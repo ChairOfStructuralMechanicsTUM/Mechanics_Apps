@@ -6,6 +6,6 @@ Prototype of a WebApp demonstrating Tensile Testing via Bokeh for the lectures a
 
 
 ## To Do ?
-[ ] Add plastic behaviour to plot
-[ ] Increase font size of force (can't find solution)
-[ ] Put subscript in legend (latex) (possible in legend?)
+- [ ] Add plastic behaviour to plot
+- [ ] Increase font size of force (can't find solution)
+- [ ] Put subscript in legend (latex) (possible in legend?)
