@@ -1,6 +1,6 @@
 # Tensile Testing App / Zugversuch App
 
-Prototype of a WebApp demonstrating Tensile Testing via Bokeh for the lectures at the Chair of Structrural Mechnaics, Prof. Müller, TUM (Technische Universität München).
+Prototype of a WebApp demonstrating Tensile Testing via Bokeh for the lectures at the Chair of Structural Mechanics, Prof. Müller, TUM (Technische Universität München).
 
 ## To Do
 
