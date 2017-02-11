@@ -191,14 +191,12 @@ p.line(x='x', y='y', source=dL_arrow_source, line_color='red',line_width=3)
 p.line(x='x', y='y', source=L_arrow_source, line_color='black',line_width=3)
 p.line(x='x', y='y', source=top_sample_line_source, line_color='red',line_width=3)
 p.line(x=[-3,8], y=[3,3], line_color='red',line_width=3)
-p.text(-0.5,5.5,text=["L"],text_color='green',text_font_size="15pt")
-p.text(-0.3,5.35,text=["0"],text_color='green',text_font_size="10pt")
+p.text(-0.5,5.5,text=[u"L\u2092"],text_color='green',text_font_size="15pt")
 dL_text=p.text(0.3,8.5,text=["dL"],text_color='red',text_font_size="15pt")
 dL_text.visible = False
 p.text(-1.5,5.5,text=["L"],text_color='black',text_font_size="15pt")
 p.line([2.75,3,2.75,3,2,2.25,2,2.25],[3.75,4,4.25,4,4,3.75,4,4.25],line_color='green',line_width=3)
-p.text(2.3,3.2,text=["S"],text_color='green',text_font_size="15pt")
-p.text(2.6,2.95,text=["0"],text_color='green',text_font_size="10pt")
+p.text(2.3,3.2,text=[u"S\u2092"],text_color='green',text_font_size="15pt")
 S_width=p.line(x='x', y='y', source=S_width_source,line_color='green',line_width=3)
 S_label_glyph=LabelSet(x='x', y='y',text='S',text_color='green',text_font_size="15pt",level='glyph',source=S_label_source)
 p.add_layout(S_label_glyph)
@@ -225,8 +223,8 @@ plot.yaxis.major_label_text_font_size="12pt"
 plot.xaxis.axis_label_text_font_style="normal"
 plot.yaxis.axis_label_text_font_style="normal"
 plot.xaxis.axis_label = u"\u03B5"
-plot.yaxis.axis_label = u"\u03C3 [N/mm^2]"
-plot.line(x='eps', y='sig', source=plot_source_theory, legend="F/S_0", color='blue')
+plot.yaxis.axis_label = u"\u03C3 [N/mm\u00B2]"
+plot.line(x='eps', y='sig', source=plot_source_theory, legend=u"F/S\u2092", color='blue')
 plot.line(x='eps', y='sig', source=plot_source_practical, legend="F/S", color='blue',line_dash=[4,4])
 plot.legend.location="top_left"
 plot.legend.label_text_font_size="14pt"
