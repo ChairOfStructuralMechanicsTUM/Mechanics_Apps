@@ -7,4 +7,4 @@ Prototype of a WebApp demonstrating Tensile Testing via Bokeh for the lectures a
 
 ## To Do ?
 - [ ] Add plastic behaviour to plot
-- [ ] Increase font size of force (can't find solution)
+- [ ] Increase font size of force slider (requires JS-fiddle?)
