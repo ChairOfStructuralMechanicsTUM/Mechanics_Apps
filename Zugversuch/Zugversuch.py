@@ -182,7 +182,7 @@ p.title.text_font_size="20pt"
 #  remove graph lines
 p.axis.visible = False
 p.grid.visible = False
-p.outline_line_alpha = 0
+p.outline_line_color = None
 #  draw bottom section
 p.patch([1, 4, 4, 3, 3, 2.8, 2.2, 2, 2, 1], [1, 1, 2, 3, 6.04, 7.9, 7.9, 6.04, 3, 2], fill_color="#CFCFCF", line_color="#CFCFCF", line_width=2)
 #  draw movable top section
