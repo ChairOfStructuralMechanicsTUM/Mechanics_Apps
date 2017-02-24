@@ -3,8 +3,8 @@
 Prototype of a WebApp demonstrating Tensile Testing via Bokeh for the lectures at the Chair of Structural Mechanics, Prof. Müller, TUM (Technische Universität München).
 
 ## To Do
-
+- [ ] write index.html file to link css solution for slider font-sizes to python script
 
 ## To Do ?
 - [ ] Add plastic behaviour to plot
-- [ ] Increase font size of force slider (requires JS-fiddle?)
+- [x] Increase font size of force slider (requires JS-fiddle?)
