@@ -1,7 +1,7 @@
 from __future__ import division
 from bokeh.plotting import figure
 from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, Slider, Button, Toggle
+from bokeh.models import ColumnDataSource, Slider, Button, Toggle, Arrow, OpenHead
 from bokeh.io import curdoc
 from math import pi, sin, cos, radians, sqrt, atan2
 
@@ -11,22 +11,25 @@ mass_source=ColumnDataSource(data=dict(x=[],y=[]))
 mass_path_circ_coords=dict(rho=[],phi=[])
 mass_path_source=ColumnDataSource(data=dict(x=[],y=[]))
 mass_lab_path_source=ColumnDataSource(data=dict(x=[],y=[]))
-mass_pos=[];
+mass_pos=[8,3.0*pi/4.0];
 Omega=radians(2)
-direction=[1.0/sqrt(5),-2.0/sqrt(5)]
-speed=[2,-4];
+speed=[2,-2];
+v0_source=ColumnDataSource(data=dict(xStart=[],xEnd=[],yStart=[],yEnd=[]))
+startPos=[]
+Active=False
 
 def initialise ():
     global mass_source, mass_pos, mass_lab_path_source, mass_path_circ_coords, mass_path_source
-    global circle_axis_circ_coords, circle_axis_source
+    global circle_axis_circ_coords, circle_axis_source, startPos
     mass_pos=[8,3.0*pi/4.0];
-    [X,Y]=circ_to_cart([mass_pos[0]],[mass_pos[1]]);
-    mass_source.data=dict(x=X,y=Y)
+    mass_source.data=dict(x=[startPos[0]],y=[startPos[1]])
     mass_path_source.data=dict(x=[],y=[])
-    mass_lab_path_source.data=dict(x=X,y=Y)
+    mass_lab_path_source.data=dict(x=[startPos[0]],y=[startPos[1]])
     mass_path_circ_coords=dict(rho=[8],phi=[3.0*pi/4.0])
     circle_axis_circ_coords=dict(rho=[[8,8],[8,8]],phi=[[0,pi],[pi/2.0,-pi/2.0]])
     circle_axis_source.data=dict(x=[[-8,8],[0,0]],y=[[0,0],[8,-8]])
+    v0_source.data=dict(xStart=[startPos[0]-speed[0]],xEnd=[startPos[0]],
+        yStart=[startPos[1]-speed[1]],yEnd=[startPos[1]])
 
 def rotation_speed(attrname, old, new):
     global Omega
@@ -68,7 +71,7 @@ def move():
     spin(mass_pos)
     
 def spin(mass_pos):
-    global circle_axis_circ_coords, Omega, mass_path_source
+    global circle_axis_circ_coords, Omega, mass_path_source, Active
     circle_axis_circ_coords['phi'][0][0]+=Omega
     circle_axis_circ_coords['phi'][0][1]+=Omega
     circle_axis_circ_coords['phi'][1][0]+=Omega
@@ -84,45 +87,73 @@ def spin(mass_pos):
     mass_path_source.data=dict(x=X,y=Y)
     if (mass_pos[0]>8):
         curdoc().remove_periodic_callback(move)
+        Active=False
 
-def particle_speed (attrname,old,new):
-    global speed, direction
-    speed=[new*direction[0],new*direction[1]];
+def particle_speed_x (attrname,old,new):
+    global speed
+    speed=[new,speed[1]];
+    v0_source.data=dict(xStart=[startPos[0]-speed[0]],xEnd=[startPos[0]],
+        yStart=[startPos[1]-speed[1]],yEnd=[startPos[1]])
+
+def particle_speed_y (attrname,old,new):
+    global speed
+    speed=[speed[0],new];
+    v0_source.data=dict(xStart=[startPos[0]-speed[0]],xEnd=[startPos[0]],
+        yStart=[startPos[1]-speed[1]],yEnd=[startPos[1]])
 
 def reset_situation ():
-    stop()
+    global pause_button, Active
+    if (Active):
+        curdoc().remove_periodic_callback(move)
+        Active=False
+    initialise()
     if (pause_button.active==True):
         pause_button.active=False
-    else:
+    else :
         curdoc().add_periodic_callback(move, 100)
+        Active=True
 
 def stop ():
-    global pause_button
-    if (mass_pos[0]<=8 and pause_button.active==False):
+    global pause_button, Active
+    if (Active):
         curdoc().remove_periodic_callback(move)
+        Active=False
+    v0_input_x.value=2.0
+    v0_input_y.value=-2.0
     initialise()
 
 def pause (toggled):
+    global Active
     if (toggled):
         curdoc().remove_periodic_callback(move)
+        Active=False
     else:
         curdoc().add_periodic_callback(move, 100)
+        Active=True
 
 def play ():
+    global Active
     if (pause_button.active==True):
         pause_button.active=False
-    else:
+    elif (not Active):
         curdoc().add_periodic_callback(move, 100)
+        Active=True
 
+[X,Y]=circ_to_cart([mass_pos[0]],[mass_pos[1]]);
+startPos=[X[0],Y[0]];
 initialise()
 
 ## Create slider to rotate plate
 Omega_input = Slider(title=u"\u03C9", value=2.0, start=0.0, end=10.0, step=0.1)
 Omega_input.on_change('value',rotation_speed)
 
-## Create slider to select v0
-v0_input = Slider(title=u"v\u2092", value=2.0, start=0.0, end=10.0, step=0.1)
-v0_input.on_change('value',particle_speed)
+## Create slider to select v0-x
+v0_input_x = Slider(title=u"v\u2092-x", value=2.0, start=-5.0, end=5.0, step=0.5)
+v0_input_x.on_change('value',particle_speed_x)
+
+## Create slider to select v0-y
+v0_input_y = Slider(title=u"v\u2092-y", value=-2.0, start=-5.0, end=5.0, step=0.5)
+v0_input_y.on_change('value',particle_speed_y)
 
 ## Create reset button
 reset_button = Button(label="Reset", button_type="success")
@@ -140,7 +171,7 @@ stop_button.on_click(stop)
 play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
 
-p=figure(title="Drehscheibe-Corioliskraft (Coriolis Force)", tools="", x_range=(-10,10), y_range=(-10,10))
+p=figure(title="Drehscheibe-Corioliskraft (Coriolis Force)", tools="", x_range=(-12,12), y_range=(-12,12))
 p.title.text_font_size="20pt"
 p.axis.visible = False
 p.grid.visible = False
@@ -150,9 +181,13 @@ p.multi_line('x','y',source=circle_axis_source,line_color="#0099CC")
 p.line(x='x',y='y',source=mass_path_source,line_color="red")
 p.line(x='x',y='y',source=mass_lab_path_source,line_color="green")
 p.ellipse(x='x',y='y',width=0.5,height=0.5,source=mass_source,fill_color="red",line_color=None)
+#p.line(x='x',y='y',source=v0_source,line_color="black")
+arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=2),
+    x_start='xStart', y_start='yStart', x_end='xEnd', y_end='yEnd',source=v0_source)
+p.add_layout(arrow_glyph)
 
 # regularly update user view
-curdoc().add_periodic_callback(move, 100)
+#curdoc().add_periodic_callback(move, 100)
 
 ## Send to window
-curdoc().add_root(row(p,column(Omega_input,v0_input,reset_button,pause_button,stop_button,play_button)))
+curdoc().add_root(row(p,column(Omega_input,v0_input_x,v0_input_y,reset_button,pause_button,stop_button,play_button)))

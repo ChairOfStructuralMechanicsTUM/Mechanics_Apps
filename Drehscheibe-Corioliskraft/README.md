@@ -4,7 +4,7 @@ Prototype of a WebApp demonstrating the Coriolis Force via Bokeh for the lecture
 
 ## To Do
 - [ ] translate buttons
-- [ ] add choice of start direction for ball
 
 ## To Do ?
 - [ ] Increase font size of force slider (requires JS-fiddle?)
+- [ ] Deactivate v0 sliders when ball is moving (not currently possible with bokeh as Slider.deactivate is not correctly implemented)
