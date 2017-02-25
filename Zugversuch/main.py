@@ -1,6 +1,6 @@
 from bokeh.plotting import figure
 from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, Slider, LabelSet
+from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead
 from bokeh.io import curdoc#, push_session
 from numpy import loadtxt
 from time import sleep
@@ -8,13 +8,13 @@ from time import sleep
 ## set up data sources for movable objects ##
 #     data sources for drawing
 top_of_sample_source = ColumnDataSource(data=dict(x=[], y=[]))
-L_arrow_source = ColumnDataSource(data=dict(x=[-1, -1,-1.5,-1,-0.5], y=[3,8,7.5,8,7.5]))
-dL_arrow_source = ColumnDataSource(data=dict(x=[], y=[]))
+L_arrow_source = ColumnDataSource(data=dict(xS=[-1], xE=[-1], yS=[3],yE=[8]))
+dL_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
 top_sample_line_source = ColumnDataSource(data=dict(x=[-3,8], y=[8,8]))
-S_width_source = ColumnDataSource(data=dict(x=[2.75,3,2.75,3,2,2.25,2,2.25],y=[5.25,5.5,5.75,5.5,5.5,5.25,5.5,5.75]))
+S_width_source = ColumnDataSource(data=dict(xS=[2], xE=[3],yS=[5.5],yE=[5.5]))
 S_label_source = ColumnDataSource(data=dict(x=[2.3],y=[6],S=['S']))
-F_label_source = ColumnDataSource(data=dict(x=[2.5],y=[10.75],F=['F']))
-F_arrow_source = ColumnDataSource(data=dict(x=[2.5,2.5,2.25,2.5,2.75],y=[9,10.5,10.25,10.5,10.25]))
+F_label_source = ColumnDataSource(data=dict(x=[2.5],y=[10.6],F=['F']))
+F_arrow_source = ColumnDataSource(data=dict(xS=[2.5], xE=[2.5],yS=[9],yE=[10.5]))
 #     data sources for plot
 plot_source_theory = ColumnDataSource(data=dict(eps=[], sig=[]))
 plot_source_practical = ColumnDataSource(data=dict(eps=[], sig=[]))
@@ -123,19 +123,19 @@ def draw(dL,F):
     
     # Only display the dL arrow and label if dL=/=0
     if (dL==0):
-        dL_arrow_source.data = dict(x=[],y=[])
+        dL_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[])
         global dL_text
         dL_text.visible = False
     else:
-        dL_arrow_source.data = dict(x=[0, 0, -0.5, 0, 0.5], y=[8, 8+dL, 7.5+dL, 8+dL, 7.5+dL])
+        dL_arrow_source.data = dict(xS=[0], xE=[0], yS=[8], yE=[8+dL])
         dL_text.visible = True
     
     # update length of L arrow
-    L_arrow_source.data = dict(x=[-1, -1, -1.5, -1, -0.5], y=[3, 8+dL, 7.5+dL, 8+dL, dL+7.5])
+    L_arrow_source.data = dict(xS=[-1], xE=[-1], yS=[3], yE=[8+dL])
     # update top line
     top_sample_line_source.data = dict(x=[-3,8], y=[8+dL,8+dL])
     # update force arrow
-    F_arrow_source.data = dict(x=[2.5,2.5,2.25,2.5,2.75],y=[9+dL,10.5+dL,10.25+dL,10.5+dL,10.25+dL])
+    F_arrow_source.data = dict(xS=[2.5],xE=[2.5],yS=[9+dL],yE=[10.5+dL])
     F_label_source.data = dict(x=[2.5],y=[10.6+dL],F=['F'])
     
     # calculate the new positions of the sample
@@ -146,29 +146,23 @@ def draw(dL,F):
     # manage surface labels
     if (dL>5):
         # remove S after break
-        S_width.visible=False
+        S_width_source.data = dict(xS=[],xE=[],yS=[],yE=[])
         S_label_glyph.text_alpha=0
     elif (dL>0.54):
         # ensure S is visible
-        S_width.visible=True
         S_label_glyph.text_alpha=1
         # update label position (account for width change)
         XX=0.2*(dL/2.0-0.54)/1.86
-        X=[2.75-XX,3-XX,2.75-XX,3-XX,2+XX,2.25+XX,2+XX,2.25+XX]
-        dL2=dL/2
-        Y=[5.25+dL2,5.5+dL2,5.75+dL2,5.5+dL2,5.5+dL2,5.25+dL2,5.5+dL2,5.75+dL2]
-        S_label_source.data = dict(x=[2.3],y=[Y[1]+0.5], S=['S'])
-        S_width_source.data = dict(x=X,y=Y)
+        Y=5.5+dL/2
+        S_label_source.data = dict(x=[2.3],y=[Y+0.5], S=['S'])
+        S_width_source.data = dict(xS=[2+XX],xE=[3-XX],yS=[Y],yE=[Y])
     else:
         # ensure S is visible
-        S_width.visible=True
         S_label_glyph.text_alpha=1
         # update label position
-        X=[2.75,3,2.75,3,2,2.25,2,2.25]
-        dL2=dL/2
-        Y=[5.25+dL2,5.5+dL2,5.75+dL2,5.5+dL2,5.5+dL2,5.25+dL2,5.5+dL2,5.75+dL2]
-        S_label_source.data = dict(x=[2.3],y=[Y[1]+0.5], S=['S'])
-        S_width_source.data = dict(x=X,y=Y)
+        Y=5.5+dL/2
+        S_label_source.data = dict(x=[2.3],y=[Y+0.5], S=['S'])
+        S_width_source.data = dict(xS=[2], xE=[3], yS=[Y],yE=[Y])
 
 ########### Main ###########
 
@@ -188,26 +182,42 @@ p.patch([1, 4, 4, 3, 3, 2.8, 2.2, 2, 2, 1], [1, 1, 2, 3, 6.04, 7.9, 7.9, 6.04, 3
 #  draw movable top section
 p.patch(x='x', y='y', source=top_of_sample_source, fill_color="#CFCFCF", line_color="#CFCFCF", line_width=2)
 p.line([-3,8],y=[8,8], line_color='green',line_dash=[4,4])
-p.line([0, 0, -0.5, 0, 0.5], [3, 8, 7.5, 8, 7.5], line_color='green',line_width=3)
-p.line(x='x', y='y', source=dL_arrow_source, line_color='red',line_width=3)
-p.line(x='x', y='y', source=L_arrow_source, line_color='black',line_width=3)
+L0_arrow_glyph = Arrow(end=OpenHead(line_color="green",line_width=2,size=10),
+    x_start=0, y_start=3, x_end=0, y_end=8,line_color="green",line_width=2)
+p.add_layout(L0_arrow_glyph)
+dL_arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width=2,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=dL_arrow_source,line_color="red",line_width=2)
+p.add_layout(dL_arrow_glyph)
+L_arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=2,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=L_arrow_source,line_color="black",line_width=2)
+p.add_layout(L_arrow_glyph)
 p.line(x='x', y='y', source=top_sample_line_source, line_color='red',line_width=3)
 p.line(x=[-3,8], y=[3,3], line_color='red',line_width=3)
 p.text(-0.5,5.5,text=[u"L\u2092"],text_color='green',text_font_size="15pt")
 dL_text=p.text(0.3,8.5,text=["dL"],text_color='red',text_font_size="15pt")
 dL_text.visible = False
 p.text(-1.5,5.5,text=["L"],text_color='black',text_font_size="15pt")
-p.line([2.75,3,2.75,3,2,2.25,2,2.25],[3.75,4,4.25,4,4,3.75,4,4.25],line_color='green',line_width=3)
+S0_arrow_glyph = Arrow(start=OpenHead(line_color="green",line_width=2, size=10),
+    end=OpenHead(line_color="green",line_width=2, size=10),
+    x_start=2, y_start=4, x_end=3, y_end=4,line_color="green",line_width=2)
+p.add_layout(S0_arrow_glyph)
 p.text(2.3,3.2,text=[u"S\u2092"],text_color='green',text_font_size="15pt")
-S_width=p.line(x='x', y='y', source=S_width_source,line_color='green',line_width=3)
+S_arrow_glyph = Arrow(start=OpenHead(line_color="green",line_width=2, size=10),
+    end=OpenHead(line_color="green",line_width=2, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=S_width_source,line_color="green",line_width=2)
+p.add_layout(S_arrow_glyph)
 S_label_glyph=LabelSet(x='x', y='y',text='S',text_color='green',text_font_size="15pt",level='glyph',source=S_label_source)
 p.add_layout(S_label_glyph)
 p.text(2.5,-0.5,text=["F"],text_color='red',text_font_size="15pt",text_align="center")
-p.line([2.5,2.5,2.25,2.5,2.75],[2,0.5,0.75,0.5,0.75],line_color='red',line_width=3)
+F_down_arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width=2,size=10),
+    x_start=2.5, y_start=2, x_end=2.5, y_end=0.5,line_color="red",line_width=2)
+p.add_layout(F_down_arrow_glyph)
 F_label_glyph=LabelSet(x='x', y='y',text='F',text_color='red',text_font_size="15pt",
     level='glyph',source=F_label_source,text_align="center")
 p.add_layout(F_label_glyph)
-p.line(x='x',y='y', source=F_arrow_source,color='red',line_width=3)
+F_up_arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width=2,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=F_arrow_source,line_color="red",line_width=2)
+p.add_layout(F_up_arrow_glyph)
 
 ## Create slider to choose force applied
 Force_input = Slider(title="Kraft (Force)", value=0.0, start=0.0, end=110.0, step=5)
