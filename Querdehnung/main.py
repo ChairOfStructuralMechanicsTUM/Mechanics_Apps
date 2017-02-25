@@ -1,6 +1,6 @@
 from __future__ import division
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, Slider, LabelSet
+from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
 
@@ -69,47 +69,44 @@ class DeformableObj(object):
         self.Y=self.YL_0*(1+eps[1])
         # deform force arrows
         for j in range(0,self.nb_force_objs):
-            X=[]
-            Y=[]
-            n=len(self.orig_forces[j][0]['y'])
-            if (self.orig_forces[j][1]=='y'):
-                # if x fixed, keep x
-                X=self.orig_forces[j][0]['x']
+            if (self.orig_forces[j][1]=='yE'):
+                # get original length
+                length=self.orig_forces[j][0]['yE'][0]-self.orig_forces[j][0]['yS'][0]
+                # keep start position relative to main object
+                newY0=self.orig_forces[j][0]['yS'][0]*(1+eps[1])
                 # alter arrow length by a factor of (1+F/200) 
-                # but keep start position relative to main object
-                Y.append(self.orig_forces[j][0]['y'][0]*(1+eps[1]))
-                for k in range(1,n):
-                    Y.append(Y[0]+(self.orig_forces[j][0]['y'][k]-self.orig_forces[j][0]['y'][0])*(1+Force[1]/200.0))
+                Force_Updatables[j].data=dict(xS=Force_Updatables[j].data['xS'],xE=Force_Updatables[j].data['xE'],
+                    yS=[newY0], yE=[newY0+(1+Force[1]/200.0)*length])
             else:
-                # if y fixed, keep y
-                Y=self.orig_forces[j][0]['y']
-                # alter arrow length by a factor of (1+F/200)
-                # but keep start position relative to main object
-                X.append(self.orig_forces[j][0]['x'][0]*(1+eps[0]))
-                for k in range(1,n):
-                    X.append(X[0]+(self.orig_forces[j][0]['x'][k]-self.orig_forces[j][0]['x'][0])*(1+Force[0]/200.0))
-            Force_Updatables[j].data=dict(x=X,y=Y)
+                # get original length
+                length=self.orig_forces[j][0]['xE'][0]-self.orig_forces[j][0]['xS'][0]
+                # keep start position relative to main object
+                newX0=self.orig_forces[j][0]['xS'][0]*(1+eps[0])
+                # alter arrow length by a factor of (1+F/200) 
+                Force_Updatables[j].data=dict(xS=[newX0],xE=[newX0+(1+Force[0]/200.0)*length],
+                    yS=Force_Updatables[j].data['yS'], yE=Force_Updatables[j].data['yE'])
+        
         # deform force labels
         for j in range(0,self.nb_force_labels,2):
             # to be placed at the end of the linked arrow
             linked_arrow=Force_Updatables[self.force_label_arrows[int(j/2)]['i']].data;
-            n=len(linked_arrow['x'])
+            n=len(linked_arrow['xE'])
             if (self.force_label_arrows[int(j/2)]['xy']=='y'):
                 # if x fixed, keep x
                 X=Force_label_Updatables[j].data['x']
                 # move by 1 from end in correct direction
-                if (linked_arrow['y'][n-2]>0):
-                    Y=[linked_arrow['y'][n-2]+1]
+                if (linked_arrow['yE'][n-2]>0):
+                    Y=[linked_arrow['yE'][n-2]+1]
                 else:
-                    Y=[linked_arrow['y'][n-2]-1]
+                    Y=[linked_arrow['yE'][n-2]-1]
             else:
                 # if y fixed, keep y
                 Y=Force_label_Updatables[j].data['y']
                 # move by 1 from end in correct direction
-                if (linked_arrow['x'][n-2]>0):
-                    X=[linked_arrow['x'][n-2]+1]
+                if (linked_arrow['xE'][n-2]>0):
+                    X=[linked_arrow['xE'][n-2]+1]
                 else:
-                    X=[linked_arrow['x'][n-2]-1]
+                    X=[linked_arrow['xE'][n-2]-1]
             Force_label_Updatables[j].data=dict(x=X, y=Y,f=['F'])
             # update subscript
             Force_label_Updatables[j+1].data=dict(x=[X[0]+0.2], y=[Y[0]-0.2],f=Force_label_Updatables[j+1].data['f'])
@@ -140,40 +137,39 @@ class DeformableObj(object):
         self.nb_Cbabies+=1
     
     # draws all 4 arrows on one side at once
-    def add_force_arrows(self,x,y,xStart,yStart,xy,diagram):
+    def add_force_arrows(self,xStart,yStart,length,xy,diagram):
         global Force_Updatables
         # create ColumnDataSources
-        if (xy=='y'):
+        if (xy=='yE'):
             n=len(xStart)
         else:
             n=len(yStart)
+        if (xy=='xE'):
+            # if x variable then xStart[i]=xStart[i+1]
+            # and yEnd always equals yStart
+            xEnd=xStart+length
+        else:
+            # if y variable then yStart[i]=yStart[i+1]
+            # and xEnd always equals xStart
+            yEnd=yStart+length
+        c=self.nb_force_objs
         for i in range(0,n):
-            X=[]
-            Y=[]
-            if (xy=='x'):
-                # if x variable then xStart is always the same
-                # (same arrow replicated in y direction)
-                for j in range(0,len(x)):
-                    X.append(x[j]+xStart)
-                    Y.append(y[j]+yStart[i])
-            else:
-                # if y variable then yStart is always the same
-                # (same arrow replicated in x direction)
-                for j in range(0,len(x)):
-                    X.append(x[j]+xStart[i])
-                    Y.append(y[j]+yStart)
             # create ColumnDataSource
-            Force_Updatables.append(ColumnDataSource(data=dict(x=X, y=Y)))
+            if (xy=='xE'):
+                # if x variable then xStart[i]=xStart[i+1]
+                Force_Updatables.append(ColumnDataSource(data=dict(xS=[xStart],xE=[xEnd],yS=[yStart[i]],yE=[yStart[i]])))
+            else:
+                # if y variable then yStart[i]=yStart[i+1]
+                Force_Updatables.append(ColumnDataSource(data=dict(xS=[xStart[i]],xE=[xStart[i]],yS=[yStart],yE=[yEnd])))
+            # add to diagram
+            arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width=3,size=10),
+                x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Force_Updatables[c+i],
+                line_color="red",line_width=3)
+            diagram.add_layout(arrow_glyph)
             # store original position and fixed direction
-            self.orig_forces.append([dict(x=X,y=Y), xy])
-        # add to diagram
-        i=self.nb_force_objs
-        diagram.line(x='x',y='y',source=Force_Updatables[i], line_color="red",line_width=3)
-        diagram.line(x='x',y='y',source=Force_Updatables[i+1], line_color="red",line_width=3)
-        diagram.line(x='x',y='y',source=Force_Updatables[i+2], line_color="red",line_width=3)
-        diagram.line(x='x',y='y',source=Force_Updatables[i+3], line_color="red",line_width=3)
+            self.orig_forces.append([dict(Force_Updatables[c+i].data), xy])
         # update number of objects
-        self.nb_force_objs+=4
+        self.nb_force_objs+=n
     
     def add_force_label(self,x,y,xy,diagram):
         global Force_Updatables
@@ -252,11 +248,11 @@ Block.add_baby([-4,-1,-1,-4],[-1,-1,1,1],diagram,"black")
 Block.add_baby([3.25,4.25,3.25,2.25],[-1,0,1,0],diagram,"black")
 Block.add_circular_baby(1,0,1.5,1.5,diagram,"black")
 ## add horizontal force arrows
-Block.add_force_arrows([0,2.25,2,2.25,2],[0,0,0.25,0,-0.25],4.75,[1.4,0.5,-0.5,-1.4],'x',diagram)
-Block.add_force_arrows([0,-2.25,-2,-2.25,-2],[0,0,0.25,0,-0.25],-4.75,[1.4,0.5,-0.5,-1.4],'x',diagram)
+Block.add_force_arrows(4.75,[1.4,0.5,-0.5,-1.4],2,'xE',diagram)
+Block.add_force_arrows(-4.75,[1.4,0.5,-0.5,-1.4],-2,'xE',diagram)
 ## add vertical force arrows
-Block.add_force_arrows([0,0,-0.25,0,0.25],[0,2.25,2,2.25,2],[3,1,-1,-3],2.25,'y',diagram)
-Block.add_force_arrows([0,0,-0.25,0,0.25],[0,-2.25,-2,-2.25,-2],[3,1,-1,-3],-2.25,'y',diagram)
+Block.add_force_arrows([3,1,-1,-3],2.25,2,'yE',diagram)
+Block.add_force_arrows([3,1,-1,-3],-2.25,-2,'yE',diagram)
 ## add force labels (must be done in same order as arrows and after arrows)
 Block.add_force_label(8,0,'x',diagram)
 Block.add_force_label(-8,0,'x',diagram)
