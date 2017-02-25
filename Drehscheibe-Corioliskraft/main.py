@@ -115,17 +115,25 @@ def rotation_speed(attrname, old, new):
 
 # Set v0
 def particle_speed_x (attrname,old,new):
-    global speed
-    speed=[new,speed[1]];
-    v0_source.data=dict(xStart=[startPos[0]-speed[0]],xEnd=[startPos[0]],
-        yStart=[startPos[1]-speed[1]],yEnd=[startPos[1]])
+    global speed, Active
+    if (not Active):
+        speed=[new,speed[1]];
+        v0_source.data=dict(xStart=[startPos[0]-speed[0]],xEnd=[startPos[0]],
+            yStart=[startPos[1]-speed[1]],yEnd=[startPos[1]])
+    elif (new!=speed[0]):
+        global v0_input_x
+        v0_input_x.value=speed[0]
 
 # Set v0
 def particle_speed_y (attrname,old,new):
     global speed
-    speed=[speed[0],new];
-    v0_source.data=dict(xStart=[startPos[0]-speed[0]],xEnd=[startPos[0]],
-        yStart=[startPos[1]-speed[1]],yEnd=[startPos[1]])
+    if (not Active):
+        speed=[speed[0],new];
+        v0_source.data=dict(xStart=[startPos[0]-speed[0]],xEnd=[startPos[0]],
+            yStart=[startPos[1]-speed[1]],yEnd=[startPos[1]])
+    elif (new!=speed[1]):
+        global v0_input_y
+        v0_input_y.value=speed[1]
 
 ## Button functions
 def reset_situation ():
@@ -163,7 +171,8 @@ def pause (toggled):
     if (toggled):
         curdoc().remove_periodic_callback(move)
         Active=False
-    else:
+    # only restart if still on table
+    elif(mass_pos[0]<=8):
         curdoc().add_periodic_callback(move, 100)
         Active=True
 
@@ -171,10 +180,11 @@ def play ():
     global Active
     # if inactive, reactivate animation
     if (pause_button.active==True):
-        pause_button.active=False
         # deactivating pause button reactivates animation
         # (calling add_periodic_callback twice gives errors)
-    elif (not Active):
+        pause_button.active=False
+    # only restart if still on table
+    elif (not Active and mass_pos[0]<=8):
         curdoc().add_periodic_callback(move, 100)
         Active=True
 

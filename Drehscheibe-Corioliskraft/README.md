@@ -8,4 +8,4 @@ The app can be run using the command "bokeh serve --show Drehscheibe-Corioliskra
 - [ ] translate buttons
 
 ## To Do ?
-- [ ] Deactivate v0 sliders when ball is moving (not currently possible with bokeh as Slider.deactivate is not correctly implemented)
+- [x] Deactivate v0 sliders when ball is moving (not currently possible with bokeh as Slider.deactivate is not correctly implemented)
