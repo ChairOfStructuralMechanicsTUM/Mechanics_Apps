@@ -178,45 +178,46 @@ p.axis.visible = False
 p.grid.visible = False
 p.outline_line_color = None
 #  draw bottom section
-p.patch([1, 4, 4, 3, 3, 2.8, 2.2, 2, 2, 1], [1, 1, 2, 3, 6.04, 7.9, 7.9, 6.04, 3, 2], fill_color="#CFCFCF", line_color="#CFCFCF", line_width=2)
+p.patch([1, 4, 4, 3, 3, 2.8, 2.2, 2, 2, 1], [1, 1, 2, 3, 6.04, 7.9, 7.9, 6.04, 3, 2], 
+    fill_color="#CCCCC6", line_color="#CCCCC6", line_width=2)
 #  draw movable top section
-p.patch(x='x', y='y', source=top_of_sample_source, fill_color="#CFCFCF", line_color="#CFCFCF", line_width=2)
-p.line([-3,8],y=[8,8], line_color='green',line_dash=[4,4])
-L0_arrow_glyph = Arrow(end=OpenHead(line_color="green",line_width=2,size=10),
-    x_start=0, y_start=3, x_end=0, y_end=8,line_color="green",line_width=2)
+p.patch(x='x', y='y', source=top_of_sample_source, fill_color="#CCCCC6", line_color="#CCCCC6", line_width=2)
+p.line([-3,8],y=[8,8], line_color='#003359',line_dash=[4,4])
+L0_arrow_glyph = Arrow(end=OpenHead(line_color="#003359",line_width=2,size=10),
+    x_start=0, y_start=3, x_end=0, y_end=8,line_color="#003359",line_width=2)
 p.add_layout(L0_arrow_glyph)
-dL_arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width=2,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=dL_arrow_source,line_color="red",line_width=2)
+dL_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width=2,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=dL_arrow_source,line_color="#E37222",line_width=2)
 p.add_layout(dL_arrow_glyph)
 L_arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=2,size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=L_arrow_source,line_color="black",line_width=2)
 p.add_layout(L_arrow_glyph)
-p.line(x='x', y='y', source=top_sample_line_source, line_color='red',line_width=3)
-p.line(x=[-3,8], y=[3,3], line_color='red',line_width=3)
-p.text(-0.5,5.5,text=[u"L\u2092"],text_color='green',text_font_size="15pt")
-dL_text=p.text(0.3,8.5,text=["dL"],text_color='red',text_font_size="15pt")
+p.line(x='x', y='y', source=top_sample_line_source, line_color='#E37222',line_width=3)
+p.line(x=[-3,8], y=[3,3], line_color='#E37222',line_width=3)
+p.text(-0.5,5.5,text=[u"L\u2092"],text_color='#003359',text_font_size="15pt")
+dL_text=p.text(0.3,8.5,text=["dL"],text_color='#E37222',text_font_size="15pt")
 dL_text.visible = False
 p.text(-1.5,5.5,text=["L"],text_color='black',text_font_size="15pt")
-S0_arrow_glyph = Arrow(start=OpenHead(line_color="green",line_width=2, size=10),
-    end=OpenHead(line_color="green",line_width=2, size=10),
-    x_start=2, y_start=4, x_end=3, y_end=4,line_color="green",line_width=2)
+S0_arrow_glyph = Arrow(start=OpenHead(line_color="#003359",line_width=2, size=10),
+    end=OpenHead(line_color="#003359",line_width=2, size=10),
+    x_start=2, y_start=4, x_end=3, y_end=4,line_color="#003359",line_width=2)
 p.add_layout(S0_arrow_glyph)
-p.text(2.3,3.2,text=[u"S\u2092"],text_color='green',text_font_size="15pt")
-S_arrow_glyph = Arrow(start=OpenHead(line_color="green",line_width=2, size=10),
-    end=OpenHead(line_color="green",line_width=2, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=S_width_source,line_color="green",line_width=2)
+p.text(2.3,3.2,text=[u"S\u2092"],text_color='#003359',text_font_size="15pt")
+S_arrow_glyph = Arrow(start=OpenHead(line_color="#003359",line_width=2, size=10),
+    end=OpenHead(line_color="#003359",line_width=2, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=S_width_source,line_color="#003359",line_width=2)
 p.add_layout(S_arrow_glyph)
-S_label_glyph=LabelSet(x='x', y='y',text='S',text_color='green',text_font_size="15pt",level='glyph',source=S_label_source)
+S_label_glyph=LabelSet(x='x', y='y',text='S',text_color='#003359',text_font_size="15pt",level='glyph',source=S_label_source)
 p.add_layout(S_label_glyph)
-p.text(2.5,-0.5,text=["F"],text_color='red',text_font_size="15pt",text_align="center")
-F_down_arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width=2,size=10),
-    x_start=2.5, y_start=2, x_end=2.5, y_end=0.5,line_color="red",line_width=2)
+p.text(2.5,-0.5,text=["F"],text_color='#E37222',text_font_size="15pt",text_align="center")
+F_down_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width=2,size=10),
+    x_start=2.5, y_start=2, x_end=2.5, y_end=0.5,line_color="#E37222",line_width=2)
 p.add_layout(F_down_arrow_glyph)
-F_label_glyph=LabelSet(x='x', y='y',text='F',text_color='red',text_font_size="15pt",
+F_label_glyph=LabelSet(x='x', y='y',text='F',text_color='#E37222',text_font_size="15pt",
     level='glyph',source=F_label_source,text_align="center")
 p.add_layout(F_label_glyph)
-F_up_arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width=2,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=F_arrow_source,line_color="red",line_width=2)
+F_up_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width=2,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=F_arrow_source,line_color="#E37222",line_width=2)
 p.add_layout(F_up_arrow_glyph)
 
 ## Create slider to choose force applied
@@ -236,21 +237,21 @@ plot.xaxis.axis_label_text_font_style="normal"
 plot.yaxis.axis_label_text_font_style="normal"
 plot.xaxis.axis_label = u"\u03B5"
 plot.yaxis.axis_label = u"\u03C3 [N/mm\u00B2]"
-plot.line(x='eps', y='sig', source=plot_source_theory, legend=u"F/S\u2092", color='blue')
-plot.line(x='eps', y='sig', source=plot_source_practical, legend="F/S", color='blue',line_dash=[4,4])
+plot.line(x='eps', y='sig', source=plot_source_theory, legend=u"F/S\u2092", color='#0065BD')
+plot.line(x='eps', y='sig', source=plot_source_practical, legend="F/S", color='#0065BD',line_dash=[4,4])
 plot.legend.location="top_left"
 plot.legend.label_text_font_size="14pt"
 plot.circle(x='eps', y='sig', source=current_coords, color='black', radius=1)
 #add sigma labels
-Sig_B=plot.line([0, 100], [67.2, 67.2], color='red')
-Sig_S=plot.line([0, 100], [50, 50], color='red')
-Sig_P=plot.line([0, 100], [41.5, 41.5], color='red')
-Sig_B_text=plot.text(101,65,text=[u"\u03C3"],text_color="red",text_font_size="12pt")
-Sig_B_text_B=plot.text(103.5,64.5,text=["B"],text_color="red",text_font_size="8pt")
-Sig_S_text=plot.text(101,48,text=[u"\u03C3"],text_color="red",text_font_size="12pt")
-Sig_S_text_S=plot.text(103.5,47.5,text=["S"],text_color="red",text_font_size="8pt")
-Sig_P_text=plot.text(101,39.5,text=[u"\u03C3"],text_color="red",text_font_size="12pt")
-Sig_P_text_P=plot.text(103.5,39,text=["P"],text_color="red",text_font_size="8pt")
+Sig_B=plot.line([0, 100], [67.2, 67.2], color='#E37222')
+Sig_S=plot.line([0, 100], [50, 50], color='#E37222')
+Sig_P=plot.line([0, 100], [41.5, 41.5], color='#E37222')
+Sig_B_text=plot.text(101,65,text=[u"\u03C3"],text_color="#E37222",text_font_size="12pt")
+Sig_B_text_B=plot.text(103.5,64.5,text=["B"],text_color="#E37222",text_font_size="8pt")
+Sig_S_text=plot.text(101,48,text=[u"\u03C3"],text_color="#E37222",text_font_size="12pt")
+Sig_S_text_S=plot.text(103.5,47.5,text=["S"],text_color="#E37222",text_font_size="8pt")
+Sig_P_text=plot.text(101,39.5,text=[u"\u03C3"],text_color="#E37222",text_font_size="12pt")
+Sig_P_text_P=plot.text(103.5,39,text=["P"],text_color="#E37222",text_font_size="8pt")
 #make sigma labels invisible until sufficiently plotted
 Sig_B.visible=False
 Sig_S.visible=False
