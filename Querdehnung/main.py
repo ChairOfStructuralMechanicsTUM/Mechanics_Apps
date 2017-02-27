@@ -162,9 +162,9 @@ class DeformableObj(object):
                 # if y variable then yStart[i]=yStart[i+1]
                 Force_Updatables.append(ColumnDataSource(data=dict(xS=[xStart[i]],xE=[xStart[i]],yS=[yStart],yE=[yEnd])))
             # add to diagram
-            arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width=3,size=10),
+            arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
                 x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Force_Updatables[c+i],
-                line_color="red",line_width=3)
+                line_color="black",line_width=3)
             diagram.add_layout(arrow_glyph)
             # store original position and fixed direction
             self.orig_forces.append([dict(Force_Updatables[c+i].data), xy])
@@ -181,11 +181,11 @@ class DeformableObj(object):
         # there are 4 arrows and 2 force_labels
         self.force_label_arrows.append(dict(i=self.nb_force_labels*2,xy=xy))
         # add to diagram
-        F_glyph=LabelSet(x='x', y='y',text='f',text_color='red',text_font_size="15pt",
+        F_glyph=LabelSet(x='x', y='y',text='f',text_color='black',text_font_size="15pt",
             level='glyph',text_baseline="middle",text_align="center",source=Force_label_Updatables[self.nb_force_labels])
         diagram.add_layout(F_glyph)
         # add subscript to diagram
-        F_glyph=LabelSet(x='x', y='y',text='f',text_color='red',text_font_size="10pt",
+        F_glyph=LabelSet(x='x', y='y',text='f',text_color='black',text_font_size="10pt",
             level='glyph',text_baseline="middle",text_align="center",source=Force_label_Updatables[self.nb_force_labels+1])
         diagram.add_layout(F_glyph)
         # update number of labels
@@ -241,12 +241,18 @@ diagram.xaxis.axis_label_text_font_size="14pt"
 diagram.yaxis.axis_label_text_font_size="14pt"
 diagram.xaxis.axis_label="x"
 diagram.yaxis.axis_label="y"
+diagram.xaxis.major_tick_line_color=None
+diagram.xaxis.major_label_text_color=None
+diagram.xaxis.minor_tick_line_color=None
+diagram.yaxis.major_tick_line_color=None
+diagram.yaxis.major_label_text_color=None
+diagram.yaxis.minor_tick_line_color=None
 ## add objects to figure and Deformable object
-diagram.patch([-5,5,5,-5],[-2.5,-2.5,2.5,2.5], fill_color="blue",line_color="blue")
-Block.add_baby([-5,5,5,-5],[-2.5,-2.5,2.5,2.5],diagram,"red")
-Block.add_baby([-4,-1,-1,-4],[-1,-1,1,1],diagram,"black")
-Block.add_baby([3.25,4.25,3.25,2.25],[-1,0,1,0],diagram,"black")
-Block.add_circular_baby(1,0,1.5,1.5,diagram,"black")
+diagram.patch([-5,5,5,-5],[-2.5,-2.5,2.5,2.5], fill_color="#003359",line_color=None)
+Block.add_baby([-5,5,5,-5],[-2.5,-2.5,2.5,2.5],diagram,"#0065BD")
+Block.add_baby([-4,-1,-1,-4],[-1,-1,1,1],diagram,"#333333")
+Block.add_baby([3.25,4.25,3.25,2.25],[-1,0,1,0],diagram,"#333333")
+Block.add_circular_baby(1,0,1.5,1.5,diagram,"#333333")
 ## add horizontal force arrows
 Block.add_force_arrows(4.75,[1.4,0.5,-0.5,-1.4],2,'xE',diagram)
 Block.add_force_arrows(-4.75,[1.4,0.5,-0.5,-1.4],-2,'xE',diagram)
