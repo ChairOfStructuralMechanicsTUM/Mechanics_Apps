@@ -26,17 +26,21 @@ We want to explicitly visualize important input parameters and the regions of in
 
 * Bokeh only supports 2D images, therefore, we do a contour plot of the wave (maybe red/blue for wave peaks/valleys?).
 
+* We implemented 3D visualization of the waves (using https://demo.bokehplots.com/apps/surface3d and https://github.com/bokeh/bokeh/tree/master/examples/app/surface3d as template). We need to additionally **install** nodejs via ```conda install -c bokeh nodejs```
+
 * Wavelength and angle is modified using sliders.
 
 * Visualize areas of interest with shading of areas?
 
-* If we want to use the 3D visualization of bokeh (https://demo.bokehplots.com/apps/surface3d and https://github.com/bokeh/bokeh/tree/master/examples/app/surface3d), we need to additionally **install** nodejs via ```conda install -c bokeh nodejs```
+* If we want to use the 3D visualization of bokeh 
 
 ## ToDos
 
 - [x] Translate Matlab code to python
-- [ ] Visualize waves using contour plot (sample code for contour plotting in https://github.com/BenjaminRueth/Visualization/tree/master/LagrangeApp)
+- [x] Visualize waves using contour plot (sample code for contour plotting in https://github.com/BenjaminRueth/Visualization/tree/master/LagrangeApp)
+- [x] Also visualized with 3d plot (consider https://demo.bokehplots.com/apps/surface3d as template)
 - [ ] explicitly visualize origin of wave and angle of incidence
+- [ ] add widgets for interaction
 
 ## Further Ideas
 

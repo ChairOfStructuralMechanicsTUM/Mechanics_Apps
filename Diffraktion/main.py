@@ -1,23 +1,20 @@
-"""
-Visualization of Diffraction with Python Bokeh
-9.3.2017
-Author: Benjamin Rüth
-HiWi LST Baumechanik, TU München
+from __future__ import division
 
-Incident plane wave upon sound barrier. Solution from eq. (3.3) and (3.4) Technical Acoustics II
-
-Code adopted from original Matlab file:
-
-diffraction_anim.m
-25.11.2014
-Author: Christian Weineisen
-LST Baumechanik, TU Muenchen
-"""
+from os.path import dirname, join
 
 import numpy as np
-from numpy import sqrt, pi, linspace, meshgrid, cos, sin, exp
+from numpy import sqrt, pi, cos, sin, exp
 from scipy.special import fresnel
-from __future__ import division
+
+
+from bokeh.driving import count
+from bokeh.io import curdoc
+from bokeh.models import ColumnDataSource, Div
+from bokeh.models.layouts import Column, Row, Spacer
+from bokeh.plotting import Figure
+
+from surface3d import Surface3d
+from contour import Contour
 
 def cart2pol(x, y):
     """
@@ -31,20 +28,22 @@ def cart2pol(x, y):
     return phi, rho
 
 # number of gridpoints in x and y direction
-nx = 100
-ny = 100
+nx = 20
+ny = 20
 # Mesh parameters
-x = linspace(-50,50,num=nx)
-y = -1 * linspace(-50,50,num=nx)
 
-X,Y = meshgrid(x,y)
-phi, R = cart2pol(X, Y)
+x = np.linspace(-50,50,num=nx)
+y = -1 * np.linspace(-50,50,num=nx)
+xx, yy = np.meshgrid(x, y)
+phi, R = cart2pol(xx, yy)
+xx_lin = xx.ravel()
+yy_lin = yy.ravel()
 
 phi[phi < 0] += 2 * np.pi # map negative angle to positive angles
 
 # Wave parameters
 phi0 = pi/3.0
-k = .4
+k = .1
 c = 1
 
 l = 2.0 * np.pi / k # wavelength
@@ -60,38 +59,36 @@ PHIPLUS = (1 - 1j) / 2.0 + fresnelc - 1j * fresnels
 fresnels, fresnelc = fresnel(sqrt(2.0/pi) * sqrt(2 * k * R) * cos((phi + phi0) / 2.0))
 PHIMINUS = (1 - 1j) / 2.0 + fresnelc - 1j * fresnels
 
-# create plot
+content_filename = join(dirname(__file__), "description.html")
 
-# TODO MISSING!!!
-Ylim = (min(y), max(y))
-Xlim = (min(x), max(x))
+description = Div(text=open(content_filename).read(),
+                  render_as_text=False, width=600)
 
-# timesteps
-nT = 100
-trange = linspace(0, T, nT)
+source = ColumnDataSource()
 
-import matplotlib.pyplot as plt
-import mpl_toolkits.mplot3d as plt3d
+surface = Surface3d(x="x", y="y", z="z", color="color", data_source=source)
 
-# pre
-fig = plt.figure()
-plt.ion()
+# Generate a figure container for the field
+plot = Figure(plot_height=300,
+              plot_width=300,
+              x_range=[-50,50],
+              y_range=[-50,50])
 
-# loop timesteps
-for t in trange:
-    # EQ(3.3)
+contour = Contour(plot, line_width=1)
+
+def compute(t):
     P = (1 + 1j) / 2.0 * (exp(1j * k * R * cos(phi - phi0)) * PHIPLUS + exp(1j * k * R * cos(phi + phi0)) * PHIMINUS) * exp(1j * omega * t)
+    return P.real
 
-    # simple plotting with matplotlib
-    contourlevels = np.arange(-3, 3, 0.1)
-    plt.contour(X, Y, P.real, levels=contourlevels)
-    """
-    # 3d plotting with mplot3d
-    ax = fig.add_subplot(111, projection='3d')
-    #ax.scatter(X,Y,P.real,marker='.')
-    ax.plot_surface(X, Y, P.real)
-    ax.set_zlim(-3, 3)
-    """
-    # post
-    plt.pause(0.01)
-    plt.clf()
+@count()
+def update(t):
+    zz = compute(t)	
+    source.data = dict(x=xx_lin, y=yy_lin, z=zz, color=zz)
+    contour.set_contour_data(xx,yy,zz,isovalue=np.arange(-2,2,.1).tolist())	 
+
+
+update(0)
+
+curdoc().add_root(Row(Row(surface),Spacer(width=300),plot))
+curdoc().add_periodic_callback(update, 100)
+curdoc().title = "Surface3d"
