@@ -42,7 +42,9 @@ We want to explicitly visualize important input parameters and the regions of in
 - [x] Visualize waves using contour plot (sample code for contour plotting in https://github.com/BenjaminRueth/Visualization/tree/master/LagrangeApp)
 - [x] Also visualized with 3d plot (consider https://demo.bokehplots.com/apps/surface3d as template)
 - [x] add widgets for interaction
-- [ ] explicitly visualize origin of wave and angle of incidence
+- [x] explicitly visualize wavefront, wavelength and angle of incidence
+- [x] show light, shadow and reflection region
+- [ ] explain app on website
 - [ ] try to increase performance
 
 ## Further Ideas
