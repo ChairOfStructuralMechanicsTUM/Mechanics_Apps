@@ -45,6 +45,7 @@ We want to explicitly visualize important input parameters and the regions of in
 - [x] explicitly visualize wavefront, wavelength and angle of incidence
 - [x] show light, shadow and reflection region
 - [x] add value picker (on click)
+- [x] two different resolutions for contour and surface plot
 - [ ] explain app on website
 - [ ] try to increase performance (maybe try different machine as client/server)
 
