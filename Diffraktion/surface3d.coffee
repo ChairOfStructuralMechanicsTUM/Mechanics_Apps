@@ -24,8 +24,8 @@ OPTIONS =
   keepAspectRatio: true
   verticalRatio: 1.0
   legendLabel: 'stuff'
-  zMin: -2.0
-  zMax: +2.0
+  zMin: -10.0
+  zMax: +10.0
   cameraPosition:
     horizontal: -0.35
     vertical: 0.22

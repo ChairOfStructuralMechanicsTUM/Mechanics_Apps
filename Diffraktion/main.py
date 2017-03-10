@@ -56,13 +56,13 @@ description = Div(text=open(content_filename).read(),
 source = ColumnDataSource()
 source_fresnel = ColumnDataSource()
 source_checker = ColumnDataSource(data=dict(SliderHasChanged=[False]))
-source_wavefront = ColumnDataSource()
-source_wavelength = ColumnDataSource()
-source_incoming_wave = ColumnDataSource()
+source_wavefront = ColumnDataSource(data=dict(x=[],y=[]))
+source_wavelength = ColumnDataSource(data=dict(x=[],y=[]))
+source_incoming_wave = ColumnDataSource(data=dict(x=[],y=[]))
 
-source_reflection = ColumnDataSource()
-source_light = ColumnDataSource()
-source_shadow = ColumnDataSource()
+source_reflection = ColumnDataSource(data=dict(x=[],y=[]))
+source_light = ColumnDataSource(data=dict(x=[],y=[]))
+source_shadow = ColumnDataSource(data=dict(x=[],y=[]))
 
 phi0_slider = Slider(title="angle of incident", name='angle of incident', value=phi0_init, start=0, end=pi, step = .1*pi)
 wavelength_slider = Slider(title="wavelength", name='wavelength', value=wavelength_init, start=0, end=100, step=1)
@@ -171,4 +171,4 @@ plot.patch(x='x', y='y', color='blue', source=source_shadow, alpha=.1)
 controls = Column(phi0_slider,wavelength_slider)
 curdoc().add_root(Column(Row(Row(surface),Spacer(width=300),plot),controls))
 curdoc().add_periodic_callback(update, 200)
-curdoc().title = "Surface3d"
+curdoc().title = "Diffraktion"
