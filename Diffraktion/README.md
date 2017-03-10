@@ -44,7 +44,7 @@ We want to explicitly visualize important input parameters and the regions of in
 - [x] add widgets for interaction
 - [x] explicitly visualize wavefront, wavelength and angle of incidence
 - [x] show light, shadow and reflection region
-- [ ] add value picker (on click)
+- [x] add value picker (on click)
 - [ ] explain app on website
 - [ ] try to increase performance (maybe try different machine as client/server)
 
