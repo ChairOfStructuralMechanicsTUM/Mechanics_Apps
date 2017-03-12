@@ -34,7 +34,9 @@ class Surface3d(LayoutDOM):
     # of the custom extension model.
     __implementation__ = "surface3d.coffee"
     # this is the local resource for the vis.js library
-    __javascript__ = ["Diffraktion/static/js/vis.min.js"]
+    #__javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.min.js"] ## online resource
+    __javascript__ = ["Diffraktion/static/js/vis.min.js"] ## offline resource
+
 
     # Below are all the "properties" for this model. Bokeh properties are
     # class attributes that define the fields (and their types) that can be
