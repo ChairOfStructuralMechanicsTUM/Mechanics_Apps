@@ -2,6 +2,27 @@
 Webbased visualization for mechanics content via Bokeh
 This Repository contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Müller, TUM (Technische Universität München).
 
+## Server Architecture
+
+We provide access to the apps through a bokeh server in directory format (see http://bokeh.pydata.org/en/latest/docs/user_guide/server.html#directory-format). Our overview website is hosted by a nginx server which forwards requests to the bokeh server.
+
+The server can be run in two modes:
+
+* online mode: provide access to apps through the internet.
+* offline mode: run the server locally and present apps to
+lecture audience.
+
+### Server Setup
+
+1. please install the following on your computer:
+    * Anaconda with python version 2.7: https://www.continuum.io/downloads
+    * Bokeh: ```conda install bokeh```
+    * Nodejs: ```conda install -c bokeh nodejs```
+    * Flexx: ```conda install -c bokeh flexx```
+    * Twisted: ```conda install twisted```
+2. run ```apprunner.sh```
+3. access ```127.0.0.1``` in your browser
+
 ## ToDos
 ### Selected Apps
 

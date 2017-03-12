@@ -75,9 +75,8 @@ plot = Figure(plot_height=300,
               y_axis_label='y',
               tools=toolset)
 
-contour = Contour(plot, line_width=2,line_color='black')
-contour_neg = Contour(plot, line_width=1,line_color='red')
-contour_pos = Contour(plot, line_width=1,line_color='blue')
+contour_zero = Contour(plot, line_width=2,line_color='black')
+contour_all = Contour(plot, line_width=1)
 kvector = Quiver(plot, fix_at_middle=False)
 interactor = ClickInteractor(plot)
 
@@ -186,9 +185,8 @@ def compute(t):
 
     p_cont = compute_wave_amplitude(source_fresnel_cont, t)
 
-    contour.set_contour_data(x_cont_mesh,y_cont_mesh,p_cont,isovalue=[0])
-    contour_neg.set_contour_data(x_cont_mesh,y_cont_mesh,p_cont,isovalue=[-2,-1.5,-1,-.5])
-    contour_pos.set_contour_data(x_cont_mesh,y_cont_mesh,p_cont,isovalue=[+.5,+1,+1.5,+2])
+    contour_zero.set_contour_data(x_cont_mesh,y_cont_mesh,p_cont,isovalue=[0])
+    contour_all.set_contour_data(x_cont_mesh,y_cont_mesh,p_cont,isovalue=[-2,-1.5,-1,-.5]+[+.5,+1,+1.5,+2])
 
 
 def compute_at(x, y, t):

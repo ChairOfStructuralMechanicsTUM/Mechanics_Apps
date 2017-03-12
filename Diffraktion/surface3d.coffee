@@ -20,12 +20,11 @@ OPTIONS =
   height: '300px'
   style: 'surface'
   showPerspective: true
-  showGrid: true
+  showGrid: false
   keepAspectRatio: true
-  verticalRatio: 1.0
-  legendLabel: 'stuff'
-  zMin: -10.0
-  zMax: +10.0
+  verticalRatio: 0.2
+  zMin: -2.0
+  zMax: +2.0
   cameraPosition:
     horizontal: -0.35
     vertical: 0.22

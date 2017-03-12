@@ -12,10 +12,9 @@ DEFAULTS = {
     'showPerspective': True,
     'showGrid':        True,
     'keepAspectRatio': True,
-    'verticalRatio':   1.0,
-    'legendLabel':     'stuff',
-	'zMin' : -2.0,
-	'zMax' : +2.0,
+    'verticalRatio':   0.2,
+    'zMin' : -2.0,
+    'zMax' : +2.0,
     'cameraPosition':  {
         'horizontal': -0.35,
         'vertical':    0.22,

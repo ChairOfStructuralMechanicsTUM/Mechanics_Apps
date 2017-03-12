@@ -40,3 +40,9 @@ Here we provide the necessary components for the server that is used for providi
     * ```<APPNAME>``` applications to be run, given in directory-format. We start the app by defining the directiry name here (e.g. Diffraktion).
     * ```--port 5100``` defines the port. Bokeh server runs on port ```5100```
     * ```--host 127.0.0.1:80``` defines the whitelist for incoming requests. User requests applications from port 80, nginx forwards the requests to the bokeh server on port 5100.
+
+## Alternative: Twisted
+
+pure python!
+
+* install twisted ```conda install twisted```

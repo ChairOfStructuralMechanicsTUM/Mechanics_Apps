@@ -34,7 +34,7 @@ We want to explicitly visualize important input parameters and the regions of in
 
 * Visualize areas of interest with shading of areas?
 
-* If we want to use the 3D visualization of bokeh 
+* If we want to use the 3D visualization of bokeh
 
 ## ToDos
 
@@ -47,7 +47,7 @@ We want to explicitly visualize important input parameters and the regions of in
 - [x] add value picker (on click)
 - [x] two different resolutions for contour and surface plot
 - [ ] explain app on website
-- [ ] try to increase performance (maybe try different machine as client/server)
+- [ ] try to increase performance (maybe try a different machine as client/server)
 
 ## Further Ideas
 
