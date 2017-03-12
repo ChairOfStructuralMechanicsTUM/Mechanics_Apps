@@ -14,14 +14,10 @@ lecture audience.
 
 ### Server Setup
 
-1. please install the following on your computer:
-    * Anaconda with python version 2.7: https://www.continuum.io/downloads
-    * Bokeh: ```conda install bokeh```
-    * Nodejs: ```conda install -c bokeh nodejs```
-    * Flexx: ```conda install -c bokeh flexx```
-    * Twisted: ```conda install twisted```
-2. run ```apprunner.sh```
-3. access ```127.0.0.1``` in your browser
+1. install Anaconda with python version 2.7: https://www.continuum.io/downloads
+2. install additional python packages (bokeh, nodejs, flexx, twisted) by running ```$ ./installer.sh```
+3. run ```$ ./apprunner.sh```. Sudo is needed for accessing port 80
+4. access ```127.0.0.1``` in your browser
 
 ## ToDos
 ### Selected Apps
