@@ -47,7 +47,7 @@ lecture audience.
 
 
 #### Technical Acoustics II (ag):
-- [ ] 1) Diffraction (br)
+- [x] 1) Diffraction (br)
 
 ### Proper Documentation & Refactoring
 
@@ -75,7 +75,7 @@ lecture audience.
 - [ ] 3) Seismic example
 
 #### Technical Acoustics II (ag):
-- [ ] 1) Diffraction 
+- [x] 1) Diffraction 
 
 ### Reference person for theoretical questions
 - Francesca Taddei ft
