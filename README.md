@@ -18,6 +18,8 @@ lecture audience.
 2. install additional python packages (bokeh, nodejs, flexx, twisted) by running ```$ ./installer.sh```
 3. configure the server with ```server.conf```. If you want to run the server locally, just use the existing configuration.
 4. run ```$ ./serverrunner.sh```. If you want to use port 80 run it as sudo.
+    * Under Linux and MacOS you can natively execute ```.sh``` scripts from the terminal.
+    * If you have problems executing ```.sh``` under windows, install Git (https://git-for-windows.github.io/) or Cygwin (http://www.cygwin.com/).
 5. run ```$ ./bokehrunner.sh```.
 6. access ```127.0.0.1``` in your browser
 
