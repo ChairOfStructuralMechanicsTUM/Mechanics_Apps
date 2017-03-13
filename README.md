@@ -1,6 +1,6 @@
 # Mechanics Apps
 Webbased visualization for mechanics content via Bokeh
-This Repository contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Müller, TUM (Technische Universität München).
+This Repository contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Mï¿½ller, TUM (Technische Universitï¿½t Mï¿½nchen).
 
 ## Server Architecture
 
@@ -16,8 +16,10 @@ lecture audience.
 
 1. install Anaconda with python version 2.7: https://www.continuum.io/downloads
 2. install additional python packages (bokeh, nodejs, flexx, twisted) by running ```$ ./installer.sh```
-3. run ```$ ./apprunner.sh```. Sudo is needed for accessing port 80
-4. access ```127.0.0.1``` in your browser
+3. configure the server with ```server.conf```. If you want to run the server locally, just use the existing configuration.
+4. run ```$ ./serverrunner.sh```. If you want to use port 80 run it as sudo.
+5. run ```$ ./bokehrunner.sh```.
+6. access ```127.0.0.1``` in your browser
 
 ## ToDos
 ### Selected Apps
@@ -26,18 +28,18 @@ lecture audience.
 - [x] 1) Tensile testing/Zugversuch (eb)
 - [x] 2) Transverse strain/Querdehnung (eb)
 - [ ] 3) Doble-supported beam with point load/Balken (ad)
-- [ ] 4) Maxwell's reciprocity theorem/Reziprozitätssatz von Maxwell (ad)
+- [ ] 4) Maxwell's reciprocity theorem/Reziprozitï¿½tssatz von Maxwell (ad)
 - [ ] 5) Buckling/Knickung (ad)
 
-#### Supplementary course/Ergänzungskurs Technical mechanics (ft):
+#### Supplementary course/Ergï¿½nzungskurs Technical mechanics (ft):
 - [ ] 1) Spring pendulum/Federpendel (sp)
 - [ ] 2) Pendulum/Schwerependel (sp)
-- [ ] 3) Base-excited oscillator/Fußpunkterregter Schwinger (sp)
+- [ ] 3) Base-excited oscillator/Fuï¿½punkterregter Schwinger (sp)
 - [ ] 4) Tuned mass damper/Schwingungstilger (sp)
 - [ ] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter) (ak)
 - [x] 6) Coriolis force/Drehscheibe-Corioliskraft (eb)
 - [ ] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma)
-- [ ] 8) Collision/Stoß (ma)
+- [ ] 8) Collision/Stoï¿½ (ma)
 - [ ] 9) Rollercoaster (eb)
 
 #### Structural dynamics (cs):
@@ -55,18 +57,18 @@ lecture audience.
 - [x] 1) Zugversuch/Tensile testing
 - [x] 2) Querdehnung/Transverse strain
 - [ ] 3) Doble-supported beam with point load/Balken
-- [ ] 4) Maxwell's reciprocity theorem/Reziprozitätssatz von Maxwell
+- [ ] 4) Maxwell's reciprocity theorem/Reziprozitï¿½tssatz von Maxwell
 - [ ] 5) Buckling/Knickung
 
-#### Supplementary course/Ergänzungskurs Technical mechanics:
+#### Supplementary course/Ergï¿½nzungskurs Technical mechanics:
 - [ ] 1) Spring pendulum/Federpendel
 - [ ] 2) Pendulum/Schwerependel
-- [ ] 3) Base-excited oscillator/Fußpunkterregter Schwinger
+- [ ] 3) Base-excited oscillator/Fuï¿½punkterregter Schwinger
 - [ ] 4) Tuned mass damper/Schwingungstilger
 - [ ] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter)
 - [x] 6) Coriolis force/Drehscheibe-Corioliskraft
 - [ ] 7) Boat with three swimmers/Boot mit drei Schwimmern
-- [ ] 8) Collision/Stoß
+- [ ] 8) Collision/Stoï¿½
 - [ ] 9) Rollercoaster
 
 #### Structural dynamics (cs):
@@ -75,7 +77,7 @@ lecture audience.
 - [ ] 3) Seismic example
 
 #### Technical Acoustics II (ag):
-- [x] 1) Diffraction 
+- [x] 1) Diffraction
 
 ### Reference person for theoretical questions
 - Francesca Taddei ft
@@ -90,4 +92,4 @@ lecture audience.
 - Siddeshwaran Parthiban sp
 - Antonios Kamariotis ak
 - Abraham Duplaa ad
-- Banjamin Rüth br
+- Banjamin Rï¿½th br
