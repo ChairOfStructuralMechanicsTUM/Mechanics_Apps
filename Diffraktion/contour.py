@@ -105,8 +105,8 @@ class Contour:
                 v = path.vertices
                 x = v[:, 0]
                 y = v[:, 1]
-                xs.append(x.tolist())
-                ys.append(y.tolist())
+                xs.append(x)
+                ys.append(y)
                 xt.append(x[int(len(x) / 2)])
                 yt.append(y[int(len(y) / 2)])
                 text.append(theiso)
