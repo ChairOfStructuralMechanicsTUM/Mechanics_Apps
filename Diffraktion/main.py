@@ -10,7 +10,8 @@ from scipy.special import fresnel
 from bokeh.driving import count
 from bokeh.io import curdoc
 from bokeh.models import ColumnDataSource, Div
-from bokeh.models.layouts import Column, Row, Spacer
+from bokeh.layouts import widgetbox, row, column
+from bokeh.models.layouts import Spacer
 from bokeh.plotting import Figure
 from bokeh.models.widgets import Slider, TextInput
 
@@ -330,8 +331,22 @@ plot.scatter(x='x',y='y', source=source_value_plotter, size=10)  # value probing
 
 initialize()
 
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+
+description = Div(text=open(description_filename).read(), render_as_text=False, width=700)
+
+# add area image
+area_image = Div(text="""
+<p>
+<img src="/Diffraktion/static/images/Diffraktion_areas.jpg" width=250>
+</p>
+<p>
+Characteristic regions and wave parameters
+</p>""", render_as_text=False, width=350)
+
 # create layout
-controls = Column(phi0_slider,wavelength_slider,textbox)  # all controls
-curdoc().add_root(Column(Row(Row(surface),Spacer(width=300),plot),controls))  # add plots and controls to root
+controls = widgetbox(phi0_slider,wavelength_slider,textbox,width=300)  # all controls
+curdoc().add_root(column(description,row(row(Spacer(width=25),surface,Spacer(width=325)),plot),row(Spacer(width=25),controls,Spacer(width=65),area_image)))  # add plots and controls to root
 curdoc().add_periodic_callback(update, 200)  # update function
 curdoc().title = "Diffraktion"
