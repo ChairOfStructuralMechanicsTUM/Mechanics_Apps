@@ -314,17 +314,17 @@ def update(frame):
     this_frame_no = last_frame_no + 1
     frame_duration = (this_frame_end_time - last_frame_end_time)
 
-    if frame_duration > 1.5 * target_frame_time or computation_time > target_frame_time:
+    if (frame_duration > 1.5 * target_frame_time) or (computation_time > target_frame_time):
         print " "
         print "high lag observed for frame %s. Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (this_frame_no, target_frame_time, frame_duration, computation_time)
         lagcount += 1
         lagfraction = lagcount / this_frame_no
         if lagfraction > 0.1 and this_frame_no > 100:
             print "WARNING! more than 10% of the frames are lost. Consider increasing TARGET_FRAME_TIME to avoid lags!"
-    if computation_time < .5 * target_frame_time and target_frame_time > 10:
+    if (computation_time < .5 * target_frame_time) and (target_frame_time > 40):
         print " "
-        print "Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (this_frame_no,target_frame_time, frame_duration, computation_time)
-        print "Computation time is much lower than frame time and framerate is below 100Hz. Consider decreasing TARGET_FRAME_TIME to improve user experience!"
+        print "Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (target_frame_time, frame_duration, computation_time)
+        print "Computation time is much lower than frame time and framerate is below 25Hz. Consider decreasing TARGET_FRAME_TIME to improve user experience!"
     frame_info.data = dict(frame_end_time=[this_frame_end_time],frame_no=[this_frame_no],lagcount=[lagcount])
 
    
@@ -346,8 +346,8 @@ interactor.on_click(on_click_change)
 # create plots
 surface = Surface3d(x="x", y="y", z="z", color="color", data_source=source_surf)  # wave surface
 # contour plots of wave
-contour_zero = Contour(plot, line_width=2,line_color='black')  # zero level
-contour_all = Contour(plot, line_width=1)  # some other levels
+contour_zero = Contour(plot, line_width=2,line_color='black', path_filter = 10)  # zero level
+contour_all = Contour(plot, line_width=1, path_filter = 10)  # some other levels
 
 kvector = Quiver(plot, fix_at_middle=False) # visualization of wave k vector
 plot.line(x=[x_min,0], y=[0,0], line_dash='dashed')

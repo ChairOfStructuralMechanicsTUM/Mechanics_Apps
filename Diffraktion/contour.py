@@ -18,18 +18,20 @@ class Contour:
     text function.
     """
 
-    def __init__(self, plot, add_label=False, line_color='line_color', **kwargs):
+    def __init__(self, plot, add_label=False, line_color='line_color', path_filter = 0, **kwargs):
         """
         :param plot: plot where the contour is plotted
         :param add_label: bool to define whether labels are added to the contour
         :param line_color: defining line color, if no line color is supplied, the default line color scheme from
         matplotlib is used
+        :param path_filter: paths with less than this number of vertices are ignored. This removes noise/features.
         :param kwargs: additional bokeh line plotting arguments like width, style ect...
         """
         self._plot = plot
         contour_source = ColumnDataSource(data=dict(xs=[], ys=[], line_color=[]))
         self._contour_plot = self._plot.multi_line(xs='xs', ys='ys', line_color=line_color, source=contour_source,
                                                    **kwargs)
+        self._path_filter = path_filter
         self._add_label = add_label
         if self._add_label:
             label_source = ColumnDataSource(data=dict(xt=[], yt=[], text=[]))
@@ -103,14 +105,15 @@ class Contour:
 
             for path in isolevel.get_paths():
                 v = path.vertices
-                x = v[:, 0]
-                y = v[:, 1]
-                xs.append(x)
-                ys.append(y)
-                xt.append(x[int(len(x) / 2)])
-                yt.append(y[int(len(y) / 2)])
-                text.append(theiso)
-                col.append(thecol)
+                if v.shape[0] > self._path_filter: # we only consider paths with more than path_filter vertices
+                    x = v[:, 0]
+                    y = v[:, 1]
+                    xs.append(x)
+                    ys.append(y)
+                    xt.append(x[int(len(x) / 2)])
+                    yt.append(y[int(len(y) / 2)])
+                    text.append(theiso)
+                    col.append(thecol)
 
         data_contour = {'xs': xs, 'ys': ys, 'line_color': col}
         data_contour_label = {'xt': xt, 'yt': yt, 'text': text}
