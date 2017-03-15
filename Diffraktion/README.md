@@ -46,7 +46,7 @@ We want to explicitly visualize important input parameters and the regions of in
 - [x] two different resolutions for contour and surface plot
 - [x] explain app on website
 - [ ] Add proper formula for computation of dB from amplitude. Currently we just probe the amplitude.
-- [ ] try to increase performance (maybe try a different machine as client/server)
+- [x] try to increase performance (100ms is currently a good tradeoff, lower times might cause lags on the client's browser)
 
 ## Further Ideas
 
