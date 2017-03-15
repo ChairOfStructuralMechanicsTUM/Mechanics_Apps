@@ -5,12 +5,13 @@ from os.path import dirname, join
 import numpy as np
 from numpy import sqrt, pi, cos, sin, exp
 from scipy.special import fresnel
-
+import time
 
 from bokeh.driving import count
 from bokeh.io import curdoc
 from bokeh.models import ColumnDataSource, Div
-from bokeh.models.layouts import Column, Row, Spacer
+from bokeh.layouts import widgetbox, row, column
+from bokeh.models.layouts import Spacer
 from bokeh.plotting import Figure
 from bokeh.models.widgets import Slider, TextInput
 
@@ -41,7 +42,7 @@ y_min, y_max = -50, 50  # y extend of domain
 
 # Wave parameters
 phi0_init = pi/3.0  # angle of incident
-c = 1  # speed of sound
+c = 4  # speed of sound
 wavelength_init = 50  # wavelength
 
 # data sources
@@ -70,7 +71,7 @@ source_shadow = ColumnDataSource(data=dict(x=[], y=[]))
 # slider for setting angle of incident
 phi0_slider = Slider(title="angle of incident", name='angle of incident', value=phi0_init, start=0, end=pi, step=.1*pi)
 # slider for setting wavelength
-wavelength_slider = Slider(title="wavelength", name='wavelength', value=wavelength_init, start=0, end=100, step=1)
+wavelength_slider = Slider(title="wavelength", name='wavelength', value=wavelength_init, start=10, end=100, step=5)
 # textbox for displaying dB value at proble location
 textbox = TextInput(title="noise probe", name='noise probe')
 
@@ -281,13 +282,20 @@ def compute_wave_amplitude_at(x, y, t):
     return p.real[0]
 
 
+target_frame_time = 100  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
+
+frame_info = ColumnDataSource(data=dict(frame_end_time=[0],frame_no=[0],lagcount=[0]))
+
 @count()
-def update(t):
+def update(frame):
     """
     called regularly by periodic update
     :param t: time
     :return:
-    """
+    """   
+    t = frame * target_frame_time / 1000.0
+    computation_start_time = time.time()
+    
     compute_wave_amplitude_on_grids(t)
 
     x, y = interactor.clicked_point()
@@ -297,7 +305,29 @@ def update(t):
     else:
         textbox.value = "pick a location for measurement"
 
+    computation_time = (time.time() - computation_start_time)*1000
 
+    last_frame_end_time = frame_info.data['frame_end_time'][0]
+    last_frame_no = frame_info.data['frame_no'][0]
+    lagcount = frame_info.data['lagcount'][0]
+    this_frame_end_time = time.time() * 1000 # in ms
+    this_frame_no = last_frame_no + 1
+    frame_duration = (this_frame_end_time - last_frame_end_time)
+
+    if (frame_duration > 1.5 * target_frame_time) or (computation_time > target_frame_time):
+        print " "
+        print "high lag observed for frame %s. Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (this_frame_no, target_frame_time, frame_duration, computation_time)
+        lagcount += 1
+        lagfraction = lagcount / this_frame_no
+        if lagfraction > 0.1 and this_frame_no > 100:
+            print "WARNING! more than 10% of the frames are lost. Consider increasing TARGET_FRAME_TIME to avoid lags!"
+    if (computation_time < .5 * target_frame_time) and (target_frame_time > 40):
+        print " "
+        print "Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (target_frame_time, frame_duration, computation_time)
+        print "Computation time is much lower than frame time and framerate is below 25Hz. Consider decreasing TARGET_FRAME_TIME to improve user experience!"
+    frame_info.data = dict(frame_end_time=[this_frame_end_time],frame_no=[this_frame_no],lagcount=[lagcount])
+
+   
 def initialize():
     """
     initialize app
@@ -316,8 +346,8 @@ interactor.on_click(on_click_change)
 # create plots
 surface = Surface3d(x="x", y="y", z="z", color="color", data_source=source_surf)  # wave surface
 # contour plots of wave
-contour_zero = Contour(plot, line_width=2,line_color='black')  # zero level
-contour_all = Contour(plot, line_width=1)  # some other levels
+contour_zero = Contour(plot, line_width=2,line_color='black', path_filter = 10)  # zero level
+contour_all = Contour(plot, line_width=1, path_filter = 10)  # some other levels
 
 kvector = Quiver(plot, fix_at_middle=False) # visualization of wave k vector
 plot.line(x=[x_min,0], y=[0,0], line_dash='dashed')
@@ -330,8 +360,22 @@ plot.scatter(x='x',y='y', source=source_value_plotter, size=10)  # value probing
 
 initialize()
 
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+
+description = Div(text=open(description_filename).read(), render_as_text=False, width=700)
+
+# add area image
+area_image = Div(text="""
+<p>
+<img src="/Diffraktion/static/images/Diffraktion_areas.jpg" width=250>
+</p>
+<p>
+Characteristic regions and wave parameters
+</p>""", render_as_text=False, width=350)
+
 # create layout
-controls = Column(phi0_slider,wavelength_slider,textbox)  # all controls
-curdoc().add_root(Column(Row(Row(surface),Spacer(width=300),plot),controls))  # add plots and controls to root
-curdoc().add_periodic_callback(update, 200)  # update function
+controls = widgetbox(phi0_slider,wavelength_slider,textbox,width=300)  # all controls
+curdoc().add_root(column(description,row(row(Spacer(width=25),surface,Spacer(width=325)),plot),row(Spacer(width=25),controls,Spacer(width=65),area_image)))  # add plots and controls to root
+curdoc().add_periodic_callback(update, target_frame_time)  # update function
 curdoc().title = "Diffraktion"

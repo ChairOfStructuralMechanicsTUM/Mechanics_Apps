@@ -30,21 +30,12 @@ code {
 }
 </style>
 
-<h1>A custom extension for simple 3d graphs</h1>
+<h1>Diffraction of sound waves at barriers</h1>
 
 <p>
-This example shows how Bokeh custom extension models can be used with
-Bokeh server applications. While there are many great features built
-into Bokeh, with custom extensions, and the Bokeh server, it becomes
-simple to connect powerful Python tools for data analytics to almost
-any web tool, widget, or framework, even if it is not built into
-Bokeh natively.
+In the following app we visualize the diffraction of planar waves at the end of a barrier. This phenomenom is important in the context of noise protection walls at e.g. motorways: noise is even transported into the shadow area of the wall by diffraction.
 </p>
 
 <p>
-This example demonstrates connecting a Bokeh <code>ColumnDataSource</code>
-to the <a href="http://visjs.org/graph3d_examples.html">VisJS Graph3d</a>
-library. The 3d plot below is being continuously updated by periodic
-callbacks in a Bokeh server application. You can pan to rotate the figure,
-scroll or pinch to zoom.
+We allow the modification of wavelength <math display="inline"><mrow>&gamma;</mrow></math> and angle of incident <math display="inline"><msub><mi>&phi;</mi><mi>0</mi></msub></math> of the wave. By clicking inside the countour plot, the noise level at this spot in dB can be probed and, therefore, the noise level at different positions and the effectivity of the barrier can be quantified.
 </p>
