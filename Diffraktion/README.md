@@ -51,6 +51,7 @@ We want to explicitly visualize important input parameters and the regions of in
 ## Performance Improvements
 
 We are now using vtk for the computation of contour lines. ```conda install vtk```
+For profiling run ```kernprof -l -v profiling.py``` and add ```@profile``` decorator at the functions that have to be profiled.
 
 ## Further Ideas
 

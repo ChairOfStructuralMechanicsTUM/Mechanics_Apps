@@ -191,7 +191,7 @@ def update_wave_amplitude_at_probe(x,y,t):
     textbox.value = str(z_val[0,0]) + " dB"  # write measured value to textbox
 
 
-target_frame_time = 50  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
+target_frame_time = 100  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
 frame_end_time = 0
 lagcount = 0
 

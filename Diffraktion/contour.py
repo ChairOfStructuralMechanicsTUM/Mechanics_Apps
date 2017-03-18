@@ -57,6 +57,7 @@ class Contour:
         # evaluate function of grid
         z = f(x, y)
         # compute contour data
+        #data_contour, data_contour_label = self.__get_contour_data(x, y, z, isovalue=isovalue)
         data_contour, data_contour_label = self.__get_contour_data_vtk(x, y, z, isovalue=isovalue)
         # update data on contour plot
         self._contour_plot.data_source.data = data_contour
@@ -66,6 +67,7 @@ class Contour:
 
     def set_contour_data(self, x, y, z, isovalue=None):
         # compute contour data
+        #data_contour, data_contour_label = self.__get_contour_data(x, y, z, isovalue=isovalue)
         data_contour, data_contour_label = self.__get_contour_data_vtk(x, y, z, isovalue=isovalue)
         # update data on contour plot
         self._contour_plot.data_source.data = data_contour
