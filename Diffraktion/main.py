@@ -159,11 +159,6 @@ def update_fresnel_on_grids():
     surface_grid.set_wave_parameters(phi0, wavelength, c)
 
 
-target_frame_time = 20  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
-
-frame_info = ColumnDataSource(data=dict(frame_end_time=[0],frame_no=[0],lagcount=[0]))
-
-
 def update_wave_amplitude_on_grids(t):
     """
     Compute wave amplitude for time t on surface plot and contour plot grid. Wave parameter specific quantities are
@@ -195,14 +190,42 @@ def update_wave_amplitude_at_probe(x,y,t):
     textbox.value = str(z_val[0,0]) + " dB"  # write measured value to textbox
 
 
+target_frame_time = 200  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
+frame_end_time = 0
+lagcount = 0
+
+
+def do_time_measurement(frame_no, computation_time):
+    global lagcount, frame_end_time
+
+    this_frame_end_time = time.time() * 1000  # in ms
+    frame_duration = (this_frame_end_time - frame_end_time)
+
+    if (frame_duration > 1.5 * target_frame_time) or (computation_time > target_frame_time):
+        print " "
+        print "high lag observed for frame %s. Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (
+        frame_no, target_frame_time, frame_duration, computation_time)
+        lagcount += 1
+        lagfraction = lagcount / (frame_no + 1)
+        if lagfraction > 0.1 and frame_no > 100:
+            print "WARNING! more than 10% of the frames are lost. Consider increasing TARGET_FRAME_TIME to avoid lags!"
+    if (computation_time < .5 * target_frame_time) and (target_frame_time > 40):
+        print " "
+        print "Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (
+        target_frame_time, frame_duration, computation_time)
+        print "Computation time is much lower than frame time and framerate is below 25Hz. Consider decreasing TARGET_FRAME_TIME to improve user experience!"
+
+    frame_end_time = this_frame_end_time
+
+
 @count()
-def update(frame):
+def update(frame_no):
     """
     called regularly by periodic update
     :param t: time
     :return:
     """   
-    t = frame * target_frame_time / 1000.0
+    t = frame_no * target_frame_time / 1000.0
     computation_start_time = time.time()
 
     ######## computation kernel
@@ -217,27 +240,9 @@ def update(frame):
 
     ########
 
-    computation_time = (time.time() - computation_start_time)*1000
+    computation_time = (time.time() - computation_start_time) * 1000
 
-    last_frame_end_time = frame_info.data['frame_end_time'][0]
-    last_frame_no = frame_info.data['frame_no'][0]
-    lagcount = frame_info.data['lagcount'][0]
-    this_frame_end_time = time.time() * 1000 # in ms
-    this_frame_no = last_frame_no + 1
-    frame_duration = (this_frame_end_time - last_frame_end_time)
-
-    if (frame_duration > 1.5 * target_frame_time) or (computation_time > target_frame_time):
-        print " "
-        print "high lag observed for frame %s. Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (this_frame_no, target_frame_time, frame_duration, computation_time)
-        lagcount += 1
-        lagfraction = lagcount / this_frame_no
-        if lagfraction > 0.1 and this_frame_no > 100:
-            print "WARNING! more than 10% of the frames are lost. Consider increasing TARGET_FRAME_TIME to avoid lags!"
-    if (computation_time < .5 * target_frame_time) and (target_frame_time > 40):
-        print " "
-        print "Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (target_frame_time, frame_duration, computation_time)
-        print "Computation time is much lower than frame time and framerate is below 25Hz. Consider decreasing TARGET_FRAME_TIME to improve user experience!"
-    frame_info.data = dict(frame_end_time=[this_frame_end_time],frame_no=[this_frame_no],lagcount=[lagcount])
+    do_time_measurement(frame_no, computation_time)
 
    
 def initialize():
