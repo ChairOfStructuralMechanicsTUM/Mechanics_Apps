@@ -6,6 +6,8 @@ from bokeh.models import ColumnDataSource
 import matplotlib as mpl
 from tables.description import Col
 from warnings import warn
+import vtk
+from vtk.util import numpy_support
 
 mpl.use('Agg')
 import matplotlib.pyplot as plt
@@ -29,7 +31,7 @@ class Contour:
         """
         self._plot = plot
         contour_source = ColumnDataSource(data=dict(xs=[], ys=[], line_color=[]))
-        self._contour_plot = self._plot.multi_line(xs='xs', ys='ys', line_color=line_color, source=contour_source,
+        self._contour_plot = self._plot.multi_line(xs='xs', ys='ys', source=contour_source,
                                                    **kwargs)
         self._path_filter = path_filter
         self._add_label = add_label
@@ -54,23 +56,21 @@ class Contour:
         # evaluate function of grid
         z = f(x, y)
         # compute contour data
-        data_contour, data_contour_label = self.__get_contour_data(x, y, z, isovalue=isovalue)
+        data_contour, data_contour_label = self.__get_contour_data_vtk(x, y, z, isovalue=isovalue)
         # update data on contour plot
         self._contour_plot.data_source.data = data_contour
         if self._add_label:
             # update contour labels
             self._text_label.data_source.data = data_contour_label
-
 
     def set_contour_data(self, x, y, z, isovalue=None):
         # compute contour data
-        data_contour, data_contour_label = self.__get_contour_data(x, y, z, isovalue=isovalue)
+        data_contour, data_contour_label = self.__get_contour_data_vtk(x, y, z, isovalue=isovalue)
         # update data on contour plot
         self._contour_plot.data_source.data = data_contour
         if self._add_label:
             # update contour labels
             self._text_label.data_source.data = data_contour_label
-		
 
     def __get_contour_data(self, x_grid, y_grid, z_grid, isovalue=None):
         """
@@ -118,3 +118,91 @@ class Contour:
         data_contour = {'xs': xs, 'ys': ys, 'line_color': col}
         data_contour_label = {'xt': xt, 'yt': yt, 'text': text}
         return data_contour, data_contour_label
+
+    def __get_contour_data_vtk(self, x_grid, y_grid, z_grid, isovalue=[0]):
+
+        nx, ny = x_grid.shape
+
+        xmin = self._plot.x_range.start
+        xmax = self._plot.x_range.end
+        ymin = self._plot.y_range.start
+        ymax = self._plot.y_range.end
+
+        hx = (xmax - xmin) / (nx - 1)
+        hy = (ymax - ymin) / (ny - 1)
+
+        image = vtk.vtkImageData()
+        image.SetDimensions(nx, ny, 1)
+        image.SetOrigin(xmin, ymin, 0)
+        image.SetSpacing(hx, hy, 0)
+
+        data = vtk.vtkDoubleArray()
+        data.SetNumberOfComponents(1)
+        data.SetNumberOfTuples(image.GetNumberOfPoints())
+        data.SetName("Values")
+
+        vtk_data_array = numpy_support.numpy_to_vtk(z_grid.ravel(), deep=True, array_type=vtk.VTK_DOUBLE)
+        image.AllocateScalars(vtk.VTK_DOUBLE, 1)
+        image.GetPointData().SetScalars(vtk_data_array)
+        """
+        image.AllocateScalars(vtk.VTK_DOUBLE, 1)
+        z_id = 0
+        for y_id in range(image.GetDimensions()[1]):
+            for x_id in range(image.GetDimensions()[0]):
+                id = image.ComputePointId((x_id, y_id, z_id))
+                value = z_grid[y_id, x_id]
+                image.SetScalarComponentFromDouble(x_id, y_id, z_id, 0, value)
+        """
+        ms = vtk.vtkMarchingSquares()
+        ms.SetInputData(image)
+
+
+        for i in range(isovalue.__len__()):
+            ms.SetValue(i, isovalue[i])
+
+        ms.SetImageRange(0, image.GetDimensions()[0], 0, image.GetDimensions()[1], 0, 0)
+        ms.Update()
+
+        poly = ms.GetOutput()
+        lines = poly.GetLines()
+
+        lines.InitTraversal
+        lineIds = vtk.vtkIdList()
+
+        xs = []
+        ys = []
+        col = []
+
+        pts_x = []
+        pts_y = []
+        for i in range(poly.GetNumberOfPoints()):
+            x, y, z = poly.GetPoint(i)
+            pts_x.append(x)
+            pts_y.append(y)
+
+        lineIndexArray = []
+        while lines.GetNextCell(lineIds):
+            line = (lineIds.GetId(0), lineIds.GetId(1))
+            lineIndexArray.append(line)
+
+        for i1, i2 in lineIndexArray:
+            xs.append([pts_x[i1], pts_x[i2]])
+            ys.append([pts_y[i1], pts_y[i2]])
+            col.append('k')
+
+
+        """
+        while lines.GetNextCell(lineIds):
+            x0, y0, z0 = poly.GetPoint(lineIds.GetId(0))
+            x1, y1, z1 = poly.GetPoint(lineIds.GetId(1))
+            xs.append([x0, x1])
+            ys.append([y0, y1])
+            col.append('k')
+        """
+
+        data_contour = {'xs': xs, 'ys': ys, 'line_color': col}
+        data_contour_label = {}
+        return data_contour, data_contour_label
+
+
+

@@ -244,7 +244,7 @@ def update(frame_no):
 
     do_time_measurement(frame_no, computation_time)
 
-   
+
 def initialize():
     """
     initialize app
