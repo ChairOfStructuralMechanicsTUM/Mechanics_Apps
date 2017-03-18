@@ -177,7 +177,8 @@ def update_wave_amplitude_on_grids(t):
     # Contour Mesh
     p_cont = contour_grid.compute_wave_amplitude(t)
     contour_zero.set_contour_data(contour_grid._x, contour_grid._y, p_cont, isovalue=[0])
-    contour_all.set_contour_data(contour_grid._x, contour_grid._y, p_cont, isovalue=[-2,-1.5,-1,-.5]+[+.5,+1,+1.5,+2])
+    contour_pos.set_contour_data(contour_grid._x, contour_grid._y, p_cont, isovalue=[+.5,+1,+1.5,+2])
+    contour_neg.set_contour_data(contour_grid._x, contour_grid._y, p_cont, isovalue=[-2, -1.5, -1, -.5])
 
 
 def update_wave_amplitude_at_probe(x,y,t):
@@ -190,7 +191,7 @@ def update_wave_amplitude_at_probe(x,y,t):
     textbox.value = str(z_val[0,0]) + " dB"  # write measured value to textbox
 
 
-target_frame_time = 200  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
+target_frame_time = 50  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
 frame_end_time = 0
 lagcount = 0
 
@@ -264,7 +265,8 @@ interactor.on_click(on_click_change)
 surface = Surface3d(x="x", y="y", z="z", color="color", data_source=source_surf)  # wave surface
 # contour plots of wave
 contour_zero = Contour(plot, line_width=2,line_color='black', path_filter = 10)  # zero level
-contour_all = Contour(plot, line_width=1, path_filter = 10)  # some other levels
+contour_pos = Contour(plot, line_width=1, line_color='red', path_filter = 10)  # some other levels
+contour_neg = Contour(plot, line_width=1, line_color='blue', path_filter = 10)  # some other levels
 
 kvector = Quiver(plot, fix_at_middle=False) # visualization of wave k vector
 plot.line(x=[x_min,0], y=[0,0], line_dash='dashed')

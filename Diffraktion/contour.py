@@ -30,9 +30,10 @@ class Contour:
         :param kwargs: additional bokeh line plotting arguments like width, style ect...
         """
         self._plot = plot
-        contour_source = ColumnDataSource(data=dict(xs=[], ys=[], line_color=[]))
-        self._contour_plot = self._plot.multi_line(xs='xs', ys='ys', source=contour_source,
-                                                   **kwargs)
+        #contour_source = ColumnDataSource(data=dict(xs=[], ys=[], line_color=[]))
+        contour_source = ColumnDataSource(data=dict(x0=[], x1=[], y0=[], y1=[]))
+        #self._contour_plot = self._plot.multi_line(xs='xs', ys='ys', source=contour_source, **kwargs)
+        self._contour_plot = self._plot.segment(x0='x0', x1='x1', y0='y0', y1='y1', color=line_color, source=contour_source, **kwargs)
         self._path_filter = path_filter
         self._add_label = add_label
         if self._add_label:
@@ -141,66 +142,38 @@ class Contour:
         data.SetNumberOfTuples(image.GetNumberOfPoints())
         data.SetName("Values")
 
+        # we load the z_data into vtk datatypes
         vtk_data_array = numpy_support.numpy_to_vtk(z_grid.ravel(), deep=True, array_type=vtk.VTK_DOUBLE)
         image.AllocateScalars(vtk.VTK_DOUBLE, 1)
         image.GetPointData().SetScalars(vtk_data_array)
-        """
-        image.AllocateScalars(vtk.VTK_DOUBLE, 1)
-        z_id = 0
-        for y_id in range(image.GetDimensions()[1]):
-            for x_id in range(image.GetDimensions()[0]):
-                id = image.ComputePointId((x_id, y_id, z_id))
-                value = z_grid[y_id, x_id]
-                image.SetScalarComponentFromDouble(x_id, y_id, z_id, 0, value)
-        """
+
+        # apply marchign squares
         ms = vtk.vtkMarchingSquares()
         ms.SetInputData(image)
-
-
-        for i in range(isovalue.__len__()):
+        for i in range(isovalue.__len__()):  # set isovalues
             ms.SetValue(i, isovalue[i])
-
         ms.SetImageRange(0, image.GetDimensions()[0], 0, image.GetDimensions()[1], 0, 0)
         ms.Update()
 
+        # read output
         poly = ms.GetOutput()
+        points = poly.GetPoints()
         lines = poly.GetLines()
 
-        lines.InitTraversal
-        lineIds = vtk.vtkIdList()
+        pts = numpy_support.vtk_to_numpy(points.GetData())  # get points
+        line_idx = numpy_support.vtk_to_numpy(lines.GetData())  # get lines
 
-        xs = []
-        ys = []
-        col = []
+        # lines are encoded as [nVerticesLine1, firstId, secondId, ... , nVerticesLine2...]
+        # We always have 2 vertices per line. This justifies the stride 3 pattern below
+        even_idx = line_idx[1::3]
+        odd_idx = line_idx[2::3]
 
-        pts_x = []
-        pts_y = []
-        for i in range(poly.GetNumberOfPoints()):
-            x, y, z = poly.GetPoint(i)
-            pts_x.append(x)
-            pts_y.append(y)
+        x0 = pts[odd_idx, 0]
+        y0 = pts[odd_idx, 1]
+        x1 = pts[even_idx, 0]
+        y1 = pts[even_idx, 1]
 
-        lineIndexArray = []
-        while lines.GetNextCell(lineIds):
-            line = (lineIds.GetId(0), lineIds.GetId(1))
-            lineIndexArray.append(line)
-
-        for i1, i2 in lineIndexArray:
-            xs.append([pts_x[i1], pts_x[i2]])
-            ys.append([pts_y[i1], pts_y[i2]])
-            col.append('k')
-
-
-        """
-        while lines.GetNextCell(lineIds):
-            x0, y0, z0 = poly.GetPoint(lineIds.GetId(0))
-            x1, y1, z1 = poly.GetPoint(lineIds.GetId(1))
-            xs.append([x0, x1])
-            ys.append([y0, y1])
-            col.append('k')
-        """
-
-        data_contour = {'xs': xs, 'ys': ys, 'line_color': col}
+        data_contour = {'x0': x0, 'x1': x1, 'y0': y0, 'y1': y1}
         data_contour_label = {}
         return data_contour, data_contour_label
 

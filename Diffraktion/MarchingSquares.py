@@ -61,9 +61,13 @@ for i in range(poly.GetNumberOfPoints()):
     pts_y.append(y)
 
 lineIndexArray = []
+i = 0
 while lines.GetNextCell(lineIds):
     line = (lineIds.GetId(0),lineIds.GetId(1))
     lineIndexArray.append(line)
+    i+=1
+
+print i
 
 for i1, i2 in lineIndexArray:
     plt.plot([pts_x[i1], pts_x[i2]], [pts_y[i1], pts_y[i2]])
