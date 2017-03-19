@@ -1,7 +1,7 @@
 from bokeh.plotting import figure
 from bokeh.layouts import column, row
 from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead
-from bokeh.io import curdoc#, push_session
+from bokeh.io import curdoc
 from numpy import loadtxt
 from time import sleep
 
