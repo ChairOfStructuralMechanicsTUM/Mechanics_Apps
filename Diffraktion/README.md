@@ -8,7 +8,7 @@ Here we visualize the effect of wave diffraction at a wall.
 
 Different areas exist:
 
-![](./areas.jpg)  
+![](./static/images/Diffraktion_areas.jpg)  
 From[1]
 
 For more information on theory see [1].
@@ -26,15 +26,13 @@ We want to explicitly visualize important input parameters and the regions of in
 
 ![](./screenshot.jpg)  
 
-* Bokeh only supports 2D images, therefore, we do a contour plot of the wave (maybe red/blue for wave peaks/valleys?).
+* We use a 2D contour plot for visualization of wave parameters and characteristic areas.
 
-* We implemented 3D visualization of the waves (using https://demo.bokehplots.com/apps/surface3d and https://github.com/bokeh/bokeh/tree/master/examples/app/surface3d as template). We need to additionally **install** nodejs via ```conda install -c bokeh nodejs```
+* We implemented 3D visualization of the waves (using https://demo.bokehplots.com/apps/surface3d and https://github.com/bokeh/bokeh/tree/master/examples/app/surface3d as template) for better impression of the waves. We need to additionally **install** nodejs via ```conda install -c bokeh nodejs```
 
 * Wavelength and angle is modified using sliders.
 
-* Visualize areas of interest with shading of areas?
-
-* If we want to use the 3D visualization of bokeh 
+* The noise at a certain position can be sampled by clicking into the contour plot.
 
 ## ToDos
 
@@ -44,13 +42,21 @@ We want to explicitly visualize important input parameters and the regions of in
 - [x] add widgets for interaction
 - [x] explicitly visualize wavefront, wavelength and angle of incidence
 - [x] show light, shadow and reflection region
-- [ ] explain app on website
-- [ ] try to increase performance
+- [x] add value picker (on click)
+- [x] two different resolutions for contour and surface plot
+- [x] explain app on website
+- [ ] Add proper formula for computation of dB from amplitude. Currently we just probe the amplitude.
+- [x] try to increase performance (100ms is currently a good tradeoff, lower times might cause lags on the client's browser)
 
 ## Further Ideas
 
 * one of the first questions, I asked myself in the video: Where does the wave actually originate? Explicitly visualize origin of wave and angle of incidence in plot!
 * Also show means for elimination of noise?
+
+## Inspiration
+
+* 3d surface implementation based on https://github.com/bokeh/bokeh/tree/master/examples/app/surface3d
+* contour plot from https://github.com/BenjaminRueth/Visualization/blob/master/my_bokeh_utils.py
 
 ## Resources
 

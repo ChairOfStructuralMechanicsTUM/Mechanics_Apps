@@ -20,15 +20,14 @@ OPTIONS =
   height: '300px'
   style: 'surface'
   showPerspective: true
-  showGrid: true
+  showGrid: false
   keepAspectRatio: true
-  verticalRatio: 1.0
-  legendLabel: 'stuff'
+  verticalRatio: 0.2
   zMin: -2.0
   zMax: +2.0
   cameraPosition:
     horizontal: -0.35
-    vertical: 0.22
+    vertical: 0.32
     distance: 1.8    
 
 # To create custom model extensions that will render on to the HTML canvas

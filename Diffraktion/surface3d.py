@@ -12,10 +12,9 @@ DEFAULTS = {
     'showPerspective': True,
     'showGrid':        True,
     'keepAspectRatio': True,
-    'verticalRatio':   1.0,
-    'legendLabel':     'stuff',
-	'zMin' : -2.0,
-	'zMax' : +2.0,
+    'verticalRatio':   0.2,
+    'zMin' : -2.0,
+    'zMax' : +2.0,
     'cameraPosition':  {
         'horizontal': -0.35,
         'vertical':    0.22,
@@ -33,6 +32,10 @@ class Surface3d(LayoutDOM):
     # of JavaScript (or CoffeeScript) code that implements the JavaScript side
     # of the custom extension model.
     __implementation__ = "surface3d.coffee"
+    # this is the local resource for the vis.js library
+    #__javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.min.js"] ## online resource
+    __javascript__ = ["Diffraktion/static/js/vis.min.js"] ## offline resource
+
 
     # Below are all the "properties" for this model. Bokeh properties are
     # class attributes that define the fields (and their types) that can be
