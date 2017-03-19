@@ -1,5 +1,6 @@
 from bokeh.models import ColumnDataSource
 
+
 class DraggableAxisAlignedRectangle:
 
     def __init__(self, plot, w, h, x, y):

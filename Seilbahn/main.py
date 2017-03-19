@@ -2,7 +2,8 @@ from __future__ import division
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, Slider, Tool
 from bokeh.io import curdoc
-from draggableAxisAlignedRectangle import DraggableAxisAlignedRectangle
+from draggablePost import DraggablePost
+from draggableCart import DraggableCart
 import numpy as np
 
 
@@ -10,24 +11,9 @@ BearingSource = []
 
 # figure for diagram
 p = figure(title="", tools="zoom_in,zoom_out,wheel_zoom", x_range=(0, 15), y_range=(0, 15))
-draggables = [DraggableAxisAlignedRectangle(p, 1.0, 1.0, 1.0, 1.0),
-              DraggableAxisAlignedRectangle(p, 1.0, 1.0, 5.0, 1.0)]
-
-post_sources = draggables.__len__() * [None]
-
-# create post holding the cable
-for i in range(draggables.__len__()):
-    handle = draggables[i]
-    post_height = 5
-    post_sources[i] = ColumnDataSource(dict(xs=[np.array([handle._pos_x,
-                                                          handle._pos_x + handle._width,
-                                                          handle._pos_x + .5 * handle._width])],
-                                            ys=[np.array([handle._pos_y + handle._height,
-                                                          handle._pos_y + handle._height,
-                                                          handle._pos_y + handle._height + post_height])],
-                                            cs=['k']))
-    p.patches(xs='xs', ys='ys', color='cs', source=post_sources[i])
-
+draggables = [DraggablePost(p, 1.0, 1.0, 1.0, 1.0),
+              DraggablePost(p, 1.0, 1.0, 5.0, 1.0),
+              DraggableCart(p, 1.0, 1.0, 2.5, 5.0),]
 
 JS_CODE = """
 import * as p from "core/properties"
@@ -85,18 +71,6 @@ def on_mouse_move(attr, old, new):
             draggable = draggables[i]
             if draggable.is_hit(XStart, YStart):
                 draggable.translate(dx, dy)
-
-                xs = post_sources[i].data['xs']
-                ys = post_sources[i].data['ys']
-                cs = post_sources[i].data['cs']
-                for j in range(xs.__len__()):
-                    xs[j] += dx
-                    ys[j] += dy
-
-                print xs
-                print ys
-                post_sources[i].data = dict(xs=xs, ys=ys, cs=cs)
-                #p.patches(xs='xs', ys='ys', color='cs', source=post_sources[i])
 
 p.tool_events.on_change('geometries', on_mouse_move)
 
