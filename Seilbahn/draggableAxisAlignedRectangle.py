@@ -1,4 +1,5 @@
 from bokeh.models import ColumnDataSource
+import numpy as np
 
 
 class DraggableAxisAlignedRectangle:
@@ -13,15 +14,17 @@ class DraggableAxisAlignedRectangle:
         :param y: y coordinate of left bottom corner
         """
 
-        self._width = w
-        self._height = h
-        self._pos_x = x
-        self._pos_y = y
-        self._my_data_source = ColumnDataSource(data=dict(r=[self._pos_x + self._width],
-                                                          l=[self._pos_x],
-                                                          b=[self._pos_y],
-                                                          t=[self._pos_y + self._height]))
+        self._dims = np.array([w, h])
+        self._pos = np.array([x, y])
+        self._my_data_source = ColumnDataSource(data=dict(r=[], l=[], b=[], t=[]))
         plot.quad(top='t', bottom='b', left='l', right='r', source=self._my_data_source)
+        self._update_rectangle_data_source()
+
+    def _update_rectangle_data_source(self):
+        self._my_data_source.data = dict(r=[(self._pos + self._dims)[0]],
+                                         l=[self._pos[0]],
+                                         b=[self._pos[1]],
+                                         t=[(self._pos + self._dims)[1]])
 
     def is_hit(self, click_pos_x, click_pos_y):
         """
@@ -30,16 +33,13 @@ class DraggableAxisAlignedRectangle:
         :param click_pos_y: click position y
         :return: return if click hits rectangle
         """
-        if abs(self._pos_x - click_pos_x) < self._width and abs(self._pos_y - click_pos_y) < self._height:
+        click_pos = np.array([click_pos_x, click_pos_y])
+        pos_diff = self._pos - click_pos
+        if abs(pos_diff[0]) < self._dims[0] and abs(pos_diff[1]) < self._dims[1]:
             return True
         else:
             return False
 
     def translate(self, dx, dy):
-        self._pos_x += dx
-        self._pos_y += dy
-
-        self._my_data_source.data = dict(r=[self._pos_x + self._width],
-                                         l=[self._pos_x],
-                                         b=[self._pos_y],
-                                         t=[self._pos_y + self._height])
+        self._pos += np.array([dx, dy])
+        self._update_rectangle_data_source()
