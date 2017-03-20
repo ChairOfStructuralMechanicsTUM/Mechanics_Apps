@@ -2,7 +2,7 @@ from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource
 from MathFuncs import *
 from MoveNodeTool import *
-from math import sqrt
+from math import sqrt, floor
 
 RollerNodeSource = []
 RollerPointXPos = []
@@ -17,8 +17,10 @@ Deriv2Y=[]
 def PathInit (fig):
     global RollerPointXPos,RollerPointYPos,RollerNodeSource, TotPoints, Deriv2X, Deriv2Y
     #Ramp
-    X = [1,2.5,4,5.5,7,8.5,10,11.5,13]
-    Y = [13,11.5,10,8.5,7,5.5,4,2.5,1]
+    #X = [1,2.5,4,5.5,7,8.5,10,11.5,13]
+    #Y = [13,11.5,10,8.5,7,5.5,4,2.5,1]
+    X = [1, 3.5, 6.64, 8.7, 6.8, 5.54, 10.0, 11.67, 13.9]
+    Y = [13, 3.3, 1.4, 3.8, 5.4, 3.16, 1.4, 4.8, 6.4]
     # Create and save path nodes
     for i in range(0,len(X)):
         RollerNodeSource.append(ColumnDataSource(data=dict(x=[X[i]],y=[Y[i]])))
@@ -69,16 +71,23 @@ def cubicSpline(f):
         # create path from 20 points (1 at node 19 between nodes)
         Y.append(f[i])
         for j in range(1,20):
-            xnow+=h/20.0
+            xnow+=1.0/20.0
             Y.append((f2[i]*(i+1-xnow)**3 + f2[i+1]*(xnow-i)**3)/6.0
                 + (f[i+1]-f[i] + (f2[i]-f2[i+1])/6.0)*(xnow-i)+f[i]-f2[i]/6.0)
     # add final node to path
     Y.append(f[len(x)-1])
     return (Y,f2)
 
+# return Y(t)
+def getHeight(xnow):
+    i=int(floor(xnow))
+    return ((Deriv2Y[i]*(i+1-xnow)**3 + Deriv2Y[i+1]*(xnow-i)**3)/6.0
+        + ((RollerPointYPos[i+1]-RollerPointYPos[i])
+        + (Deriv2Y[i]-Deriv2Y[i+1])/6.0)*(xnow-i)+RollerPointYPos[i]-Deriv2Y[i]/6.0)
+
 # return point (X(t),Y(t))
 def getPoint(xnow):
-    i=int(xnow)
+    i=int(floor(xnow))
     return ((Deriv2X[i]*(i+1-xnow)**3 + Deriv2X[i+1]*(xnow-i)**3)/6.0
         + ((RollerPointXPos[i+1]-RollerPointXPos[i])
         + (Deriv2X[i]-Deriv2X[i+1])/6.0)*(xnow-i)+RollerPointXPos[i]-Deriv2X[i]/6.0,
@@ -89,12 +98,12 @@ def getPoint(xnow):
 ## function to simplify :    getDistance(xnow,xnext)
 # return dx/dt
 def dX(t):
-    i=int(t)
+    i=int(floor(t))
     return ((Deriv2X[i+1]*(t-i)**2-Deriv2X[i]*(i+1-t)**2)/2.0
         +RollerPointXPos[i+1]-RollerPointXPos[i]+(Deriv2X[i]-Deriv2X[i+1])/6.0)
 # return dy/dt
 def dY(t):
-    i=int(t)
+    i=int(floor(t))
     return ((Deriv2Y[i+1]*(t-i)**2-Deriv2Y[i]*(i+1-t)**2)/2.0
         +RollerPointYPos[i+1]-RollerPointYPos[i]+(Deriv2Y[i]-Deriv2Y[i+1])/6.0)
 
@@ -115,8 +124,8 @@ def normal (i):
 # Find derivative of path
 def deriv (t):
     # find nearest nodes
-    i1=int(t*20)
-    i2=int(t*20)+1
+    i1=int(floor(t*20))
+    i2=int(floor(t*20))+1
     # use finite differences to compute derivative
     global RollerCoasterPathSource
     dx=RollerCoasterPathSource.data ['x'][i2]- RollerCoasterPathSource.data ['x'][i1]
@@ -144,7 +153,7 @@ def inNode (xPos,yPos):
 
 # modify path by dragging nodes
 def modify_path(attr, old, new):
-    global RollerPointXPos,RollerPointYPos,RollerNodeSource, currentNode
+    global currentNode, RollerNodeSource, RollerPointXPos,RollerPointYPos, Deriv2X, Deriv2Y, RollerCoasterPathSource
     # if there is a previous node (not first time the function is called)
     # and the node has not been released (new['x']=-1 on release to prepare for future calls)
     if (len(old)==1 and new[0][u'x']!=-1):
@@ -175,7 +184,7 @@ def modify_path(attr, old, new):
 # nodes are provided in arguments
 def drawPath (X,Y):
     # save nodes in easily accessible list
-    global RollerPointXPos, RollerPointYPos
+    global RollerPointXPos, RollerPointYPos, RollerNodeSource, Deriv2X, Deriv2Y, RollerCoasterPathSource
     RollerPointXPos=X
     RollerPointYPos=Y
     # update nodes

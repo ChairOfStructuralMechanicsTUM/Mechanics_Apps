@@ -5,10 +5,8 @@ Prototype of a WebApp demonstrating Transverse Strain via Bokeh for the lectures
 The app can be run using the command "bokeh serve --show Rollercoaster/" from the parent directory.
 
 ## To Do
-- [x] Find a smooth interpolation of a loop-the-loop (currently using cubic interpolation)
-- [x] Add force arrows
-- [x] add cart
-- [x] add energy bar chart
-- [ ] Add movement
-- [ ] Find start path
-- [ ] Find interesting paths
+- [ ] fix mechanical energy (trajectory rounding errors)
+      Solutions ?
+      - Calculate velocity from energy
+- [ ] add comments to main.py
+- [ ] find and remove occasional error
