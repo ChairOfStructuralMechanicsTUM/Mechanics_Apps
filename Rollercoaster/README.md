@@ -10,3 +10,4 @@ The app can be run using the command "bokeh serve --show Rollercoaster/" from th
       - Calculate velocity from energy
 - [ ] add comments to main.py
 - [ ] find and remove occasional error
+- [ ] implement TUM colours
