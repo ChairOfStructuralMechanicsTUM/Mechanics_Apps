@@ -6,3 +6,5 @@ echo "installing flexx..."
 conda install -c bokeh flexx
 echo "installing twisted..."
 conda install twisted
+echo "installing vtk..."
+conda install vtk
