@@ -47,15 +47,16 @@ We want to explicitly visualize important input parameters and the regions of in
 - [x] explain app on website
 - [ ] Add proper formula for computation of dB from amplitude. Currently we just probe the amplitude.
 - [x] try to increase performance
+- [ ] Remove artifacts in contour lines (currently we plot the lines with many line segments with only two vertices. This leads to disconnected lines with tiny gaps.)
 
 ## Performance Improvements
 
 We are now using vtk for the computation of contour lines. ```conda install vtk```
 For profiling run ```kernprof -l -v profiling.py``` and add ```@profile``` decorator at the functions that have to be profiled.
+With those improvements we can run the app with 25Hz on a decent machine. Please also note that a high framerate not only puts strain onto the server, but also onto the client! Clients that are not powerful enough might suffer under the high framerate.
 
 ## Further Ideas
 
-* one of the first questions, I asked myself in the video: Where does the wave actually originate? Explicitly visualize origin of wave and angle of incidence in plot!
 * Also show means for elimination of noise?
 
 ## Inspiration
