@@ -23,6 +23,17 @@ lecture audience.
 5. run ```$ ./bokehrunner.sh```.
 6. access ```127.0.0.1``` in your browser
 
+### Server Login
+
+1. Access the VPN network of LRZ: see https://www.lrz.de/services/netz/mobil/vpn_en/
+    * install Cisco AnyConnect (easy on Windows, more complicated for other OS)
+https://www.lrz.de/services/netz/mobil/vpn_en/anyconnect_en/
+    * log on to
+https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
+2. connect to the VM
+    * install PuTTY http://www.putty.org/
+    * connect to the VM via PuTTY.
+
 ## ToDos
 ### Selected Apps
 
