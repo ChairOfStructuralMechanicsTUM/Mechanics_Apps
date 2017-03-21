@@ -1,6 +1,7 @@
 from __future__ import division
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, Slider, Tool
+from bokeh.models import Tool
+from bokeh.models.sources import ColumnDataSource
 from bokeh.io import curdoc
 from draggablePost import DraggablePost
 from draggableCart import DraggableCart
@@ -13,7 +14,10 @@ BearingSource = []
 p = figure(title="", tools="zoom_in,zoom_out,wheel_zoom", x_range=(0, 15), y_range=(0, 15))
 draggables = [DraggablePost(p, 1.0, 1.0, 1.0, 1.0),
               DraggablePost(p, 1.0, 1.0, 5.0, 1.0),
-              DraggableCart(p, 1.0, 1.0, 2.5, 5.0),]
+              DraggableCart(p, 1.0, 1.0, 2.5, 5.0)]
+
+rope_data_source = ColumnDataSource(data=dict(x=[], y=[]))
+rope = p.line(x='x', y='y', source=rope_data_source)
 
 JS_CODE = """
 import * as p from "core/properties"
@@ -57,6 +61,14 @@ class DrawTool(Tool):
 
 p.add_tools(DrawTool())
 
+def compute_rope(from_post, to_post):
+    x = []
+    y = []
+    for t in np.linspace(0,1,100):
+        pos = from_post + (to_post - from_post) * t  # todo here we need a formula for the actual rope shape!!!
+        x.append(pos[0])
+        y.append(pos[1])
+    rope_data_source.data = dict(x=x, y=y)
 
 def on_mouse_move(attr, old, new):
     global RollerPointXPos, RollerPointYPos, RollerNodeSource
@@ -71,7 +83,9 @@ def on_mouse_move(attr, old, new):
             draggable = draggables[i]
             if draggable.is_hit(XStart, YStart):
                 draggable.translate(dx, dy)
+        compute_rope(draggables[0].get_post_tip_position(), draggables[1].get_post_tip_position())
 
+compute_rope(draggables[0].get_post_tip_position(), draggables[1].get_post_tip_position())
 p.tool_events.on_change('geometries', on_mouse_move)
 
 ## Send to window
