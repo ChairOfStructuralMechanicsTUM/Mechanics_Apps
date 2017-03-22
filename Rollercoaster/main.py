@@ -29,6 +29,7 @@ cartAcc=[0,0]
 cart = ColumnDataSource(data=dict(x=[],y=[]))
 mu=0.2
 Active=False
+MechEng=100
 
 ## Functions
 # initialisation
@@ -89,8 +90,14 @@ def drawCart ():
 
 # update bar chart
 def updateBars ():
-    # update mechanical energy = kin energy + potential energy
-    eFig.setHeight(0,0.5*cartSpeed**2+2.0*getHeight(cartPosition))
+    global MechEng, cartSpeed, cartPosition
+    # mechanical energy = kin energy + potential energy
+    ME=0.5*cartSpeed**2+2.0*getHeight(cartPosition)
+    if (ME<MechEng):
+        # update mechanical energy if and only if it has decreased
+        # this removes (visually) the rounding errors that make the total energy increase
+        eFig.setHeight(0,ME)
+        MechEng=ME
     # update potential energy = mgh (m=1)
     eFig.setHeight(1,2.0*getHeight(cartPosition))
     # update kinetic energy = 0.5 m v^2 (m=1)
@@ -98,7 +105,7 @@ def updateBars ():
 
 # evolve cart position
 def moveCart ():
-    global cartPosition, cartSpeed, cartAcc
+    global cartPosition, cartSpeed, cartAcc, mu
     dt=0.1
     # get new velocity, old velocity = speed*direction
     (nx,ny)=deriv(cartPosition)
@@ -124,29 +131,29 @@ def moveCart ():
             # if moving in a positive direction to new segment
             # new position is at boundary
             newPos=int(floor(newPos))
-            if (newPos==len(RollerPointXPos)-1):
-                # if new position is last node then change direction
-                direction=-direction
-                cartSpeed=-cartSpeed
         elif (int(floor(newPos))<int(floor(cartPosition)) and int(floor(cartPosition))!=cartPosition):
             # if moving in a negative direction to new segment
             # new position is at boundary
             newPos=int(floor(cartPosition))
-            if (newPos==0):
-                # if new position is first node then change direction
-                direction=-direction
-                cartSpeed=-cartSpeed
         # calculate distance travelled in this step
         pas=abs(getDistance(cartPosition,newPos))
-        if (sDone+pas<=s):
+        if (sDone+pas<=s or factor==64):
             # if the step means that the total distance travelled is
             # less than the distance that must be travelled,
             # then update position and distance travelled in this function
             cartPosition=newPos
             sDone+=pas
+            if (newPos==0 or newPos==len(RollerPointXPos)-1):
+                # if new position is first or last node then change direction
+                direction=-direction
+                cartSpeed=-cartSpeed
         else:
             # else reduce the step size
             factor*=2
+    if (mu==0.0):
+        # if no friction then use energy to calculate new speed
+        # to remove energy fluctuations due to rounding errors
+        cartSpeed=sign(cartSpeed)*sqrt(max(0,2.0*MechEng-4.0*getHeight(cartPosition)))
     # update the drawing
     drawCart()
     updateForces()
@@ -154,7 +161,7 @@ def moveCart ():
 
 # figure for bar charts
 eFig = BC.BarChart(["Mechanische Energie\n(Mechanical Energy)","Potentielle Energie\n(Potential Energy)","Kinetische Energie\n(Kinetic Energy)"],
-    [28,28,0],["purple","red","blue"],[3,3,3])
+    [28,28,0],["#98C6EA","#A2AD00","#E37222"],[3,3,3])
 eFig.Width(300)
 eFig.Height(650)
 eFig.fig.yaxis.visible=False
@@ -177,14 +184,14 @@ p.tool_events.on_change('geometries', on_mouse_move)
 Normal_arrow_glyph = Arrow(end=OpenHead(line_color="#003359",line_width=2, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_color="#003359",line_width=2,source=NormalForce)
 p.add_layout(Normal_arrow_glyph)
-Drag_arrow_glyph = Arrow(end=OpenHead(line_color="green",line_width=2, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_color="green",line_width=2,source=DragForce)
+Drag_arrow_glyph = Arrow(end=OpenHead(line_color="#003359",line_width=2, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_color="#003359",line_width=2,source=DragForce)
 p.add_layout(Drag_arrow_glyph)
 Grav_arrow_glyph = Arrow(end=OpenHead(line_color="#003359",line_width=2, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_color="#003359",line_width=2,source=GravForce)
 p.add_layout(Grav_arrow_glyph)
 # add cart drawing
-p.patch(x='x',y='y',fill_color="red",source=cart,level='annotation')
+p.patch(x='x',y='y',fill_color="#0065BD",source=cart,level='annotation')
 
 # functions which change the rollercoaster shape
 def Ramp():
@@ -213,10 +220,11 @@ loop_button.on_click(Loop)
 
 # function which returns the cart to the beginning of the rollercoaster
 def Reset():
-    global cartPosition, cartSpeed, cartAcc
+    global cartPosition, cartSpeed, cartAcc, MechEng
     cartPosition=0
     cartSpeed=0
     cartAcc=[0,0]
+    MechEng=100
     updateForces()
     drawCart()
     updateBars()
@@ -254,7 +262,7 @@ play_button.on_click(play)
 def Friction(attr,old,new):
     global mu
     mu=new
-drag_slider = Slider(title=u"Friktion (Friction), \u00B5 = ", value=0.2, start=0.0, end=1.0, step=0.05)
+drag_slider = Slider(title=u"Friktion (Friction), \u00B5 = ", value=0.2, start=0.0, end=1.0, step=0.1)
 drag_slider.on_change('value',Friction)
 
 ## Send to window

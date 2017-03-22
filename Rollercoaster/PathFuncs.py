@@ -81,6 +81,9 @@ def cubicSpline(f):
 # return Y(t)
 def getHeight(xnow):
     i=int(floor(xnow))
+    # if last point then i-1-th segment
+    if (i==len(Deriv2X)-1):
+        i-=1
     return ((Deriv2Y[i]*(i+1-xnow)**3 + Deriv2Y[i+1]*(xnow-i)**3)/6.0
         + ((RollerPointYPos[i+1]-RollerPointYPos[i])
         + (Deriv2Y[i]-Deriv2Y[i+1])/6.0)*(xnow-i)+RollerPointYPos[i]-Deriv2Y[i]/6.0)
@@ -88,6 +91,9 @@ def getHeight(xnow):
 # return point (X(t),Y(t))
 def getPoint(xnow):
     i=int(floor(xnow))
+    # if last point then i-1-th segment
+    if (i==len(Deriv2X)-1):
+        i-=1
     return ((Deriv2X[i]*(i+1-xnow)**3 + Deriv2X[i+1]*(xnow-i)**3)/6.0
         + ((RollerPointXPos[i+1]-RollerPointXPos[i])
         + (Deriv2X[i]-Deriv2X[i+1])/6.0)*(xnow-i)+RollerPointXPos[i]-Deriv2X[i]/6.0,
@@ -99,11 +105,17 @@ def getPoint(xnow):
 # return dx/dt
 def dX(t):
     i=int(floor(t))
+    # if last point then i-1-th segment
+    if (i==len(Deriv2X)-1):
+        i-=1
     return ((Deriv2X[i+1]*(t-i)**2-Deriv2X[i]*(i+1-t)**2)/2.0
         +RollerPointXPos[i+1]-RollerPointXPos[i]+(Deriv2X[i]-Deriv2X[i+1])/6.0)
 # return dy/dt
 def dY(t):
     i=int(floor(t))
+    # if last point then i-1-th segment
+    if (i==len(Deriv2Y)-1):
+        i-=1
     return ((Deriv2Y[i+1]*(t-i)**2-Deriv2Y[i]*(i+1-t)**2)/2.0
         +RollerPointYPos[i+1]-RollerPointYPos[i]+(Deriv2Y[i]-Deriv2Y[i+1])/6.0)
 
@@ -118,16 +130,20 @@ def getDistance(xnow,xnext):
 
 # Find normal vector
 def normal (i):
-   (dx,dy)=deriv (i);
-   return (-dy,dx)
+    (dx,dy)=deriv (i);
+    return (-dy,dx)
 
 # Find derivative of path
 def deriv (t):
     # find nearest nodes
     i1=int(floor(t*20))
     i2=int(floor(t*20))+1
-    # use finite differences to compute derivative
     global RollerCoasterPathSource
+    # if last point then i-1-th segment
+    if (i1==len(RollerCoasterPathSource.data['x'])-1):
+        i1-=2
+        i2-=2
+    # use finite differences to compute derivative
     dx=RollerCoasterPathSource.data ['x'][i2]- RollerCoasterPathSource.data ['x'][i1]
     if (dx==0):
         return (0,1)
