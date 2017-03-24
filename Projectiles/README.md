@@ -6,4 +6,3 @@ The app can be run using the command "bokeh serve --show Projectiles/" from the 
 
 ## To Do
 - [ ] translate reset
-- [ ] keep banana in cannon
