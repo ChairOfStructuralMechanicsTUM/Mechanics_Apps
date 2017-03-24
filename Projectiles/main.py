@@ -55,7 +55,7 @@ def updateTargetArrow ():
 # function which makes banana and monkey move
 def evolve ():
     global t, Active
-    t+=0.05
+    t+=0.1
     (xB,yB)=moveBanana(bananaPosition(t))
     (xM,yM)=moveMonkey(monkeyDrop(t))
     # if monkey is hit with banana then stop
@@ -63,7 +63,7 @@ def evolve ():
         curdoc().remove_periodic_callback(evolve)
         Active = False
     # else if the banana hit the floor then stop
-    elif (yB<0):
+    elif (yB<0 or yM<0):
         curdoc().remove_periodic_callback(evolve)
         Active = False
 
@@ -140,8 +140,8 @@ def changeGrav(attr,old,new):
         grav_select.value=old
     else:
         # else reset and change gravity
-        Reset()
         g=PlanetGravity[new]
+        Reset()
 grav_select = Select(title="Planet:", value="Erde",
     options=["Weltraum", "Mercur", "Venus", "Erde", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptun","Pluto"])
 grav_select.on_change('value',changeGrav)
@@ -149,6 +149,8 @@ grav_select.on_change('value',changeGrav)
 def Fire():
     global Active, grav_select
     if (not Active):
+        if (t!=0):
+            Reset()
         # if simulation is not already started
         # release branch and start simulation
         monkeyLetGo(grav_select.value!="Erde")
@@ -163,11 +165,11 @@ def Reset():
     if (Active):
         curdoc().remove_periodic_callback(evolve)
         Active = False
-    # return banana and monkey to original positions
+    # return banana, monkey and cannon to original positions
     moveBanana()
     moveMonkey()
     # make monkey grab branch again (also resets helmet)
-    monkeyGrab()
+    monkeyGrab(grav_select.value!="Erde")
     # reset time
     t=0
 reset_button = Button(label="Reset",button_type="success")

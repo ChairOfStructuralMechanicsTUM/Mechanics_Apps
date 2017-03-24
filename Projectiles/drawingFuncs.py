@@ -11,6 +11,7 @@ cannon_data = ColumnDataSource(data = dict(image=[],xS=[],yS=[],h=[],w=[]))
 monkey_data = ColumnDataSource(data = dict(image=[],xS=[],yS=[],h=[],w=[]))
 banana_data = ColumnDataSource(data = dict(image=[],xS=[],yS=[],h=[],w=[]))
 height = 0
+theta=0
 
 # transform saved image to a bokeh readable format
 def convertForBokeh(img):
@@ -147,7 +148,7 @@ def monkeyGrab(space = False):
 
 ## rotation of cannon
 def rotateCannon(angle):
-    global cannon_orig_image, cannon_size
+    global cannon_orig_image, cannon_size, theta
     # find points (in image coordinates) about which the image is rotated
     aboutX=4.7*cannon_size[0]/15.0
     aboutY=7.5*cannon_size[1]/15.0
@@ -159,6 +160,7 @@ def rotateCannon(angle):
     # cos(theta) and sin(theta) do not vary over loop so they are calculated in advance
     cosTheta=cos(angle)
     sinTheta=sin(angle)
+    theta = angle
     # fill new_img with rotated img
     for i in range(0,cannon_size[0]):
         Y=i-aboutY
@@ -178,13 +180,19 @@ def rotateCannon(angle):
     new_img=np.squeeze(new_img.view(np.uint32))
     # update ColumnDataSource
     cannon_data.data=dict(image = [new_img[::-1,:]], xS=[0.3], yS=[0.5+height],h=[15],w=[15])
+    moveBanana((3.2+4.8*sinTheta+5.5*cosTheta,4.5+height+4.8*cosTheta-5.5*sinTheta))
 
 ## functions which move objects
 def moveBanana((x,y) = (0,0)):
+    global banana_data, theta
     # default values are in cannon
     if ((x,y)==(0,0)):
-        (x,y)=(8,10+height)
-    global banana_data
+        if (theta==0):
+            (x,y)=(8,10+height)
+        else:
+            cosTheta=cos(theta)
+            sinTheta=sin(theta)
+            (x,y)=(3.2+4.8*sinTheta+5.5*cosTheta,4.5+height+4.8*cosTheta-5.5*sinTheta)
     # modify the position
     newData=dict(banana_data.data)
     newData['xS']=[x]
