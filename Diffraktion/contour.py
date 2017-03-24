@@ -57,7 +57,7 @@ class Contour:
         # evaluate function of grid
         z = f(x, y)
         # compute contour data
-        #data_contour, data_contour_label = self.__get_contour_data(x, y, z, isovalue=isovalue)
+        #data_contour, data_contour_label = self.__get_contour_data_mpl(x, y, z, isovalue=isovalue)
         data_contour, data_contour_label = self.__get_contour_data_vtk(x, y, z, isovalue=isovalue)
         # update data on contour plot
         self._contour_plot.data_source.data = data_contour
@@ -67,7 +67,7 @@ class Contour:
 
     def set_contour_data(self, x, y, z, isovalue=None):
         # compute contour data
-        #data_contour, data_contour_label = self.__get_contour_data(x, y, z, isovalue=isovalue)
+        #data_contour, data_contour_label = self.__get_contour_data_mpl(x, y, z, isovalue=isovalue)
         data_contour, data_contour_label = self.__get_contour_data_vtk(x, y, z, isovalue=isovalue)
         # update data on contour plot
         self._contour_plot.data_source.data = data_contour
@@ -75,7 +75,7 @@ class Contour:
             # update contour labels
             self._text_label.data_source.data = data_contour_label
 
-    def __get_contour_data(self, x_grid, y_grid, z_grid, isovalue=None):
+    def __get_contour_data_mpl(self, x_grid, y_grid, z_grid, isovalue=None):
         """
         wrapper for matplotlib function. Extracting contour information into bokeh compatible data type.
         :param x_grid: grid of x values
@@ -124,6 +124,15 @@ class Contour:
 
     def __get_contour_data_vtk(self, x_grid, y_grid, z_grid, isovalue=[0]):
 
+        """
+        wrapper for vtk marching squares function. Extracting contour information into bokeh compatible data type.
+        Less comfortable (no text labels, no coloring) but faster then __get_contour_data_mpl
+        :param x_grid:
+        :param y_grid:
+        :param z_grid:
+        :param isovalue:
+        :return:
+        """
         nx, ny = x_grid.shape
 
         xmin = self._plot.x_range.start

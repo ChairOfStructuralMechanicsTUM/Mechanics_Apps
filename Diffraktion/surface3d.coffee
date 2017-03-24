@@ -16,8 +16,8 @@ import {LayoutDOM, LayoutDOMView} from "models/layouts/layout_dom"
 # See: http://visjs.org/graph3d_examples.html for more details. This
 # JS object should match the Python default value.
 OPTIONS =
-  width:  '300px'
-  height: '300px'
+  width:  '600px'
+  height: '600px'
   style: 'surface'
   showPerspective: true
   showGrid: false
@@ -26,9 +26,9 @@ OPTIONS =
   zMin: -2.0
   zMax: +2.0
   cameraPosition:
-    horizontal: -0.35
-    vertical: 0.32
-    distance: 1.8    
+    horizontal: -0.8
+    vertical: 0.6
+    distance: 1.6    
 
 # To create custom model extensions that will render on to the HTML canvas
 # or into the DOM, we must create a View subclass for the model. Currently
