@@ -59,15 +59,15 @@ source_shadow = ColumnDataSource(data=dict(x=[], y=[]))
 
 # interactive widgets
 # slider for setting angle of incident
-phi0_slider = Slider(title="angle of incident", name='angle of incident', value=phi0_init, start=0, end=pi, step=.1*pi)
+phi0_slider = Slider(title="Angle of incidence", name='angle of incidence', value=phi0_init, start=0, end=pi, step=.1*pi)
 # slider for setting wavelength
-wavelength_slider = Slider(title="wavelength", name='wavelength', value=wavelength_init, start=10, end=100, step=5)
+wavelength_slider = Slider(title="Wavelength", name='wavelength', value=wavelength_init, start=10, end=100, step=5)
 # textbox for displaying dB value at proble location
-textbox = TextInput(title="noise probe", name='noise probe')
+textbox = TextInput(title="Noise probe", name='noise probe')
 
 # Generate a figure container for the field
-plot = Figure(plot_height=300,
-              plot_width=330,
+plot = Figure(plot_height=550,
+              plot_width=580,
               x_range=[x_min,x_max],
               y_range=[y_min,y_max],
               x_axis_label='x',
@@ -282,19 +282,23 @@ initialize()
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
-description = Div(text=open(description_filename).read(), render_as_text=False, width=700)
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 # add area image
 area_image = Div(text="""
 <p>
-<img src="/Diffraktion/static/images/Diffraktion_areas.jpg" width=250>
+<img src="/Diffraktion/static/images/Diffraktion_areas.jpg" width=500>
 </p>
 <p>
 Characteristic regions and wave parameters
 </p>""", render_as_text=False, width=350)
 
 # create layout
-controls = widgetbox(phi0_slider,wavelength_slider,textbox,width=300)  # all controls
-curdoc().add_root(column(description,row(row(Spacer(width=25),surface,Spacer(width=325)),plot),row(Spacer(width=25),controls,Spacer(width=65),area_image)))  # add plots and controls to root
+controls = widgetbox(phi0_slider,wavelength_slider,textbox,width=550)  # all controls
+curdoc().add_root(column(description,
+                         row(row(Spacer(width=50),surface,Spacer(width=550)),plot),
+                         row(Spacer(width=50),controls,Spacer(width=45),area_image)
+                         )
+                  )  # add plots and controls to root
 curdoc().add_periodic_callback(update, target_frame_time)  # update function
 curdoc().title = "Diffraktion"
