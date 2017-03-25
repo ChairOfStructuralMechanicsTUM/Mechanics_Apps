@@ -105,7 +105,7 @@ def updateBars ():
 
 # evolve cart position
 def moveCart ():
-    global cartPosition, cartSpeed, cartAcc, mu
+    global cartPosition, cartSpeed, cartAcc, mu, Active
     dt=0.1
     # get new velocity, old velocity = speed*direction
     (nx,ny)=deriv(cartPosition)
@@ -158,6 +158,9 @@ def moveCart ():
     drawCart()
     updateForces()
     updateBars()
+    if (abs(cartSpeed)<=0.001 or cartPosition==0 or cartPosition==len(RollerPointXPos)-1):
+        curdoc().remove_periodic_callback(moveCart)
+        Active=False
 
 # figure for bar charts
 eFig = BC.BarChart(["Mechanische Energie\n(Mechanical Energy)","Potentielle Energie\n(Potential Energy)","Kinetische Energie\n(Kinetic Energy)"],
@@ -195,6 +198,8 @@ p.patch(x='x',y='y',fill_color="#0065BD",source=cart,level='annotation')
 
 # functions which change the rollercoaster shape
 def Ramp():
+    global MechEng
+    MechEng=100
     drawPath(XRamp,YRamp)
     updateForces()
     drawCart()
@@ -203,6 +208,8 @@ ramp_button = Button(label="Rampe", button_type="success")
 ramp_button.on_click(Ramp)
 
 def Bump():
+    global MechEng
+    MechEng=100
     drawPath(XBump,YBump)
     updateForces()
     drawCart()
@@ -211,6 +218,8 @@ bump_button = Button(label="Bumps", button_type="success")
 bump_button.on_click(Bump)
 
 def Loop():
+    global MechEng
+    MechEng=100
     drawPath(XLoop,YLoop)
     updateForces()
     drawCart()
