@@ -1,4 +1,4 @@
-# Stopping Distances App / Bremswegen App
+# Stopping Distances App / Bremsstrecke App
 
 Prototype of a WebApp demonstrating stopping distances via Bokeh for the lectures at the Chair of Structural Mechanics, Prof. Müller, TUM (Technische Universität München).
 
