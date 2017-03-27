@@ -178,6 +178,8 @@ p.add_tools(MoveNodeTool())
 def on_mouse_move(attr, old, new):
     if (modify_path(attr,old,new)==1):
         # if the path is changed then update the drawing
+        global MechEng
+        MechEng=100
         updateForces()
         drawCart()
         updateBars()
