@@ -41,56 +41,35 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [x] 1) Tensile testing/Zugversuch (eb)
 - [x] 2) Transverse strain/Querdehnung (eb)
 - [ ] 3) Doble-supported beam with point load/Balken (ad)
-- [ ] 4) Maxwell's reciprocity theorem/Reziprozitï¿½tssatz von Maxwell (ad)
+- [ ] 4) Maxwell's reciprocity theorem/Reziprozitätssatz von Maxwell (ad)
 - [ ] 5) Buckling/Knickung (ad)
+- [ ] 6) Seilbahn/Funicular (br)
+- [ ] 7) Polares Flächenträgheitmoments/Polar moment of inertia ()
+- [ ] 8) Zusammenges. Flächenträgheitmoments/ Combined moment of inertia ()
+- [ ] 9) Zusammenges. Schwerpunktsmoment/Combined center of mass moment
 
 #### Supplementary course/Ergï¿½nzungskurs Technical mechanics (ft):
-- [ ] 1) Spring pendulum/Federpendel (sp)
-- [ ] 2) Pendulum/Schwerependel (sp)
-- [ ] 3) Base-excited oscillator/Fuï¿½punkterregter Schwinger (sp)
-- [ ] 4) Tuned mass damper/Schwingungstilger (sp)
+- [ ] 1) Spring pendulum/Federpendel (eb)
+- [ ] 2) Pendulum/Schwerependel (eb)
+- [ ] 3) Base-excited oscillator/Fusspunkterregter Schwinger (eb)
+- [ ] 4) Tuned mass damper/Schwingungstilger (eb)
 - [ ] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter) (ak)
 - [x] 6) Coriolis force/Drehscheibe-Corioliskraft (eb)
 - [ ] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma)
-- [ ] 8) Collision/Stoï¿½ (ma)
-- [ ] 9) Rollercoaster (eb)
+- [ ] 8) Collision/Stoss (ma)
+- [x] 9) Rollercoaster (eb)
+- [x] 10)Stopping distances (eb)
+- [x] 11) Wurfgeschoss/Projectiles (eb)
+- [ ] 12) Abrollbedingungen/Rolling Condition 
+- [ ] 13) Rollversuch/Rolling test ()
 
 #### Structural dynamics (cs):
 - [ ] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
 - [ ] 2) FEM Example (ma)
 - [ ] 3) Seismic example (ak)
 
-
 #### Technical Acoustics II (ag):
 - [x] 1) Diffraction (br)
-
-### Proper Documentation & Refactoring
-
-#### Technical mechanics I:
-- [x] 1) Zugversuch/Tensile testing
-- [x] 2) Querdehnung/Transverse strain
-- [ ] 3) Doble-supported beam with point load/Balken
-- [ ] 4) Maxwell's reciprocity theorem/Reziprozitï¿½tssatz von Maxwell
-- [ ] 5) Buckling/Knickung
-
-#### Supplementary course/Ergï¿½nzungskurs Technical mechanics:
-- [ ] 1) Spring pendulum/Federpendel
-- [ ] 2) Pendulum/Schwerependel
-- [ ] 3) Base-excited oscillator/Fuï¿½punkterregter Schwinger
-- [ ] 4) Tuned mass damper/Schwingungstilger
-- [ ] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter)
-- [x] 6) Coriolis force/Drehscheibe-Corioliskraft
-- [ ] 7) Boat with three swimmers/Boot mit drei Schwimmern
-- [ ] 8) Collision/Stoï¿½
-- [ ] 9) Rollercoaster
-
-#### Structural dynamics (cs):
-- [ ] 1) Euler-Bernoulli Vibrations with analytical solutions
-- [ ] 2) FEM Example
-- [ ] 3) Seismic example
-
-#### Technical Acoustics II (ag):
-- [x] 1) Diffraction
 
 ### Reference person for theoretical questions
 - Francesca Taddei ft
@@ -105,4 +84,4 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - Siddeshwaran Parthiban sp
 - Antonios Kamariotis ak
 - Abraham Duplaa ad
-- Banjamin Rï¿½th br
+- Banjamin Rüth br

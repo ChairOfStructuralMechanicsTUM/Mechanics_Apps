@@ -43,12 +43,12 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [ ] 3) Doble-supported beam with point load/Balken (ad)
 - [ ] 4) Maxwell's reciprocity theorem/Reziprozitätssatz von Maxwell (ad)
 - [ ] 5) Buckling/Knickung (ad)
-- [ ] 6) Seilbahn/Funicular (br)
-- [ ] 7) Polares Flächenträgheitmoments/Polar moment of inertia ()
-- [ ] 8) Zusammenges. Flächenträgheitmoments/ Combined moment of inertia ()
-- [ ] 9) Zusammenges. Schwerpunktsmoment/Combined center of mass moment
+- [ ] 6) Funicular/Seilbahn (br)
+- [ ] 7) Polar moment of inertia/Polares Flächenträgheitmoments/ ()
+- [ ] 8) Combined moment of inertia/Zusammenges. Flächenträgheitmoments ()
+- [ ] 9) Combined center of mass moment/Zusammenges. Schwerpunktsmoment ()
 
-#### Supplementary course/Ergï¿½nzungskurs Technical mechanics (ft):
+#### Supplementary course/Ergänzungskurs Technical mechanics (ft):
 - [ ] 1) Spring pendulum/Federpendel (eb)
 - [ ] 2) Pendulum/Schwerependel (eb)
 - [ ] 3) Base-excited oscillator/Fusspunkterregter Schwinger (eb)
@@ -58,10 +58,10 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [ ] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma)
 - [ ] 8) Collision/Stoss (ma)
 - [x] 9) Rollercoaster (eb)
-- [x] 10)Stopping distances (eb)
-- [x] 11) Wurfgeschoss/Projectiles (eb)
-- [ ] 12) Abrollbedingungen/Rolling Condition 
-- [ ] 13) Rollversuch/Rolling test ()
+- [x] 10) Stopping distances (eb)
+- [x] 11) Projectiles/Wurfgeschoss (eb)
+- [ ] 12) Rolling Condition/Abrollbedingungen ()
+- [ ] 13) Rolling test/Rollversuch ()
 
 #### Structural dynamics (cs):
 - [ ] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
