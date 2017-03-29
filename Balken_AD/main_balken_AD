@@ -1,0 +1,5 @@
+#Balken and Einzallast: Double bearing beam and single cell
+
+
+#Make a class for the beam
+class Beam
