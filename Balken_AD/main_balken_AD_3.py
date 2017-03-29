@@ -57,10 +57,17 @@ def Fun_Update(attrname, old, new):
 
     #moment
     m_max = Fun_Moment(p_mag_slide.value,a,b,l)
-    mom_source.data = dict(x=[0,a,l] , y=[0,m_max,0])
+    if (l >= a):
+        mom_source.data = dict(x=[0,a,l] , y=[0,m_max,0])
+        shear_source.data = dict(x=[0,a,a,l], y=[-f1_mag,-f1_mag,f2_mag,f2_mag])
+    else:
+        mom_source.data = dict(x=[0,l,a] , y=[0,m_max,0])
+        shear_source.data = dict(x=[0,l,l,a], y=[-f1_mag,-f1_mag,p_mag,p_mag])
+
+
     #print mom_source
     #shear:
-    shear_source.data = dict(x=[0,a,a,l], y=[f1_mag,f1_mag,f2_mag,f2_mag])
+    shear_source.data = dict(x=[0,a,a,l], y=[-f1_mag,-f1_mag,f2_mag,f2_mag])
     #print shear_source
 
     #p_arrow:
@@ -87,6 +94,9 @@ def Fun_Update(attrname, old, new):
     else:
         f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(f2_mag/200.0)], yE=[-1] )
 
+#initial function:
+def initial():
+    Fun_Update(None,None,None)
 
 ##########Plotting##########
 #Main Plot:
@@ -116,10 +126,6 @@ p_mag_slide.on_change('value', Fun_Update)
 f2_loc_slide.on_change('value',Fun_Update)
 
 #main:
-def initial():
-    Fun_Update(None,None,None)
-
 initial()
 
-#show(row(column(plot)))#)p_loc_slide,p_mag_slide,f2_loc_slide),plot))
 curdoc().add_root(row(column(p_loc_slide,p_mag_slide,f2_loc_slide,plot1),plot))
