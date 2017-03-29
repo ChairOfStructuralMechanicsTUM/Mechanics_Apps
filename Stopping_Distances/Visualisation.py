@@ -27,9 +27,6 @@ class Visualisation:
         self.arrow.data = dict(xS=[0],yS=[0.5], xE=[v_0], yE=[0.5])
         self.v_label.data = dict(x=[v_0/2.0],y=[0.5],S=[u"v\u2092"])
     
-    def disp (self):
-        return self.fig
-    
     def move(self,x,v):
         temp=self.carshape+(x,0)
         self.car.data=dict(x=temp.x,y=temp.y)
