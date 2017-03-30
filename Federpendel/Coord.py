@@ -81,3 +81,6 @@ class Coord(object):
     
     def copy(self):
         return Coord(self.x,self.y)
+    
+    def prod_scal(self,A):
+        return self.x*A.x+self.y*A.y

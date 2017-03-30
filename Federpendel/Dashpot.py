@@ -51,13 +51,13 @@ class Dashpot(object):
         # can't be based on previous as bokeh too slow
         casing=deepcopy(self.CasingStart)
         line1=deepcopy(self.Line1Start)
-        displacement1=start-self.origStart
+        displacement=start-self.origStart
         for i in range(0,4):
-            casing['x'][i]+=displacement1.x
-            casing['y'][i]+=displacement1.y
+            casing['x'][i]+=displacement.x
+            casing['y'][i]+=displacement.y
         for i in range(0,2):
-            line1['x'][i]+=displacement1.x
-            line1['y'][i]+=displacement1.y
+            line1['x'][i]+=displacement.x
+            line1['y'][i]+=displacement.y
         
         piston=deepcopy(self.PistonStart)
         line2=deepcopy(self.Line2Start)
@@ -74,11 +74,13 @@ class Dashpot(object):
         self.Piston.data=piston
         self.Line2.data=line2
         
+        displacement = end-self.end+start-self.start
+        
         self.start=start.copy()
         self.end=end.copy()
         
         # return total displacement
-        return (displacement+displacement1).norm()
+        return displacement.prod_scal(self.direction)
     
     ## draw spring on figure
     def plot(self,fig,colour="#808080",width=1):
@@ -89,11 +91,11 @@ class Dashpot(object):
     
     ## place dashpot in space over a certain time
     def compressTo(self,start,end):
-        dt=0.1
+        dt=0.03
         # draw dashpot and collect displacement
         displacement=self.draw(start,end)
         # calculate the force exerted on/by the spring
-        F = self.lam*displacement/dt
+        F = -self.lam*displacement/dt
         for i in range(0,len(self.actsOn)):
             self.actsOn[i][0].applyForce(F*self.out(self.actsOn[i][1]),self)
         # return the force

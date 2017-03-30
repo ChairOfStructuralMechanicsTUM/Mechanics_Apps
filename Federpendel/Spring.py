@@ -4,7 +4,7 @@ from Coord import *
 
 class Spring(object):
     ## create spring
-    def __init__(self,start,end,x0,kappa=1.0,spacing = 1.0):
+    def __init__(self,start,end,x0,kappa=50.0,spacing = 1.0):
         start=Coord(start[0],start[1])
         end=Coord(end[0],end[1])
         # define spring constant
