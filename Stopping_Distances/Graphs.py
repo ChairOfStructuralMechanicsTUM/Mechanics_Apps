@@ -166,19 +166,27 @@ class Graphs:
         #create lists in which to store co-ordinates
         X=[]
         Y=[]
-        # plot 100 points between 0 and xmax
-        for s in linspace(0,xmax,100.0):
-            # add x point
-            X.append(s)
-            # Str contains an equation as a function of s
-            # evaluating it therefore gives the y co-ordinate
+        try:
+            # plot 100 points between 0 and xmax
+            for s in linspace(0,xmax,100.0):
+                # add x point
+                X.append(s)
+                # Str contains an equation as a function of s
+                # evaluating it therefore gives the y co-ordinate
+                Y.append(eval(Str))
+            
+            # add final point
+            X.append(xmax)
+            # create s=final_x_point so that s exists when it is called by Str in eval
+            s=xmax
             Y.append(eval(Str))
-        
-        # add final point
-        X.append(xmax)
-        # create s=final_x_point so that s exists when it is called by Str in eval
-        s=xmax
-        Y.append(eval(Str))
+        except ValueError:
+            # if value is not valid in equation
+            # (i.e s has become large enough that we are doing sqrt(negative) )
+            # then Y.append throws ValueError stopping further points being added
+            # as a result X is longer than Y
+            # fix this
+            X.pop()
         
         # add new data to appropriate figure
         if (sv=='s'):

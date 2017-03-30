@@ -1,4 +1,5 @@
 from string import find, count, replace
+from math import sqrt
 
 acceptable_characters=u"1234567890.+-*/^()\u221A"
 numbers=u"1234567890."

@@ -288,6 +288,8 @@ class Problem:
             self.Reset()
             # enable viewer to see s(t) and v(t)
             self.eqVis.disabled=False
+            # rename acceleration input
+            self.UserAcceleration.title="Beschleunigung :"
         elif (new==u"Webabh\u00E4ngige Geschwindigkeit"):
             # if new problem type is where user provides v(s)
             # update input title to indicate this
@@ -305,3 +307,7 @@ class Problem:
             self.Reset()
             # stop viewer from seeing s(t) and v(t) (as not relevant to this problem)
             self.eqVis.disabled=True
+            # clear and remove name from acceleration input
+            # (disabled does not work, nor does visible)
+            self.UserAcceleration.value=""
+            self.UserAcceleration.title=""
