@@ -25,7 +25,10 @@ shear_source = ColumnDataSource(data=dict(x=[] , y=[]))
 p_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
 f2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
 f1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
-
+#text source:
+text_source = ColumnDataSource(data=dict(x=[] , y=[]))
+#Position 2 Triangle source:
+f2_triangle_source = ColumnDataSource(data=dict(x= [], y= [], size = []))
 #Sliders:
 p_loc_slide= Slider(title="Concentrated Load Location",value= xf/2,start = x0, end = xf, step = 1/resol)
 p_mag_slide = Slider(title="Concentrated Load Magnitude", value=p_mag, start=-2*p_mag, end=2*p_mag, step=1)
@@ -54,8 +57,9 @@ def Fun_Update(attrname, old, new):
     l = f2_coord
     f1_mag = Fun_F(p_mag_slide.value,b,l)
     f2_mag = Fun_F(p_mag_slide.value,a,l)
+    f2_triangle_source.data = dict(x = [0.0,f2_loc_slide.value], y = [0-0.41, 0-0.41], size = [20,20])
 
-    #moment
+    #moment and shear:
     m_max = Fun_Moment(p_mag_slide.value,a,b,l)
     if (l >= a):
         mom_source.data = dict(x=[0,a,l] , y=[0,m_max,0])
@@ -63,12 +67,6 @@ def Fun_Update(attrname, old, new):
     else:
         mom_source.data = dict(x=[0,l,a] , y=[0,m_max,0])
         shear_source.data = dict(x=[0,l,l,a], y=[-f1_mag,-f1_mag,p_mag,p_mag])
-
-
-    #print mom_source
-    #shear:
-    shear_source.data = dict(x=[0,a,a,l], y=[-f1_mag,-f1_mag,f2_mag,f2_mag])
-    #print shear_source
 
     #p_arrow:
     if (p_mag==0):
@@ -82,18 +80,20 @@ def Fun_Update(attrname, old, new):
     if (f1_mag==0):
         f1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[])
     elif (f1_mag<0):
-        f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(f1_mag/200.0)], yE=[1] )
+        f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(f1_mag/200.0)], yE=[0.8] )
     else:
-        f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(f1_mag/200.0)], yE=[-1] )
+        f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(f1_mag/200.0)], yE=[-0.8] )
 
     #f2_arrow:
     if (f2_mag==0):
         f2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[])
     elif (f2_mag<0):
-        f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [1-(f2_mag/200.0)], yE=[1] )
+        f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [1-(f2_mag/200.0)], yE=[0.8] )
     else:
-        f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(f2_mag/200.0)], yE=[-1] )
+        f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(f2_mag/200.0)], yE=[-0.8] )
 
+    text_source.data = dict(x = [p_coord,0,], y = [0-0.41, 0-0.41]) # x = [p, f1, f2]
+    print f2_arrow_source.data['xS']
 #initial function:
 def initial():
     Fun_Update(None,None,None)
@@ -102,8 +102,10 @@ def initial():
 #Main Plot:
 plot = Figure(title="Doppeltgelagerter Balken und Einzellast", x_range=(x0-3,xf+3), y_range=(-5,5))
 plot.line(x='x', y='y', source=plot_source, color='blue',line_width=20)
+plot.triangle(x='x', y='y', size = 'size', source= f2_triangle_source,color="#99D594", line_width=2)
+#plot.text(x=[],)
 #Plot with moment and shear:
-plot1 = Figure(title="Biegemoment, Querkraft", x_range=(x0,xf), y_range=(-100*2,100*2), width = 400, height = 200)
+plot1 = Figure(title="Biegemoment, Querkraft", x_range=(x0,xf), y_range=(-400,400), width = 400, height = 200)
 plot1.line(x='x', y='y', source=mom_source, color='blue',line_width=5)
 plot1.line(x='x', y='y', source=shear_source, color='red',line_width=5)
 
