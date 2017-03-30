@@ -5,6 +5,7 @@ numbers=u"1234567890."
     
 def isEquation(equation,x):
     global acceptable_characters, numbers
+    # change , to . so 0,5 becomes 0.5, thus rendering European notation readable by python
     replace(equation,',','.')
     # check there are as many opening brackets as closing brackets
     if (count(equation,'(')!=count(equation,')')):

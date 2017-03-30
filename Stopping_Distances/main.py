@@ -1,5 +1,6 @@
 from Problem import *
 
+# create each part of the window
 Visual=Visualisation()
 Plotter=Graphs()
 Prob = Problem(Visual,Plotter)
