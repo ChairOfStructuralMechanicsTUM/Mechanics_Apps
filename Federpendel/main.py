@@ -60,7 +60,7 @@ p.axis.major_label_text_font_size="12pt"
 p.axis.axis_label_text_font_style="normal"
 p.axis.axis_label_text_font_size="14pt"
 p.xaxis.axis_label="Zeit (Time) [s]"
-p.yaxis.axis_label="Verschiebung (Displacement) [m]"
+p.yaxis.axis_label="Auslenkung (Displacement) [m]"
 
 def change_mass(attr,old,new):
     global mass
