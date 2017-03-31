@@ -23,6 +23,21 @@ class Mass(object):
         # tell the object that it is linked so it can also apply forces to the mass
         obj.linkTo(self,p)
     
+    ## reset linking point between mass and object
+    def resetLinks(self,obj,point):
+        p=Coord(point[0],point[1])
+        # initialise values for loop
+        n=len(self.affectedObjects)
+        i=0
+        while (i<n):
+            # check for object
+            if (self.affectedObjects[i][0]==obj):
+                # if so update it to the new force
+                self.affectedObjects[i][1]=p
+                # and exit while loop
+                i=n+1
+            i+=1
+    
     ## Usually called by spring or dashpot to apply a force to the mass
     def applyForce(self,F,obj):
         # initialise values for loop
@@ -30,7 +45,7 @@ class Mass(object):
         i=0
         while (i<n):
             # check if object has already applied a force
-            if (self.nextStepObjForces==obj):
+            if (self.nextStepObjForces[i]==obj):
                 # if so update it to the new force
                 self.nextStepForces[i]=F
                 # and exit while loop
@@ -105,6 +120,12 @@ class RectangularMass(Mass):
     # add RectangularMass to figure
     def plot(self,fig,colour="#0065BD",width=1):
         fig.patch(x='x',y='y',color=colour,source=self.shape,line_width=width)
+    
+    # displace mass to position (used for reset)
+    def moveTo(self,x,y,w,h):
+        temp=dict(x=[x,x,x+h,x+h],y=[y,y+w,y+w,y])
+        # update ColumnDataSource
+        self.shape.data=temp
 
 class CircularMass(Mass):
     def __init__ (self, mass, x=0, y=0, w=0, h=0):
@@ -115,3 +136,9 @@ class CircularMass(Mass):
     # add CircularMass to figure
     def plot(self,fig,colour="#0065BD",width=1):
         fig.ellipse(x='x',y='y',width='w',height='h',color=colour,source=self.shape,line_width=width)
+    
+    # displace mass to position (used for reset)
+    def moveTo(self,point):
+        temp=dict(x=[point[0]], y=[point[1]], w=[self.shape.data['w'][0]], h=[self.shape.data['h'][0]])
+        # update ColumnDataSource
+        self.shape.data=temp
