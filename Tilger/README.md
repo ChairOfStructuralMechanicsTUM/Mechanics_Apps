@@ -7,6 +7,3 @@ The app can be run using the command "bokeh serve --show Tilger/" from the paren
 ## To Do
 - [ ] implement forced oscillation (correctly)
       Masse 10, Federsteifigkeit 60, Dämpfungskonstante 10, Omega 17.5 gives weird results
-
-
-
