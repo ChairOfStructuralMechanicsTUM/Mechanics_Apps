@@ -73,9 +73,18 @@ class Spring(object):
         fig.line(x='x',y='y',color=colour,source=self.Position,line_width=width)
     
     ## place spring in space
-    def compressTo(self,start,end):
-        # draw spring and collect current length
-        length=self.draw(start,end)
+    def compressTo(self,start,end,dt = None,draw = True):
+        if (draw):
+            # draw spring and collect current length
+            length=self.draw(start,end)
+        else:
+            self.start=start.copy()
+            self.end=end.copy()
+            # find direction along which spring lies
+            # (not normalised)
+            direction = end-start
+            # find normalising constant (=length)
+            length = direction.norm()
         # calculate the force exerted on/by the spring
         F = -self.kappa*(length-self.length)
         for i in range(0,len(self.actsOn)):
@@ -84,11 +93,11 @@ class Spring(object):
         return F
     
     ## if a point (start) is moved then compress spring accordingly and calculate resulting force
-    def movePoint(self,start,moveVect):
+    def movePoint(self,start,moveVect,dt = None, draw = True):
         if (start==self.start):
-            return self.compressTo(start+moveVect,self.end)
+            return self.compressTo(start+moveVect,self.end,dt,draw)
         else:
-            return self.compressTo(self.start,start+moveVect)
+            return self.compressTo(self.start,start+moveVect,dt,draw)
     
     # return outward direction
     def out(self,se):

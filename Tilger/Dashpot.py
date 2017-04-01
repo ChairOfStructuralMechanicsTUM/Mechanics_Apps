@@ -90,10 +90,15 @@ class Dashpot(object):
         fig.line(x='x',y='y',color=colour,source=self.Line2,line_width=width)
     
     ## place dashpot in space over a certain time
-    def compressTo(self,start,end):
-        dt=0.03
-        # draw dashpot and collect displacement
-        displacement=self.draw(start,end)
+    def compressTo(self,start,end,dt,draw = True):
+        if (draw):
+            # draw dashpot and collect displacement
+            displacement=self.draw(start,end)
+        else:
+            displacement = end-self.end+start-self.start
+            self.start=start.copy()
+            self.end=end.copy()
+            displacement = displacement.prod_scal(self.direction)
         # calculate the force exerted on/by the spring
         F = -self.lam*displacement/dt
         for i in range(0,len(self.actsOn)):
@@ -102,11 +107,11 @@ class Dashpot(object):
         return F
     
     ## if a point (start) is moved then compress spring accordingly and calculate resulting force
-    def movePoint(self,start,moveVect):
+    def movePoint(self,start,moveVect,dt, draw = True):
         if (start==self.start):
-            return self.compressTo(start+moveVect,self.end)
+            return self.compressTo(start+moveVect,self.end,dt,draw)
         else:
-            return self.compressTo(self.start,start+moveVect)
+            return self.compressTo(self.start,start+moveVect,dt,draw)
     
     # return outward direction
     def out(self,se):
