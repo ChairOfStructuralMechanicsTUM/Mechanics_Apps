@@ -115,7 +115,7 @@ class RectangularMass(Mass):
     def __init__ (self, mass, x, y, w, h):
         Mass.__init__(self,mass)
         # create ColumnDataSource
-        self.shape = ColumnDataSource(data=dict(x=[x,x,x+h,x+h],y=[y,y+w,y+w,y]))
+        self.shape = ColumnDataSource(data=dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y]))
     
     # add RectangularMass to figure
     def plot(self,fig,colour="#0065BD",width=1):
@@ -123,7 +123,7 @@ class RectangularMass(Mass):
     
     # displace mass to position (used for reset)
     def moveTo(self,x,y,w,h):
-        temp=dict(x=[x,x,x+h,x+h],y=[y,y+w,y+w,y])
+        temp=dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y])
         # update ColumnDataSource
         self.shape.data=temp
 
