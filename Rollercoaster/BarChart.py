@@ -94,7 +94,7 @@ class BarChart(object):
         return self.barSources[key].data
     
     def setHeight(self,key,height):
-        self.barSources[key].data=dict(x=list(self.barSource[key].data['x']),y=[0,height,height,0])
+        self.barSources[key].data=dict(x=list(self.barSources[key].data['x']),y=[0,height,height,0])
     
     def Height(self,height):
         self.fig.height=height
