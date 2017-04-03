@@ -120,6 +120,11 @@ def moveCart ():
     sDone=0
     step=0.1
     factor=1.0
+    # if cart is at end of track and accelerates off track then stop the call
+    if ((cartPosition==0 and cartSpeed<0) or (cartPosition==len(RollerPointXPos)-1 and cartSpeed>0)):
+        curdoc().remove_periodic_callback(moveCart)
+        Active=False
+        sDone=s
     # take smaller and smaller steps to approach s
     # (there is no formula to find the appropriate t such that |(X(t)-xnow,Y(t)-ynow)|=s
     while (sDone<s and factor<65):
@@ -158,7 +163,8 @@ def moveCart ():
     drawCart()
     updateForces()
     updateBars()
-    if (abs(cartSpeed)<=0.001 or cartPosition==0 or cartPosition==len(RollerPointXPos)-1):
+    if (abs(cartSpeed)<=0.001 and cartAcc[0]**2+cartAcc[1]**2<0.01):
+        # if an equilibrium has been reached then stop
         curdoc().remove_periodic_callback(moveCart)
         Active=False
 
@@ -170,7 +176,7 @@ eFig.Height(650)
 eFig.fig.yaxis.visible=False
 
 # figure for diagram
-p = figure(title="", tools="zoom_in,zoom_out,wheel_zoom", x_range=(0,15), y_range=(0,15))
+p = figure(title="", tools="", x_range=(0,15), y_range=(0,15))
 init();
 p.line(x='x',y='y',source=RollerCoasterPathSource,line_color="black")
 p.add_tools(MoveNodeTool())
@@ -273,7 +279,7 @@ play_button.on_click(play)
 def Friction(attr,old,new):
     global mu
     mu=new
-drag_slider = Slider(title=u"Friktion (Friction), \u00B5 = ", value=0.2, start=0.0, end=1.0, step=0.1)
+drag_slider = Slider(title=u"Reibungskoeffizient (Coefficient of friction), \u00B5 = ", value=0.2, start=0.0, end=1.0, step=0.1,width=350)
 drag_slider.on_change('value',Friction)
 
 ## Send to window
