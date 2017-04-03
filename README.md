@@ -1,6 +1,6 @@
 # Mechanics Apps
 Webbased visualization for mechanics content via Bokeh
-This Repository contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Mï¿½ller, TUM (Technische Universitï¿½t Mï¿½nchen).
+This Repository contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. MÃ¼ller, TUM (Technical University of Munich).
 
 ## Server Architecture
 
@@ -41,14 +41,14 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [x] 1) Tensile testing/Zugversuch (eb)
 - [x] 2) Transverse strain/Querdehnung (eb)
 - [ ] 3) Doble-supported beam with point load/Balken (ad)
-- [ ] 4) Maxwell's reciprocity theorem/Reziprozitätssatz von Maxwell (ad)
+- [ ] 4) Maxwell's reciprocity theorem/ReziprozitÃ¤tssatz von Maxwell (ad)
 - [ ] 5) Buckling/Knickung (ad)
 - [ ] 6) Funicular/Seilbahn (br)
-- [ ] 7) Polar moment of inertia/Polares Flächenträgheitmoments/ ()
-- [ ] 8) Combined moment of inertia/Zusammenges. Flächenträgheitmoments ()
+- [ ] 7) Polar moment of inertia/Polares FlÃ¤chentrÃ¤gheitmoments/ ()
+- [ ] 8) Combined moment of inertia/Zusammenges. FlÃ¤chentrÃ¤gheitmoments ()
 - [ ] 9) Combined center of mass moment/Zusammenges. Schwerpunktsmoment ()
 
-#### Supplementary course/Ergänzungskurs Technical mechanics (ft):
+#### Supplementary course/ErgÃ¤nzungskurs Technical mechanics (ft):
 - [ ] 1) Spring pendulum/Federpendel (eb)
 - [ ] 2) Pendulum/Schwerependel (eb)
 - [ ] 3) Base-excited oscillator/Fusspunkterregter Schwinger (eb)
@@ -79,9 +79,9 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - Julian Freisinger jf
 
 ### Developers
-- Emily Bourne em
+- Emily Bourne eb
 - Moustafa Alsayed Ahmad ma
 - Siddeshwaran Parthiban sp
 - Antonios Kamariotis ak
 - Abraham Duplaa ad
-- Banjamin Rüth br
+- Benjamin RÃ¼th br
