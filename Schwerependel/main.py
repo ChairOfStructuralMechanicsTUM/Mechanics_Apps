@@ -9,7 +9,7 @@ PendulumArm = ColumnDataSource(data = dict(x=[0],y=[10]))
 PhaseDiagram = ColumnDataSource(data = dict(x=[[]],y=[[]], c=["blue"]))
 basicPhaseDiagram = ColumnDataSource(data = dict(x=[],y=[]))
 currentPoint = ColumnDataSource(data = dict(x=[],y=[]))
-R=2.0
+R=4.0
 m=5.0
 g=9.81
 dt=0.1
