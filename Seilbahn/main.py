@@ -2,6 +2,8 @@ from __future__ import division
 from bokeh.plotting import figure
 from bokeh.models import Tool
 from bokeh.models.sources import ColumnDataSource
+from bokeh.models.widgets import Slider
+from bokeh.models.layouts import Row
 from bokeh.io import curdoc
 from draggablePost import DraggablePost
 from draggableCart import DraggableCart
@@ -61,14 +63,26 @@ class DrawTool(Tool):
 
 p.add_tools(DrawTool())
 
+def rope_equation(from_post, to_post, t):
+    return from_post + (to_post - from_post) * t   # todo here we need a formula for the actual rope shape!!!
+
+def update_cart(from_post, to_post):
+    cart_pos = rope_equation(from_post,to_post,cart_position_slider.value)
+    cart = draggables[2]
+    dx, dy = cart_pos - cart._pos
+    cart.translate(dx, dy)
+
 def compute_rope(from_post, to_post):
     x = []
     y = []
     for t in np.linspace(0,1,100):
-        pos = from_post + (to_post - from_post) * t  # todo here we need a formula for the actual rope shape!!!
+        pos = rope_equation(from_post,to_post,t)
         x.append(pos[0])
         y.append(pos[1])
     rope_data_source.data = dict(x=x, y=y)
+
+    update_cart(from_post, to_post)
+
 
 def on_mouse_move(attr, old, new):
     global RollerPointXPos, RollerPointYPos, RollerNodeSource
@@ -85,10 +99,20 @@ def on_mouse_move(attr, old, new):
                 draggable.translate(dx, dy)
         compute_rope(draggables[0].get_post_tip_position(), draggables[1].get_post_tip_position())
 
+
+def on_cart_position_slider_change(attr, old, new):
+    from_post, to_post = draggables[0].get_post_tip_position(), draggables[1].get_post_tip_position()
+    update_cart(from_post, to_post)
+
+
+cart_position_init = 0.5
+cart_position_slider = Slider(title="cart position", name='cart position', value=cart_position_init, start=0, end=1, step=.01)
+cart_position_slider.on_change('value', on_cart_position_slider_change)
+
 compute_rope(draggables[0].get_post_tip_position(), draggables[1].get_post_tip_position())
 p.tool_events.on_change('geometries', on_mouse_move)
 
 ## Send to window
-curdoc().add_root(p)
+curdoc().add_root(Row(p,cart_position_slider))
 # curdoc().add_root(p)
 curdoc().title = "Seilbahn"
