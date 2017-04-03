@@ -213,19 +213,20 @@ def change_E(attrname, old, new):
     Block.deform([ForceX_input.value, ForceY_input.value])
 
 ## Create slider to choose force applied to x axis
-ForceX_input = Slider(title="Kraft-x (Force-x)", value=0.0, start=0.0, end=125.0, step=5)
+ForceX_input = Slider(title="Kraft-x (Force-x) [N]", value=0.0, start=0.0, end=125.0, step=5,width=350)
 ForceX_input.on_change('value',change_FX)
 
 ## Create slider to choose force applied to y axis
-ForceY_input = Slider(title="Kraft-y (Force-y)", value=0.0, start=0.0, end=125.0, step=5)
+ForceY_input = Slider(title="Kraft-y (Force-y) [N]", value=0.0, start=0.0, end=125.0, step=5,width=350)
 ForceY_input.on_change('value',change_FY)
 
 ## Create slider to choose nu applied
-Nu_input = Slider(title="Nu", value=0.5, start=0.0, end=1.0, step=0.1)
+Nu_input = Slider(title="Nu", value=0.5, start=0.0, end=1.0, step=0.1,width=350)
 Nu_input.on_change('value',change_nu)
 
 ## Create slider to choose Young's modulus
-E_input = Slider(title=u"Elastizit\u00E4tsmodul (Young's Modulus)", value=100.0, start=100.0, end=1000.0, step=100)
+E_input = Slider(title=u"Elastizit\u00E4tsmodul (Young's Modulus) [N/m\u00B2]",
+    value=100.0, start=100.0, end=1000.0, step=100,width=350)
 E_input.on_change('value',change_E)
 
 ## Create Deformable Object
