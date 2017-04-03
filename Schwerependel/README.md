@@ -6,5 +6,5 @@ The app can be run using the command "bokeh serve --show Schwerependel/" from th
 
 ## To Do
 - [ ] add start/stop buttons
-- [ ] add sliders
+- [ ] find TUM colours for currentPoint
 - [ ] recalculate equations for double pendulum

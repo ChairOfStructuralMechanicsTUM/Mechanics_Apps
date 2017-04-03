@@ -8,6 +8,7 @@ Mass = ColumnDataSource(data = dict(x=[],y=[]))
 PendulumArm = ColumnDataSource(data = dict(x=[0],y=[10]))
 PhaseDiagram = ColumnDataSource(data = dict(x=[[]],y=[[]], c=["blue"]))
 basicPhaseDiagram = ColumnDataSource(data = dict(x=[],y=[]))
+currentPoint = ColumnDataSource(data = dict(x=[],y=[]))
 R=2.0
 m=5.0
 g=9.81
@@ -71,6 +72,7 @@ def plot():
 
 def evolve():
     getNextPoint()
+    currentPoint.data=dict(x=[phi],y=[dPhi])
     plot()
 
 fig = figure(title="Schwerependel (Pendulum)",tools="",x_range=(-5,5),y_range=(2,12))
@@ -89,10 +91,49 @@ phase_diagramm.axis.axis_label_text_font_size="16pt"
 phase_diagramm.xaxis.axis_label=u"\u03C6"
 phase_diagramm.yaxis.axis_label=u"\u03C6\u0307"
 phase_diagramm.multi_line(xs='x',ys='y',color='c',source=PhaseDiagram)
-phase_diagramm.ellipse(x='x',y='y',width=0.1,height=0.1,color="blue",source=basicPhaseDiagram)
+phase_diagramm.ellipse(x='x',y='y',width=0.1,height=0.1,color="#0065BD",source=basicPhaseDiagram)
+phase_diagramm.ellipse(x='x',y='y',width=0.2,height=0.2,color="pink",source=currentPoint)
 plot()
 
+def stop():
+    try:
+        curdoc().remove_periodic_callback(evolve)
+    except ValueError:
+        pass
+
+def change_mass(attr,old,new):
+    global m
+    m=new
+## Create slider to choose mass of blob
+mass_input = Slider(title="Masse (mass) [kg]", value=5, start=0.5, end=10.0, step=0.1,width=200)
+mass_input.on_change('value',change_mass)
+
+def change_lam(attr,old,new):
+    global lam
+    lam=new
+## Create slider to choose damper coefficient
+lam_input = Slider(title=u"D\u00E4mpfungskonstante (Damper Coefficient) [N*s/m]", value=0.0, start=0.0, end=5.0, step=0.2,width=400)
+lam_input.on_change('value',change_lam)
+
+def change_phi0(attr,old,new):
+    global phi
+    stop()
+    phi=new
+    plot()
+## Create slider to choose damper coefficient
+phi0_input = Slider(title=u"\u03C60", value=0.0, start=-3.0, end=3.0, step=0.2,width=200)
+phi0_input.on_change('value',change_phi0)
+
+def change_phi0dot(attr,old,new):
+    global dPhi
+    stop()
+    dPhi=new
+    plot()
+## Create slider to choose damper coefficient
+dphi0_input = Slider(title=u"\u03C6\u03070", value=0.0, start=-5.0, end=5.0, step=0.5,width=200)
+dphi0_input.on_change('value',change_phi0dot)
+
 ## Send to window
-curdoc().add_root(row(fig,phase_diagramm))
+curdoc().add_root(column(row(fig,phase_diagramm),row(mass_input,lam_input,phi0_input,dphi0_input)))
 curdoc().title = "Schwerependel"
-#curdoc().add_periodic_callback(evolve,100)
+curdoc().add_periodic_callback(evolve,100)
