@@ -3,7 +3,7 @@ from __future__ import division
 from os.path import dirname, join
 
 import numpy as np
-from numpy import pi, cos, sin
+from numpy import pi, cos, sin, sqrt, log10
 import time
 
 from bokeh.driving import count
@@ -20,7 +20,7 @@ from quiver import Quiver
 from clickInteractor import ClickInteractor
 
 from diffraction_grid import Grid
-from diffraction_computation import compute_wave_amplitude_at_cart
+from diffraction_computation import compute_wave_max_at_cart
 
 # number of gridpoints in x and y direction
 nx_surface = 20  # resolution surface plot
@@ -187,11 +187,14 @@ def update_wave_amplitude_at_probe(x,y,t):
     wavelength = wavelength_slider.value
     x = np.array([[x]])
     y = np.array([[y]])
-    z_val = compute_wave_amplitude_at_cart(x, y, wavelength, phi0, c, t)
-    textbox.value = str(z_val[0,0]) + " dB"  # write measured value to textbox
+    p_max = abs(compute_wave_max_at_cart(x, y, wavelength, phi0)[0,0])
+    p_eff = 1.0 / sqrt(2.0) * p_max
+    p_0 = .0001 # minimum loudness
+    loudness = 20 * log10(p_eff/p_0)
+    textbox.value = "%.2f dB" % loudness  # write measured value to textbox
 
 
-target_frame_time = 40  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
+target_frame_time = 100  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
 frame_end_time = 0
 lagcount = 0
 

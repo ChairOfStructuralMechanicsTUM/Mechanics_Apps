@@ -54,21 +54,49 @@ def compute_wave_amplitude_at_cart(x, y, wavelength, phi0, c, t):
     return compute_wave_amplitude_at_polar(rho, phi, wavelength, phi0, c, t)
 
 
-def compute_wave_amplitude_at_polar(rho, phi, wavelength, phi0, c, t):
+def compute_wave_max_at_cart(x, y, wavelength, phi0):
+    """
+    compute wave max at position (x,y)
+    :param x: position x
+    :param y: position y
+    :return: wave max
+    """
 
+    rho, phi = cart2pol(x,y)
+
+    return compute_wave_max_at_polar(rho, phi, wavelength, phi0)
+
+
+def compute_wave_amplitude_at_polar(rho, phi, wavelength, phi0, c, t):
     # compute parameter specific quantities
-    phiplus, phiminus = compute_fresnel_at_polar(rho, phi, wavelength, phi0)
+    phiplus, phiminus = compute_fresnel_at_polar(rho, phi, phi0, wavelength)
 
     return compute_wave_amplitude(rho, phi, phiplus, phiminus, wavelength, phi0, c, t)
 
 
+def compute_wave_max_at_polar(rho, phi, wavelength, phi0):
+    # compute parameter specific quantities
+    phiplus, phiminus = compute_fresnel_at_polar(rho, phi, phi0, wavelength)
+
+    return compute_wave_max(rho, phi, phiplus, phiminus, wavelength, phi0)
+
+
+def compute_wave_max(rho, phi, phiplus, phiminus, wavelength, phi0):
+    k = 2 * np.pi / wavelength  # wave number
+
+    # compute max amplitude from specific quantities
+    p_max = (1 + 1j) / 2.0 * (exp(1j * k * rho * cos(phi - phi0)) * phiplus +
+                              exp(1j * k * rho * cos(phi + phi0)) * phiminus)
+
+    return p_max
+
+
 def compute_wave_amplitude(rho, phi, phiplus, phiminus, wavelength, phi0, c, t):
 
-    k = 2 * np.pi / wavelength  # wave number
     omega = 2 * np.pi * c / wavelength  # angular velocity
 
+    p_max = compute_wave_max(rho, phi, phiplus, phiminus, wavelength, phi0)
     # compute amplitude at time t from specific quantities
-    p = (1 + 1j) / 2.0 * exp(1j * omega * t) * (exp(1j * k * rho * cos(phi - phi0)) * phiplus +
-                                                exp(1j * k * rho * cos(phi + phi0)) * phiminus)
+    p = p_max * exp(1j * omega * t)
 
     return p.real
