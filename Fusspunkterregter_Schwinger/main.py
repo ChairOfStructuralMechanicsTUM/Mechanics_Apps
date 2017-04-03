@@ -30,15 +30,19 @@ Floor_angle=164
 Active=False
 
 def init():
-    global Floor, Floor_source, oldBase
+    global Floor, Floor_source, oldBase, Floor_angle
     #x_range=(-7,7)
-    #for x in (-7,3)
-    Floor = dict(x=[],y=[])
-    for i in range(0,100):
+    Floor = dict(x=[],y=[])    
+    #for x in (-7,2)
+    for i in range(0,91):
         Floor['x'].append(i/10.0-7.0)
         Floor['y'].append(4)
-    #for x in (3,7)
-    for i in range(100,141):
+    #for x in (2,4)
+    for i in range(91,110):
+        Floor['x'].append(i/10.0-7.0)
+        Floor['y'].append(-0.0308*(i/10.0)**3+0.7329*(i/10.0)**2-5.7046*i/10.0+18.4390)
+    #for x in (4,7)
+    for i in range(110,141):
         Floor['x'].append(i/10.0-7.0)
         Floor['y'].append(4-sin(radians((i-100)*4.0)))
     Floor_source.data = deepcopy(dict(Floor))
@@ -49,6 +53,7 @@ def init():
     mass.resetLinks(spring,(-2,stable_pos))
     mass.resetLinks(dashpot,(2,stable_pos))
     oldBase=9
+    Floor_angle=164
 
 def updateFloor():
     global Floor, Floor_source, Floor_angle
@@ -60,7 +65,12 @@ def updateFloor():
 def evolve():
     global mass, Bottom_Line, Linking_Line, t, s, oldBase
     updateFloor()
-    baseShift=Floor['y'][70]-4
+    gradient = (Floor['y'][73]-Floor['y'][68])/0.5
+    if (gradient==0):
+        baseShift=Floor['y'][70]-4
+    else:
+        gradNorm = sqrt(1+gradient**2)
+        baseShift=Floor['y'][int(floor(70+10.0*gradient/gradNorm))]-4-(1-1.0/gradNorm)
     Bottom_Line.data=dict(x=[-2,2],y=[9+baseShift,9+baseShift])
     Linking_Line.data=dict(x=[0,0],y=[9+baseShift,5+baseShift])
     Wheel_source.data=dict(x=[0],y=[5+baseShift])
@@ -145,6 +155,7 @@ def reset():
     Position.data=dict(t=[0],s=[0])
     Bottom_Line.data = dict(x=[-2,2],y=[9,9])
     Linking_Line.data = dict(x=[0,0],y=[9,5])
+    Wheel_source.data = dict(x=[0],y=[5])
     init() 
     mass.changeInitV(0.0)
 
