@@ -1,3 +1,5 @@
+#main file:
+
 from bokeh.plotting import Figure, output_file , show
 from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
 from bokeh.layouts import column, row
@@ -15,18 +17,19 @@ I  = 50                 #moment of inertia
 length  = xf-x0              #length of beam
 plot_source = dict(x = np.linspace(x0,xf,resol), y = np.ones(resol) * 0 )
 p_mag = 100.0           #initialize the p force
-
+p_magi = 100.0
 #Sources:
 #Moment Source:
 mom_source = ColumnDataSource(data=dict(x=[] , y=[]))
 #Shear Source:
 shear_source = ColumnDataSource(data=dict(x=[] , y=[]))
 #Arrow Sources:
-p_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
-f2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
-f1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
-#text source:
-text_source = ColumnDataSource(data=dict(x=[] , y=[]))
+p_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
+f2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
+f1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
+
+#f2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
+#f1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
 #Position 2 Triangle source:
 f2_triangle_source = ColumnDataSource(data=dict(x= [], y= [], size = []))
 #Sliders:
@@ -70,59 +73,88 @@ def Fun_Update(attrname, old, new):
 
     #p_arrow:
     if (p_mag==0):
-        p_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[])
+        p_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     elif (p_mag<0):
-        p_arrow_source.data = dict(xS= [p_coord], xE= [p_coord], yS= [1-(p_mag/200.0)], yE=[1] )
+        p_arrow_source.data = dict(xS= [p_coord], xE= [p_coord], yS= [1-(p_mag/200.0)], yE=[1], lW = [abs(p_mag/40.0)] )
     else:
-        p_arrow_source.data = dict(xS= [p_coord], xE= [p_coord], yS= [-1-(p_mag/200.0)], yE=[-1] )
+        p_arrow_source.data = dict(xS= [p_coord], xE= [p_coord], yS= [-1-(p_mag/200.0)], yE=[-1], lW = [abs(p_mag/40.0)] )
 
     #f1_arrow:
     if (f1_mag==0):
-        f1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[])
-    elif (f1_mag<0):
-        f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(f1_mag/200.0)], yE=[0.8] )
+        f1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    elif (f1_mag<=-p_magi):
+        f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(f1_mag/200.0)], yE=[0.8], lW = [6])
+    elif ( f1_mag>-p_magi ) & ( f1_mag<0 ):
+        f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(f1_mag/200.0)], yE=[0.8], lW = [abs(f1_mag/40.0)])
+    elif (f1_mag > 0) & ( f1_mag < p_magi ):
+        f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(f1_mag/200.0)], yE=[-0.8], lW = [abs(f1_mag/40.0)] )
     else:
-        f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(f1_mag/200.0)], yE=[-0.8] )
+        f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(f1_mag/200.0)], yE=[-0.8], lW = [6] )
 
     #f2_arrow:
     if (f2_mag==0):
         f2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[])
-    elif (f2_mag<0):
-        f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [1-(f2_mag/200.0)], yE=[0.8] )
+    elif (f2_mag<=-p_magi):
+        f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [1-(f2_mag/200.0)], yE=[0.8], lW = [6])
+    elif (f2_mag > -p_magi) & (f2_mag < 0.0):
+        f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [1-(f2_mag/200.0)], yE=[0.8], lW = [abs(f2_mag/40.0)])
+    elif (f2_mag > 0) & ( f2_mag < p_magi ):
+        f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(f2_mag/200.0)], yE=[-0.8], lW = [abs(f2_mag/40.0)])
     else:
-        f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(f2_mag/200.0)], yE=[-0.8] )
+        f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(f2_mag/200.0)], yE=[-0.8], lW = [6])
 
-    text_source.data = dict(x = [p_coord,0,], y = [0-0.41, 0-0.41]) # x = [p, f1, f2]
-    print f2_arrow_source.data['xS']
+    #print f2_arrow_source.data['xS']
 #initial function:
 def initial():
     Fun_Update(None,None,None)
 
 ##########Plotting##########
+#<<<<<<< HEAD
+
+###Main Plot:
+#=======
 #Main Plot:
-plot = Figure(title="Doppeltgelagerter Balken und Einzellast", x_range=(x0-3,xf+3), y_range=(-5,5))
+#>>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
+plot = Figure(title="Doppeltgelagerter Balken und Einzellast", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5))
 plot.line(x='x', y='y', source=plot_source, color='blue',line_width=20)
 plot.triangle(x='x', y='y', size = 'size', source= f2_triangle_source,color="#99D594", line_width=2)
-#plot.text(x=[],)
+#plot.text(x='xS', y = 'yE', source=p_arrow_source, text = 'F', angle = 0, x_offset = 1, y_offset = 1)
+#plot.text(1,2, text = 'F')
+#plot.text(text = 'a')
+#plot.text(text = 'a')
+
+#<<<<<<< HEAD
+###Plot with moment and shear:
+#=======
 #Plot with moment and shear:
+#>>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
 plot1 = Figure(title="Biegemoment, Querkraft", x_range=(x0,xf), y_range=(-400,400), width = 400, height = 200)
 plot1.line(x='x', y='y', source=mom_source, color='blue',line_width=5)
 plot1.line(x='x', y='y', source=shear_source, color='red',line_width=5)
 
+#<<<<<<< HEAD
+###arrow plotting:
+#=======
 #arrow plotting:
+#>>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
 #P arrow:
-p_arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width= 4,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=p_arrow_source,line_color="red",line_width=2)
+p_arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width= 4, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=p_arrow_source,line_color="red")
 plot.add_layout(p_arrow_glyph)
 #Position 2 arrow:
 f2_arrow_glyph = Arrow(end=OpenHead(line_color="blue",line_width= 4,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=f2_arrow_source,line_color="blue",line_width=2)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width = "lW", source=f2_arrow_source,line_color="blue")
 plot.add_layout(f2_arrow_glyph)
 #Position 1 arrow:
 f1_arrow_glyph = Arrow(end=OpenHead(line_color="blue",line_width= 4,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=f1_arrow_source,line_color="blue",line_width=2)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width = "lW", source=f1_arrow_source,line_color="blue" )
 plot.add_layout(f1_arrow_glyph)
+#<<<<<<< HEAD
+
+###on_change:
+#=======
 #on_change:
+#>>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
 p_loc_slide.on_change('value', Fun_Update)
 p_mag_slide.on_change('value', Fun_Update)
 f2_loc_slide.on_change('value',Fun_Update)
