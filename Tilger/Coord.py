@@ -66,6 +66,10 @@ class Coord(object):
     # define what is printed by print
     def __str__(self):
         return "("+str(self.x)+", "+str(self.y)+")"
+
+    # define what is printed by print in a list
+    def __repr__(self):
+        return "("+str(self.x)+", "+str(self.y)+")"
     
     # function returning the norm
     def norm(self):
