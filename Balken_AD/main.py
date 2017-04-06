@@ -109,12 +109,12 @@ def initial():
     Fun_Update(None,None,None)
 
 ##########Plotting##########
-<<<<<<< HEAD
+#<<<<<<< HEAD
 
 ###Main Plot:
-=======
+#=======
 #Main Plot:
->>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
+#>>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
 plot = Figure(title="Doppeltgelagerter Balken und Einzellast", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5))
 plot.line(x='x', y='y', source=plot_source, color='blue',line_width=20)
 plot.triangle(x='x', y='y', size = 'size', source= f2_triangle_source,color="#99D594", line_width=2)
@@ -123,20 +123,20 @@ plot.triangle(x='x', y='y', size = 'size', source= f2_triangle_source,color="#99
 #plot.text(text = 'a')
 #plot.text(text = 'a')
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
 ###Plot with moment and shear:
-=======
+#=======
 #Plot with moment and shear:
->>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
+#>>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
 plot1 = Figure(title="Biegemoment, Querkraft", x_range=(x0,xf), y_range=(-400,400), width = 400, height = 200)
 plot1.line(x='x', y='y', source=mom_source, color='blue',line_width=5)
 plot1.line(x='x', y='y', source=shear_source, color='red',line_width=5)
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
 ###arrow plotting:
-=======
+#=======
 #arrow plotting:
->>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
+#>>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
 #P arrow:
 p_arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width= 4, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=p_arrow_source,line_color="red")
@@ -149,12 +149,12 @@ plot.add_layout(f2_arrow_glyph)
 f1_arrow_glyph = Arrow(end=OpenHead(line_color="blue",line_width= 4,size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width = "lW", source=f1_arrow_source,line_color="blue" )
 plot.add_layout(f1_arrow_glyph)
-<<<<<<< HEAD
+#<<<<<<< HEAD
 
 ###on_change:
-=======
+#=======
 #on_change:
->>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
+#>>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
 p_loc_slide.on_change('value', Fun_Update)
 p_mag_slide.on_change('value', Fun_Update)
 f2_loc_slide.on_change('value',Fun_Update)
