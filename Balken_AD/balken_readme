@@ -1,9 +1,12 @@
 To Do:
--Fix arrows
--Fix shear equation CHECK
--add triangles to the support beams CHECK
--change colors to TUM colors
--
+-change axis so that plot is not cut off (CHECK BUT: the plot goes to infinity when negative?)
+-turn axis off CHECK
+-add the biegelinie-variation (bending shape)
+-add the schub effects (shear effects) with length-to-height ratio as interactive parameter
+-add reset button
+-LAST: change colors to TUM colors
+
+
 
 Translations:
 -Biegemoment: Bending Moment
@@ -13,7 +16,7 @@ Translations:
 -Laenge zu Hoehe: Length to Height ratio
 
 -Biegelinie: Buffer-line?
--Mit Schub: with thrust?
+-Mit Schub: Shear effects
 
 There is a beam: side A is fixed. Side B location can be changed by the slider. The animation takes the following inputs:
 	-Location of side B

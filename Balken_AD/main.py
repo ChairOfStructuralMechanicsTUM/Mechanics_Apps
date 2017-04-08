@@ -7,7 +7,6 @@ from bokeh.io import curdoc
 import numpy as np
 import math
 
-
 #Beam Properties:
 resol = 100.0
 x0 = 0                  #starting value of beam
@@ -27,15 +26,14 @@ shear_source = ColumnDataSource(data=dict(x=[] , y=[]))
 p_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 f2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 f1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
-
-#f2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
-#f1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
+#label_source:
+labels_source = ColumnDataSource(data=dict(x=[] , y=[],name = []))
 #Position 2 Triangle source:
 f2_triangle_source = ColumnDataSource(data=dict(x= [], y= [], size = []))
 #Sliders:
-p_loc_slide= Slider(title="Concentrated Load Location",value= xf/2,start = x0, end = xf, step = 1/resol)
-p_mag_slide = Slider(title="Concentrated Load Magnitude", value=p_mag, start=-2*p_mag, end=2*p_mag, step=1)
-f2_loc_slide = Slider(title="Support 2 Location",value=xf,start = x0, end = xf, step = 1/resol)
+p_loc_slide= Slider(title="Lastposition",value= xf/2,start = x0, end = xf, step = 1/resol)
+p_mag_slide = Slider(title="Lastamplitude", value=p_mag, start=-2*p_mag, end=2*p_mag, step=1)
+f2_loc_slide = Slider(title="Lagerposition",value=xf,start = x0, end = xf, step = 1/resol)
 
 
 #FUNCTION: Calculate Force at Support 1
@@ -60,7 +58,8 @@ def Fun_Update(attrname, old, new):
     l = f2_coord
     f1_mag = Fun_F(p_mag_slide.value,b,l)
     f2_mag = Fun_F(p_mag_slide.value,a,l)
-    f2_triangle_source.data = dict(x = [0.0,f2_loc_slide.value], y = [0-0.41, 0-0.41], size = [20,20])
+    move_tri = -0.25
+    f2_triangle_source.data = dict(x = [0.0,f2_loc_slide.value], y = [0+move_tri, 0+move_tri], size = [20,20])
 
     #moment and shear:
     m_max = Fun_Moment(p_mag_slide.value,a,b,l)
@@ -71,20 +70,25 @@ def Fun_Update(attrname, old, new):
         mom_source.data = dict(x=[0,l,a] , y=[0,m_max,0])
         shear_source.data = dict(x=[0,l,l,a], y=[-f1_mag,-f1_mag,p_mag,p_mag])
 
-    #p_arrow:
+    #p_arrow and labels:
     if (p_mag==0):
         p_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        labels_source.data = dict(x = [] , y = [], name = ['F','A','B'])
+
     elif (p_mag<0):
         p_arrow_source.data = dict(xS= [p_coord], xE= [p_coord], yS= [1-(p_mag/200.0)], yE=[1], lW = [abs(p_mag/40.0)] )
+        labels_source.data = dict(x = [p_coord,0,f2_coord] , y = [1,move_tri,move_tri],name = ['F','A','B'])
+
     else:
         p_arrow_source.data = dict(xS= [p_coord], xE= [p_coord], yS= [-1-(p_mag/200.0)], yE=[-1], lW = [abs(p_mag/40.0)] )
+        labels_source.data = dict(x = [p_coord,0,f2_coord] , y = [-1,move_tri,move_tri],name = ['F','A','B'])
 
     #f1_arrow:
-    if (f1_mag==0):
-        f1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    elif (f1_mag<=-p_magi):
+    #if (f1_mag==0):
+        #f1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    if (f1_mag<=-p_magi):
         f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(f1_mag/200.0)], yE=[0.8], lW = [6])
-    elif ( f1_mag>-p_magi ) & ( f1_mag<0 ):
+    elif ( f1_mag>-p_magi ) & ( f1_mag<=0 ):
         f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(f1_mag/200.0)], yE=[0.8], lW = [abs(f1_mag/40.0)])
     elif (f1_mag > 0) & ( f1_mag < p_magi ):
         f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(f1_mag/200.0)], yE=[-0.8], lW = [abs(f1_mag/40.0)] )
@@ -92,69 +96,63 @@ def Fun_Update(attrname, old, new):
         f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(f1_mag/200.0)], yE=[-0.8], lW = [6] )
 
     #f2_arrow:
-    if (f2_mag==0):
-        f2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[])
-    elif (f2_mag<=-p_magi):
+    #if (f2_mag==0):
+    #    f2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[])
+    if (f2_mag<=-p_magi):
         f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [1-(f2_mag/200.0)], yE=[0.8], lW = [6])
-    elif (f2_mag > -p_magi) & (f2_mag < 0.0):
+    elif (f2_mag > -p_magi) & (f2_mag <= 0.0):
         f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [1-(f2_mag/200.0)], yE=[0.8], lW = [abs(f2_mag/40.0)])
     elif (f2_mag > 0) & ( f2_mag < p_magi ):
         f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(f2_mag/200.0)], yE=[-0.8], lW = [abs(f2_mag/40.0)])
     else:
         f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(f2_mag/200.0)], yE=[-0.8], lW = [6])
 
-    #print f2_arrow_source.data['xS']
+    #print labels_source.data
+
+
 #initial function:
 def initial():
     Fun_Update(None,None,None)
 
 ##########Plotting##########
-#<<<<<<< HEAD
 
 ###Main Plot:
-#=======
-#Main Plot:
-#>>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
 plot = Figure(title="Doppeltgelagerter Balken und Einzellast", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5))
 plot.line(x='x', y='y', source=plot_source, color='blue',line_width=20)
 plot.triangle(x='x', y='y', size = 'size', source= f2_triangle_source,color="#99D594", line_width=2)
-#plot.text(x='xS', y = 'yE', source=p_arrow_source, text = 'F', angle = 0, x_offset = 1, y_offset = 1)
-#plot.text(1,2, text = 'F')
-#plot.text(text = 'a')
-#plot.text(text = 'a')
+plot.axis.visible = False
+plot.outline_line_width = 7
+plot.outline_line_alpha = 0.3
+plot.outline_line_color = "Black"
+labels = LabelSet(x='x', y='y', text='name', level='glyph',
+              x_offset=5, y_offset=-30, source=labels_source, render_mode='canvas')
 
-#<<<<<<< HEAD
+
 ###Plot with moment and shear:
-#=======
-#Plot with moment and shear:
-#>>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
-plot1 = Figure(title="Biegemoment, Querkraft", x_range=(x0,xf), y_range=(-400,400), width = 400, height = 200)
+plot1 = Figure(title="Biegemoment, Querkraft", x_range=(x0,xf), y_range=(-600,600), width = 400, height = 200)
 plot1.line(x='x', y='y', source=mom_source, color='blue',line_width=5)
 plot1.line(x='x', y='y', source=shear_source, color='red',line_width=5)
+plot1.axis.visible = False
 
-#<<<<<<< HEAD
 ###arrow plotting:
-#=======
-#arrow plotting:
-#>>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
 #P arrow:
 p_arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width= 4, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=p_arrow_source,line_color="red")
-plot.add_layout(p_arrow_glyph)
 #Position 2 arrow:
 f2_arrow_glyph = Arrow(end=OpenHead(line_color="blue",line_width= 4,size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width = "lW", source=f2_arrow_source,line_color="blue")
-plot.add_layout(f2_arrow_glyph)
 #Position 1 arrow:
 f1_arrow_glyph = Arrow(end=OpenHead(line_color="blue",line_width= 4,size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width = "lW", source=f1_arrow_source,line_color="blue" )
+
+###add layouts:
+plot.add_layout(labels)
+plot.add_layout(p_arrow_glyph)
+plot.add_layout(f2_arrow_glyph)
 plot.add_layout(f1_arrow_glyph)
-#<<<<<<< HEAD
 
 ###on_change:
-#=======
-#on_change:
-#>>>>>>> 0db8c129e3a7194d1aee390c15b70851a12fd809
+
 p_loc_slide.on_change('value', Fun_Update)
 p_mag_slide.on_change('value', Fun_Update)
 f2_loc_slide.on_change('value',Fun_Update)
