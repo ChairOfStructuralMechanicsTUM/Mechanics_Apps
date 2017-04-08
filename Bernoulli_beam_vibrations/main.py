@@ -47,14 +47,14 @@ x3=np.linspace(0,1,N)
 y3=-5-(1/2*(np.cosh(1.8751*x3/l)-np.cos(1.8751*x3/l))-((1/2*(np.cosh(1.8751)+np.cos(1.8751)))/(1/2*(np.sinh(1.8751)+np.sin(1.8751))))*1/2*(np.sinh(1.8751*x3/l)-np.sin(1.8751*x3/l)))
 source3=ColumnDataSource(data=dict(x=x3,y=y3))
 
-p1 = figure(title="Euler Bernoulli Beam Vibrations", tools="crosshair,pan,reset,save,wheel_zoom", x_range=(-0.075,1.5), y_range=(-7.5,1.5))
+p1 = figure(title="Euler Bernoulli Beam Vibrations", tools="crosshair,pan,reset,save,wheel_zoom", x_range=(-0.075,1.5), y_range=(-8,1.5))
 p1.axis.visible = False
 p1.grid.visible = False
 p1.outline_line_color = None
 p1.title.text_font_size="18pt"
 
 beam1=p1.line(x='x', y='y', source=beam1,line_width=5,line_color='black') 
-eigenmodes_beam1=p1.line(x='x', y='y', source=source1,legend="Eigenvalue Problem: sin(lamda)=0",line_width=3,line_color='pink')
+eigenmodes_beam1=p1.line(x='x', y='y', source=source1,legend="""Eigenvalue Problem: sin(lamda)=0 """,line_width=3,line_color='pink')
 eigenmodes_beam1.visible=False
 support_left_beam1=p1.line(x='x', y='y', source=support_left,line_width=1,line_color='black')
 support_righta_beam1=p1.line(x='x', y='y', source=support_righta,line_width=1,line_color='black')
