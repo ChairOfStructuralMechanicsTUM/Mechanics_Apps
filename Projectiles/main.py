@@ -14,6 +14,8 @@ speed = 50
 g = 9.81
 PlanetGravity = dict(Weltraum = 0.0, Mercur = 3.61, Venus = 8.83, Erde = 9.81, Mars = 3.75, Ceres = 0.27,
     Jupiter = 26.0, Saturn = 11.2, Uranus = 10.5, Neptun = 13.3, Pluto = 0.61)
+PlanetHue = dict(Weltraum = "#42437A", Mercur = "#D6A3FF", Venus = "#FF9B30", Erde = "#D1F4FF", Mars = "#FF3636", Ceres = "#C4C4C4",
+    Jupiter = "#FFE1AD", Saturn = "#E8FF96", Uranus = "#46FAB2", Neptun = "#5D98FC", Pluto = "#F0E1E1")
 x_0 = 5.0
 y_0 = 7.5
 direction_arrow = ColumnDataSource(data=dict(xS=[],yS=[],xE=[],yE=[]))
@@ -80,6 +82,8 @@ drawBranch(p)
 drawBanana(p)
 drawCannon(p)
 drawBase(p)
+p.background_fill_color = PlanetHue["Erde"]
+p.grid.visible=False
 
 init()
 
@@ -141,6 +145,7 @@ def changeGrav(attr,old,new):
     else:
         # else reset and change gravity
         g=PlanetGravity[new]
+        p.background_fill_color = PlanetHue[new]
         Reset()
 grav_select = Select(title="Planet:", value="Erde",
     options=["Weltraum", "Mercur", "Venus", "Erde", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptun","Pluto"])

@@ -18,6 +18,7 @@ class Dashpot(object):
         self.direction = end-start
         # define (normalised) perpendicular vector for spike directions
         perpVect = self.direction.perp()
+        # define initial positions of dashpot coordinates
         self.CasingStart=dict(x=[end.x-self.direction.x/8.0+perpVect.x/2.0,
             start.x+self.direction.x/8.0+perpVect.x/2.0,start.x+self.direction.x/8.0-perpVect.x/2.0,
             end.x-self.direction.x/8.0-perpVect.x/2.0],y=[end.y-self.direction.y/8.0+perpVect.y/2.0,
@@ -35,6 +36,7 @@ class Dashpot(object):
         self.Line1 = ColumnDataSource(data=self.Line1Start)
         self.Piston = ColumnDataSource(data=self.PistonStart)
         self.Line2 = ColumnDataSource(data=self.Line2Start)
+        # once positions have been calculated direction is normalised
         self.direction=self.direction.direction()
         # objects that are influenced by the dashpot
         self.actsOn = []
@@ -51,7 +53,9 @@ class Dashpot(object):
         # can't be based on previous as bokeh too slow
         casing=deepcopy(self.CasingStart)
         line1=deepcopy(self.Line1Start)
+        # get displacement of casing
         displacement=start-self.origStart
+        # displace outside of piston
         for i in range(0,4):
             casing['x'][i]+=displacement.x
             casing['y'][i]+=displacement.y
@@ -61,7 +65,9 @@ class Dashpot(object):
         
         piston=deepcopy(self.PistonStart)
         line2=deepcopy(self.Line2Start)
+        # get displacement of plunger
         displacement=end-self.origEnd
+        # displace plunger
         for i in range(0,2):
             piston['x'][i]+=displacement.x
             piston['y'][i]+=displacement.y
@@ -74,12 +80,14 @@ class Dashpot(object):
         self.Piston.data=piston
         self.Line2.data=line2
         
+        # calculate change in length
         displacement = end-self.end+start-self.start
         
+        # save new points
         self.start=start.copy()
         self.end=end.copy()
         
-        # return total displacement
+        # return total displacement (along dashpot)
         return displacement.prod_scal(self.direction)
     
     ## draw spring on figure
@@ -90,32 +98,26 @@ class Dashpot(object):
         fig.line(x='x',y='y',color=colour,source=self.Line2,line_width=width)
     
     ## place dashpot in space over a certain time
-    def compressTo(self,start,end,dt,draw = True):
-        if (draw):
-            # draw dashpot and collect displacement
-            displacement=self.draw(start,end)
-        else:
-            displacement = end-self.end+start-self.start
-            self.start=start.copy()
-            self.end=end.copy()
-            displacement = displacement.prod_scal(self.direction)
+    def compressTo(self,start,end,dt):
+        # draw dashpot and collect displacement
+        displacement=self.draw(start,end)
         # calculate the force exerted on/by the spring
         F = -self.lam*displacement/dt
+        # apply this force to all connected objects
         for i in range(0,len(self.actsOn)):
             self.actsOn[i][0].applyForce(F*self.out(self.actsOn[i][1]),self)
         # return the force
         return F
     
-    ## if a point (start) is moved then compress spring accordingly and calculate resulting force
-    def movePoint(self,start,moveVect,dt, draw = True):
+    ## if a point (start) is moved then compress dashpot accordingly and calculate resulting force
+    def movePoint(self,start,moveVect,dt):
         if (start==self.start):
-            return self.compressTo(start+moveVect,self.end,dt,draw)
+            return self.compressTo(start+moveVect,self.end,dt)
         else:
-            return self.compressTo(self.start,start+moveVect,dt,draw)
+            return self.compressTo(self.start,start+moveVect,dt)
     
     # return outward direction
     def out(self,se):
-        # -1*direction
         if (se=='s'):
             return -self.direction
         else:
