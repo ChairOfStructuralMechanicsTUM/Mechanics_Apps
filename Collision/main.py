@@ -256,6 +256,14 @@ def update_ballTwo_y_position(attr,old,new):
     else:
         pass
     
+def update_Cr_value(attr,old,new):
+    global Cr
+    
+    if Active == False:
+        Cr = new
+    else:
+        pass
+    
 ballOneXCoordSlider = Slider(title=u" Green ball x-coordinate ", value=0, start=xMin, end=xMax, step=0.25,width=350)
 ballOneXCoordSlider.on_change('value',update_ballOne_x_position)
 
@@ -268,7 +276,9 @@ ballTwoXCoordSlider.on_change('value',update_ballTwo_x_position)
 ballTwoYCoordSlider = Slider(title=u" Red ball y-coordinate ", value=0, start=yMin, end=xMax, step=0.25,width=350)
 ballTwoYCoordSlider.on_change('value',update_ballTwo_y_position)
 
+Cr_Slider = Slider(title=u" coefficient of restitution ", value=0, start=0, end=1, step=0.1,width=350)
+Cr_Slider.on_change('value',update_Cr_value)
     
 curdoc().add_periodic_callback( compute_tranjectory,10 )
 
-curdoc().add_root(row(eFig.getFig(),playGround,column(reset_button,play_button,pause_button,ballOneXCoordSlider,ballOneYCoordSlider,ballTwoXCoordSlider,ballTwoYCoordSlider)))                       
+curdoc().add_root(row(eFig.getFig(),playGround,column(reset_button,play_button,pause_button,ballOneXCoordSlider,ballOneYCoordSlider,ballTwoXCoordSlider,ballTwoYCoordSlider,Cr_Slider)))                       
