@@ -6,3 +6,4 @@ The app can be run using the command "bokeh serve --show Schwerependel/" from th
 
 ## To Do
 - [ ] fix energy conservation for double pendulum
+       (Lagrangian equations give same result for ddTheta but give ddPhi dependant on ddTheta, removing this dependance gives division by 0 at theta=0)
