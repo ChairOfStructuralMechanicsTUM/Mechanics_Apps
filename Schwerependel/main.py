@@ -45,7 +45,7 @@ def getKinEngSingle():
 
 # return kinetic energy for double pendulum
 def getKinEngDouble():
-    return 0.5*m*((R*dPhi*sin(theta))**2+(R*dPhi*cos(theta)+R2*dTheta+R2*dPhi)**2)
+    return 0.5*m*((R*dPhi*sin(theta))**2+(R*dPhi*cos(theta)+R2*(dTheta+dPhi))**2)
 
 # return double derivative of phi for a single pendulum
 def ddPhi(Phi,dPhi):
@@ -54,7 +54,7 @@ def ddPhi(Phi,dPhi):
 
 # return double derivative of phi for a double pendulum
 def ddPhiDouble(phi,dPhi,theta,dTheta):
-    global lam, R, m, g
+    global lam, R, m, g, R2
     return g*cos(phi+theta)*sin(theta)/R-lam*dPhi*sin(theta)**2/m
 
 # return double derivative of theta for a double pendulum
@@ -140,9 +140,9 @@ def getCurrentXYSingle():
 
 # get position of mass in double pendulum
 def getCurrentXYDouble():
-    global R, sin, theta
-    X=R*sin(phi)+R*sin(phi+theta)
-    Y=10-R*cos(phi)-R*cos(phi+theta)
+    global R, R2, sin, theta
+    X=R*sin(phi)+R2*sin(phi+theta)
+    Y=10-R*cos(phi)-R2*cos(phi+theta)
     return (X,Y)
 
 # function which carries out timestep
@@ -172,7 +172,9 @@ def on_mouse_move(attr, old, new):
         # if last call
         elif (new[0][u'y']==-1):
             massSelected=False
+            inMass=False
             TotEng=getTotEng()
+            plot()
 
 # function which moves mass to new angle for single pendulum
 def moveToSingle(X,Y):
@@ -253,9 +255,9 @@ def stop():
     global Active, phi0_input, phi, dphi0_input, dPhi, dTheta
     if (Active):
         curdoc().remove_periodic_callback(evolve)
-        Active=False
         phi0_input.value=phi
         dphi0_input.value=dPhi
+        Active=False
     dTheta=0
         
 Stop_button = Button(label="Stop",button_type="success",width=150)
