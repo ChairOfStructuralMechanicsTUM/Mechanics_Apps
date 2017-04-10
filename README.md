@@ -40,36 +40,47 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 #### Technical mechanics I (jf):
 - [x] 1) Tensile testing/Zugversuch (eb)
 - [x] 2) Transverse strain/Querdehnung (eb)
-- [ ] 3) Doble-supported beam with point load/Balken (ad)
-- [ ] 4) Maxwell's reciprocity theorem/Reziprozitätssatz von Maxwell (ad)
-- [ ] 5) Buckling/Knickung (ad)
-- [ ] 6) Funicular/Seilbahn (br)
+- [\] 3) Doble-supported beam with point load/Balken (ad)
+- [\] 4) Maxwell's reciprocity theorem/Reziprozitätssatz von Maxwell (ad)
+- [\] 5) Buckling/Knickung (ad)
+- [\] 6) Funicular/Seilbahn (br)
 - [ ] 7) Polar moment of inertia/Polares Flächenträgheitmoments/ ()
 - [ ] 8) Combined moment of inertia/Zusammenges. Flächenträgheitmoments ()
 - [ ] 9) Combined center of mass moment/Zusammenges. Schwerpunktsmoment ()
+- [ ] 10) Maibaum/Maypole (ak)
 
 #### Supplementary course/Ergänzungskurs Technical mechanics (ft):
-- [ ] 1) Spring pendulum/Federpendel (eb)
-- [ ] 2) Pendulum/Schwerependel (eb)
-- [ ] 3) Base-excited oscillator/Fusspunkterregter Schwinger (eb)
-- [ ] 4) Tuned mass damper/Schwingungstilger (eb)
-- [ ] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter) (ak)
+- [x] 1) Spring pendulum/Federpendel (eb)
+- [x] 2) Pendulum/Schwerependel (eb)
+- [x] 3) Base-excited oscillator/Fusspunkterregter Schwinger (eb)
+- [x] 4) Tuned mass damper/Schwingungstilger (eb)
+- [x] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter) (ak)
 - [x] 6) Coriolis force/Drehscheibe-Corioliskraft (eb)
 - [ ] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma)
-- [ ] 8) Collision/Stoss (ma)
+- [\] 8) Collision/Stoss (ma)
 - [x] 9) Rollercoaster (eb)
 - [x] 10) Stopping distances (eb)
 - [x] 11) Projectiles/Wurfgeschoss (eb)
 - [ ] 12) Rolling Condition/Abrollbedingungen ()
 - [ ] 13) Rolling test/Rollversuch ()
+- [ ] 14) Instant centre of rotation of the cupoler/Momentanpol der Koppel (ak)
+- [ ] 15) Drop tube/Fallturm (ak)
+- [ ] 16) Low-pressure area/Tiefdruck ()
+- [ ] 17) Angular momentum/Drallerhaltung2 ()
+
 
 #### Structural dynamics (cs):
-- [ ] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
-- [ ] 2) FEM Example (ma)
+- [\] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
+- [\] 2) FEM Example (ma)
 - [ ] 3) Seismic example (ak)
 
 #### Technical Acoustics II (ag):
 - [x] 1) Diffraction (br)
+
+Legend
+- [x] finished
+- [\] ongoing
+- [ ] planned
 
 ### Reference person for theoretical questions
 - Francesca Taddei ft
