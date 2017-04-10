@@ -225,8 +225,8 @@ fig.grid.visible=False
 fig.outline_line_color = None
 fig.line(x='x',y='y',source=PendulumArm,color="#808080")
 fig.ellipse(x='x',y='y',width=1,height=1,source=Mass,color="#0065BD")
-fig.patch(x='x',y='y',source=KinEnergySource,color="red")
-fig.patch(x='x',y='y',source=OtherEnergySource,color="purple")
+fig.patch(x='x',y='y',source=KinEnergySource,color="#E37222")
+fig.patch(x='x',y='y',source=OtherEnergySource,color="#808080")
 
 # draw phase diagram
 phase_diagramm = figure(title="Phasendiagramm (Phase diagram)",tools="",x_range=(-3.14,3.14),y_range=(-5,5))
