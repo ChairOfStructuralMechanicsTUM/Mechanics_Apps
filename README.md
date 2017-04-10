@@ -50,13 +50,13 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [ ] 10) Maibaum/Maypole (ak)
 
 #### Supplementary course/Ergänzungskurs Technical mechanics (ft):
-- [x] 1) Spring pendulum/Federpendel (eb)
-- [x] 2) Pendulum/Schwerependel (eb)
+:white_check_mark: 1) Spring pendulum/Federpendel (eb)
+:white_check_mark: 2) Pendulum/Schwerependel (eb)
 - [x] 3) Base-excited oscillator/Fusspunkterregter Schwinger (eb)
 - [x] 4) Tuned mass damper/Schwingungstilger (eb)
 - [x] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter) (ak)
 - [x] 6) Coriolis force/Drehscheibe-Corioliskraft (eb)
-- [ ] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma)
+:white_medium_square: 7) Boat with three swimmers/Boot mit drei Schwimmern (ma)
 - [ ] 8) Collision/Stoss (ma)
 - [x] 9) Rollercoaster (eb)
 - [x] 10) Stopping distances (eb)
@@ -78,9 +78,9 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [x] 1) Diffraction (br)
 
 Legend
-- [x] finished
-- [ ] ongoing
-- [ ] planned
+:white_check_mark: finished
+:white_square_button: ongoing
+:white_medium_square: planned
 
 ### Reference person for theoretical questions
 - Francesca Taddei ft
