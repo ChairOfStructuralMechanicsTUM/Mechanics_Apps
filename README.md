@@ -41,9 +41,9 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [x] 1) Tensile testing/Zugversuch (eb)
 - [x] 2) Transverse strain/Querdehnung (eb)
 - [\] 3) Doble-supported beam with point load/Balken (ad)
-- [\] 4) Maxwell's reciprocity theorem/Reziprozitätssatz von Maxwell (ad)
-- [\] 5) Buckling/Knickung (ad)
-- [\] 6) Funicular/Seilbahn (br)
+- [o] 4) Maxwell's reciprocity theorem/Reziprozitätssatz von Maxwell (ad)
+- [o] 5) Buckling/Knickung (ad)
+- [o] 6) Funicular/Seilbahn (br)
 - [ ] 7) Polar moment of inertia/Polares Flächenträgheitmoments/ ()
 - [ ] 8) Combined moment of inertia/Zusammenges. Flächenträgheitmoments ()
 - [ ] 9) Combined center of mass moment/Zusammenges. Schwerpunktsmoment ()
@@ -79,7 +79,7 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 
 Legend
 - [x] finished
-- [\] ongoing
+- [o] ongoing
 - [ ] planned
 
 ### Reference person for theoretical questions
