@@ -77,11 +77,6 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 #### Technical Acoustics II (ag):
 - [x] 1) Diffraction (br)
 
-Legend
-- [x] finished
-- [ ] ongoing
-- [ ] planned
-
 ### Reference person for theoretical questions
 - Francesca Taddei ft
 - Axel Greim ag
