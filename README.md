@@ -40,10 +40,10 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 #### Technical mechanics I (jf):
 - [x] 1) Tensile testing/Zugversuch (eb)
 - [x] 2) Transverse strain/Querdehnung (eb)
-- [\] 3) Doble-supported beam with point load/Balken (ad)
-- [o] 4) Maxwell's reciprocity theorem/Reziprozitätssatz von Maxwell (ad)
-- [o] 5) Buckling/Knickung (ad)
-- [o] 6) Funicular/Seilbahn (br)
+- [ ] 3) Doble-supported beam with point load/Balken (ad)
+- [ ] 4) Maxwell's reciprocity theorem/Reziprozitätssatz von Maxwell (ad)
+- [ ] 5) Buckling/Knickung (ad)
+- [ ] 6) Funicular/Seilbahn (br)
 - [ ] 7) Polar moment of inertia/Polares Flächenträgheitmoments/ ()
 - [ ] 8) Combined moment of inertia/Zusammenges. Flächenträgheitmoments ()
 - [ ] 9) Combined center of mass moment/Zusammenges. Schwerpunktsmoment ()
@@ -57,7 +57,7 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [x] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter) (ak)
 - [x] 6) Coriolis force/Drehscheibe-Corioliskraft (eb)
 - [ ] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma)
-- [\] 8) Collision/Stoss (ma)
+- [ ] 8) Collision/Stoss (ma)
 - [x] 9) Rollercoaster (eb)
 - [x] 10) Stopping distances (eb)
 - [x] 11) Projectiles/Wurfgeschoss (eb)
@@ -70,8 +70,8 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 
 
 #### Structural dynamics (cs):
-- [\] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
-- [\] 2) FEM Example (ma)
+- [ ] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
+- [ ] 2) FEM Example (ma)
 - [ ] 3) Seismic example (ak)
 
 #### Technical Acoustics II (ag):
@@ -79,7 +79,7 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 
 Legend
 - [x] finished
-- [o] ongoing
+- [ ] ongoing
 - [ ] planned
 
 ### Reference person for theoretical questions
