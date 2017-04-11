@@ -71,6 +71,7 @@ def Fun_Deflection(a,b,l,p,x):
 
 #FUNCTION: Update:
 def Fun_Update(attrname, old, new):
+    my_line.glyph.line_width =new
     a = p_loc_slide.value
     f2_coord = f2_loc_slide.value
     b = f2_coord - a
@@ -155,7 +156,7 @@ def initial():
 
 ###Main Plot:
 plot = Figure(title="Doppeltgelagerter Balken und Einzellast", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5))
-plot.line(x='x', y='y', source=plot_source, color='blue', line_width =20)
+my_line=plot.line(x='x', y='y', source=plot_source, color='blue',line_width=20)
 plot.triangle(x='x', y='y', size = 'size', source= f2_triangle_source,color="#99D594", line_width=2)
 plot.axis.visible = False
 plot.outline_line_width = 7
