@@ -4,9 +4,10 @@ To Do:
 [X]turn axis off CHECK
 [ ]Fix the biegelinie-variation (bending shape)
 [ ]add the schub effects (shear effects) with length-to-height ratio as interactive
-[ ]add the checkboxes
+[X]add length to height slider
+[X]add the checkboxes
 [X]add reset button
-[ ]add length-height interactive slider
+[X]add length-height interactive slider
 [X]Columndatasource error
 [ ]LAST: change colors to TUM colors
 

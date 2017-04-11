@@ -71,7 +71,7 @@ def Fun_Deflection(a,b,l,p,x):
 
 #FUNCTION: Update:
 def Fun_Update(attrname, old, new):
-    my_line.glyph.line_width =new
+    my_line.glyph.line_width = 40/lth_slide.value
     a = p_loc_slide.value
     f2_coord = f2_loc_slide.value
     b = f2_coord - a
@@ -89,6 +89,7 @@ def Fun_Update(attrname, old, new):
     elif checkbox.active == [1]:
         checkbox.active = []
     elif checkbox.active == [0,1]:
+        ynew = Fun_Deflection(a,b,l,p_mag,plot_source.data['x'])
         plot_source.data = dict(x = np.linspace(x0,xf,resol), y = ynew)
         print 'this would be mit schub'
     else:
