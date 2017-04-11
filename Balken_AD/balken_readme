@@ -1,10 +1,14 @@
 To Do:
--change axis so that plot is not cut off (CHECK BUT: the plot goes to infinity when negative?)
--turn axis off CHECK
--add the biegelinie-variation (bending shape)
--add the schub effects (shear effects) with length-to-height ratio as interactive parameter
--add reset button
--LAST: change colors to TUM colors
+[X]change axis so that plot is not cut off
+[ ]fix what happens when both supports are equal (becomes a beam hanging on a wall)
+[X]turn axis off CHECK
+[ ]Fix the biegelinie-variation (bending shape)
+[ ]add the schub effects (shear effects) with length-to-height ratio as interactive
+[ ]add the checkboxes
+[X]add reset button
+[ ]add length-height interactive slider
+[X]Columndatasource error
+[ ]LAST: change colors to TUM colors
 
 
 
