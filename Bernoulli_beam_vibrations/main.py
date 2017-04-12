@@ -7,27 +7,33 @@ import numpy as np
 from bokeh.io import curdoc  
 from bokeh.layouts import row,column
 from bokeh.models import ColumnDataSource,CustomJS
-from bokeh.models.widgets import Slider,Toggle 
+from bokeh.models.widgets import Slider,Toggle, Paragraph 
 from bokeh.plotting import figure 
+from bokeh.layouts import widgetbox
 
 l=1
 #beam 1-->simply supported
 beam1 = ColumnDataSource(data=dict(x=[0,1], y=[0,0]))
 #create the boundary conditions for simply supported beam
-support_left=ColumnDataSource(data=dict(x=[0,-0.05,0.05,0.025,0.05,0.025,0,0.025,0,-0.025,0,-0.025,-0.05,-0.025,-0.05,-0.075,-0.05,0.05,0], y=[0,-0.15,-0.15,-0.2,-0.15,-0.15,-0.2,-0.15,-0.15,-0.2,-0.15,-0.15,-0.2,-0.15,-0.15,-0.2,-0.15,-0.15,0]))
+support_left=ColumnDataSource(data=dict(x=[0,-0.05,0.05,0.025,0.05,0.025,0,0.025,0,-0.025,0,-0.025,-0.05,-0.025,-0.05,-0.075,-0.05,0.05,0], y=[0,-0.15,-0.15,
+                                        -0.2,-0.15,-0.15,-0.2,-0.15,-0.15,-0.2,-0.15,-0.15,-0.2,-0.15,-0.15,-0.2,-0.15,-0.15,0]))
 support_righta=ColumnDataSource(data=dict(x=[1,0.95,1.05,1],y=[0,-0.10,-0.10,0]))
-support_rightb= ColumnDataSource(data=dict(x=[0.95,1.05,1.025,1.05,1.025,1,1.025,1,0.975,1,0.975,0.95,0.975,0.95],y=[-0.15,-0.15,-0.2,-0.15,-0.15,-0.2,-0.15,-0.15,-0.2,-0.15,-0.15,-0.2,-0.15,-0.15]))
+support_rightb= ColumnDataSource(data=dict(x=[0.95,1.05,1.025,1.05,1.025,1,1.025,1,0.975,1,0.975,0.95,0.975,0.95],y=[-0.15,-0.15,-0.2,-0.15,-0.15,-0.2,-0.15,-0.15,
+                                           -0.2,-0.15,-0.15,-0.2,-0.15,-0.15]))
 
 #beam 2-->fixed at both ends
 beam2 = ColumnDataSource(data=dict(x=[0,1], y=[-2.5,-2.5]))
 #create the boundary conditions for the beam fixed at both ends
-fixed_left=ColumnDataSource(data=dict(x=[0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03],y=[-2.25,-2.75,-2.8,-2.75,-2.625,-2.675,-2.625,-2.5,-2.55,-2.5,-2.375,-2.425,-2.375,-2.25,-2.3]))
-fixed_right=ColumnDataSource(data=dict(x=[1,1,1.03,1,1,1.03,1,1,1.03,1,1,1.03,1,1,1.03],y=[-2.25,-2.75,-2.7,-2.75,-2.625,-2.575,-2.625,-2.5,-2.45,-2.5,-2.375,-2.325,-2.375,-2.25,-2.2]))
+fixed_left=ColumnDataSource(data=dict(x=[0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03],y=[-2.25,-2.75,-2.8,-2.75,-2.625,-2.675,-2.625,-2.5,-2.55,-2.5,-2.375,
+                                      -2.425,-2.375,-2.25,-2.3]))
+fixed_right=ColumnDataSource(data=dict(x=[1,1,1.03,1,1,1.03,1,1,1.03,1,1,1.03,1,1,1.03],y=[-2.25,-2.75,-2.7,-2.75,-2.625,-2.575,-2.625,-2.5,-2.45,-2.5,-2.375,-2.325,
+                                       -2.375,-2.25,-2.2]))
 
 #beam 3-->cantilever beam
 beam3=ColumnDataSource(data=dict(x=[0,1], y=[-5,-5]))
 #create the left fixed support for the cantilever beam
-fixed_cantil=ColumnDataSource(data=dict(x=[0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03],y=[-4.75,-5.25,-5.3,-5.25,-5.125,-5.175,-5.125,-5,-5.05,-5,-4.875,-4.925,-4.875,-4.75,-4.8]))
+fixed_cantil=ColumnDataSource(data=dict(x=[0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03],y=[-4.75,-5.25,-5.3,-5.25,-5.125,-5.175,-5.125,-5,-5.05,-5,-4.875,
+                                        -4.925,-4.875,-4.75,-4.8]))
 
 #simply supported beam
 N=200
@@ -38,13 +44,15 @@ source1 = ColumnDataSource(data=dict(x=x1,y=y1))
 #beam fixed at both ends
 N=200
 x2=np.linspace(0,1,N)
-y2=-2.5-(1/2*(np.cosh(4.73004*x2/l)-np.cos(4.73004*x2/l))-((1/2*(np.cosh(4.73004)-np.cos(4.73004)))/(1/2*(np.sinh(4.73004)-np.sin(4.73004))))*1/2*(np.sinh(4.73004*x2/l)-np.sin(4.73004*x2/l)))
+y2=-2.5-(1/2*(np.cosh(4.73004*x2/l)-np.cos(4.73004*x2/l))-((1/2*(np.cosh(4.73004)-np.cos(4.73004)))/(1/2*(np.sinh(4.73004)-np.sin(4.73004))))*1/2*
+         (np.sinh(4.73004*x2/l)-np.sin(4.73004*x2/l)))
 source2=ColumnDataSource(data=dict(x=x2,y=y2))
 
 #cantilever beam
 N=200
 x3=np.linspace(0,1,N)
-y3=-5-(1/2*(np.cosh(1.8751*x3/l)-np.cos(1.8751*x3/l))-((1/2*(np.cosh(1.8751)+np.cos(1.8751)))/(1/2*(np.sinh(1.8751)+np.sin(1.8751))))*1/2*(np.sinh(1.8751*x3/l)-np.sin(1.8751*x3/l)))
+y3=-5-(1/2*(np.cosh(1.8751*x3/l)-np.cos(1.8751*x3/l))-((1/2*(np.cosh(1.8751)+np.cos(1.8751)))/(1/2*(np.sinh(1.8751)+np.sin(1.8751))))*1/2*(np.sinh(1.8751*x3/l)-
+            np.sin(1.8751*x3/l)))
 source3=ColumnDataSource(data=dict(x=x3,y=y3))
 
 p1 = figure(title="Euler Bernoulli Beam Vibrations", tools="crosshair,pan,reset,save,wheel_zoom", x_range=(-0.075,1.5), y_range=(-8,1.5))
@@ -54,28 +62,33 @@ p1.outline_line_color = None
 p1.title.text_font_size="18pt"
 
 beam1=p1.line(x='x', y='y', source=beam1,line_width=5,line_color='black') 
-eigenmodes_beam1=p1.line(x='x', y='y', source=source1,legend="""Eigenvalue Problem: sin(lamda)=0 """,line_width=3,line_color='pink')
+eigenmodes_beam1=p1.line(x='x', y='y', source=source1,legend="""Eigenvalue Problem: sin(\u03BB)=0 / Solution: w\u1D62(\u03BE)=sin(i\u00B7\u03C0\u00B7\u03BE)""",
+                         line_width=3,line_color='pink')
 eigenmodes_beam1.visible=False
 support_left_beam1=p1.line(x='x', y='y', source=support_left,line_width=1,line_color='black')
 support_righta_beam1=p1.line(x='x', y='y', source=support_righta,line_width=1,line_color='black')
 support_rightb_beam1=p1.line(x='x', y='y', source=support_rightb,line_width=1,line_color='black')
 
 beam2=p1.line(x='x', y='y', source=beam2,line_width=5,line_color='black') 
-eigenmodes_beam2=p1.line(x='x', y='y', source=source2,legend="Eigenvalue Problem: cosh(lamda)*cos(lamda)-1=0",line_width=3,line_color='purple')
+eigenmodes_beam2=p1.line(x='x', y='y', source=source2,legend="Eigenvalue Problem: cosh(\u03BB)\u00B7cos(\u03BB)-1=0 / Solution: w\u1D62(\u03BE) = c(\u03BB\u1D62\u03BE) - c(\u03BB\u1D62) / s(\u03BB\u1D62) \u00B7s (\u03BB\u1D62\u03BE)",
+                         line_width=3,line_color='purple')
 eigenmodes_beam2.visible=False
 fixed_support_left=p1.line(x='x', y='y', source=fixed_left,line_width=1,line_color='black')
 fixed_support_right=p1.line(x='x', y='y', source=fixed_right,line_width=1,line_color='black')
 
 beam3=p1.line(x='x', y='y', source=beam3,line_width=5,line_color='black') 
 fixed_cantilever=p1.line(x='x', y='y', source=fixed_cantil,line_width=1,line_color='black')
-eigenmodes_beam3=p1.line(x='x', y='y', source=source3,legend="Eigenvalue Problem: cosh(lamda)*cos(lamda)+1=0",line_width=3,line_color='red')
+eigenmodes_beam3=p1.line(x='x', y='y', source=source3,legend="Eigenvalue Problem: cosh(\u03BB)\u00B7cos(\u03BB)+1=0 / Solution: w\u1D62(\u03BE) = c(\u03BB\u1D62\u03BE) - C(\u03BB\u1D62) / S(\u03BB\u1D62) \u00B7s (\u03BB\u1D62\u03BE)",line_width=3,line_color='red')
 eigenmodes_beam3.visible= False
 
 p1.legend.label_text_font_size="10pt"
-p1.legend.border_line_width = 3
-p1.legend.border_line_color = "navy"
-p1.legend.border_line_alpha = 0.5
+#p1.legend.border_line_width = 3
+#p1.legend.border_line_color = "navy"
+#p1.legend.border_line_alpha = 0.5
 p1.legend.location = "bottom_left"
+
+p = Paragraph(text="""C(\u03BB\u00B7\u03BE)=\u00BD (cosh(\u03BB\u00B7\u03BE) + cos(\u03BB\u00B7\u03BE)) and S(\u03BB\u00B7\u03BE)=\u00BD (sinh(\u03BB\u00B7\u03BE) + sin(\u03BB\u00B7\u03BE)) c(\u03BB\u00B7\u03BE)=\u00BD (cosh(\u03BB\u00B7\u03BE) - cos(\u03BB\u00B7\u03BE))  and s(\u03BB\u00B7\u03BE)=\u00BD (sinh(\u03BB\u00B7\u03BE) - sin(\u03BB\u00B7\u03BE))""",
+              width=400, height=60)
 
 # coffeescript to link toggle with visible property
 code = '''\
@@ -136,6 +149,6 @@ def update_data(attrname, old, new):
     
 Eigenvalue_input.on_change('value',update_data)
 
-curdoc().add_root(column(column(p1,toggle1,toggle2,toggle3),Eigenvalue_input))
+curdoc().add_root(column(column(p1,widgetbox(p),toggle1,toggle2,toggle3),Eigenvalue_input))
 curdoc().title = "Bernoulli Beam Vibrations"
 
