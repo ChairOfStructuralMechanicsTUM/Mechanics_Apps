@@ -41,15 +41,15 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [x] 1) Tensile testing/Zugversuch (eb)
 - [x] 2) Transverse strain/Querdehnung (eb)
 - [ ] 3) Doble-supported beam with point load/Balken (ad)
-- [ ] 4) Maxwell's reciprocity theorem/Reziprozit√§tssatz von Maxwell (ad)
+- [ ] 4) Maxwell's reciprocity theorem/Reziprozit‰tssatz von Maxwell (ad)
 - [ ] 5) Buckling/Knickung (ad)
 - [ ] 6) Funicular/Seilbahn (br)
-- [ ] 7) Polar moment of inertia/Polares Fl√§chentr√§gheitmoments/ ()
-- [ ] 8) Combined moment of inertia/Zusammenges. Fl√§chentr√§gheitmoments ()
+- [ ] 7) Polar moment of inertia/Polares Fl‰chentr‰gheitmoments/ ()
+- [ ] 8) Combined moment of inertia/Zusammenges. Fl‰chentr‰§gheitmoments ()
 - [ ] 9) Combined center of mass moment/Zusammenges. Schwerpunktsmoment ()
 - [ ] 10) Maibaum/Maypole (ak)
 
-#### Supplementary course/Erg√§nzungskurs Technical mechanics (ft):
+#### Supplementary course/Erg‰nzungskurs Technical mechanics (ft):
 - [x] 1) Spring pendulum/Federpendel (eb)
 - [x] 2) Pendulum/Schwerependel (eb)
 - [x] 3) Base-excited oscillator/Fusspunkterregter Schwinger (eb)
@@ -61,8 +61,8 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [x] 9) Rollercoaster (eb)
 - [x] 10) Stopping distances (eb)
 - [x] 11) Projectiles/Wurfgeschoss (eb)
-- [ ] 12) Rolling Condition/Abrollbedingungen ()
-- [ ] 13) Rolling test/Rollversuch ()
+- [ ] 12) Rolling Condition/Abrollbedingungen (eb)
+- [ ] 13) Rolling test/Rollversuch (eb)
 - [ ] 14) Instant centre of rotation of the cupoler/Momentanpol der Koppel (ak)
 - [ ] 15) Drop tube/Fallturm (ak)
 - [ ] 16) Low-pressure area/Tiefdruck ()
@@ -87,7 +87,6 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 ### Developers
 - Emily Bourne eb
 - Moustafa Alsayed Ahmad ma
-- Siddeshwaran Parthiban sp
 - Antonios Kamariotis ak
 - Abraham Duplaa ad
-- Benjamin R√ºth br
+- Benjamin R¸th br
