@@ -5,7 +5,7 @@ from bokeh.plotting import ColumnDataSource
 from bokeh.models import Button, Toggle, Slider
 from Person import Person, create_people, update_source
 from bokeh.layouts import column, row
-
+import BarChart as BC
 '''
 Plotting space construction
 '''
@@ -138,7 +138,7 @@ def move_boat():
                                       personSource.data['y'][i] 
                                     + dxJumping*dt*listPeople[i].relativeVelocity[1]
                                  )
-            print('Hello')
+
             # Plotting the path of the jumping person
             listSources[i].stream( dict(
                                                 x = [newListXCoords[i][0]],
@@ -239,6 +239,7 @@ def play ():
     elif (not Active):
         curdoc().add_periodic_callback(move_boat, 50)
         Active=True
+    update_bars()
 play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
 
@@ -324,8 +325,20 @@ def jump ():
                          )
             break
         counter += 1
+    update_bars()
 
 jump_button = Button(label="jump", button_type="success")
 jump_button.on_click(jump)
 
-curdoc().add_root(column(scene,column(numberPersonsSlider,play_button,pause_button,jump_button,reset_button)))
+
+eFig = BC.BarChart(["Boat's momentum"], [boatSpeed*mass*6], ["#98C6EA"], [1])
+eFig.Width(100)
+eFig.Height(500)
+eFig.fig.yaxis.visible=True
+def update_bars ():
+    global boatSpeed
+    
+    eFig.setHeight(0,boatSpeed*mass)
+    
+
+curdoc().add_root(column(scene,row(column(numberPersonsSlider,play_button,pause_button,jump_button,reset_button),eFig.getFig())))
