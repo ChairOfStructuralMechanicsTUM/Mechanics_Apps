@@ -8,6 +8,7 @@ class Person():
         self.mass = mass
         self.standingPosition = standingPosition
         self.jumpingPosition  = jumpingPosition
+        self.currentPosition = self.standingPosition
         self.jumping = False
         self.relativeVelocity = [5,4]
         self.jumpingPath = dict(x=[],y=[])
@@ -40,7 +41,7 @@ def create_people(
     else:
         separatingDistance = (L-1)/(N-1)
     standingShiftingList = np.ones((N,28))
-    #jumpingShiftingList = np.ones((N,29))
+    jumpingShiftingList = np.ones((N,29))
     
     distanceList = np.zeros(N)
     
@@ -50,7 +51,11 @@ def create_people(
         counter -= 1
     for i in range(0,N):
         standingShiftingList[i,:] *= distanceList[i] *separatingDistance
-
+        jumpingShiftingList[i,:] *= distanceList[i] *separatingDistance
+    print('length of standingPositionX is: ',len(standingPositionX))
+    print('length of standingPositionY is: ',len(standingPositionY))
+    print('length of jumpingPositionX is: ',len(jumpingPositionX))
+    print('length of jumpingPositionY is: ',len(jumpingPositionY))
             
     listPeople = list()
     for i in range(N):
@@ -58,8 +63,8 @@ def create_people(
                                       i, 
                                       mass, 
                                       [standingPositionX+standingShiftingList[i,:],standingPositionY],
-                                      [jumpingPositionX , jumpingPositionY]
-                          )      )
+                                      [jumpingPositionX+jumpingShiftingList[i,:] , jumpingPositionY]
+                         )       )
     
     return listPeople
 
