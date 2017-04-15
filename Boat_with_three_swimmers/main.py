@@ -3,9 +3,10 @@ from bokeh.plotting import figure
 from bokeh.io import curdoc
 from bokeh.plotting import ColumnDataSource
 from bokeh.models import Button, Toggle, Slider
-from Person import Person, create_people, update_source
+from Person import create_people
 from bokeh.layouts import column, row
 import BarChart as BC
+
 '''
 Plotting space construction
 '''
@@ -14,8 +15,12 @@ yMin , yMax = 0,10
 scene = figure(
                     title="test person",
                     x_range=(xMin,xMax),
-                    y_range=(yMin,yMax),width=1600, height=400
+                    y_range=(yMin,yMax),width=1600, height=400,
+                    tools=''
                )
+scene.grid.visible=False
+scene.xaxis.visible=False
+scene.yaxis.visible=False
 Active = False
 
 
@@ -332,12 +337,11 @@ jump_button.on_click(jump)
 
 
 eFig = BC.BarChart(["Boat's momentum"], [boatSpeed*mass*6], ["#98C6EA"], [1])
-eFig.Width(100)
-eFig.Height(500)
+eFig.Width(200)
+eFig.Height(400)
 eFig.fig.yaxis.visible=True
 def update_bars ():
     global boatSpeed
-    
     eFig.setHeight(0,boatSpeed*mass)
     
 
