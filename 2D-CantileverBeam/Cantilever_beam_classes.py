@@ -77,7 +77,7 @@ def construct_deformed_beam_centerLine( Py, Pz, E,
 
 def color_determiner( minimumValue, maximumValue, currentValue ):
     if minimumValue == maximumValue:
-        return '#'+'33'+'ff'+'ff'
+        return '#'+'66'+'ff'+'66'
     else:
         # Define the four regions seperating between the essential colors: Blue, Sky, Green, Yellow, Red
         minimumPoint = [minimumValue , 0]

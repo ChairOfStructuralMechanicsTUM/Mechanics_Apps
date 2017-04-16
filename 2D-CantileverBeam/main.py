@@ -426,6 +426,7 @@ plotUndefXY = Figure(
 plotUndefXY.grid.visible = False
 plotUndefXY.xaxis.visible = False
 plotUndefXY.yaxis.visible = False
+plotUndefXY.title.text_font_size="13.5pt"
 
 plotDefXY = Figure(    
                        plot_width=350    , 
@@ -438,6 +439,7 @@ plotDefXY = Figure(
 plotDefXY.grid.visible = False
 plotDefXY.xaxis.visible = False
 plotDefXY.yaxis.visible = False
+plotDefXY.title.text_font_size="13.5pt"
 
 plotUndefXZ = Figure(    
                          plot_width=350    , 
@@ -450,6 +452,7 @@ plotUndefXZ = Figure(
 plotUndefXZ.grid.visible = False
 plotUndefXZ.xaxis.visible = False
 plotUndefXZ.yaxis.visible = False
+plotUndefXZ.title.text_font_size="13.5pt"
 
 plotDefXZ = Figure(    
                        plot_width=350    , 
@@ -462,11 +465,11 @@ plotDefXZ = Figure(
 plotDefXZ.grid.visible = False
 plotDefXZ.xaxis.visible = False
 plotDefXZ.yaxis.visible = False
-
+plotDefXZ.title.text_font_size="13.5pt"
 
 # Construct the color-bar figure
 colorBar = Figure(
-                      title = 'compression                                                                                                           tension',
+                      title = 'compression                                                                             tension',
                       title_location="below",
                       plot_width=700,
                       plot_height=75,
@@ -476,6 +479,7 @@ colorBar = Figure(
                  )
 colorBar.xaxis.visible = False
 colorBar.yaxis.visible = False
+colorBar.title.text_font_size="16pt"
 
 # create colorBar patches
 colorBarXCoords = list()
