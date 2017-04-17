@@ -2,8 +2,8 @@ import Cantilever_beam_classes as functions
 from bokeh.io import curdoc
 from bokeh.plotting import Figure, ColumnDataSource
 from bokeh.layouts import row, column
-from bokeh.models import Slider
-from bokeh.models import Arrow, NormalHead
+from bokeh.models import Slider, LabelSet
+from bokeh.models import Arrow, NormalHead, OpenHead
 
 # Define basic beam parameters and loading
 length = 5.0
@@ -309,23 +309,35 @@ def fun_change_Py(attrname, old, new):
     sourceXZdef.data   = dict( x=sourceXZdef.data['x'], y=sourceXZdef.data['y'], c=colorListDeformedXZ, a=alphaList)
     sourceXYdef.data   = dict( x=XCoordsDefXY,   y=YCoordsDefXY,   c =colorListDeformedXY,   a=alphaList )
     
-    # Update the source data file of the force arrow
+    # Update the source data file of the force arrow and the force label
     # The first part of the if-statement is excuted whenever the beam is 
     # deforming downwards
     if sourceXYdef.data['y'][0][3] <= 0:
         sourceArrowXY.data = dict(
                                       xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
-                                      ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Py)/5000+0.5],
+                                      ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Py)/5000+0.25],
                                       xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
+                                 )
+        sourceFyLabel.data = dict(
+                                      x= sourceArrowXY.data['xs'],
+                                      y= [sourceArrowXY.data['ys'][0] + 0.5],
+                                      f= ['Fy']
                                  )
     else:
         sourceArrowXY.data = dict(
                                       xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
-                                      ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Py)/5000-0.5],
+                                      ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Py)/5000-0.25],
                                       xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
                                  )
+        sourceFyLabel.data = dict(
+                                      x= sourceArrowXY.data['xs'],
+                                      y= [sourceArrowXY.data['ys'][0] - 0.5],
+                                      f= ['Fy']
+                                 )
+    
+
         
 # The function to be excuted whenever the force in the z direction changes
 def fun_change_Pz(attrname, old, new):
@@ -363,23 +375,34 @@ def fun_change_Pz(attrname, old, new):
     sourceXYdef.data   = dict( x=sourceXYdef.data['x'], y=sourceXYdef.data['y'], c=colorListDeformedXY, a=alphaList)
     sourceXZdef.data   = dict( x=XCoordsDefXZ,   y=YCoordsDefXZ,   c =colorListDeformedXZ,   a=alphaList )
     
-    # Update the source data file of the force arrow
+    # Update the source data file of the force arrow and the force label
     # The first part of the if-statement is excuted whenever the beam is 
     # deforming downwards
     if sourceXZdef.data['y'][0][3] <= 0:
         sourceArrowXZ.data = dict(
                                       xs=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
-                                      ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Pz)/5000+0.5],
+                                      ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Pz)/5000+0.25],
                                       xe=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ye=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
+                                 )
+        sourceFzLabel.data = dict(
+                                      x= sourceArrowXZ.data['xs'],
+                                      y= [sourceArrowXZ.data['ys'][0] + 0.5],
+                                      f= ['Fz']
                                  )
     else:
         sourceArrowXZ.data = dict(
                                       xs=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
-                                      ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Pz)/5000-0.5],
+                                      ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Pz)/5000-0.25],
                                       xe=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ye=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
                                  )
+        sourceFzLabel.data = dict(
+                                      x= sourceArrowXZ.data['xs'],
+                                      y= [sourceArrowXZ.data['ys'][0] - 0.5],
+                                      f= ['Fz']
+                                 )
+
         
 def init_data():
     fun_change_Py(None,None,None)
@@ -409,6 +432,10 @@ sourceArrowXZ = ColumnDataSource(
                                                    ye=[sourceXZdef.data['y'][len( sourceXYdef.data['y'])-2][2]],                            
                                               )
                                 )
+                                     
+# Construct the source files for the force labels
+sourceFyLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fy'] ))
+sourceFzLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fz'] ))
 
 # Construct the force sliders
 Yforce_slider = Slider(title="Y-direction Force", value=0, start=-5000, end=5000, step=100)
@@ -421,12 +448,20 @@ plotUndefXY = Figure(
                          x_range = ( 0,6 ) ,
                          y_range= ( -3,3 ) ,
                          title = 'Undefromed Cofiguration in XY plane',
-                         tools = ''
+                         tools = '',
                     )
+plotUndefXY.xaxis.major_tick_line_color=None
+plotUndefXY.xaxis.major_label_text_color=None
+plotUndefXY.xaxis.minor_tick_line_color=None
+plotUndefXY.yaxis.major_tick_line_color=None
+plotUndefXY.yaxis.major_label_text_color=None
+plotUndefXY.yaxis.minor_tick_line_color=None
 plotUndefXY.grid.visible = False
-plotUndefXY.xaxis.visible = False
-plotUndefXY.yaxis.visible = False
-plotUndefXY.title.text_font_size="13.5pt"
+plotUndefXY.title.text_font_size="12.5pt"
+plotUndefXY.xaxis.axis_label_text_font_size="14pt"
+plotUndefXY.yaxis.axis_label_text_font_size="14pt"
+plotUndefXY.xaxis.axis_label="x"
+plotUndefXY.yaxis.axis_label="y"
 
 plotDefXY = Figure(    
                        plot_width=350    , 
@@ -436,10 +471,18 @@ plotDefXY = Figure(
                        title = 'Defromed Cofiguration in XY plane',
                        tools = ''
                   )
+plotDefXY.xaxis.major_tick_line_color=None
+plotDefXY.xaxis.major_label_text_color=None
+plotDefXY.xaxis.minor_tick_line_color=None
+plotDefXY.yaxis.major_tick_line_color=None
+plotDefXY.yaxis.major_label_text_color=None
+plotDefXY.yaxis.minor_tick_line_color=None
 plotDefXY.grid.visible = False
-plotDefXY.xaxis.visible = False
-plotDefXY.yaxis.visible = False
-plotDefXY.title.text_font_size="13.5pt"
+plotDefXY.title.text_font_size="12.5pt"
+plotDefXY.xaxis.axis_label_text_font_size="14pt"
+plotDefXY.yaxis.axis_label_text_font_size="14pt"
+plotDefXY.xaxis.axis_label="x"
+plotDefXY.yaxis.axis_label="y"
 
 plotUndefXZ = Figure(    
                          plot_width=350    , 
@@ -449,10 +492,18 @@ plotUndefXZ = Figure(
                          title = 'Undefromed Cofiguration in XZ plane',
                          tools = ''
                     )
+plotUndefXZ.xaxis.major_tick_line_color=None
+plotUndefXZ.xaxis.major_label_text_color=None
+plotUndefXZ.xaxis.minor_tick_line_color=None
+plotUndefXZ.yaxis.major_tick_line_color=None
+plotUndefXZ.yaxis.major_label_text_color=None
+plotUndefXZ.yaxis.minor_tick_line_color=None
 plotUndefXZ.grid.visible = False
-plotUndefXZ.xaxis.visible = False
-plotUndefXZ.yaxis.visible = False
-plotUndefXZ.title.text_font_size="13.5pt"
+plotUndefXZ.title.text_font_size="12.5pt"
+plotUndefXZ.xaxis.axis_label_text_font_size="14pt"
+plotUndefXZ.yaxis.axis_label_text_font_size="14pt"
+plotUndefXZ.xaxis.axis_label="x"
+plotUndefXZ.yaxis.axis_label="z"
 
 plotDefXZ = Figure(    
                        plot_width=350    , 
@@ -462,14 +513,22 @@ plotDefXZ = Figure(
                        title = 'Defromed Cofiguration in XZ plane',
                        tools = ''
                   )
+plotDefXZ.xaxis.major_tick_line_color=None
+plotDefXZ.xaxis.major_label_text_color=None
+plotDefXZ.xaxis.minor_tick_line_color=None
+plotDefXZ.yaxis.major_tick_line_color=None
+plotDefXZ.yaxis.major_label_text_color=None
+plotDefXZ.yaxis.minor_tick_line_color=None
 plotDefXZ.grid.visible = False
-plotDefXZ.xaxis.visible = False
-plotDefXZ.yaxis.visible = False
-plotDefXZ.title.text_font_size="13.5pt"
+plotDefXZ.title.text_font_size="12.5pt"
+plotDefXZ.xaxis.axis_label_text_font_size="14pt"
+plotDefXZ.yaxis.axis_label_text_font_size="14pt"
+plotDefXZ.xaxis.axis_label="x"
+plotDefXZ.yaxis.axis_label="z"
 
 # Construct the color-bar figure
 colorBar = Figure(
-                      title = 'compression                                                                             tension',
+                      title = 'compression                                                                          tension',
                       title_location="below",
                       plot_width=700,
                       plot_height=75,
@@ -511,18 +570,20 @@ colorBarSource = ColumnDataSource(data=dict( x=colorBarXCoords, y=colorBarYCoord
 colorBar.patches( xs='x', ys='y', source=colorBarSource, color = 'c', alpha = 'a' )
 plotUndefXY.patches(xs='x', ys='y', source=sourceXYundef, color = 'c', alpha = 'a')
 plotDefXY.patches  (xs='x', ys='y', source=sourceXYdef  , color = 'c', alpha = 'a')
+plotUndefXZ.patches(xs='x', ys='y', source=sourceXZundef, color = 'c', alpha = 'a')
+plotDefXZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
+
+# Construct the arrows
 plotDefXY.add_layout( 
-                     Arrow(end=NormalHead(line_color="firebrick", line_width=1),
+                     Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
                            x_start=['xs'][0],
                            y_start=['ys'][0],
                            x_end=['xe'][0], 
                            y_end=['ye'][0], 
                            source = sourceArrowXY) 
                     )
-plotUndefXZ.patches(xs='x', ys='y', source=sourceXZundef, color = 'c', alpha = 'a')
-plotDefXZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
 plotDefXZ.add_layout( 
-                     Arrow(end=NormalHead(line_color="firebrick", line_width=1),
+                     Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
                            x_start=['xs'][0], 
                            y_start=['ys'][0], 
                            x_end=['xe'][0], 
@@ -530,6 +591,27 @@ plotDefXZ.add_layout(
                            source = sourceArrowXZ)
                     )
 
+# Construct the force labels
+plotDefXY.add_layout(
+                      LabelSet(
+                                  x='x', y='y',
+                                  text='f',
+                                  text_color='black',text_font_size="15pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=sourceFyLabel
+                              )
+                    )
+
+plotDefXZ.add_layout(
+                      LabelSet(
+                                  x='x', y='y',
+                                  text='f',
+                                  text_color='black',text_font_size="15pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=sourceFzLabel
+                              )
+                    )
+                     
 # Notify the corresponding functions to carry out the changes characterized by
 # the sliders
 Yforce_slider.on_change('value',fun_change_Py)
