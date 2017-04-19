@@ -55,11 +55,14 @@ def ddPhi(Phi,dPhi):
 # return double derivative of phi for a double pendulum
 def ddPhiDouble(phi,dPhi,theta,dTheta):
     global lam, R, m, g, R2
-    return g*cos(phi+theta)*sin(theta)/R-lam*dPhi*sin(theta)**2/m
+    # problematic equation ?
+    #return g*cos(phi+theta)*sin(theta)/R-lam*dPhi*sin(theta)**2/m
+    return (sin(theta)*(R2*(dPhi*dPhi+2*dTheta*dPhi)+g*cos(phi+theta))/R-lam*dPhi*sin(theta)**2/m)/(1+sin(theta)**2)
 
 # return double derivative of theta for a double pendulum
 def ddThetaDouble(phi,dPhi,ddPhi1,theta,dTheta):
     global lam, R, m, R2, g
+    # equation is correct
     return -(ddPhi1+R*(dPhi*dPhi*sin(theta)+(ddPhi1+lam*dPhi/m)*cos(theta))/R2+
         lam*(dTheta+dPhi)/m+g*sin(phi+theta)/R2)
 
