@@ -13,9 +13,10 @@ alpha=0.35
 # (speeds up calculations)
 SIN=sin(alpha)
 COS=cos(alpha)
-offset=-17*COS
+rampLength=25
+offset=-rampLength*COS
 t=0.0
-H = 17*SIN
+H = rampLength*SIN
 SphereXLines=[[],[]]
 SphereYLines=[]
 
@@ -30,8 +31,8 @@ ramp_source = ColumnDataSource(data = dict(x=[offset,0],y=[H,0]))
 
 def init():
     global SphereXLines, SphereYLines
-    for i in range (0,21):
-        SphereYLines.append((i/10.0-1.0)*r)
+    for i in range (0,17):
+        SphereYLines.append((i/8.0-1.0)*r)
         SphereXLines[0].append(cos(pi/4.0)*sqrt(r*r-SphereYLines[i]*SphereYLines[i]))
         SphereXLines[1].append(-SphereXLines[0][i])
     createSphere()
@@ -64,8 +65,6 @@ def moveSphere(t):
     newYBase=H-displacement*SIN
     newY=newYBase+r*COS
     sphere_data.data=dict(x=[newX],y=[newY],w=[2*r])
-    #sphere_lines_data.data=dict(x=[newX+r*sin(rotation),newX-r*sin(rotation)],
-    #    y=[newY-r*cos(rotation),newY+r*cos(rotation)])
     X1=[]
     X2=[]
     Y1=[]
