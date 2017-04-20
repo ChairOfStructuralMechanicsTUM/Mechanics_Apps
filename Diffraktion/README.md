@@ -47,7 +47,10 @@ We want to explicitly visualize important input parameters and the regions of in
 - [x] explain app on website
 - [x] Add proper formula for computation of dB from amplitude
 - [x] try to increase performance
+
+## Possible Improvements
 - [ ] Remove artifacts in contour lines (currently we plot the lines with many line segments with only two vertices. This leads to disconnected lines with tiny gaps.)
+- [ ] Responsive Web design (content should adopt to different devices depending on screen/window size: tablets, notebooks, beamers, smartphones)
 
 ## Performance Improvements
 
