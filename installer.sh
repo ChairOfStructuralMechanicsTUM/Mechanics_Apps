@@ -1,5 +1,7 @@
+echo "updating conda..."
+conda update conda
 echo "installing bokeh..."
-conda install bokeh
+conda install bokeh=0.12.4
 echo "installing nodejs..."
 conda install -c bokeh nodejs
 echo "installing flexx..."

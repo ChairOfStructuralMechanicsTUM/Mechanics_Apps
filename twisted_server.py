@@ -27,7 +27,7 @@ bokehPort = int(args.bokeh_port)
 globalIP = args.global_ip
 
 resource = File('./server_data/www/')
-resource.putChild('apps',proxy.ReverseProxyResource(globalIP, bokehPort, ''))
+resource.putChild('apps',proxy.ReverseProxyResource('localhost', bokehPort, ''))
 resource.putChild('images',File('./server_data/images'))
 resource.putChild('Diffraktion',File('./server_data/Diffraktion'))
 resource.putChild('Diffraktion/images',File('./server_data/Diffraktion/images'))
