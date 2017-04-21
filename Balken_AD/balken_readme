@@ -1,10 +1,10 @@
 To Do:
 [X]change axis so that plot is not cut off
 [ ]fix what happens when both supports are equal (becomes a cantilever on a wall)
-	-add rectangle
-	-add segments/rays
-	-modify moment/shear
-	-modify arrows
+	[X]add rectangle 
+	[X}add segments/rays
+	[X]modify moment/shear
+	[X]modify arrows
 [X]turn axis off CHECK
 [X]Fix the biegelinie-variation (bending shape)
 [ ]add the schub effects (shear effects) with length-to-height ratio as interactive

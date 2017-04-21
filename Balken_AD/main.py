@@ -11,8 +11,8 @@ import numpy as np
 resol = 100
 x0 = 0                  #starting value of beam
 xf = 10                 #ending value of beam
-E  = 200.0e1            #modulus of elasticity
-I  = 50                 #moment of inertia
+E  = 500.0e1            #modulus of elasticity
+I  = 30                 #moment of inertia
 length  = xf-x0              #length of beam
 p_mag = 100.0           #initialize the p force
 p_magi = 100.0
@@ -61,13 +61,17 @@ def Fun_Deflection(a,b,l,p,x):
     ynew = []
     ynew1 = []
     ynew2 = []
-    for i in range(0,int(l*10)):
-        if x[i] < a:
-            dy = ( ( p * b * x[i]) / (6 * E * I * l) ) * ( (l**2) - (b**2) - (x[i]**2) )
-        elif x[i] == a:
-            dy = ( p * (a**2) * (b**2) ) / (3 * E * I * l)
-        elif x[i] > a and x[i] <= l:
-            dy = ( (p * a * (l-x[i]) ) / (6 * E * I * l) ) * ( (2*l*x[i]) - (x[i]**2) - (a**2) )
+    for i in range(0,int(l*(resol/10) ) ):
+        if a > l:
+            dy = ( ( p * b * x[i]) / (6 * E * I * l) ) * ( (l**2) - (x[i]**2) )
+        else:
+            if x[i] < a:
+                dy = ( ( p * b * x[i]) / (6 * E * I * l) ) * ( (l**2) - (b**2) - (x[i]**2) )
+            elif x[i] == a:
+                dy = ( p * (a**2) * (b**2) ) / (3 * E * I * l)
+            elif x[i] > a and x[i] <= l:
+                dy = ( (p * a * (l-x[i]) ) / (6 * E * I * l) ) * ( (2*l*x[i]) - (x[i]**2) - (a**2) )
+
         ynew1.append(dy)
 
     new_range = int(resol - l*10)
@@ -81,19 +85,25 @@ def Fun_Deflection(a,b,l,p,x):
 
 
 #FUNCTION: Cantilever Deflection function:
-def Fun_C_Deflection(p,a,x):
+def Fun_C_Deflection(p,b,x):
     '''Calculates the deflection of the beam when it is cantilever'''
+    #b is the distance from the wall to the concentrated load
+
     ynew = []
+    a = xf - b;     #The a for cantilever is the distance between
+                    #the free end and the concentrated load.
     for i in range(0,resol):
         if x[i] < a:
-            dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*a) - xf + x[i] )
+            #dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
+            dy = (  ( p * (b**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - b )
         elif x[i] == a:
-            dy = ( p * (a**3) ) / (3 * E * I)
+            dy = ( p * (b**3) ) / (3 * E * I)
         elif x[i] > a:
-            dy = (  ( p * (a**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - a )
+            #dy = (  ( p * (a**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - a )
+            dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
         ynew.append(dy)
 
-    return ynew
+    return list(reversed(ynew))     #need to reverse because x is calculated in the opposite direction
 
 #FUNCTION: Cantilever function:
 #When position 2 is 0, this function is called:
@@ -104,7 +114,7 @@ def Fun_Cantilever():
     top = 2
     bottom  = -top
     left = -1
-    right = -left
+    right = 0
     clines = 40
     quad_source.data = dict(top = [top], bottom = [bottom], left = [left] , right = [right])
     xseg = np.ones(clines) * left
@@ -124,15 +134,11 @@ def Fun_Update(attrname, old, new):
     l = f2_coord
     x1 = xf - l
 
-
     if f2_coord == 0:
-        xcan = x0 + 1
+        xcan = x0
         Fun_Cantilever()
 
-        if (p_mag==0):
-            p_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-            labels_source.data = dict(x = [] , y = [], name = [])
-        elif (p_mag<0):
+        if (p_mag<0):
             p_arrow_source.data = dict(xS= [p_coord], xE= [p_coord], yS= [1-(p_mag/200.0)], yE=[1], lW = [abs(p_mag/40.0)] )
             labels_source.data = dict(x = [p_coord] , y = [1],name = ['F'])
         else:
@@ -141,9 +147,9 @@ def Fun_Update(attrname, old, new):
 
         #cantilever moment calculation:
         #max moment at fixed end x0. Moment max = P*l
-        m_max = p_mag * l
-        mom_source.data = dict(x=[xcan,l,xf] , y=[m_max,0,0])
-        shear_source.data = dict(x=[xcan,l,l,xf], y=[-p_mag,-p_mag,0,0])
+        m_max = (p_mag * a)/6
+        mom_source.data = dict(x=[xcan,a,xf] , y=[m_max,0,0])
+        shear_source.data = dict(x=[xcan,a,a,xf], y=[p_mag,p_mag,0,0])
 
         if checkbox.active == [0]:
             ynew = Fun_C_Deflection(p_mag,a,plot_source.data['x'])
@@ -159,13 +165,9 @@ def Fun_Update(attrname, old, new):
         else:
             print 'fatal error'
 
-
-
-    else:
-
-
-
-
+#####################
+    else: ##this else is what determines whether or not the figure is in cantilever mode
+#####################
         quad_source.data = dict(top = [], bottom = [], left = [] , right = [])
         segment_source.data = dict(x0= [], y0= [],x1 = [], y1 =[])
 
@@ -194,18 +196,14 @@ def Fun_Update(attrname, old, new):
         #moment and shear:
         m_max = Fun_Moment(p_mag_slide.value,a,b,l)
         if (l >= a):
-            mom_source.data = dict(x=[0,a,l] , y=[0,m_max,0])
-            shear_source.data = dict(x=[0,a,a,l], y=[-f1_mag,-f1_mag,f2_mag,f2_mag])
+            mom_source.data = dict(x=[0,a,l,xf] , y=[0,m_max,0,0])
+            shear_source.data = dict(x=[0,a,a,l,xf], y=[f1_mag,f1_mag,-f2_mag,-f2_mag,-f2_mag])
         else:
-            mom_source.data = dict(x=[0,l,a] , y=[0,m_max,0])
-            shear_source.data = dict(x=[0,l,l,a], y=[-f1_mag,-f1_mag,p_mag,p_mag])
+            mom_source.data = dict(x=[0,l,a,xf] , y=[0,m_max,0,0])
+            shear_source.data = dict(x=[0,l,l,a,xf], y=[f1_mag,f1_mag,-p_mag,-p_mag,-p_mag])
 
         #p_arrow and labels:
-        if (p_mag==0):
-            p_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-            labels_source.data = dict(x = [] , y = [], name = ['F','A','B'])
-
-        elif (p_mag<0):
+        if (p_mag<0):
             p_arrow_source.data = dict(xS= [p_coord], xE= [p_coord], yS= [1-(p_mag/200.0)], yE=[1], lW = [abs(p_mag/40.0)] )
             labels_source.data = dict(x = [p_coord,0,f2_coord] , y = [1,move_tri,move_tri],name = ['F','A','B'])
 
@@ -250,10 +248,10 @@ def initial():
 
 ###Main Plot:
 plot = Figure(title="Doppeltgelagerter Balken und Einzellast", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5))
-my_line=plot.line(x='x', y='y', source=plot_source, color='blue',line_width=20)
-plot.triangle(x='x', y='y', size = 'size', source= triangle_source,color="#99D594", line_width=2)
+my_line=plot.line(x='x', y='y', source=plot_source, color='#0065BD',line_width=20)
+plot.triangle(x='x', y='y', size = 'size', source= triangle_source,color="#E37222", line_width=2)
 plot.quad(top='top', bottom='bottom', left='left',
-    right='right', source = quad_source, color="#B3DE69", fill_alpha = 0.5)
+    right='right', source = quad_source, color="#808080", fill_alpha = 0.5)
 plot.segment(x0='x0', y0='y0', x1='x1',
           y1='y1', source = segment_source, color="#F4A582", line_width=2)
 plot.axis.visible = False
@@ -263,20 +261,24 @@ plot.outline_line_color = "Black"
 labels = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=5, y_offset=-30, source=labels_source, render_mode='canvas')
 ###Plot with moment and shear:
-plot1 = Figure(title="Biegemoment, Querkraft", x_range=(x0,xf), y_range=(-600,600), width = 400, height = 200)
+y_range0 = -600
+y_range1 = -y_range0
+plot1 = Figure(title="Biegemoment, Querkraft", x_range=(x0,xf), y_range=(y_range0,y_range1), width = 400, height = 200)
 plot1.line(x='x', y='y', source=mom_source, color='blue',line_width=5)
 plot1.line(x='x', y='y', source=shear_source, color='red',line_width=5)
+plot1.line(x= [x0-1,xf+1], y = [0, 0 ], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
+plot1.line(x= [xf/2,xf/2], y = [y_range0,y_range1], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot1.axis.visible = False
 ###arrow plotting:
 #P arrow:
-p_arrow_glyph = Arrow(end=OpenHead(line_color="red",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=p_arrow_source,line_color="red")
+p_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=p_arrow_source,line_color="#A2AD00")
 #Position 2 arrow:
-f2_arrow_glyph = Arrow(end=OpenHead(line_color="blue",line_width= 4,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width = "lW", source=f2_arrow_source,line_color="blue")
+f2_arrow_glyph = Arrow(end=OpenHead(line_color="#003359",line_width= 4,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width = "lW", source=f2_arrow_source,line_color="#003359")
 #Position 1 arrow:
-f1_arrow_glyph = Arrow(end=OpenHead(line_color="blue",line_width= 4,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width = "lW", source=f1_arrow_source,line_color="blue" )
+f1_arrow_glyph = Arrow(end=OpenHead(line_color="#003359",line_width= 4,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width = "lW", source=f1_arrow_source,line_color="#003359" )
 ###add layouts:
 plot.add_layout(labels)
 plot.add_layout(p_arrow_glyph)
