@@ -23,17 +23,30 @@ current_coords = ColumnDataSource(data=dict(eps=[0], sig=[0]))
 ## Define constants ##
 # L chosen to keep deformations in the drawing window
 L=0.05;
+Elastic = True
+MaxPlotted=0
+MinPlasticPlotted=44
 
 ## Load Plotting Points from file ##
-DataPlotter = loadtxt('Zugversuch/GraphData.txt');
+#ElasticDataPlotter = loadtxt('Zugversuch/ElasticZone.txt');
+#print len(ElasticDataPlotter)
+#DataPlotter = loadtxt('Zugversuch/GraphData.txt');
+#print len(DataPlotter)
+#ElasticPos = loadtxt('Zugversuch/ElasticDictionary.txt');
+#print len(ElasticPos)
+#PlasticPos = loadtxt('Zugversuch/ForceDictionary.txt');
+#print len(PlasticPos)
+TheoryData = loadtxt('Zugversuch/TheoryData.txt');
+TheoryDataDictionary = loadtxt('Zugversuch/TheoryDataDictionary.txt',int);
+PlasticData = loadtxt('Zugversuch/PlasticData.txt');
+PlasticDataDictionary = loadtxt('Zugversuch/PlasticDataDictionary.txt',int);
 
 ## Create array containing the points which need to be plotted for each
 #  incrementation of the force slider (i.e. for Force = 5 (1 incrementation)
 #  the points DataPlotter[0] and DataPlotter[1] need to be plotted as 
 #  DataPlotterDictionary[1]=2, and
 #  DataPlotter[0:2]=[DataPlotter[0], DataPlotter[1]] ##
-DataPlotterDictionary = [1,2,3,4,5,6,7,8,9,11,16,18,21,24,27,30,33,35,37,39,41,42];
-
+DataPlotterDictionary = [0,1,2,3,4,5,6,7,8,9,11,16,18,21,24,27,30,33,35,37,39,41,42];
 
 ########### Functions ###########
 
@@ -44,78 +57,54 @@ def init():
     Y=[10, 10, 9, 8, 4.96, 3.1, 3.1, 4.96, 8, 9]
     top_of_sample_source.data = dict(x=X, y=Y)
 
-# function which pulls the sample with a force F (new)
-def Pull(attrname, old, new):
-    # use loaded data
-    global DataPlotter, DataPlotterDictionary
+def Pull(attrname,old,new):
+    global MaxPlotted, TheoryData, TheoryDataDictionary, MinPlasticPlotted, L
+    global PlasticData, PlasticDataDictionary, plot_source_theory, plot_source_practical
     
-    # get index value for DataPlotterDictionary from Force value
-    i=min(new//5,20)
+    if (new>MaxPlotted):
+        if(new<102.5):
+            MaxPlotted=new
+        else:
+            MaxPlotted=102
+            Eps=list(PlasticData[PlasticDataDictionary[MinPlasticPlotted]:PlasticDataDictionary[MaxPlotted]+1,0])
+            SigP=list(PlasticData[PlasticDataDictionary[MinPlasticPlotted]:PlasticDataDictionary[MaxPlotted]+1,1])
+            plot_source_practical.data=dict(eps=Eps,sig=SigP)
+        if (new>75):
+            global Sig_B, Sig_B_text, Sig_B_text_B
+            Sig_B.visible=True
+            Sig_B_text.visible=True
+            Sig_B_text_B.visible=True
+        if (new>50):
+            global Sig_S, Sig_S_text, Sig_S_text_S
+            Sig_S.visible=True
+            Sig_S_text.visible=True
+            Sig_S_text_S.visible=True
+        if (new>45):
+            global Sig_P, Sig_P_text, Sig_P_text_P
+            Sig_P.visible=True
+            Sig_P_text.visible=True
+            Sig_P_text_P.visible=True
     
-    # if the plot has not yet been drawn up to this value of sigma,
-    # update the plot
-    if (DataPlotterDictionary[i]>len( plot_source_theory.data['eps'])):
-         plot_source_theory.data = dict(eps=DataPlotter[0:DataPlotterDictionary[i],0],sig=DataPlotter[0:DataPlotterDictionary[i],1])
-         plot_source_practical.data = dict(eps=DataPlotter[0:DataPlotterDictionary[i],0],sig=DataPlotter[0:DataPlotterDictionary[i],2])
+    Eps=list(TheoryData[0:TheoryDataDictionary[MaxPlotted]+1,0])
+    Sig=list(TheoryData[0:TheoryDataDictionary[MaxPlotted]+1,1])
+    plot_source_theory.data=dict(eps=Eps,sig=Sig)
     
-    # calculate length change and use it to update the figure
-    if (i<20):
-        dL= plot_source_practical.data['eps'][DataPlotterDictionary[i]-1]*L
+    if (new>102.5):
+        dL= PlasticData[-1,0]*L+(new-102)*0.05
+    elif (MaxPlotted>50):
+        if (new<MinPlasticPlotted):
+            MinPlasticPlotted=new
+        Eps=list(PlasticData[PlasticDataDictionary[MinPlasticPlotted]:PlasticDataDictionary[MaxPlotted]+1,0])
+        SigP=list(PlasticData[PlasticDataDictionary[MinPlasticPlotted]:PlasticDataDictionary[MaxPlotted]+1,1])
+        plot_source_practical.data=dict(eps=Eps,sig=SigP)
+        dL = PlasticData[PlasticDataDictionary[new],0]*L
     else:
-        dL= plot_source_practical.data['eps'][DataPlotterDictionary[20]-1]*L+(new-100)*0.05
+        SigP=list(TheoryData[0:TheoryDataDictionary[MaxPlotted]+1,2])
+        Eps=list(TheoryData[0:TheoryDataDictionary[MaxPlotted]+1,0])
+        plot_source_practical.data=dict(eps=Eps,sig=SigP)
+        dL = TheoryData[TheoryDataDictionary[new],0]*L
+    
     draw(dL,new)
-    
-    
-    if (new==75):
-        global Sig_B, Sig_B_text, Sig_B_text_B
-        Sig_B.visible=True
-        Sig_B_text.visible=True
-        Sig_B_text_B.visible=True
-    elif (new==50):
-        global Sig_S, Sig_S_text, Sig_S_text_S
-        Sig_S.visible=True
-        Sig_S_text.visible=True
-        Sig_S_text_S.visible=True
-    elif (new==45):
-        global Sig_P, Sig_P_text, Sig_P_text_P
-        Sig_P.visible=True
-        Sig_P_text.visible=True
-        Sig_P_text_P.visible=True
-    """
-    elif(new==??):
-    """
-    
-    """
-    ## attempt to make movement smoother, failed as I can't find a way
-    ## to force bokeh to update now rather than waiting until the end
-    ## of the function "Pull"
-    
-    i=new//5
-    j=int(old//5)
-    l=min(i,j)
-    if (i<20):
-        nSteps=abs(DataPlotterDictionary[i]-DataPlotterDictionary[j])
-        for k in range(0,DataPlotterDictionary[i]-DataPlotterDictionary[j],DataPlotterDictionary[i]-DataPlotterDictionary[j]):
-            # calculate the change in length of the sample
-            dL= plot_source_practical.data['eps'][DataPlotterDictionary[j]+k+1]*L
-            F = plot_source_practical.data['sig'][DataPlotterDictionary[j]+k+1]
-        draw(dL,F);
-        if (k!=nSteps-1):
-            print "zzzzzz"
-            #push_session()
-            #session().store_obj(top_sample_line_source)
-            sleep(1)
-    else:
-        for k in range(0,i-j,i-j):
-            # calculate the change in length of the sample after breakage
-            dL= plot_source_practical.data['eps'][DataPlotterDictionary[20]-1]*L+float((new-100)*0.05*(k+1))/float(i-j)
-            F = old + (new-old)*float(k+1)/float(i-j)
-            print dL, F
-        draw(dL,F);
-        if (k!=nSteps-1):
-            #push_session()
-            sleep(1)
-    """
 
 def draw(dL,F):
     # update circle showing current position on plot
@@ -221,7 +210,7 @@ F_up_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width=2,size=10)
 p.add_layout(F_up_arrow_glyph)
 
 ## Create slider to choose force applied
-Force_input = Slider(title="Kraft (Force)", value=0.0, start=0.0, end=110.0, step=5)
+Force_input = Slider(title="Kraft (Force)", value=0.0, start=0.0, end=110.0, step=1)
 #Force_input.text_font_size="14pt"
 Force_input.on_change('value',Pull)
 
