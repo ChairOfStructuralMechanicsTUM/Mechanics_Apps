@@ -1,7 +1,7 @@
 To Do:
 [X]change axis so that plot is not cut off
-[ ]fix what happens when both supports are equal (becomes a cantilever on a wall)
-	[X]add rectangle 
+[X]fix what happens when both supports are equal (becomes a cantilever on a wall)
+	[X]add rectangle
 	[X}add segments/rays
 	[X]modify moment/shear
 	[X]modify arrows
@@ -13,7 +13,8 @@ To Do:
 [X]add reset button
 [X]add length-height interactive slider
 [X]Columndatasource error
-[ ]LAST: change colors to TUM colors
+[ ]Add Multiple concentrated load capability
+[X]LAST: change colors to TUM colors
 
 
 
