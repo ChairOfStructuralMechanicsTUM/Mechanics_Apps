@@ -2,6 +2,23 @@
 Webbased visualization for mechanics content via Bokeh
 This Repository contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Müller, TUM (Technical University of Munich).
 
+## Overview
+
+### Files
+
+* ```Mechanic_Apps.exe``` one click executable for apps. A browser windows pops up, where the individual apps are presented
+* ```Mechanic_Apps.cmd/sh``` corresponding shell scripts. Using http://www.f2ko.de/en/b2e.php the exe is created
+* ```serverrunner.sh``` runs a python server hosting the overview page
+* ```bokehrunner.sh``` runs a bokeh server hosting the bokeh apps
+* ```installer.cmd/sh``` for installation of python packages
+* ```appnames.conf``` all names of the apps that are run on the bokeh server are collected here
+* ```server.conf``` for configuration of the server
+
+### Directories
+
+* ```AppOverviewPage/``` all data for the overview page is collected here
+* ```<other>/``` different bokeh apps in directory format (see http://bokeh.pydata.org/en/latest/docs/user_guide/server.html#directory-format)
+
 ## Server Architecture
 
 We provide access to the apps through a bokeh server in directory format (see http://bokeh.pydata.org/en/latest/docs/user_guide/server.html#directory-format). Our overview website is hosted by a python twisted (https://twistedmatrix.com/trac/). From there requests are forwarded requests to the bokeh server (http://bokeh.pydata.org/).
@@ -21,8 +38,8 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
     * Linux: see https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
     * Windows: see https://git-for-windows.github.io/
 2. install additional python packages (bokeh, nodejs, flexx, twisted) by running ```$ ./installer.sh```, ```$ ./installer.cmd```.
-3. configure the server with ```server.conf```. If you want to run the server locally, just use the existing configuration. If you want to run the server online, insert the global ip address and make sure that the server port is open to the world wide web.
-4. run ```$ ./serverrunner.sh```. If you want to use port 80 run it as sudo.
+3. configure the server with ```server.conf```. If you want to run the server locally, just use the existing configuration. If you want to run the server online, insert the global ip address and make sure that the server port is open to the world wide web. In ```appnames.conf``` write the folder names of the apps you want to run on the server.
+4. run ```$ ./serverrunner.sh```. If you want to use port 80 run it as sudo. Use Git Bash to run .sh files.
 5. run ```$ ./bokehrunner.sh```.
 6. access ```127.0.0.1``` in your browser (or the corresponding IP address set in ```server.conf```)
 

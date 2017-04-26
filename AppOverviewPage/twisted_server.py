@@ -15,6 +15,7 @@ from twisted.web import proxy, server
 from twisted.web.static import File
 
 import argparse
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input-port', required=True, help='port that is open to the web')
@@ -26,12 +27,12 @@ inputPort = int(args.input_port)
 bokehPort = int(args.bokeh_port)
 globalIP = args.global_ip
 
-resource = File('./server_data/www/')
+resource = File(os.path.dirname(__file__)+'/www/')
 resource.putChild('apps',proxy.ReverseProxyResource(globalIP, bokehPort, ''))
-resource.putChild('images',File('./server_data/images'))
-resource.putChild('Diffraktion',File('./server_data/Diffraktion'))
-resource.putChild('Diffraktion/images',File('./server_data/Diffraktion/images'))
-resource.putChild('Diffraktion/static/images',File('./server_data/Diffraktion/static/images'))
+resource.putChild('images',File(os.path.dirname(__file__)+'/images'))
+resource.putChild('Diffraktion',File(os.path.dirname(__file__)+'/Diffraktion'))
+resource.putChild('Diffraktion/images',File(os.path.dirname(__file__)+'/Diffraktion/images'))
+resource.putChild('Diffraktion/static/images',File(os.path.dirname(__file__)+'/Diffraktion/static/images'))
 site = server.Site(resource)
 reactor.listenTCP(inputPort, site)
 reactor.run()

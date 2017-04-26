@@ -13,5 +13,6 @@ echo "BokehServerPort "$BokehPort
 echo ""
 
 WebsocketOrigin="$GlobalIP:$InputPort"
+apps=`cat appnames.conf`
 
-bokeh serve Diffraktion Zugversuch Querdehnung Rollercoaster Drehscheibe-Corioliskraft --port $BokehPort --host=$GlobalIP:$BokehPort --allow-websocket-origin=$WebsocketOrigin
+bokeh serve $apps --port $BokehPort --host=$GlobalIP:$BokehPort --allow-websocket-origin=$WebsocketOrigin

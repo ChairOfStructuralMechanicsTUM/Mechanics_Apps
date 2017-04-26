@@ -13,5 +13,4 @@ echo "WebServerPort "$InputPort
 echo "BokehServerPort "$BokehPort
 echo ""
 
-
-python twisted_server.py --bokeh-port $BokehPort --input-port $InputPort --global-ip $GlobalIP
+python AppOverviewPage/twisted_server.py --bokeh-port $BokehPort --input-port $InputPort --global-ip $GlobalIP
