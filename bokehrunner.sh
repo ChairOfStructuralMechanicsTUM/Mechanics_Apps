@@ -14,4 +14,4 @@ echo ""
 
 WebsocketOrigin="$GlobalIP:$InputPort"
 
-bokeh serve Diffraktion Zugversuch Querdehnung Rollercoaster Drehscheibe-Corioliskraft --port $BokehPort --host $GlobalIP:$BokehPort --allow-websocket-origin=$WebsocketOrigin
+bokeh serve Diffraktion Zugversuch Querdehnung Rollercoaster Drehscheibe-Corioliskraft --port $BokehPort --host=$GlobalIP:$BokehPort --allow-websocket-origin=$WebsocketOrigin
