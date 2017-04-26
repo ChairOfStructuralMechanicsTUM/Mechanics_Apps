@@ -28,25 +28,13 @@ MaxPlotted=0
 MinPlasticPlotted=44
 
 ## Load Plotting Points from file ##
-#ElasticDataPlotter = loadtxt('Zugversuch/ElasticZone.txt');
-#print len(ElasticDataPlotter)
-#DataPlotter = loadtxt('Zugversuch/GraphData.txt');
-#print len(DataPlotter)
-#ElasticPos = loadtxt('Zugversuch/ElasticDictionary.txt');
-#print len(ElasticPos)
-#PlasticPos = loadtxt('Zugversuch/ForceDictionary.txt');
-#print len(PlasticPos)
 TheoryData = loadtxt('Zugversuch/TheoryData.txt');
-TheoryDataDictionary = loadtxt('Zugversuch/TheoryDataDictionary.txt',int);
 PlasticData = loadtxt('Zugversuch/PlasticData.txt');
-PlasticDataDictionary = loadtxt('Zugversuch/PlasticDataDictionary.txt',int);
 
-## Create array containing the points which need to be plotted for each
-#  incrementation of the force slider (i.e. for Force = 5 (1 incrementation)
-#  the points DataPlotter[0] and DataPlotter[1] need to be plotted as 
-#  DataPlotterDictionary[1]=2, and
-#  DataPlotter[0:2]=[DataPlotter[0], DataPlotter[1]] ##
-DataPlotterDictionary = [0,1,2,3,4,5,6,7,8,9,11,16,18,21,24,27,30,33,35,37,39,41,42];
+## Create arrays containing the points which need to be plotted for each
+#  incrementation of the force slider
+TheoryDataDictionary = loadtxt('Zugversuch/TheoryDataDictionary.txt',int);
+PlasticDataDictionary = loadtxt('Zugversuch/PlasticDataDictionary.txt',int);
 
 ########### Functions ###########
 
@@ -60,50 +48,72 @@ def init():
 def Pull(attrname,old,new):
     global MaxPlotted, TheoryData, TheoryDataDictionary, MinPlasticPlotted, L
     global PlasticData, PlasticDataDictionary, plot_source_theory, plot_source_practical
-    
+    # if the plot has changed
     if (new>MaxPlotted):
         if(new<102.5):
+            # if this is a change where the point is on the graph, 
+            # update the extent of the graph
             MaxPlotted=new
         else:
+            # if the point has exited the graph ensure that everything that needs to be plotted has been plotted
             MaxPlotted=102
             Eps=list(PlasticData[PlasticDataDictionary[MinPlasticPlotted]:PlasticDataDictionary[MaxPlotted]+1,0])
             SigP=list(PlasticData[PlasticDataDictionary[MinPlasticPlotted]:PlasticDataDictionary[MaxPlotted]+1,1])
             plot_source_practical.data=dict(eps=Eps,sig=SigP)
-        if (new>75):
+        # check if any new lines have appeared and if so plot them
+        # (this cannot be done with if/else statements in case the slider is moved too quickly)
+        if (new>=75):
             global Sig_B, Sig_B_text, Sig_B_text_B
             Sig_B.visible=True
             Sig_B_text.visible=True
             Sig_B_text_B.visible=True
-        if (new>50):
+        if (new>=50):
             global Sig_S, Sig_S_text, Sig_S_text_S
             Sig_S.visible=True
             Sig_S_text.visible=True
             Sig_S_text_S.visible=True
-        if (new>45):
+        if (new>=45):
             global Sig_P, Sig_P_text, Sig_P_text_P
             Sig_P.visible=True
             Sig_P_text.visible=True
             Sig_P_text_P.visible=True
+        
+        # plot the new theoretical line
+        Eps=list(TheoryData[0:TheoryDataDictionary[MaxPlotted]+1,0])
+        Sig=list(TheoryData[0:TheoryDataDictionary[MaxPlotted]+1,1])
+        plot_source_theory.data=dict(eps=Eps,sig=Sig)
+        # plot the new practical line
+        if (MaxPlotted<50):
+            # if the elastic limit is not yet reached then it can be plotted similarly
+            SigP=list(TheoryData[0:TheoryDataDictionary[MaxPlotted]+1,2])
+            Eps=list(TheoryData[0:TheoryDataDictionary[MaxPlotted]+1,0])
+            plot_source_practical.data=dict(eps=Eps,sig=SigP)
+        else:
+            # if the elastic limit has been reached then the plastic data is also included
+            Eps=list(PlasticData[PlasticDataDictionary[MinPlasticPlotted]:PlasticDataDictionary[MaxPlotted]+1,0])
+            SigP=list(PlasticData[PlasticDataDictionary[MinPlasticPlotted]:PlasticDataDictionary[MaxPlotted]+1,1])
+            plot_source_practical.data=dict(eps=Eps,sig=SigP)
     
-    Eps=list(TheoryData[0:TheoryDataDictionary[MaxPlotted]+1,0])
-    Sig=list(TheoryData[0:TheoryDataDictionary[MaxPlotted]+1,1])
-    plot_source_theory.data=dict(eps=Eps,sig=Sig)
-    
+    # plot the new experimental line
     if (new>102.5):
+        # if the material has broken then there is nothing to plot
+        # dL is calculated to position the black dot and the image
         dL= PlasticData[-1,0]*L+(new-102)*0.05
-    elif (MaxPlotted>50):
+    elif (MaxPlotted>49):
+        # if the material has passed the elastic limit
         if (new<MinPlasticPlotted):
+            # if the plot has changed then update it
             MinPlasticPlotted=new
-        Eps=list(PlasticData[PlasticDataDictionary[MinPlasticPlotted]:PlasticDataDictionary[MaxPlotted]+1,0])
-        SigP=list(PlasticData[PlasticDataDictionary[MinPlasticPlotted]:PlasticDataDictionary[MaxPlotted]+1,1])
-        plot_source_practical.data=dict(eps=Eps,sig=SigP)
+            Eps=list(PlasticData[PlasticDataDictionary[MinPlasticPlotted]:PlasticDataDictionary[MaxPlotted]+1,0])
+            SigP=list(PlasticData[PlasticDataDictionary[MinPlasticPlotted]:PlasticDataDictionary[MaxPlotted]+1,1])
+            plot_source_practical.data=dict(eps=Eps,sig=SigP)
+        # dL is calculated to position the black dot and the image
         dL = PlasticData[PlasticDataDictionary[new],0]*L
     else:
-        SigP=list(TheoryData[0:TheoryDataDictionary[MaxPlotted]+1,2])
-        Eps=list(TheoryData[0:TheoryDataDictionary[MaxPlotted]+1,0])
-        plot_source_practical.data=dict(eps=Eps,sig=SigP)
+        # dL is calculated to position the black dot and the image
         dL = TheoryData[TheoryDataDictionary[new],0]*L
     
+    # the black dot and the image are positioned
     draw(dL,new)
 
 def draw(dL,F):

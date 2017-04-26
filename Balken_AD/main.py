@@ -105,6 +105,11 @@ def Fun_C_Deflection(p,b,x):
 
     return list(reversed(ynew))     #need to reverse because x is calculated in the opposite direction
 
+#FUNCTION: Function that's called when mitschub is checked:
+def Fun_WithShear():
+#4.0 * (Mq(x, q) + MF(x, F)) / (l_h ^2);
+    pass
+
 #FUNCTION: Cantilever function:
 #When position 2 is 0, this function is called:
 def Fun_Cantilever():

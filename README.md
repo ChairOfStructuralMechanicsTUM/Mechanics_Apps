@@ -36,7 +36,7 @@ https://www.lrz.de/services/netz/mobil/vpn_en/anyconnect_en/
     * log on to
 https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 2. connect to the VM
-    * use a remote desktop client
+    * use a remote desktop client (on Ubuntu ```remmina```)
     * get the address of the server from Francesca or Julian
     * make sure that your LRZ account has the right to access the server.
     * Use your LRZ credentials for login (your have to add the prefix ```ads\``` to your username: ads\ga00xxx).

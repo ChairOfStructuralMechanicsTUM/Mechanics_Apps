@@ -4,6 +4,7 @@ from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
 from bokeh.models import ColumnDataSource, Slider, Button, RadioButtonGroup
 from math import sin, cos, pi, atan2, sqrt, acos
+from mpmath import csc
 
 # create column data sources
 Mass = ColumnDataSource(data = dict(x=[],y=[]))
@@ -55,14 +56,14 @@ def ddPhi(Phi,dPhi):
 # return double derivative of phi for a double pendulum
 def ddPhiDouble(phi,dPhi,theta,dTheta):
     global lam, R, m, g, R2
-    # problematic equation ?
-    #return g*cos(phi+theta)*sin(theta)/R-lam*dPhi*sin(theta)**2/m
-    return (sin(theta)*(R2*(dPhi*dPhi+2*dTheta*dPhi)+g*cos(phi+theta))/R-lam*dPhi*sin(theta)**2/m)/(1+sin(theta)**2)
+    if (theta==0):
+        return 0
+    else:
+        return float(((g*cos(phi+theta)+R2*(dTheta+dPhi)**2)/R+dPhi*(dPhi*cos(theta)-lam*sin(theta)/m))/(sin(theta)+csc(theta)))
 
 # return double derivative of theta for a double pendulum
 def ddThetaDouble(phi,dPhi,ddPhi1,theta,dTheta):
     global lam, R, m, R2, g
-    # equation is correct
     return -(ddPhi1+R*(dPhi*dPhi*sin(theta)+(ddPhi1+lam*dPhi/m)*cos(theta))/R2+
         lam*(dTheta+dPhi)/m+g*sin(phi+theta)/R2)
 
