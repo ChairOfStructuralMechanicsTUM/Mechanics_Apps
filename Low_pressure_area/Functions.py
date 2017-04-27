@@ -35,6 +35,7 @@ def get_contour_data(X, Y, Z):
     
 def get_index( position, Xgrid, Ygrid ):
     # finding the x position index
+    xPosIndex,yPosIndex = 0,0
     counter = 0
     for i in Xgrid[0,:]:
         if i == Xgrid[0,-1]:
@@ -62,4 +63,4 @@ def get_pressure_grad( position, Xgrid, Ygrid, presGrad ):
     
     xPosIndex, yPosIndex = get_index( position, Xgrid, Ygrid )
     
-    return presGrad[ xPosIndex, yPosIndex ]
+    return presGrad[ xPosIndex][yPosIndex ]
