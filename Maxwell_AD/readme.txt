@@ -1,7 +1,8 @@
 readme: Maxwell
 
 TO-DO:
-[] Add in the second force frame
+[X] Add in the second force frame
+[] Add in the Reset button
 [] Add the labels to frames and forces
 [] Add the boundary condition shapes
 [] Consider adding multi-boundary condition
