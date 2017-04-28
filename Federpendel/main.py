@@ -22,6 +22,7 @@ Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[11,9]))
 Position = ColumnDataSource(data = dict(t=[0],s=[0]))
 t=0
 s=0
+InitialV=-5.0
 Active=False
 
 def evolve():
@@ -84,8 +85,12 @@ lam_input = Slider(title=u"D\u00E4mpfungskonstante (Damper Coefficient) [N*s/m]"
 lam_input.on_change('value',change_lam)
 
 def change_initV(attr,old,new):
-    global mass
-    mass.changeInitV(new)
+    global mass, Active, InitialV, initV_input
+    if (not Active):
+        mass.changeInitV(new)
+        InitialV=new
+    elif (new!=InitialV):
+        initV_input.value=InitialV
 ## Create slider to choose damper coefficient
 initV_input = Slider(title="Anfangsgeschwindigkeit (Initial velocity) [m/s]", value=-5.0, start=-5.0, end=5.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
@@ -114,7 +119,7 @@ def reset():
     mass.moveTo((0,9))
     mass.resetLinks(spring,(-2,11))
     mass.resetLinks(dashpot,(2,11))
-    mass.changeInitV(mass_input.value)
+    mass.changeInitV(initV_input.value)
 
 stop_button = Button(label="Stop", button_type="success",width=100)
 stop_button.on_click(stop)
@@ -124,7 +129,7 @@ reset_button = Button(label="Reset", button_type="success",width=100)
 reset_button.on_click(reset)
 
 ## Send to window
-curdoc().add_root(column(title_box,row(column(Spacer(height=100),stop_button,play_button,reset_button),Spacer(width=10),fig,p),
+curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,stop_button,reset_button),Spacer(width=10),fig,p),
     row(mass_input,kappa_input),row(lam_input,initV_input)))
 curdoc().title = "Federpendel"
 #curdoc().add_periodic_callback(evolve,100)
