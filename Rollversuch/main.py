@@ -274,12 +274,15 @@ def changeObject(FIG,new,r,m):
     if (FIG==1):
         global evolveFunc1
         evolveFunc1=func
+        fig1.title.text=new
     elif(FIG==2):
         global evolveFunc2
         evolveFunc2=func
+        fig2.title.text=new
     else:
         global evolveFunc3
         evolveFunc3=func
+        fig3.title.text=new
     # if a simulation is in progress, restart it
     global Active,t
     if (Active):
