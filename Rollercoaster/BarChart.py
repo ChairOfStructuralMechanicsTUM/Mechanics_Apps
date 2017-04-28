@@ -100,5 +100,18 @@ class BarChart(object):
         self.fig.height=height
     def Width(self,width):
         self.fig.width=width
+    
+    def ResetYRange(self):
+        Min=0
+        Max=0
+        for bar in self.barSources:
+            Min=min(Min,min(bar.data['y']))
+            Max=max(Max,max(bar.data['y']))
+        if (Min!=0):
+            Min-=1
+        else:
+            Max+=1
+        self.fig.y_range.start=Min
+        self.fig.y_range.end=Max
 
 #eFig = BarChart(['A','B'],[10,20])
