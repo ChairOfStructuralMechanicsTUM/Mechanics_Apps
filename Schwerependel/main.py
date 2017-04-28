@@ -31,6 +31,9 @@ inMass=False
 massSelected=False
 bentDirection=0
 TotEng=0
+# create values to disable phi0 and dphi0 slider
+Phi0=0.0
+dPhi0=0.0
 
 # return total energy
 def getTotEng():
@@ -259,9 +262,9 @@ def stop():
     global Active, phi0_input, phi, dphi0_input, dPhi, dTheta
     if (Active):
         curdoc().remove_periodic_callback(evolve)
+        Active=False
         phi0_input.value=phi
         dphi0_input.value=dPhi
-        Active=False
     dTheta=0
         
 Stop_button = Button(label="Stop",button_type="success",width=150)
@@ -281,8 +284,10 @@ Reset_button = Button(label="Reset",button_type="success",width=150)
 Reset_button.on_click(reset)
 
 def change_mass(attr,old,new):
-    global m
+    global m, TotEng
     m=new
+    TotEng=getTotEng()
+    plot()
 ## Create slider to choose mass of blob
 mass_input = Slider(title="Masse (mass) [kg]", value=5, start=0.5, end=10.0, step=0.1,width=200)
 mass_input.on_change('value',change_mass)
@@ -295,22 +300,28 @@ lam_input = Slider(title=u"D\u00E4mpfungskonstante (Damper Coefficient) [N*s/m]"
 lam_input.on_change('value',change_lam)
 
 def change_phi0(attr,old,new):
-    global Active, phi, phi0_input, TotEng
+    global Active, phi, phi0_input, TotEng, Phi0
     if (not Active):
         phi=new
         TotEng=getTotEng()
         plot()
+        Phi0=new
+    elif (Phi0!=new):
+        phi0_input.value=Phi0
 ## Create slider to choose damper coefficient
 phi0_input = Slider(title=u"\u03C6\u2080", value=0.0, start=-3.0, end=3.0, step=0.2,width=200)
 phi0_input.on_change('value',change_phi0)
 
 def change_phi0dot(attr,old,new):
-    global Active, dPhi, dphi0_input,TotEng
+    global Active, dPhi, dphi0_input,TotEng, dPhi0
     if (not Active):
         stop()
         dPhi=new
         TotEng=getTotEng()
         plot()
+        dPhi=new
+    elif (dPhi0!=new):
+        dphi0_input.value=dPhi0
 ## Create slider to choose damper coefficient
 dphi0_input = Slider(title=u"\u03C6\u0307\u2080", value=0.0, start=-5.0, end=5.0, step=0.5,width=200)
 dphi0_input.on_change('value',change_phi0dot)
