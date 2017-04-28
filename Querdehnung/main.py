@@ -61,8 +61,8 @@ class DeformableObj(object):
             old=self.orig_Cbabies[j];
             new_x0=self.deform_coord(old[0],self.CX,eps[0])
             new_y0=self.deform_coord(old[2],self.CY,eps[1])
-            new_width=abs(self.deform_coord(old[0]+old[1]/2.0,self.CX,eps[0])-self.deform_coord(old[0]-old[1]/2.0,self.CX,eps[0]))
-            new_height=abs(self.deform_coord(old[2]+old[3]/2.0,self.CY,eps[1])-self.deform_coord(old[2]-old[3]/2.0,self.CY,eps[1]))
+            new_width=abs(self.deform_coord(old[0]+old[1]*0.5,self.CX,eps[0])-self.deform_coord(old[0]-old[1]*0.5,self.CX,eps[0]))
+            new_height=abs(self.deform_coord(old[2]+old[3]*0.5,self.CY,eps[1])-self.deform_coord(old[2]-old[3]*0.5,self.CY,eps[1]))
             Circular_Updatables[j].data=dict(x=[new_x0],y=[new_y0],w=[new_width], h=[new_height])
         # deform main object (not plotted but important for S when calculating sigma)
         self.X=self.XL_0*(1+eps[0])
@@ -76,14 +76,14 @@ class DeformableObj(object):
                 newY0=self.orig_forces[j][0]['yS'][0]*(1+eps[1])
                 # alter arrow length by a factor of (1+F/200) 
                 Force_Updatables[j].data=dict(xS=Force_Updatables[j].data['xS'],xE=Force_Updatables[j].data['xE'],
-                    yS=[newY0], yE=[newY0+(1+Force[1]/200.0)*length])
+                    yS=[newY0], yE=[newY0+(1+Force[1]*0.005)*length])
             else:
                 # get original length
                 length=self.orig_forces[j][0]['xE'][0]-self.orig_forces[j][0]['xS'][0]
                 # keep start position relative to main object
                 newX0=self.orig_forces[j][0]['xS'][0]*(1+eps[0])
                 # alter arrow length by a factor of (1+F/200) 
-                Force_Updatables[j].data=dict(xS=[newX0],xE=[newX0+(1+Force[0]/200.0)*length],
+                Force_Updatables[j].data=dict(xS=[newX0],xE=[newX0+(1+Force[0]*0.005)*length],
                     yS=Force_Updatables[j].data['yS'], yE=Force_Updatables[j].data['yE'])
         
         # deform force labels
