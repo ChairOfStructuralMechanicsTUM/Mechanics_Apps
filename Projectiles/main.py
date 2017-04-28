@@ -14,8 +14,8 @@ speed = 50
 g = 9.81
 PlanetGravity = dict(Weltraum = 0.0, Mercur = 3.61, Venus = 8.83, Erde = 9.81, Mars = 3.75, Ceres = 0.27,
     Jupiter = 26.0, Saturn = 11.2, Uranus = 10.5, Neptun = 13.3, Pluto = 0.61)
-PlanetHue = dict(Weltraum = "#42437A", Mercur = "#D6A3FF", Venus = "#FF9B30", Erde = "#D1F4FF", Mars = "#FF3636", Ceres = "#C4C4C4",
-    Jupiter = "#FFE1AD", Saturn = "#E8FF96", Uranus = "#46FAB2", Neptun = "#5D98FC", Pluto = "#F0E1E1")
+PlanetHue = dict(Weltraum = "#696A8C", Mercur = "#EDD9FC", Venus = "#FCDDBB", Erde = "#D1F4FF", Mars = "#FF9E9E", Ceres = "#C4C4C4",
+    Jupiter = "#FFE1AD", Saturn = "#F3FFC9", Uranus = "#46FAB2", Neptun = "#AFC0DB", Pluto = "#DBD0D0")
 x_0 = 5.0
 y_0 = 7.5
 direction_arrow = ColumnDataSource(data=dict(xS=[],yS=[],xE=[],yE=[]))
@@ -68,6 +68,10 @@ def evolve ():
     elif (yB<0 or yM<0):
         curdoc().remove_periodic_callback(evolve)
         Active = False
+    # else if nothing is falling and the banana has exited the screen
+    elif (grav_select.value=="Weltraum" and yB>105):
+        curdoc().remove_periodic_callback(evolve)
+        Active = False
 
 # set up image
 p = figure(tools="",x_range=(0,200),y_range=(0,100),width=900,height=450)
@@ -99,6 +103,7 @@ def changeTheta(attr,old,new):
         theta=radians(new)
         rotateCannon(radians(30-new))
         updateTargetArrow()
+# angle increment is large to prevent lag
 angle_slider = Slider(title=u"\u0398 (\u00B0)",value=30,start=0,end=65,step=5)
 angle_slider.on_change('value',changeTheta)
 def changeSpeed(attr,old,new):
