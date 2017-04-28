@@ -7,6 +7,7 @@ from bokeh.io import curdoc
 import pandas as pd
 import BarChart as BC
 from physics import *
+from math import floor, ceil
 
 ## Forces
 NormalForce = ColumnDataSource(data=dict(xS=[],yS=[],xE=[],yE=[]))
@@ -183,8 +184,22 @@ p.line(x='x',y='y',source=RollerCoasterPathSource,line_color="black")
 p.add_tools(MoveNodeTool())
 # function for tool
 def on_mouse_move(attr, old, new):
-    if (modify_path(attr,old,new)==1):
-        # if the path is changed then update the drawing
+    currentNode=modify_path(attr,old,new)
+    down=int(floor(cartPosition))
+    up=int(ceil(cartPosition))
+    Min=min(up-1,down)
+    Max=max(down+1,up)
+    if (Min<=currentNode and Max>=currentNode):
+        # if the path is changed at an adjacent node then update the drawing
+        # further nodes can influence the cart, but their influence is minimal
+        # so this reduces lag
+        global MechEng
+        MechEng=100
+        updateForces()
+        drawCart()
+        updateBars()
+    elif (currentNode==-1):
+        # when the movement is finished, update the cart position regardless
         global MechEng
         MechEng=100
         updateForces()
