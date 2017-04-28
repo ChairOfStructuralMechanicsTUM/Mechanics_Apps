@@ -159,6 +159,10 @@ def evolve():
     #if (K>TotEng):
     #    print K, "  >  ", TotEng
     plot()
+    if (getTotEng()<1e-4):
+        global Active
+        Active=False
+        curdoc().remove_periodic_callback(evolve)
 
 # function for tool
 def on_mouse_move(attr, old, new):
