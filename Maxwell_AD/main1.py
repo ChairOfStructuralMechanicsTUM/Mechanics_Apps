@@ -1,7 +1,7 @@
 from bokeh.plotting import Figure, output_file , show
-from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
+from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, NormalHead, Arrow
 from bokeh.layouts import column, row, widgetbox
-from bokeh.models.widgets import Toggle
+from bokeh.models.widgets import Button
 from bokeh.io import curdoc
 import numpy as np
 
@@ -29,17 +29,22 @@ class Frame(object):
         self.loc_val        = 50
         self.arrow_source   = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
         self.e_s            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
-        self.mag_slider     = Slider(title= self.name + " Kraftbetrag", value=self.mag_val, start=self.mag_start, end=self.mag_end, step=1)
-        self.loc_slider     = Slider(title= self.name + " Kraftposition", value=self.loc_val, start=self.loc_start, end=self.loc_end, step=1)
+        self.tri            = ColumnDataSource(data=dict(x= [], y= [], size = []))
+        self.seg            = ColumnDataSource(data=dict(x0=[], x1=[], y0=[], y1=[]))
+        self.t_line         = ColumnDataSource(data=dict(x=[], y=[]))
 
-    def set_mag(self):
-        self.p_mag = self.mag_slider.value
-    def set_param(self):
-        self.p_loc = self.loc_slider.value
+        #self.mag_slider     = Slider(title= self.name + " Kraftbetrag", value=self.mag_val, start=self.mag_start, end=self.mag_end, step=1)
+        #self.loc_slider     = Slider(title= self.name + " Kraftposition", value=self.loc_val, start=self.loc_start, end=self.loc_end, step=1)
+
+    def set_mag(self, a):
+        self.p_mag = a
+    def set_param(self, a):
+        self.p_loc = a
     def get_mag(self):
         return self.p_mag
     def get_param(self):
         return self.p_loc
+
 
 
 #some constants
@@ -47,36 +52,38 @@ a           = 0.5
 b           = 0.7
 FScale      = 150.0
 offsetKraft = 0.08
-#x1          = []
-#x2          = []
-#x3          = []
-#y1          = []
-#y2          = []
-#y3          = []
+tri_size    = 30
+changer     = 0
+shift       =0.01
+shift2      = 0.015
 
 #Arrow Sources:
 #p_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 arr_scal = 450.0
 arr_lw   = 20.0
-
-orig = Frame("o")
-f1   = Frame("F1")
-f2   = Frame("F2")
+ground   = 0.07
+orig            = Frame("o")
+f1              = Frame("F1")
+f2              = Frame("F2")
+f1.tri.data     = dict(x = [0.1,0.8], y = [0.1,0.1], size = [tri_size,tri_size])
+#seg             = dict(x0=[0.095,0.097,0.099,0.101,0.103,0.105],
+#                x1=[0.095+shift,0.097+shift,0.099+shift,0.101+shift,0.103+shift,0.105+shift],
+#                y0=[0.09]*5, y1=[0.088]*5)
+t_line          = dict(x=[0.7,0.9], y=[ground,ground])
 
 #sliders:
-#mag_start = -100
-#mag_end = 100
-#mag_val = 0
-#p1mag_slider = Slider(title=f1.name + " Kraftbetrag", value=mag_val, start=mag_start, end=mag_end, step=1)
-#p2mag_slider = Slider(title=f2.name + " Kraftbetrag", value=mag_val, start=mag_start, end=mag_end, step=1)
+mag_start   = -100
+mag_end     = 100
+mag_val     = 0
+mag_slider  = Slider(title="Kraftbetrag", value=mag_val, start=mag_start, end=mag_end, step=1)
 
 #Toggle button:
-toggle = Toggle(label="Freeze F1", button_type="success")
-
-#loc_start = 0
-#loc_end = 100
-#loc_val = 50
-#p1loc_slider = Slider(title=f1.name + " Kraftposition", value=loc_val, start=loc_start, end=loc_end, step=1)
+button = Button(label="Save", button_type="success")
+rbutton = Button(label="Reset", button_type="success")
+loc_start = 0
+loc_end = 100
+loc_val = 50
+loc_slider = Slider(title="Kraftposition", value=loc_val, start=loc_start, end=loc_end, step=1)
 #p2loc_slider = Slider(title=f2.name + " Kraftposition", value=loc_val, start=loc_start, end=loc_end, step=1)
 
 
@@ -85,7 +92,6 @@ def create_orig(o):
     y = [o.y0,o.yf,o.yf,o.y0]
     o.pts.data = dict(x = x, y = y )
 
-#also need a reget function (moves everything back to normal)
 
 def create_prof(f):
     paramInt = f.get_param()
@@ -317,8 +323,6 @@ def side3(f,paramInt,i):
     y = [0.1] + y1 + y2 + y3
     f.pts.data = dict(x = x, y = y )
 
-
-
 def compute_shift(paramInt1, paramInt2, i):
     d7 = i / FScale
 
@@ -421,7 +425,7 @@ def create_shift(f1, f2):
 
     d2 = 0
     d1 = 0
-    sclr = 5
+    sclr = 10
     if (paramInt1 < 30):
         d2 = paramInt1 / 30.0 * 0.5 + 0.1
         d1 = 0.1
@@ -462,54 +466,76 @@ def create_shift(f1, f2):
         yS= [d2], yE=[d2], lW = [abs(localDouble2[0] *sclr) ] )
 
 
-
-
-
 def update_fun(attr,old,new):
-    f1.set_param()
-    f1.set_mag()
-    f2.set_param()
-    f2.set_mag()
-    create_prof(f1)
-    #create_prof(f2)
-    #create_shift(f1,f2)
-    if toggle.active == True:
+    if changer == 0:
+        f1.set_param(loc_slider.value)
+        f1.set_mag(mag_slider.value)
+        create_prof(f1)
+        f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
+    elif changer != 0:
+        f1.tri.data = dict(x = [], y = [], size = [])
+        f2.set_param(loc_slider.value)
+        f2.set_mag(mag_slider.value)
         create_prof(f2)
         create_shift(f1,f2)
+        f2.tri.data = dict(x = [0.1,f2.pts.data["x"][-1]], y = [0.1,f2.pts.data["y"][-1]], size = [tri_size,tri_size])
+        #print mag_slider.value
 
 
+def button_fun():
+    global changer
+    changer = 1
+    f1.set_param(loc_slider.value)
+    f1.set_mag(mag_slider.value)
+    create_prof(f1)
+    create_shift(f1,f2)
 
 
 #Force 1 sliders:
-f1.loc_slider.on_change('value', update_fun)
-f1.mag_slider.on_change('value', update_fun)
+#f1.loc_slider.on_change('value', update_fun)
+#f1.mag_slider.on_change('value', update_fun)
+
+loc_slider.on_change('value', update_fun)
+mag_slider.on_change('value', update_fun)
 
 #Force 2 sliders:
-f2.loc_slider.on_change('value', update_fun)
-f2.mag_slider.on_change('value', update_fun)
-
-toggle.on_change('active',update_fun)
+#f2.loc_slider.on_change('value', update_fun)
+#f2.mag_slider.on_change('value', update_fun)
 
 
+
+button.on_click(button_fun)
 
 
 
 
 create_orig(orig)
-plot = Figure(title="Maxwell", x_range=(-0.1,1.0), y_range=(-0.1,0.8))
-plot.line(x='x', y='y', source=orig.pts, color='#0065BD',line_width=4)
+ps = 0.3
+plot = Figure(title="Maxwell",title_location = "above", x_range=(0.1-ps,0.8+ps), y_range=(0.0,1.0))
+plot.line(x='x', y='y', source=orig.pts, color='Black',line_width=3)
 plot.line(x='x', y='y', source=f1.pts, color="#808080",line_width=5)
-plot.line(x='x', y='y', source=f2.pts, color="yellow",line_width=5)
+plot.line(x='x', y='y', source=f2.pts, color="#E37222",line_width=5)
+plot.line(x='x', y='y', source=t_line, color="Black",line_width=5)
+plot.triangle(x='x', y='y', size = 'size', source= f1.tri,color="#808080", line_width=2)
+plot.triangle(x='x', y='y', size = 'size', source= f2.tri,color="#E37222", line_width=2)
+plot.axis.visible = False
+plot.outline_line_width = 7
+plot.outline_line_alpha = 0.3
+plot.outline_line_color = "Black"
+plot.title.text_color = "black"
+plot.title.text_font_style = "bold"
+plot.title.align = "center"
+
 
 #P arrow:
-p1_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.arrow_source,line_color="red")
-p2_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f2.arrow_source,line_color="green")
-e1_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 1, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.e_s,line_color="red")
-e2_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 1, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f2.e_s,line_color="red")
+p1_arrow_glyph = Arrow(end=NormalHead(line_color="#0065BD",line_width= 4, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.arrow_source,line_color="#0065BD")
+p2_arrow_glyph = Arrow(end=NormalHead(line_color="#E37222",line_width= 4, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f2.arrow_source,line_color="#E37222")
+e1_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 1, size=7),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.e_s,line_color="#A2AD00")
+e2_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 1, size=7),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f2.e_s,line_color="#A2AD00")
 
 
 plot.add_layout(p1_arrow_glyph)
@@ -519,6 +545,5 @@ plot.add_layout(e2_arrow_glyph)
 
 
 
-
-
-curdoc().add_root( row(column(f1.mag_slider,f1.loc_slider,f2.mag_slider,f2.loc_slider, toggle),plot ) )
+#curdoc().add_root( row(column(f1.mag_slider,f1.loc_slider,f2.mag_slider,f2.loc_slider, toggle),plot ) )
+curdoc().add_root( column(plot,row(mag_slider, loc_slider),button) )
