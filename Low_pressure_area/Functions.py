@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 from bokeh.models import ColumnDataSource
 from MoveNodeTool import *
+import numpy as np
 
-paticleSource = ColumnDataSource(data=dict(x=[],y=[]))
+particleSource = ColumnDataSource(data=dict(x=[],y=[]))
 particleXPos = [0]
 particleYPos = [0]
 currentNode=-1
@@ -111,7 +112,7 @@ def modify_path(attr, old, new):
     #print('old: ',old)
     #print('new: ',new)
     #print('currentNode: ',currentNode)
-    global currentNode, paticleSource, particleXPos, particleYPos
+    global currentNode, particleSource, particleXPos, particleYPos
     # if there is a previous node (not first time the function is called)
     # and the node has not been released (new['x']=-1 on release to prepare for future calls)
     if (len(old)==1 and new[0][u'x']!=-1):
@@ -124,7 +125,7 @@ def modify_path(attr, old, new):
         # if not first call then move node
         if (currentNode!=-1):
             # update node position
-            paticleSource.data=dict(x=[new[0][u'x']],y=[new[0][u'y']])
+            particleSource.data=dict(x=[new[0][u'x']],y=[new[0][u'y']])
             particleXPos[currentNode]=new[0][u'x']
             particleYPos[currentNode]=new[0][u'y']
         return 1
@@ -135,11 +136,19 @@ def modify_path(attr, old, new):
         return -1
 
 def update_particle_source(x,y):
-    global particleXPos, particleYPos, paticleSource
+    global particleXPos, particleYPos, particleSource
     #print('update_particle_positions() has been accessed')
     particleXPos[0]=x
     particleYPos[0]=y
-    paticleSource.data = dict(x=[x],y=[y])
+    particleSource.data = dict(x=[x],y=[y])
 
 def get_particle_source():
-    return paticleSource
+    return particleSource
+
+def update_particle_position(x,y):
+    global particleXPos, particleYPos
+    particleXPos[0] = x
+    particleYPos[0] = y
+
+def get_particle_position():
+    return np.array([ particleXPos[0] , particleYPos[0] ])

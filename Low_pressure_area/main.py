@@ -69,7 +69,7 @@ plot.text(
 dt = 0.01
 particleRadius = 0.1
 particleMass   = 20
-position = np.array([ (xmax+xmin)/2+0.1,-1+0.2 ]) # Initial particle's position
+update_particle_position(x=0,y=-0.5)         # Initial particle's position
 velocity = np.array([0,0])                   # Initial particle's velocity
 #paticleSource = ColumnDataSource(
 #                                       data=dict(
@@ -77,6 +77,7 @@ velocity = np.array([0,0])                   # Initial particle's velocity
 #                                                     y = [position[1]],
 #                                                )
 #                                  )
+position = get_particle_position()
 update_particle_source(position[0],position[1])
 
 plot.circle(
@@ -89,14 +90,14 @@ plot.circle(
 
 ### (3) Forces and velocity arrows ###
 # Defining the velocity arrow
-paticleSource = get_particle_source()
+particleSource = get_particle_source()
 velocityArrowTailPosition = np.array([ 
-                                      paticleSource.data['x'][0],
-                                      paticleSource.data['y'][0]
+                                      particleSource.data['x'][0],
+                                      particleSource.data['y'][0]
                                     ])
 velocityArrowHeadPosition = np.array([
-                                      paticleSource.data['x'][0]+velocity[0],
-                                      paticleSource.data['y'][0]+velocity[1]
+                                      particleSource.data['x'][0]+velocity[0],
+                                      particleSource.data['y'][0]+velocity[1]
                                     ])
 velocityArrowSource = ColumnDataSource(
                                        data=dict(
@@ -124,19 +125,18 @@ plot.add_layout(
 
 # Defining the pressure gradient force arrow                               
 presGradArrowTail = np.array([ 
-                              paticleSource.data['x'][0],
-                              paticleSource.data['y'][0]
+                              particleSource.data['x'][0],
+                              particleSource.data['y'][0]
                             ])
 currentPressGrad = get_pressure_grad(
-                                     [paticleSource.data['x'][0],
-                                      paticleSource.data['y'][0]],
+                                     get_particle_position(),
                                      X, Y,
                                      presGrad
                                     )
 
 presGradArrowHead = np.array([
-                              paticleSource.data['x'][0]+0.1*currentPressGrad[0],
-                              paticleSource.data['y'][0]+0.1*currentPressGrad[1]
+                              particleSource.data['x'][0]+0.1*currentPressGrad[0],
+                              particleSource.data['y'][0]+0.1*currentPressGrad[1]
                             ])
 presGradArrowSource = ColumnDataSource(
                                        data=dict(
@@ -188,12 +188,12 @@ coriolisForce = np.array([
                          ])
 
 coriolisArrowTailPosition = np.array([ 
-                                      paticleSource.data['x'][0],
-                                      paticleSource.data['y'][0]
+                                      particleSource.data['x'][0],
+                                      particleSource.data['y'][0]
                                     ])
 coriolisArrowHeadPosition = np.array([
-                                      paticleSource.data['x'][0]+0.1*coriolisForce[0],
-                                      paticleSource.data['y'][0]+0.1*coriolisForce[1]
+                                      particleSource.data['x'][0]+0.1*coriolisForce[0],
+                                      particleSource.data['y'][0]+0.1*coriolisForce[1]
                                     ])
 
 coriolisForceArrowSource = ColumnDataSource(
@@ -222,39 +222,39 @@ plot.add_layout(
 
 def compute_tranjectory():
     global velocity, position, coriolisForce, currentPressGrad
-    paticleSource = get_particle_source()
-    coriolisForce = np.array([
-                          coriolisForce[0],
-                          coriolisForce[1]
-                         ])
     
-
+    particleSource = get_particle_source()
+    position = get_particle_position()
+    
+    coriolisForce = np.array([
+                              coriolisForce[0],
+                              coriolisForce[1]
+                            ])
+    
     currentPressGrad = get_pressure_grad(
-                                     [paticleSource.data['x'][0],
-                                      paticleSource.data['y'][0]],
-                                     X, Y,
-                                     presGrad
-                                    )
+                                         [particleSource.data['x'][0],
+                                          particleSource.data['y'][0]],
+                                         X, Y,
+                                         presGrad
+                                        )
     acceleration = ( coriolisForce + currentPressGrad ) / particleMass
     velocity = velocity + acceleration*dt
-    position = np.array([paticleSource.data['x'][0],paticleSource.data['y'][0]]) + velocity*dt
+    position = np.array([particleSource.data['x'][0],particleSource.data['y'][0]]) + velocity*dt
+                        
     update_particle_source(position[0],position[1])
-                            #  x = [position[0]],
-                            #  y = [position[1]]
-                            # )
-    paticleSource = get_particle_source()
+    update_particle_position( x=position[0] , y=position[1] )
+    
+    particleSource = get_particle_source()
     #coriolisForce = -2*particleMass*np.cross(angularVelocity, np.array([velocity[0],velocity[1],0]))
-    coriolisForce = np.array([ paticleSource.data['x'][0], 0 ])
-    #print('angularVelocity= ', angularVelocity)
-    #print('velocity= ',velocity)
-    #print('coriolisForce= ',coriolisForce)
+    coriolisForce = np.array([ particleSource.data['x'][0], 0 ])
+
     velocityArrowTailPosition = np.array([ 
-                                      paticleSource.data['x'][0],
-                                      paticleSource.data['y'][0]
-                                    ])
+                                          particleSource.data['x'][0],
+                                          particleSource.data['y'][0]
+                                        ])
     velocityArrowHeadPosition = np.array([
-                                          paticleSource.data['x'][0]+velocity[0],
-                                          paticleSource.data['y'][0]+velocity[1]
+                                          particleSource.data['x'][0]+velocity[0],
+                                          particleSource.data['y'][0]+velocity[1]
                                         ])
     velocityArrowSource.data = dict(
                                      xs=[velocityArrowTailPosition[0]],
@@ -263,12 +263,12 @@ def compute_tranjectory():
                                      ye=[velocityArrowHeadPosition[1]]
                                    )
     coriolisArrowTailPosition = np.array([ 
-                                      paticleSource.data['x'][0],
-                                      paticleSource.data['y'][0]
+                                      particleSource.data['x'][0],
+                                      particleSource.data['y'][0]
                                     ])
     coriolisArrowHeadPosition = np.array([
-                                      paticleSource.data['x'][0]+coriolisForce[0],
-                                      paticleSource.data['y'][0]+coriolisForce[1]
+                                      particleSource.data['x'][0]+coriolisForce[0],
+                                      particleSource.data['y'][0]+coriolisForce[1]
                                     ])
     coriolisForceArrowSource.data = dict(
                                          xs=[coriolisArrowTailPosition[0]],
@@ -277,12 +277,12 @@ def compute_tranjectory():
                                          ye=[coriolisArrowHeadPosition[1]]
                                         )
     presGradArrowTail = np.array([ 
-                              paticleSource.data['x'][0],
-                              paticleSource.data['y'][0]
+                              particleSource.data['x'][0],
+                              particleSource.data['y'][0]
                             ])
     presGradArrowHead = np.array([
-                              paticleSource.data['x'][0]+0.1*currentPressGrad[0],
-                              paticleSource.data['y'][0]+0.1*currentPressGrad[1]
+                              particleSource.data['x'][0]+0.1*currentPressGrad[0],
+                              particleSource.data['y'][0]+0.1*currentPressGrad[1]
                             ])
     
     presGradArrowSource.data = dict(
