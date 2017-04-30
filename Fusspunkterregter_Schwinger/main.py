@@ -167,7 +167,7 @@ reset_button = Button(label="Reset", button_type="success",width=100)
 reset_button.on_click(reset)
 
 ## Send to window
-curdoc().add_root(column(title_box,row(column(Spacer(height=100),stop_button,play_button,reset_button),Spacer(width=10),fig,p),
+curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,stop_button,reset_button),Spacer(width=10),fig,p),
     row(mass_input,kappa_input),row(lam_input)))
 curdoc().title = "Fusspunterregter Schwinger"
 #curdoc().add_periodic_callback(evolve,100)

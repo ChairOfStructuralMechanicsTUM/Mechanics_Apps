@@ -189,7 +189,7 @@ def modify_path(attr, old, new):
             (X,Deriv2X) = cubicSpline(RollerPointXPos)
             (Y, Deriv2Y) = cubicSpline(RollerPointYPos)
             RollerCoasterPathSource.data=dict(x=X,y=Y)
-        return 1
+        return currentNode
     else:
         # when node is released reset current node to -1
         # so a new node is moved next time

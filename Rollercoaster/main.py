@@ -1,12 +1,13 @@
 from __future__ import division
 from PathFuncs import *
-from bokeh.layouts import column, row
+from bokeh.layouts import column, row, Spacer
 from bokeh.core.properties import Instance, List
 from bokeh.models import Slider, LabelSet, Arrow, OpenHead, Button, Toggle, Slider
 from bokeh.io import curdoc
 import pandas as pd
 import BarChart as BC
 from physics import *
+from math import floor, ceil
 
 ## Forces
 NormalForce = ColumnDataSource(data=dict(xS=[],yS=[],xE=[],yE=[]))
@@ -38,6 +39,7 @@ def init ():
     updateForces()
     drawCart()
     updateBars()
+    eFig.ResetYRange()
 
 # calculate new forces after movement
 def updateForces ():
@@ -182,8 +184,22 @@ p.line(x='x',y='y',source=RollerCoasterPathSource,line_color="black")
 p.add_tools(MoveNodeTool())
 # function for tool
 def on_mouse_move(attr, old, new):
-    if (modify_path(attr,old,new)==1):
-        # if the path is changed then update the drawing
+    currentNode=modify_path(attr,old,new)
+    down=int(floor(cartPosition))
+    up=int(ceil(cartPosition))
+    Min=min(up-1,down)
+    Max=max(down+1,up)
+    if (Min<=currentNode and Max>=currentNode):
+        # if the path is changed at an adjacent node then update the drawing
+        # further nodes can influence the cart, but their influence is minimal
+        # so this reduces lag
+        global MechEng
+        MechEng=100
+        updateForces()
+        drawCart()
+        updateBars()
+    elif (currentNode==-1):
+        # when the movement is finished, update the cart position regardless
         global MechEng
         MechEng=100
         updateForces()
@@ -206,45 +222,49 @@ p.patch(x='x',y='y',fill_color="#0065BD",source=cart,level='annotation')
 
 # functions which change the rollercoaster shape
 def Ramp():
-    global MechEng
-    MechEng=100
+    global MechEng, eFig
+    MechEng=1000
     drawPath(XRamp,YRamp)
     updateForces()
     drawCart()
     updateBars()
+    eFig.ResetYRange()
 ramp_button = Button(label="Rampe", button_type="success")
 ramp_button.on_click(Ramp)
 
 def Bump():
-    global MechEng
-    MechEng=100
+    global MechEng, eFig
+    MechEng=1000
     drawPath(XBump,YBump)
     updateForces()
     drawCart()
     updateBars()
+    eFig.ResetYRange()
 bump_button = Button(label="Bumps", button_type="success")
 bump_button.on_click(Bump)
 
 def Loop():
-    global MechEng
-    MechEng=100
+    global MechEng, eFig
+    MechEng=1000
     drawPath(XLoop,YLoop)
     updateForces()
     drawCart()
     updateBars()
+    eFig.ResetYRange()
 loop_button = Button(label="Looping", button_type="success")
 loop_button.on_click(Loop)
 
 # function which returns the cart to the beginning of the rollercoaster
 def Reset():
-    global cartPosition, cartSpeed, cartAcc, MechEng
+    global cartPosition, cartSpeed, cartAcc, MechEng, eFig
     cartPosition=0
     cartSpeed=0
     cartAcc=[0,0]
-    MechEng=100
+    MechEng=1000
     updateForces()
     drawCart()
     updateBars()
+    eFig.ResetYRange()
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)
 
@@ -284,5 +304,5 @@ drag_slider.on_change('value',Friction)
 
 ## Send to window
 curdoc().add_root(row(eFig.getFig(),column(p),
-    column(ramp_button,bump_button,loop_button,reset_button,play_button,pause_button,drag_slider)))
+    column(ramp_button,bump_button,loop_button,Spacer(height=50),play_button,pause_button,reset_button,drag_slider)))
 curdoc().title = "Rollercoaster"

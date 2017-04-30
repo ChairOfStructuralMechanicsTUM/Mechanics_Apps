@@ -23,12 +23,13 @@ v0_source=ColumnDataSource(data=dict(xStart=[],xEnd=[],yStart=[],yEnd=[]))
 startPos=[]
 Active=False
 OnTable=False
+AtStart=True
 
 ## Functions
 # give initial values (called by stop and reset, therefore does not re-initialise arrow)
 def initialise ():
     global mass_source, mass_pos, mass_lab_path_source, mass_path_circ_coords, mass_path_source, mass_lab_path_circ
-    global circle_axis_source, startPos, circle_axis_phi, room_axis_phi, room_axis_source, speed, OSpeed
+    global circle_axis_source, startPos, circle_axis_phi, room_axis_phi, room_axis_source, speed, OSpeed, AtStart
     # give room axis coordinates
     room_axis_phi=[0,pi/2.0]
     room_axis_source.data=dict(x=[[-12, 12], [0,0]],y=[[0,0], [-12,12]])
@@ -49,6 +50,7 @@ def initialise ():
     # set up directional arrow
     v0_source.data=dict(xStart=[startPos[0]-speed[0]],xEnd=[startPos[0]],
         yStart=[startPos[1]-speed[1]],yEnd=[startPos[1]])
+    AtStart=True
 
 # convert 1 cartesian coordinate to a circular coordinate
 def cart_to_circ (x,y):
@@ -168,27 +170,27 @@ def rotation_speed(attrname, old, new):
 
 # Set v0
 def particle_speed_x (attrname,old,new):
-    global speed, Active, OSpeed
-    if (not Active):
+    global speed, OSpeed, AtStart
+    if (AtStart):
         speed=[new,OSpeed[1]];
         OSpeed=speed
         v0_source.data=dict(xStart=[startPos[0]-speed[0]],xEnd=[startPos[0]],
             yStart=[startPos[1]-speed[1]],yEnd=[startPos[1]])
     elif (new!=OSpeed[0]):
         global v0_input_x
-        v0_input_x.value=speed[0]
+        v0_input_x.value=OSpeed[0]
 
 # Set v0
 def particle_speed_y (attrname,old,new):
-    global speed, OSpeed
-    if (not Active):
+    global speed, OSpeed, AtStart
+    if (AtStart):
         speed=[OSpeed[0],new];
         OSpeed=speed
         v0_source.data=dict(xStart=[startPos[0]-speed[0]],xEnd=[startPos[0]],
             yStart=[startPos[1]-speed[1]],yEnd=[startPos[1]])
     elif (new!=OSpeed[1]):
         global v0_input_y
-        v0_input_y.value=speed[1]
+        v0_input_y.value=OSpeed[1]
 
 ## Button functions
 def reset_situation ():
@@ -199,16 +201,8 @@ def reset_situation ():
         Active=False
     # put everything back to initial position
     initialise()
-    # reactivate animation
-    if (pause_button.active==True):
-        # deactivating pause button reactivates animation
-        # (calling add_periodic_callback twice gives errors)
-        pause_button.active=False
-    else :
-        curdoc().add_periodic_callback(move, 100)
-        Active=True
 
-def stop ():
+def BackToInitial ():
     global pause_button, Active
     # only stop callback if there is a callback
     if (Active):
@@ -217,6 +211,7 @@ def stop ():
     # put speed back to original value
     v0_input_x.value=2.0
     v0_input_y.value=-2.0
+    Omega_input.value=2.0
     # put everything back to initial position
     initialise()
 
@@ -232,7 +227,7 @@ def pause (toggled):
         Active=True
 
 def play ():
-    global Active
+    global Active, AtStart
     # if inactive, reactivate animation
     if (pause_button.active==True):
         # deactivating pause button reactivates animation
@@ -242,6 +237,7 @@ def play ():
     elif (not Active and mass_pos[0]<=8):
         curdoc().add_periodic_callback(move, 100)
         Active=True
+        AtStart=False
 
 def chooseRef (attrname, old, new):
     global OnTable
@@ -274,9 +270,9 @@ reset_button.on_click(reset_situation)
 pause_button = Toggle(label="Pause", button_type="success")
 pause_button.on_click(pause)
 
-## Create stop button
-stop_button = Button(label="Stop", button_type="success")
-stop_button.on_click(stop)
+## Create re-initialise button
+reinit_button = Button(label="Re-initialise", button_type="success")
+reinit_button.on_click(BackToInitial)
 
 ## Create play button
 play_button = Button(label="Play", button_type="success")
@@ -309,5 +305,5 @@ arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=2),
 p.add_layout(arrow_glyph)
 
 ## Send to window
-curdoc().add_root(row(p,column(Omega_input,v0_input_x,v0_input_y,reset_button,pause_button,stop_button,play_button,Referential_button)))
+curdoc().add_root(row(p,column(Omega_input,v0_input_x,v0_input_y,play_button,pause_button,reset_button,reinit_button,Referential_button)))
 curdoc().title = "Drehscheibe-Corioliskraft"
