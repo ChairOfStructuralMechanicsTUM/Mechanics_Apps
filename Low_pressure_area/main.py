@@ -3,12 +3,14 @@ from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 from bokeh.io import curdoc
 from Functions import *
-from bokeh.models import Arrow, OpenHead
+from bokeh.models import Arrow, OpenHead, Button, Toggle, Slider
 from bokeh.core.properties import Instance, List
-from bokeh.models import Button, Toggle, Slider
 from bokeh.layouts import column, row
+
+Active = True
+
 '''
-Create the plotting domain
+Create the plotting domain (the low pressure area!)
 '''
 xmin, xmax = -1,1
 ymin, ymax = -1,1
@@ -26,8 +28,7 @@ Define the objects to be plotted within the plotting domain
  (2) Travelling particle
  (3) Forces and velocity arrows
 '''
-Active = True
-### (1) Pressure contour lines ###
+######################## (1) Pressure contour lines ###########################
 earthRotation = 1
 N = 40                              # Number of points defining pressure field
 x = np.linspace(-1, 1, N)           
@@ -35,6 +36,8 @@ y = np.linspace(-1, 1, N)
 X, Y = np.meshgrid(x, y)            # Create a grid for the pressure plot
 pressure = (X**2 + Y**2)            # Define the function that determines the
                                     # pressure field
+                                    
+# Create the grid of pressure gradient
 presGrad = [0]*N
 presGradX = 2*X
 presGradY = 2*Y
@@ -45,10 +48,9 @@ for i in range(N):
         else:
             presGrad[j].append(np.array([-presGradX[i,j] , -presGradY[i,j]]))
         
-        
 presGrad = np.array(presGrad)
 
-# Define the source file for pressure contour lines
+# Define the source file for pressure contour lines plot
 pressureContourSource = get_contour_data(X,Y,pressure)
 plot.multi_line(
                     xs='xs',
@@ -65,18 +67,13 @@ plot.text(
               text_align='center'
          )
 
-### (2) Travelling particle ###
+######################## (2) Travelling particle ##############################
 dt = 0.01
 particleRadius = 0.1
 particleMass   = 20
 update_particle_position(x=0,y=-0.5)         # Initial particle's position
 velocity = np.array([0,0])                   # Initial particle's velocity
-#paticleSource = ColumnDataSource(
-#                                       data=dict(
-#                                                     x = [position[0]],
-#                                                     y = [position[1]],
-#                                                )
-#                                  )
+
 position = get_particle_position()
 update_particle_source(position[0],position[1])
 
@@ -88,138 +85,93 @@ plot.circle(
                 source = get_particle_source()
            )
 
-### (3) Forces and velocity arrows ###
+###################### (3) Forces and velocity arrows #########################
 # Defining the velocity arrow
 particleSource = get_particle_source()
-velocityArrowTailPosition = np.array([ 
-                                      particleSource.data['x'][0],
-                                      particleSource.data['y'][0]
-                                    ])
-velocityArrowHeadPosition = np.array([
-                                      particleSource.data['x'][0]+velocity[0],
-                                      particleSource.data['y'][0]+velocity[1]
-                                    ])
-velocityArrowSource = ColumnDataSource(
-                                       data=dict(
-                                                 xs=[velocityArrowTailPosition[0]],
-                                                 ys=[velocityArrowTailPosition[1]],
-                                                 xe=[velocityArrowHeadPosition[0]],
-                                                 ye=[velocityArrowHeadPosition[1]]
-                                                )
-                                      ) 
+
+velocityArrowSource = construct_arrow_source( particleSource, velocity )
+
 plot.add_layout( 
-                      Arrow(    
-                                end=OpenHead(
-                                             line_color="yellow",
-                                             line_width=3,
-                                             size=10
-                                            ),
-                                x_start=['xs'][0],
-                                y_start=['ys'][0],
-                                x_end=['xe'][0], 
-                                y_end=['ye'][0], 
-                                line_color="yellow",
-                                source = velocityArrowSource
-                           ) 
-                     )
+                Arrow(    
+                      end=OpenHead(
+                                   line_color="yellow",
+                                   line_width=3,
+                                   size=10
+                                  ),
+                      x_start=['xs'][0],
+                      y_start=['ys'][0],
+                      x_end=['xe'][0], 
+                      y_end=['ye'][0], 
+                      line_color="yellow",
+                      source = velocityArrowSource
+                     ) 
+                )
 
 # Defining the pressure gradient force arrow                               
-presGradArrowTail = np.array([ 
-                              particleSource.data['x'][0],
-                              particleSource.data['y'][0]
-                            ])
 currentPressGrad = get_pressure_grad(
                                      get_particle_position(),
-                                     X, Y,
+                                     X, 
+                                     Y,
                                      presGrad
                                     )
 
-presGradArrowHead = np.array([
-                              particleSource.data['x'][0]+0.1*currentPressGrad[0],
-                              particleSource.data['y'][0]+0.1*currentPressGrad[1]
-                            ])
-presGradArrowSource = ColumnDataSource(
-                                       data=dict(
-                                                 xs=[presGradArrowTail[0]],
-                                                 ys=[presGradArrowTail[1]],
-                                                 xe=[presGradArrowHead[0]],
-                                                 ye=[presGradArrowHead[1]]
-                                                ) 
-                                      ) 
+presGradArrowSource = construct_arrow_source( 
+                                             particleSource, 
+                                             0.1*currentPressGrad 
+                                            )
+                                    
 plot.add_layout( 
-                      Arrow(    
-                                end=OpenHead(
-                                             line_color="black",
-                                             line_width=3,
-                                             size=10
-                                            ),
-                                x_start=['xs'][0],
-                                y_start=['ys'][0],
-                                x_end=['xe'][0], 
-                                y_end=['ye'][0], 
-                                line_color="black",
-                                source = presGradArrowSource
-                           ) 
-                     )
+                Arrow(    
+                      end=OpenHead(
+                                   line_color="black",
+                                   line_width=3,
+                                   size=10
+                                  ),
+                      x_start=['xs'][0],
+                      y_start=['ys'][0],
+                      x_end=['xe'][0], 
+                      y_end=['ye'][0], 
+                      line_color="black",
+                      source = presGradArrowSource
+                     ) 
+                )
          
 # Defining the coriolis force arrow
-'''
-rotationRadius = np.array([ paticleSource.data['x'][0], paticleSource.data['x'][0] ])
-rotationRadiusMag = np.sqrt( np.dot(rotationRadius,rotationRadius) )
-if rotationRadiusMag == 0:
-    radialNormal = np.array([0.2,0])
-else:
-    radialNormal = rotationRadius / rotationRadiusMag
-radialVelocity = np.dot(velocity,radialNormal)
-tangentialVelocity = velocity - radialVelocity
-tangentialVelocityMag = np.sqrt( np.dot(tangentialVelocity,tangentialVelocity) )
-if rotationRadiusMag == 0:
-    angularVelocityMag = 0
-else:
-    angularVelocityMag = tangentialVelocityMag / rotationRadiusMag
-rotationNormal = np.array([ 0,0,1 ])  # In Z-axis direction
-print('angularVelocityMag = ',angularVelocityMag)
-'''
 angularVelocity = earthRotation * np.array([ 0,-1,0.2 ])
-coriolisForce = -2*particleMass*np.cross(angularVelocity, np.array([velocity[0],velocity[1],0]))
+coriolisForce = -2 * particleMass * np.cross(
+                                             angularVelocity, 
+                                             np.array([ velocity[0], velocity[1], 0 ])
+                                            )
 coriolisForce = np.array([
                           coriolisForce[0],
                           coriolisForce[1]
                          ])
 
-coriolisArrowTailPosition = np.array([ 
-                                      particleSource.data['x'][0],
-                                      particleSource.data['y'][0]
-                                    ])
-coriolisArrowHeadPosition = np.array([
-                                      particleSource.data['x'][0]+0.1*coriolisForce[0],
-                                      particleSource.data['y'][0]+0.1*coriolisForce[1]
-                                    ])
+coriolisForceArrowSource = construct_arrow_source( 
+                                                  particleSource,
+                                                  coriolisForce 
+                                                 )
 
-coriolisForceArrowSource = ColumnDataSource(
-                                           data=dict(
-                                                     xs=[coriolisArrowTailPosition[0]],
-                                                     ys=[coriolisArrowTailPosition[1]],
-                                                     xe=[coriolisArrowHeadPosition[0]],
-                                                     ye=[coriolisArrowHeadPosition[1]]
-                                                    ) 
-                                           ) 
 plot.add_layout( 
-                  Arrow(    
-                        end=OpenHead(
-                                     line_color="red",
-                                     line_width=3,
-                                     size=10
-                                    ),
-                        x_start=['xs'][0],
-                        y_start=['ys'][0],
-                        x_end=['xe'][0], 
-                        y_end=['ye'][0], 
-                        line_color="red",
-                        source = coriolisForceArrowSource
-                       ) 
-               )
+                Arrow(    
+                      end=OpenHead(
+                                   line_color="red",
+                                   line_width=3,
+                                   size=10
+                                  ),
+                      x_start=['xs'][0],
+                      y_start=['ys'][0],
+                      x_end=['xe'][0], 
+                      y_end=['ye'][0], 
+                      line_color="red",
+                      source = coriolisForceArrowSource
+                     ) 
+                )
 
+'''
+Define the function that will develope the position of the particle through
+time
+'''
 def compute_tranjectory():
     global velocity, position, coriolisForce, currentPressGrad
     
@@ -248,49 +200,16 @@ def compute_tranjectory():
     #coriolisForce = -2*particleMass*np.cross(angularVelocity, np.array([velocity[0],velocity[1],0]))
     coriolisForce = np.array([ particleSource.data['x'][0], 0 ])
 
-    velocityArrowTailPosition = np.array([ 
-                                          particleSource.data['x'][0],
-                                          particleSource.data['y'][0]
-                                        ])
-    velocityArrowHeadPosition = np.array([
-                                          particleSource.data['x'][0]+velocity[0],
-                                          particleSource.data['y'][0]+velocity[1]
-                                        ])
-    velocityArrowSource.data = dict(
-                                     xs=[velocityArrowTailPosition[0]],
-                                     ys=[velocityArrowTailPosition[1]],
-                                     xe=[velocityArrowHeadPosition[0]],
-                                     ye=[velocityArrowHeadPosition[1]]
-                                   )
-    coriolisArrowTailPosition = np.array([ 
-                                      particleSource.data['x'][0],
-                                      particleSource.data['y'][0]
-                                    ])
-    coriolisArrowHeadPosition = np.array([
-                                      particleSource.data['x'][0]+coriolisForce[0],
-                                      particleSource.data['y'][0]+coriolisForce[1]
-                                    ])
-    coriolisForceArrowSource.data = dict(
-                                         xs=[coriolisArrowTailPosition[0]],
-                                         ys=[coriolisArrowTailPosition[1]],
-                                         xe=[coriolisArrowHeadPosition[0]],
-                                         ye=[coriolisArrowHeadPosition[1]]
-                                        )
-    presGradArrowTail = np.array([ 
-                              particleSource.data['x'][0],
-                              particleSource.data['y'][0]
-                            ])
-    presGradArrowHead = np.array([
-                              particleSource.data['x'][0]+0.1*currentPressGrad[0],
-                              particleSource.data['y'][0]+0.1*currentPressGrad[1]
-                            ])
+    velocityArrowSource.data = update_arrow_source( particleSource, velocity )
     
-    presGradArrowSource.data = dict(
-                                     xs=[presGradArrowTail[0]],
-                                     ys=[presGradArrowTail[1]],
-                                     xe=[presGradArrowHead[0]],
-                                     ye=[presGradArrowHead[1]]
-                                   )
+    coriolisForceArrowSource.data = update_arrow_source( particleSource, 0.1*coriolisForce )
+    
+    presGradArrowSource.data = update_arrow_source( particleSource, 0.1*currentPressGrad )
+    
+'''
+Add the interactive functionalities
+'''
+#################### Moving the ball through the mouse ########################
 plot.add_tools(MoveNodeTool())
 
 def on_mouse_move(attr, old, new):
@@ -298,23 +217,75 @@ def on_mouse_move(attr, old, new):
     if (modify_path(attr,old,new)==1):
         # if the path is changed then update the drawing
         pass
-    
+
 plot.tool_events.on_change('geometries', on_mouse_move)
 
- # Creating pause button
+########################### Creating pause button #############################
 def pause (toggled):
     global Active
-    # When active pause animation
+
     if (toggled):
         curdoc().remove_periodic_callback(compute_tranjectory)
         Active=False
-        #update_particle_positions( paticleSource )
+
     else:
         curdoc().add_periodic_callback(compute_tranjectory, 10)
         Active=True
         
 pause_button = Toggle(label="Pause", button_type="success")
-pause_button.on_click(pause)   
+pause_button.on_click(pause) 
+########################### Creating play button ##############################
+def play ():
+    global Active
+    # if inactive, reactivate animation
+    if (pause_button.active):
+        # deactivating pause button reactivates animation
+        # (calling add_periodic_callback twice gives errors)
+        pause_button.active=False
+    elif Active == False:
+        curdoc().add_periodic_callback(compute_tranjectory, 10)
+        Active=True
+        
+play_button = Button(label="Play", button_type="success")
+play_button.on_click(play)
+########################### Creating reset button #############################
+def Reset():
+    global velocity
     
+    position = np.array([ 0,-1 ])
+    velocity = np.array([ 0,0  ])
+
+    update_particle_source(position[0],position[1])
+    update_particle_position( x=position[0] , y=position[1] )
+    
+    velocityArrowSource.data = update_arrow_source( particleSource, velocity )
+    
+    coriolisForce = np.array([ particleSource.data['x'][0], 0 ])
+    coriolisForceArrowSource.data = update_arrow_source( particleSource, 0.1*coriolisForce )
+    
+    currentPressGrad = get_pressure_grad(
+                                         [particleSource.data['x'][0],
+                                          particleSource.data['y'][0]],
+                                         X, 
+                                         Y,
+                                         presGrad
+                                        )
+    presGradArrowSource.data = update_arrow_source( particleSource, 0.1*currentPressGrad )
+
+reset_button = Button(label="Reset", button_type="success")
+reset_button.on_click(Reset)
+    
+'''
+Add all the components together and initiate the app
+'''
 curdoc().add_periodic_callback(compute_tranjectory,10)
-curdoc().add_root(row(plot,pause_button))
+curdoc().add_root(
+                  row(
+                      plot,
+                      column(
+                             pause_button,
+                             play_button,
+                             reset_button
+                            )
+                     )
+                 )

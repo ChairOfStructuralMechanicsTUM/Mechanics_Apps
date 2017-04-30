@@ -98,9 +98,6 @@ def get_pressure_grad( position, Xgrid, Ygrid, presGrad ):
 # find index of node in which coordinates are found
 # (return -1 if not in a node)
 def inNode (xPos,yPos):
-    print('inNode() has been accessed')
-    print('particleXPos: ',particleXPos)
-    print('particleYPos: ',particleYPos)
     global particleXPos, particleYPos
     for i in range(0,len(particleXPos)):
         if (abs(xPos-particleXPos[i])<=0.1 and abs(yPos-particleYPos[i])<=0.1):
@@ -152,3 +149,39 @@ def update_particle_position(x,y):
 
 def get_particle_position():
     return np.array([ particleXPos[0] , particleYPos[0] ])
+    
+def construct_arrow_source( tailPosition, tailHeadDistance ):
+    arrowTailPosition = np.array([ 
+                                  tailPosition.data['x'][0],
+                                  tailPosition.data['y'][0]
+                                ])
+    arrowHeadPosition = np.array([
+                                  tailPosition.data['x'][0]+tailHeadDistance[0],
+                                  tailPosition.data['y'][0]+tailHeadDistance[1]
+                                ])
+    arrowSource = ColumnDataSource(
+                                   data=dict(
+                                             xs=[arrowTailPosition[0]],
+                                             ys=[arrowTailPosition[1]],
+                                             xe=[arrowHeadPosition[0]],
+                                             ye=[arrowHeadPosition[1]]
+                                            )
+                                  ) 
+    return arrowSource
+    
+def update_arrow_source( tailPosition, tailHeadDistance ):
+    arrowTailPosition = np.array([ 
+                                  tailPosition.data['x'][0],
+                                  tailPosition.data['y'][0]
+                                ])
+    arrowHeadPosition = np.array([
+                                  tailPosition.data['x'][0]+tailHeadDistance[0],
+                                  tailPosition.data['y'][0]+tailHeadDistance[1]
+                                ])
+    arrowSourceData = dict(
+                             xs=[arrowTailPosition[0]],
+                             ys=[arrowTailPosition[1]],
+                             xe=[arrowHeadPosition[0]],
+                             ye=[arrowHeadPosition[1]]
+                          ) 
+    return arrowSourceData
