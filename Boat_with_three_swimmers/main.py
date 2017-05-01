@@ -346,3 +346,4 @@ def update_bars ():
     
 
 curdoc().add_root(column(scene,row(column(numberPersonsSlider,play_button,pause_button,jump_button,reset_button),eFig.getFig())))
+curdoc().title = "Boot mit Schwimmern"

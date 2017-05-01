@@ -311,3 +311,4 @@ button.on_click(initial)
 initial()
 
 curdoc().add_root( row( column(p_loc_slide,p_mag_slide,f2_loc_slide,lth_slide,plot1,widgetbox(button)),  column(plot,widgetbox(checkbox) ) ) )
+curdoc().title = "Balken"
