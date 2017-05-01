@@ -305,3 +305,4 @@ curdoc().add_root(
                             )
                      )
                  )
+curdoc().title = "Tiefdruckgebiet"

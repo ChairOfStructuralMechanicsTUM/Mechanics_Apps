@@ -511,7 +511,7 @@ Cr_Slider = Slider(title=u" coefficient of restitution ", value=1, start=0, end=
 Cr_Slider.on_change('value',update_Cr_value)
     
 curdoc().add_periodic_callback( compute_tranjectory,10 )
-
+curdoc().title = "Collision"
 curdoc().add_root(
                     row(
                             barsFig.getFig(),
