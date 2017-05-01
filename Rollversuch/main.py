@@ -1,5 +1,5 @@
 from bokeh.plotting import figure
-from bokeh.layouts import column, row
+from bokeh.layouts import column, row, Spacer
 from bokeh.models import ColumnDataSource, Select, Button, LabelSet, Slider
 from bokeh.io import curdoc
 from math import sin, cos, pi, sqrt, radians
@@ -13,7 +13,7 @@ alpha=radians(20)
 # (speeds up calculations)
 SIN=sin(alpha)
 COS=cos(alpha)
-rampLength=25
+rampLength=50
 offset=-rampLength*COS
 t=0.0
 H = rampLength*SIN
@@ -57,7 +57,7 @@ def init():
         X.append(-3*cos(i*alpha/10.0))
         Y.append(3*sin(i*alpha/10.0))
     AngleMarkerSource.data=dict(x=X,y=Y)
-    AlphaPos.data=dict(x=[-4.5],y=[-0.1],t=[u"\u03B1"])
+    AlphaPos.data=dict(x=[-8],y=[-0.1],t=[u"\u03B1"])
 
 def createSphere(r,sphere_data,sphere_lines_data):
     global offset, SphereXLines, SphereYLines, SIN, COS
@@ -209,7 +209,10 @@ def moveHollowCylinder(t,r,m,ri,hollowCylinder_data,hollowCylinder_lines_data):
 
 ## draw 3 graphs each containing a ramp, the angle marker, an ellipse, and lines
 
-fig1 = figure(title="Kugel (Sphere)",x_range=(offset-maxR,0),y_range=(0,H+2*maxR),height=220)
+XStart=-rampLength-maxR-5
+YEnd=H+2*maxR
+Width=-220.0*XStart/YEnd
+fig1 = figure(title="Kugel (Sphere)",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
 fig1.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig1_data)
 fig1.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig1_lines_data)
@@ -219,7 +222,7 @@ angle_glyph1=LabelSet(x='x', y='y',text='t',text_color='black',
     text_font_size="15pt", source=AlphaPos)
 fig1.add_layout(angle_glyph1)
 
-fig2 = figure(title="Vollzylinder (Full cylinder)",x_range=(offset-maxR,0),y_range=(0,H+2*maxR),height=220)
+fig2 = figure(title="Vollzylinder (Full cylinder)",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
 fig2.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig2_data)
 fig2.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig2_lines_data)
@@ -229,7 +232,7 @@ angle_glyph2=LabelSet(x='x', y='y',text='t',text_color='black',
     text_font_size="15pt", source=AlphaPos)
 fig2.add_layout(angle_glyph2)
 
-fig3 = figure(title="Hohlzylinder (Hollow cylinder)",x_range=(offset-maxR,0),y_range=(0,H+2*maxR),height=220)
+fig3 = figure(title="Hohlzylinder (Hollow cylinder)",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
 fig3.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig3_data)
 fig3.multi_line(xs='x',ys='y',color="#003359",line_width=3,source=fig3_lines_data)
@@ -344,7 +347,7 @@ def changeAlpha(attr,old,new):
     stop()
 
 # slider for the angle
-alpha_slider = Slider(title=u"\u03B1", value=20.0, start=5.0, end=35.0, step=5.0)
+alpha_slider = Slider(title=u"\u03B1", value=20.0, start=5.0, end=25.0, step=1.0)
 alpha_slider.on_change('value',changeAlpha)
 
 def start():
@@ -395,6 +398,6 @@ init()
 ## Send to window
 curdoc().add_root(row(column(row(fig1,column(object_select1,radius_select1)),
     row(fig2,column(object_select2,radius_select2)),
-    row(fig3,column(object_select3,radius_select3))),
+    row(fig3,column(object_select3,radius_select3))),Spacer(width=100),
     column(start_button,stop_button,alpha_slider)))
 curdoc().title = "Rollversuch"
