@@ -193,13 +193,28 @@ def compute_tranjectory():
     acceleration = ( coriolisForce + currentPressGrad ) / particleMass
     velocity = velocity + acceleration*dt
     position = np.array([particleSource.data['x'][0],particleSource.data['y'][0]]) + velocity*dt
+
+    # Safety checks to prevent the particle from getting outside the domain
+    if position[0] > xmax :
+        position[0] -= xmax/5
+        velocity[0]  = 0
+    elif position[0] < xmin:
+        position[0] += xmax/5
+        velocity[0]  = 0
+    elif position[1] > ymax :
+        position[1] -= ymax/5
+        velocity[1]  = 0
+    elif position[0] < ymin:
+        position[1] += ymax/5
+        velocity[1]  = 0
+        
                         
     update_particle_source(position[0],position[1])
     update_particle_position( x=position[0] , y=position[1] )
     
     particleSource = get_particle_source()
-    #coriolisForce = -2*particleMass*np.cross(angularVelocity, np.array([velocity[0],velocity[1],0]))
-    coriolisForce = np.array([ particleSource.data['x'][0], 0 ])
+    coriolisForce = -2*particleMass*np.cross(angularVelocity, np.array([velocity[0],velocity[1],0]))
+    #coriolisForce = np.array([ particleSource.data['x'][0], 0 ])
 
     velocityArrowSource.data = update_arrow_source( particleSource, velocity )
     
