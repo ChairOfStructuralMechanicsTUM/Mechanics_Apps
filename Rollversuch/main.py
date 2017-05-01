@@ -356,7 +356,7 @@ def start():
         changeObject(2,object_select2.value,radius_select2.value,1.0)
         changeObject(3,object_select3.value,radius_select3.value,1.0)
         # add the call to evolve
-        curdoc().add_periodic_callback(evolve,200)
+        curdoc().add_periodic_callback(evolve,50)
         Active = True
 
 def stop():
@@ -374,7 +374,7 @@ def stop():
 
 def evolve():
     global t
-    t+=0.05
+    t+=0.01
     # call all necessary functions
     (x1,y1)=evolveFunc1(t)
     (x2,y2)=evolveFunc2(t)
