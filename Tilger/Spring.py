@@ -78,7 +78,7 @@ class Spring(object):
         fig.line(x='x',y='y',color=colour,source=self.Position,line_width=width)
     
     ## place spring in space
-    def compressTo(self,start,end,dt = None):
+    def compressTo(self,start,end):
         # draw spring and collect current length
         length=self.draw(start,end)
         # calculate the force exerted on/by the spring
@@ -90,11 +90,11 @@ class Spring(object):
         return F
     
     ## if a point (start) is moved then compress spring accordingly and calculate resulting force
-    def movePoint(self,start,moveVect,dt = None):
+    def movePoint(self,start,moveVect):
         if (start==self.start):
-            return self.compressTo(start+moveVect,self.end,dt)
+            return self.compressTo(start+moveVect,self.end)
         else:
-            return self.compressTo(self.start,start+moveVect,dt)
+            return self.compressTo(self.start,start+moveVect)
     
     # return outward direction
     def out(self,se):
@@ -106,4 +106,9 @@ class Spring(object):
     
     def changeSpringConst(self,kappa):
         self.kappa=kappa
+    
+    def changeL0(self,x0,spacing = 1.0):
+        self.length = self.direction*x0
+        # define the number of coils with respect to the relaxed position of the spring
+        self.nCoils=int(floor(x0/spacing))
 
