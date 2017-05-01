@@ -59,9 +59,9 @@ shift2      = 0.015
 
 #Arrow Sources:
 #p_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
-arr_scal = 450.0
-arr_lw   = 20.0
-ground   = 0.07
+arr_scal        = 450.0
+arr_lw          = 20.0
+ground          = 0.07
 orig            = Frame("o")
 f1              = Frame("F1")
 f2              = Frame("F2")
