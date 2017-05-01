@@ -1,6 +1,6 @@
 from bokeh.plotting import figure
-from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead
+from bokeh.layouts import column, row, Spacer
+from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead, Button
 from bokeh.io import curdoc
 from numpy import loadtxt
 from time import sleep
@@ -262,6 +262,32 @@ Sig_B_text_B.visible=False
 Sig_S_text_S.visible=False
 Sig_P_text_P.visible=False
 
+def reset():
+    global plot_source_theory, plot_source_practical, Elastic, MaxPlotted, MinPlasticPlotted
+    init()
+    Elastic = True
+    MaxPlotted=0
+    MinPlasticPlotted=44
+    plot_source_theory.data=dict(eps=[], sig=[])
+    plot_source_practical.data=dict(eps=[], sig=[])
+    if (Force_input.value==0):
+        Pull(None,0,0)
+    else:
+        Force_input.value=0
+    global Sig_B, Sig_B_text, Sig_B_text_B, Sig_S, Sig_S_text, Sig_S_text_S, Sig_P, Sig_P_text, Sig_P_text_P
+    Sig_B.visible=False
+    Sig_B_text.visible=False
+    Sig_B_text_B.visible=False
+    Sig_S.visible=False
+    Sig_S_text.visible=False
+    Sig_S_text_S.visible=False
+    Sig_P.visible=False
+    Sig_P_text.visible=False
+    Sig_P_text_P.visible=False
+
+reset_button=Button(label="Reset", button_type="success")
+reset_button.on_click(reset)
+
 ## Send to window
-curdoc().add_root(column(row(p,plot),Force_input))
+curdoc().add_root(column(row(p,plot),row(Force_input,Spacer(width=400),reset_button)))
 curdoc().title = "Zugversuch"
