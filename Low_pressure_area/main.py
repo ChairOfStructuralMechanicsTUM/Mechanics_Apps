@@ -15,11 +15,12 @@ Create the plotting domain (the low pressure area!)
 xmin, xmax = -1,1
 ymin, ymax = -1,1
 plot = figure(
-                  plot_width=800,
-                  plot_height=800,
-                  x_range=[xmin,xmax], 
-                  y_range=[ymin,ymax],
-                  tools=""
+              plot_width=800,
+              plot_height=800,
+              x_range=[xmin,xmax], 
+              y_range=[ymin,ymax],
+              tools="",
+              title = 'Tiefdruckgebiet (Low-pressure area)',
              )
 
 '''
@@ -53,18 +54,18 @@ presGrad = np.array(presGrad)
 # Define the source file for pressure contour lines plot
 pressureContourSource = get_contour_data(X,Y,pressure)
 plot.multi_line(
-                    xs='xs',
-                    ys='ys', 
-                    line_color='line_color',
-                    source=pressureContourSource
+                xs='xs',
+                ys='ys', 
+                line_color='line_color',
+                source=pressureContourSource
                )
 plot.text(
-              x='xt',
-              y='yt',
-              text='text',
-              source=pressureContourSource,
-              text_baseline='middle',
-              text_align='center'
+          x='xt',
+          y='yt',
+          text='text',
+          source=pressureContourSource,
+          text_baseline='middle',
+          text_align='center'
          )
 
 ######################## (2) Travelling particle ##############################
@@ -78,11 +79,11 @@ position = get_particle_position()
 update_particle_source(position[0],position[1])
 
 plot.circle(
-                x = 'x',
-                y = 'y',
-                radius = particleRadius,
-                color = '#33FF33',
-                source = get_particle_source()
+            x = 'x',
+            y = 'y',
+            radius = particleRadius,
+            color = '#33FF33',
+            source = get_particle_source()
            )
 
 ###################### (3) Forces and velocity arrows #########################
@@ -214,7 +215,7 @@ plot.add_tools(MoveNodeTool())
 
 def on_mouse_move(attr, old, new):
 
-    if (modify_path(attr,old,new)==1):
+    if (modify_location(attr,old,new)==1):
         # if the path is changed then update the drawing
         pass
 

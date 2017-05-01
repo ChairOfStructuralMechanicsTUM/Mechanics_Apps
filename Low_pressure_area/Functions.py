@@ -3,6 +3,13 @@ from bokeh.models import ColumnDataSource
 from MoveNodeTool import *
 import numpy as np
 
+'''
+The particleSource, particleXPos, particleYPos are stored in this file because
+they are used extensively by the functions inNode() and modify_location(), and
+this use cannot be achieved without storing them here.
+This piece of code responsible for the contour plot has been brough from the 
+user: http://stackoverflow.com/users/5158031/br123
+'''
 particleSource = ColumnDataSource(data=dict(x=[],y=[]))
 particleXPos = [0]
 particleYPos = [0]
@@ -37,9 +44,23 @@ def get_contour_data(X, Y, Z):
             text.append(theiso)
             col.append(thecol)
 
-    source = ColumnDataSource(data={'xs': xs, 'ys': ys, 'line_color': col,'xt':xt,'yt':yt,'text':text})
+    source = ColumnDataSource(
+                              data={
+                                    'xs': xs, 
+                                    'ys': ys, 
+                                    'line_color': col,
+                                    'xt':xt,
+                                    'yt':yt,
+                                    'text':text
+                                   }
+                             )
     return source
     
+'''
+This function gets for a certain position of the ball within the plot its 
+corresponding index within the position grid created in the main file under
+the name X, Y
+'''
 def get_index( position, Xgrid, Ygrid ):
     # finding the x position index
     xPosIndex,yPosIndex = 0,0
@@ -48,16 +69,15 @@ def get_index( position, Xgrid, Ygrid ):
     for i in Xgrid[0,:]:
         if i == Xgrid[0,-1]:
             pass
+        
         elif position[0] >= Xgrid[0,counter] and position[0] < Xgrid[0,counter+1]:
             xPosIndex = counter
             
             # If the actual position is in between the two coordinate points
-            # I am comparing with, the next line will indicate a percentage  
-            # how this position is situated between
+            # I am comparing with, the following line will indicate a   
+            # percentage of how this position is situated in between
             percentageX = (position[0] - Xgrid[0,counter]) / (Xgrid[0,counter+1] - Xgrid[0,counter])
-            #print('percentageX = ',percentageX)
-        else:
-            pass
+           
         counter += 1
         
     # finding the y position index
@@ -65,17 +85,22 @@ def get_index( position, Xgrid, Ygrid ):
     for i in Ygrid[:,0]:
         if i == Ygrid[-1,0]:
             pass
+        
         elif position[1] >= Ygrid[counter,0] and position[1] < Ygrid[counter+1,0]:
             yPosIndex = counter
-            
             percentageY = (position[1] - Ygrid[counter,0]) / (Ygrid[counter+1,0] - Ygrid[counter,0])
-            #print('percentageY = ',percentageY)
-        else:
-            pass
+         
         counter += 1
         
     return xPosIndex, yPosIndex, percentageX, percentageY
     
+'''
+This function calculates the pressure gradient based on the indeces determined
+by the get_index() function; furthermore, it considers the percentages retuned
+by get_index() in order to do linear interpolation and gets an accurate 
+continuous determination of the actual pressure gradient at that specific 
+location (which is determined by the indeces)
+'''
 def get_pressure_grad( position, Xgrid, Ygrid, presGrad ):
     
     xPosIndex, yPosIndex, percentageX, percentageY= get_index( position, Xgrid, Ygrid )
@@ -87,14 +112,19 @@ def get_pressure_grad( position, Xgrid, Ygrid, presGrad ):
 
     # Linear interpolation formula
     presGradActual = (
-                      presGrad00 * (1-percentageX) * (1-percentageY)
-                     +presGrad10 * (percentageX  ) * (1-percentageY)
-                     +presGrad01 * (1-percentageX) * (percentageY  )
-                     +presGrad11 * (percentageX  ) * (percentageY  )
+                       presGrad00 * (1-percentageX) * (1-percentageY)
+                     + presGrad10 * (percentageX  ) * (1-percentageY)
+                     + presGrad01 * (1-percentageX) * (percentageY  )
+                     + presGrad11 * (percentageX  ) * (percentageY  )
                      )
     
     return presGradActual
     
+'''
+The functions inNode() and modify_location() are concerned with the 
+functionality of changing the position of the particle (ball) using the mouse.
+For more information, get in touch with Emily Bourne, whom I got this code from.
+'''
 # find index of node in which coordinates are found
 # (return -1 if not in a node)
 def inNode (xPos,yPos):
@@ -105,10 +135,8 @@ def inNode (xPos,yPos):
     return -1
 
 # modify path by dragging nodes
-def modify_path(attr, old, new):
-    #print('old: ',old)
-    #print('new: ',new)
-    #print('currentNode: ',currentNode)
+def modify_location(attr, old, new):
+
     global currentNode, particleSource, particleXPos, particleYPos
     # if there is a previous node (not first time the function is called)
     # and the node has not been released (new['x']=-1 on release to prepare for future calls)
@@ -132,6 +160,11 @@ def modify_path(attr, old, new):
         currentNode=-1
         return -1
 
+'''
+The following six functions are constructed here in order to pass the export 
+particle source file here to the main file, and to reduce the number of lines
+in the main file as well
+'''
 def update_particle_source(x,y):
     global particleXPos, particleYPos, particleSource
     #print('update_particle_positions() has been accessed')
