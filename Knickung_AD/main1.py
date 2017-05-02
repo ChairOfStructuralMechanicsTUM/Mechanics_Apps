@@ -8,10 +8,10 @@ import numpy as np
 import math
 
 #constant numbers:
-resol           = 100                #resolution of beams
-E               = 200.0e1            #modulus of elasticity
-I               = 50                 #moment of inertia
-f_end           = 1.5         #last slider value
+#resol           = 100                #resolution of beams
+#E               = 200.0e1            #modulus of elasticity
+#I               = 50                 #moment of inertia
+f_end           = 1.5                 #last slider value
 punktezahl      = 30
 factor          = 1.2
 xf              = 0.0
@@ -49,10 +49,6 @@ class Column(object):
         name = ["F",self.name]
         self.labels.data = dict(x = x, y = y, name = name)
 
-
-
-
-
 weight_slide = Slider(title="Force", value=0, start=0, end=f_end, step=0.05)
 
 
@@ -62,13 +58,12 @@ def drange(start,stop,step):
         yield r
         r += step
 
-#create 4 functions that calculate the buckling
-#create 4 objects called beam
 
-col1 = Column("Free-Fixed",3,0.9)                        #beam: "Free-Fixed" Column
+
+col1 = Column("Free-Fixed",3,0.9)                               #beam: "Free-Fixed" Column
 col2 = Column("Pinned-Pinned",2.0*col1.h,1.0*col1.fcrit)        #beam: "Fixed-Fixed" Column
-col3 = Column("Pinned-Fixed",1.43*col2.h,1.0*col2.fcrit)       #beam: "Fixed-Fixed" Column
-col4 = Column("Fixed-Fixed",2.0*col2.h,1.0*col2.fcrit)        #beam: "Fixed-Fixed" Column
+col3 = Column("Pinned-Fixed",1.43*col2.h,1.0*col2.fcrit)        #beam: "Fixed-Fixed" Column
+col4 = Column("Fixed-Fixed",2.0*col2.h,1.0*col2.fcrit)          #beam: "Fixed-Fixed" Column
 
 #where the columns start on the graph:
 col1.xstart = xstart
