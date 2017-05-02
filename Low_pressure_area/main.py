@@ -22,6 +22,11 @@ plot = figure(
               tools="",
               title = 'Tiefdruckgebiet (Low-pressure area)',
              )
+plot.title.text_font_size = "25px"
+plot.title.align = "center"
+plot.grid.visible=False
+plot.xaxis.visible=False
+plot.yaxis.visible=False
 
 '''
 Define the objects to be plotted within the plotting domain
@@ -85,6 +90,12 @@ plot.circle(
             color = '#33FF33',
             source = get_particle_source()
            )
+jumpingSource = ColumnDataSource(data = dict(x=[],y=[]) )
+plot.ellipse(
+             x='x',y='y',width=0.1,height=0.1,
+             color="#0065BD",
+             source=jumpingSource
+            )
 
 ###################### (3) Forces and velocity arrows #########################
 # Defining the velocity arrow
@@ -207,8 +218,14 @@ def compute_tranjectory():
     elif position[0] < ymin:
         position[1] += ymax/5
         velocity[1]  = 0
-        
-                        
+
+    jumpingSource.stream( 
+                          dict(
+                               x = [position[0]],
+                               y = [position[1]]
+                              )
+                         )
+                
     update_particle_source(position[0],position[1])
     update_particle_position( x=position[0] , y=position[1] )
     
