@@ -51,7 +51,7 @@ Cr = 1.0
 dt = 0.01
 tolerance = 0.1
 velocityTolerance = 0.05
-Active = True
+Active = False
 
 # Construct source files
 circleOneSource = ColumnDataSource(
@@ -249,9 +249,9 @@ def compute_tranjectory():
     # Update the kinetic energies and velocity arrows plotted by each bar 
     # according to the new velocities calculated previously
     update_bars()
-    updata_velocity_arrows()
+    update_velocity_arrows()
     
-def updata_velocity_arrows():
+def update_velocity_arrows():
     
     sourceArrowOne.data=dict(
                                  xs=[circleOneSource.data['x'][0]],
@@ -288,8 +288,10 @@ def update_bars ():
     barsFig.setHeight(2,totalKE)
     
 # Creating reset button
+
+periodicCallback = 0
 def Reset():
-    global velocityVectorOne, velocityVectorTwo
+    global velocityVectorOne, velocityVectorTwo, Active, periodicCallback
 
     # Update the source data file to the very initial data
     circleOneSource.data = dict(
@@ -306,39 +308,49 @@ def Reset():
     velocityVectorTwo = np.array([0,0])
 
     # Update the velocity arrows' source file
-    updata_velocity_arrows()
+    update_velocity_arrows()
     
     # Update the height of the bars accordingly
     update_bars()
+    
+    
+    # The preiodic callback has been removed here because when the pause 
+    # button is set to False, this reactivates the periodic callback
+    if periodicCallback == 0 and Active == True:
+        curdoc().remove_periodic_callback(compute_tranjectory)
+        periodicCallback += 1
+
+    else:
+        pass
+    
+    Active = False
 
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)
 
 # Creating pause button
-def pause (toggled):
+def pause ():
     global Active
     # When active pause animation
-    if (toggled):
+    if Active == True:
         curdoc().remove_periodic_callback(compute_tranjectory)
         Active=False
     else:
-        curdoc().add_periodic_callback(compute_tranjectory, 10)
-        Active=True
+        pass
         
-pause_button = Toggle(label="Pause", button_type="success")
+pause_button = Button(label="Pause", button_type="success")
 pause_button.on_click(pause)
 
 # Creating play button
 def play ():
-    global Active
-    # if inactive, reactivate animation
-    if (pause_button.active):
-        # deactivating pause button reactivates animation
-        # (calling add_periodic_callback twice gives errors)
-        pause_button.active=False
-    elif (not Active):
+    global Active, periodicCallback
+    
+    if Active == False:
         curdoc().add_periodic_callback(compute_tranjectory, 10)
         Active=True
+        periodicCallback = 0
+    else:
+        pass
         
 play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
@@ -510,7 +522,7 @@ ballTwoVelocityMagSlider.on_change('value',update_ballTwo_VelocityMag)
 Cr_Slider = Slider(title=u" coefficient of restitution ", value=1, start=0, end=1, step=0.1,width=600)
 Cr_Slider.on_change('value',update_Cr_value)
     
-curdoc().add_periodic_callback( compute_tranjectory,10 )
+#curdoc().add_periodic_callback( compute_tranjectory,10 )
 
 curdoc().add_root(
                     row(
