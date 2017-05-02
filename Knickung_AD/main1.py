@@ -50,16 +50,16 @@ class Column(object):
     def fun_arrow(self):
         xS = [self.xstart]
         xE = [self.xstart]
-        yS = [self.h + 1.8*f_end ]
+        yS = [self.h + 2.2*f_end ]
         yE = [self.h + 1.8*f_end - (weight_slide.value/1.9)]
         lW = [weight_slide.value*3]
         self.arrow.data = dict(xS = xS, xE = xE , yS = yS, yE = yE, lW = lW)
 
     def fun_labels(self):
-        x = [self.xstart, self.xstart + 1]
-        y = [self.h + 1.8*f_end + 2, 3]
+        x = [self.xstart, self.xstart]
+        y = [self.h + 1.8*f_end + 2, 0.5]
         name = ["F",self.name]
-        self.labels = dict(x = x, y = y, name = name)
+        self.labels.data = dict(x = x, y = y, name = name)
 
 
 
@@ -243,16 +243,16 @@ col3_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
 x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col3.arrow,line_color="#A2AD00")
 col4_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
 x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col4.arrow,line_color="#A2AD00")
-#labels = LabelSet(x='x', y='y', text='name', level='glyph',
-#              x_offset=0, y_offset=0, source=labels, render_mode='canvas')
-labels = LabelSet(x=[0,1], y=[0,3], text=["hsdf","isdfs"], level='glyph',
-              x_offset=0, y_offset=0, render_mode='canvas')
-#labels2 = LabelSet(x='x', y='y', text='name', level='glyph',
-#              x_offset=5, y_offset=-30, source=col2.labels, render_mode='canvas')
-#labels3 = LabelSet(x='x', y='y', text='name', level='glyph',
-#              x_offset=5, y_offset=-30, source=col3.labels, render_mode='canvas')
-#labels4 = LabelSet(x='x', y='y', text='name', level='glyph',
-#              x_offset=5, y_offset=-30, source=col4.labels, render_mode='canvas')
+labels1 = LabelSet(x='x', y='y', text='name', level='glyph',
+              x_offset=-30, y_offset=0, source=col1.labels, render_mode='canvas')
+#labels = LabelSet(x=[0,1], y=[0,3], text=["hsdf","isdfs"], level='glyph',
+#              x_offset=0, y_offset=0, render_mode='canvas')
+labels2 = LabelSet(x='x', y='y', text='name', level='glyph',
+              x_offset=-30, y_offset=0, source=col2.labels, render_mode='canvas')
+labels3 = LabelSet(x='x', y='y', text='name', level='glyph',
+              x_offset=-30, y_offset=0, source=col3.labels, render_mode='canvas')
+labels4 = LabelSet(x='x', y='y', text='name', level='glyph',
+              x_offset=-30, y_offset=0, source=col4.labels, render_mode='canvas')
 #labels = LabelSet(x='x', y='y', text='name', level='glyph',
 #              x_offset=5, y_offset=-30, source=col1.fun_labels, render_mode='canvas')
 
@@ -270,10 +270,10 @@ plot.add_layout(col1_a)
 plot.add_layout(col2_a)
 plot.add_layout(col3_a)
 plot.add_layout(col4_a)
-plot.add_layout(labels)
-#plot.add_layout(labels2)
-#plot.add_layout(labels3)
-#plot.add_layout(labels4)
+plot.add_layout(labels1)
+plot.add_layout(labels2)
+plot.add_layout(labels3)
+plot.add_layout(labels4)
 
 
 curdoc().add_root(row(column(weight_slide),plot))
