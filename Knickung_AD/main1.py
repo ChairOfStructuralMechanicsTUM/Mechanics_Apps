@@ -39,7 +39,7 @@ class Column(object):
         xS = [self.pts.data['x'][-1]]
         xE = [self.pts.data['x'][-1]]
         yS = [self.h + 2.2*f_end ]
-        yE = [self.h + 1.8*f_end - (weight_slide.value/1.9)]
+        yE = [self.h + 1.85*f_end - (weight_slide.value/1.9)]
         lW = [weight_slide.value*3]
         self.arrow.data = dict(xS = xS, xE = xE , yS = yS, yE = yE, lW = lW)
 
@@ -74,25 +74,24 @@ col1.fun_floor()
 col2.floor = dict(x = [col2.xstart-1,col2.xstart+1], y = [zstart-0.75,zstart-0.75])
 col3.fun_floor()
 col4.fun_floor()
-
 col2.cir1 = dict(x = [col2.xstart] , y = [zstart])
 col2.cir2 = ColumnDataSource(data=dict(x=[] , y=[]))
 col3.cir2 = ColumnDataSource(data=dict(x=[] , y=[]))
-
 col2.tri1 = dict(x = [col2.xstart] , y = [zstart-0.5])
 col2.tri2 = ColumnDataSource(data=dict(x=[] , y=[]))
 col3.tri2 = ColumnDataSource(data=dict(x=[] , y=[]))
 col4.square = ColumnDataSource(data=dict(x=[] , y=[]))
-
+col1.harrow = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 col2.wall = dict(x = [col2.xstart+1,col2.xstart+1] , y = [zstart+col2.hi+1,zstart+col2.hi-1])
 col3.wall = dict(x = [col3.xstart+1,col3.xstart+1] , y = [zstart+col3.hi+1,zstart+col3.hi-1])
-col4.wall = dict(x = [ [col4.xstart+0.5,col4.xstart+0.5] , [col4.xstart-0.5,col4.xstart-0.5] ], y = [ [zstart+col4.hi+1,zstart+col4.hi-1] , [zstart+col4.hi+1,zstart+col4.hi-1] ] )
+col4.wall = dict(x = [ [col4.xstart+0.5,col4.xstart+0.5] , [col4.xstart-0.5,col4.xstart-0.5] ],
+y = [ [zstart+col4.hi+1,zstart+col4.hi-1] , [zstart+col4.hi+1,zstart+col4.hi-1] ] )
+
 
 def fun_col1(paramFloat1,paramFloat2):
     x = []
     y = []
     d3 = col1.h/ punktezahl
-    #this.Stab_I.reset()
     d1 = paramFloat1
     d2 = paramFloat2
     x0 = [d1]
@@ -109,7 +108,6 @@ def fun_col2(paramFloat1,paramFloat2):
     x  = []
     y  = []
     d3 = col2.h/ punktezahl
-    #this.Stab_I.reset()
     d1 = paramFloat1
     d2 = paramFloat2
     x0 = [d1]
@@ -130,7 +128,6 @@ def fun_col3(paramFloat1,paramFloat2):
     y  = []
     d3 = col3.h / punktezahl
     d4 = 4.4 / col3.h
-    #Stab_III.reset()
     d1 = paramFloat1
     d2 = paramFloat2
     x0 = [d1]
@@ -182,6 +179,14 @@ def fun_col4(paramFloat1,paramFloat2):
 
     col4.pts.data = dict(x = x0 + x + [paramFloat1] , y = y0 + y + [paramFloat2 + col4.h-0.05])
 
+def fun_figures():
+    col2.cir2.data = dict(x= [ col2.pts.data['x'][-1] ], y=[col2.pts.data['y'][-1]])
+    col3.cir2.data = dict(x=[col3.pts.data['x'][-1]], y=[col3.pts.data['y'][-1]])
+    col2.tri2.data = dict(x=[col2.pts.data['x'][-1]+0.6], y=[col2.pts.data['y'][-1]])
+    col3.tri2.data = dict(x=[col3.pts.data['x'][-1]+0.6], y=[col3.pts.data['y'][-1]])
+    col4.square.data = dict(x=[col4.pts.data['x'][-1]], y=[col4.pts.data['y'][-1]-.2])
+    #col1.harrowhead.data = dict(lw=[weight_slide.value*2], s=[weight_slide.value*2])
+
 def fun_update(attr,old,new):
     #print col1.floor
     global Druckkraft
@@ -194,6 +199,9 @@ def fun_update(attr,old,new):
     if(Druckkraft > col1.fcrit):
         col1.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col1.fcrit)-1) )
         col1.h         -= 0.005
+        col1.harrow.data = dict(xS=[col1.xstart+1], xE=[col1.pts.data['x'][-1]+0.1],
+        yS=[col1.pts.data['y'][-1]], yE=[col1.pts.data['y'][-1]], lW = [weight_slide.value*2])
+
     if(Druckkraft > col2.fcrit):
         col2.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col2.fcrit)-1) )
         col2.h         -= 0.005
@@ -216,22 +224,13 @@ def fun_update(attr,old,new):
     col2.fun_labels()
     col3.fun_labels()
     col4.fun_labels()
-
-    col2.cir2.data = dict(x= [ col2.pts.data['x'][-1] ], y=[col2.pts.data['y'][-1]])
-    col3.cir2.data = dict(x=[col3.pts.data['x'][-1]], y=[col3.pts.data['y'][-1]])
-
-    col2.tri2.data = dict(x=[col2.pts.data['x'][-1]+0.6], y=[col2.pts.data['y'][-1]])
-    col3.tri2.data = dict(x=[col3.pts.data['x'][-1]+0.6], y=[col3.pts.data['y'][-1]])
-    col4.square.data = dict(x=[col4.pts.data['x'][-1]], y=[col4.pts.data['y'][-1]-.2])
-
-
+    fun_figures()
 
 plot = Figure(tools = "",title="Knickung", x_range=(-2,fenster), y_range=(-.5,fenster+2))
 plot.line(x='x', y='y', source = col1.pts, color='blue',line_width=5)
 plot.line(x='x', y='y', source = col2.pts, color='blue',line_width=5)
 plot.line(x='x', y='y', source = col3.pts, color='blue',line_width=5)
 plot.line(x='x', y='y', source = col4.pts, color='blue',line_width=5)
-
 
 plot.line(x='x', y='y', source = col1.floor, color='black',line_width=6)
 plot.line(x='x', y='y', source = col2.floor, color='black',line_width=6)
@@ -242,8 +241,6 @@ plot.line(x='x', y='y', source = col2.wall, color='black',line_width=6)
 plot.line(x='x', y='y', source = col3.wall, color='black',line_width=6)
 plot.multi_line(xs='x', ys='y', source = col4.wall, color='black',line_width=6)
 
-
-
 plot.circle(x='x', y='y', source = col2.cir1, color='black',size = 10)
 plot.circle(x='x', y='y', source = col2.cir2, color='black',size = 10)
 plot.circle(x='x', y='y', source = col3.cir2, color='black',size = 10)
@@ -253,6 +250,12 @@ plot.triangle(x='x', y='y', source = col2.tri2, color='black',angle =np.pi/2,fil
 plot.triangle(x='x', y='y', source = col3.tri2, color='black',angle =np.pi/2,fill_alpha = 0, size = 20)
 plot.square(x='x', y='y', source = col4.square, color='black',size = 20)
 
+plot.axis.visible = False
+plot.grid.visible = False
+plot.outline_line_width = 10
+plot.outline_line_alpha = 0.5
+plot.outline_line_color = "Black"
+plot.title.text_font_size = "18pt"
 col1_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
 x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col1.arrow,line_color="#A2AD00")
 col2_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
@@ -261,10 +264,11 @@ col3_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
 x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col3.arrow,line_color="#A2AD00")
 col4_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
 x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col4.arrow,line_color="#A2AD00")
+col1_ha = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=6),
+x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col1.harrow,line_color="#A2AD00")
+
 labels1 = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-20, y_offset=0, source=col1.labels, render_mode='canvas')
-#labels = LabelSet(x=[0,1], y=[0,3], text=["hsdf","isdfs"], level='glyph',
-#              x_offset=0, y_offset=0, render_mode='canvas')
 labels2 = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-30, y_offset=0, source=col2.labels, render_mode='canvas')
 labels3 = LabelSet(x='x', y='y', text='name', level='glyph',
@@ -277,27 +281,21 @@ labels3.text_font_size = '10pt'
 labels4.text_font_size = '10pt'
 
 
-#labels = LabelSet(x='x', y='y', text='name', level='glyph',
-#              x_offset=5, y_offset=-30, source=col1.fun_labels, render_mode='canvas')
-
-#plot.axis.visible = False
-#plot.grid.visible = False
-plot.outline_line_width = 7
-plot.outline_line_alpha = 0.3
-plot.outline_line_color = "Black"
 
 
-weight_slide.on_change('value', fun_update)
-#p_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-#    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=p_arrow_source,line_color="#A2AD00")
+
 plot.add_layout(col1_a)
 plot.add_layout(col2_a)
 plot.add_layout(col3_a)
 plot.add_layout(col4_a)
+plot.add_layout(col1_ha)
 plot.add_layout(labels1)
 plot.add_layout(labels2)
 plot.add_layout(labels3)
 plot.add_layout(labels4)
 
 
+weight_slide.on_change('value', fun_update)
+
+fun_update(None,None,None)
 curdoc().add_root(row(column(weight_slide),plot))
