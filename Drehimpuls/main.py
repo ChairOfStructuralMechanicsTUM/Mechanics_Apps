@@ -207,6 +207,10 @@ test_button.on_click(test)
 
 def reset():
     global Active, t, ball, phi, arrowSources, a_half, y0, h, ArrowText, VhArrow, VhText, dPhiArrow, dPhiText
+    a_input.value=1.5
+    h_input.value=2.5
+    mk_input.value=3
+    ms_input.value=15
     ball.data = dict(x=[a_half-0.1],y=[y0])
     if (Active):
         Active=False
