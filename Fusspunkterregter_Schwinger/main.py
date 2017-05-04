@@ -14,7 +14,7 @@ from math import sin, radians
 
 mass = RectangularMass(6,-4,16,8,2)
 spring = Spring((-2,16),(-2,9),7,150)
-dashpot = Dashpot((2,16),(2,9),5)
+dashpot = Dashpot((2,16),(2,9),1)
 oldBase = 9
 mass.linkObj(spring,(-2,16))
 mass.linkObj(dashpot,(2,16))
@@ -24,10 +24,12 @@ Position = ColumnDataSource(data = dict(t=[0],s=[0]))
 Wheel_source = ColumnDataSource(data = dict(x=[0],y=[5]))
 Floor = dict(x=[],y=[])
 Floor_source = ColumnDataSource(data = dict(x=[],y=[]))
+dt=0.03
 t=0
 s=0
 Floor_angle=164
 Active=False
+maxX=20
 
 def init():
     global Floor, Floor_source, oldBase, Floor_angle
@@ -49,7 +51,7 @@ def init():
     stable_pos=16-9.81*float(mass_input.value)/float(kappa_input.value)
     mass.moveTo(-4,stable_pos,8,2)
     spring.compressTo(Coord(-2,stable_pos),Coord(-2,9))
-    dashpot.compressTo(Coord(2,stable_pos),Coord(2,9))
+    dashpot.compressTo(Coord(2,stable_pos),Coord(2,9),dt)
     mass.resetLinks(spring,(-2,stable_pos))
     mass.resetLinks(dashpot,(2,stable_pos))
     oldBase=9
@@ -77,17 +79,29 @@ def evolve():
     spring.movePoint(Coord(-2,oldBase),Coord(0,(9+baseShift)-oldBase))
     dashpot.movePoint(Coord(2,oldBase),Coord(0,(9+baseShift)-oldBase))
     oldBase+=baseShift
+    #mass.FreezeForces()
+    #disp=mass.evolve(0.03)
     mass.FreezeForces()
-    disp=mass.evolve(0.03)
-    s+=disp.y
+    temp=mass.getVelAcc()
+    mass.move(temp[0]*dt+0.5*dt*dt*temp[1])
+    A=temp[1]
+    s+=temp[0].y*dt+0.5*dt*dt*temp[1].y
+    dashpot.assertForces(dt)
+    mass.FreezeForces()
+    temp=mass.getVelAcc()
+    mass.v+=0.5*dt*(A+temp[1])
     t+=0.03
     Position.stream(dict(t=[t],s=[s]))
+    global maxX
+    if (t>maxX):
+        maxX+=20
+        p.x_range.end=maxX
 
 title_box = Div(text="""<h2 style="text-align:center;">Fusspunkterregter Schwinger (Base-excited oscillator)</h2>""",width=1000)
 
 fig = figure(title="", tools="", x_range=(-7,7), y_range=(0,20),width=350,height=500)
 fig.title.text_font_size="20pt"
-fig.axis.visible = False
+fig.xaxis.visible = False
 fig.grid.visible = False
 fig.outline_line_color = None
 spring.plot(fig,width=2)
@@ -98,7 +112,7 @@ fig.line(x='x',y='y',source=Floor_source,color="black",line_width=1)
 fig.ellipse(x='x',y='y',width=2,height=2,source=Wheel_source,line_color="#E37222",fill_color=None,line_width=2)
 mass.plot(fig)
 
-p = figure(title="", tools="", y_range=(-5,5), x_range=(0,20),height=500)
+p = figure(title="", tools="", y_range=(-5,5), x_range=(0,maxX),height=500)
 p.line(x='t',y='s',source=Position,color="black")
 p.axis.major_label_text_font_size="12pt"
 p.axis.axis_label_text_font_style="normal"
@@ -110,7 +124,7 @@ def change_mass(attr,old,new):
     global mass
     mass.changeMass(new)
 ## Create slider to choose mass of blob
-mass_input = Slider(title="Masse (mass) [kg]", value=6, start=0.0, end=10.0, step=0.1,width=400)
+mass_input = Slider(title="Masse (mass) [kg]", value=6, start=0.3, end=10.0, step=0.1,width=400)
 mass_input.on_change('value',change_mass)
 
 def change_kappa(attr,old,new):
@@ -124,7 +138,7 @@ def change_lam(attr,old,new):
     global dashpot
     dashpot.changeDamperCoeff(new)
 ## Create slider to choose damper coefficient
-lam_input = Slider(title=u"D\u00E4mpfungskonstante (Damper Coefficient) [N*s/m]", value=5.0, start=0.0, end=10, step=0.1,width=400)
+lam_input = Slider(title=u"D\u00E4mpfungskonstante (Damper Coefficient) [N*s/m]", value=1.0, start=0.0, end=10, step=0.1,width=400)
 lam_input.on_change('value',change_lam)
 
 #def change_initV(attr,old,new):
@@ -148,16 +162,21 @@ def play():
         curdoc().add_periodic_callback(evolve,100)
         Active=True
 def reset():
-    global Position, t, s, Bottom_Line, Linking_Line, spring, mass, dashpot
+    global Position, t, s, Bottom_Line, Linking_Line, spring, mass, dashpot, maxX
     stop()
     t=0
     s=0
+    mass_input.value=6.0
+    lam_input.value=1.0
+    kappa_input.value=150.0
     Position.data=dict(t=[0],s=[0])
     Bottom_Line.data = dict(x=[-2,2],y=[9,9])
     Linking_Line.data = dict(x=[0,0],y=[9,5])
     Wheel_source.data = dict(x=[0],y=[5])
     init() 
     mass.changeInitV(0.0)
+    maxX=20
+    p.x_range.end=maxX
 
 stop_button = Button(label="Stop", button_type="success",width=100)
 stop_button.on_click(stop)

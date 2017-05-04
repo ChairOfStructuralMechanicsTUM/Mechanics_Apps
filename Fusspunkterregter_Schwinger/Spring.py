@@ -9,10 +9,12 @@ class Spring(object):
         end=Coord(end[0],end[1])
         # define spring constant
         self.kappa=kappa
-        # define rest length
-        self.length = x0
+        # define rest length (directional) and direction
+        self.length = (end-start)
+        self.direction = self.length/self.length.norm()
+        self.length = self.direction*x0
         # define the number of coils with respect to the relaxed position of the spring
-        self.nCoils=int(floor(self.length/spacing))
+        self.nCoils=int(floor(x0/spacing))
         # Create ColumnDataSource
         self.Position = ColumnDataSource(data=dict(x=[],y=[]))
         # objects that are influenced by the spring
@@ -24,8 +26,12 @@ class Spring(object):
     def linkTo(self,obj,point):
         if (point==self.start):
             self.actsOn.append((obj,'s'))
+            # apply current force to object
+            obj.applyForce(-self.kappa*(self.end-self.start-self.length),self)
         else:
             self.actsOn.append((obj,'e'))
+            # apply current force to object
+            obj.applyForce(self.kappa*(self.end-self.start-self.length),self)
     
     ## define spring co-ordinates
     def draw(self,start,end):
@@ -36,7 +42,6 @@ class Spring(object):
         direction = end-start
         # find normalising constant (=length)
         length = direction.norm()
-        self.direction = direction/length
         # define (normalised) perpendicular vector for spike directions
         perpVect = Coord(direction.y/length,-direction.x/length)
         # create values to help with loop
@@ -65,8 +70,8 @@ class Spring(object):
         
         # add calculated points to figure
         self.Position.data=Pos
-        # return current length
-        return length
+        # return length (with direction for overly compressed spring)
+        return direction
     
     ## draw spring on figure
     def plot(self,fig,colour="#808080",width=1):
@@ -77,7 +82,8 @@ class Spring(object):
         # draw spring and collect current length
         length=self.draw(start,end)
         # calculate the force exerted on/by the spring
-        F = -self.kappa*(length-self.length)
+        F = -self.kappa*(length-self.length).prod_scal(self.direction)
+        # apply force to each object that the spring acts on
         for i in range(0,len(self.actsOn)):
             self.actsOn[i][0].applyForce(F*self.out(self.actsOn[i][1]),self)
         # return the force
@@ -100,3 +106,9 @@ class Spring(object):
     
     def changeSpringConst(self,kappa):
         self.kappa=kappa
+    
+    def changeL0(self,x0,spacing = 1.0):
+        self.length = self.direction*x0
+        # define the number of coils with respect to the relaxed position of the spring
+        self.nCoils=int(floor(x0/spacing))
+
