@@ -15,10 +15,10 @@ x1=6
 x2=16
 h=5
 m1=100
-m2=11.0
-c2=1.5
+m2=8.0
+c2=3.7
 k1 = 1000.0
-k2 = 110.0
+k2 = 80.0
 # create upper mass
 topMass = RectangularMass(m2,-5,x2,4,4)
 # create dashpot and spring linked to upper mass
@@ -300,6 +300,10 @@ def play():
         Active=True
 def reset():
     global spring, topMass, dashpot, mainMass, baseSpring, oscForceAngle, x1, x2, h
+    mass_input.value=8.0
+    kappa_input.value=80.0
+    lam_input.value=3.7
+    omega_input.value=1.0
     # if simulation is running, then stop it
     stop()
     # reset objects
