@@ -251,7 +251,7 @@ def Loop():
     drawCart()
     updateBars()
     eFig.ResetYRange()
-loop_button = Button(label="Looping", button_type="success")
+loop_button = Button(label="Loop", button_type="success")
 loop_button.on_click(Loop)
 
 # function which returns the cart to the beginning of the rollercoaster
