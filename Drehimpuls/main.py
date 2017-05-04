@@ -154,7 +154,7 @@ def removeMark(attr,old,new):
 userVh = TextInput(value="", title=u"v\u2095 = (1 d.p)",width=200)
 userVh.on_change('value',removeMark)
 VhMark = Paragraph(text="")
-userDPhi = TextInput(value="", title=u"\u03C6\u0307 = (1 d.p)",width=200)
+userDPhi = TextInput(value="", title=u"\u03C6\u0307 = (2 d.p)",width=200)
 userDPhi.on_change('value',removeMark)
 dPhiMark = Paragraph(text="")
 
@@ -163,7 +163,6 @@ def markUserInput():
     Vh=sqrt(19.62*h)
     Vh10=floor(Vh*10)
     Vh100=floor(Vh*100)
-    Vh100-Vh10*10
     if (Vh100-Vh10*10>=5):
         Vh=(Vh10+1)/10.0
     else:
@@ -175,13 +174,12 @@ def markUserInput():
             VhMark.text=u"\u2717"
     except:
         VhMark.text=u"\u2717"
-    dPhi10=floor(dPhi*10)
     dPhi100=floor(dPhi*100)
-    dPhi100-dPhi10*10
-    if (dPhi100-dPhi10*10>=5):
-        dPhiR=(dPhi10+1)/10.0
+    dPhi1000=floor(dPhi*1000)
+    if (dPhi1000-dPhi100*10>=5):
+        dPhiR=(dPhi100+1)/100.0
     else:
-        dPhiR=dPhi10/10.0
+        dPhiR=dPhi100/100.0
     try:
         if (abs(float(userDPhi.value)-dPhiR)<=0.05):
             dPhiMark.text=u"\u2714"
