@@ -2,24 +2,29 @@ from MoveMassTool import *
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
-from bokeh.models import ColumnDataSource, Slider, Button, RadioButtonGroup
+from bokeh.models import ColumnDataSource, Slider, Button, RadioButtonGroup, Arrow, OpenHead
 from math import sin, cos, pi, atan2, sqrt, acos
 from mpmath import csc
 
 # create column data sources
 Mass = ColumnDataSource(data = dict(x=[],y=[]))
 PendulumArm = ColumnDataSource(data = dict(x=[0],y=[10]))
+PendulumElbow = ColumnDataSource(data = dict(x=[],y=[]))
 basicPhaseDiagram = ColumnDataSource(data = dict(x=[],y=[]))
 currentPoint = ColumnDataSource(data = dict(x=[],y=[]))
 KinEnergySource = ColumnDataSource(data = dict(x=[],y=[]))
 OtherEnergySource = ColumnDataSource(data = dict(x=[],y=[]))
+PhiAngle = ColumnDataSource(data=dict(x=[],y=[]))
+PhiAngleText = ColumnDataSource(data=dict(x=[],y=[],t=[]))
+dPhiArrow = ColumnDataSource(data=dict(xs=[],xe=[],ys=[],ye=[]))
+dPhiArrowText = ColumnDataSource(data=dict(x=[],y=[],t=[]))
 # create characteristic properties
 R=4.0
 m=5.0
 g=9.81
 dt=0.1
-phi=-1.0
-dPhi=0.0
+phi=0.5
+dPhi=1.0
 lam=0.0
 PenduleType="Single"
 theta=0
@@ -34,6 +39,43 @@ TotEng=0
 # create values to disable phi0 and dphi0 slider
 Phi0=0.0
 dPhi0=0.0
+
+def drawPhiAngle():
+    global PhiAngle, PhiAngleText, dPhiArrow, dPhiArrowText, phi, dPhi
+    X=[]
+    Y=[]
+    for i in range(0,6):
+        X.append(0.5*sin(i*phi/5.0))
+        Y.append(10.0-0.5*cos(i*phi/5.0))
+    X.append(X[4])
+    Y.append(Y[5])
+    X.append(X[5])
+    Y.append(Y[5])
+    X.append(X[5])
+    Y.append(Y[4])
+    PhiAngle.data=dict(x=X,y=Y)
+    if (X[2]>=0):
+        PhiAngleText.data=dict(x=[X[2]],y=[Y[2]-0.1],t=[u"\u03C6"])
+    else:
+        PhiAngleText.data=dict(x=[X[2]],y=[Y[2]-0.1],t=[u"-\u03C6"])
+    X=Mass.data['x'][0]
+    Y=Mass.data['y'][0]
+    Xe=X+dPhi*cos(phi)
+    Ye=Y+dPhi*sin(phi)
+    dPhiArrow.data=dict(xs=[X],xe=[Xe],ys=[Y],ye=[Ye])
+    if (Xe>X):
+        dPhiArrowText.data=dict(x=[Xe],y=[Ye],t=[u"\u03C6\u0307"])
+        dPhiText.glyph.text_align="left"
+    else:
+        dPhiArrowText.data=dict(x=[Xe],y=[Ye],t=[u"-\u03C6\u0307"])
+        dPhiText.glyph.text_align="right"
+
+def removePhiAngle():
+    global PhiAngle, PhiAngleText, dPhiArrow, dPhiArrowText
+    PhiAngle.data=dict(x=[],y=[])
+    PhiAngleText.data=dict(x=[],y=[],t=[])
+    dPhiArrow.data=dict(xs=[],xe=[],ys=[],ye=[])
+    dPhiArrowText.data=dict(x=[],y=[],t=[])    
 
 # return total energy
 def getTotEng():
@@ -131,6 +173,7 @@ def plotDouble():
     global phi, dPhi, theta, R, PendulumArm, Mass, basicPhaseDiagram, TotEng
     PendulumArm.data=dict(x=[0, R*sin(phi), R*sin(phi)+R2*sin(theta+phi)],
         y=[10,10.0-R*cos(phi),10.0-R*cos(phi)-R2*cos(theta+phi)])
+    PendulumElbow.data=dict(x=[R*sin(phi)],y=[10.0-R*cos(phi)])
     Mass.data=dict(x=[R*sin(phi)+R2*sin(theta+phi)],y=[10.0-R*cos(phi)-R2*cos(theta+phi)])
     basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi]))
     K=getKinEngDouble()*9.0/TotEng-4.5
@@ -227,7 +270,7 @@ moveTo=moveToSingle
 getKinEng=getKinEngSingle
 
 # draw pendulum diagram
-fig = figure(title="Schwerependel (Pendulum)",tools="",x_range=(-4.5,4.5),y_range=(3,12),width=500,height=500)
+fig = figure(title="Energy Balance",tools="",x_range=(-4.5,4.5),y_range=(3,12),width=500,height=500)
 fig.add_tools(MoveMassTool())
 fig.tool_events.on_change('geometries', on_mouse_move)
 fig.title.text_font_size="20pt"
@@ -235,9 +278,17 @@ fig.axis.visible=False
 fig.grid.visible=False
 fig.outline_line_color = None
 fig.line(x='x',y='y',source=PendulumArm,color="#808080")
+fig.ellipse(x='x',y='y',width=0.1,height=0.1,source=PendulumElbow,color="#808080")
 fig.ellipse(x='x',y='y',width=1,height=1,source=Mass,color="#0065BD")
 fig.patch(x='x',y='y',source=KinEnergySource,color="#E37222")
 fig.patch(x='x',y='y',source=OtherEnergySource,color="#808080")
+fig.line(x='x',y='y',source=PhiAngle,color="black")
+fig.text(x='x',y='y',text='t',source=PhiAngleText,color="black",text_baseline="top",text_align="center")
+arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=2,size=6),
+    x_start='xs', y_start='ys', x_end='xe', y_end='ye',source=dPhiArrow,
+    line_color="black",line_width=2)
+fig.add_layout(arrow_glyph)
+dPhiText = fig.text(x='x',y='y',text='t',source=dPhiArrowText,color="black",text_align="left")
 
 # draw phase diagram
 phase_diagramm = figure(title="Phasendiagramm (Phase diagram)",tools="",x_range=(-3.14,3.14),y_range=(-5,5))
@@ -247,7 +298,7 @@ phase_diagramm.axis.axis_label_text_font_style="normal"
 phase_diagramm.axis.axis_label_text_font_size="16pt"
 phase_diagramm.xaxis.axis_label=u"\u03C6"
 phase_diagramm.yaxis.axis_label=u"\u03C6\u0307"
-phase_diagramm.ellipse(x='x',y='y',width=0.1,height=0.1,color="#0065BD",source=basicPhaseDiagram)
+phase_diagramm.line(x='x',y='y',color="#0065BD",source=basicPhaseDiagram)
 phase_diagramm.ellipse(x='x',y='y',width=0.2,height=0.2,color="#E37222",source=currentPoint)
 
 TotEng=getTotEng()
@@ -257,6 +308,7 @@ plot()
 def play():
     global Active
     if (not Active):
+        removePhiAngle()
         curdoc().add_periodic_callback(evolve,100)
         Active=True
 Play_button = Button(label="Play",button_type="success",width=150)
@@ -276,11 +328,15 @@ Stop_button.on_click(stop)
 
 def reset():
     global Active, phi0_input, phi, dphi0_input, dPhi, basicPhaseDiagram, dTheta
+    phi=0.5
+    dPhi=1
     if (Active):
         curdoc().remove_periodic_callback(evolve)
         Active=False
-        phi0_input.value=phi
-        dphi0_input.value=dPhi
+    mass_input.value=5.0
+    lam_input.value=0.0
+    phi0_input.value=phi
+    dphi0_input.value=dPhi
     dTheta=0
     basicPhaseDiagram.data=dict(x=[],y=[])
         
@@ -310,6 +366,7 @@ def change_phi0(attr,old,new):
         TotEng=getTotEng()
         plot()
         Phi0=new
+        drawPhiAngle()
     elif (Phi0!=new):
         phi0_input.value=Phi0
 ## Create slider to choose damper coefficient
@@ -324,6 +381,7 @@ def change_phi0dot(attr,old,new):
         TotEng=getTotEng()
         plot()
         dPhi=new
+        drawPhiAngle()
     elif (dPhi0!=new):
         dphi0_input.value=dPhi0
 ## Create slider to choose damper coefficient
@@ -342,6 +400,7 @@ def swapPendulumType(attr,old,new):
         getKinEng=getKinEngSingle
         R=4.0
         dt=0.1
+        PendulumElbow.data=dict(x=[],y=[])
     elif(new==1):
         # if double pendulum
         plot=plotDouble
