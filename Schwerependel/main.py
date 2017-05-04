@@ -26,7 +26,6 @@ dt=0.1
 phi=0.5
 dPhi=1.0
 lam=0.0
-PenduleType="Single"
 theta=0
 dTheta=0
 R2=2.0
@@ -58,8 +57,12 @@ def drawPhiAngle():
         PhiAngleText.data=dict(x=[X[2]],y=[Y[2]-0.1],t=[u"\u03C6"])
     else:
         PhiAngleText.data=dict(x=[X[2]],y=[Y[2]-0.1],t=[u"-\u03C6"])
-    X=Mass.data['x'][0]
-    Y=Mass.data['y'][0]
+    if (plot==plotSingle):
+        X=Mass.data['x'][0]
+        Y=Mass.data['y'][0]
+    else:
+        X=PendulumElbow.data['x'][0]
+        Y=PendulumElbow.data['y'][0]
     Xe=X+dPhi*cos(phi)
     Ye=Y+dPhi*sin(phi)
     dPhiArrow.data=dict(xs=[X],xe=[Xe],ys=[Y],ye=[Ye])
@@ -229,6 +232,7 @@ def on_mouse_move(attr, old, new):
             inMass=False
             TotEng=getTotEng()
             plot()
+            drawPhiAngle()
 
 # function which moves mass to new angle for single pendulum
 def moveToSingle(X,Y):
@@ -414,6 +418,8 @@ def swapPendulumType(attr,old,new):
     dTheta=0
     TotEng=getTotEng()
     plot()
+    if (not Active):
+        drawPhiAngle()
 
 pendulum_type_input = RadioButtonGroup(
         labels=["Single Pendulum", "Double Pendulum"], active=0)
