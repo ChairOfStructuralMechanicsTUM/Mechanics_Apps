@@ -8,17 +8,15 @@ import numpy as np
 import math
 
 #constant numbers:
-#resol           = 100                #resolution of beams
-#E               = 200.0e1            #modulus of elasticity
-#I               = 50                 #moment of inertia
-f_end           = 1.5                 #last slider value
 punktezahl      = 30
 factor          = 1.2
 xf              = 0.0
 fenster         = 16
 xstart          = 0.02 * fenster
 zstart          = 0.1 * fenster
-
+zbifi           = 3
+step            = 0.05
+f_end           = 1.5
 class Column(object):
     def __init__(self,name,h,fcrit):
         self.pts        = ColumnDataSource(data=dict(x=[] , y=[]))
@@ -49,8 +47,7 @@ class Column(object):
         name = ["F",self.name]
         self.labels.data = dict(x = x, y = y, name = name)
 
-weight_slide = Slider(title="Force", value=0, start=0, end=f_end, step=0.05)
-
+weight_slide = Slider(title="Force", value=0, start=0, end=f_end, step=step)
 
 def drange(start,stop,step):
     r = start
@@ -65,28 +62,53 @@ col2 = Column("Pinned-Pinned",2.0*col1.h,1.0*col1.fcrit)        #beam: "Fixed-Fi
 col3 = Column("Pinned-Fixed",1.43*col2.h,1.0*col2.fcrit)        #beam: "Fixed-Fixed" Column
 col4 = Column("Fixed-Fixed",2.0*col2.h,1.0*col2.fcrit)          #beam: "Fixed-Fixed" Column
 
+
 #where the columns start on the graph:
 col1.xstart = xstart
 col2.xstart = xstart + 4.0
 col3.xstart = xstart + 8.0
 col4.xstart = xstart + 12.0
+
 col1.fun_floor()
-col2.floor = dict(x = [col2.xstart-1,col2.xstart+1], y = [zstart-0.75,zstart-0.75])
 col3.fun_floor()
 col4.fun_floor()
-col2.cir1 = dict(x = [col2.xstart] , y = [zstart])
-col2.cir2 = ColumnDataSource(data=dict(x=[] , y=[]))
-col3.cir2 = ColumnDataSource(data=dict(x=[] , y=[]))
-col2.tri1 = dict(x = [col2.xstart] , y = [zstart-0.5])
-col2.tri2 = ColumnDataSource(data=dict(x=[] , y=[]))
-col3.tri2 = ColumnDataSource(data=dict(x=[] , y=[]))
+col2.floor = dict(x = [col2.xstart-1,col2.xstart+1], y = [zstart-0.75,zstart-0.75])
+
+col2.cir1   = dict(x = [col2.xstart] , y = [zstart])
+col2.cir2   = ColumnDataSource(data=dict(x=[] , y=[]))
+col3.cir2   = ColumnDataSource(data=dict(x=[] , y=[]))
+col2.tri1   = dict(x = [col2.xstart] , y = [zstart-0.5])
+col2.tri2   = ColumnDataSource(data=dict(x=[] , y=[]))
+col3.tri2   = ColumnDataSource(data=dict(x=[] , y=[]))
 col4.square = ColumnDataSource(data=dict(x=[] , y=[]))
 col1.harrow = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
-col2.wall = dict(x = [col2.xstart+1,col2.xstart+1] , y = [zstart+col2.hi+1,zstart+col2.hi-1])
-col3.wall = dict(x = [col3.xstart+1,col3.xstart+1] , y = [zstart+col3.hi+1,zstart+col3.hi-1])
-col4.wall = dict(x = [ [col4.xstart+0.5,col4.xstart+0.5] , [col4.xstart-0.5,col4.xstart-0.5] ],
+col2.wall   = dict(x = [col2.xstart+1,col2.xstart+1] , y = [zstart+col2.hi+1,zstart+col2.hi-1])
+col3.wall   = dict(x = [col3.xstart+1,col3.xstart+1] , y = [zstart+col3.hi+1,zstart+col3.hi-1])
+col4.wall   = dict(x = [ [col4.xstart+0.5,col4.xstart+0.5] , [col4.xstart-0.5,col4.xstart-0.5] ],
 y = [ [zstart+col4.hi+1,zstart+col4.hi-1] , [zstart+col4.hi+1,zstart+col4.hi-1] ] )
 
+#bifurkation plot columndatasources:
+posplot     = ColumnDataSource(data=dict(x=[] , y=[]))
+negplot     = ColumnDataSource(data=dict(x=[] , y=[]))
+conplot    = ColumnDataSource(data=dict(x=[] , y=[]))
+
+#create the arrays for the graph
+bk = 0.95
+y2 = []
+xbifi = []
+bx = 0.05
+#print (f_end-col3.fcrit)/step
+for i in xrange(0, 1+int( (f_end-col3.fcrit)/step )  ):
+    yb  = zbifi * ( factor * np.sqrt( np.sqrt( bk/col3.fcrit)-1) )
+    bk += step
+    y2.append(yb)
+for i in xrange(0,int(f_end/step) ):
+    xbifi.append(bx)
+    bx += step
+
+y1 = [0] * int((col3.fcrit/step))
+ybifi  = y1 + y2
+negybifi = [ -x for x in ybifi]
 
 def fun_col1(paramFloat1,paramFloat2):
     x = []
@@ -179,13 +201,29 @@ def fun_col4(paramFloat1,paramFloat2):
 
     col4.pts.data = dict(x = x0 + x + [paramFloat1] , y = y0 + y + [paramFloat2 + col4.h-0.05])
 
+
+
+
+def fun_bifurkation():
+    end = int(weight_slide.value/step)
+    #print end
+    #print xbifi[0:end+1]
+    #print ybifi[0:end+int(1.5/0.05)]
+    posplot.data     = dict(x=xbifi[0:end ] , y=ybifi[0:end])
+    #print posplot.data['x']
+    negplot.data     = dict(x=xbifi[0:end]  , y= negybifi[0:end] )
+    conplot.data     = dict(x=xbifi[0:end]  , y=[0] * end )
+
+
+
+
+
 def fun_figures():
     col2.cir2.data = dict(x= [ col2.pts.data['x'][-1] ], y=[col2.pts.data['y'][-1]])
     col3.cir2.data = dict(x=[col3.pts.data['x'][-1]], y=[col3.pts.data['y'][-1]])
     col2.tri2.data = dict(x=[col2.pts.data['x'][-1]+0.6], y=[col2.pts.data['y'][-1]])
     col3.tri2.data = dict(x=[col3.pts.data['x'][-1]+0.6], y=[col3.pts.data['y'][-1]])
     col4.square.data = dict(x=[col4.pts.data['x'][-1]], y=[col4.pts.data['y'][-1]-.2])
-    #col1.harrowhead.data = dict(lw=[weight_slide.value*2], s=[weight_slide.value*2])
 
 def fun_update(attr,old,new):
     #print col1.floor
@@ -225,6 +263,11 @@ def fun_update(attr,old,new):
     col3.fun_labels()
     col4.fun_labels()
     fun_figures()
+    fun_bifurkation()
+
+
+
+
 
 plot = Figure(tools = "",title="Knickung", x_range=(-2,fenster), y_range=(-.5,fenster+2))
 plot.line(x='x', y='y', source = col1.pts, color='blue',line_width=5)
@@ -256,6 +299,8 @@ plot.outline_line_width = 10
 plot.outline_line_alpha = 0.5
 plot.outline_line_color = "Black"
 plot.title.text_font_size = "18pt"
+
+
 col1_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
 x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col1.arrow,line_color="#A2AD00")
 col2_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
@@ -280,10 +325,6 @@ labels2.text_font_size = '10pt'
 labels3.text_font_size = '10pt'
 labels4.text_font_size = '10pt'
 
-
-
-
-
 plot.add_layout(col1_a)
 plot.add_layout(col2_a)
 plot.add_layout(col3_a)
@@ -294,8 +335,21 @@ plot.add_layout(labels2)
 plot.add_layout(labels3)
 plot.add_layout(labels4)
 
+plot1 = Figure(tools = "",title="Bifurkation", x_range=(0.05,f_end), y_range=(-ybifi[-1],ybifi[-1]), width = 400, height = 200)
+plot1.line(x='x', y='y', source = posplot, color='blue',line_width=5)
+plot1.line(x='x', y='y', source = negplot, color='red',line_width=5)
+plot1.line(x='x', y='y', source = conplot, color='red',line_width=5)
+plot1.axis.visible = False
+plot1.grid.visible = False
+plot1.outline_line_width = 5
+plot1.outline_line_alpha = 0.5
+plot1.outline_line_color = "Black"
+plot1.title.text_font_size = "10pt"
+
+
+
 
 weight_slide.on_change('value', fun_update)
 
 fun_update(None,None,None)
-curdoc().add_root(row(column(weight_slide),plot))
+curdoc().add_root(row(column(weight_slide,plot1),plot))
