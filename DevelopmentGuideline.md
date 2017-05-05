@@ -8,7 +8,8 @@ The following points are important for all developers.
 
 * Apps that are not executable using ```bokeh serve --show app_directory``` should **not** be pushed to master, you may use a branch for experimental apps.
 * Develop app in directory format (see http://bokeh.pydata.org/en/latest/docs/user_guide/server.html#directory-format).
-* Use the **same** name for the directory and the title of the app. Language depends on the language of the lecture. See also coding style above.
+* Use the **same** name for the directory and the title of the app. The title of the app shall explain the mechanical content - not the method of visualization. (e.g. use "conservation of momentum" instead of "boat with three swimmers"). See also coding style above.
+* Lanuage: The Language of everything (titles, explanations, comments in code, etc.) within the whole project is **English**!
 * If your app is completed ask your supervisor whether there are any additional improvements to be done or if the app is ready for publication.
 * Write a mail to Francesca that your app is ready for publication.
 
