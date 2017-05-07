@@ -7,4 +7,4 @@ TO-DO:
 [X] Add the boundary condition shapes
 [X] Fix axis, labels, turn off grid etc
 [X] Change to TUM colors
-[] Fix reset button
+[X] Fix reset button
