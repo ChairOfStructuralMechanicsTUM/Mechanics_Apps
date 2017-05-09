@@ -57,17 +57,14 @@ class Mass(object):
             self.nextStepForces.append(F)
             self.nextStepObjForces.append(obj)
     
-    # function which saves the forces so evolution of other masses does not
+    # function which saves the forces so movement of other masses does not
     # affect this mass's behaviour
     def FreezeForces(self):
         # save forces
         self.thisStepForces=list(self.nextStepForces)
-        # reinitialise Force monitoring vectors to collect new influences
-        self.nextStepForces=[]
-        self.nextStepObjForces=[]
     
-    ## carry out 1 time step
-    def evolve(self,dt):
+    ## get Velocity and Acceleration at this timestep
+    def getVelAcc(self):
         # find the total force:
         # Start with gravitational force
         F=Coord(0,-self.mass*9.81)
@@ -76,32 +73,25 @@ class Mass(object):
             F+=self.thisStepForces.pop()
         # Find acceleration
         a=F/self.mass
-        # Use explicit Euler to find new velocity
-        self.v+=dt*a
-        # Use implicit Euler to find displacement vector
-        displacement=dt*self.v
-        # Displace mass
-        self.move(displacement)
+        return [self.v.copy(), a, self.currentPos['y'][0]]
+    
+    # displace mass by disp
+    def move(self,disp):
+        for i in range(0,len(self.currentPos['x'])):
+            # move x and y co-ordinates
+            self.currentPos['x'][i]+=disp.x
+            self.currentPos['y'][i]+=disp.y
+        # update ColumnDataSource
+        self.shape.data=deepcopy(self.currentPos)
         # This affects all the affectedObjects
         for i in range(0,len(self.affectedObjects)):
             # tell object that it has been affected and must move the end at
             # point self.affectedObjects[i][1] by displacement
-            self.affectedObjects[i][0].movePoint(self.affectedObjects[i][1],displacement)
+            self.affectedObjects[i][0].movePoint(self.affectedObjects[i][1],disp)
             # N.B. calling this function refills nextStepForces for next timestep
             
             # change point so that it is accurate for next timestep
-            self.affectedObjects[i][1]+=displacement
-        return displacement
-    
-    # displace mass by disp
-    def move(self,disp):
-        temp=deepcopy(dict(self.shape.data))
-        for i in range(0,len(self.shape.data['x'])):
-            # move x and y co-ordinates
-            temp['x'][i]+=disp.x
-            temp['y'][i]+=disp.y
-        # update ColumnDataSource
-        self.shape.data=temp
+            self.affectedObjects[i][1]+=disp
     
     def changeMass(self,mass):
         self.mass=mass
@@ -116,6 +106,7 @@ class RectangularMass(Mass):
         Mass.__init__(self,mass)
         # create ColumnDataSource
         self.shape = ColumnDataSource(data=dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y]))
+        self.currentPos = dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y])
     
     # add RectangularMass to figure
     def plot(self,fig,colour="#0065BD",width=1):
@@ -123,23 +114,27 @@ class RectangularMass(Mass):
     
     # displace mass to position (used for reset)
     def moveTo(self,x,y,w,h):
-        temp=dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y])
+        self.currentPos=dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y])
         # update ColumnDataSource
-        self.shape.data=temp
+        self.shape.data=deepcopy(self.currentPos)
+    
+    def getTop(self):
+        return self.currentPos['y'][1]
 
 class CircularMass(Mass):
-    def __init__ (self, mass, x=0, y=0, w=0, h=0):
+    def __init__ (self, mass, x, y, w, h):
         Mass.__init__(self,mass)
         # create ColumnDataSource
         self.shape = ColumnDataSource(data=dict(x=[x],y=[y],w=[w],h=[h]))
+        self.currentPos = dict(x=[x],y=[y],w=[w],h=[h])
     
     # add CircularMass to figure
     def plot(self,fig,colour="#0065BD",width=1):
         fig.ellipse(x='x',y='y',width='w',height='h',color=colour,source=self.shape,line_width=width)
-
+    
     # displace mass to position (used for reset)
     def moveTo(self,point):
-        temp=dict(x=[point[0]], y=[point[1]], w=[self.shape.data['w'][0]], h=[self.shape.data['h'][0]])
+        self.currentPos=dict(x=[point[0]], y=[point[1]], w=[self.shape.data['w'][0]], h=[self.shape.data['h'][0]])
         # update ColumnDataSource
-        self.shape.data=temp
+        self.shape.data=self.currentPos
 

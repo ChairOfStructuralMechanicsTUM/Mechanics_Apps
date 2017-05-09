@@ -3,7 +3,6 @@ from bokeh.layouts import column, row, Spacer
 from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead, Button
 from bokeh.io import curdoc
 from numpy import loadtxt
-from time import sleep
 
 ## set up data sources for movable objects ##
 #     data sources for drawing
