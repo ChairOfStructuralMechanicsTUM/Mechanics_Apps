@@ -253,7 +253,10 @@ play_button.on_click(play)
 # Creating the reset button
 def reset ():
     global Active, boatX, boatY, boatSource, boatSpeed, startBoatSpeed
-    global listPeople
+    global listPeople, listSources
+    
+    for element in listSources:
+        element.data = dict(x=[],y=[])
     
     # Make the app inactive and stop the ap from running
     if Active == False:
@@ -277,6 +280,10 @@ def reset ():
                                    jumpingPositionX, jumpingPositionY
                               )    
     
+    listSources = list()
+    for person in listPeople:
+        listSources.append(ColumnDataSource(data=person.jumpingPath))
+        
     # Reseting the data inside the people source file 
     listXCoords = list()
     listYCoords = list()
@@ -353,3 +360,4 @@ def update_bars ():
     
 
 curdoc().add_root(column(scene,row(column(numberPersonsSlider,play_button,pause_button,jump_button,reset_button),eFig.getFig())))
+curdoc().title = "Boot mit Schwimmern"

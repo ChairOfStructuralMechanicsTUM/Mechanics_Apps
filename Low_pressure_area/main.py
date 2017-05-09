@@ -3,14 +3,13 @@ from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 from bokeh.io import curdoc
 from Functions import *
-from bokeh.models import Arrow, OpenHead, Button, Toggle, Slider
-from bokeh.core.properties import Instance, List
+from bokeh.models import Arrow, OpenHead, Button
 from bokeh.layouts import column, row
 
-Active = True
-
 '''
+###############################################################################
 Create the plotting domain (the low pressure area!)
+###############################################################################
 '''
 xmin, xmax = -1,1
 ymin, ymax = -1,1
@@ -28,11 +27,15 @@ plot.grid.visible=False
 plot.xaxis.visible=False
 plot.yaxis.visible=False
 
+Active = True
+
 '''
+###############################################################################
 Define the objects to be plotted within the plotting domain
  (1) Pressure contour lines
  (2) Travelling particle
  (3) Forces and velocity arrows
+###############################################################################
 '''
 ######################## (1) Pressure contour lines ###########################
 earthRotation = 1
@@ -74,7 +77,7 @@ plot.text(
          )
 
 ######################## (2) Travelling particle ##############################
-dt = 0.01
+dt = 0.1
 particleRadius = 0.1
 particleMass   = 20
 update_particle_position(x=0,y=-0.5)         # Initial particle's position
@@ -92,7 +95,7 @@ plot.circle(
            )
 jumpingSource = ColumnDataSource(data = dict(x=[],y=[]) )
 plot.ellipse(
-             x='x',y='y',width=0.1,height=0.1,
+             x='x',y='y',width=0.005,height=0.005,
              color="#0065BD",
              source=jumpingSource
             )
@@ -181,8 +184,10 @@ plot.add_layout(
                 )
 
 '''
+###############################################################################
 Define the function that will develope the position of the particle through
 time
+###############################################################################
 '''
 def compute_tranjectory():
     global velocity, position, coriolisForce, currentPressGrad
@@ -207,17 +212,17 @@ def compute_tranjectory():
 
     # Safety checks to prevent the particle from getting outside the domain
     if position[0] > xmax :
-        position[0] -= xmax/5
-        velocity[0]  = 0
+        position[0] -= xmax/50
+        velocity[0]  *= -1
     elif position[0] < xmin:
-        position[0] += xmax/5
-        velocity[0]  = 0
+        position[0] += xmax/50
+        velocity[0]  *= -1
     elif position[1] > ymax :
-        position[1] -= ymax/5
-        velocity[1]  = 0
-    elif position[0] < ymin:
-        position[1] += ymax/5
-        velocity[1]  = 0
+        position[1] -= ymax/50
+        velocity[1]  *= -1
+    elif position[1] < ymin:
+        position[1] += ymax/50
+        velocity[1]  *= -1
 
     jumpingSource.stream( 
                           dict(
@@ -230,17 +235,28 @@ def compute_tranjectory():
     update_particle_position( x=position[0] , y=position[1] )
     
     particleSource = get_particle_source()
-    coriolisForce = -2*particleMass*np.cross(angularVelocity, np.array([velocity[0],velocity[1],0]))
+    coriolisForce = -2*particleMass*np.cross(
+                                             angularVelocity, 
+                                             np.array([ velocity[0],velocity[1],0 ])
+                                            )
     #coriolisForce = np.array([ particleSource.data['x'][0], 0 ])
 
     velocityArrowSource.data = update_arrow_source( particleSource, velocity )
     
-    coriolisForceArrowSource.data = update_arrow_source( particleSource, 0.1*coriolisForce )
+    coriolisForceArrowSource.data = update_arrow_source( 
+                                                        particleSource, 
+                                                        0.1*coriolisForce
+                                                       )
     
-    presGradArrowSource.data = update_arrow_source( particleSource, 0.1*currentPressGrad )
+    presGradArrowSource.data = update_arrow_source( 
+                                                   particleSource,
+                                                   0.1*currentPressGrad
+                                                  )
     
 '''
+###############################################################################
 Add the interactive functionalities
+###############################################################################
 '''
 #################### Moving the ball through the mouse ########################
 plot.add_tools(MoveNodeTool())
@@ -254,36 +270,36 @@ def on_mouse_move(attr, old, new):
 plot.tool_events.on_change('geometries', on_mouse_move)
 
 ########################### Creating pause button #############################
-def pause (toggled):
+def pause ():
     global Active
-
-    if (toggled):
+    # When active pause animation
+    if Active == True:
         curdoc().remove_periodic_callback(compute_tranjectory)
         Active=False
-
     else:
-        curdoc().add_periodic_callback(compute_tranjectory, 10)
-        Active=True
+        pass
         
-pause_button = Toggle(label="Pause", button_type="success")
-pause_button.on_click(pause) 
+pause_button = Button(label="Pause", button_type="success")
+pause_button.on_click(pause)
 ########################### Creating play button ##############################
 def play ():
-    global Active
-    # if inactive, reactivate animation
-    if (pause_button.active):
-        # deactivating pause button reactivates animation
-        # (calling add_periodic_callback twice gives errors)
-        pause_button.active=False
-    elif Active == False:
-        curdoc().add_periodic_callback(compute_tranjectory, 10)
+    global Active, periodicCallback
+    
+    if Active == False:
+        curdoc().add_periodic_callback(compute_tranjectory, 50)
         Active=True
+        periodicCallback = 0
+    else:
+        pass
         
 play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
 ########################### Creating reset button #############################
+periodicCallback = 0
 def Reset():
-    global velocity
+    global velocity, Active, periodicCallback, jumpingSource
+    
+    jumpingSource.data = dict(x=[],y=[]) 
     
     position = np.array([ 0,-1 ])
     velocity = np.array([ 0,0  ])
@@ -294,7 +310,10 @@ def Reset():
     velocityArrowSource.data = update_arrow_source( particleSource, velocity )
     
     coriolisForce = np.array([ particleSource.data['x'][0], 0 ])
-    coriolisForceArrowSource.data = update_arrow_source( particleSource, 0.1*coriolisForce )
+    coriolisForceArrowSource.data = update_arrow_source( 
+                                                        particleSource,
+                                                        0.1*coriolisForce 
+                                                       )
     
     currentPressGrad = get_pressure_grad(
                                          [particleSource.data['x'][0],
@@ -303,15 +322,31 @@ def Reset():
                                          Y,
                                          presGrad
                                         )
-    presGradArrowSource.data = update_arrow_source( particleSource, 0.1*currentPressGrad )
+    presGradArrowSource.data = update_arrow_source( 
+                                                   particleSource, 
+                                                   0.1*currentPressGrad
+                                                  )
 
+    # The preiodic callback has been removed here because when the pause 
+    # button is set to False, this reactivates the periodic callback
+    if periodicCallback == 0 and Active == True:
+        curdoc().remove_periodic_callback(compute_tranjectory)
+        periodicCallback += 1
+
+    else:
+        pass
+    
+    Active = False
+        
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)
     
 '''
+###############################################################################
 Add all the components together and initiate the app
+###############################################################################
 '''
-curdoc().add_periodic_callback(compute_tranjectory,10)
+curdoc().add_periodic_callback(compute_tranjectory,50)
 curdoc().add_root(
                   row(
                       plot,
@@ -322,3 +357,4 @@ curdoc().add_root(
                             )
                      )
                  )
+curdoc().title = "Tiefdruckgebiet"

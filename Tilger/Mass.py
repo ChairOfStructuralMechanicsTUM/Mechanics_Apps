@@ -73,10 +73,10 @@ class Mass(object):
             F+=self.thisStepForces.pop()
         # Find acceleration
         a=F/self.mass
-        return [self.v, a]
+        return [self.v.copy(), a, self.currentPos['y'][0]]
     
     # displace mass by disp
-    def move(self,disp,dt):
+    def move(self,disp):
         for i in range(0,len(self.currentPos['x'])):
             # move x and y co-ordinates
             self.currentPos['x'][i]+=disp.x
@@ -87,7 +87,7 @@ class Mass(object):
         for i in range(0,len(self.affectedObjects)):
             # tell object that it has been affected and must move the end at
             # point self.affectedObjects[i][1] by displacement
-            self.affectedObjects[i][0].movePoint(self.affectedObjects[i][1],disp,dt)
+            self.affectedObjects[i][0].movePoint(self.affectedObjects[i][1],disp)
             # N.B. calling this function refills nextStepForces for next timestep
             
             # change point so that it is accurate for next timestep
