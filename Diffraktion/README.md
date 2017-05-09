@@ -1,6 +1,6 @@
  # Diffraction App
 
-Programmer: Benjamin Rüth, Supervisor: Alexander Greim
+Programmer: Benjamin Rüth, Supervisor: Axel Greim
 
 Here we visualize the effect of wave diffraction at a wall.
 
@@ -47,6 +47,10 @@ We want to explicitly visualize important input parameters and the regions of in
 - [x] explain app on website
 - [x] Add proper formula for computation of dB from amplitude
 - [x] try to increase performance
+- [ ] insert barrier in 3D srface plot
+- [ ] Adapt description: foc on geometry as mitigation meassure (in comparision to damping) depends on Wavelegnth/hight of barrier
+- [ ] Implement angle phi in degrees
+- [ ] Implement Wagelength dimensionless (Lambda/hight of barrier)
 
 ## Possible Improvements
 - [ ] Remove artifacts in contour lines (currently we plot the lines with many line segments with only two vertices. This leads to disconnected lines with tiny gaps.)
