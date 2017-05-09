@@ -26,7 +26,6 @@ vertical_wall=ColumnDataSource(data=dict(x=[-0.25,-0.04,-0.04,-0.25,-0.04,-0.04,
 horizontal_wall=ColumnDataSource(data=dict(x=[-0.25,-0.04,0.5,0.25,0.5,1,0.75,1,1.5,1.25,1.5,2,1.75,2,2.5,2.25,2.5,3,2.75,3,3.5,3.25,3.5,4,3.75,4,4.5,4.25,4.5,5,4.75,5],y=[-0.25,-0.04,-0.04,-0.25,-0.04,-0.04,-0.25,-0.04,-0.04,-0.25,-0.04,-0.04,-0.25,-0.04,-0.04,-0.25,-0.04,-0.04,-0.25,-0.04,-0.04,-0.25,-0.04,-0.04,-0.25,-0.04,-0.04,-0.25,-0.04,-0.04,-0.25,-0.04]))
 ICR_label_source = ColumnDataSource(data=dict(x=[0],y=[l+0.1],ICR=['ICR']))
 spurkurve=ColumnDataSource(data=dict(x=[], y=[]))
-#pollkurve=ColumnDataSource(data=dict(x=[],y=[]))
 
 def init():  
     # initialise the position of the bar
@@ -58,7 +57,6 @@ p.add_layout(Vb_label_glyph)
 Va_label_glyph=LabelSet(x='x', y='y',text='Va',text_font_size="15pt",text_color='red',level='glyph',source=Va_label_source)
 p.add_layout(Va_label_glyph)
 p.line(x='x',y='y', source=spurkurve,line_width=3,line_color='red',legend="Spurkurve" )
-#p.line(x='x',y='y', source=pollkurve,line_width=3,line_color='blue',legend="Pollkurve")
 p.legend.location="top_right"
 p.legend.label_text_font_size="15pt"
 
@@ -88,7 +86,6 @@ def slide(attrname, old, new): #function which updates the drawing for the chang
     Va_label_source.data=dict(x=[0.50+l*math.sin(w)],y=[0],Va=['V'])
     i=int(new*40/math.pi)
     spurkurve.data = dict(x=DataPlotter[0:DataPlotterDictionary[i],0],y=DataPlotter[0:DataPlotterDictionary[i],1])
-    #pollkurve.data= dict(x=[DataPlotter[0:DataPlotterDictionary[i],2],DataPlotter[0:DataPlotterDictionary[i],4]],y=[DataPlotter[0:DataPlotterDictionary[i],3],DataPlotter[0:DataPlotterDictionary[i],5]])
 Wmega_input.on_change('value',slide)
 curdoc().add_root(column(row(p),Wmega_input))
 curdoc().title = "Leiter"
