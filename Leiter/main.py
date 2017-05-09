@@ -36,7 +36,7 @@ def init():
 ########### Main ###########
 ## Initialise
 init()
-p = figure(title="Momentalpol der Leiter (Instant Center of Rotation)", tools="", x_range=(-1,5), y_range=(-1,5))
+p = figure(plot_height=875, plot_width=1000,title="Momentalpol der Leiter (Instant Center of Rotation)", tools="", x_range=(-1,5), y_range=(-1,5))
 p.title.text_font_size="18pt"
 #  remove graph lines
 p.axis.visible = False
