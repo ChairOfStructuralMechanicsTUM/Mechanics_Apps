@@ -13,11 +13,12 @@ Plotting space construction
 xMin , xMax = 0,40
 yMin , yMax = 0,10
 scene = figure(
-                    title="test person",
+                    title="People on Boat",
                     x_range=(xMin,xMax),
                     y_range=(yMin,yMax),width=1600, height=400,
                     tools=''
                )
+scene.title.text_font_size = "25px"
 scene.grid.visible=False
 scene.xaxis.visible=False
 scene.yaxis.visible=False
@@ -252,11 +253,17 @@ play_button.on_click(play)
 # Creating the reset button
 def reset ():
     global Active, boatX, boatY, boatSource, boatSpeed, startBoatSpeed
-    global listPeople
+    global listPeople, listSources
+    
+    for element in listSources:
+        element.data = dict(x=[],y=[])
     
     # Make the app inactive and stop the ap from running
-    curdoc().remove_periodic_callback(move_boat)
-    Active = False
+    if Active == False:
+        pass
+    else:
+        curdoc().remove_periodic_callback(move_boat)
+        Active = False
     
     # Reset the coordinates defining the boat in its source data file
     boatSource.data = dict(x = boatX, y = boatY)
@@ -265,7 +272,7 @@ def reset ():
 
     # Creating a new list of people with only one person as default
     listPeople = create_people(
-                                   1,
+                                   numberPersonsSlider.value,
                                    initBoatCGx,
                                    initBoatCGy,
                                    L,
@@ -273,6 +280,10 @@ def reset ():
                                    jumpingPositionX, jumpingPositionY
                               )    
     
+    listSources = list()
+    for person in listPeople:
+        listSources.append(ColumnDataSource(data=person.jumpingPath))
+        
     # Reseting the data inside the people source file 
     listXCoords = list()
     listYCoords = list()
@@ -290,47 +301,50 @@ reset_button.on_click(reset)
 def jump ():
     global Active, boatSpeed, personSource
     
-    counter = 0
-    for person in listPeople:
-        if person.jumping == True:
-            pass
-        else:
-            # Change the speed of the boat
-            boatSpeed = boatSpeed + person.mass*person.relativeVelocity[0]/mass
-            person.relativeVelocity[0] -= boatSpeed
-            person.jumping = True
-
-            # Determining the total displacement carried so far by the people
-            # on board
-            totalDisplacement = np.ones(29) * (
-                                                personSource.data['x'][counter][0]
-                                              - person.jumpingPosition[0][0]
-                                              )
-
-            # Copying the old list of coordinates defining people on board
-            newPersonSourceX = personSource.data['x']
-            newPersonSourceY = personSource.data['y']
-            
-            # Chagning the shape of the jumping person to the jumping position
-            newPersonSourceX[counter] = person.jumpingPosition[0]+totalDisplacement
-            newPersonSourceY[counter] = person.jumpingPosition[1]
-
-            # Updating the people (persons) source data file
-            personSource.data = dict(
-                                         x = newPersonSourceX,
-                                         y = newPersonSourceY,
-                                         c = personSource.data['c']
-                                    )
-            
-            # Start plotting the path of the person's own jump
-            scene.ellipse(
-                              x='x',y='y',width=0.1,height=0.1,
-                              color="#0065BD",
-                              source=listSources[counter]
-                         )
-            break
-        counter += 1
-    update_bars()
+    if Active == True:
+        counter = 0
+        for person in listPeople:
+            if person.jumping == True:
+                pass
+            else:
+                # Change the speed of the boat
+                boatSpeed = boatSpeed + person.mass*person.relativeVelocity[0]/mass
+                person.relativeVelocity[0] -= boatSpeed
+                person.jumping = True
+    
+                # Determining the total displacement carried so far by the people
+                # on board
+                totalDisplacement = np.ones(29) * (
+                                                    personSource.data['x'][counter][0]
+                                                  - person.jumpingPosition[0][0]
+                                                  )
+    
+                # Copying the old list of coordinates defining people on board
+                newPersonSourceX = personSource.data['x']
+                newPersonSourceY = personSource.data['y']
+                
+                # Chagning the shape of the jumping person to the jumping position
+                newPersonSourceX[counter] = person.jumpingPosition[0]+totalDisplacement
+                newPersonSourceY[counter] = person.jumpingPosition[1]
+    
+                # Updating the people (persons) source data file
+                personSource.data = dict(
+                                             x = newPersonSourceX,
+                                             y = newPersonSourceY,
+                                             c = personSource.data['c']
+                                        )
+                
+                # Start plotting the path of the person's own jump
+                scene.ellipse(
+                                  x='x',y='y',width=0.1,height=0.1,
+                                  color="#0065BD",
+                                  source=listSources[counter]
+                             )
+                break
+            counter += 1
+        update_bars()
+    else:
+        pass
 
 jump_button = Button(label="jump", button_type="success")
 jump_button.on_click(jump)
