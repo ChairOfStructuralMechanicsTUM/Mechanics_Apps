@@ -6,19 +6,19 @@ from bokeh.models import ColumnDataSource, LayoutDOM
 # that we are fixing the size of this component, in ``options``, but
 # with additional work it could be made more responsive.
 DEFAULTS = {
-    'width':          '300px',
-    'height':         '300px',
+    'width':          '600px',
+    'height':         '600px',
     'style':          'surface',
     'showPerspective': True,
-    'showGrid':        True,
+    'showGrid':        False,
     'keepAspectRatio': True,
     'verticalRatio':   0.2,
     'zMin' : -2.0,
     'zMax' : +2.0,
     'cameraPosition':  {
-        'horizontal': -0.35,
-        'vertical':    0.22,
-        'distance':    1.8,
+        'horizontal': -0.8,
+        'vertical':    0.6,
+        'distance':    1.6,
     },
 }
 
@@ -34,7 +34,7 @@ class Surface3d(LayoutDOM):
     __implementation__ = "surface3d.coffee"
     # this is the local resource for the vis.js library
     #__javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.min.js"] ## online resource
-    __javascript__ = ["Diffraktion/static/js/vis.min.js"] ## offline resource
+    __javascript__ = ["Diffraction/static/js/vis.min.js"] ## offline resource
 
 
     # Below are all the "properties" for this model. Bokeh properties are

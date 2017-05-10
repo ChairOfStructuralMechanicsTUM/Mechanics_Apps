@@ -18,6 +18,7 @@ from surface3d import Surface3d
 from contour import Contour
 from quiver import Quiver
 from clickInteractor import ClickInteractor
+#from LatexLabel import LatexLabel
 
 from diffraction_grid import Grid
 from diffraction_computation import compute_wave_max_at_cart
@@ -27,17 +28,17 @@ nx_surface = 20  # resolution surface plot
 ny_surface = 20
 nx_contour = 50  # resolution contour plot
 ny_contour = 50
-x_min, x_max = -50, 50  # x extend of domain
-y_min, y_max = -50, 50  # y extend of domain
+x_min, x_max = -5, 5  # x extend of domain, x_max is same as height of barrier
+y_min, y_max = -5, 5  # y extend of domain
 
 # initialize diffraction grids
 contour_grid = Grid(x_min, x_max, nx_contour, y_min, y_max, ny_contour)
 surface_grid = Grid(x_min, x_max, nx_surface, y_min, y_max, ny_surface)
 
 # Wave parameters
-phi0_init = pi/3.0  # angle of incident
-c = 4  # speed of sound
-wavelength_init = 50  # wavelength
+phi0_init = 60  # angle of incident
+c = 3  # speed of sound - fictive value used in order to decrease speed of animation - does not affect amplitudes
+wavelength_init = 1  # wavelength
 
 # data sources
 # data source for surface plot
@@ -59,11 +60,11 @@ source_shadow = ColumnDataSource(data=dict(x=[], y=[]))
 
 # interactive widgets
 # slider for setting angle of incident
-phi0_slider = Slider(title="Angle of incidence", name='angle of incidence', value=phi0_init, start=0, end=pi, step=.1*pi)
+phi0_slider = Slider(title=u"Angle of incidence \u03C6\u2080 [\u00B0]", name='angle of incidence', value=phi0_init, start=0, end=180, step=10) #
 # slider for setting wavelength
-wavelength_slider = Slider(title="Wavelength", name='wavelength', value=wavelength_init, start=10, end=100, step=5)
+wavelength_slider = Slider(title=u"Dimensionless wavelength w.r.t. height of barrier [\u03BB/h]", name='wavelength', value=wavelength_init, start=0.4, end=2, step=0.1)
 # textbox for displaying dB value at proble location
-textbox = TextInput(title="Noise probe", name='noise probe')
+textbox = TextInput(title="Noise probe (in contour plot)", name='noise probe', placeholder="pick a location for probe")
 
 # Generate a figure container for the field
 plot = Figure(plot_height=550,
@@ -88,8 +89,8 @@ def set_parameter_visualization():
     """
 
     # get wave parameters
-    phi0 = phi0_slider.value
-    wavelength = wavelength_slider.value
+    phi0 = phi0_slider.value/180*pi
+    wavelength = wavelength_slider.value*x_max
     length = (x_max - x_min)
 
     # visualization of k vector
@@ -152,8 +153,8 @@ def update_fresnel_on_grids():
     """
 
     # read wave parameters
-    phi0 = phi0_slider.value
-    wavelength = wavelength_slider.value
+    phi0 = phi0_slider.value/180*pi
+    wavelength = wavelength_slider.value*x_max
     # if wave parameters have changed, we have to recompute the specific quantities
     contour_grid.set_wave_parameters(phi0, wavelength, c)
     surface_grid.set_wave_parameters(phi0, wavelength, c)
@@ -183,13 +184,13 @@ def update_wave_amplitude_on_grids(t):
 
 def update_wave_amplitude_at_probe(x,y,t):
     # read wave parameters
-    phi0 = phi0_slider.value
-    wavelength = wavelength_slider.value
+    phi0 = phi0_slider.value/180*pi
+    wavelength = wavelength_slider.value*x_max
     x = np.array([[x]])
     y = np.array([[y]])
     p_max = abs(compute_wave_max_at_cart(x, y, wavelength, phi0)[0,0])
     p_eff = 1.0 / sqrt(2.0) * p_max
-    p_0 = .0001 # minimum loudness
+    p_0 = .00002 # threshold of perception
     loudness = 20 * log10(p_eff/p_0)
     textbox.value = "%.2f dB" % loudness  # write measured value to textbox
 
@@ -240,7 +241,7 @@ def update(frame_no):
     if x is not None:  # valid position has been clicked
         update_wave_amplitude_at_probe(x,y,t)
     else:
-        textbox.value = "pick a location for measurement"
+        textbox.value = "pick a location to probe"
 
     ########
 
@@ -259,7 +260,7 @@ def initialize():
     update(0)
 
 
-# add callback beahviour
+# add callback behaviour
 phi0_slider.on_change('value',set_slider_has_changed)
 wavelength_slider.on_change('value',set_slider_has_changed)
 interactor.on_click(on_click_change)
@@ -290,18 +291,18 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 # add area image
 area_image = Div(text="""
 <p>
-<img src="/Diffraktion/static/images/Diffraktion_areas.jpg" width=500>
+<img src="/Diffraction/static/images/Diffraction_areas.jpg" width=500>
 </p>
 <p>
 Characteristic regions and wave parameters
 </p>""", render_as_text=False, width=350)
 
 # create layout
-controls = widgetbox(phi0_slider,wavelength_slider,textbox,width=550)  # all controls
+controls = widgetbox([phi0_slider,wavelength_slider,textbox],width=550)  # all controls
 curdoc().add_root(column(description,
                          row(row(Spacer(width=50),surface,Spacer(width=550)),plot),
                          row(Spacer(width=50),controls,Spacer(width=45),area_image)
                          )
                   )  # add plots and controls to root
 curdoc().add_periodic_callback(update, target_frame_time)  # update function
-curdoc().title = "Diffraktion"
+curdoc().title = "Diffraction"
