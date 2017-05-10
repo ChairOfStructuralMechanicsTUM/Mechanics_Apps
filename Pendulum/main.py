@@ -427,5 +427,5 @@ pendulum_type_input.on_change('active',swapPendulumType)
 
 ## Send to window
 curdoc().add_root(column(row(column(fig,row(Play_button,Spacer(width=10),Stop_button,Spacer(width=10),Reset_button),pendulum_type_input),phase_diagramm),row(mass_input,lam_input,phi0_input,dphi0_input)))
-curdoc().title = "Schwerependel"
+curdoc().title = "Pendulum"
 curdoc().add_periodic_callback(evolve,100)
