@@ -82,7 +82,7 @@ class Dashpot(object):
         # return total displacement
         return displacement.prod_scal(self.direction)
     
-    ## draw spring on figure
+    ## draw dashpot on figure
     def plot(self,fig,colour="#808080",width=1):
         fig.line(x='x',y='y',color=colour,source=self.Casing,line_width=width)
         fig.line(x='x',y='y',color=colour,source=self.Piston,line_width=width)
@@ -94,14 +94,14 @@ class Dashpot(object):
         dt=0.03
         # draw dashpot and collect displacement
         displacement=self.draw(start,end)
-        # calculate the force exerted on/by the spring
+        # calculate the force exerted on/by the dashpot
         F = -self.lam*displacement/dt
         for i in range(0,len(self.actsOn)):
             self.actsOn[i][0].applyForce(F*self.out(self.actsOn[i][1]),self)
         # return the force
         return F
     
-    ## if a point (start) is moved then compress spring accordingly and calculate resulting force
+    ## if a point (start) is moved then compress dashpot accordingly and calculate resulting force
     def movePoint(self,start,moveVect):
         if (start==self.start):
             return self.compressTo(start+moveVect,self.end)
