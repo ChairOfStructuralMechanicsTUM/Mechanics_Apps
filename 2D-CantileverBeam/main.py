@@ -4,6 +4,7 @@ from bokeh.plotting import Figure, ColumnDataSource
 from bokeh.layouts import row, column
 from bokeh.models import Slider, LabelSet
 from bokeh.models import Arrow, NormalHead, OpenHead
+from os.path import dirname, join, split
 
 # Define basic beam parameters and loading
 length = 5.0
@@ -620,3 +621,4 @@ Zforce_slider.on_change('value',fun_change_Pz)
 init_data()    
 
 curdoc().add_root(row(column(row(column(plotUndefXY,plotDefXY) , column(plotUndefXZ,plotDefXZ)),colorBar),column(Yforce_slider,Zforce_slider)))  
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

@@ -6,6 +6,7 @@ from bokeh.models import Button, Toggle, Slider
 from Person import create_people
 from bokeh.layouts import column, row
 import BarChart as BC
+from os.path import dirname, join, split
 
 '''
 Plotting space construction
@@ -360,4 +361,4 @@ def update_bars ():
     
 
 curdoc().add_root(column(scene,row(column(numberPersonsSlider,play_button,pause_button,jump_button,reset_button),eFig.getFig())))
-curdoc().title = "Boot mit Schwimmern"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

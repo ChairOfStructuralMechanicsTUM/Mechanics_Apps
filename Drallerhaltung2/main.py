@@ -21,6 +21,7 @@ from bokeh.layouts import column, row
 from bokeh.models import Button, Toggle, Slider
 from bokeh.models import Arrow, OpenHead
 from Functions import *
+from os.path import dirname, join, split
 
 '''
 ######################## Define the plotting space ############################
@@ -205,5 +206,5 @@ playGround.wedge(
                   color="#FFFFFF",
                   source = wedgesSource
                 )
-curdoc().title = "Collision"
 curdoc().add_root(row(playGround,column(reset_button, play_button, pause_button)))
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

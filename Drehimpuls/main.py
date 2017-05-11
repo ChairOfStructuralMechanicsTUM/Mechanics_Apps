@@ -3,6 +3,7 @@ from bokeh.layouts import column, row, Spacer
 from bokeh.models import ColumnDataSource, Slider, Arrow, OpenHead, Button, TextInput, Paragraph
 from bokeh.io import curdoc
 from math import sqrt, sin, cos, floor
+from os.path import dirname, join, split
 
 m=3
 a_half=0.75
@@ -232,4 +233,4 @@ reset_button.on_click(reset)
 
 ## Send to window
 curdoc().add_root(row(p,column(a_input,h_input,mk_input,ms_input,row(userVh,VhMark),row(userDPhi,dPhiMark),test_button,reset_button)))
-curdoc().title = "Drehimpuls"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

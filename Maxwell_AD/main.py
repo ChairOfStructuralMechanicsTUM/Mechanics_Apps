@@ -4,6 +4,7 @@ from bokeh.layouts import column, row, widgetbox
 from bokeh.models.widgets import Button
 from bokeh.io import curdoc
 import numpy as np
+from os.path import dirname, join, split
 
 
 #main1
@@ -589,3 +590,4 @@ plot.add_layout(labels2)
 
 #curdoc().add_root( row(column(f1.mag_slider,f1.loc_slider,f2.mag_slider,f2.loc_slider, toggle),plot ) )
 curdoc().add_root( column(plot,row(mag_slider, loc_slider),button,rbutton) )
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

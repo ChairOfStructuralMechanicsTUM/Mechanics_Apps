@@ -6,7 +6,8 @@ from bokeh.plotting import figure
 from bokeh.layouts import column, row
 from bokeh.models import ColumnDataSource, Slider, LabelSet
 from bokeh.io import curdoc
-from numpy import math,loadtxt 
+from numpy import math,loadtxt
+from os.path import dirname, join, split 
 
 #define constant length
 l=4;
@@ -88,7 +89,7 @@ def slide(attrname, old, new): #function which updates the drawing for the chang
     spurkurve.data = dict(x=DataPlotter[0:DataPlotterDictionary[i],0],y=DataPlotter[0:DataPlotterDictionary[i],1])
 Wmega_input.on_change('value',slide)
 curdoc().add_root(column(row(p),Wmega_input))
-curdoc().title = "Leiter"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 
 
 

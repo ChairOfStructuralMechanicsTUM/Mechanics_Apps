@@ -8,7 +8,8 @@ from bokeh.io import curdoc
 from bokeh.layouts import row,column
 from bokeh.models import ColumnDataSource,CustomJS
 from bokeh.models.widgets import Slider,Toggle
-from bokeh.plotting import figure 
+from bokeh.plotting import figure
+from os.path import dirname, join, split 
 
 l=1
 #beam 1-->simply supported
@@ -151,5 +152,5 @@ def update_data(attrname, old, new):
 Eigenvalue_input.on_change('value',update_data)
 
 curdoc().add_root(row(column(p1),column(toggle1,toggle2,toggle3,Eigenvalue_input)))
-curdoc().title = "Bernoulli Beam Vibrations"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 

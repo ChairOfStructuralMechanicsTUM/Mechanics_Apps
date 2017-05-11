@@ -4,6 +4,7 @@ from bokeh.models import ColumnDataSource, Select, Button, LabelSet, Slider
 from bokeh.io import curdoc
 from math import sin, cos, pi, sqrt, radians
 from numpy import *
+from os.path import dirname, join, split
 
 # create variables
 maxR=4.0
@@ -400,4 +401,4 @@ curdoc().add_root(row(column(row(fig1,column(object_select1,radius_select1)),
     row(fig2,column(object_select2,radius_select2)),
     row(fig3,column(object_select3,radius_select3))),Spacer(width=100),
     column(start_button,stop_button,alpha_slider)))
-curdoc().title = "Rollversuch"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

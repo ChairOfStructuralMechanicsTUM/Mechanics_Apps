@@ -10,6 +10,7 @@ from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow, No
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
 import numpy as np
+from os.path import dirname, join, split
 
 #Global constant numbers:
 punktezahl      = 30
@@ -385,3 +386,4 @@ init()
 
 #Output to the browser:
 curdoc().add_root(row(column(weight_slide,plot1,button),plot))
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

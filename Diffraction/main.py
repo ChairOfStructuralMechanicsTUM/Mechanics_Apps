@@ -1,6 +1,6 @@
 from __future__ import division
 
-from os.path import dirname, join
+from os.path import dirname, join, split
 
 import numpy as np
 from numpy import pi, cos, sin, sqrt, log10
@@ -305,4 +305,4 @@ curdoc().add_root(column(description,
                          )
                   )  # add plots and controls to root
 curdoc().add_periodic_callback(update, target_frame_time)  # update function
-curdoc().title = "Diffraction"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

@@ -5,6 +5,7 @@ from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
 from bokeh.models import Slider, Button, Div, HoverTool, Range1d
+from os.path import dirname, join, split
 
 # z = lam/(2*sqrt(k*m))
 # z = 1 => crit damped
@@ -152,5 +153,4 @@ reset_button.on_click(reset)
 ## Send to window
 curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,stop_button,reset_button),Spacer(width=10),fig,p),
     row(mass_input,kappa_input),row(lam_input,initV_input)))
-curdoc().title = "Federpendel"
-#curdoc().add_periodic_callback(evolve,100)
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
