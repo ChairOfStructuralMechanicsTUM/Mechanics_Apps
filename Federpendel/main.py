@@ -11,19 +11,26 @@ from bokeh.models import Slider, Button, Div, HoverTool, Range1d
 # z > 1 => over damped
 # z < 1 => under damped
 
-mass = CircularMass(6,0,9,2,2)
-mass.changeInitV(-5.0)
-spring = Spring((-2,18),(-2,11),7,150)
-dashpot = Dashpot((2,18),(2,11),5)
+## initial values
+initial_mass_value = 8
+initial_kappa_value = 50
+initial_lambda_value = 2
+initial_velocity_value = -5
+s=0
+t=0
+dt=0.03
+
+mass = CircularMass(initial_mass_value,0,9,2,2)
+mass.changeInitV(initial_velocity_value)
+spring = Spring((-2,18),(-2,11),7,initial_kappa_value)
+dashpot = Dashpot((2,18),(2,11),initial_lambda_value)
 mass.linkObj(spring,(-2,11))
 mass.linkObj(dashpot,(2,11))
 Bottom_Line = ColumnDataSource(data = dict(x=[-2,2],y=[11,11]))
 Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[11,9]))
 Position = ColumnDataSource(data = dict(t=[0],s=[0]))
-t=0
-s=0
-dt=0.03
-InitialV=-5.0
+
+initial_velocity_value=-5.0
 Active=False
 
 def evolve():
@@ -73,7 +80,7 @@ def change_mass(attr,old,new):
     mass.changeMass(new)
 
 ## Create slider to choose mass of blob
-mass_input = Slider(title="Masse (mass) [kg]", value=6, start=0.0, end=10.0, step=0.1,width=400)
+mass_input = Slider(title="Masse (mass) [kg]", value=initial_mass_value, start=0.0, end=10.0, step=0.5, width=400)
 mass_input.on_change('value',change_mass)
 
 def change_kappa(attr,old,new):
@@ -81,7 +88,7 @@ def change_kappa(attr,old,new):
     spring.changeSpringConst(new)
 
 ## Create slider to choose spring constant
-kappa_input = Slider(title="Federsteifigkeit (Spring stiffness) [N/m]", value=150.0, start=0.0, end=200, step=10,width=400)
+kappa_input = Slider(title="Federsteifigkeit (Spring stiffness) [N/m]", value=initial_kappa_value, start=0.0, end=200, step=10,width=400)
 kappa_input.on_change('value',change_kappa)
 
 def change_lam(attr,old,new):
@@ -89,19 +96,19 @@ def change_lam(attr,old,new):
     dashpot.changeDamperCoeff(new)
 
 ## Create slider to choose damper coefficient
-lam_input = Slider(title=u"D\u00E4mpfungskonstante (Damper Coefficient) [N*s/m]", value=5.0, start=0.0, end=10, step=0.1,width=400)
+lam_input = Slider(title=u"D\u00E4mpfungskonstante (Damper Coefficient) [N*s/m]", value=initial_lambda_value, start=0.0, end=10, step=0.1,width=400)
 lam_input.on_change('value',change_lam)
 
 def change_initV(attr,old,new):
-    global mass, Active, InitialV, initV_input
+    global mass, Active, initial_velocity_value, initV_input
     if (not Active):
         mass.changeInitV(new)
-        InitialV=new
-    elif (new!=InitialV):
-        initV_input.value=InitialV
+        initial_velocity_value=new
+    elif (new!=initial_velocity_value):
+        initV_input.value=initial_velocity_value
 
 ## Create slider to choose damper coefficient
-initV_input = Slider(title="Anfangsgeschwindigkeit (Initial velocity) [m/s]", value=-5.0, start=-5.0, end=5.0, step=0.5,width=400)
+initV_input = Slider(title="Anfangsgeschwindigkeit (Initial velocity) [m/s]", value=initial_velocity_value, start=-5.0, end=5.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
 
 def stop():
@@ -131,6 +138,9 @@ def reset():
     mass.resetLinks(spring,(-2,11))
     mass.resetLinks(dashpot,(2,11))
     mass.changeInitV(initV_input.value)
+    #this could reset also the plot, but needs the selenium package
+    #reset_button = selenium.find_element_by_class_name('bk-tool-icon-reset')
+    #click_element_at_position(selenium, reset_button, 10, 10)
 
 stop_button = Button(label="Stop", button_type="success",width=100)
 stop_button.on_click(stop)
