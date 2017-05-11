@@ -1,9 +1,12 @@
 from bokeh.models import ColumnDataSource
 from Coord import *
 from copy import deepcopy
+from abc import ABCMeta, abstractmethod
 
 class Mass(object):
+    __metaclass__ = ABCMeta
     ## create mass
+    @abstractmethod
     def __init__ (self, mass):
         # initialise value
         self.mass=mass
@@ -14,6 +17,8 @@ class Mass(object):
         self.v=Coord(0,0)
         # create vector of objects affected by this object
         self.affectedObjects=[]
+        #create the (empty) shape
+        self.shape=ColumnDataSource
     
     ## Add an object that is affected by the movement of the mass
     def linkObj(self,obj,point):
@@ -108,6 +113,14 @@ class Mass(object):
     
     def changeInitV(self,v):
         self.v=Coord(0,v)
+
+    @abstractmethod
+    def plot(self,fig,colour,width):
+        pass
+
+    @abstractmethod
+    def moveTo(self,x,y,w,h):
+        pass
 
 ### Types of Masses
 
