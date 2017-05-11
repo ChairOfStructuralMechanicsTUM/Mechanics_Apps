@@ -2,11 +2,25 @@ import numpy as np
 from bokeh.io import curdoc
 from bokeh.plotting import Figure, ColumnDataSource
 import BarChart as BC
-from bokeh.layouts import column, row
+from bokeh.layouts import column, row, widgetbox
 from bokeh.models import Button, Toggle, Slider
-from bokeh.models import Arrow, OpenHead
+from bokeh.models import Arrow, OpenHead, Div
+from bokeh.models.layouts import Spacer
 from Functions import *
+from os.path import dirname, join
 
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
+area_image = Div(text="""
+<p>
+<img src="/Collision/static/images/particles_information.png" width=500>
+</p>
+<p>
+Particles' Parameters
+</p>""", render_as_text=False, width=350)
 
 # Define the figure (which corresponds to the play ground)
 xMin, xMax = 0, 10
@@ -17,7 +31,7 @@ playGround = Figure(
                         plot_height= 800,
                         x_range  =(xMin, xMax),
                         y_range  =(yMin, yMax),
-                        title = 'Collision play ground',
+                        title = 'Collision Play Ground',
                         tools=''
                    )
 
@@ -30,16 +44,16 @@ playGround.yaxis.visible = False
 
 # Define the energy bar
 barsFig = BC.BarChart(
-                      ["Green ball's kinetic energy",
-                      "Red ball's kinetic energy",
-                      "Total system's kinetic energy"],
+                      ["Green ball",
+                      "Red ball",
+                      "Whole system"],
                       [50,50,50],
-                      ["#98C6EA","#A2AD00","#E37222"],
+                      ["#33FF33","#FF3333","#460BF8"],
                       [1,1,1]
                      )
 barsFig.Width(300)
 barsFig.Height(650)
-barsFig.fig.yaxis.visible=False
+barsFig.values='timing'
 
 # Define the initial location of the two colliding balls (in our 2D app, circles)
 x1,x2 = 3,5
@@ -257,8 +271,8 @@ def update_velocity_arrows():
                          velocityVectorTwo
                        )
     
-def update_bars ():
-    # Determine the new kinetic of both balls
+def update_bars():
+    # Determine the new kinetic energy of both balls
     yellowBallKE = 0.5*m1*( 
                             velocityVectorOne[0]**2
                           + velocityVectorOne[1]**2
@@ -283,7 +297,7 @@ def update_bars ():
 periodicCallback = 0
 def Reset():
     global velocityVectorOne, velocityVectorTwo, Active, periodicCallback
-
+	
     # Update the source data file to the very initial data
     update_particle_source(0,x1,y1)
     update_particle_source(1,x2,y2)
@@ -298,7 +312,6 @@ def Reset():
     # Update the height of the bars accordingly
     update_bars()
     
-    
     # The preiodic callback has been removed here because when the pause 
     # button is set to False, this reactivates the periodic callback
     if periodicCallback == 0 and Active == True:
@@ -309,12 +322,18 @@ def Reset():
         pass
     
     Active = False
+    
+    # Return the solider to their default values
+    ballOneVelocityDirSlider.value = 0
+    ballTwoVelocityDirSlider.value = 0
+    ballOneVelocityMagSlider.value  = 1
+    ballTwoVelocityMagSlider.value  = 0
 
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)
 
 # Creating pause button
-def pause ():
+def pause():
     global Active
     # When active pause animation
     if Active == True:
@@ -327,7 +346,7 @@ pause_button = Button(label="Pause", button_type="success")
 pause_button.on_click(pause)
 
 # Creating play button
-def play ():
+def play():
     global Active, periodicCallback
     
     if Active == False:
@@ -418,20 +437,20 @@ def update_Cr_value(attr,old,new):
     Cr = new
 
 
-ballOneVelocityDirSlider = Slider(title=u" Green ball velocity direction ", value=0, start=0, end=360, step=1.0, width=300)
+ballOneVelocityDirSlider = Slider(title=u" Green Ball Velocity Direction ( degrees ) ", value=0, start=0, end=360, step=1.0, width=300)
 ballOneVelocityDirSlider.on_change('value',update_ballOne_VelocityDir)
 
-ballOneVelocityMagSlider = Slider(title=u" Green ball veloccity magnitude ", value=0, start=0, end=5, step=0.1, width=300)
+ballOneVelocityMagSlider = Slider(title=u" Green Ball Velocity Magnitude ( meter/second ) ", value=1, start=0, end=5, step=0.1, width=300)
 ballOneVelocityMagSlider.on_change('value',update_ballOne_VelocityMag)
 
-ballTwoVelocityDirSlider = Slider(title=u" Red ball velocity direction ", value=0, start=0, end=360, step=1.0, width=300)
+ballTwoVelocityDirSlider = Slider(title=u" Red Ball Velocity Direction ( degrees ) ", value=0, start=0, end=360, step=1.0, width=300)
 ballTwoVelocityDirSlider.on_change('value',update_ballTwo_VelocityDir)
 
-ballTwoVelocityMagSlider = Slider(title=u" Red ball veloccity magnitude ", value=0, start=0, end=5, step=0.1, width=300)
+ballTwoVelocityMagSlider = Slider(title=u" Red Ball Velocity Magnitude ( meter/second ) ", value=0, start=0, end=5, step=0.1, width=300)
 ballTwoVelocityMagSlider.on_change('value',update_ballTwo_VelocityMag)
 
 
-Cr_Slider = Slider(title=u" coefficient of restitution ", value=1, start=0, end=1, step=0.1,width=600)
+Cr_Slider = Slider(title=u" Coefficient of Restitution ", value=1, start=0, end=1, step=0.1,width=600)
 Cr_Slider.on_change('value',update_Cr_value)
     
 
@@ -449,25 +468,34 @@ playGround.tool_events.on_change('geometries', on_mouse_move)
 
 #curdoc().add_periodic_callback( compute_tranjectory,10 )
 curdoc().title = "Collision"
-curdoc().add_root(
-                    row(
-                            barsFig.getFig(),
-                            playGround,
-                            column(
-                                       reset_button,
-                                       play_button,
-                                       pause_button,
-                                       row(
-                                           column(
-                                                   ballOneVelocityDirSlider,
-                                                   ballOneVelocityMagSlider,                                                  
-                                                 ),
-                                           column(
-                                                   ballTwoVelocityDirSlider,
-                                                   ballTwoVelocityMagSlider                                                  
-                                                 )
-                                          ),
-                                       Cr_Slider 
+buttons = widgetbox(reset_button, play_button, pause_button,width=150)
+curdoc().add_root(	
+                  column(
+                         description,
+                         row(
+                             barsFig.getFig(),
+                             playGround,
+                             column(
+                                    row(
+                                        Spacer(width=220),
+                                        buttons
+                                       ),
+                                    row(
+                                        column(
+                                               ballOneVelocityDirSlider,
+                                               ballOneVelocityMagSlider,
+                                              ),
+                                        column(
+                                               ballTwoVelocityDirSlider,
+                                               ballTwoVelocityMagSlider
+                                              )
+                                       ),
+                                    Cr_Slider,
+                                    row(
+                                        Spacer(width=35),
+                                        area_image
+                                       )
                                   )
-                       )
+                            )
+                        )
                  )                       
