@@ -22,21 +22,23 @@ Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[11,9]))
 Position = ColumnDataSource(data = dict(t=[0],s=[0]))
 t=0
 s=0
+dt=0.03
 InitialV=-5.0
 Active=False
 
 def evolve():
     global mass, Bottom_Line, Linking_Line, t, s
     mass.FreezeForces()
-    disp=mass.evolve(0.03)
+    disp=mass.evolve(dt)
     s+=disp.y
     Bottom_Line.data=dict(x=[-2,2],y=[11+s, s+11])
     Linking_Line.data=dict(x=[0,0],y=[11+s, 9+s])
-    t+=0.03
+    t+=dt
     Position.stream(dict(t=[t],s=[s]))
 
 title_box = Div(text="""<h2 style="text-align:center;">Federpendel (Spring pendulum)</h2>""",width=1000)
 
+# drawing
 fig = figure(title="", tools="", x_range=(-7,7), y_range=(0,20),width=350,height=500)
 fig.title.text_font_size="20pt"
 fig.axis.visible = False
@@ -55,6 +57,7 @@ fig.line(x='x',y='y',source=Bottom_Line,color="black",line_width=3)
 fig.line(x='x',y='y',source=Linking_Line,color="black",line_width=3)
 mass.plot(fig)
 
+# plot
 p = figure(title="", tools="", y_range=(-5,5), x_range=(0,20),height=500)
 p.line(x='t',y='s',source=Position,color="black")
 p.axis.major_label_text_font_size="12pt"
@@ -66,6 +69,7 @@ p.yaxis.axis_label="Auslenkung (Displacement) [m]"
 def change_mass(attr,old,new):
     global mass
     mass.changeMass(new)
+
 ## Create slider to choose mass of blob
 mass_input = Slider(title="Masse (mass) [kg]", value=6, start=0.0, end=10.0, step=0.1,width=400)
 mass_input.on_change('value',change_mass)
@@ -73,6 +77,7 @@ mass_input.on_change('value',change_mass)
 def change_kappa(attr,old,new):
     global spring
     spring.changeSpringConst(new)
+
 ## Create slider to choose spring constant
 kappa_input = Slider(title="Federsteifigkeit (Spring stiffness) [N/m]", value=150.0, start=0.0, end=200, step=10,width=400)
 kappa_input.on_change('value',change_kappa)
@@ -80,6 +85,7 @@ kappa_input.on_change('value',change_kappa)
 def change_lam(attr,old,new):
     global dashpot
     dashpot.changeDamperCoeff(new)
+
 ## Create slider to choose damper coefficient
 lam_input = Slider(title=u"D\u00E4mpfungskonstante (Damper Coefficient) [N*s/m]", value=5.0, start=0.0, end=10, step=0.1,width=400)
 lam_input.on_change('value',change_lam)
@@ -91,6 +97,7 @@ def change_initV(attr,old,new):
         InitialV=new
     elif (new!=InitialV):
         initV_input.value=InitialV
+        
 ## Create slider to choose damper coefficient
 initV_input = Slider(title="Anfangsgeschwindigkeit (Initial velocity) [m/s]", value=-5.0, start=-5.0, end=5.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
@@ -100,12 +107,14 @@ def stop():
     if (Active):
         curdoc().remove_periodic_callback(evolve)
         Active=False
+
 def play():
     global Active
     if (not Active):
         reset()
-        curdoc().add_periodic_callback(evolve,100)
+        curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
         Active=True
+
 def reset():
     global Position, t, s, Bottom_Line, Linking_Line, spring, mass, dashpot
     stop()
