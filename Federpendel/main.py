@@ -4,7 +4,7 @@ from Mass import *
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div
+from bokeh.models import Slider, Button, Div, HoverTool, Range1d
 
 # z = lam/(2*sqrt(k*m))
 # z = 1 => crit damped
@@ -58,7 +58,9 @@ fig.line(x='x',y='y',source=Linking_Line,color="black",line_width=3)
 mass.plot(fig)
 
 # plot
-p = figure(title="", tools="", y_range=(-5,5), x_range=(0,20),height=500)
+hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
+p = figure(title="", y_range=(-5,5), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=500, \
+    toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
 p.line(x='t',y='s',source=Position,color="black")
 p.axis.major_label_text_font_size="12pt"
 p.axis.axis_label_text_font_style="normal"
@@ -97,7 +99,7 @@ def change_initV(attr,old,new):
         InitialV=new
     elif (new!=InitialV):
         initV_input.value=InitialV
-        
+
 ## Create slider to choose damper coefficient
 initV_input = Slider(title="Anfangsgeschwindigkeit (Initial velocity) [m/s]", value=-5.0, start=-5.0, end=5.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
