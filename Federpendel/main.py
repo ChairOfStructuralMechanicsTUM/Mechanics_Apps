@@ -44,7 +44,7 @@ def evolve():
     t+=dt
     Position.stream(dict(t=[t],s=[s]))
 
-title_box = Div(text="""<h2 style="text-align:center;">Federpendel (Spring pendulum)</h2>""",width=1000)
+title_box = Div(text="""<h2 style="text-align:center;">Spring pendulum</h2>""",width=1000)
 
 # drawing
 fig = figure(title="", tools="", x_range=(-7,7), y_range=(0,20),width=350,height=500)
@@ -73,15 +73,15 @@ p.line(x='t',y='s',source=Position,color="black")
 p.axis.major_label_text_font_size="12pt"
 p.axis.axis_label_text_font_style="normal"
 p.axis.axis_label_text_font_size="14pt"
-p.xaxis.axis_label="Zeit (Time) [s]"
-p.yaxis.axis_label="Auslenkung (Displacement) [m]"
+p.xaxis.axis_label="Time [s]"
+p.yaxis.axis_label="Displacement [m]"
 
 def change_mass(attr,old,new):
     global mass
     mass.changeMass(new)
 
 ## Create slider to choose mass of blob
-mass_input = Slider(title="Masse (mass) [kg]", value=initial_mass_value, start=0.5, end=10.0, step=0.5, width=400)
+mass_input = Slider(title="Mass [kg]", value=initial_mass_value, start=0.5, end=10.0, step=0.5, width=400)
 mass_input.on_change('value',change_mass)
 
 def change_kappa(attr,old,new):
@@ -89,7 +89,7 @@ def change_kappa(attr,old,new):
     spring.changeSpringConst(new)
 
 ## Create slider to choose spring constant
-kappa_input = Slider(title="Federsteifigkeit (Spring stiffness) [N/m]", value=initial_kappa_value, start=0.0, end=200, step=10,width=400)
+kappa_input = Slider(title="Spring stiffness [N/m]", value=initial_kappa_value, start=0.0, end=200, step=10,width=400)
 kappa_input.on_change('value',change_kappa)
 
 def change_lam(attr,old,new):
@@ -97,7 +97,7 @@ def change_lam(attr,old,new):
     dashpot.changeDamperCoeff(new)
 
 ## Create slider to choose damper coefficient
-lam_input = Slider(title=u"D\u00E4mpfungskonstante (Damper Coefficient) [N*s/m]", value=initial_lambda_value, start=0.0, end=10, step=0.1,width=400)
+lam_input = Slider(title="Damping coefficient [N*s/m]", value=initial_lambda_value, start=0.0, end=10, step=0.1,width=400)
 lam_input.on_change('value',change_lam)
 
 def change_initV(attr,old,new):
@@ -106,7 +106,7 @@ def change_initV(attr,old,new):
         mass.changeInitV(new)
 
 ## Create slider to choose damper coefficient
-initV_input = Slider(title="Anfangsgeschwindigkeit (Initial velocity) [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
+initV_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
 
 def pause():
