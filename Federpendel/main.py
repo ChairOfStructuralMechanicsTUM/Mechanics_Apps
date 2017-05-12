@@ -112,7 +112,7 @@ def change_initV(attr,old,new):
 initV_input = Slider(title="Anfangsgeschwindigkeit (Initial velocity) [m/s]", value=initial_velocity_value, start=-5.0, end=5.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
 
-def stop():
+def pause():
     global Active
     if (Active):
         curdoc().remove_periodic_callback(evolve)
@@ -121,13 +121,13 @@ def stop():
 def play():
     global Active
     if (not Active):
-        reset()
+        # reset()
         curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
         Active=True
 
-def reset():
+def stop():
     global Position, t, s, Bottom_Line, Linking_Line, spring, mass, dashpot
-    stop()
+    pause()
     t=0
     s=0
     Position.data=dict(t=[0],s=[0])
@@ -139,18 +139,30 @@ def reset():
     mass.resetLinks(spring,(-2,11))
     mass.resetLinks(dashpot,(2,11))
     mass.changeInitV(initV_input.value)
-    #this could reset also the plot, but needs the selenium package
+
+def reset():
+    stop()
+    mass_input = initial_mass_value
+    kappa_input = initial_kappa_value
+    lam_input.value = initial_lambda_value
+    initV_input.value = initial_velocity_value
+    mass.changeInitV(initV_input.value)
+
+    #this could reset also the plot, but needs the selenium package:
     #reset_button = selenium.find_element_by_class_name('bk-tool-icon-reset')
     #click_element_at_position(selenium, reset_button, 10, 10)
 
-stop_button = Button(label="Stop", button_type="success",width=100)
-stop_button.on_click(stop)
 play_button = Button(label="Play", button_type="success",width=100)
 play_button.on_click(play)
+pause_button = Button(label="Pause", button_type="success",width=100)
+pause_button.on_click(pause)
+stop_button = Button(label="Stop", button_type="success", width=100)
+stop_button.on_click(stop)
 reset_button = Button(label="Reset", button_type="success",width=100)
 reset_button.on_click(reset)
 
 ## Send to window
-curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,stop_button,reset_button),Spacer(width=10),fig,p),
+curdoc().add_root(column(title_box, \
+    row(column(Spacer(height=100),play_button,pause_button,stop_button,reset_button),Spacer(width=10),fig,p), \
     row(mass_input,kappa_input),row(lam_input,initV_input)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
