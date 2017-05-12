@@ -81,7 +81,7 @@ def change_mass(attr,old,new):
     mass.changeMass(new)
 
 ## Create slider to choose mass of blob
-mass_input = Slider(title="Masse (mass) [kg]", value=initial_mass_value, start=0.0, end=10.0, step=0.5, width=400)
+mass_input = Slider(title="Masse (mass) [kg]", value=initial_mass_value, start=0.5, end=10.0, step=0.5, width=400)
 mass_input.on_change('value',change_mass)
 
 def change_kappa(attr,old,new):
@@ -104,12 +104,9 @@ def change_initV(attr,old,new):
     global mass, Active, initial_velocity_value, initV_input
     if (not Active):
         mass.changeInitV(new)
-        initial_velocity_value=new
-    elif (new!=initial_velocity_value):
-        initV_input.value=initial_velocity_value
 
 ## Create slider to choose damper coefficient
-initV_input = Slider(title="Anfangsgeschwindigkeit (Initial velocity) [m/s]", value=initial_velocity_value, start=-5.0, end=5.0, step=0.5,width=400)
+initV_input = Slider(title="Anfangsgeschwindigkeit (Initial velocity) [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
 
 def pause():
@@ -121,7 +118,6 @@ def pause():
 def play():
     global Active
     if (not Active):
-        # reset()
         curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
         Active=True
 
@@ -142,8 +138,8 @@ def stop():
 
 def reset():
     stop()
-    mass_input = initial_mass_value
-    kappa_input = initial_kappa_value
+    mass_input.value = initial_mass_value
+    kappa_input.value = initial_kappa_value
     lam_input.value = initial_lambda_value
     initV_input.value = initial_velocity_value
     mass.changeInitV(initV_input.value)
