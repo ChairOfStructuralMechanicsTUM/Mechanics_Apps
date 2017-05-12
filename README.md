@@ -33,15 +33,18 @@ lecture audience.
 
 If you are using a Linux system, please execute the ```.sh``` scripts, under Windows use the ```.cmd``` scripts if available.
 
-1. install Anaconda with python version 2.7: https://www.continuum.io/downloads
+1. install Anaconda with python **version 2.7**: https://www.continuum.io/downloads (Choose installation for all users if possible)
 2. install Git
     * Linux: see https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
     * Windows: see https://git-for-windows.github.io/
-2. install additional python packages (bokeh, nodejs, flexx, twisted) by running ```$ ./installer.sh```, ```$ ./installer.cmd```.
-3. configure the server with ```server.conf```. If you want to run the server locally, just use the existing configuration. If you want to run the server online, insert the global ip address and make sure that the server port is open to the world wide web. In ```appnames.conf``` write the folder names of the apps you want to run on the server.
-4. run ```$ ./serverrunner.sh```. If you want to use port 80 run it as sudo. Use Git Bash to run .sh files.
-5. run ```$ ./bokehrunner.sh```.
-6. access ```127.0.0.1``` in your browser (or the corresponding IP address set in ```server.conf```)
+3. clone **this** repository (*Linux:* from command line, *Windows:* by opening git bash) ```git clone https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps.git```)
+4. install additional python packages (bokeh, nodejs, flexx, twisted) by running ```$ ./installer.sh```, ```$ ./installer.cmd```. *Windows:* Right click on script >> Run as administrator. Please check the version of tornado, which is being installed automatically. Bokeh is not compatible with tornado verions >= 4.5, so please make sure, that tornado version 4.4.2 is installed.
+5. configure the server with ```server.conf```. If you want to run the server locally, just use the existing configuration. If you want to run the server online, insert the global ip address and make sure that the server port is open to the world wide web. In ```appnames.conf``` write the folder names of the apps you want to run on the server.
+
+### Running the Server
+
+* **Local running** If you just want to use the apps locally, just run Mechanic_Apps.exe (or Linux .sh). You can also access 127.0.0.1:8080 if your browser does not open automatically.
+* **Web running** If you want to publish to the web, run server_autorun ```$ ./serverrunner.sh``` and ```$ ./bokehrunner.sh```. Access your global IP in your browser (or the corresponding IP address set in ```server.conf```)
 
 ### Server Login to LRZ Windows VM
 
@@ -109,6 +112,9 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - Julian Freisinger jf
 
 ### Developers
+
+Please comply with the [DevelopmentGuideline](DevelopmentGuideline.pdf)
+
 - Emily Bourne eb
 - Moustafa Alsayed Ahmad ma
 - Antonios Kamariotis ak

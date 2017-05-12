@@ -7,9 +7,9 @@ import numpy as np
 from bokeh.io import curdoc  
 from bokeh.layouts import row,column
 from bokeh.models import ColumnDataSource,CustomJS
-from bokeh.models.widgets import Slider,Toggle, Paragraph 
-from bokeh.plotting import figure 
-from bokeh.layouts import widgetbox
+from bokeh.models.widgets import Slider,Toggle
+from bokeh.plotting import figure
+from os.path import dirname, join, split 
 
 l=1
 #beam 1-->simply supported
@@ -55,7 +55,7 @@ y3=-5-(1/2*(np.cosh(1.8751*x3/l)-np.cos(1.8751*x3/l))-((1/2*(np.cosh(1.8751)+np.
             np.sin(1.8751*x3/l)))
 source3=ColumnDataSource(data=dict(x=x3,y=y3))
 
-p1 = figure(title="Euler Bernoulli Beam Vibrations", tools="crosshair,pan,reset,save,wheel_zoom", x_range=(-0.075,1.5), y_range=(-8,1.5))
+p1 = figure(plot_height=975, plot_width=800,title="Euler Bernoulli Beam Vibrations", tools="", x_range=(-0.075,1.5), y_range=(-8,1.5))
 p1.axis.visible = False
 p1.grid.visible = False
 p1.outline_line_color = None
@@ -81,14 +81,16 @@ fixed_cantilever=p1.line(x='x', y='y', source=fixed_cantil,line_width=1,line_col
 eigenmodes_beam3=p1.line(x='x', y='y', source=source3,legend="Eigenvalue Problem: cosh(\u03BB)\u00B7cos(\u03BB)+1=0 / Solution: w\u1D62(\u03BE) = c(\u03BB\u1D62\u03BE) - C(\u03BB\u1D62) / S(\u03BB\u1D62) \u00B7s (\u03BB\u1D62\u03BE)",line_width=3,line_color='red')
 eigenmodes_beam3.visible= False
 
-p1.legend.label_text_font_size="10pt"
-#p1.legend.border_line_width = 3
-#p1.legend.border_line_color = "navy"
-#p1.legend.border_line_alpha = 0.5
-p1.legend.location = "bottom_left"
+definitions1=p1.line(x=[0],y=[0],line_width=1,line_color='white',legend="C(\u03BB\u00B7\u03BE)=\u00BD (cosh(\u03BB\u00B7\u03BE) + cos(\u03BB\u00B7\u03BE))")
+definitions2=p1.line(x=[0],y=[0],line_width=1,line_color='white',legend="S(\u03BB\u00B7\u03BE)=\u00BD (sinh(\u03BB\u00B7\u03BE) + sin(\u03BB\u00B7\u03BE))")
+definitions3=p1.line(x=[0],y=[0],line_width=1,line_color='white',legend="c(\u03BB\u00B7\u03BE)=\u00BD (cosh(\u03BB\u00B7\u03BE) - cos(\u03BB\u00B7\u03BE))")
+definitions4=p1.line(x=[0],y=[0],line_width=1,line_color='white',legend="s(\u03BB\u00B7\u03BE)=\u00BD (sinh(\u03BB\u00B7\u03BE) - sin(\u03BB\u00B7\u03BE))")
 
-p = Paragraph(text="""C(\u03BB\u00B7\u03BE)=\u00BD (cosh(\u03BB\u00B7\u03BE) + cos(\u03BB\u00B7\u03BE)) and S(\u03BB\u00B7\u03BE)=\u00BD (sinh(\u03BB\u00B7\u03BE) + sin(\u03BB\u00B7\u03BE)) c(\u03BB\u00B7\u03BE)=\u00BD (cosh(\u03BB\u00B7\u03BE) - cos(\u03BB\u00B7\u03BE))  and s(\u03BB\u00B7\u03BE)=\u00BD (sinh(\u03BB\u00B7\u03BE) - sin(\u03BB\u00B7\u03BE))""",
-              width=400, height=60)
+p1.legend.label_text_font_size="10pt"
+p1.legend.border_line_width = 3
+p1.legend.border_line_color = "navy"
+p1.legend.border_line_alpha = 0.5
+p1.legend.location = "bottom_left"
 
 # coffeescript to link toggle with visible property
 code = '''\
@@ -149,6 +151,6 @@ def update_data(attrname, old, new):
     
 Eigenvalue_input.on_change('value',update_data)
 
-curdoc().add_root(column(column(p1,widgetbox(p),toggle1,toggle2,toggle3),Eigenvalue_input))
-curdoc().title = "Bernoulli Beam Vibrations"
+curdoc().add_root(row(column(p1),column(toggle1,toggle2,toggle3,Eigenvalue_input)))
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 

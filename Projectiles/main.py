@@ -5,6 +5,7 @@ from bokeh.layouts import column, row
 from bokeh.io import curdoc
 from drawingFuncs import *
 from math import radians, cos, sin, tan
+from os.path import dirname, join, split
 
 # initialise variables
 aim_line = ColumnDataSource(data=dict(x=[],y=[]))
@@ -187,4 +188,4 @@ reset_button.on_click(Reset)
 
 ## Send to window
 curdoc().add_root(row(p,column(angle_slider,speed_slider,mass_slider,height_slider,grav_select,fire_button,reset_button)))
-curdoc().title = "Projektil"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

@@ -4,6 +4,7 @@ from bokeh.layouts import column, row, widgetbox
 from bokeh.models.widgets import Button
 from bokeh.io import curdoc
 import numpy as np
+from os.path import dirname, join, split
 
 
 #main1
@@ -522,20 +523,29 @@ mag_slider.on_change('value', update_fun)
 
 def init():
     global changer
-    f1.label.data = dict(x=[0.45] , y=[0.65], name = ["F1"])
-    f2.label.data = dict(x=[] , y=[], name = [])
-    f1.pts.data = dict(x = [], y = [] )
-    f2.pts.data = dict(x = [], y = [] )
-    mag_slider.value = mag_val
-    loc_slider.value = loc_val
-    changer = 0
-    f1.arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    f2.arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    changer                 = 0
+    f1.label.data           = dict(x=[0.45] , y=[0.65], name = ["F1"])
+    f2.label.data           = dict(x=[] , y=[], name = [])
+    mag_slider.value        = mag_val
+    loc_slider.value        = loc_val
+    f1.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    f2.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    f2.tri.data             = dict(x = [], y = [], size = [])
+    f1.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    f2.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    f1.tri.data             = dict(x = [0.1,0.8], y = [0.1,0.1], size = [tri_size,tri_size])
+
+def clearf2():
+    f2.pts.data             = dict(x = [], y = [] )
+
 
 button.on_click(button_fun)
 rbutton.on_click(init)
+rbutton.on_click(clearf2)
+
 init()
 create_orig(orig)
+
 ps = 0.3
 plot = Figure(tools = "",title="Maxwell",title_location = "above", x_range=(0.1-ps,0.8+ps), y_range=(0.0,1.0))
 plot.line(x='x', y='y', source=orig.pts, color='Black',line_width=3)
@@ -580,3 +590,4 @@ plot.add_layout(labels2)
 
 #curdoc().add_root( row(column(f1.mag_slider,f1.loc_slider,f2.mag_slider,f2.loc_slider, toggle),plot ) )
 curdoc().add_root( column(plot,row(mag_slider, loc_slider),button,rbutton) )
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

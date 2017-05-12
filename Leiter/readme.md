@@ -4,5 +4,4 @@ Prototype of a WebApp demonstrating Instantaneous Center of Rotation via Bokeh f
 
 The app can be run using the command "bokeh serve --show Leiter.py" from the parent directory.
 
-To do
-Make pollkurve visible
+

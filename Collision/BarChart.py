@@ -71,6 +71,8 @@ class BarChart(object):
         self.fig.xaxis.major_label_text_font_size="14pt"
         self.fig.xaxis.major_tick_line_color=None
         self.fig.xaxis.major_label_orientation=pi/2
+        self.fig.yaxis.major_label_orientation=pi/2
+        self.fig.yaxis.axis_label="Kinetic Energy ( Joule )"
         # only give x ticks at bars
         self.fig.xaxis[0].ticker=FixedTicker(ticks=label_places)
         # save vals in ColumnDataSource so ticker_func can use it as default val
