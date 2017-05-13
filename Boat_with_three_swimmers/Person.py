@@ -10,7 +10,7 @@ class Person():
         self.jumpingPosition  = jumpingPosition
         self.currentPosition = self.standingPosition
         self.jumping = False
-        self.relativeVelocity = [5,4]
+        self.relativeVelocity = [3,3]
         self.jumpingPath = dict(x=[],y=[])
         
     def get_number(self):
