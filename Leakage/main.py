@@ -45,21 +45,21 @@ N_input = TextInput(value='2^6', title="N (Number of sample points, max = 10^5)"
 ###########
 # FIGURES #
 ###########
+toolset=["crosshair, pan, wheel_zoom, reset"]
 # Generate a figure container for the original function
 plot_original = Figure(x_axis_label='t',
                        y_axis_label='f(t)',
-                       tools=["crosshair, save, tap"])
+                       tools=toolset,active_scroll="wheel_zoom")
 
 # Generate a figure container for the real part of the transformed function
 plot_transform_real= Figure(x_axis_label='omega',
                             y_axis_label='real(F(omega))',
-                            tools=["crosshair, save, tap"])
+                            tools=toolset,active_scroll="wheel_zoom")
 
 # Generate a figure container for the imaginary part of the transformed function
 plot_transform_imag= Figure(x_axis_label='omega',
                             y_axis_label='imag(F(omega))',
-                            tools=["crosshair, save, tap"])
-
+                            tools=toolset,active_scroll="wheel_zoom")
 
 def extract_parameters():
     """
