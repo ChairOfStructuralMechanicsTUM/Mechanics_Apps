@@ -33,9 +33,9 @@ F_source = ColumnDataSource(data=dict(omega=[], F_real=[], F_imag=[]))
 # INTERACTIVE WIDGETS #
 #######################
 # text input window for function f(x,y) to be transformed
-f_input = TextInput(value='exp(-t)', title="f(x):")
+f_input = TextInput(value='exp(-t)', title="f(t):")
 # dropdown menu for selecting one of the sample functions
-sample_fun_input_f = Dropdown(label="choose a sample function f(x,y) or enter one below",
+sample_fun_input_f = Dropdown(label="choose a sample function f(t) or enter one below",
                               menu=sample_f_names)
 # text input window for T0 (Sampling interval length)
 t0_input = TextInput(value='1', title="T0 (Interval)")
@@ -131,13 +131,23 @@ def initialize():
 
     update()
 
+    # todo here we have to use the correct sources! f_samples_source and f_analytical_source
     plot_original.scatter('t', 'f', source=f_source)
-    plot_transform_imag.line('omega', 'F_imag', source=F_source)
-    plot_transform_real.line('omega', 'F_real', source=F_source)
+    plot_original.line('t', 'f', source=f_source, line_width=.5)
+    plot_transform_imag.scatter('omega', 'F_imag', source=F_source)
+    plot_transform_imag.line('omega', 'F_imag', source=F_source, line_width=.5)
+    plot_transform_real.scatter('omega', 'F_real', source=F_source)
+    plot_transform_real.line('omega', 'F_real', source=F_source, line_width=.5)
 
 
-def widged_changed(attr, old, new):
+def on_parameters_changed(attr, old, new):
     update()
+
+
+def on_function_changed(attr, old, new):
+    update()
+    # reset the views of all three plots
+    # todo Here we have to add the corresponding callback!
 
 
 def sample_fun_input_changed(self):
@@ -154,10 +164,10 @@ def sample_fun_input_changed(self):
 initialize()
 
 # add callback behaviour
-f_input.on_change('value', widged_changed)
+f_input.on_change('value', on_function_changed)
 sample_fun_input_f.on_click(sample_fun_input_changed)
-t0_input.on_change('value',widged_changed)
-N_input.on_change('value',widged_changed)
+t0_input.on_change('value',on_parameters_changed)
+N_input.on_change('value',on_parameters_changed)
 
 # create layout
 controls = widgetbox(f_input, sample_fun_input_f, t0_input, N_input)  # all controls
