@@ -25,9 +25,11 @@ sample_f_names = [
 # Data Sources #
 ################
 # source for original function f
-f_source = ColumnDataSource(data=dict(t=[],f=[]))
+f_sampled_source = ColumnDataSource(data=dict(t=[],f=[]))
+f_analytical_source = ColumnDataSource(data=dict(t=[],f=[]))
 # source for transformed function F
-F_source = ColumnDataSource(data=dict(omega=[], F_real=[], F_imag=[]))
+F_sampled_source = ColumnDataSource(data=dict(omega=[], F_real=[], F_imag=[]))
+F_analytical_source = ColumnDataSource(data=dict(omega=[], F_real=[], F_imag=[]))
 
 #######################
 # INTERACTIVE WIDGETS #
@@ -113,14 +115,33 @@ def approximate_fourier_transform(T_0, N, f_function):
 
 
 def update():
-    ## Extract parameters
+    """
+    Compute data depending on input parameters. We compute the fft and the analytical fourier transform
+
+    WARNING!
+    Currently we fake the computation of the transform by just computing a high resolution fft, sympy allows us to do
+    an analytical fourier transform but there are some bugs: https://github.com/sympy/sympy/issues/12591 (18.5.2017)
+    """
+
+    # Extract parameters
     T_0, N, f_function = extract_parameters()
 
+    # computation of discrete FT
     F_samples, omega_samples, f_samples, t_samples = approximate_fourier_transform(T_0, N, f_function)
 
+    # faking the analytical FT by using a high resolution discrete FT
+    N_high = 10**5
+    F_analytical, omega_analytical, f_analytical, t_analytical = approximate_fourier_transform(T_0, N_high, f_function)
+    # we only use the part of the "analytical" solution that matched the discrete FT region, otherwise the interesting regions shrink too much
+    decider = (omega_analytical >= omega_samples.min()) & (omega_analytical <= omega_samples.max())
+    F_analytical = F_analytical[decider]  # truncuate F values
+    omega_analytical = omega_analytical[decider]  # truncuate omega region
+
     # save to data source
-    f_source.data = dict(t=t_samples, f=f_samples)
-    F_source.data = dict(omega=omega_samples, F_real=F_samples.real, F_imag=F_samples.imag)
+    f_sampled_source.data = dict(t=t_samples, f=f_samples)
+    F_sampled_source.data = dict(omega=omega_samples, F_real=F_samples.real, F_imag=F_samples.imag)
+    f_analytical_source.data = dict(t=t_analytical, f=f_analytical)
+    F_analytical_source.data = dict(omega=omega_analytical, F_real=F_analytical.real, F_imag=F_analytical.imag)
 
 
 def initialize():
@@ -131,13 +152,12 @@ def initialize():
 
     update()
 
-    # todo here we have to use the correct sources! f_samples_source and f_analytical_source
-    plot_original.scatter('t', 'f', source=f_source)
-    plot_original.line('t', 'f', source=f_source, line_width=.5)
-    plot_transform_imag.scatter('omega', 'F_imag', source=F_source)
-    plot_transform_imag.line('omega', 'F_imag', source=F_source, line_width=.5)
-    plot_transform_real.scatter('omega', 'F_real', source=F_source)
-    plot_transform_real.line('omega', 'F_real', source=F_source, line_width=.5)
+    plot_original.scatter('t', 'f', source=f_sampled_source, legend='samples')
+    plot_original.line('t', 'f', source=f_analytical_source, line_width=.5, legend='f(t)')
+    plot_transform_imag.scatter('omega', 'F_imag', source=F_sampled_source, legend='Im(DFT(f(t)))')
+    plot_transform_imag.line('omega', 'F_imag', source=F_analytical_source, line_width=.5, legend='Im(F(omega))')
+    plot_transform_real.scatter('omega', 'F_real', source=F_sampled_source, legend='Re(DFT(f(t))')
+    plot_transform_real.line('omega', 'F_real', source=F_analytical_source, line_width=.5, legend='Re(F(omega))')
 
 
 def on_parameters_changed(attr, old, new):
