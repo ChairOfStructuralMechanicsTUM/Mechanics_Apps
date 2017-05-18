@@ -6,7 +6,7 @@ import numpy as np
 from numpy.fft import fft, fftshift
 
 from bokeh.io import curdoc
-from bokeh.models import ColumnDataSource
+from bokeh.models import ColumnDataSource, VBox
 from bokeh.layouts import widgetbox, layout
 from bokeh.plotting import Figure
 from bokeh.models.widgets import TextInput, Dropdown
@@ -35,32 +35,41 @@ F_analytical_source = ColumnDataSource(data=dict(omega=[], F_real=[], F_imag=[])
 # INTERACTIVE WIDGETS #
 #######################
 # text input window for function f(x,y) to be transformed
-f_input = TextInput(value='exp(-t)', title="f(t):")
+f_input = TextInput(value='exp(-t)',
+                    title="f(t):",
+                    sizing_mode='stretch_both')
+
 # dropdown menu for selecting one of the sample functions
 sample_fun_input_f = Dropdown(label="choose a sample function f(t) or enter one below",
-                              menu=sample_f_names)
+                              menu=sample_f_names,
+                              sizing_mode='stretch_both')
 # text input window for T0 (Sampling interval length)
-t0_input = TextInput(value='1', title="T0 (Interval)")
+t0_input = TextInput(value='1',
+                     title=u"T\u2080 (Interval)",
+                     sizing_mode='stretch_both')
 # text input window for N (Number of sample points)
-N_input = TextInput(value='2^6', title="N (Number of sample points, max = 10^5)")
+N_input = TextInput(value='2^6',
+                    title=u"N (Number of sample points, max = 10\u2075)",
+                    sizing_mode='stretch_both')
 
 ###########
 # FIGURES #
 ###########
-toolset=["crosshair, pan, wheel_zoom, reset"]
+toolset=["crosshair, pan, wheel_zoom"]
 # Generate a figure container for the original function
 plot_original = Figure(x_axis_label='t',
                        y_axis_label='f(t)',
                        tools=toolset,active_scroll="wheel_zoom")
 
 # Generate a figure container for the real part of the transformed function
-plot_transform_real= Figure(x_axis_label='omega',
-                            y_axis_label='real(F(omega))',
+plot_transform_real= Figure(x_axis_label=u'\u03C9',
+                            y_axis_label=u'Re[F(\u03C9)]',
                             tools=toolset,active_scroll="wheel_zoom")
 
 # Generate a figure container for the imaginary part of the transformed function
-plot_transform_imag= Figure(x_axis_label='omega',
-                            y_axis_label='imag(F(omega))',
+plot_transform_imag= Figure(x_axis_label=u'\u03C9',
+                            y_axis_label=u'Im[F(\u03C9)]',
+                            x_range=plot_transform_real.x_range, y_range=plot_transform_real.y_range,  # this line links the displayed region in the imaginary and the real part.
                             tools=toolset,active_scroll="wheel_zoom")
 
 def extract_parameters():
@@ -154,10 +163,10 @@ def initialize():
 
     plot_original.scatter('t', 'f', source=f_sampled_source, legend='samples')
     plot_original.line('t', 'f', source=f_analytical_source, line_width=.5, legend='f(t)')
-    plot_transform_imag.scatter('omega', 'F_imag', source=F_sampled_source, legend='Im(DFT(f(t)))')
-    plot_transform_imag.line('omega', 'F_imag', source=F_analytical_source, line_width=.5, legend='Im(F(omega))')
-    plot_transform_real.scatter('omega', 'F_real', source=F_sampled_source, legend='Re(DFT(f(t))')
-    plot_transform_real.line('omega', 'F_real', source=F_analytical_source, line_width=.5, legend='Re(F(omega))')
+    plot_transform_imag.scatter('omega', 'F_imag', source=F_sampled_source, legend='Im[DFT(f(t))]')
+    plot_transform_imag.line('omega', 'F_imag', source=F_analytical_source, line_width=.5, legend=u'Im[F[\u03C9)]')
+    plot_transform_real.scatter('omega', 'F_real', source=F_sampled_source, legend='Re[DFT(f(t)]')
+    plot_transform_real.line('omega', 'F_real', source=F_analytical_source, line_width=.5, legend=u'Re[F(\u03C9)]')
 
 
 def on_parameters_changed(attr, old, new):
@@ -167,7 +176,18 @@ def on_parameters_changed(attr, old, new):
 def on_function_changed(attr, old, new):
     update()
     # reset the views of all three plots
-    # todo Here we have to add the corresponding callback!
+    plot_original.x_range.start = min(f_sampled_source.data['t'])
+    plot_original.x_range.end = max(f_sampled_source.data['t'])
+    plot_original.y_range.start = min(f_sampled_source.data['f'])
+    plot_original.y_range.end = max(f_sampled_source.data['f'])
+    plot_transform_imag.x_range.start = min(F_sampled_source.data['omega'])
+    plot_transform_imag.x_range.end = max(F_sampled_source.data['omega'])
+    plot_transform_imag.y_range.start = min(min(F_sampled_source.data['F_real']),min(F_sampled_source.data['F_imag']))
+    plot_transform_imag.y_range.end = max(max(F_sampled_source.data['F_real']),max(F_sampled_source.data['F_imag']))
+    plot_transform_real.x_range.start = min(F_sampled_source.data['omega'])
+    plot_transform_real.x_range.end = max(F_sampled_source.data['omega'])
+    plot_transform_real.y_range.start = min(min(F_sampled_source.data['F_real']),min(F_sampled_source.data['F_imag']))
+    plot_transform_real.y_range.end = max(max(F_sampled_source.data['F_real']),max(F_sampled_source.data['F_imag']))
 
 
 def sample_fun_input_changed(self):
@@ -190,7 +210,11 @@ t0_input.on_change('value',on_parameters_changed)
 N_input.on_change('value',on_parameters_changed)
 
 # create layout
-controls = widgetbox(f_input, sample_fun_input_f, t0_input, N_input)  # all controls
+controls = VBox(children=[f_input,
+                          sample_fun_input_f,
+                          t0_input,
+                          N_input],
+                sizing_mode='stretch_both')  # all controls
 curdoc().add_root(layout([[plot_original, plot_transform_real],
                           [controls, plot_transform_imag]],
                          sizing_mode='stretch_both')) # add plots and controls to root
