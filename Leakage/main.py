@@ -131,7 +131,7 @@ def initialize():
 
     update()
 
-    plot_original.line('t', 'f', source=f_source)
+    plot_original.scatter('t', 'f', source=f_source)
     plot_transform_imag.line('omega', 'F_imag', source=F_source)
     plot_transform_real.line('omega', 'F_real', source=F_source)
 
