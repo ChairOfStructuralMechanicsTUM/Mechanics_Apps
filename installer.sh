@@ -10,3 +10,6 @@ echo "installing twisted..."
 conda install twisted
 echo "installing vtk..."
 conda install vtk
+echo "installing tornado 4.4.2...."
+conda install tornado=4.4.2
+

@@ -303,7 +303,7 @@ phase_diagramm.axis.axis_label_text_font_style="normal"
 phase_diagramm.axis.axis_label_text_font_size="16pt"
 phase_diagramm.xaxis.axis_label=u"\u03C6"
 phase_diagramm.yaxis.axis_label=u"\u03C6\u0307"
-phase_diagramm.line(x='x',y='y',color="#0065BD",source=basicPhaseDiagram)
+phase_diagramm.ellipse(x='x',y='y',width=0.02,height=0.02,color="#0065BD",source=basicPhaseDiagram)
 phase_diagramm.ellipse(x='x',y='y',width=0.2,height=0.2,color="#E37222",source=currentPoint)
 
 TotEng=getTotEng()

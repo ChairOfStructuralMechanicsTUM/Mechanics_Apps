@@ -23,6 +23,9 @@ from clickInteractor import ClickInteractor
 from diffraction_grid import Grid
 from diffraction_computation import compute_wave_max_at_cart
 
+SHOWWARN = False
+SHOWDEBUG = False
+
 # number of gridpoints in x and y direction
 nx_surface = 20  # resolution surface plot
 ny_surface = 20
@@ -206,7 +209,7 @@ def do_time_measurement(frame_no, computation_time):
     this_frame_end_time = time.time() * 1000  # in ms
     frame_duration = (this_frame_end_time - frame_end_time)
 
-    if (frame_duration > 1.5 * target_frame_time) or (computation_time > target_frame_time):
+    if ((frame_duration > 1.5 * target_frame_time) or (computation_time > target_frame_time)) and SHOWWARN:
         print " "
         print "high lag observed for frame %s. Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (
         frame_no, target_frame_time, frame_duration, computation_time)
@@ -214,7 +217,7 @@ def do_time_measurement(frame_no, computation_time):
         lagfraction = lagcount / (frame_no + 1)
         if lagfraction > 0.1 and frame_no > 100:
             print "WARNING! more than 10% of the frames are lost. Consider increasing TARGET_FRAME_TIME to avoid lags!"
-    if (computation_time < .5 * target_frame_time) and (target_frame_time > 40):
+    if (computation_time < .5 * target_frame_time) and (target_frame_time > 40) and SHOWDEBUG:
         print " "
         print "Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (
         target_frame_time, frame_duration, computation_time)
@@ -289,13 +292,15 @@ description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 # add area image
+appname = split(dirname(__file__))[-1]
+img_source = appname+"/static/images/Diffraction_areas.jpg" # join(dirname(__file__), "static/images/Diffraction_areas.jpg") # path of the image
 area_image = Div(text="""
 <p>
-<img src="/Diffraction/static/images/Diffraction_areas.jpg" width=500>
+<img src=%s width=500>
 </p>
 <p>
 Characteristic regions and wave parameters
-</p>""", render_as_text=False, width=350)
+</p>""" % (img_source), render_as_text=False, width=350)
 
 # create layout
 controls = widgetbox([phi0_slider,wavelength_slider,textbox],width=550)  # all controls

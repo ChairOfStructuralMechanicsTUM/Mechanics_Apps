@@ -2,7 +2,7 @@
 """
 @author: antonis
 """
-
+from __future__ import division
 import numpy as np
 from bokeh.io import curdoc  
 from bokeh.layouts import row,column
@@ -62,7 +62,7 @@ p1.outline_line_color = None
 p1.title.text_font_size="18pt"
 
 beam1=p1.line(x='x', y='y', source=beam1,line_width=5,line_color='black') 
-eigenmodes_beam1=p1.line(x='x', y='y', source=source1,legend="""Eigenvalue Problem: sin(\u03BB)=0 / Solution: w\u1D62(\u03BE)=sin(i\u00B7\u03C0\u00B7\u03BE)""",
+eigenmodes_beam1=p1.line(x='x', y='y', source=source1,legend="Eigenvalue Problem: sin("u"\u03BB)=0 / Solution: w"u"\u1D62("u"\u03BE)=sin(i"u"\u00B7"u"\u03C0"u"\u00B7"u"\u03BE)",
                          line_width=3,line_color='pink')
 eigenmodes_beam1.visible=False
 support_left_beam1=p1.line(x='x', y='y', source=support_left,line_width=1,line_color='black')
@@ -70,7 +70,7 @@ support_righta_beam1=p1.line(x='x', y='y', source=support_righta,line_width=1,li
 support_rightb_beam1=p1.line(x='x', y='y', source=support_rightb,line_width=1,line_color='black')
 
 beam2=p1.line(x='x', y='y', source=beam2,line_width=5,line_color='black') 
-eigenmodes_beam2=p1.line(x='x', y='y', source=source2,legend="Eigenvalue Problem: cosh(\u03BB)\u00B7cos(\u03BB)-1=0 / Solution: w\u1D62(\u03BE) = c(\u03BB\u1D62\u03BE) - c(\u03BB\u1D62) / s(\u03BB\u1D62) \u00B7s (\u03BB\u1D62\u03BE)",
+eigenmodes_beam2=p1.line(x='x', y='y', source=source2,legend="Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)-1=0 / Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - c("u"\u03BB"u"\u1D62) / s("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)",
                          line_width=3,line_color='purple')
 eigenmodes_beam2.visible=False
 fixed_support_left=p1.line(x='x', y='y', source=fixed_left,line_width=1,line_color='black')
@@ -78,13 +78,13 @@ fixed_support_right=p1.line(x='x', y='y', source=fixed_right,line_width=1,line_c
 
 beam3=p1.line(x='x', y='y', source=beam3,line_width=5,line_color='black') 
 fixed_cantilever=p1.line(x='x', y='y', source=fixed_cantil,line_width=1,line_color='black')
-eigenmodes_beam3=p1.line(x='x', y='y', source=source3,legend="Eigenvalue Problem: cosh(\u03BB)\u00B7cos(\u03BB)+1=0 / Solution: w\u1D62(\u03BE) = c(\u03BB\u1D62\u03BE) - C(\u03BB\u1D62) / S(\u03BB\u1D62) \u00B7s (\u03BB\u1D62\u03BE)",line_width=3,line_color='red')
+eigenmodes_beam3=p1.line(x='x', y='y', source=source3,legend="Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)+1=0 / Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - C("u"\u03BB"u"\u1D62) / S("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)",line_width=3,line_color='red')
 eigenmodes_beam3.visible= False
 
-definitions1=p1.line(x=[0],y=[0],line_width=1,line_color='white',legend="C(\u03BB\u00B7\u03BE)=\u00BD (cosh(\u03BB\u00B7\u03BE) + cos(\u03BB\u00B7\u03BE))")
-definitions2=p1.line(x=[0],y=[0],line_width=1,line_color='white',legend="S(\u03BB\u00B7\u03BE)=\u00BD (sinh(\u03BB\u00B7\u03BE) + sin(\u03BB\u00B7\u03BE))")
-definitions3=p1.line(x=[0],y=[0],line_width=1,line_color='white',legend="c(\u03BB\u00B7\u03BE)=\u00BD (cosh(\u03BB\u00B7\u03BE) - cos(\u03BB\u00B7\u03BE))")
-definitions4=p1.line(x=[0],y=[0],line_width=1,line_color='white',legend="s(\u03BB\u00B7\u03BE)=\u00BD (sinh(\u03BB\u00B7\u03BE) - sin(\u03BB\u00B7\u03BE))")
+definitions1=p1.line(x=[0],y=[0],line_width=1,line_color='white',legend="C("u"\u03BB"u"\u00B7"u"\u03BE)="u"\u00BD (cosh("u"\u03BB"u"\u00B7"u"\u03BE) + cos("u"\u03BB"u"\u00B7"u"\u03BE))")
+definitions2=p1.line(x=[0],y=[0],line_width=1,line_color='white',legend="S("u"\u03BB"u"\u00B7"u"\u03BE)="u"\u00BD (sinh("u"\u03BB"u"\u00B7"u"\u03BE) + sin("u"\u03BB"u"\u00B7"u"\u03BE))")
+definitions3=p1.line(x=[0],y=[0],line_width=1,line_color='white',legend="c("u"\u03BB"u"\u00B7"u"\u03BE)="u"\u00BD (cosh("u"\u03BB"u"\u00B7"u"\u03BE) - cos("u"\u03BB"u"\u00B7"u"\u03BE))")
+definitions4=p1.line(x=[0],y=[0],line_width=1,line_color='white',legend="s("u"\u03BB"u"\u00B7"u"\u03BE)="u"\u00BD (sinh("u"\u03BB"u"\u00B7"u"\u03BE) - sin("u"\u03BB"u"\u00B7"u"\u03BE))")
 
 p1.legend.label_text_font_size="10pt"
 p1.legend.border_line_width = 3
