@@ -388,5 +388,5 @@ area_image = Div(text="""
 Technical Information for Boat and Swimmers
 </p>""", render_as_text=False, width=600)
 
-curdoc().add_root(column(scene,row(column(numberPersonsSlider,play_button,pause_button,jump_button,reset_button),eFig.getFig())))
+curdoc().add_root(column(description,scene,row(column(numberPersonsSlider,play_button,pause_button,jump_button,reset_button),eFig.getFig(),area_image)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
