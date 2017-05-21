@@ -15,15 +15,13 @@ App describtion:
 '''
 import numpy as np
 from bokeh.io import curdoc
-from bokeh.plotting import Figure, ColumnDataSource
+from bokeh.plotting import Figure
 import BarChart as BC
 from bokeh.layouts import column, row
-from bokeh.models import Button, Toggle, Slider
-from bokeh.models import Arrow, OpenHead
+from bokeh.models import Button
+from bokeh.models import Div
 from Functions import *
 from os.path import dirname, join, split
-
-from timeit import default_timer as timer
 
 '''
 ######################## Define the plotting space ############################
@@ -36,7 +34,7 @@ playGround = Figure(
                         plot_height= 800,
                         x_range  =(xMin, xMax),
                         y_range  =(yMin, yMax),
-                        title = 'Conservation of Angular Momnetum',
+                        #title = 'Conservation of Angular Momentum',
                         tools = ''
                    )
 
@@ -51,8 +49,8 @@ barsFig = BC.BarChart(
                       ["Wheel",
                       "Rectangular Base",
                       "Whole system"],
-                      [20,20,20],
-                      [-20,-20,-20],
+                      [15,15,15],
+                      [-15,-15,-15],
                       ["#33FF33","#FF3333","#460BF8"],
                       [1,1,1]
                      )
@@ -68,7 +66,6 @@ J_base   = 2 # Angular moment of inertia of the rectangular base
 dt = 0.01
 Active = False
 
-start = timer()
 '''
 #################### Define the objects to be rotating ########################
 
@@ -199,6 +196,19 @@ playGround.tool_events.on_change('geometries', on_mouse_move)
 '''
 ########################### Plot the application ##############################
 '''
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
+area_image = Div(text="""
+<p>
+<img src="/Drallerhaltung2/static/images/picture.jpg" width=500>
+</p>
+<p>
+Particles' Parameters
+</p>""", render_as_text=False, width=350)
+
 playGround.rect(
                 x = 'x',
                 y = 'y',
@@ -230,16 +240,24 @@ playGround.rect(
                )
 
 barChart = barsFig.getFig()
+barChart.yaxis.axis_label="Angular Momentum ( kg*meter/sec )"
 
 curdoc().add_root(
-                  row(
-                      playGround,
-                      column(
-                             reset_button, 
-                             play_button, 
-                             pause_button,
-                             barChart
+                  column(
+                         description,
+                         row(
+                              playGround,
+                              column(
+                                     reset_button, 
+                                     play_button, 
+                                     pause_button,
+                                     barChart
+                                    ),
+                              area_image
                             )
-                      )
+                        )
                  )
-curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
+                      
+# get path of parent directory and only use the name of the Parent Directory 
+# for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  
