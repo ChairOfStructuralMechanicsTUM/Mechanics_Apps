@@ -1,6 +1,6 @@
 # Coding Style
 
-* for directory names use ```_``` for blank space. In the app title (see formatting hints below) use a real blank. **do not use ```-```**
+* for directory names use ```_``` for blank space. In the app title (see formatting hints below) use a real blank. **do not use ```-``` or CamelCase style**
 
 # Developer Workflow
 
@@ -32,4 +32,10 @@ The following points are executed by Francesca only.
 
 # Formatting hints
 
-* use ```curdoc().title = "Appname"``` for defining the title. This title can be seen, for example in the Tab title of the browser.
+* We use ```curdoc().title = "Appname"``` for defining the title. This title can be seen, for example in the Tab title of the browser. Your directory name should comply with the standard defined above. Use
+
+    ```
+    curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')
+    ```
+
+    This gets path of parent directory and only uses the name of the Parent Directory for the app title name. Then it replaces underscores '_' and minuses '-' with blanks ' '.

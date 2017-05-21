@@ -6,6 +6,7 @@ from bokeh.layouts import column, row, widgetbox
 from bokeh.io import curdoc
 from bokeh.models.widgets import Button, CheckboxGroup
 import numpy as np
+from os.path import dirname, join, split
 
 #Global Beam Properties:
 resol = 100
@@ -311,4 +312,4 @@ button.on_click(initial)
 initial()
 
 curdoc().add_root( row( column(p_loc_slide,p_mag_slide,f2_loc_slide,lth_slide,plot1,widgetbox(button)),  column(plot,widgetbox(checkbox) ) ) )
-curdoc().title = "Balken"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

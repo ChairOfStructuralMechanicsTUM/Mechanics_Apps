@@ -7,7 +7,7 @@ from bokeh.models import Button, Toggle, Slider
 from bokeh.models import Arrow, OpenHead, Div
 from bokeh.models.layouts import Spacer
 from Functions import *
-from os.path import dirname, join
+from os.path import dirname, join, split
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
@@ -466,8 +466,6 @@ def on_mouse_move(attr, old, new):
 
 playGround.tool_events.on_change('geometries', on_mouse_move)
 
-#curdoc().add_periodic_callback( compute_tranjectory,10 )
-curdoc().title = "Collision"
 buttons = widgetbox(reset_button, play_button, pause_button,width=150)
 curdoc().add_root(	
                   column(
@@ -498,4 +496,5 @@ curdoc().add_root(
                                   )
                             )
                         )
-                 )                       
+                 )    
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '				 

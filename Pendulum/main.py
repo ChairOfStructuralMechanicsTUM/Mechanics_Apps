@@ -5,6 +5,7 @@ from bokeh.io import curdoc
 from bokeh.models import ColumnDataSource, Slider, Button, RadioButtonGroup, Arrow, OpenHead
 from math import sin, cos, pi, atan2, sqrt, acos
 from mpmath import csc
+from os.path import dirname, join, split
 
 # create column data sources
 Mass = ColumnDataSource(data = dict(x=[],y=[]))
@@ -302,7 +303,7 @@ phase_diagramm.axis.axis_label_text_font_style="normal"
 phase_diagramm.axis.axis_label_text_font_size="16pt"
 phase_diagramm.xaxis.axis_label=u"\u03C6"
 phase_diagramm.yaxis.axis_label=u"\u03C6\u0307"
-phase_diagramm.line(x='x',y='y',color="#0065BD",source=basicPhaseDiagram)
+phase_diagramm.ellipse(x='x',y='y',width=0.02,height=0.02,color="#0065BD",source=basicPhaseDiagram)
 phase_diagramm.ellipse(x='x',y='y',width=0.2,height=0.2,color="#E37222",source=currentPoint)
 
 TotEng=getTotEng()
@@ -427,5 +428,5 @@ pendulum_type_input.on_change('active',swapPendulumType)
 
 ## Send to window
 curdoc().add_root(column(row(column(fig,row(Play_button,Spacer(width=10),Stop_button,Spacer(width=10),Reset_button),pendulum_type_input),phase_diagramm),row(mass_input,lam_input,phi0_input,dphi0_input)))
-curdoc().title = "Pendulum"
 curdoc().add_periodic_callback(evolve,100)
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

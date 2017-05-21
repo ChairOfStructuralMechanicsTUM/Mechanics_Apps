@@ -8,6 +8,7 @@ from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
 from bokeh.models import Slider, Button, Div, Arrow, OpenHead
 from math import cos, sin, radians, sqrt, pi, atan2
+from os.path import dirname, join, split
 
 ## create and link objects
 g=9.81
@@ -351,5 +352,5 @@ change_Omega(None,None,1.0)
 curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,stop_button,reset_button,omega_scan_button),Spacer(width=10),fig,p),
 #curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,stop_button,reset_button),Spacer(width=10),fig,test_fig),
     row(mass_input,kappa_input),row(lam_input,omega_input)))
-curdoc().title = "Schwingungstilger"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 

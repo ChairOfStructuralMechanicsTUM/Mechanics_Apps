@@ -4,6 +4,7 @@ from bokeh.layouts import column, row
 from bokeh.models import ColumnDataSource, Slider, Button, Toggle, Arrow, OpenHead, RadioGroup
 from bokeh.io import curdoc
 from math import pi, sin, cos, radians, sqrt, atan2
+from os.path import dirname, join, split
 
 ## Create all required variables
 circle_axis_phi=[]
@@ -306,4 +307,4 @@ p.add_layout(arrow_glyph)
 
 ## Send to window
 curdoc().add_root(row(p,column(Omega_input,v0_input_x,v0_input_y,play_button,pause_button,reset_button,reinit_button,Referential_button)))
-curdoc().title = "Drehscheibe-Corioliskraft"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

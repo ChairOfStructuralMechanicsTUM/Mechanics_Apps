@@ -8,6 +8,7 @@ from bokeh.layouts import column, row
 import BarChart as BC
 from os.path import dirname, join
 from bokeh.models.layouts import Spacer
+from os.path import dirname, join, split
 
 '''
 Plotting space construction
@@ -387,5 +388,5 @@ area_image = Div(text="""
 Technical Information for Boat and Swimmers
 </p>""", render_as_text=False, width=600)
 
-curdoc().add_root(column(description,scene,row(column(numberPersonsSlider,jump_button,Spacer(height=20),play_button,pause_button,reset_button),Spacer(width=40),eFig.getFig(),area_image)))
-curdoc().title = "Boot mit Schwimmern"
+curdoc().add_root(column(scene,row(column(numberPersonsSlider,play_button,pause_button,jump_button,reset_button),eFig.getFig())))
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

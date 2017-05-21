@@ -3,6 +3,7 @@ from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
+from os.path import dirname, join, split
 
 E_inv = 1e-2
 nu = 0.5
@@ -268,4 +269,4 @@ Block.add_force_label(0,-5.5,'y',diagram)
 
 ## Send to window
 curdoc().add_root(row(column(ForceX_input,ForceY_input,E_input,Nu_input),diagram))
-curdoc().title = "Querdehnung"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

@@ -8,6 +8,7 @@ import pandas as pd
 import BarChart as BC
 from physics import *
 from math import floor, ceil
+from os.path import dirname, join, split
 
 ## Forces
 NormalForce = ColumnDataSource(data=dict(xS=[],yS=[],xE=[],yE=[]))
@@ -251,7 +252,7 @@ def Loop():
     drawCart()
     updateBars()
     eFig.ResetYRange()
-loop_button = Button(label="Looping", button_type="success")
+loop_button = Button(label="Loop", button_type="success")
 loop_button.on_click(Loop)
 
 # function which returns the cart to the beginning of the rollercoaster
@@ -305,4 +306,4 @@ drag_slider.on_change('value',Friction)
 ## Send to window
 curdoc().add_root(row(eFig.getFig(),column(p),
     column(ramp_button,bump_button,loop_button,Spacer(height=50),play_button,pause_button,reset_button,drag_slider)))
-curdoc().title = "Rollercoaster"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

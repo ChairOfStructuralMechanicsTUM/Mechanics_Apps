@@ -16,52 +16,80 @@ App describtion:
 import numpy as np
 from bokeh.io import curdoc
 from bokeh.plotting import Figure, ColumnDataSource
-#import BarChart as BC
+import BarChart as BC
 from bokeh.layouts import column, row
 from bokeh.models import Button, Toggle, Slider
 from bokeh.models import Arrow, OpenHead
 from Functions import *
+from os.path import dirname, join, split
+
+from timeit import default_timer as timer
 
 '''
 ######################## Define the plotting space ############################
 '''
-xMin, xMax = 0, 10
-yMin, yMax = 0, 10
+xMin, xMax = -10, 10
+yMin, yMax = -10, 10
 
 playGround = Figure(
                         plot_width = 600,
                         plot_height= 800,
                         x_range  =(xMin, xMax),
                         y_range  =(yMin, yMax),
-                        title = 'Angular Momnetum'
+                        title = 'Conservation of Angular Momnetum',
+                        tools = ''
                    )
 
 playGround.title.text_font_size = "25px"
 playGround.title.align = "center"
-playGround.grid.visible = True
-playGround.xaxis.visible = True
-playGround.yaxis.visible = True
+playGround.grid.visible = False
+playGround.xaxis.visible = False
+playGround.yaxis.visible = False
 
-rotation_speed = 1 # rad/sec
-dt = 0.1
+# Define the energy bar
+barsFig = BC.BarChart(
+                      ["Wheel",
+                      "Rectangular Base",
+                      "Whole system"],
+                      [20,20,20],
+                      [-20,-20,-20],
+                      ["#33FF33","#FF3333","#460BF8"],
+                      [1,1,1]
+                     )
+barsFig.Width(300)
+barsFig.Height(650)
+
+rotation_speed_wheel = get_velocity('circle') # rad/sec
+rotation_speed_base  = get_velocity('base') # rad/sec
+
+J_circle = 1 # Angular moment of inertia of the wheel
+J_base   = 2 # Angular moment of inertia of the rectangular base
+
+dt = 0.01
 Active = False
+
+start = timer()
 '''
 #################### Define the objects to be rotating ########################
 
 The objects include:
-    (1) Rotating circle (Includes two circles at the top of each other and four
-                         quarter circular wedges)
+    (1) Rotating circle (Includes two circles at the top of each other and two
+                         othogonal rectangles)
     (2) Rotating rectangle
 '''
 ########################## (1) Rotating circle ################################
-construct_circle_source( center=[1,1], radius=1 )
-construct_wedges_source( radius=0.7 )
+construct_circle_source( 
+                        center=[ [0.0,0.0], [0.0,0.0] ], 
+                        radius=[ 4.0, 3.0 ], 
+                        color=[ "#33FF33","#FFFFFF" ]
+                       )
+construct_cross_source()
 
 circleSource = get_circle_source()
-wedgesSource = get_wedges_source()
+crossSource = get_cross_source()
 
 ######################### (2) Rotating rectangle ##############################
-construct_rectangle_source( center=[1,1] )
+construct_rectangle_source( center=[0.0,0.0] )
 
 rectangelSource = get_rectangle_source()
 
@@ -69,62 +97,40 @@ rectangelSource = get_rectangle_source()
 ####################### Define the evolution function #########################
 '''
 def compute_tranjectory():
-    global rotation_speed, dt
-    
-    circleSource = get_circle_source()
-    wedgesSource = get_wedges_source()
-    
-    rectangelSource = get_rectangle_source()
-    
-    rotation_center = np.array([
-                                circleSource.data['x'][0],
-                                circleSource.data['y'][0] 
-                              ])
-    
-    centerX, centerY, startAngle, endAngle = list(), list(), list(), list()
-    for counter in range(len(wedgesSource.data['x'])):
+    global crossSource
 
-        x = wedgesSource.data['x'][counter]-rotation_center[0]
-        y = wedgesSource.data['y'][counter]-rotation_center[1]
-        angle = abs( np.arctan( y/x ) )
-        '''
-        if x>=0 and y>=0:
-            pass
-        elif x<=0 and y>=0:
-            angle -= 2*np.pi
-        elif x<=0 and y<=0:
-            angle += 2*np.pi
-        else:
-            angle *= -1
-            
-        '''
-        angle += dt*rotation_speed
-        
-        x_shift = abs(0.28284271247*np.cos(angle))
-        y_shift = abs(0.28284271247*np.sin(angle))
-        print('counter: ',counter)
-        print('x_shift= ',x_shift)
-        print('y_shift= ',y_shift)
-        if x>=0 and y>=0:
-            centerX.append( x_shift + rotation_center[0])
-            centerY.append( y_shift + rotation_center[1])
-        elif x<=0 and y>=0:
-            centerX.append( -x_shift + rotation_center[0])
-            centerY.append( y_shift + rotation_center[1])
-        elif x<=0 and y<=0:
-            centerX.append( -x_shift + rotation_center[0])
-            centerY.append( -y_shift + rotation_center[1])
-        else:
-            centerX.append( x_shift + rotation_center[0])
-            centerY.append( -y_shift + rotation_center[1])
-        
-        #centerX.append( 0.28284271247*np.cos(angle) + rotation_center[0])
-        #centerY.append( 0.28284271247*np.sin(angle) + rotation_center[1])
+    ######################## Rotate the inner wheel ###########################
+    crossSource = get_cross_source()
 
-        startAngle.append( wedgesSource.data['start_angle'][counter] + rotation_speed * dt )
-        endAngle.append( wedgesSource.data['end_angle'][counter] + rotation_speed * dt )
-        
-    update_wedges_source( centerX, centerY, startAngle, endAngle )
+    angle = crossSource.data['angle']
+
+    onesVector = np.ones(2)
+    rotation_speed_wheel = get_velocity('circle') * J_base/J_circle # rad/sec
+    angle += onesVector * rotation_speed_wheel * dt
+    
+    update_cross_source( angle )
+    
+    ###################### Rotate the rectangular base ########################
+    rectanguleSource = get_rectangle_source()
+    
+    angle = rectanguleSource.data['angle'][0]
+
+    rotation_speed_base  = get_velocity('base')  # rad/sec
+    angle += rotation_speed_base * dt
+    
+    update_rectangle_source( angle )    
+    
+    update_bars(rotation_speed_wheel, rotation_speed_base)
+   
+def update_bars(wheelVelocity, baseVelocity):
+    
+    wheelMomentum = J_circle * wheelVelocity
+    baseMomentum  = J_base  * baseVelocity
+    totalMomentum = wheelMomentum + baseMomentum
+    
+    barsFig.setHeight(0,wheelMomentum)
+    barsFig.setHeight(1,baseMomentum)
+    barsFig.setHeight(2,totalMomentum)
     
 '''
 ########################## Define interactivities #############################
@@ -144,7 +150,7 @@ def Reset():
     if periodicCallback == 0 and Active == True:
         curdoc().remove_periodic_callback(compute_tranjectory)
         periodicCallback += 1
-
+        set_velocity(0)
     else:
         pass
     
@@ -169,7 +175,7 @@ def play ():
     global Active, periodicCallback
     
     if Active == False:
-        curdoc().add_periodic_callback(compute_tranjectory, 100)
+        curdoc().add_periodic_callback(compute_tranjectory, 10)
         Active=True
         periodicCallback = 0
     else:
@@ -178,32 +184,62 @@ def play ():
 play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
 
+############################## (4) Mouse touch ################################
+playGround.add_tools(MoveNodeTool())
+
+def on_mouse_move(attr, old, new):
+    global rotation_speed_wheel, rotation_speed_base
+
+    if (modify_location(attr,old,new)==1):
+        # if the path is changed then update the drawing
+        pass
+    
+playGround.tool_events.on_change('geometries', on_mouse_move)
+
 '''
 ########################### Plot the application ##############################
 '''
 playGround.rect(
                 x = 'x',
                 y = 'y',
-                width = 5,
-                height = 3,
-                color = "#FF2233",
-                source=rectangelSource
+                angle = 'angle',
+                source=rectangelSource,
+                width = 12,
+                height = 8,
+                color = "#F22633",
+                height_units = 'data'
                )
+
 playGround.circle(
-                   x = 'x',
-                   y = 'y',
-                   radius = 'r',
-                   source = circleSource
+                    x = 'x',
+                    y = 'y',
+                    radius  = 'radius',
+                    color = 'color',
+                    source = circleSource,
                  )
-playGround.wedge(
+
+playGround.rect(
                   x = 'x',
                   y = 'y',
-                  radius = 0.6,
-                  start_angle = 'start_angle',
-                  end_angle   = 'end_angle',
-                  #radius_units="screen",
-                  color="#FFFFFF",
-                  source = wedgesSource
-                )
-curdoc().title = "Collision"
-curdoc().add_root(row(playGround,column(reset_button, play_button, pause_button)))
+                  angle = 'angle',
+                  source = crossSource,
+                  width = 1,
+                  height = 6,
+                  color="#33FF33",
+                  height_units="data"
+               )
+
+barChart = barsFig.getFig()
+
+curdoc().add_root(
+                  row(
+                      playGround,
+                      column(
+                             reset_button, 
+                             play_button, 
+                             pause_button,
+                             barChart
+                            )
+                      )
+                 )
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

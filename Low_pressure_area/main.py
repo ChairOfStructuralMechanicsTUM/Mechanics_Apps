@@ -5,6 +5,7 @@ from bokeh.io import curdoc
 from Functions import *
 from bokeh.models import Arrow, OpenHead, Button
 from bokeh.layouts import column, row
+from os.path import dirname, join, split
 
 '''
 ###############################################################################
@@ -357,4 +358,4 @@ curdoc().add_root(
                             )
                      )
                  )
-curdoc().title = "Tiefdruckgebiet"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

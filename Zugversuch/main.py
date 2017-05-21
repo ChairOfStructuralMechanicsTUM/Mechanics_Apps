@@ -3,6 +3,7 @@ from bokeh.layouts import column, row, Spacer
 from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead, Button
 from bokeh.io import curdoc
 from numpy import loadtxt
+from os.path import dirname, join, split
 
 ## set up data sources for movable objects ##
 #     data sources for drawing
@@ -289,4 +290,4 @@ reset_button.on_click(reset)
 
 ## Send to window
 curdoc().add_root(column(row(p,plot),row(Force_input,Spacer(width=400),reset_button)))
-curdoc().title = "Zugversuch"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
