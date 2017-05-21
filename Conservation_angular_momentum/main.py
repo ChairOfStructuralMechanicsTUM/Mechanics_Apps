@@ -203,7 +203,7 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 
 area_image = Div(text="""
 <p>
-<img src="/Drallerhaltung2/static/images/picture.jpg" width=500>
+<img src="/Conservation_angular_momentum/static/images/picture.jpg" width=500>
 </p>
 <p>
 Particles' Parameters
@@ -240,7 +240,7 @@ playGround.rect(
                )
 
 barChart = barsFig.getFig()
-barChart.yaxis.axis_label="Angular Momentum ( kg*meter/sec )"
+barChart.yaxis.axis_label="Angular Momentum ( kg*meter/second )"
 
 curdoc().add_root(
                   column(
