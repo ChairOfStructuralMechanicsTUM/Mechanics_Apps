@@ -148,6 +148,12 @@ def Reset():
         curdoc().remove_periodic_callback(compute_tranjectory)
         periodicCallback += 1
         set_velocity(0)
+        
+        angle = np.array([0,np.pi/2])
+        update_cross_source( angle )
+        update_rectangle_source( angle=0 ) 
+        update_bars(get_velocity('circle'), get_velocity('base'))
+        
     else:
         pass
     
@@ -187,7 +193,7 @@ playGround.add_tools(MoveNodeTool())
 def on_mouse_move(attr, old, new):
     global rotation_speed_wheel, rotation_speed_base
 
-    if (modify_location(attr,old,new)==1):
+    if (modify_location(attr,old,new)==1) and Active == True:
         # if the path is changed then update the drawing
         pass
     
@@ -206,7 +212,7 @@ area_image = Div(text="""
 <img src="/Conservation_angular_momentum/static/images/picture.jpg" width=500>
 </p>
 <p>
-Particles' Parameters
+Angular Moment of Inertia pf the rotating bodies
 </p>""", render_as_text=False, width=350)
 
 playGround.rect(
