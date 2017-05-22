@@ -9,19 +9,11 @@ from bokeh.models.layouts import Spacer
 from Functions import *
 from os.path import dirname, join, split
 
-# add app description
-description_filename = join(dirname(__file__), "description.html")
-
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
-
-area_image = Div(text="""
-<p>
-<img src="/Collision/static/images/particles_information.png" width=500>
-</p>
-<p>
-Particles' Parameters
-</p>""", render_as_text=False, width=350)
-
+'''
+###############################################################################
+Create the plotting domain
+###############################################################################
+'''
 # Define the figure (which corresponds to the play ground)
 xMin, xMax = 0, 10
 yMin, yMax = 0, 10
@@ -55,6 +47,13 @@ barsFig.Width(300)
 barsFig.Height(650)
 barsFig.values='timing'
 
+'''
+###############################################################################
+Define the objects to be plotted within the plotting domain
+ (1) Travelling balls
+ (2) Velocity arrows
+###############################################################################
+'''
 # Define the initial location of the two colliding balls (in our 2D app, circles)
 x1,x2 = 3,5
 y1,y2 = 2,2
@@ -116,6 +115,12 @@ playGround.add_layout(
                            ) 
                      )
 
+'''
+###############################################################################
+Define the function that will develope the position of the balls and bar chart
+through time
+###############################################################################
+'''
 # Calculate the new location of the two balls
 def compute_tranjectory():
     global velocityVectorOne, velocityVectorTwo, Cr
@@ -292,8 +297,12 @@ def update_bars():
     barsFig.setHeight(1,redBallKE)
     barsFig.setHeight(2,totalKE)
     
-# Creating reset button
-
+'''
+###############################################################################
+Add the interactive functionalities
+###############################################################################
+'''
+########################### Creating reset button #############################
 periodicCallback = 0
 def Reset():
     global velocityVectorOne, velocityVectorTwo, Active, periodicCallback
@@ -332,7 +341,7 @@ def Reset():
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)
 
-# Creating pause button
+########################### Creating pause button #############################
 def pause():
     global Active
     # When active pause animation
@@ -345,7 +354,7 @@ def pause():
 pause_button = Button(label="Pause", button_type="success")
 pause_button.on_click(pause)
 
-# Creating play button
+########################### Creating play button ##############################
 def play():
     global Active, periodicCallback
     
@@ -359,6 +368,7 @@ def play():
 play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
     
+##################### Creating velocity direction slider ######################
 def update_ballOne_VelocityDir(attr,old,new):
     global velocityVectorOne
     if Active == False:
@@ -379,6 +389,13 @@ def update_ballOne_VelocityDir(attr,old,new):
     else:
         pass
     
+ballOneVelocityDirSlider = Slider(
+                                  title=u" Green Ball Velocity Direction ( degrees ) ",
+                                  value=0, start=0, end=360, step=1.0, width=300
+                                 )
+ballOneVelocityDirSlider.on_change('value',update_ballOne_VelocityDir)
+
+##################### Creating velocity magnitude slider ######################
 def update_ballOne_VelocityMag(attr,old,new):
     global velocityVectorOne
     if Active == False:
@@ -395,7 +412,14 @@ def update_ballOne_VelocityMag(attr,old,new):
 
     else:
         pass
-    
+   
+ballOneVelocityMagSlider = Slider(
+                                  title=u" Green Ball Velocity Magnitude ( meter/second ) ",
+                                  value=1, start=0, end=5, step=0.1, width=300
+                                 )
+ballOneVelocityMagSlider.on_change('value',update_ballOne_VelocityMag)
+
+##################### Creating velocity direction slider ######################
 def update_ballTwo_VelocityDir(attr,old,new):
     global velocityVectorTwo
     if Active == False:
@@ -415,6 +439,14 @@ def update_ballTwo_VelocityDir(attr,old,new):
         
     else:
         pass
+    
+ballTwoVelocityDirSlider = Slider(  
+                                  title=u" Red Ball Velocity Direction ( degrees ) ",
+                                  value=0, start=0, end=360, step=1.0, width=300
+                                 )
+ballTwoVelocityDirSlider.on_change('value',update_ballTwo_VelocityDir)
+
+##################### Creating velocity magnitude slider ######################
 def update_ballTwo_VelocityMag(attr,old,new):
     global velocityVectorTwo
     if Active == False:
@@ -432,28 +464,24 @@ def update_ballTwo_VelocityMag(attr,old,new):
     else:
         pass
     
+ballTwoVelocityMagSlider = Slider(
+                                  title=u" Red Ball Velocity Magnitude ( meter/second ) ", 
+                                  value=0, start=0, end=5, step=0.1, width=300
+                                 )
+ballTwoVelocityMagSlider.on_change('value',update_ballTwo_VelocityMag)
+
+################# Creating coefficient of restitution slider ##################
 def update_Cr_value(attr,old,new):
     global Cr
     Cr = new
 
-
-ballOneVelocityDirSlider = Slider(title=u" Green Ball Velocity Direction ( degrees ) ", value=0, start=0, end=360, step=1.0, width=300)
-ballOneVelocityDirSlider.on_change('value',update_ballOne_VelocityDir)
-
-ballOneVelocityMagSlider = Slider(title=u" Green Ball Velocity Magnitude ( meter/second ) ", value=1, start=0, end=5, step=0.1, width=300)
-ballOneVelocityMagSlider.on_change('value',update_ballOne_VelocityMag)
-
-ballTwoVelocityDirSlider = Slider(title=u" Red Ball Velocity Direction ( degrees ) ", value=0, start=0, end=360, step=1.0, width=300)
-ballTwoVelocityDirSlider.on_change('value',update_ballTwo_VelocityDir)
-
-ballTwoVelocityMagSlider = Slider(title=u" Red Ball Velocity Magnitude ( meter/second ) ", value=0, start=0, end=5, step=0.1, width=300)
-ballTwoVelocityMagSlider.on_change('value',update_ballTwo_VelocityMag)
-
-
-Cr_Slider = Slider(title=u" Coefficient of Restitution ", value=1, start=0, end=1, step=0.1,width=600)
+Cr_Slider = Slider(
+                   title=u" Coefficient of Restitution ",
+                   value=1, start=0, end=1, step=0.1,width=600
+                  )
 Cr_Slider.on_change('value',update_Cr_value)
-    
 
+#################### Moving the balls through the mouse #######################
 playGround.add_tools(MoveNodeTool())
 
 def on_mouse_move(attr, old, new):
@@ -466,7 +494,26 @@ def on_mouse_move(attr, old, new):
 
 playGround.tool_events.on_change('geometries', on_mouse_move)
 
+'''
+###############################################################################
+Add all the components together and initiate the app
+###############################################################################
+'''
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
+area_image = Div(text="""
+<p>
+<img src="/Collision/static/images/particles_information.png" width=500>
+</p>
+<p>
+Particles' Parameters
+</p>""", render_as_text=False, width=350)
+
 buttons = widgetbox(reset_button, play_button, pause_button,width=150)
+
 curdoc().add_root(	
                   column(
                          description,
@@ -497,4 +544,7 @@ curdoc().add_root(
                             )
                         )
                  )    
-curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '				 
+                                    
+# get path of parent directory and only use the name of the Parent Directory 
+# for the tab name. Replace underscores '_' and minuses '-' with blanks ' '				 
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  
