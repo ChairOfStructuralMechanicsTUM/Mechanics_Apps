@@ -11,13 +11,10 @@ from bokeh.models.layouts import Spacer
 from os.path import dirname, join, split
 
 '''
-Plotting space construction
+###############################################################################
+Create the plotting domain
+###############################################################################
 '''
-# add app description
-description_filename = join(dirname(__file__), "description.html")
-
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
-
 xMin , xMax = 0,40
 yMin , yMax = 0,10
 scene = figure(
@@ -36,7 +33,11 @@ Active = False
 bar_chart_data = {'objects':{'boat':600,'swimmer1':150}}
 
 '''
-Defining the figures to appear in the plotting space
+###############################################################################
+Define the objects to be plotted within the plotting domain
+ (1) Boat
+ (2) Swimmers
+###############################################################################
 '''
 # Dynamics parameters
 dt = 0.05
@@ -125,7 +126,12 @@ personSource = ColumnDataSource(data=dict(
 
 scene.patches(xs='x',ys='y',fill_color='c',source =personSource )
 
-
+'''
+###############################################################################
+Define the function that will develope the position of the boat and swimmers
+through time
+###############################################################################
+'''
 def move_boat():
     global personSource, listSources
     
@@ -177,9 +183,12 @@ def move_boat():
                                  c=newListColor
                             )
     
-    
-    
-# Creating the "numberPeopleSlider" 
+'''
+###############################################################################
+Add the interactive functionalities
+###############################################################################
+'''
+##################### Creating numberPeopleSlider slider ######################
 def updateNoPersons(attr,old,new):
     global Active, listSources
     
@@ -224,6 +233,7 @@ def updateNoPersons(attr,old,new):
             
     else:
         pass
+    
 numberPersonsSlider = Slider(
                                  title=u" Number of swimmers on board ", 
                                  value=1, start=1, end=5, step=1,width=350
@@ -231,7 +241,7 @@ numberPersonsSlider = Slider(
 numberPersonsSlider.on_change('value',updateNoPersons)
 
 
-# Creating the pause button
+########################### Creating pause button #############################
 def pause (toggled):
     global Active
     # When active pause animation
@@ -241,11 +251,11 @@ def pause (toggled):
     else:
         curdoc().add_periodic_callback(move_boat, 50)
         Active=True
+        
 pause_button = Toggle(label="Pause", button_type="success")
 pause_button.on_click(pause)
 
-
-# Creating the play button
+########################### Creating play button ##############################
 def play ():
     global Active
     # if inactive, reactivate animation
@@ -261,8 +271,7 @@ def play ():
 play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
 
-
-# Creating the reset button
+########################### Creating reset button #############################
 def reset ():
     global Active, boatX, boatY, boatSource, boatSpeed, startBoatSpeed
     global listPeople, listSources
@@ -309,7 +318,7 @@ def reset ():
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(reset)
 
-# Create play button
+########################### Creating jump button ##############################
 def jump ():
     global Active, boatSpeed, personSource
     
@@ -380,6 +389,16 @@ def update_bars ():
     eFig.setHeight(0,boatSpeed*mass)
     
 
+'''
+###############################################################################
+Add all the components together and initiate the app
+###############################################################################
+'''
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
 area_image = Div(text="""
 <p>
 <img src="/Boat_with_three_swimmers/static/images/picture.jpg" width=600>
@@ -388,5 +407,23 @@ area_image = Div(text="""
 Technical Information for Boat and Swimmers
 </p>""", render_as_text=False, width=600)
 
-curdoc().add_root(column(description,scene,row(column(numberPersonsSlider,play_button,pause_button,jump_button,reset_button),eFig.getFig(),area_image)))
-curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
+curdoc().add_root(
+                  column(
+                         description,
+                         scene,
+                         row(
+                             column(
+                                    numberPersonsSlider,
+                                    play_button,
+                                    pause_button,
+                                    jump_button,
+                                    reset_button
+                                   ),
+                             eFig.getFig(),
+                             area_image
+                            )
+                        )
+                 )
+# get path of parent directory and only use the name of the Parent Directory 
+# for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  
