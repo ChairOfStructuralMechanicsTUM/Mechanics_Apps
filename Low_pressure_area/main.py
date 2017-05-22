@@ -94,11 +94,11 @@ plot.circle(
             color = '#33FF33',
             source = get_particle_source()
            )
-jumpingSource = ColumnDataSource(data = dict(x=[],y=[]) )
+traceSource = ColumnDataSource(data = dict(x=[],y=[]) )
 plot.ellipse(
              x='x',y='y',width=0.005,height=0.005,
              color="#0065BD",
-             source=jumpingSource
+             source=traceSource
             )
 
 ###################### (3) Forces and velocity arrows #########################
@@ -225,12 +225,17 @@ def compute_tranjectory():
         position[1] += ymax/50
         velocity[1]  *= -1
 
-    jumpingSource.stream( 
+    traceSource.stream( 
                           dict(
                                x = [position[0]],
                                y = [position[1]]
                               )
-                         )
+                      )
+    if len(traceSource.data['x']) == 100:
+        traceSource.data = dict(
+                                x=traceSource.data['x'][1:100],
+                                y=traceSource.data['y'][1:100]
+                               )
                 
     update_particle_source(position[0],position[1])
     update_particle_position( x=position[0] , y=position[1] )
