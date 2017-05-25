@@ -68,7 +68,7 @@ ground          = 0.07
 orig            = Frame("o")
 f1              = Frame("F1")
 f2              = Frame("F2")
-f1.tri.data     = dict(x = [0.1,0.8], y = [0.1,0.1], size = [tri_size,tri_size])
+default     = dict(x = [0.1,0.8], y = [0.1,0.1], size = [tri_size,tri_size])
 #seg             = dict(x0=[0.095,0.097,0.099,0.101,0.103,0.105],
 #                x1=[0.095+shift,0.097+shift,0.099+shift,0.101+shift,0.103+shift,0.105+shift],
 #                y0=[0.09]*5, y1=[0.088]*5)
@@ -81,7 +81,7 @@ mag_val     = 0
 mag_slider  = Slider(title="Kraftbetrag", value=mag_val, start=mag_start, end=mag_end, step=1)
 
 #Toggle button:
-button = Button(label="Save", button_type="success")
+button = Button(label="Save Deformed Frame", button_type="success")
 rbutton = Button(label="Reset", button_type="success")
 loc_start = 0
 loc_end = 100
@@ -129,7 +129,7 @@ def side1(f,paramInt,i):
     d13 = 0
 
     #change arrow:
-    if i<0:
+    if (i<0):
         f.arrow_source.data = dict(xS= [0.12-i/arr_scal], xE= [0.12],
         yS= [0.1 + paramInt*(1.0/60)], yE=[0.1+ paramInt*(1.0/60)], lW = [abs(i/arr_lw)] )
 
@@ -140,6 +140,9 @@ def side1(f,paramInt,i):
         yS= [0.1 + paramInt*(1.0/60)], yE=[0.1+ paramInt*(1.0/60)], lW = [abs(i/arr_lw)] )
 
         f.label.data = dict(x = [0.08-i/arr_scal], y = [0.1+ paramInt*(1.0/60)], name = [f.name])
+    else:
+        f.label.data = dict(x = [0.03-i/arr_scal], y = [0.1+ paramInt*(1.0/60)], name = [f.name])
+
 
 
     d2 = (paramInt / 30.0) * a
@@ -200,6 +203,7 @@ def side2(f,paramInt,i):
 
     #add arrow changing function here
     #change arrow:
+
     if i<0:
         f.arrow_source.data = dict(xS= [0.1 + (paramInt-30)*(0.0175)], xE= [0.1 + (paramInt-30)*(0.0175)],
         yS= [0.58+i/arr_scal], yE=[0.58], lW = [abs(i/arr_lw)] )
@@ -211,6 +215,9 @@ def side2(f,paramInt,i):
         yS= [0.62+i/arr_scal], yE=[0.62], lW = [abs(i/arr_lw)] )
 
         f.label.data = dict(x = [0.1 + (paramInt-30)*(0.0175)], y = [0.62+i/arr_scal], name = [f.name])
+    else:
+        f.label.data = dict(x = [0.1 + (paramInt-30)*(0.0175)], y = [0.62+i/arr_scal], name = [f.name])
+
 
 
     d1 = i / FScale
@@ -275,6 +282,8 @@ def side3(f,paramInt,i):
 
 
     #change arrow:
+
+
     if i<0:
         f.arrow_source.data = dict(xS= [0.78+i/arr_scal], xE= [0.78],
         yS= [0.6 - (paramInt%70)*(1.0/60)], yE=[0.6 - (paramInt%70)*(1.0/60)], lW = [abs(i/arr_lw)] )
@@ -285,6 +294,8 @@ def side3(f,paramInt,i):
         f.arrow_source.data = dict(xS= [0.82+i/arr_scal], xE= [0.82],
         yS= [0.6 - (paramInt%70)*(1.0/60)], yE=[0.6 - (paramInt%70)*(1.0/60)], lW = [abs(i/arr_lw)] )
 
+        f.label.data = dict(x = [0.82+i/arr_scal], y = [0.6 - (paramInt%70)*(1.0/60)], name = [f.name])
+    else:
         f.label.data = dict(x = [0.82+i/arr_scal], y = [0.6 - (paramInt%70)*(1.0/60)], name = [f.name])
 
 
@@ -489,12 +500,12 @@ def update_fun(attr,old,new):
         create_prof(f1)
         f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
     elif changer != 0:
-        f1.tri.data = dict(x = [], y = [], size = [])
         f2.set_param(loc_slider.value)
         f2.set_mag(mag_slider.value)
         create_prof(f2)
         create_shift(f1,f2)
         f2.tri.data = dict(x = [0.1,f2.pts.data["x"][-1]], y = [0.1,f2.pts.data["y"][-1]], size = [tri_size,tri_size])
+
 
 
 def button_fun():
@@ -513,6 +524,7 @@ def button_fun():
 loc_slider.on_change('value', update_fun)
 mag_slider.on_change('value', update_fun)
 
+#default.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
 #Force 2 sliders:
 #f2.loc_slider.on_change('value', update_fun)
 #f2.mag_slider.on_change('value', update_fun)
@@ -543,16 +555,17 @@ button.on_click(button_fun)
 rbutton.on_click(init)
 rbutton.on_click(clearf2)
 
-init()
+#init()
 create_orig(orig)
 
 ps = 0.3
 plot = Figure(tools = "",title="Maxwell",title_location = "above", x_range=(0.1-ps,0.8+ps), y_range=(0.0,1.0))
-plot.line(x='x', y='y', source=orig.pts, color='Black',line_width=3)
-plot.line(x='x', y='y', source=f1.pts, color="#808080",line_width=5)
+plot.line(x='x', y='y', source=orig.pts, color="grey",line_width=3)
+plot.line(x='x', y='y', source=f1.pts, color="#0065BD",line_width=5)
 plot.line(x='x', y='y', source=f2.pts, color="#E37222",line_width=5)
 plot.line(x='x', y='y', source=t_line, color="Black",line_width=5)
-plot.triangle(x='x', y='y', size = 'size', source= f1.tri,color="#808080", line_width=2)
+plot.triangle(x='x', y='y', size = 'size', source= default,color="grey" ,  line_width=2)
+plot.triangle(x='x', y='y', size = 'size', source= f1.tri,color="#0065BD", line_width=2)
 plot.triangle(x='x', y='y', size = 'size', source= f2.tri,color="#E37222", line_width=2)
 plot.axis.visible = False
 plot.outline_line_width = 7
@@ -564,9 +577,9 @@ plot.title.align = "center"
 
 
 labels1 = LabelSet(x='x', y='y', text='name', level='glyph',
-              x_offset=0, y_offset=0, source=f1.label, render_mode='canvas')
+              x_offset=0, y_offset=0, source=f1.label, text_color="#0065BD", text_font_size = '16pt',  render_mode='canvas')
 labels2 = LabelSet(x='x', y='y', text='name', level='glyph',
-              x_offset=0, y_offset=0, source=f2.label, render_mode='canvas')
+              x_offset=0, y_offset=0, source=f2.label,text_color="#E37222", text_font_size = '16pt', render_mode='canvas')
 
 #P arrow:
 p1_arrow_glyph = Arrow(end=NormalHead(line_color="#0065BD",line_width= 4, size=10),
