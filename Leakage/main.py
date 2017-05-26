@@ -30,6 +30,8 @@ f_analytical_source = ColumnDataSource(data=dict(t=[],f=[]))
 # source for transformed function F
 F_sampled_source = ColumnDataSource(data=dict(omega=[], F_real=[], F_imag=[]))
 F_analytical_source = ColumnDataSource(data=dict(omega=[], F_real=[], F_imag=[]))
+source_interval_patch = ColumnDataSource(data=dict(x_patch=[], y_patch=[]))
+source_interval_bound = ColumnDataSource(data=dict(x_min=[], x_max=[], y_minmax=[]))
 
 #######################
 # INTERACTIVE WIDGETS #
@@ -152,6 +154,17 @@ def update():
     f_analytical_source.data = dict(t=t_analytical, f=f_analytical)
     F_analytical_source.data = dict(omega=omega_analytical, F_real=F_analytical.real, F_imag=F_analytical.imag)
 
+    t_start = 0 - N / T_0 / 2.0
+    t_end = 0 + N / T_0 / 2.0
+
+    # data for patch denoting the size of one interval
+    source_interval_patch.data = dict(x_patch=[t_start,t_end,t_end,t_start],
+                                      y_patch=[-10**3,-10**3,+10**3,+10**3])
+    # data for patch border lines
+    source_interval_bound.data = dict(x_min=[t_start,t_start],
+                                      x_max=[t_end,t_end],
+                                      y_minmax=[-10**3,-10**3])
+
 
 def initialize():
     """
@@ -167,6 +180,12 @@ def initialize():
     plot_transform_imag.line('omega', 'F_imag', source=F_analytical_source, line_width=.5, legend=u'Im[F[\u03C9)]')
     plot_transform_real.scatter('omega', 'F_real', source=F_sampled_source, legend='Re[DFT(f(t)]')
     plot_transform_real.line('omega', 'F_real', source=F_analytical_source, line_width=.5, legend=u'Re[F(\u03C9)]')
+    plot_transform_real.patch('x_patch', 'y_patch', source=source_interval_patch, alpha=.2)
+    plot_transform_imag.patch('x_patch', 'y_patch', source=source_interval_patch, alpha=.2)
+    plot_transform_real.line('x_min', 'y_minmax', source=source_interval_bound)
+    plot_transform_real.line('x_max', 'y_minmax', source=source_interval_bound)
+    plot_transform_imag.line('x_min', 'y_minmax', source=source_interval_bound)
+    plot_transform_imag.line('x_max', 'y_minmax', source=source_interval_bound)
 
 
 def on_parameters_changed(attr, old, new):
@@ -210,12 +229,10 @@ t0_input.on_change('value',on_parameters_changed)
 N_input.on_change('value',on_parameters_changed)
 
 # create layout
-controls = VBox(children=[f_input,
-                          sample_fun_input_f,
-                          t0_input,
-                          N_input],
-                sizing_mode='stretch_both')  # all controls
+controls = [f_input, sample_fun_input_f, t0_input, N_input]
+controls_box = widgetbox(*controls,
+                	 sizing_mode='fixed')  # all controls
 curdoc().add_root(layout([[plot_original, plot_transform_real],
-                          [controls, plot_transform_imag]],
+                          [controls_box, plot_transform_imag]],
                          sizing_mode='stretch_both')) # add plots and controls to root
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
