@@ -492,7 +492,6 @@ def create_shift(f1, f2):
         f2.e_s.data = dict(xS= [ d1 ], xE= [d1 + localDouble2[0]],
         yS= [d2], yE=[d2], lW = [abs(localDouble2[0] *sclr) ] )
 
-
 def update_fun(attr,old,new):
     if changer == 0:
         f1.set_param(loc_slider.value)
@@ -506,8 +505,6 @@ def update_fun(attr,old,new):
         create_shift(f1,f2)
         f2.tri.data = dict(x = [0.1,f2.pts.data["x"][-1]], y = [0.1,f2.pts.data["y"][-1]], size = [tri_size,tri_size])
 
-
-
 def button_fun():
     global changer
     changer = 1
@@ -515,7 +512,8 @@ def button_fun():
     f1.set_mag(mag_slider.value)
     create_prof(f1)
     create_shift(f1,f2)
-
+    mag_slider.value        = mag_val
+    loc_slider.value        = loc_val
 
 #Force 1 sliders:
 #f1.loc_slider.on_change('value', update_fun)
@@ -536,7 +534,7 @@ mag_slider.on_change('value', update_fun)
 def init():
     global changer
     changer                 = 0
-    f1.label.data           = dict(x=[0.45] , y=[0.65], name = ["F1"])
+    f1.label.data           = dict(x=[0.45] , y=[0.62], name = ["F1"])
     f2.label.data           = dict(x=[] , y=[], name = [])
     mag_slider.value        = mag_val
     loc_slider.value        = loc_val
@@ -545,11 +543,11 @@ def init():
     f2.tri.data             = dict(x = [], y = [], size = [])
     f1.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     f2.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    f1.tri.data             = dict(x = [0.1,0.8], y = [0.1,0.1], size = [tri_size,tri_size])
-
+    f1.pts.data = dict(x = [], y = [] )
+    #f1.tri.data             = dict(x = [0.1,0.8], y = [0.1,0.1], size = [tri_size,tri_size])
+    f1.tri.data             = dict(x = [], y = [], size = [])
 def clearf2():
     f2.pts.data             = dict(x = [], y = [] )
-
 
 button.on_click(button_fun)
 rbutton.on_click(init)
