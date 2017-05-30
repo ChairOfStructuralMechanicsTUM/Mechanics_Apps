@@ -13,7 +13,7 @@ from os.path import dirname, join, split
 
 
 class Frame(object):
-    def __init__(self,name):
+    def __init__(self,name,n):
         self.pts            = ColumnDataSource(data=dict(x = [], y = [] ))
         self.p_mag          = 0
         self.boundary       = 0
@@ -29,6 +29,7 @@ class Frame(object):
         self.loc_start      = 0
         self.loc_end        = 100
         self.loc_val        = 50
+        self.n              = n
         self.arrow_source   = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
         self.e_s            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
         self.tri            = ColumnDataSource(data=dict(x= [], y= [], size = []))
@@ -36,6 +37,7 @@ class Frame(object):
         self.t_line         = ColumnDataSource(data=dict(x=[], y=[]))
         self.label          = ColumnDataSource(data=dict(x=[] , y=[], name = []))
         self.dline          = ColumnDataSource(data=dict(x=[], y=[]))
+        self.dlabel         = ColumnDataSource(data=dict(x=[] , y=[], name = []))
 
         #self.mag_slider     = Slider(title= self.name + " Kraftbetrag", value=self.mag_val, start=self.mag_start, end=self.mag_end, step=1)
         #self.loc_slider     = Slider(title= self.name + " Kraftposition", value=self.loc_val, start=self.loc_start, end=self.loc_end, step=1)
@@ -61,15 +63,19 @@ tri_size    = 30
 changer     = 0
 shift       = 0.01
 shift2      = 0.015
-
+ps = 0.3
+plotx0 = 0.1-ps
+plotxf = 0.8+ps
+ploty0 = -0.1
+plotyf = 1.0
 #Arrow Sources:
 #p_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 arr_scal        = 450.0
 arr_lw          = 20.0
 ground          = 0.07
-orig            = Frame("o")
-f1              = Frame("F1")
-f2              = Frame("F2")
+orig            = Frame("o","0")
+f1              = Frame("F1","n1")
+f2              = Frame("F2","n2")
 default     = dict(x = [0.1,0.8], y = [0.1,0.1], size = [tri_size,tri_size])
 #seg             = dict(x0=[0.095,0.097,0.099,0.101,0.103,0.105],
 #                x1=[0.095+shift,0.097+shift,0.099+shift,0.101+shift,0.103+shift,0.105+shift],
@@ -109,14 +115,19 @@ def create_prof(f):
     if int(paramInt) < 30:
         side1(f,paramInt,i)
         f.dline.data = dict( x = [-10,10], y = [0.1+ paramInt*(1.0/60),0.1+ paramInt*(1.0/60)] )
+        f.dlabel.data = dict(x=[plotx0+0.05] , y=[0.1+ paramInt*(1.0/60)], name = [f.n])
     elif (int(paramInt)> 30) & (int(paramInt) < 70) :
         side2(f,paramInt,i)
         f.dline.data = dict( x = [0.1 + (paramInt-30)*(0.0175),0.1 + (paramInt-30)*(0.0175)], y = [-10,10] )
+        f.dlabel.data = dict(x=[0.11 + (paramInt-30)*(0.0175)] , y=[plotyf-0.06], name = [f.n])
     elif  int(paramInt) > 70:
         side3(f,paramInt,i)
         f.dline.data = dict( x = [-10,10], y = [0.6 - (paramInt%70)*(1.0/60),0.6 - (paramInt%70)*(1.0/60)] )
+        f.dlabel.data = dict(x=[plotxf-0.05] , y=[0.6 - (paramInt%70)*(1.0/60)], name = [f.n])
+
     if (i == 0):
         f.dline.data = dict(x = [], y = [] )
+        f.dline.data = dict(x = [], y = [], name = [] )
 
 def side1(f,paramInt,i):
     x1          = []
@@ -575,9 +586,9 @@ rbutton.on_click(clearf2)
 #init()
 create_orig(orig)
 
-ps = 0.3
 abshift = 0.02
-plot = Figure(tools = "",title="Maxwell",title_location = "above", x_range=(0.1-ps,0.8+ps), y_range=(-0.1,1.0),plot_width=1000, plot_height=1000)
+xb      = -0.015
+plot = Figure(tools = "",title="Maxwell",title_location = "above", x_range=(plotx0,plotxf), y_range=(ploty0,plotyf),plot_width=1000, plot_height=1000)
 plot.line(x='x', y='y', source=orig.pts, color="grey",line_width=3)
 plot.line(x='x', y='y', source=f1.pts, color="#0065BD",line_width=5)
 plot.line(x='x', y='y', source=f2.pts, color="#E37222",line_width=5)
@@ -585,7 +596,7 @@ plot.line(x='x', y='y', source=t_line, color="Black",line_width=5)
 plot.line(x='x', y='y', source=f1.dline, color="Black",line_width=3,line_dash = 'dashed',line_alpha = 0.3)
 plot.line(x='x', y='y', source=f2.dline, color="Black",line_width=3,line_dash = 'dashed',line_alpha = 0.3)
 plot.multi_line( [ [orig.x0, orig.xf],[orig.x0,orig.x0],[orig.xf,orig.xf] ], [ [0,0] ,[0-abshift,0+abshift] , [0-abshift,0+abshift] ], color=["black", "black","black"], line_width=10)
-plot.multi_line( [ [0,0],[0-abshift,0+abshift],[0-abshift,0+abshift] ], [ [orig.y0,orig.yf], [orig.y0,orig.y0], [orig.yf,orig.yf] ], color=["black", "black","black"], line_width=10)
+plot.multi_line( [ [xb,xb],[xb-abshift,xb+abshift],[xb-abshift,xb+abshift] ], [ [orig.y0,orig.yf], [orig.y0,orig.y0], [orig.yf,orig.yf] ], color=["black", "black","black"], line_width=10)
 plot.triangle(x='x', y='y', size = 'size', source= default,color="grey" ,  line_width=2)
 plot.triangle(x='x', y='y', size = 'size', source= f1.tri,color="#0065BD", line_width=2)
 plot.triangle(x='x', y='y', size = 'size', source= f2.tri,color="#E37222", line_width=2)
@@ -602,6 +613,10 @@ labels1 = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=0, y_offset=0, source=f1.label, text_color="#0065BD", text_font_size = '16pt',  render_mode='canvas')
 labels2 = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=0, y_offset=0, source=f2.label,text_color="#E37222", text_font_size = '16pt', render_mode='canvas')
+labelsn1 = LabelSet(x='x', y='y', text='name', level='glyph',
+              x_offset=0, y_offset=0, source=f1.dlabel,text_color="#E37222", text_font_size = '12pt', render_mode='canvas')
+labelsn2 = LabelSet(x='x', y='y', text='name', level='glyph',
+              x_offset=0, y_offset=0, source=f2.dlabel,text_color="#E37222", text_font_size = '12pt', render_mode='canvas')
 
 #P arrow:
 p1_arrow_glyph = Arrow(end=NormalHead(line_color="#0065BD",line_width= 4, size=10),
@@ -615,16 +630,21 @@ e2_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3, size=6,l
 
 #Text:
 #abtext_glyph = Text( x=[ (orig.x0+orig.xf)/2, (0-0.03)] , y=[ (0-0.03), (orig.y0+orig.yf)/2 ], text="text", text_color="Black")
-absource = ColumnDataSource(dict(x=[ (orig.x0+orig.xf)/2, (0-0.03)], y=[ (0-0.03), (orig.y0+orig.yf)/2 ], text=['a','b']))
+absource = ColumnDataSource(dict(x=[ (orig.x0+orig.xf)/2, (0-0.05)], y=[ (0-0.05), (orig.y0+orig.yf)/2 ], text=['a','b']))
 abtext_glyph = Text( x='x' , y='y', text='text' ,text_color="Black",text_font_size="16pt",text_font_style = "bold")
+#dtext_glyph = Text( x='x' , y='y', text='text' ,text_color="Black",text_font_size="16pt",text_font_style = "bold")
 
 plot.add_layout(p1_arrow_glyph)
 plot.add_layout(p2_arrow_glyph)
 plot.add_layout(e1_arrow_glyph)
 plot.add_layout(e2_arrow_glyph)
 plot.add_glyph(absource,abtext_glyph)
+#plot.add_glyph(dsource, dtext_glyph)
 plot.add_layout(labels1)
 plot.add_layout(labels2)
+plot.add_layout(labelsn1)
+plot.add_layout(labelsn2)
+
 
 
 
