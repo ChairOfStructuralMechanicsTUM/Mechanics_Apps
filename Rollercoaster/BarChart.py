@@ -1,9 +1,6 @@
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, Range1d, FuncTickFormatter, FixedTicker
-from bokeh.core.properties import Dict
 from math import pi, floor
-
-#ColourOptions = ["red","blue","green","black","yellow","purple"]
 
 class BarChart(object):
     def __init__(self, xVals, yVals, colours = None, width=None):

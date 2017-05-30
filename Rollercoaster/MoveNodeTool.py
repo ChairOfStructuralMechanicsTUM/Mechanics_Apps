@@ -1,4 +1,4 @@
-from bokeh.models import Tool, CustomJS
+from bokeh.models import Tool
 
 JS_CODE = """
 import * as p from "core/properties"

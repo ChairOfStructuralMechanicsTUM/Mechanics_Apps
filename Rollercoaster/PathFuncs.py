@@ -1,12 +1,11 @@
-from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource
-from MathFuncs import *
-from MoveNodeTool import *
 from math import sqrt, floor
+from numpy import sign
 
 RollerNodeSource = []
 RollerPointXPos = []
 RollerPointYPos = []
+#Path
 RollerCoasterPathSource = ColumnDataSource(data=dict(x=[],y=[]))
 
 currentNode=-1
@@ -17,8 +16,6 @@ Deriv2Y=[]
 def PathInit (fig):
     global RollerPointXPos,RollerPointYPos,RollerNodeSource, TotPoints, Deriv2X, Deriv2Y
     #Ramp
-    #X = [1,2.5,4,5.5,7,8.5,10,11.5,13]
-    #Y = [13,11.5,10,8.5,7,5.5,4,2.5,1]
     X = [1, 3.5, 6.64, 8.7, 6.8, 5.54, 10.0, 11.67, 13.9]
     Y = [13, 3.3, 1.4, 3.8, 5.4, 3.16, 1.4, 4.8, 6.4]
     # Create and save path nodes
@@ -31,7 +28,7 @@ def PathInit (fig):
     # calculate and save path
     (X,Deriv2X)=cubicSpline(RollerPointXPos)
     (Y,Deriv2Y)=cubicSpline(RollerPointYPos)
-    RollerCoasterPathSource.data=dict(x=X,y=Y)
+    RollerCoasterPathSource.data = dict(x=X, y=Y)
     TotPoints=len(X)
 
 def find2Deriv (x,f):
@@ -128,13 +125,15 @@ def getDistance(xnow,xnext):
         + 4*sqrt(dX((xnow+xnext)/2.0)**2+dY((xnow+xnext)/2.0)**2)*sign(dX((xnow+xnext)/2.0))
         + sqrt(dX(xnext)**2+dY(xnext)**2)*sign(dX(xnext)))*abs(xnext-xnow)/6.0
 
+
 # Find normal vector
-def normal (i):
+def normal(i):
     (dx,dy)=deriv (i);
     return (-dy,dx)
 
+
 # Find derivative of path
-def deriv (t):
+def deriv(t):
     # find nearest nodes
     i1=int(floor(t*20))
     i2=int(floor(t*20))+1
