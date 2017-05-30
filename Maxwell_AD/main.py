@@ -2,6 +2,7 @@ from bokeh.plotting import Figure, output_file , show
 from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, NormalHead, Arrow
 from bokeh.layouts import column, row, widgetbox
 from bokeh.models.widgets import Button
+from bokeh.models.glyphs import Text
 from bokeh.io import curdoc
 import numpy as np
 from os.path import dirname, join, split
@@ -34,6 +35,7 @@ class Frame(object):
         self.seg            = ColumnDataSource(data=dict(x0=[], x1=[], y0=[], y1=[]))
         self.t_line         = ColumnDataSource(data=dict(x=[], y=[]))
         self.label          = ColumnDataSource(data=dict(x=[] , y=[], name = []))
+        self.dline          = ColumnDataSource(data=dict(x=[], y=[]))
 
         #self.mag_slider     = Slider(title= self.name + " Kraftbetrag", value=self.mag_val, start=self.mag_start, end=self.mag_end, step=1)
         #self.loc_slider     = Slider(title= self.name + " Kraftposition", value=self.loc_val, start=self.loc_start, end=self.loc_end, step=1)
@@ -96,17 +98,25 @@ def create_orig(o):
     o.pts.data = dict(x = x, y = y )
 
 
+ya =[0,0]
+xb = [0,0]
+a_fig = dict(xa = [orig.x0, orig.xf] , ya = [0,0], iay = [0-0.1,0+0.1], iax1 = [orig.x0,orig.x0], iax2 = [orig.xf,orig.xf] )
+
+
 def create_prof(f):
     paramInt = f.get_param()
     i = f.get_mag()
     if int(paramInt) < 30:
         side1(f,paramInt,i)
-
+        f.dline.data = dict( x = [-10,10], y = [0.1+ paramInt*(1.0/60),0.1+ paramInt*(1.0/60)] )
     elif (int(paramInt)> 30) & (int(paramInt) < 70) :
         side2(f,paramInt,i)
-
+        f.dline.data = dict( x = [0.1 + (paramInt-30)*(0.0175),0.1 + (paramInt-30)*(0.0175)], y = [-10,10] )
     elif  int(paramInt) > 70:
         side3(f,paramInt,i)
+        f.dline.data = dict( x = [-10,10], y = [0.6 - (paramInt%70)*(1.0/60),0.6 - (paramInt%70)*(1.0/60)] )
+    if (i == 0):
+        f.dline.data = dict(x = [], y = [] )
 
 def side1(f,paramInt,i):
     x1          = []
@@ -353,9 +363,7 @@ def side3(f,paramInt,i):
 def compute_shift(paramInt1, paramInt2, i):
     d7 = i / FScale
 
-    localDouble = []
-
-    #create a localdouble Point2d variable
+    localDouble = [] #create a localdouble array
 
     d1 = paramInt2 / 30.0 * a
     d2 = a - d1
@@ -443,66 +451,75 @@ def compute_shift(paramInt1, paramInt2, i):
 
     return localDouble
 
-def create_shift(f1, f2):
-    paramInt1 = f1.get_param()
-    paramInt2 = f2.get_param()
+def create_shift(f):
+    if (f.get_mag() == 0):
+        if (f.get_mag() == 0):
+            f.e_s.data = dict(xS= [], xE= [],
+            yS= [], yE=[], lW = [] )
+    else:
+        paramInt1 = f.get_param()
+        #print orig.pts.data["y"]
+        #sprint f2.pts.data["x"]
+        #print f2.pts.data["y"]
+        localDouble1 = compute_shift(paramInt1,paramInt1, f.get_mag())
 
-    localDouble1 = compute_shift(paramInt1,paramInt2, f2.get_mag())
-    localDouble2 = compute_shift(paramInt2,paramInt1, f2.get_mag())
+        d2 = 0
+        d1 = 0
+        sclr = 10
+        if (paramInt1 < 30):
+            d2 = paramInt1 / 30.0 * 0.5 + 0.1
+            d1 = 0.1
 
-    d2 = 0
-    d1 = 0
-    sclr = 10
-    if (paramInt1 < 30):
-        d2 = paramInt1 / 30.0 * 0.5 + 0.1
-        d1 = 0.1
+            f.e_s.data = dict(xS= [ d1 ], xE= [d1 + localDouble1[0]],
+            yS= [d2], yE=[d2], lW = [abs(localDouble1[0]*sclr) ] )
 
-        f1.e_s.data = dict(xS= [ d1 ], xE= [d1 + localDouble1[0]],
-        yS= [d2], yE=[d2], lW = [abs(localDouble1[0]*sclr) ] )
+        elif ((30 <= paramInt1) & (paramInt1 <= 70)):
+            d1 = (paramInt1 - 30) / 40.0 * 0.7 + 0.1
+            d2 = 0.6
 
-    elif ((30 <= paramInt1) & (paramInt1 <= 70)):
-        d1 = (paramInt1 - 30) / 40.0 * 0.7 + 0.1
-        d2 = 0.6
+            f.e_s.data = dict(xS= [ d1 ], xE= [d1],
+            yS= [d2 + localDouble1[1] ], yE=[d2], lW = [abs(localDouble1[1]*sclr) ] )
 
-        f1.e_s.data = dict(xS= [ d1 ], xE= [d1],
-        yS= [d2 + localDouble1[1] ], yE=[d2], lW = [abs(localDouble1[1]*sclr) ] )
+        elif (paramInt1 > 70):
+            d1 = 0.8
+            d2 = 0.6 - (paramInt1 - 70) / 30.0 * 0.5
 
-    elif (paramInt1 > 70):
-        d1 = 0.8
-        d2 = 0.6 - (paramInt1 - 70) / 30.0 * 0.5
+            f.e_s.data = dict(xS= [ d1], xE= [d1 + localDouble1[0] ],
+            yS= [d2], yE=[d2], lW = [ abs(localDouble1[0]*sclr ) ] )
 
-        f1.e_s.data = dict(xS= [ d1], xE= [d1 + localDouble1[0] ],
-        yS= [d2], yE=[d2], lW = [ abs(localDouble1[0]*sclr ) ] )
+'''
+        if (paramInt2 < 30):
+            d2 = paramInt2 / 30.0 * 0.5 + 0.1
+            d1 = 0.1
+            f2.e_s.data = dict(xS= [ d1 + localDouble2[0] ], xE= [d1],
+            yS= [d2], yE=[d2], lW = [abs(localDouble2[0]*sclr ) ] )
+        elif((30 <= paramInt2) & (paramInt2 <= 70)):
+            d1 = (paramInt2 - 30) / 40.0 * 0.7 + 0.1
+            d2 = 0.6
+            f2.e_s.data = dict(xS= [ d1 ], xE= [d1],
+            yS= [d2], yE=[d2 + localDouble1[1] ], lW = [abs(localDouble1[1]*sclr) ] )
+        elif(paramInt2 > 70):
+            d1 = 0.8
+            d2 = 0.6 - (paramInt2 - 70) / 30.0 * 0.5
+
+            f2.e_s.data = dict(xS= [ d1 ], xE= [d1 + localDouble2[0]],
+            yS= [d2], yE=[d2], lW = [abs(localDouble2[0] *sclr) ] )
+'''
 
 
-    if (paramInt2 < 30):
-        d2 = paramInt2 / 30.0 * 0.5 + 0.1
-        d1 = 0.1
-        f2.e_s.data = dict(xS= [ d1 + localDouble2[0] ], xE= [d1],
-        yS= [d2], yE=[d2], lW = [abs(localDouble2[0]*sclr ) ] )
-    elif((30 <= paramInt2) & (paramInt2 <= 70)):
-        d1 = (paramInt2 - 30) / 40.0 * 0.7 + 0.1
-        d2 = 0.6
-        f2.e_s.data = dict(xS= [ d1 ], xE= [d1],
-        yS= [d2], yE=[d2 + localDouble1[1] ], lW = [abs(localDouble1[1]*sclr) ] )
-    elif(paramInt2 > 70):
-        d1 = 0.8
-        d2 = 0.6 - (paramInt2 - 70) / 30.0 * 0.5
-
-        f2.e_s.data = dict(xS= [ d1 ], xE= [d1 + localDouble2[0]],
-        yS= [d2], yE=[d2], lW = [abs(localDouble2[0] *sclr) ] )
 
 def update_fun(attr,old,new):
     if changer == 0:
         f1.set_param(loc_slider.value)
         f1.set_mag(mag_slider.value)
         create_prof(f1)
+        create_shift(f1)
         f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
     elif changer != 0:
         f2.set_param(loc_slider.value)
         f2.set_mag(mag_slider.value)
         create_prof(f2)
-        create_shift(f1,f2)
+        create_shift(f2)
         f2.tri.data = dict(x = [0.1,f2.pts.data["x"][-1]], y = [0.1,f2.pts.data["y"][-1]], size = [tri_size,tri_size])
 
 def button_fun():
@@ -511,10 +528,10 @@ def button_fun():
     f1.set_param(loc_slider.value)
     f1.set_mag(mag_slider.value)
     create_prof(f1)
-    create_shift(f1,f2)
+    create_shift(f2)
     mag_slider.value        = mag_val
     loc_slider.value        = loc_val
-
+    update_fun(None,None,None)
 #Force 1 sliders:
 #f1.loc_slider.on_change('value', update_fun)
 #f1.mag_slider.on_change('value', update_fun)
@@ -546,6 +563,8 @@ def init():
     f1.pts.data = dict(x = [], y = [] )
     #f1.tri.data             = dict(x = [0.1,0.8], y = [0.1,0.1], size = [tri_size,tri_size])
     f1.tri.data             = dict(x = [], y = [], size = [])
+    f2.set_param(loc_val)
+    f2.set_mag(mag_val)
 def clearf2():
     f2.pts.data             = dict(x = [], y = [] )
 
@@ -557,11 +576,16 @@ rbutton.on_click(clearf2)
 create_orig(orig)
 
 ps = 0.3
-plot = Figure(tools = "",title="Maxwell",title_location = "above", x_range=(0.1-ps,0.8+ps), y_range=(0.0,1.0))
+abshift = 0.02
+plot = Figure(tools = "",title="Maxwell",title_location = "above", x_range=(0.1-ps,0.8+ps), y_range=(-0.1,1.0),plot_width=1000, plot_height=1000)
 plot.line(x='x', y='y', source=orig.pts, color="grey",line_width=3)
 plot.line(x='x', y='y', source=f1.pts, color="#0065BD",line_width=5)
 plot.line(x='x', y='y', source=f2.pts, color="#E37222",line_width=5)
 plot.line(x='x', y='y', source=t_line, color="Black",line_width=5)
+plot.line(x='x', y='y', source=f1.dline, color="Black",line_width=3,line_dash = 'dashed',line_alpha = 0.3)
+plot.line(x='x', y='y', source=f2.dline, color="Black",line_width=3,line_dash = 'dashed',line_alpha = 0.3)
+plot.multi_line( [ [orig.x0, orig.xf],[orig.x0,orig.x0],[orig.xf,orig.xf] ], [ [0,0] ,[0-abshift,0+abshift] , [0-abshift,0+abshift] ], color=["black", "black","black"], line_width=10)
+plot.multi_line( [ [0,0],[0-abshift,0+abshift],[0-abshift,0+abshift] ], [ [orig.y0,orig.yf], [orig.y0,orig.y0], [orig.yf,orig.yf] ], color=["black", "black","black"], line_width=10)
 plot.triangle(x='x', y='y', size = 'size', source= default,color="grey" ,  line_width=2)
 plot.triangle(x='x', y='y', size = 'size', source= f1.tri,color="#0065BD", line_width=2)
 plot.triangle(x='x', y='y', size = 'size', source= f2.tri,color="#E37222", line_width=2)
@@ -584,16 +608,21 @@ p1_arrow_glyph = Arrow(end=NormalHead(line_color="#0065BD",line_width= 4, size=1
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.arrow_source,line_color="#0065BD")
 p2_arrow_glyph = Arrow(end=NormalHead(line_color="#E37222",line_width= 4, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f2.arrow_source,line_color="#E37222")
-e1_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 1, size=7),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.e_s,line_color="#A2AD00")
-e2_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 1, size=7),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f2.e_s,line_color="#A2AD00")
+e1_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3, size=6,line_alpha = 0.5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f1.e_s,line_color="#A2AD00",line_alpha = 0.5)
+e2_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3, size=6,line_alpha = 0.5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.e_s,line_color="#A2AD00",line_alpha = 0.5)
 
+#Text:
+#abtext_glyph = Text( x=[ (orig.x0+orig.xf)/2, (0-0.03)] , y=[ (0-0.03), (orig.y0+orig.yf)/2 ], text="text", text_color="Black")
+absource = ColumnDataSource(dict(x=[ (orig.x0+orig.xf)/2, (0-0.03)], y=[ (0-0.03), (orig.y0+orig.yf)/2 ], text=['a','b']))
+abtext_glyph = Text( x='x' , y='y', text='text' ,text_color="Black",text_font_size="16pt",text_font_style = "bold")
 
 plot.add_layout(p1_arrow_glyph)
 plot.add_layout(p2_arrow_glyph)
 plot.add_layout(e1_arrow_glyph)
 plot.add_layout(e2_arrow_glyph)
+plot.add_glyph(absource,abtext_glyph)
 plot.add_layout(labels1)
 plot.add_layout(labels2)
 
