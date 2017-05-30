@@ -2,32 +2,42 @@ import numpy as np
 from bokeh.plotting import figure
 from bokeh.io import curdoc
 from bokeh.plotting import ColumnDataSource
-from bokeh.models import Button, Toggle, Slider
+from bokeh.models import Button, Toggle, Slider, Div
 from Person import create_people
 from bokeh.layouts import column, row
 import BarChart as BC
+from os.path import dirname, join
+from bokeh.models.layouts import Spacer
 from os.path import dirname, join, split
 
 '''
-Plotting space construction
+###############################################################################
+Create the plotting domain
+###############################################################################
 '''
 xMin , xMax = 0,40
 yMin , yMax = 0,10
 scene = figure(
-                    title="People on Boat",
-                    x_range=(xMin,xMax),
-                    y_range=(yMin,yMax),width=1600, height=400,
-                    tools=''
-               )
+                title="Water Scene with the Boat and its Swimmers",
+                x_range=(xMin,xMax),
+                y_range=(yMin,yMax),width=1600, height=400,
+                tools=''
+              )
+scene.title.align = "center"
 scene.title.text_font_size = "25px"
 scene.grid.visible=False
 scene.xaxis.visible=False
 scene.yaxis.visible=False
 Active = False
 
+bar_chart_data = {'objects':{'boat':600,'swimmer1':150}}
 
 '''
-Defining the figures to appear in the plotting space
+###############################################################################
+Define the objects to be plotted within the plotting domain
+ (1) Boat
+ (2) Swimmers
+###############################################################################
 '''
 # Dynamics parameters
 dt = 0.05
@@ -116,7 +126,12 @@ personSource = ColumnDataSource(data=dict(
 
 scene.patches(xs='x',ys='y',fill_color='c',source =personSource )
 
-
+'''
+###############################################################################
+Define the function that will develope the position of the boat and swimmers
+through time
+###############################################################################
+'''
 def move_boat():
     global personSource, listSources
     
@@ -137,13 +152,13 @@ def move_boat():
             # Determining the new position of the person according to his/her
             # own velocity
             newListXCoords.append(
-                                      personSource.data['x'][i] 
-                                    + dxJumping*dt*listPeople[i].relativeVelocity[0]
+                                  personSource.data['x'][i] 
+                                + dxJumping*dt*listPeople[i].relativeVelocity[0]
                                  )
             
             newListYCoords.append(
-                                      personSource.data['y'][i] 
-                                    + dxJumping*dt*listPeople[i].relativeVelocity[1]
+                                  personSource.data['y'][i] 
+                                + dxJumping*dt*listPeople[i].relativeVelocity[1]
                                  )
 
             # Plotting the path of the jumping person
@@ -168,9 +183,12 @@ def move_boat():
                                  c=newListColor
                             )
     
-    
-    
-# Creating the "numberPeopleSlider" 
+'''
+###############################################################################
+Add the interactive functionalities
+###############################################################################
+'''
+##################### Creating numberPeopleSlider slider ######################
 def updateNoPersons(attr,old,new):
     global Active, listSources
     
@@ -212,16 +230,18 @@ def updateNoPersons(attr,old,new):
         listSources = list()
         for person in listPeople:
             listSources.append(ColumnDataSource(data=person.jumpingPath))
+            
     else:
         pass
+    
 numberPersonsSlider = Slider(
-                                 title=u" Number of People on board ", 
+                                 title=u" Number of swimmers on board ", 
                                  value=1, start=1, end=5, step=1,width=350
                             )
 numberPersonsSlider.on_change('value',updateNoPersons)
 
 
-# Creating the pause button
+########################### Creating pause button #############################
 def pause (toggled):
     global Active
     # When active pause animation
@@ -231,11 +251,11 @@ def pause (toggled):
     else:
         curdoc().add_periodic_callback(move_boat, 50)
         Active=True
+        
 pause_button = Toggle(label="Pause", button_type="success")
 pause_button.on_click(pause)
 
-
-# Creating the play button
+########################### Creating play button ##############################
 def play ():
     global Active
     # if inactive, reactivate animation
@@ -247,11 +267,11 @@ def play ():
         curdoc().add_periodic_callback(move_boat, 50)
         Active=True
     update_bars()
+
 play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
 
-
-# Creating the reset button
+########################### Creating reset button #############################
 def reset ():
     global Active, boatX, boatY, boatSource, boatSpeed, startBoatSpeed
     global listPeople, listSources
@@ -295,10 +315,10 @@ def reset ():
         listColors.append('#33FF33')
     personSource.data = dict(x=listXCoords, y=listYCoords,c=listColors)
         
-reset_button = Button(label="reset", button_type="success")
+reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(reset)
 
-# Create play button
+########################### Creating jump button ##############################
 def jump ():
     global Active, boatSpeed, personSource
     
@@ -308,10 +328,18 @@ def jump ():
             if person.jumping == True:
                 pass
             else:
-                # Change the speed of the boat
-                boatSpeed = boatSpeed + person.mass*person.relativeVelocity[0]/mass
-                person.relativeVelocity[0] -= boatSpeed
                 person.jumping = True
+                # Change the speed of the boat
+                people_still_onboard = 0
+                for swimmer in listPeople:
+                    if swimmer.jumping == False:
+                        people_still_onboard += 1
+                    else:
+                        pass
+                    
+                velocity_increase = person.mass*person.relativeVelocity[0] / (person.mass*people_still_onboard + mass)
+                boatSpeed = boatSpeed + velocity_increase
+                person.relativeVelocity[0] -= boatSpeed
     
                 # Determining the total displacement carried so far by the people
                 # on board
@@ -337,28 +365,65 @@ def jump ():
                 
                 # Start plotting the path of the person's own jump
                 scene.ellipse(
-                                  x='x',y='y',width=0.1,height=0.1,
-                                  color="#0065BD",
-                                  source=listSources[counter]
+                              x='x',y='y',width=0.1,height=0.1,
+                              color="#0065BD",
+                              source=listSources[counter]
                              )
                 break
             counter += 1
         update_bars()
+
     else:
         pass
 
-jump_button = Button(label="jump", button_type="success")
+jump_button = Button(label="Jump!", button_type="success")
 jump_button.on_click(jump)
 
 
-eFig = BC.BarChart(["Boat's momentum"], [boatSpeed*mass*6], ["#98C6EA"], [1])
+eFig = BC.BarChart([""], [boatSpeed*mass*3], ["#98C6EA"], [1])
 eFig.Width(200)
-eFig.Height(400)
+eFig.Height(300)
 eFig.fig.yaxis.visible=True
 def update_bars ():
     global boatSpeed
     eFig.setHeight(0,boatSpeed*mass)
     
 
-curdoc().add_root(column(scene,row(column(numberPersonsSlider,play_button,pause_button,jump_button,reset_button),eFig.getFig())))
-curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
+'''
+###############################################################################
+Add all the components together and initiate the app
+###############################################################################
+'''
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
+area_image = Div(text="""
+<p>
+<img src="/Boat_with_three_swimmers/static/images/picture.jpg" width=600>
+</p>
+<p>
+Technical Information for Boat and Swimmers
+</p>""", render_as_text=False, width=600)
+
+curdoc().add_root(
+                  column(
+                         description,
+                         scene,
+                         row(
+                             column(
+                                    numberPersonsSlider,
+                                    play_button,
+                                    pause_button,
+                                    jump_button,
+                                    reset_button
+                                   ),
+                             eFig.getFig(),
+                             area_image
+                            )
+                        )
+                 )
+# get path of parent directory and only use the name of the Parent Directory 
+# for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  

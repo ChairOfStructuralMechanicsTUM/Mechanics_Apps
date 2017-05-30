@@ -6,7 +6,7 @@ from math import pi, floor
 #ColourOptions = ["red","blue","green","black","yellow","purple"]
 
 class BarChart(object):
-    def __init__(self, xVals, yVals, colours = None, width=None):
+    def __init__(self, xVals, yValsMax, yValsMin, colours = None, width=None):
         Max = 0;
         Min=0;
         N=len(xVals)
@@ -35,12 +35,12 @@ class BarChart(object):
         for i in range(0,N):
             # add ColumnDataSource describing each bar
             self.barSources.append(ColumnDataSource(data=dict(x=[x, x, x+width[i],x+width[i]],
-                y=[0,yVals[i], yVals[i], 0])))
+                y=[yValsMin[i],yValsMax[i], yValsMax[i], yValsMin[i]])))
             # update Max and Min for y_range
-            if (yVals[i]+1>Max):
-                Max=yVals[i]+1
-            elif (yVals[i]<0 and yVals[i]-1<Min):
-                Min=yVals[i]-1
+            if (yValsMax[i]+1>Max):
+                Max=yValsMax[i]+1
+            elif (yValsMin[i]<0 and yValsMin[i]-1<Min):
+                Min=yValsMin[i]-1
             # create bar
             self.fig.patch(x='x', y='y', fill_color=colours[i], source=self.barSources[i], line_color=None)
             br=xVals[i].find('\n')

@@ -2,9 +2,10 @@ import Cantilever_beam_classes as functions
 from bokeh.io import curdoc
 from bokeh.plotting import Figure, ColumnDataSource
 from bokeh.layouts import row, column
-from bokeh.models import Slider, LabelSet
+from bokeh.models import Slider, LabelSet, Div
 from bokeh.models import Arrow, NormalHead, OpenHead
 from os.path import dirname, join, split
+from bokeh.models.layouts import Spacer
 
 # Define basic beam parameters and loading
 length = 5.0
@@ -21,7 +22,7 @@ noElementsZ = 20
 elementSizeX = length / noElementsX
 elementSizeY = height / noElementsY
 elementSizeZ = thickness / noElementsZ
-amplificationFactor = 500
+amplificationFactor = 100
 
 def deformed_cantilever_beam_determiner_XY( 
                                             length, height, thickness, E, Py, 
@@ -337,7 +338,8 @@ def fun_change_Py(attrname, old, new):
                                       y= [sourceArrowXY.data['ys'][0] - 0.5],
                                       f= ['Fy']
                                  )
-    
+        
+    update_colorBar_extremas(smallestValue,biggestValue)
 
         
 # The function to be excuted whenever the force in the z direction changes
@@ -403,6 +405,8 @@ def fun_change_Pz(attrname, old, new):
                                       y= [sourceArrowXZ.data['ys'][0] - 0.5],
                                       f= ['Fz']
                                  )
+        
+    update_colorBar_extremas(smallestValue,biggestValue)
 
         
 def init_data():
@@ -563,6 +567,9 @@ for i in range(50):
 for i in range(50):
     colorBarColorList.append(functions.color_determiner( smallestValue, biggestValue, valuesRange[i] ))
     colorBarAlphaList.append( 1 )
+    
+def update_colorBar_extremas(smallesValue, biggestValue):
+    colorBar.title.text = str(smallesValue)+" Pa                                                                      "+str(biggestValue)+" Pa"
 
 # Construct the source file for the color bar
 colorBarSource = ColumnDataSource(data=dict( x=colorBarXCoords, y=colorBarYCoords, c =colorBarColorList, a=colorBarAlphaList ))
@@ -620,5 +627,20 @@ Zforce_slider.on_change('value',fun_change_Pz)
 
 init_data()    
 
-curdoc().add_root(row(column(row(column(plotUndefXY,plotDefXY) , column(plotUndefXZ,plotDefXZ)),colorBar),column(Yforce_slider,Zforce_slider)))  
+area_image = Div(text="""
+<p>
+<img src="/2D-CantileverBeam/static/images/picture.jpg" width=600>
+</p>
+<p>
+3D Schematic of the Cantilever Beam with the Corresponding Geometry and Material Parameters
+</p>
+<p>
+**For visualization purposes, there is a magnification factor of 100 that exaggerates the deformation""", render_as_text=False, width=600)
+
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
+curdoc().add_root(row(description,row(column(row(column(plotUndefXY,plotDefXY) , column(plotUndefXZ,plotDefXZ)),colorBar),column(Yforce_slider,Zforce_slider,Spacer(height=30),area_image))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
