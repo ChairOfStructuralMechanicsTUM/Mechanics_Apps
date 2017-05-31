@@ -21,6 +21,12 @@ sample_f_names = [
     ("exp", "exp(-t)")
 ]
 
+####################
+# General Settings #
+####################
+
+color_interval = False  # here we can decide if we want to color the transformed interval
+
 ################
 # Data Sources #
 ################
@@ -30,8 +36,10 @@ f_analytical_source = ColumnDataSource(data=dict(t=[],f=[]))
 # source for transformed function F
 F_sampled_source = ColumnDataSource(data=dict(omega=[], F_real=[], F_imag=[]))
 F_analytical_source = ColumnDataSource(data=dict(omega=[], F_real=[], F_imag=[]))
-source_interval_patch = ColumnDataSource(data=dict(x_patch=[], y_patch=[]))
-source_interval_bound = ColumnDataSource(data=dict(x_min=[], x_max=[], y_minmax=[]))
+
+if color_interval:
+    source_interval_patch = ColumnDataSource(data=dict(x_patch=[], y_patch=[]))
+    source_interval_bound = ColumnDataSource(data=dict(x_min=[], x_max=[], y_minmax=[]))
 
 #######################
 # INTERACTIVE WIDGETS #
@@ -61,18 +69,24 @@ toolset=["crosshair, pan, wheel_zoom"]
 # Generate a figure container for the original function
 plot_original = Figure(x_axis_label='t',
                        y_axis_label='f(t)',
-                       tools=toolset,active_scroll="wheel_zoom")
+                       tools=toolset,
+                       active_scroll="wheel_zoom",
+                       title="Function in Original Domain")
 
 # Generate a figure container for the real part of the transformed function
 plot_transform_real= Figure(x_axis_label=u'\u03C9',
                             y_axis_label=u'Re[F(\u03C9)]',
-                            tools=toolset,active_scroll="wheel_zoom")
+                            tools=toolset,
+                            active_scroll="wheel_zoom",
+                            title="Fourier transform of function - Real part")
 
 # Generate a figure container for the imaginary part of the transformed function
 plot_transform_imag= Figure(x_axis_label=u'\u03C9',
                             y_axis_label=u'Im[F(\u03C9)]',
                             x_range=plot_transform_real.x_range, y_range=plot_transform_real.y_range,  # this line links the displayed region in the imaginary and the real part.
-                            tools=toolset,active_scroll="wheel_zoom")
+                            tools=toolset,
+                            active_scroll="wheel_zoom",
+                            title="Fourier transform of function - Imaginary part")
 
 def extract_parameters():
     """
@@ -157,13 +171,14 @@ def update():
     t_start = 0 - N / T_0 / 2.0
     t_end = 0 + N / T_0 / 2.0
 
-    # data for patch denoting the size of one interval
-    source_interval_patch.data = dict(x_patch=[t_start,t_end,t_end,t_start],
-                                      y_patch=[-10**3,-10**3,+10**3,+10**3])
-    # data for patch border lines
-    source_interval_bound.data = dict(x_min=[t_start,t_start],
-                                      x_max=[t_end,t_end],
-                                      y_minmax=[-10**3,-10**3])
+    if color_interval:
+        # data for patch denoting the size of one interval
+        source_interval_patch.data = dict(x_patch=[t_start,t_end,t_end,t_start],
+                                          y_patch=[-10**3,-10**3,+10**3,+10**3])
+        # data for patch border lines
+        source_interval_bound.data = dict(x_min=[t_start,t_start],
+                                          x_max=[t_end,t_end],
+                                          y_minmax=[-10**3,-10**3])
 
 
 def initialize():
@@ -180,12 +195,14 @@ def initialize():
     plot_transform_imag.line('omega', 'F_imag', source=F_analytical_source, line_width=.5, legend=u'Im[F[\u03C9)]')
     plot_transform_real.scatter('omega', 'F_real', source=F_sampled_source, legend='Re[DFT(f(t)]')
     plot_transform_real.line('omega', 'F_real', source=F_analytical_source, line_width=.5, legend=u'Re[F(\u03C9)]')
-    plot_transform_real.patch('x_patch', 'y_patch', source=source_interval_patch, alpha=.2)
-    plot_transform_imag.patch('x_patch', 'y_patch', source=source_interval_patch, alpha=.2)
-    plot_transform_real.line('x_min', 'y_minmax', source=source_interval_bound)
-    plot_transform_real.line('x_max', 'y_minmax', source=source_interval_bound)
-    plot_transform_imag.line('x_min', 'y_minmax', source=source_interval_bound)
-    plot_transform_imag.line('x_max', 'y_minmax', source=source_interval_bound)
+
+    if color_interval:
+        plot_transform_real.patch('x_patch', 'y_patch', source=source_interval_patch, alpha=.2)
+        plot_transform_imag.patch('x_patch', 'y_patch', source=source_interval_patch, alpha=.2)
+        plot_transform_real.line('x_min', 'y_minmax', source=source_interval_bound)
+        plot_transform_real.line('x_max', 'y_minmax', source=source_interval_bound)
+        plot_transform_imag.line('x_min', 'y_minmax', source=source_interval_bound)
+        plot_transform_imag.line('x_max', 'y_minmax', source=source_interval_bound)
 
 
 def on_parameters_changed(attr, old, new):
