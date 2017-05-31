@@ -101,14 +101,17 @@ def moveCart():
     :return:
     """
     global Active
-    dt=0.1
+    dt = 0.1
     # get new velocity, old velocity = speed*direction
-    (nx,ny)=path.get_derivative(cart.position)
-    cartSpeedX=cart.speed*nx+dt*cart.acceleration[0]
-    cartSpeedY=cart.speed*ny+dt*cart.acceleration[1]
+    vx, vy = cart.get_velocity()
+    ax, ay = cart.acceleration
+    cartSpeedX = vx + dt * ax
+    cartSpeedY = vy + dt * ay
+
     # new speed = |velocity|*direction
-    direction=sign(cartSpeedX)*sign(nx)
-    cart.speed=direction*sqrt(cartSpeedX**2+cartSpeedY**2)
+    nx, ny = path.get_derivative(cart.position)
+    direction = sign(cartSpeedX) * sign(nx)
+    cart.speed= direction * sqrt(cartSpeedX**2+cartSpeedY**2)
     # distance to be travelled
     s=abs(cart.speed*dt)
     # initialise loop values
@@ -155,7 +158,7 @@ def moveCart():
         # to remove energy fluctuations due to rounding errors
         cart.speed=sign(cart.speed)*sqrt(max(0,2.0*MechEng-4.0*path.get_height(cart.position)))
     # update the drawing
-    cart.draw(path)
+    cart.draw()
     updateForces()
     updateBars()
     if abs(cart.speed)<=0.001 and cart.acceleration[0]**2+cart.acceleration[1]**2<0.01:
@@ -174,7 +177,6 @@ eFig.fig.yaxis.visible=False
 plot = figure(title="", tools="", x_range=(0, 15), y_range=(0, 15))
 path = DraggablePath(plot)
 cart = Cart(plot, path)
-cart.draw(path)
 init()
 plot.add_tools(MoveNodeTool())
 
@@ -199,14 +201,14 @@ def on_mouse_move(attr, old, new):
         global MechEng
         MechEng=100
         updateForces()
-        cart.draw(path)
+        cart.draw()
         updateBars()
     elif currentNode == -1:
         # when the movement is finished, update the cart position regardless
         global MechEng
         MechEng=100
         updateForces()
-        cart.draw(path)
+        cart.draw()
         updateBars()
 
 plot.tool_events.on_change('geometries', on_mouse_move)
@@ -228,7 +230,7 @@ def Ramp():
     MechEng=1000
     path.compute_path(XRamp,YRamp)
     updateForces()
-    cart.draw(path)
+    cart.draw()
     updateBars()
     eFig.ResetYRange()
 ramp_button = Button(label="Rampe", button_type="success")
@@ -239,7 +241,7 @@ def Bump():
     MechEng=1000
     path.compute_path(XBump,YBump)
     updateForces()
-    cart.draw(path)
+    cart.draw()
     updateBars()
     eFig.ResetYRange()
 bump_button = Button(label="Bumps", button_type="success")
@@ -251,7 +253,7 @@ def loop():
     MechEng=1000
     path.compute_path(XLoop,YLoop)
     updateForces()
-    cart.draw(path)
+    cart.draw()
     updateBars()
     eFig.ResetYRange()
 
@@ -267,7 +269,7 @@ def reset():
     """
     global MechEng, eFig
     cart.reset()
-    cart.draw(path)
+    cart.draw()
     MechEng=1000
     updateForces()
     updateBars()

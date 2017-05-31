@@ -6,11 +6,12 @@ class Cart:
     def __init__(self, fig, path):
         self.source = ColumnDataSource(data=dict(x=[], y=[]))
         self.reset()
+        self.path = path  # path on which the cart is travelling
         # add cart drawing
-        self.draw(path)
+        self.draw()
         fig.patch(x='x', y='y', fill_color="#0065BD", source=self.source, level='annotation')
 
-    def draw(self, path):
+    def draw(self):
         """
         draw cart after movement
         :return:
@@ -23,9 +24,9 @@ class Cart:
         # theta angle between line and x axis
         # h=1 as |deriv|=1
         # => cos(theta)=x, sin(theta)=y
-        (cosTheta, sinTheta) = path.get_derivative(self.position)
+        (cosTheta, sinTheta) = self.path.get_derivative(self.position)
         # get coordinates
-        (x, y) = path.get_point(self.position)
+        (x, y) = self.path.get_point(self.position)
         # get direction of travel
         S = sign(self.speed)
         if S == 0:
@@ -42,3 +43,7 @@ class Cart:
         self.position=0
         self.speed = 0
         self.acceleration = [0, 0]
+
+    def get_velocity(self):
+        nx, ny = self.path.get_derivative(self.position)
+        return self.speed * nx, self.speed * ny
