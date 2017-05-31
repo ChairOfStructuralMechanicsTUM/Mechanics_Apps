@@ -629,7 +629,7 @@ init_data()
 
 area_image = Div(text="""
 <p>
-<img src="/2D-CantileverBeam/static/images/picture.jpg" width=600>
+<img src="/2D_cantilever_beam/static/images/picture.jpg" width=600>
 </p>
 <p>
 3D Schematic of the Cantilever Beam with the Corresponding Geometry and Material Parameters
