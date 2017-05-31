@@ -61,62 +61,74 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
     * make sure that your LRZ account has the right to access the server.
     * Use your LRZ credentials for login (your have to add the prefix ```ads\``` to your username: ads\ga00xxx).
 
-## ToDos
-### Selected Apps
+### Apps
 
-#### Technical mechanics I (jf):
-- [x] 1) Tensile testing/Zugversuch (eb)
-- [x] 2) Transverse strain/Querdehnung (eb)
+#### Technical mechanics (jf):
+- [ ][ ] 1) Tensile testing/Zugversuch (eb)
+- [ ][ ] 2) Transverse strain/Querdehnung (eb)
 - [ ] 3) Doble-supported beam with point load/Balken (ad)
-- [ ] 4) Maxwell's reciprocity theorem/Reziprozit�tssatz von Maxwell (ad)
+- [ ] 4) Maxwell's reciprocity theorem/Reziprozitaetssatz von Maxwell (ad)
 - [ ] 5) Buckling/Knickung (ad)
 - [ ] 6) Funicular/Seilbahn (br)
-- [ ] 7) Polar moment of inertia/Polares Fl�chentr�gheitmoments/ ()
-- [ ] 8) Combined moment of inertia/Zusammenges. Fl�chentr��gheitmoments ()
+- [ ] 7) Polar moment of inertia/Polares Flaechentraegheitmoments/ ()
+- [ ] 8) Combined moment of inertia/Zusammenges. Flaechentraegheitmoments ()
 - [ ] 9) Combined center of mass moment/Zusammenges. Schwerpunktsmoment ()
-- [ ] 10) Maibaum/Maypole (ak)
+- [ ] 10) Maypole/Maibaum ()
+- [ ] 11) Vector addition (rem)
+- [ ] 12) What is a moment (rem)
+- [ ] 13) Moment is a free vector (rem)
 
-#### Supplementary course/Erg�nzungskurs Technical mechanics (ft):
-- [x] 1) Spring pendulum/Federpendel (eb)
-- [x] 2) Pendulum/Schwerependel (eb)
-- [x] 3) Base-excited oscillator/Fusspunkterregter Schwinger (eb)
-- [x] 4) Tuned mass damper/Schwingungstilger (eb)
-- [x] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter) (ak)
-- [x] 6) Coriolis force/Drehscheibe-Corioliskraft (eb)
+#### Supplementary course/Ergaenzungskurs Technical mechanics (ft, qa):
+- [x] 1) Spring pendulum/Federpendel (eb, qa)
+- [ ] 2) Pendulum/Schwerependel (eb)
+- [ ] 3) Base-excited oscillator/Fusspunkterregter Schwinger (eb)
+- [ ] 4) Tuned mass damper/Schwingungstilger (eb, rd)
+- [ ] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter) (ak, vu)
+- [ ] 6) Coriolis force/Drehscheibe-Corioliskraft (eb)
 - [ ] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma)
 - [ ] 8) Collision/Stoss (ma)
 - [x] 9) Rollercoaster (eb)
-- [x] 10) Stopping distances (eb)
+- [ ] 10) Stopping distances (eb)
 - [x] 11) Projectiles/Wurfgeschoss (eb)
 - [ ] 12) Rolling Condition/Abrollbedingungen (eb)
 - [ ] 13) Rolling test/Rollversuch (eb)
-- [ ] 14) Instant centre of rotation of the cupoler/Momentanpol der Koppel (ak)
-- [ ] 15) Drop tube/Fallturm (ak)
-- [ ] 16) Low-pressure area/Tiefdruck ()
+- [ ] 14) Instant centre of rotation of the cupoler/Momentanpol der Koppel ()
+- [ ] 15) Drop tube/Fallturm ()
+- [ ] 16) Low-pressure area/Tiefdruck (ma)
 - [ ] 17) Angular momentum/Drallerhaltung2 ()
 
 
 #### Structural dynamics (cs):
-- [ ] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
+- [x] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
 - [ ] 2) FEM Example (ma)
-- [ ] 3) Seismic example (ak)
+- [ ] 3) Seismic example (ma)
 
 #### Technical Acoustics II (ag):
 - [x] 1) Diffraction (br)
 
-### Reference person for theoretical questions
+#### Integral transform method (fm, he):
+- [ ] 1) Leakage (br)
+
+### Supervisors
 - Francesca Taddei ft
 - Axel Greim ag
+- Quirin Aumann qa
 - Moritz Becker mb
-- Corinna Schmausser cs
 - Julian Freisinger jf
+- Franziska Mittermeier fm
+- Hannes Englert he
+- Corinna Schmausser cs
 
 ### Developers
 
 Please comply with the [DevelopmentGuideline](DevelopmentGuideline.pdf)
 
-- Emily Bourne eb
-- Moustafa Alsayed Ahmad ma
-- Antonios Kamariotis ak
-- Abraham Duplaa ad
-- Benjamin R�th br
+- Emily Bourne, eb
+- Moustafa Alsayed Ahmad, ma
+- Antonios Kamariotis, ak
+- Abraham Duplaa, ad
+- Benjamin Rueth, br
+- Rishith Ellath Meethal, rem
+- Ravil Dorozhinskii, rd
+- Razieh Rezaei, rr
+- Vyshakh Unnikrishnan, vu
