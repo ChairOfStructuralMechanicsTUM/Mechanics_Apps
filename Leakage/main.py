@@ -7,9 +7,9 @@ from numpy.fft import fft, fftshift
 
 from bokeh.io import curdoc
 from bokeh.models import ColumnDataSource, VBox
-from bokeh.layouts import widgetbox, layout
+from bokeh.layouts import widgetbox, layout, column
 from bokeh.plotting import Figure
-from bokeh.models.widgets import TextInput, Dropdown
+from bokeh.models.widgets import TextInput, Dropdown, CheckboxButtonGroup
 
 from sympy import sympify
 
@@ -31,11 +31,11 @@ color_interval = False  # here we can decide if we want to color the transformed
 # Data Sources #
 ################
 # source for original function f
-f_sampled_source = ColumnDataSource(data=dict(t=[],f=[]))
-f_analytical_source = ColumnDataSource(data=dict(t=[],f=[]))
+x_sampled_source = ColumnDataSource(data=dict(t=[],x=[]))
+x_analytical_source = ColumnDataSource(data=dict(t=[],x=[]))
 # source for transformed function F
-F_sampled_source = ColumnDataSource(data=dict(omega=[], F_real=[], F_imag=[]))
-F_analytical_source = ColumnDataSource(data=dict(omega=[], F_real=[], F_imag=[]))
+X_sampled_source = ColumnDataSource(data=dict(frequency=[], X_real=[], X_imag=[]))
+X_analytical_source = ColumnDataSource(data=dict(frequency=[], X_real=[], X_imag=[]))
 
 if color_interval:
     source_interval_patch = ColumnDataSource(data=dict(x_patch=[], y_patch=[]))
@@ -46,21 +46,21 @@ if color_interval:
 #######################
 # text input window for function f(x,y) to be transformed
 f_input = TextInput(value='exp(-t)',
-                    title="f(t):",
-                    sizing_mode='stretch_both')
-
+                    title="x(t):")
 # dropdown menu for selecting one of the sample functions
-sample_fun_input_f = Dropdown(label="choose a sample function f(t) or enter one below",
-                              menu=sample_f_names,
-                              sizing_mode='stretch_both')
+sample_fun_input_f = Dropdown(label="choose a sample function x(t) or enter one above",
+                              menu=sample_f_names)
 # text input window for T0 (Sampling interval length)
 t0_input = TextInput(value='1',
-                     title=u"T\u2080 (Interval)",
-                     sizing_mode='stretch_both')
+                     title=u"T\u2080 (Interval)")
 # text input window for N (Number of sample points)
 N_input = TextInput(value='2^6',
-                    title=u"N (Number of sample points, max = 10\u2075)",
-                    sizing_mode='stretch_both')
+                    title=u"N (Number of sample points, max = 10\u2075)")
+# button to show the solution
+nyquist_label_default = "Show sampling- and Nyquist-frequency"
+nyquist_button = CheckboxButtonGroup(labels=[nyquist_label_default],
+                                     active=[],
+                                     sizing_mode="stretch_both")
 
 ###########
 # FIGURES #
@@ -68,21 +68,21 @@ N_input = TextInput(value='2^6',
 toolset=["crosshair, pan, wheel_zoom"]
 # Generate a figure container for the original function
 plot_original = Figure(x_axis_label='t',
-                       y_axis_label='f(t)',
+                       y_axis_label='x(t)',
                        tools=toolset,
                        active_scroll="wheel_zoom",
                        title="Function in Original Domain")
 
 # Generate a figure container for the real part of the transformed function
-plot_transform_real= Figure(x_axis_label=u'\u03C9',
-                            y_axis_label=u'Re[F(\u03C9)]',
+plot_transform_real= Figure(x_axis_label='f',
+                            y_axis_label='Re[X(f)]',
                             tools=toolset,
                             active_scroll="wheel_zoom",
                             title="Fourier transform of function - Real part")
 
 # Generate a figure container for the imaginary part of the transformed function
-plot_transform_imag= Figure(x_axis_label=u'\u03C9',
-                            y_axis_label=u'Im[F(\u03C9)]',
+plot_transform_imag= Figure(x_axis_label='f',
+                            y_axis_label='Re[X(f)]',
                             x_range=plot_transform_real.x_range, y_range=plot_transform_real.y_range,  # this line links the displayed region in the imaginary and the real part.
                             tools=toolset,
                             active_scroll="wheel_zoom",
@@ -149,24 +149,24 @@ def update():
     """
 
     # Extract parameters
-    T_0, N, f_function = extract_parameters()
+    T_0, N, x_function = extract_parameters()
 
     # computation of discrete FT
-    F_samples, omega_samples, f_samples, t_samples = approximate_fourier_transform(T_0, N, f_function)
+    X_samples, f_samples, x_samples, t_samples = approximate_fourier_transform(T_0, N, x_function)
 
     # faking the analytical FT by using a high resolution discrete FT
     N_high = 10**5
-    F_analytical, omega_analytical, f_analytical, t_analytical = approximate_fourier_transform(T_0, N_high, f_function)
+    X_analytical, f_analytical, x_analytical, t_analytical = approximate_fourier_transform(T_0, N_high, x_function)
     # we only use the part of the "analytical" solution that matched the discrete FT region, otherwise the interesting regions shrink too much
-    decider = (omega_analytical >= omega_samples.min()) & (omega_analytical <= omega_samples.max())
-    F_analytical = F_analytical[decider]  # truncuate F values
-    omega_analytical = omega_analytical[decider]  # truncuate omega region
+    decider = (f_analytical >= 2 * f_samples.min()) & (f_analytical <= 2 * f_samples.max())
+    X_analytical = X_analytical[decider]  # truncuate F values
+    f_analytical = f_analytical[decider]  # truncuate omega region
 
     # save to data source
-    f_sampled_source.data = dict(t=t_samples, f=f_samples)
-    F_sampled_source.data = dict(omega=omega_samples, F_real=F_samples.real, F_imag=F_samples.imag)
-    f_analytical_source.data = dict(t=t_analytical, f=f_analytical)
-    F_analytical_source.data = dict(omega=omega_analytical, F_real=F_analytical.real, F_imag=F_analytical.imag)
+    x_sampled_source.data = dict(t=t_samples, x=x_samples)
+    X_sampled_source.data = dict(frequency=f_samples, X_real=X_samples.real, X_imag=X_samples.imag)
+    x_analytical_source.data = dict(t=t_analytical, x=x_analytical)
+    X_analytical_source.data = dict(frequency=f_analytical, X_real=X_analytical.real, X_imag=X_analytical.imag)
 
     t_start = 0 - N / T_0 / 2.0
     t_end = 0 + N / T_0 / 2.0
@@ -189,12 +189,12 @@ def initialize():
 
     update()
 
-    plot_original.scatter('t', 'f', source=f_sampled_source, legend='samples')
-    plot_original.line('t', 'f', source=f_analytical_source, line_width=.5, legend='f(t)')
-    plot_transform_imag.scatter('omega', 'F_imag', source=F_sampled_source, legend='Im[DFT(f(t))]')
-    plot_transform_imag.line('omega', 'F_imag', source=F_analytical_source, line_width=.5, legend=u'Im[F[\u03C9)]')
-    plot_transform_real.scatter('omega', 'F_real', source=F_sampled_source, legend='Re[DFT(f(t)]')
-    plot_transform_real.line('omega', 'F_real', source=F_analytical_source, line_width=.5, legend=u'Re[F(\u03C9)]')
+    plot_original.scatter('t', 'x', source=x_sampled_source, legend='samples')
+    plot_original.line('t', 'x', color='red', source=x_analytical_source, line_width=.5, legend='x(t)')
+    plot_transform_imag.scatter('frequency', 'X_imag', source=X_sampled_source, legend='Im[X(f)] - DFT')
+    plot_transform_imag.line('frequency', 'X_imag', color='red', source=X_analytical_source, line_width=.5, legend='Im[X(f)]')
+    plot_transform_real.scatter('frequency', 'X_real', source=X_sampled_source, legend='Re[X(f)] - DFT')
+    plot_transform_real.line('frequency', 'X_real', color='red', source=X_analytical_source, line_width=.5, legend='Re[X(f)]')
 
     if color_interval:
         plot_transform_real.patch('x_patch', 'y_patch', source=source_interval_patch, alpha=.2)
@@ -205,8 +205,30 @@ def initialize():
         plot_transform_imag.line('x_max', 'y_minmax', source=source_interval_bound)
 
 
+def reveal_solution():
+    """
+    reveals sampling and nyquist frequency for current setting
+    :return:
+    """
+    T_0, N, _ = extract_parameters()
+    sampling_frequency = N/T_0
+    nyquist_frequency = sampling_frequency/2.0
+    nyquist_button.labels = ["sampling: %.2f, nyquist: %.2f" % (sampling_frequency, nyquist_frequency)]
+    nyquist_button.active = [0]
+
+
+def hide_solution():
+    """
+    hides sampling and nyquist frequency for current setting and replaces it with default text
+    :return:
+    """
+    nyquist_button.labels = [nyquist_label_default]
+    nyquist_button.active = []
+
+
 def on_parameters_changed(attr, old, new):
     update()
+    hide_solution()
 
 
 def on_function_changed(attr, old, new):
@@ -236,19 +258,30 @@ def sample_fun_input_changed(self):
     update()
 
 
+def on_nyquist_button_changed(attr, old, new):
+    """
+    called if the nyquist button is
+    :return:
+    """
+    if 0 in nyquist_button.active:
+        reveal_solution()
+    else:
+        hide_solution()
+
+
 # create plots
 initialize()
 
 # add callback behaviour
 f_input.on_change('value', on_function_changed)
 sample_fun_input_f.on_click(sample_fun_input_changed)
-t0_input.on_change('value',on_parameters_changed)
-N_input.on_change('value',on_parameters_changed)
+t0_input.on_change('value', on_parameters_changed)
+N_input.on_change('value', on_parameters_changed)
+nyquist_button.on_change('active', on_nyquist_button_changed)
 
 # create layout
-controls = [f_input, sample_fun_input_f, t0_input, N_input]
-controls_box = widgetbox(*controls,
-                	 sizing_mode='fixed')  # all controls
+controls = [f_input, sample_fun_input_f, t0_input, N_input, nyquist_button]
+controls_box = widgetbox(controls, responsive=True)  # all controls
 curdoc().add_root(layout([[plot_original, plot_transform_real],
                           [controls_box, plot_transform_imag]],
                          sizing_mode='stretch_both')) # add plots and controls to root
