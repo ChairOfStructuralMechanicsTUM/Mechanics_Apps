@@ -64,8 +64,8 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 ### Apps
 
 #### Technical mechanics (jf):
-- [ ][ ] 1) Tensile testing/Zugversuch (eb)
-- [ ][ ] 2) Transverse strain/Querdehnung (eb)
+- [ ] 1) Tensile testing/Zugversuch (eb)
+- [ ] 2) Transverse strain/Querdehnung (eb)
 - [ ] 3) Doble-supported beam with point load/Balken (ad)
 - [ ] 4) Maxwell's reciprocity theorem/Reziprozitaetssatz von Maxwell (ad)
 - [ ] 5) Buckling/Knickung (ad)

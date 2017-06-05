@@ -100,7 +100,7 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 
 #### Structural dynamics (cs):
 - [x] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
-- [ ] 2) FEM Example (ma)
+- [ ] 2) 2D cantilever beam (ma)
 - [ ] 3) Seismic example (ma)
 
 #### Technical Acoustics II (ag):
