@@ -3,7 +3,7 @@ from bokeh.plotting import figure
 from bokeh.models import Slider, Arrow, OpenHead, Select, Button, ColumnDataSource
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
-from drawingFuncs import monkeyLetGo, monkeyGrab, modifyHeight
+from drawingFuncs import monkeyLetGo, monkeyGrab
 from math import radians, cos, sin
 from os.path import dirname, split
 from drawable import Drawable
@@ -23,6 +23,7 @@ y_0 = 7.5
 direction_arrow = ColumnDataSource(data=dict(xS=[],yS=[],xE=[],yE=[]))
 t=0
 Active = False
+Done = False
 height = 0
 mass = 0.7
 
@@ -76,7 +77,7 @@ def evolve():
     function which makes banana and monkey move
     :return:
     """
-    global t, Active
+    global t, Active, Done
 
     t += 0.1
 
@@ -89,14 +90,17 @@ def evolve():
     if xM < xB < xM+20 and yM < yB < yM+20:
         curdoc().remove_periodic_callback(evolve)
         Active = False
+        Done = True
     # else if the banana hit the floor then stop
     elif yB < 0 or yM < 0:
         curdoc().remove_periodic_callback(evolve)
         Active = False
+        Done = True
     # else if nothing is falling and the banana has exited the screen
     elif grav_select.value == "Weltraum" and yB > 105:
         curdoc().remove_periodic_callback(evolve)
         Active = False
+        Done = True
 
 
 # set up image
@@ -121,7 +125,7 @@ banana_init_pos = (8, 10)
 banana.draw_at(x=banana_init_pos[0], y=banana_init_pos[1], w=5, h=5)
 
 cannon = Drawable(p, "Images/cannon.png")
-cannon.draw_at(x=0.3, y=0.5, h=15, w=15)
+cannon.draw_at(x=2.8, y=3.0, h=10, w=10, pad_fraction=.25)
 base = Drawable(p, "Images/base.png")
 base.draw_at(x=0, y=0, w=10, h=10)
 
@@ -142,7 +146,7 @@ def rotateCannon(angle):
     cannon.rotate_to(angle, center)
     cos_theta = cos(angle)
     sin_theta = sin(angle)
-    pos_banana = (3.2 + 4.8 * sin_theta + 5.5 * cos_theta, 4.5 + height + 4.8 * cos_theta - 5.5 * sin_theta)
+    pos_banana = (.2 + 4.8 * sin_theta + 5.5 * cos_theta, 4.5 + height + 4.8 * cos_theta - 5.5 * sin_theta)
     banana.move_to(pos_banana)
 
 
@@ -195,17 +199,20 @@ mass_slider.on_change('value',massCheck)
 
 
 def changeHeight(attr,old,new):
-    global y_0
+    global y_0, height
     # if it has been modified during the simulation
     # move back == deactivated (does not exist in bokeh)
-    if (Active and height!=new):
-        speed_slider.value=old
+    if (Active or Done) and height != new:
+        height_slider.value = old
     else:
         # else change height and update drawings
-        modifyHeight(new, cannon, base, banana)
-        y_0+=(new-old)
+        height = new
+        base.move_to((None, height))
+        cannon.move_to((None, height + 0.5))
+        banana.move_to((None, 10 + height))
+        y_0+=(height-old)
         updateTargetArrow()
-        hill_source.data=dict(x=[0, 30, 30],y=[new, new, 0])
+        hill_source.data = dict(x=[0, 30, 30],y=[height, height, 0])
 
 
 height_slider = Slider(title=u"H\u00F6he (m)",value=0.0,start=0,end=60,step=5)
@@ -247,11 +254,12 @@ fire_button.on_click(Fire)
 
 
 def Reset():
-    global Active, t
+    global Active, Done, t
     # if simulation is in progress, stop simulation
-    if Active:
+    if Active or Done:
         curdoc().remove_periodic_callback(evolve)
         Active = False
+        Done = False
     # return banana, monkey and cannon to original positions
     banana.move_to(banana_init_pos)
     monkey.move_to(monkey_init_pos)

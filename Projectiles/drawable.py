@@ -45,10 +45,17 @@ class Drawable:
         # thus we have a 2D array in bokeh readable format which can be returned
         return img
 
-    def draw_at(self, x, y, w, h):
+    def draw_at(self, x, y, w, h, pad_fraction=0):
         """
+
+        :param x: x coordinates of picture
+        :param y: y coordinates of picture
+        :param w: width
+        :param h: height
+        :param pad_fraction: part of the dimensions that is padded around the picture
         :return:
         """
+
         # find path to file
         dir = os.path.dirname(__file__)
         absolute_filepath = os.path.join(dir, self.filepath)
@@ -58,8 +65,12 @@ class Drawable:
         img = self.__convertForBokeh(img)
         # pad image so rotation can occur within frame
         size = img.shape
-        size = [int(ceil(size[0] / 4.0)), int(ceil(size[1] / 4.0))]
-        img = np.lib.pad(img, ((size[0], size[0]), (size[1], size[1])), 'constant', constant_values=(0))
+        padding_size = [int(ceil(size[0] * pad_fraction)), int(ceil(size[1] * pad_fraction))]
+        img = np.lib.pad(img, ((padding_size[0], padding_size[0]), (padding_size[1], padding_size[1])), 'constant', constant_values=(0))
+        x -= pad_fraction * w
+        y -= pad_fraction * h
+        w *= 1 + 2 * pad_fraction
+        h *= 1 + 2 * pad_fraction
         # save information to ColumnDataSource and other variables for rotation later
         self.orig_image = img
         self.orig_size = img.shape

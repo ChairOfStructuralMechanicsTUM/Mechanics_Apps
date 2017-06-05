@@ -22,11 +22,3 @@ def monkeyGrab(monkey, space = False):
         filename = "Images/monkey.png"
     print "calling monkey.replace_image"
     monkey.replace_image(filename)
-
-
-def modifyHeight(h, cannon, base, banana):
-    assert isinstance(cannon, Drawable) and isinstance(base, Drawable) and isinstance(banana, Drawable)
-
-    base.move_to((None, h))
-    cannon.move_to((None, h+0.5))
-    banana.move_to((None, 10+h))
