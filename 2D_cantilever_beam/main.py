@@ -533,7 +533,7 @@ plotDefXZ.yaxis.axis_label="z"
 
 # Construct the color-bar figure
 colorBar = Figure(
-                      title = 'compression                                                                      tension',
+                      title = '',
                       title_location="below",
                       plot_width=700,
                       plot_height=75,
