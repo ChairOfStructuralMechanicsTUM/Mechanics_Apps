@@ -57,7 +57,7 @@ t0_input = TextInput(value='1',
 N_input = TextInput(value='2^6',
                     title=u"N (Number of sample points, max = 10\u2075)")
 # button to show the solution
-nyquist_label_default = "Show sampling- and Nyquist-frequency"
+nyquist_label_default = "sampling: ..., nyquist: ..."
 nyquist_button = CheckboxButtonGroup(labels=[nyquist_label_default],
                                      active=[],
                                      sizing_mode="stretch_both")
