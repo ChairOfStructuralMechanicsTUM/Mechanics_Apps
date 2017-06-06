@@ -49,7 +49,8 @@ f_input = TextInput(value='exp(-t)',
                     title="x(t):")
 # dropdown menu for selecting one of the sample functions
 sample_fun_input_f = Dropdown(label="choose a sample function x(t) or enter one above",
-                              menu=sample_f_names)
+                              menu=sample_f_names,
+                              width=200)
 # text input window for T0 (Sampling interval length)
 t0_input = TextInput(value='1',
                      title=u"T\u2080 (Interval)")
@@ -234,18 +235,18 @@ def on_parameters_changed(attr, old, new):
 def on_function_changed(attr, old, new):
     update()
     # reset the views of all three plots
-    plot_original.x_range.start = min(f_sampled_source.data['t'])
-    plot_original.x_range.end = max(f_sampled_source.data['t'])
-    plot_original.y_range.start = min(f_sampled_source.data['f'])
-    plot_original.y_range.end = max(f_sampled_source.data['f'])
-    plot_transform_imag.x_range.start = min(F_sampled_source.data['omega'])
-    plot_transform_imag.x_range.end = max(F_sampled_source.data['omega'])
-    plot_transform_imag.y_range.start = min(min(F_sampled_source.data['F_real']),min(F_sampled_source.data['F_imag']))
-    plot_transform_imag.y_range.end = max(max(F_sampled_source.data['F_real']),max(F_sampled_source.data['F_imag']))
-    plot_transform_real.x_range.start = min(F_sampled_source.data['omega'])
-    plot_transform_real.x_range.end = max(F_sampled_source.data['omega'])
-    plot_transform_real.y_range.start = min(min(F_sampled_source.data['F_real']),min(F_sampled_source.data['F_imag']))
-    plot_transform_real.y_range.end = max(max(F_sampled_source.data['F_real']),max(F_sampled_source.data['F_imag']))
+    plot_original.x_range.start = min(x_sampled_source.data['t'])
+    plot_original.x_range.end = max(x_sampled_source.data['t'])
+    plot_original.y_range.start = min(x_sampled_source.data['x'])
+    plot_original.y_range.end = max(x_sampled_source.data['x'])
+    plot_transform_imag.x_range.start = min(X_sampled_source.data['frequency'])
+    plot_transform_imag.x_range.end = max(X_sampled_source.data['frequency'])
+    plot_transform_imag.y_range.start = min(min(X_sampled_source.data['X_real']),min(X_sampled_source.data['X_imag']))
+    plot_transform_imag.y_range.end = max(max(X_sampled_source.data['X_real']),max(X_sampled_source.data['X_imag']))
+    plot_transform_real.x_range.start = min(X_sampled_source.data['frequency'])
+    plot_transform_real.x_range.end = max(X_sampled_source.data['frequency'])
+    plot_transform_real.y_range.start = min(min(X_sampled_source.data['X_real']),min(X_sampled_source.data['X_imag']))
+    plot_transform_real.y_range.end = max(max(X_sampled_source.data['X_real']),max(X_sampled_source.data['X_imag']))
 
 
 def sample_fun_input_changed(self):
