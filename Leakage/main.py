@@ -3,7 +3,7 @@ from __future__ import division
 from os.path import dirname, split
 
 import numpy as np
-from numpy.fft import fft, fftshift
+from numpy.fft import ifft, fft, fftshift
 
 from bokeh.io import curdoc
 from bokeh.models import ColumnDataSource, VBox
@@ -137,11 +137,11 @@ def approximate_fourier_transform(T_0, N, f_function):
     x_samples = f_function(t_samples)
 
     # Fast Fourier Transform (FFT)
-    X_samples = fft(x_samples)
+    X_samples = ifft(x_samples)
 
     # Modifications in order to approximate the Continuous FT
-    X_samples *= T_S  # FFT and scaling with T_S
-    X_samples = fftshift(X_samples)  # Shift of the results
+    # X_samples /= N  # FFT and scaling with T_S
+    X_samples = 2 * np.sqrt(np.pi/2) * fftshift(X_samples)  # Shift of the results
 
     # ignore very small values and set them equal to zero
     a = X_samples.real
