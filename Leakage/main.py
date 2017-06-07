@@ -13,19 +13,31 @@ from bokeh.models.widgets import TextInput, Dropdown, CheckboxButtonGroup
 
 from sympy import sympify
 
-from my_bokeh_utils import string_to_function_parser
+from sym_functions import string_to_function_parser
 
+# sample functions with corresponding id
 sample_f_names = [
-    ("cos", "cos(2*pi*8*t)"),
-    ("cos and sin", "cos(2*pi*2*t)+sin(2*pi*4*t)"),
-    ("exp", "exp(-t)")
+    ("cos", "cos"),
+    ("cos and sin", "cos and sin"),
+    ("exp", "exp")
 ]
+
+# function and corresponding FT
+sample_functions = {
+    "cos":("cos(2*pi*8*t)", "sqrt(pi/2)*DiracDelta(f - 16*pi) + sqrt(pi/2)*DiracDelta(f + 16*pi)"),
+    "cos and sin":("cos(2*pi*2*t)+sin(2*pi*4*t)", "I*sqrt(pi/2)*DiracDelta(f - 8*pi) - I*sqrt(pi/2)*DiracDelta(f + 8*pi) + sqrt(pi/2)*DiracDelta(f + 4*pi) + sqrt(pi/2)*DiracDelta(f - 4*pi)"),
+    "exp":("exp(-t)", "0") # FT does not exist!
+}
 
 ####################
 # General Settings #
 ####################
 
 color_interval = False  # here we can decide if we want to color the transformed interval
+show_analytical_solution = True  # here we can decide if we want to show the analytical solution for sample functions
+sample_function_id = "cos"  # here we set the sample function that initially activated
+sample_function_used = True  # global bool that states whether a sample function is currently used
+
 
 ################
 # Data Sources #
@@ -45,7 +57,7 @@ if color_interval:
 # INTERACTIVE WIDGETS #
 #######################
 # text input window for function f(x,y) to be transformed
-f_input = TextInput(value='exp(-t)',
+f_input = TextInput(value=sample_functions[sample_function_id][0],
                     title="x(t):")
 # dropdown menu for selecting one of the sample functions
 sample_fun_input_f = Dropdown(label="choose a sample function x(t) or enter one above",
@@ -101,8 +113,9 @@ def extract_parameters():
         N = 10**5
         N_input.value = '10^5'
 
+    h = T_0 / N
     print f_input.value
-    f_function, _ = string_to_function_parser(f_input.value, ['t'])  # function to be transformed
+    f_function, _ = string_to_function_parser(f_input.value, h, ['t'])  # function to be transformed
 
     return T_0, N, f_function
 
@@ -118,35 +131,48 @@ def approximate_fourier_transform(T_0, N, f_function):
     T_S = T_0 / N  # Length of one sampling interval
 
     t_samples = np.arange(0, T_0, T_S)  # Grid in the Time Domain
-    omega_samples = np.arange(-N / 2 / T_0, N / 2 / T_0, 1 / T_0)  # Grid in the Frequency Domain
+    f_samples = np.arange(-np.pi * N / T_0, np.pi * N / T_0, 2*np.pi / T_0)  # Grid in the Frequency Domain
 
     # Function sampling
-    f_samples = f_function(t_samples)
+    x_samples = f_function(t_samples)
 
     # Fast Fourier Transform (FFT)
-    F_samples = fft(f_samples)
+    X_samples = fft(x_samples)
 
     # Modifications in order to approximate the Continuous FT
-    F_samples *= T_S  # FFT and scaling with T_S
-    F_samples = fftshift(F_samples)  # Shift of the results
+    X_samples *= T_S  # FFT and scaling with T_S
+    X_samples = fftshift(X_samples)  # Shift of the results
 
     # ignore very small values and set them equal to zero
-    a = F_samples.real
-    b = F_samples.imag
+    a = X_samples.real
+    b = X_samples.imag
     a[abs(a) < 10 ** -10] = 0
     b[abs(b) < 10 ** -10] = 0
-    F_samples = a+1j*b
+    X_samples = a+1j*b
 
-    return F_samples, omega_samples, f_samples, t_samples
+    return X_samples, f_samples, x_samples, t_samples
+
+
+def sample_fourier_transform(T_0, N):
+    """
+    returns samples of the fourier transform
+    :return:
+    """
+    assert sample_function_used
+
+    sample_functions_transform = sample_functions[sample_function_id][1]
+
+    N_samples = 1000
+    f_analytical, h = np.linspace(-np.pi * N / T_0, np.pi * N / T_0, N_samples, retstep=True)  # Grid in the Frequency Domain
+    X_function_analytical, _ = string_to_function_parser(sample_functions_transform, h, ['f'])  # function to be transformed
+    X_analytical = X_function_analytical(f_analytical)
+
+    return X_analytical, f_analytical
 
 
 def update():
     """
     Compute data depending on input parameters. We compute the fft and the analytical fourier transform
-
-    WARNING!
-    Currently we fake the computation of the transform by just computing a high resolution fft, sympy allows us to do
-    an analytical fourier transform but there are some bugs: https://github.com/sympy/sympy/issues/12591 (18.5.2017)
     """
 
     # Extract parameters
@@ -154,25 +180,25 @@ def update():
 
     # computation of discrete FT
     X_samples, f_samples, x_samples, t_samples = approximate_fourier_transform(T_0, N, x_function)
-
-    # faking the analytical FT by using a high resolution discrete FT
-    N_high = 10**5
-    X_analytical, f_analytical, x_analytical, t_analytical = approximate_fourier_transform(T_0, N_high, x_function)
-    # we only use the part of the "analytical" solution that matched the discrete FT region, otherwise the interesting regions shrink too much
-    decider = (f_analytical >= 2 * f_samples.min()) & (f_analytical <= 2 * f_samples.max())
-    X_analytical = X_analytical[decider]  # truncuate F values
-    f_analytical = f_analytical[decider]  # truncuate omega region
-
-    # save to data source
     x_sampled_source.data = dict(t=t_samples, x=x_samples)
     X_sampled_source.data = dict(frequency=f_samples, X_real=X_samples.real, X_imag=X_samples.imag)
-    x_analytical_source.data = dict(t=t_analytical, x=x_analytical)
-    X_analytical_source.data = dict(frequency=f_analytical, X_real=X_analytical.real, X_imag=X_analytical.imag)
 
-    t_start = 0 - N / T_0 / 2.0
-    t_end = 0 + N / T_0 / 2.0
+    if sample_function_used and show_analytical_solution: # we only provide the analytical solution, if a sample function is used.
+        X_analytical, f_analytical = sample_fourier_transform(T_0, N)
+        X_analytical_source.data = dict(frequency=f_analytical.tolist(), X_real=X_analytical.real, X_imag=X_analytical.imag)
+
+    else:  # otherwise we provide empty arrays
+        X_analytical_source.data = dict(frequency=[], X_real=[], X_imag=[])
+
+    N_samples = 1000
+    t_analytical, h = np.linspace(0, T_0, N_samples, retstep=True)
+    x_function_analytical, _ = string_to_function_parser(f_input.value, h, ['t'])  # function to be transformed
+    x_analytical = x_function_analytical(t_analytical)
+    x_analytical_source.data = dict(t=t_analytical.tolist(), x=x_analytical.tolist())
 
     if color_interval:
+        t_start = - N / T_0 / 2.0
+        t_end = + N / T_0 / 2.0
         # data for patch denoting the size of one interval
         source_interval_patch.data = dict(x_patch=[t_start,t_end,t_end,t_start],
                                           y_patch=[-10**3,-10**3,+10**3,+10**3])
@@ -232,8 +258,11 @@ def on_parameters_changed(attr, old, new):
     hide_solution()
 
 
-def on_function_changed(attr, old, new):
-    update()
+def reset_views():
+    """
+    resets all views with respect to the currently plotted function. Should be called after a new function is eneterd.
+    :return:
+    """
     # reset the views of all three plots
     plot_original.x_range.start = min(x_sampled_source.data['t'])
     plot_original.x_range.end = max(x_sampled_source.data['t'])
@@ -241,22 +270,50 @@ def on_function_changed(attr, old, new):
     plot_original.y_range.end = max(x_sampled_source.data['x'])
     plot_transform_imag.x_range.start = min(X_sampled_source.data['frequency'])
     plot_transform_imag.x_range.end = max(X_sampled_source.data['frequency'])
-    plot_transform_imag.y_range.start = min(min(X_sampled_source.data['X_real']),min(X_sampled_source.data['X_imag']))
-    plot_transform_imag.y_range.end = max(max(X_sampled_source.data['X_real']),max(X_sampled_source.data['X_imag']))
+    plot_transform_imag.y_range.start = min(min(X_sampled_source.data['X_real']), min(X_sampled_source.data['X_imag']))
+    plot_transform_imag.y_range.end = max(max(X_sampled_source.data['X_real']), max(X_sampled_source.data['X_imag']))
     plot_transform_real.x_range.start = min(X_sampled_source.data['frequency'])
     plot_transform_real.x_range.end = max(X_sampled_source.data['frequency'])
-    plot_transform_real.y_range.start = min(min(X_sampled_source.data['X_real']),min(X_sampled_source.data['X_imag']))
-    plot_transform_real.y_range.end = max(max(X_sampled_source.data['X_real']),max(X_sampled_source.data['X_imag']))
+    plot_transform_real.y_range.start = min(min(X_sampled_source.data['X_real']), min(X_sampled_source.data['X_imag']))
+    plot_transform_real.y_range.end = max(max(X_sampled_source.data['X_real']), max(X_sampled_source.data['X_imag']))
+
+
+def on_function_changed(attr, old, new):
+    """
+    Called if the function is changed by providing text input
+    :param attr:
+    :param old:
+    :param new:
+    :return:
+    """
+    # we set the bool false, because we use an arbitrary function that is input by the user
+    global sample_function_used
+    sample_function_used = False
+
+    update()
+    reset_views()
 
 
 def sample_fun_input_changed(self):
     """
-    called if the sample function is changed.
+    Called if the sample function is changed.
     :param self:
     :return:
     """
-    f_input.value = sample_fun_input_f.value
+
+    # we set the bool true, because we use a sample function for which we know the analytical solution
+    global sample_function_used, sample_function_id
+    sample_function_used = True
+
+    # get the id
+    sample_function_id = sample_fun_input_f.value
+    # get the corresponding sample function
+    sample_function = sample_functions[sample_function_id][0]
+    # write the sample function into the textbox
+    f_input.value = sample_function
+    sample_function_used = True
     update()
+    reset_views()
 
 
 def on_nyquist_button_changed(attr, old, new):
