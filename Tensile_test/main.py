@@ -28,13 +28,13 @@ MaxPlotted=0
 MinPlasticPlotted=44
 
 ## Load Plotting Points from file ##
-TheoryData = loadtxt('Zugversuch/TheoryData.txt');
-PlasticData = loadtxt('Zugversuch/PlasticData.txt');
+TheoryData = loadtxt('Tensile_test/TheoryData.txt');
+PlasticData = loadtxt('Tensile_test/PlasticData.txt');
 
 ## Create arrays containing the points which need to be plotted for each
 #  incrementation of the force slider
-TheoryDataDictionary = loadtxt('Zugversuch/TheoryDataDictionary.txt',int);
-PlasticDataDictionary = loadtxt('Zugversuch/PlasticDataDictionary.txt',int);
+TheoryDataDictionary = loadtxt('Tensile_test/TheoryDataDictionary.txt',int);
+PlasticDataDictionary = loadtxt('Tensile_test/PlasticDataDictionary.txt',int);
 
 ########### Functions ###########
 
