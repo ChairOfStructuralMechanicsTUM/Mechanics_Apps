@@ -7,4 +7,8 @@ The app can be run using the command "bokeh serve --show Querdehnung/" from the 
 ## To Do
 
 ## To Do ? 
-- [ ] Allow user to add own shapes
+- [ ] Change colors, red=Pantone 158, black=# 333333, blue=Pantone 301
+- [ ] Make the deformation more evident
+- [ ] Delete or avoid global variables
+- [ ] Final check
+- [ ] Description: general and interactivity features

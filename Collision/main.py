@@ -55,8 +55,8 @@ Define the objects to be plotted within the plotting domain
 ###############################################################################
 '''
 # Define the initial location of the two colliding balls (in our 2D app, circles)
-x1,x2 = 3,5
-y1,y2 = 2,2
+x1,x2 = 3.0,5.0
+y1,y2 = 2.0,2.0
 r1,r2 = 0.5,0.5
 m1,m2 = 3,1
 c1,c2 = '#33FF33','#FF3333'
@@ -145,24 +145,24 @@ def compute_tranjectory():
     distance = np.sqrt( dx*dx + dy*dy )
     
     # Detect Walls
-    if (   abs( circleOneSource.data['x'][0] + r1 - xMax ) <= abs(velocityVectorOne[0])*dt+tolerance
-        or abs( circleOneSource.data['x'][0] - r1 - xMin ) <= abs(velocityVectorOne[0])*dt+tolerance):
+    if (   abs( circleOneSource.data['x'][0] + r1 - xMax ) <= abs(velocityVectorOne[0])*dt + tolerance
+        or abs( circleOneSource.data['x'][0] - r1 - xMin ) <= abs(velocityVectorOne[0])*dt + tolerance):
         
         # The negative sign is to reflect the ball
         velocityVectorOne[0] *= -1
 
-    elif (   abs( circleTwoSource.data['x'][0] + r2 - xMax ) <= abs(velocityVectorTwo[0]*dt)+tolerance
-          or abs( circleTwoSource.data['x'][0] - r2 - xMin ) <= abs(velocityVectorTwo[0]*dt)+tolerance):
+    elif (   abs( circleTwoSource.data['x'][0] + r2 - xMax ) <= abs(velocityVectorTwo[0])*dt + tolerance
+          or abs( circleTwoSource.data['x'][0] - r2 - xMin ) <= abs(velocityVectorTwo[0])*dt + tolerance):
         
         velocityVectorTwo[0] *= -1
 
-    if (   abs( circleOneSource.data['y'][0] + r1 - yMax ) <= abs(velocityVectorOne[1])*dt+tolerance 
-        or abs( circleOneSource.data['y'][0] - r1 - yMin ) <= abs(velocityVectorOne[1])*dt+tolerance):
+    if (   abs( circleOneSource.data['y'][0] + r1 - yMax ) <= abs(velocityVectorOne[1])*dt + tolerance 
+        or abs( circleOneSource.data['y'][0] - r1 - yMin ) <= abs(velocityVectorOne[1])*dt + tolerance):
         
         velocityVectorOne[1] *= -1
 
-    elif (   abs( circleTwoSource.data['y'][0] + r2 - yMax ) <= tolerance+abs(velocityVectorTwo[1])*dt
-          or abs( circleTwoSource.data['y'][0] - r2 - yMin ) <= tolerance+abs(velocityVectorTwo[1])*dt):
+    elif (   abs( circleTwoSource.data['y'][0] + r2 - yMax ) <= abs(velocityVectorTwo[1])*dt + tolerance
+          or abs( circleTwoSource.data['y'][0] - r2 - yMin ) <= abs(velocityVectorTwo[1])*dt + tolerance):
         
         velocityVectorTwo[1] *= -1
 
@@ -312,8 +312,8 @@ def Reset():
     update_particle_source(1,x2,y2)
 
     # Update the velocity vectors
-    velocityVectorOne = np.array([1,0])
-    velocityVectorTwo = np.array([0,0])
+    velocityVectorOne = np.array([1.0, 0.0])
+    velocityVectorTwo = np.array([0.0, 0.0])
 
     # Update the velocity arrows' source file
     update_velocity_arrows()
@@ -333,10 +333,10 @@ def Reset():
     Active = False
     
     # Return the solider to their default values
-    ballOneVelocityDirSlider.value = 0
-    ballTwoVelocityDirSlider.value = 0
-    ballOneVelocityMagSlider.value  = 1
-    ballTwoVelocityMagSlider.value  = 0
+    ballOneVelocityDirSlider.value = 0.0
+    ballTwoVelocityDirSlider.value = 0.0
+    ballOneVelocityMagSlider.value  = 1.0
+    ballTwoVelocityMagSlider.value  = 0.0
 
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)

@@ -1,11 +1,12 @@
 from __future__ import division
 from bokeh.plotting import figure
-from bokeh.models import Slider, LabelSet, Arrow, OpenHead, Select, Button
+from bokeh.models import Slider, Arrow, OpenHead, Select, Button, ColumnDataSource
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
-from drawingFuncs import *
-from math import radians, cos, sin, tan
-from os.path import dirname, join, split
+from drawingFuncs import monkeyLetGo, monkeyGrab
+from math import radians, cos, sin
+from os.path import dirname, split
+from drawable import Drawable
 
 # initialise variables
 aim_line = ColumnDataSource(data=dict(x=[],y=[]))
@@ -22,27 +23,42 @@ y_0 = 7.5
 direction_arrow = ColumnDataSource(data=dict(xS=[],yS=[],xE=[],yE=[]))
 t=0
 Active = False
+Done = False
 height = 0
 mass = 0.7
+
 
 def init ():
     updateTargetArrow()
 
-# calculate banana position during trajectory
-def bananaPosition (t):
-    global x_0, speed, theta
+
+def bananaPosition(t):
+    """
+    calculate banana position during trajectory
+    :param t:
+    :return:
+    """
     x = x_0 + speed*cos(theta)*t
     y = y_0 + speed*sin(theta)*t-g*t**2/2.0
     return (x,y)
 
-# calculate monkey position during fall
-def monkeyDrop (t):
-    y = -g*t**2/2.0
-    return y
 
-# update directional indicator arrows
-def updateTargetArrow ():
-    global direction_arrow, speed, theta, aim_line, x_0, y_0
+def monkeyPosition(t):
+    """
+    calculate monkey position during fall
+    :param t:
+    :return:
+    """
+    x = monkey_init_pos[0]
+    y = monkey_init_pos[1] - g*t**2 * .5
+    return (x,y)
+
+
+def updateTargetArrow():
+    """
+    update directional indicator arrows
+    :return:
+    """
     # if speed = 0 then there is no arrow
     if (speed == 0):
         direction_arrow.data = dict(xS=[],yS=[],xE=[],yE=[])
@@ -55,24 +71,37 @@ def updateTargetArrow ():
         # mean that a solution using tan does not lie on the direction arrow
         aim_line.data = dict(x=[x_0,100*xE],y=[y_0,y_0+100*yE])
 
-# function which makes banana and monkey move
-def evolve ():
-    global t, Active
-    t+=0.1
-    (xB,yB)=moveBanana(bananaPosition(t))
-    (xM,yM)=moveMonkey(monkeyDrop(t))
+
+def evolve():
+    """
+    function which makes banana and monkey move
+    :return:
+    """
+    global t, Active, Done
+
+    t += 0.1
+
+    xM, yM = monkeyPosition(t)
+    xB, yB = bananaPosition(t)
+    banana.move_to((xB, yB))
+    monkey.move_to((xM, yM))
+
     # if monkey is hit with banana then stop
-    if (xB>xM and xB<xM+20 and yB>yM and yB<yM+20):
+    if xM < xB < xM+20 and yM < yB < yM+20:
         curdoc().remove_periodic_callback(evolve)
         Active = False
+        Done = True
     # else if the banana hit the floor then stop
-    elif (yB<0 or yM<0):
+    elif yB < 0 or yM < 0:
         curdoc().remove_periodic_callback(evolve)
         Active = False
+        Done = True
     # else if nothing is falling and the banana has exited the screen
-    elif (grav_select.value=="Weltraum" and yB>105):
+    elif grav_select.value == "Weltraum" and yB > 105:
         curdoc().remove_periodic_callback(evolve)
         Active = False
+        Done = True
+
 
 # set up image
 p = figure(tools="",x_range=(0,200),y_range=(0,100),width=900,height=450)
@@ -82,19 +111,48 @@ arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=direction_arrow,
     line_color="black",line_width=3)
 p.add_layout(arrow_glyph)
-drawMonkey(p)
-drawBranch(p)
-drawBanana(p)
-drawCannon(p)
-drawBase(p)
+
+monkey = Drawable(p, "Images/monkey.png")
+monkey_init_pos = (180, 70)
+monkey.draw_at(x=monkey_init_pos[0], y=monkey_init_pos[1], w=20, h=20)
+
+branch = Drawable(p, "Images/branch.png")
+branch_init_pos = (150, 70)
+branch.draw_at(x=branch_init_pos[0], y=branch_init_pos[1], w=50, h=25)
+
+banana = Drawable(p, "Images/banana.png")
+banana_init_pos = (8, 10)
+banana.draw_at(x=banana_init_pos[0], y=banana_init_pos[1], w=5, h=5)
+
+cannon = Drawable(p, "Images/cannon.png")
+cannon.draw_at(x=2.8, y=3.0, h=10, w=10, pad_fraction=.25)
+base = Drawable(p, "Images/base.png")
+base.draw_at(x=0, y=0, w=10, h=10)
+
 p.background_fill_color = PlanetHue["Erde"]
 p.grid.visible=False
 
 init()
 
+
+def rotateCannon(angle):
+    """
+    rotates the cannon and moves the banana correspondingly
+    :param angle:
+    :return:
+    """
+    # find points (in image coordinates) about which the image is rotated
+    center = (4.7 * cannon.orig_size[0] / 15.0, 7.5 * cannon.orig_size[1] / 15.0)
+    cannon.rotate_to(angle, center)
+    cos_theta = cos(angle)
+    sin_theta = sin(angle)
+    pos_banana = (.2 + 4.8 * sin_theta + 5.5 * cos_theta, 4.5 + height + 4.8 * cos_theta - 5.5 * sin_theta)
+    banana.move_to(pos_banana)
+
+
 ## slider/button/dropdown functions
 def changeTheta(attr,old,new):
-    global theta, Active, angle_slider
+    global theta, Active
     # if it has been modified during the simulation
     # move back == deactivated (does not exist in bokeh)
     if (Active and theta!=radians(new)):
@@ -104,11 +162,15 @@ def changeTheta(attr,old,new):
         theta=radians(new)
         rotateCannon(radians(30-new))
         updateTargetArrow()
+
+
 # angle increment is large to prevent lag
 angle_slider = Slider(title=u"\u0398 (\u00B0)",value=30,start=0,end=65,step=5)
 angle_slider.on_change('value',changeTheta)
+
+
 def changeSpeed(attr,old,new):
-    global speed, Active, speed_slider
+    global speed, Active
     # if it has been modified during the simulation
     # move back == deactivated (does not exist in bokeh)
     if (Active and speed!=new):
@@ -117,72 +179,97 @@ def changeSpeed(attr,old,new):
         # else update speed and directional arrow
         speed=new
         updateTargetArrow()
-speed_slider = Slider(title="Geschwindigkeit (m/s)",value=50,start=0,end=120,step=5)
-speed_slider.on_change('value',changeSpeed)
+
+
+speed_slider = Slider(title="Geschwindigkeit (m/s)", value=50, start=0, end=120, step=5)
+speed_slider.on_change('value', changeSpeed)
+
+
 # mass is not necessary but function is needed to protect the integrity of the simulation
-def massCheck(attr,old,new):
-    global Active, mass, mass_slider
+def massCheck(attr, old, new):
+    global Active, mass
     if (Active and mass!=new):
         mass_slider.value=old
     else:
         mass=new
+
+
 mass_slider = Slider(title="Masse (kg)",value=mass,start=0,end=2,step=0.1)
 mass_slider.on_change('value',massCheck)
+
+
 def changeHeight(attr,old,new):
-    global y_0, hill_source, Active, speed_slider
+    global y_0, height
     # if it has been modified during the simulation
     # move back == deactivated (does not exist in bokeh)
-    if (Active and height!=new):
-        speed_slider.value=old
+    if (Active or Done) and height != new:
+        height_slider.value = old
     else:
         # else change height and update drawings
-        modifyHeight(new)
-        y_0+=(new-old)
+        height = new
+        base.move_to((None, height))
+        cannon.move_to((None, height + 0.5))
+        banana.move_to((None, 10 + height))
+        y_0+=(height-old)
         updateTargetArrow()
-        hill_source.data=dict(x=[0,30,30],y=[new,new,0])
+        hill_source.data = dict(x=[0, 30, 30],y=[height, height, 0])
+
+
 height_slider = Slider(title=u"H\u00F6he (m)",value=0.0,start=0,end=60,step=5)
 height_slider.on_change('value',changeHeight)
+
+
 def changeGrav(attr,old,new):
-    global g, PlanetGravity, Active
+    global g
     # if it has been modified during the simulation
     # move back == deactivated (does not exist in bokeh)
-    if (Active and g!=PlanetGravity[new]):
+    if (Active and g != PlanetGravity[new]):
         grav_select.value=old
     else:
         # else reset and change gravity
         g=PlanetGravity[new]
         p.background_fill_color = PlanetHue[new]
         Reset()
+
+
 grav_select = Select(title="Planet:", value="Erde",
     options=["Weltraum", "Mercur", "Venus", "Erde", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptun","Pluto"])
 grav_select.on_change('value',changeGrav)
 
+
 def Fire():
-    global Active, grav_select
-    if (not Active):
-        if (t!=0):
+    global Active
+    if not Active:
+        if t!=0:
             Reset()
         # if simulation is not already started
         # release branch and start simulation
-        monkeyLetGo(grav_select.value!="Erde")
+        monkeyLetGo(monkey, grav_select.value!="Erde")
         curdoc().add_periodic_callback(evolve, 50)
         Active = True
+
+
 fire_button = Button(label="Feuer",button_type="success")
 fire_button.on_click(Fire)
 
+
 def Reset():
-    global Active,t
+    global Active, Done, t
     # if simulation is in progress, stop simulation
-    if (Active):
+    if Active or Done:
         curdoc().remove_periodic_callback(evolve)
         Active = False
+        Done = False
     # return banana, monkey and cannon to original positions
-    moveBanana()
-    moveMonkey()
+    banana.move_to(banana_init_pos)
+    monkey.move_to(monkey_init_pos)
+
     # make monkey grab branch again (also resets helmet)
-    monkeyGrab(grav_select.value!="Erde")
+    monkeyGrab(monkey, grav_select.value != "Erde")
     # reset time
     t=0
+
+
 reset_button = Button(label="Reset",button_type="success")
 reset_button.on_click(Reset)
 
