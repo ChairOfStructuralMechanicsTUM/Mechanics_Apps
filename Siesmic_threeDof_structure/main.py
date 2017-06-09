@@ -13,6 +13,8 @@ from bokeh.layouts import column, row
 from bokeh.models.widgets import TextInput
 from os.path import dirname, join, split
 from Functions import *
+from bokeh.models.ranges import Range1d
+from bokeh.models.layouts import Spacer
 
 '''
 ###############################################################################
@@ -27,12 +29,12 @@ time_plot = figure(
                       x_range=[xmin,xmax], 
                       y_range=[ymin,ymax],
                       
-                      title = '',
+                      title = 'Time Domain Plot of the System',
                   )
 time_plot.title.text_font_size = "25px"
 time_plot.title.align = "center"
 time_plot.grid.visible=False
-time_plot.xaxis.visible=False
+time_plot.xaxis.visible=True
 time_plot.yaxis.visible=False
 
 modes_plot = figure(
@@ -41,7 +43,7 @@ modes_plot = figure(
                       x_range=[xmin,xmax], 
                       y_range=[ymin,ymax],
                       
-                      title = '',
+                      title = 'Modes plot of the System',
                    )
 modes_plot.title.text_font_size = "25px"
 modes_plot.title.align = "center"
@@ -50,18 +52,20 @@ modes_plot.xaxis.visible=False
 modes_plot.yaxis.visible=False
 
 siesmic_input_plot = figure(
-                      plot_width=400,
-                      plot_height=400,
+                      plot_width=800,
+                      plot_height=200,
                       x_range=[0.0,2000], 
                       y_range=[-1.0,1.0],
-                      
-                      title = '',
+                      tools = '',
+                      title = 'Siesmic Input Signal'
                    )
 siesmic_input_plot.title.text_font_size = "25px"
 siesmic_input_plot.title.align = "center"
-siesmic_input_plot.grid.visible=False
-siesmic_input_plot.xaxis.visible=False
-siesmic_input_plot.yaxis.visible=False
+siesmic_input_plot.grid.visible=True
+siesmic_input_plot.xaxis.visible=True
+siesmic_input_plot.yaxis.visible=True
+siesmic_input_plot.xaxis.axis_label = 'Time (second)'
+siesmic_input_plot.yaxis.axis_label = 'Acceleration (meter^2/second)'
 
 Active = True
 
@@ -116,9 +120,9 @@ base = ColumnDataSource(
 structure = Structure(masses, massSupports, trussSources, trussLength, base)
 
 ############################## Plot structure #################################
-time_plot.line( x='x', y='y', source=structure.massSupports[0], line_width=4)
-time_plot.line( x='x', y='y', source=structure.massSupports[1], line_width=4)
-time_plot.line( x='x', y='y', source=structure.massSupports[2], line_width=4)
+time_plot.line( x='x', y='y', source=structure.massSupports[0], color='#000000', line_width=5)
+time_plot.line( x='x', y='y', source=structure.massSupports[1], color='#000000', line_width=5)
+time_plot.line( x='x', y='y', source=structure.massSupports[2], color='#000000', line_width=5)
 
 time_plot.circle( x='x',y='y',radius=radius,color=color,source=structure.masses[0] )
 time_plot.circle( x='x',y='y',radius=radius,color=color,source=structure.masses[1] )
@@ -131,7 +135,7 @@ time_plot.line( x='x', y='y', source=structure.trusses[3], line_width=2)
 time_plot.line( x='x', y='y', source=structure.trusses[4], line_width=2)
 time_plot.line( x='x', y='y', source=structure.trusses[5], line_width=2)
 
-time_plot.line( x='x', y='y', source=structure.base,   line_width=10)
+time_plot.line( x='x', y='y', source=structure.base, color='#000000', line_width=20)
 '''
 ###############################################################################
 Construct the system of equations that needs to be solved
@@ -150,6 +154,8 @@ Define here the time loop that leads to the solution of the system of equations
 in time domain
 ###############################################################################
 '''
+timeStep = 0.01 #seconds
+
 # siesmicInput is an array which has a list of time in seconds in its first 
 # index and a list of the ampitude in m/s2 in its second index
 siesmicInput = ColumnDataSource(data=dict(amplitude=[0],time=[0],color=["33FF33"]))
@@ -157,7 +163,13 @@ siesmicInput.data = read_siesmic_input(file='data/preDefinedTwo.txt')
 
 # Plot the siesmic input signal into the siesmic_input_plot
 siesmic_input_plot.line( x='time', y='amplitude', color="#33FF33", source=siesmicInput,   line_width=1)
-siesmic_input_plot.circle(x='time', y='amplitude', color="color", source=siesmicInput, radius=1)
+siesmic_input_plot.circle(x='time', y='amplitude', color="color", source=siesmicInput, radius=0.01)
+
+# Modify the y-range of the signal plot
+maxValue = max(abs(i) for i in siesmicInput.data['amplitude'])
+
+siesmic_input_plot.y_range = Range1d(-maxValue, maxValue)
+siesmic_input_plot.x_range = Range1d(0, siesmicInput.data['time'][-1])
 
 siesmicInput.data['color'][100] = siesmicInput.data['color'][100]*0 + '#000000'
 
@@ -210,26 +222,20 @@ Define here the main interactivities which are:
 ###############################################################################
 '''
 ############################ (1) masses slider ################################
-mass_Slider = Slider(
-                       title=u" Mass of the individual point mass (kg) ",
-                       value=1, start=0, end=10, step=0.1,width=600
-                    )
-mass_Slider.on_change('value',update_mass)
-
 def update_mass(attr,old,new):
     global mass
     mass = new
     
     construct_system(M, K, C, mass, bendingStiffness, trussLength)
     compute_system()
+    
+mass_Slider = Slider(
+                       title=u" Mass of the individual point mass (kg) ",
+                       value=1, start=0, end=10, step=0.1,width=600
+                    )
+mass_Slider.on_change('value',update_mass)
 
 ####################### (2) bending stiffness slider ##########################
-bendingStiffness_Slider = Slider(
-                                   title=u" Bending stiffness of the individual column () ",
-                                   value=0, start=0, end=30, step=0.01,width=600
-                                )
-bendingStiffness_Slider.on_change('value',update_bendingStiffness)
-
 def update_bendingStiffness(attr,old,new):
     global bendingStiffness
     bendingStiffness = new
@@ -237,13 +243,21 @@ def update_bendingStiffness(attr,old,new):
     construct_system(M, K, C, mass, bendingStiffness, trussLength)
     compute_system()
     
+bendingStiffness_Slider = Slider(
+                                   title=u" Bending stiffness of the individual column () ",
+                                   value=0, start=0, end=30, step=0.01,width=600
+                                )
+bendingStiffness_Slider.on_change('value',update_bendingStiffness)
+    
 ############################# (3) time slider #################################
 def update_time(attr,old,new):
     global counter
-    timeStep = 0.01 #seconds
-    masses[0].data = dict(x=[solution[0,int(new/timeStep)]] , y=masses[0].data['y'])
-    masses[1].data = dict(x=[solution[1,int(new/timeStep)]] , y=masses[1].data['y'])
-    masses[2].data = dict(x=[solution[2,int(new/timeStep)]] , y=masses[2].data['y'])
+    
+    displacement = [solution[0,counter], solution[1,counter], solution[2,counter]]
+
+    structure.update_masses( displacement )
+    structure.update_massSupprts( displacement )
+    structure.update_truss_sources()
     
     counter = int(new/timeStep)
     
@@ -256,7 +270,6 @@ time_Slider.on_change('value',update_time)
 
 ############################# (4) Play button #################################  
 def play():
-    print('pressed!')
     timeStep = 0.01 #seconds
     period = timeStep*1000
     curdoc().add_periodic_callback(play_system, period)
@@ -284,11 +297,11 @@ def play_system():
     siesmicInput.data['color'][counter] = siesmicInput.data['color'][counter]*0 + '#000000'
 
 ############################ (5) Pause button #################################
-pause_button = Button(label="Pause", button_type="success")
-pause_button.on_click(pause)
-
 def pause():
     curdoc().remove_periodic_callback(play_system)
+    
+pause_button = Button(label="Pause", button_type="success")
+pause_button.on_click(pause)
 
 ############################### (6) data box ##################################
 text_input = TextInput(value="default", title="Label:")
@@ -301,7 +314,7 @@ def compute_system():
         (3) compute/re-compute the time dependent solution of the system
     '''
     global siesmicInput, eigenvalues, eigenmodeOne, eigenmodeTwo, eigenmodeThree, solution
-    
+    print('pressed!')
     curdoc().remove_periodic_callback(play_system)
     time_Slider.value = 0.0
     
@@ -325,13 +338,20 @@ Construct and show the resulting plot
 curdoc().add_root(
                   row(
                       column(
-                             time_plot,
+                             row(
+                                   time_plot,
+                                   modes_plot,
+                                ),
+                             Spacer(height=60),
                              siesmic_input_plot
                             ),
-                      modes_plot,
                       column(
                              play_button,
-                             time_Slider
+                             pause_button,
+                             Spacer(height=60),
+                             time_Slider,
+                             bendingStiffness_Slider,
+                             mass_Slider
                             )
                      )
                  )    

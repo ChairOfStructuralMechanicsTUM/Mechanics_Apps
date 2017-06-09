@@ -22,17 +22,35 @@ class Structure:
         self.massSupports[2].data['x'] = self.massSupports[2].data['x']*0 + [-0.5+displacement[2], 0.5+displacement[2]]
 
     def update_truss_sources(self):
+        noElements = 10
+        
+        # truss1
+        x1 = self.masses[0].data['x'][0] - self.trussLength/2
+        x2 = self.masses[0].data['x'][0] - self.trussLength/2
+        ys = np.ones(noElements) * (self.masses[0].data['y'][0] - self.trussLength)
+        xs = interpolate(x1,x2,noElements,self.trussLength)
         self.trusses[0].data = dict(
-                                    x=[self.masses[0].data['x'][0] - self.trussLength/2, self.masses[0].data['x'][0] - self.trussLength/2],
-                                    y=[self.masses[0].data['y'][0] - self.trussLength  , self.masses[0].data['y'][0]                     ]
+                                    x=[xs],
+                                    y=[ys]
                                    )
         self.trusses[1].data = dict(
                                     x=[self.masses[0].data['x'][0] + self.trussLength/2, self.masses[0].data['x'][0] + self.trussLength/2],
                                     y=[self.masses[0].data['y'][0] - self.trussLength  ,           self.masses[0].data['y'][0]           ]
                                    )
+        
+        # truss3
+        x1 = self.masses[0].data['x'][0] - self.trussLength/2
+        x2 = self.masses[1].data['x'][0] - self.trussLength/2
+        xs = interpolate(x1,x2,noElements,self.trussLength)
+        
+        y1 = self.masses[0].data['y'][0] 
+        y2 = self.masses[1].data['y'][0] 
+        ys = interpolate(y1,y2,noElements,self.trussLength)
+        print('ys = ',ys)
+        print('xs = ',xs)
         self.trusses[2].data =dict(
-                                    x=[self.masses[0].data['x'][0] - self.trussLength/2, self.masses[1].data['x'][0] - self.trussLength/2],
-                                    y=[self.masses[0].data['y'][0]                     ,           self.masses[1].data['y'][0]           ]
+                                    x=[xs],
+                                    y=[ys]
                                    )
         self.trusses[3].data =dict(
                                     x=[self.masses[0].data['x'][0] + self.trussLength/2, self.masses[1].data['x'][0] + self.trussLength/2],
@@ -47,7 +65,21 @@ class Structure:
                                     y=[self.masses[1].data['y'][0]                     ,           self.masses[2].data['y'][0]           ]
                                    ) 
         
-        
+def N1 (x,length):
+    xi = 2*x/length - 1
+    return( 0.25 * (1-xi)**2 * (2+xi) )
+def N2 (x,length):
+    xi = 2*x/length - 1
+    return( 0.25 * (1+xi)**2 * (2-xi) )
+    
+def interpolate(x1,x2,noElements,length):
+    nodes = np.ones(noElements)
+    for i in range(noElements):
+        x = i/noElements * length + x2
+        nodes[i] =  N1(x,length)*x1 + N2(x,length)*x2 
+
+    return(nodes)
+    
 def construct_truss_sources(massOne, massTwo, massThree, length):
     trussOne   = ColumnDataSource(
                                   data=dict(
