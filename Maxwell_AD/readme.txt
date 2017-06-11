@@ -2,7 +2,7 @@ readme: Maxwell
 
 TO-DO:
 [X]Change F1 frame to blue (changed)
-[] Change to english
+[X] Change to english
 []add in description
 []Change displacement arrows
 []add in ratio

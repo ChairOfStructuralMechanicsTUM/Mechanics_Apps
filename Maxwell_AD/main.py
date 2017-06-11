@@ -41,7 +41,7 @@ class Frame(object):
         self.dlabel         = ColumnDataSource(data=dict(x=[] , y=[], name = []))
         self.w1             = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
         self.w2             = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
-        self.wdline         = ColumnDataSource(data=dict(x=[], y=[]))
+        self.wdline         = ColumnDataSource(data=dict(x1=[], x2 =[], y1 = [], y2=[]))
 
         #self.mag_slider     = Slider(title= self.name + " Kraftbetrag", value=self.mag_val, start=self.mag_start, end=self.mag_end, step=1)
         #self.loc_slider     = Slider(title= self.name + " Kraftposition", value=self.loc_val, start=self.loc_start, end=self.loc_end, step=1)
@@ -536,26 +536,13 @@ def create_shift(f):
 
 
 def create_wdline(f):
-    f.wdline = 
+    if f.get_mag() == 0:
+        f.wdline.data = dict(x1 = [] , x2 = [] ,y1 = [] , y2 = [])
+    else:
+        f.wdline.data = dict(x1 = [ f.w1.data['xS'][0], f.w1.data['xS'][0] ]  , x2 = [  f.w2.data['xS'][0], f.w2.data['xS'][0] ] ,
+        y1 = [ f.w1.data['yS'][0] , f.e_s.data['yS'][0] ] , y2 = [ f.w2.data['yS'][0], f.e_s.data['yS'][0] ] )
 
-'''
-        if (paramInt2 < 30):
-            d2 = paramInt2 / 30.0 * 0.5 + 0.1
-            d1 = 0.1
-            f2.e_s.data = dict(xS= [ d1 + localDouble2[0] ], xE= [d1],
-            yS= [d2], yE=[d2], lW = [abs(localDouble2[0]*sclr ) ] )
-        elif((30 <= paramInt2) & (paramInt2 <= 70)):
-            d1 = (paramInt2 - 30) / 40.0 * 0.7 + 0.1
-            d2 = 0.6
-            f2.e_s.data = dict(xS= [ d1 ], xE= [d1],
-            yS= [d2], yE=[d2 + localDouble1[1] ], lW = [abs(localDouble1[1]*sclr) ] )
-        elif(paramInt2 > 70):
-            d1 = 0.8
-            d2 = 0.6 - (paramInt2 - 70) / 30.0 * 0.5
 
-            f2.e_s.data = dict(xS= [ d1 ], xE= [d1 + localDouble2[0]],
-            yS= [d2], yE=[d2], lW = [abs(localDouble2[0] *sclr) ] )
-'''
 
 
 
@@ -566,11 +553,14 @@ def update_fun(attr,old,new):
         create_prof(f1)
         create_shift(f1)
         f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
+        create_wdline(f1)
     elif changer != 0:
         f2.set_param(loc_slider.value)
         f2.set_mag(mag_slider.value)
+        create_wdline(f2)
         create_prof(f2)
         create_shift(f2)
+        create_wdline(f2)
         f2.tri.data = dict(x = [0.1,f2.pts.data["x"][-1]], y = [0.1,f2.pts.data["y"][-1]], size = [tri_size,tri_size])
 
 def button_fun():
@@ -640,13 +630,13 @@ plot.line(x='x', y='y', source=t_line, color="Black",line_width=5)
 plot.line(x='x', y='y', source=f1.dline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
 plot.line(x='x', y='y', source=f2.dline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
 
-plot.line(x='x', y='y', source=f1.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
-plot.line(x='x', y='y', source=f1.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
-
+plot.line(x = 'x1' , y = 'y1',source = f1.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+plot.line(x = 'x2' , y = 'y2',source = f1.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+plot.line(x = 'x1' , y = 'y1',source = f2.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+plot.line(x = 'x2' , y = 'y2',source = f2.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
 
 plot.multi_line( [ [orig.x0, orig.xf],[orig.x0,orig.x0],[orig.xf,orig.xf] ], [ [0,0] ,[0-abshift,0+abshift] , [0-abshift,0+abshift] ], color=["black", "black","black"], line_width=10)
 plot.multi_line( [ [xb,xb],[xb-abshift,xb+abshift],[xb-abshift,xb+abshift] ], [ [orig.y0,orig.yf], [orig.y0,orig.y0], [orig.yf,orig.yf] ], color=["black", "black","black"], line_width=10)
-
 #Frame bases:
 plot.triangle(x='x', y='y', size = 'size', source= default,color="grey" ,  line_width=2)
 plot.triangle(x='x', y='y', size = 'size', source= f1.tri,color="#0065BD", line_width=2)
