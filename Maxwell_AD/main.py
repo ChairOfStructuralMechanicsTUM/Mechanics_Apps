@@ -601,7 +601,7 @@ def init():
     f2.tri.data             = dict(x = [], y = [], size = [])
     f1.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     f2.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    f1.pts.data = dict(x = [], y = [] )
+    f1.pts.data             = dict(x = [], y = [] )
     #f1.tri.data             = dict(x = [0.1,0.8], y = [0.1,0.1], size = [tri_size,tri_size])
     f1.tri.data             = dict(x = [], y = [], size = [])
     f2.set_param(loc_val)
@@ -624,7 +624,7 @@ plot = Figure(tools = "",title="Maxwell",title_location = "above",
 
 plot.line(x='x', y='y', source=orig.pts, color="grey",line_width=3)
 plot.line(x='x', y='y', source=f1.pts, color="#0065BD",line_width=5)
-plot.line(x='x', y='y', source=f2.pts, color="#E37222",line_width=5)
+#plot.line(x='x', y='y', source=f2.pts, color="#E37222",line_width=5)
 plot.line(x='x', y='y', source=t_line, color="Black",line_width=5)
 
 plot.line(x='x', y='y', source=f1.dline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
@@ -632,8 +632,8 @@ plot.line(x='x', y='y', source=f2.dline, color="Black",line_width=2,line_dash = 
 
 plot.line(x = 'x1' , y = 'y1',source = f1.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
 plot.line(x = 'x2' , y = 'y2',source = f1.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
-plot.line(x = 'x1' , y = 'y1',source = f2.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
-plot.line(x = 'x2' , y = 'y2',source = f2.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+#plot.line(x = 'x1' , y = 'y1',source = f2.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+#plot.line(x = 'x2' , y = 'y2',source = f2.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
 
 plot.multi_line( [ [orig.x0, orig.xf],[orig.x0,orig.x0],[orig.xf,orig.xf] ], [ [0,0] ,[0-abshift,0+abshift] , [0-abshift,0+abshift] ], color=["black", "black","black"], line_width=10)
 plot.multi_line( [ [xb,xb],[xb-abshift,xb+abshift],[xb-abshift,xb+abshift] ], [ [orig.y0,orig.yf], [orig.y0,orig.y0], [orig.yf,orig.yf] ], color=["black", "black","black"], line_width=10)
@@ -700,7 +700,6 @@ plot.add_layout(w12_arrow_glyph)
 plot.add_layout(w21_arrow_glyph)
 plot.add_layout(w22_arrow_glyph)
 plot.add_glyph(absource,abtext_glyph)
-#plot.add_glyph(dsource, dtext_glyph)
 plot.add_layout(labels1)
 plot.add_layout(labels2)
 plot.add_layout(labelsn1)
