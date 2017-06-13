@@ -282,6 +282,7 @@ def fun_update(attr,old,new):
         weight_slide.value = fun_onewayslider(old_slide_val,weight_slide.value)
         return
     else:
+        print "hi"
         #weight_slide.value = fun_onewayslider(old_slide_val,weight_slide.value)
         Druckkraft = weight_slide.value
         col1.h -= 5.0E-4
