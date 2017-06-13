@@ -3,8 +3,9 @@
 #   Each column is a different height
 #   Each column has different boundary conditions
 #   All columns have the same material properties
+#   All columns buckle at the same F-ratio value
 
-#Import needed libraries:
+#Import libraries:
 from bokeh.plotting import Figure, output_file , show
 from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow, NormalHead, Button
 from bokeh.layouts import column, row
@@ -22,6 +23,8 @@ zstart          = 0.1 * fenster
 zbifi           = 3
 step            = 0.05
 f_end           = 1.5
+old_slide_val   = 0
+#label_length    = dict(x=[],y=[],name=[])
 
 #Class created for the columns:
 class Column(object):
@@ -66,7 +69,7 @@ class Column(object):
         name                = ["F",self.name]
         self.labels.data    = dict(x = x, y = y, name = name)
 
-weight_slide = Slider(title="Force", value=0, start=0, end=f_end, step=step)    #slider created to change weight on columns
+weight_slide = Slider(title="Force Ratio (F/Fcrit)", value=0, start=0, end=f_end, step=step)    #slider created to change weight on columns
 
 def drange(start,stop,step):
     '''Function created to provide float range'''
@@ -75,12 +78,17 @@ def drange(start,stop,step):
         yield r
         r += step
 
+def fun_onewayslider(a,b):
+    if b < a:
+        b = a
+    else:
+        b = b
+    return b
 
-
-col1 = Column("Free-Fixed",3,0.9)                                               #beam: "Free-Fixed" Column
+col1 = Column("Free-Fixed",3,1.0)                                               #beam: "Free-Fixed" Column
 col2 = Column("Pinned-Pinned",2.0*col1.h,1.0*col1.fcrit)                        #beam: "Pinned-Pinned" Column
-col3 = Column("Pinned-Fixed",1.43*col2.h,1.0*col2.fcrit)                        #beam: "Pinned-Fixed" Column
-col4 = Column("Fixed-Fixed",2.0*col2.h,1.0*col2.fcrit)                          #beam: "Fixed-Fixed" Column
+col3 = Column("Pinned-Fixed",3.0*col1.h,1.0*col2.fcrit)                        #beam: "Pinned-Fixed" Column
+col4 = Column("Fixed-Fixed",4.0*col1.h,1.0*col2.fcrit)                          #beam: "Fixed-Fixed" Column
 
 
 #where the columns start on the graph:
@@ -89,11 +97,18 @@ col2.xstart = xstart + 4.0
 col3.xstart = xstart + 8.0
 col4.xstart = xstart + 12.0
 
+#source for length labels (L,2L, etc)
+label_length = ColumnDataSource(data=dict(x = [], y = []))
+label_length.data = dict(x = [col1.xstart,col2.xstart,col3.xstart,col4.xstart],
+        y = [col1.h/1.5,col2.h/1.5,col3.h/1.5,col4.h/1.5], name = ["L","2L","3L","4L"])
+
+#, "name" = ["L","2L","3L","4L"]
 #creation of the floors of the columns:
 col1.fun_floor()
 col3.fun_floor()
 col4.fun_floor()
 col2.floor = dict(x = [col2.xstart-1,col2.xstart+1], y = [zstart-0.75,zstart-0.75])
+
 
 #Creation of the pins, fixed upper boundary, walls, and horizontal arrow of w
 col2.cir1   = dict(x = [col2.xstart] , y = [zstart])
@@ -102,8 +117,12 @@ col3.cir2   = ColumnDataSource(data=dict(x=[] , y=[]))
 col2.tri1   = dict(x = [col2.xstart] , y = [zstart-0.5])
 col2.tri2   = ColumnDataSource(data=dict(x=[] , y=[]))
 col3.tri2   = ColumnDataSource(data=dict(x=[] , y=[]))
+
 col4.square = ColumnDataSource(data=dict(x=[] , y=[]))
+
 col1.harrow = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
+col1.wlabel = ColumnDataSource(data=dict(x=[], y=[],name =[]))
+
 col2.wall   = dict(x = [col2.xstart+1,col2.xstart+1] , y = [zstart+col2.hi+1,zstart+col2.hi-1])
 col3.wall   = dict(x = [col3.xstart+1,col3.xstart+1] , y = [zstart+col3.hi+1,zstart+col3.hi-1])
 col4.wall   = dict(x = [ [col4.xstart+0.5,col4.xstart+0.5] , [col4.xstart-0.5,col4.xstart-0.5] ],
@@ -112,10 +131,11 @@ y = [ [zstart+col4.hi+1,zstart+col4.hi-1] , [zstart+col4.hi+1,zstart+col4.hi-1] 
 #bifurkation plot columndatasources:
 posplot     = ColumnDataSource(data=dict(x=[] , y=[]))
 negplot     = ColumnDataSource(data=dict(x=[] , y=[]))
-conplot    = ColumnDataSource(data=dict(x=[] , y=[]))
+conplot     = ColumnDataSource(data=dict(x=[] , y=[]))
 
 #create the arrays for the graph
-bk = 0.95
+#bk = 0.95
+bk = 1.05
 y2 = []
 xbifi = []
 bx = 0.05
@@ -243,8 +263,11 @@ def fun_figures():
 
 def init():
     '''Initializes plot'''
-    col1.harrow.data   = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    weight_slide.value = 0
+    global old_slide_val
+    old_slide_val       = 0
+    col1.harrow.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    col1.wlabel.data    = dict(x = [], y = [], name =[])
+    weight_slide.value  = 0
     col1.reset()
     col2.reset()
     col3.reset()
@@ -254,50 +277,58 @@ def init():
 def fun_update(attr,old,new):
     '''Function: Updates the plot when the weight slider is used'''
     global Druckkraft
-    Druckkraft = weight_slide.value
-    col1.h -= 5.0E-4
-    col2.h -= 5.0E-4
-    col3.h -= 5.0E-4
-    col4.h -= 5.0E-4
+    global old_slide_val
+    if weight_slide.value < old_slide_val:
+        weight_slide.value = fun_onewayslider(old_slide_val,weight_slide.value)
+        return
+    else:
+        #weight_slide.value = fun_onewayslider(old_slide_val,weight_slide.value)
+        Druckkraft = weight_slide.value
+        col1.h -= 5.0E-4
+        col2.h -= 5.0E-4
+        col3.h -= 5.0E-4
+        col4.h -= 5.0E-4
 
-    if(Druckkraft > col1.fcrit):
-        col1.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col1.fcrit)-1) )
-        col1.h         -= 0.005
-        col1.harrow.data = dict(xS=[col1.xstart+1], xE=[col1.pts.data['x'][-1]+0.1],
-        yS=[col1.pts.data['y'][-1]], yE=[col1.pts.data['y'][-1]], lW = [weight_slide.value*2])
+        if(Druckkraft > col1.fcrit):
+            col1.deflection  = ( factor * np.sqrt(np.sqrt(Druckkraft/col1.fcrit)-1) )
+            col1.h          -= 0.005
+            col1.harrow.data = dict(xS=[col1.xstart+1], xE=[col1.pts.data['x'][-1]+0.1],
+            yS=[col1.pts.data['y'][-1]], yE=[col1.pts.data['y'][-1]], lW = [weight_slide.value*2])
+            col1.wlabel.data = dict(x = [col1.pts.data['x'][-1]+0.1] , y = [col1.pts.data['y'][-1]], name = ['w'] )
 
-    if(Druckkraft > col2.fcrit):
-        col2.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col2.fcrit)-1) )
-        col2.h         -= 0.005
-    if(Druckkraft > col3.fcrit):
-        col3.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col3.fcrit)-1) )
-        col3.h         -= 0.005
-    if(Druckkraft > col4.fcrit):
-        col4.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col4.fcrit)-1) )
-        col4.h         -= 0.005
+        if(Druckkraft > col2.fcrit):
+            col2.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col2.fcrit)-1) )
+            col2.h         -= 0.005
+        if(Druckkraft > col3.fcrit):
+            col3.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col3.fcrit)-1) )
+            col3.h         -= 0.005
+        if(Druckkraft > col4.fcrit):
+            col4.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col4.fcrit)-1) )
+            col4.h         -= 0.005
 
-    fun_col1(col1.xstart,zstart)
-    fun_col2(col2.xstart,zstart)
-    fun_col3(col3.xstart,zstart)
-    fun_col4(col4.xstart,zstart)
-    col1.fun_arrow()
-    col2.fun_arrow()
-    col3.fun_arrow()
-    col4.fun_arrow()
-    col1.fun_labels()
-    col2.fun_labels()
-    col3.fun_labels()
-    col4.fun_labels()
-    fun_figures()
-    fun_bifurkation()
+        fun_col1(col1.xstart,zstart)
+        fun_col2(col2.xstart,zstart)
+        fun_col3(col3.xstart,zstart)
+        fun_col4(col4.xstart,zstart)
+        col1.fun_arrow()
+        col2.fun_arrow()
+        col3.fun_arrow()
+        col4.fun_arrow()
+        col1.fun_labels()
+        col2.fun_labels()
+        col3.fun_labels()
+        col4.fun_labels()
+        fun_figures()
+        fun_bifurkation()
+        old_slide_val = weight_slide.value
 
 
 ##Plotting section:
 plot = Figure(tools = "",title="Knickung", x_range=(-2,fenster), y_range=(-.5,fenster+2))
-plot.line(x='x', y='y', source = col1.pts, color='blue',line_width=5)
-plot.line(x='x', y='y', source = col2.pts, color='blue',line_width=5)
-plot.line(x='x', y='y', source = col3.pts, color='blue',line_width=5)
-plot.line(x='x', y='y', source = col4.pts, color='blue',line_width=5)
+plot.line(x='x', y='y', source = col1.pts, color='#003359',line_width=5)
+plot.line(x='x', y='y', source = col2.pts, color='#003359',line_width=5)
+plot.line(x='x', y='y', source = col3.pts, color='#003359',line_width=5)
+plot.line(x='x', y='y', source = col4.pts, color='#003359',line_width=5)
 
 plot.line(x='x', y='y', source = col1.floor, color='black',line_width=6)
 plot.line(x='x', y='y', source = col2.floor, color='black',line_width=6)
@@ -317,9 +348,9 @@ plot.triangle(x='x', y='y', source = col2.tri2, color='black',angle =np.pi/2,fil
 plot.triangle(x='x', y='y', source = col3.tri2, color='black',angle =np.pi/2,fill_alpha = 0, size = 20)
 plot.square(x='x', y='y', source = col4.square, color='black',size = 20)
 
-plot.axis.visible = False
+plot.axis.visible = True
 plot.grid.visible = False
-plot.outline_line_width = 10
+plot.outline_line_width = 4
 plot.outline_line_alpha = 0.5
 plot.outline_line_color = "Black"
 plot.title.text_font_size = "18pt"
@@ -333,8 +364,8 @@ col3_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
 x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col3.arrow,line_color="#A2AD00")
 col4_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
 x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col4.arrow,line_color="#A2AD00")
-col1_ha = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=6),
-x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col1.harrow,line_color="#A2AD00")
+col1_ha = Arrow(end=NormalHead(line_color="blue",line_width= 4, size=6),
+x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col1.harrow,line_color="blue")
 
 #Labels section:
 labels1 = LabelSet(x='x', y='y', text='name', level='glyph',
@@ -345,6 +376,10 @@ labels3 = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-30, y_offset=0, source=col3.labels, render_mode='canvas')
 labels4 = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-30, y_offset=0, source=col4.labels, render_mode='canvas')
+labels_L = LabelSet(x = 'x', y = 'y', text = 'name', source = label_length,
+    level = 'glyph', x_offset = -50, y_offset = +20, render_mode = 'canvas')
+labels_w = LabelSet(x = 'x', y = 'y', text = 'name', source = col1.wlabel,
+    level = 'glyph' ,x_offset = 10, y_offset = 0, text_color = "blue", render_mode = 'canvas')
 labels1.text_font_size = '10pt'
 labels2.text_font_size = '10pt'
 labels3.text_font_size = '10pt'
@@ -360,19 +395,26 @@ plot.add_layout(labels1)
 plot.add_layout(labels2)
 plot.add_layout(labels3)
 plot.add_layout(labels4)
+plot.add_layout(labels_L)
+plot.add_layout(labels_w)
+
+
+
 
 #Bifurkation plot (Plot1):
-plot1 = Figure(tools = "",title="Bifurkation", x_range=(0.05,f_end), y_range=(-ybifi[-1],ybifi[-1]), width = 400, height = 200)
-plot1.line(x='x', y='y', source = posplot, color='blue',line_width=5)
-plot1.line(x='x', y='y', source = negplot, color='red',line_width=5)
-plot1.line(x='x', y='y', source = conplot, color='red',line_width=5)
-plot1.axis.visible = False
+plot1 = Figure(tools = "",title="Buckling Displacement", x_range=(0.05,f_end), y_range=(-ybifi[-1],ybifi[-1]), width = 400, height = 200)
+plot1.line(x='x', y='y', source = posplot, color='blue',line_width=3)
+plot1.line(x='x', y='y', source = negplot, color='red',line_width=3)
+plot1.line(x='x', y='y', source = conplot, color='red',line_width=3)
+plot1.line(x=[1,1], y = [-10,10], color = 'Black', line_width = 2, line_dash = 'dashed', line_alpha = 0.3 )
+plot1.axis.visible = True
 plot1.grid.visible = False
-plot1.outline_line_width = 5
+plot1.outline_line_width = 2
 plot1.outline_line_alpha = 0.5
 plot1.outline_line_color = "Black"
 plot1.title.text_font_size = "10pt"
-
+plot1.xaxis[0].axis_label = 'Force Ratio (F/Fcrit)'
+plot1.yaxis[0].axis_label = 'displacement (w)'
 
 #Create Reset Button:
 button = Button(label="Reset", button_type="success")
