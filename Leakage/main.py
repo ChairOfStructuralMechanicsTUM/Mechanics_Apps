@@ -19,14 +19,14 @@ from sym_functions import string_to_function_parser
 sample_f_names = [
     ("cos", "cos"),
     ("cos and sin", "cos and sin"),
-    ("exp", "exp")
+   #("exp", "exp")
 ]
 
 # function and corresponding FT
 sample_functions = {
-    "cos":("cos(2*pi*8*t)", "sqrt(pi/2)*DiracDelta(f - 16*pi) + sqrt(pi/2)*DiracDelta(f + 16*pi)"),
-    "cos and sin":("cos(2*pi*2*t)+sin(2*pi*4*t)", "I*sqrt(pi/2)*DiracDelta(f - 8*pi) - I*sqrt(pi/2)*DiracDelta(f + 8*pi) + sqrt(pi/2)*DiracDelta(f + 4*pi) + sqrt(pi/2)*DiracDelta(f - 4*pi)"),
-    "exp":("exp(-t)", "0") # FT does not exist!
+    "cos":("cos(2*pi*8*t)", "(1/2)*DiracDelta(f - 8) + (1/2)*DiracDelta(f + 8)"),
+    "cos and sin":("cos(2*pi*2*t)+sin(2*pi*4*t)", "-I*(1/2)*DiracDelta(f - 4) + I*(1/2)*DiracDelta(f + 4) + (1/2)*DiracDelta(f + 2) + (1/2)*DiracDelta(f - 2)"),
+    #"exp":("exp(-t)", "1/(1+4*(pi)^2 * f^2) - I*2*pi*f/(1+4*(pi)^2 * f^2)") # FT does not exist!
 }
 
 ####################
@@ -70,7 +70,7 @@ t0_input = TextInput(value='1',
 N_input = TextInput(value='2^6',
                     title=u"N (Number of sample points, max = 10\u2075)")
 # button to show the solution
-nyquist_label_default = "sampling: ..., nyquist: ..."
+nyquist_label_default = "show sampling- and Nyquist-frequency"
 nyquist_button = CheckboxButtonGroup(labels=[nyquist_label_default],
                                      active=[],
                                      sizing_mode="stretch_both")
@@ -131,17 +131,17 @@ def approximate_fourier_transform(T_0, N, f_function):
     T_S = T_0 / N  # Length of one sampling interval
 
     t_samples = np.arange(0, T_0, T_S)  # Grid in the Time Domain
-    f_samples = np.arange(-np.pi * N / T_0, np.pi * N / T_0, 2*np.pi / T_0)  # Grid in the Frequency Domain
+    f_samples = np.arange(-(N/2) / T_0, (N/2 - 1) / T_0, 1/ T_0)  # Grid in the Frequency Domain
 
     # Function sampling
     x_samples = f_function(t_samples)
 
     # Fast Fourier Transform (FFT)
-    X_samples = ifft(x_samples)
+    X_samples = fft(x_samples)
 
     # Modifications in order to approximate the Continuous FT
     # X_samples /= N  # FFT and scaling with T_S
-    X_samples = 2 * np.sqrt(np.pi/2) * fftshift(X_samples)  # Shift of the results
+    X_samples = (1/N) * fftshift(X_samples)  # Shift of the results
 
     # ignore very small values and set them equal to zero
     a = X_samples.real
@@ -163,7 +163,7 @@ def sample_fourier_transform(T_0, N):
     sample_functions_transform = sample_functions[sample_function_id][1]
 
     N_samples = 1000
-    f_analytical, h = np.linspace(-np.pi * N / T_0, np.pi * N / T_0, N_samples, retstep=True)  # Grid in the Frequency Domain
+    f_analytical, h = np.linspace(-(N/2) / T_0, (N/2 - 1) / T_0, N_samples, retstep=True)  # Grid in the Frequency Domain
     X_function_analytical, _ = string_to_function_parser(sample_functions_transform, h, ['f'])  # function to be transformed
     X_analytical = X_function_analytical(f_analytical)
 
@@ -240,7 +240,7 @@ def reveal_solution():
     T_0, N, _ = extract_parameters()
     sampling_frequency = N/T_0
     nyquist_frequency = sampling_frequency/2.0
-    nyquist_button.labels = ["sampling: %.2f, nyquist: %.2f" % (sampling_frequency, nyquist_frequency)]
+    nyquist_button.labels = ["f_s: %.2f, f_Nyquist: %.2f" % (sampling_frequency, nyquist_frequency)]
     nyquist_button.active = [0]
 
 
