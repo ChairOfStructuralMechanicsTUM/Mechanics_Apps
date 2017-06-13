@@ -1,12 +1,12 @@
 from __future__ import division
 
-from os.path import dirname, split
+from os.path import dirname, split, join
 
 import numpy as np
 from numpy.fft import ifft, fft, fftshift
 
 from bokeh.io import curdoc
-from bokeh.models import ColumnDataSource, VBox
+from bokeh.models import ColumnDataSource, VBox, Div
 from bokeh.layouts import widgetbox, layout, column
 from bokeh.plotting import Figure
 from bokeh.models.widgets import TextInput, Dropdown, CheckboxButtonGroup
@@ -337,10 +337,16 @@ t0_input.on_change('value', on_parameters_changed)
 N_input.on_change('value', on_parameters_changed)
 nyquist_button.on_change('active', on_nyquist_button_changed)
 
+#Description
+description_filename = join(dirname(__file__), "description.html")
+
+description = Div(text=open(description_filename).read(), render_as_text=False)
+
+
 # create layout
 controls = [f_input, sample_fun_input_f, t0_input, N_input, nyquist_button]
 controls_box = widgetbox(controls, responsive=True)  # all controls
-curdoc().add_root(layout([[plot_original, plot_transform_real],
+curdoc().add_root(layout([[description],[plot_original, plot_transform_real],
                           [controls_box, plot_transform_imag]],
                          sizing_mode='stretch_both')) # add plots and controls to root
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

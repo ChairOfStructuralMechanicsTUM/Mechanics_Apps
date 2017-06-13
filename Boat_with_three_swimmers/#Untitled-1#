@@ -1,0 +1,23 @@
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
+
+curdoc().add_root(
+                  column(
+                         description,
+                         scene,
+                         row(
+                             column(
+                                    numberPersonsSlider,
+                                    play_button,
+                                    pause_button,
+                                    jump_button,
+                                    reset_button
+                                   ),
+                             eFig.getFig(),
+                             area_image
+                            )
+                        )
+                 )
