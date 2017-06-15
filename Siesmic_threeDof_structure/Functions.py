@@ -17,20 +17,22 @@ class Structure:
         for i in range(len(massSupports)):
             massSupportlist.append( ColumnDataSource(data=massSupports[i]) )
         self.massSupports = massSupportlist
-
-        self.trussLength  = trussLength
         
         trusslist = list()
         for i in range(len(trusses)):
             trusslist.append( ColumnDataSource(data=trusses[i]) )
         self.trusses      = trusslist
         
+        self.trussLength  = trussLength
         self.base         = ColumnDataSource(base)
         
         # System matrices
         self.M = np.zeros((3,3))
         self.C = np.zeros((3,3))
         self.K = np.zeros((3,3))
+        
+        # Mass locations
+        self.massLocations = np.zeros((3,2))
         
     def update_system(self, displacement):
         self.update_masses(displacement)
@@ -117,6 +119,14 @@ class ModeShape( Structure ):
         Structure.__init__(self, masses, massSupports, trusses, trussLength, base)
         self.frequency = frequency
         self.modeShape = modeShape
+    
+    def get_maximum_displacement( self, siesmicParameters ):
+        r = np.ones(3)
+        beta = np.dot( self.modeShape, np.dot( self.M, r ) )
+        period = 2*np.pi / self.frequency
+        Sa = siesmicParameters.get_Sa( period )
+        
+        return beta*Sa*(1/self.frequency**2)*self.modeShape
         
 class SiesmicParameters():
     
@@ -169,7 +179,7 @@ class SiesmicParameters():
             self.periods[2] = 2.00
             self.S = 0.75
             
-    def get_max_displacement (self, period):
+    def get_Sa (self, period):
         if period >= 0 and period < self.periods[0]:
             return self.a * self.gamma * self.S * (1+period/self.periods[0]*(self.beta/1-1))
         elif period >= self.periods[0] and period < self.periods[1]:
@@ -179,6 +189,7 @@ class SiesmicParameters():
             return self.a * self.gamma * self.S * self.beta / 1 * (self.periods[1]/period)
         elif (period > self.periods[2]):
             return self.a * self.gamma * self.S * self.beta / 1 * self.periods[1]**2/period**2
+
             
 def cubic_N1 (xi):
     #xi = 2*x/length - 1
@@ -288,9 +299,6 @@ def construct_system(structure, mass, massRation, bendingStiffness, stiffnessRat
                             [        -stiffnessRatio[1]         ,stiffnessRatio[1]+stiffnessRatio[2], -stiffnessRatio[2]],
                             [                0                  ,         -stiffnessRatio[2]        ,  stiffnessRatio[2]]
                           ]) * 12 * bendingStiffness / trussLength**3
-                            
-    print('M = ',structure.M)
-    print('K = ',structure.K)
                         
 def solve_time_domain(structure, siesmicInput):
     '''
@@ -357,25 +365,7 @@ def solve_modal_analysis(structure):
     eigenvalues, eigenvectors = linalg.eig(structure.K, structure.M)
     
     return eigenvalues, eigenvectors
-#    # hard-coded values
-#    eigenvalues = [1,2,3]
-#    eigenvectors = [
-#                    [0,0,0],
-#                    [1,-1,1],
-#                    [1,1,-1]
-#                   ]
-#    
-#    modes = [1,2,3]
-#    eigenvaluesDict = dict(x=modes , y=eigenvalues)
-#    eigenmodesDict = list()
-#    massXCoord = [0,0,0] # watch for these values if the coordinates change in main file
-#    massYCoord = [1,2,3] # watch for these values if the coordinates change in main file
-#    for eigenmode in eigenvectors:
-#        for element in range(0 , len(massXCoord)):
-#            massXCoord[element] += eigenmode[element]
-#
-#        eigenmodesDict.append( dict(x=massXCoord,y=massYCoord) ) 
-
+    
 def plot( plot_name, subject, radius, color ):
     plot_name.line( x='x', y='y', source=subject.massSupports[0], color='#000000', line_width=5)
     plot_name.line( x='x', y='y', source=subject.massSupports[1], color='#000000', line_width=5)
@@ -406,7 +396,7 @@ def GetMaximumDisplacement( modes, siesmicParameters ):
         beta.append( np.dot( modes[i].M , r ) )
         period.append( 2*np.pi / modes[i].frequency )
         
-        maximumDisplacement.append( siesmicParameters.get_max_displacement(period[i]) )
+        maximumDisplacement.append( siesmicParameters.get_Sa(period[i]) )
         
 def plot_ERS( plot, siesmicParameters ):
     n = 100
@@ -419,7 +409,7 @@ def plot_ERS( plot, siesmicParameters ):
     for i in range(0,n):
         T = (tMax - tMin)/n * i + tMin
         x[i] = T
-        y[i] = siesmicParameters.get_max_displacement(T)
+        y[i] = siesmicParameters.get_Sa(T)
 
     siesmicParameters.ERSdata.data = dict(x=x, y=y)
     plot.line(x='x',y='y',source=siesmicParameters.ERSdata)

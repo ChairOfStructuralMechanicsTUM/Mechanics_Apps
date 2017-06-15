@@ -396,6 +396,31 @@ untergrundParamter_text = Div(text="""<b>Untergrundparamter</b>""")
 untergrundParamter_choices = RadioGroup(
         labels=["A-R", "B-R", "C-R", "B-T", "C-T", "C-S"], active=0)
 
+def_undef_choices_text = Div(text="""<b>Choose which configuration to show</b>""")
+
+
+def show_undef_config():
+    maxes = np.zeros((3,3))
+    counter = 0
+    for mode in modes:
+        maxes[:,counter] = mode.get_maximum_displacement(siesmicParameters)
+        counter += 1
+        
+    maximumDisp = np.sqrt( maxes[:,0]**2 + maxes[:,1]**2 + maxes[:,2]**2 )
+    structure.update_system( maximumDisp )
+    structure.massLocations[:,1] = maximumDisp
+    plot( time_plot, structure, radius, color)
+    
+def show_def_config():
+    structure.update_system( np.zeros(3) )
+    plot( time_plot, structure, radius, color)
+
+undef_config_button = Button(label="Undeformed_Configuration", button_type="success",width=25)
+undef_config_button.on_click(show_undef_config)
+
+def_config_button = Button(label="Deformed_Configuration", button_type="success",width=25)
+def_config_button.on_click(show_def_config)
+
 def calculate_ERS():
     # re-assign "Erdbebenzonen" value
     a = 0
@@ -452,7 +477,7 @@ curdoc().add_root(
                   row(
                       column(
                              row(
-                                   time_plot,
+                                   column(time_plot, def_undef_choices_text, row(undef_config_button, Spacer(width=180), def_config_button)),
                                    mode_one,
                                    mode_two,
                                    mode_three,
