@@ -119,6 +119,7 @@ class ModeShape( Structure ):
         Structure.__init__(self, masses, massSupports, trusses, trussLength, base)
         self.frequency = frequency
         self.modeShape = modeShape
+        self.locationInERS = ColumnDataSource(data=dict(x=[0],y=[0])) # with default values
     
     def get_maximum_displacement( self, siesmicParameters ):
         r = np.ones(3)
@@ -127,6 +128,20 @@ class ModeShape( Structure ):
         Sa = siesmicParameters.get_Sa( period )
         
         return beta*Sa*(1/self.frequency**2)*self.modeShape
+
+    def modify_location_in_ERS( self, siesmicParameters ):
+        period = 2*np.pi / self.frequency
+        Sa = siesmicParameters.get_Sa( period )
+        self.locationInERS.data = dict(x=[period,period,0],y=[0,Sa,Sa])
+        
+    def modify_mode_text(self,siesmicParameters, modeText):
+        r = np.ones(3)
+        beta = np.dot( self.modeShape, np.dot( self.M, r ) )
+        period = 2*np.pi / self.frequency
+        Sa = siesmicParameters.get_Sa( period )
+        multiplier = beta*Sa*(1/self.frequency**2)
+        
+        modeText.text += str(multiplier)
         
 class SiesmicParameters():
     

@@ -252,6 +252,10 @@ Construc the Elastic Response Spectrum
 ###############################################################################
 '''
 plot_ERS(ERSplot, siesmicParameters )
+colors = ['#FF0000','#00FF00','#0000FF']
+for mode in modes:
+    mode.modify_location_in_ERS(siesmicParameters)
+    ERSplot.line(x='x',y='y',source=mode.locationInERS,color=colors[0])
 
 '''
 ###############################################################################
@@ -346,7 +350,7 @@ pause_button.on_click(pause)
 ################################ Solve System #################################
 def solve_system():
     eigenvalues, eigenvectors = solve_modal_analysis(structure)
-    print('eigenvectors = ',eigenvectors)
+    print('eigenvalues = ',eigenvalues)
     # update the modes with the new values
     counter = 0
     for mode in modes:
@@ -354,7 +358,9 @@ def solve_system():
         mode.update_system( eigenvectors[:,counter].real )
         mode.frequency = np.sqrt(eigenvalues[counter].real)
         mode.modeShape = eigenvectors[:,counter].real
-    
+
+        mode.modify_location_in_ERS(siesmicParameters)
+        ERSplot.line(x='x',y='y',source=mode.locationInERS,color=colors[0])
         counter += 1
     
 solve_system_button = Button(label="Solve System", button_type="success")
@@ -396,7 +402,17 @@ untergrundParamter_text = Div(text="""<b>Untergrundparamter</b>""")
 untergrundParamter_choices = RadioGroup(
         labels=["A-R", "B-R", "C-R", "B-T", "C-T", "C-S"], active=0)
 
-def_undef_choices_text = Div(text="""<b>Choose which configuration to show</b>""")
+def_undef_choices_text = Div(text="""<b>Choose which configuration to show</b> """)
+
+mode_information = [
+Div(text="""<b>Multiplier =</b> """),
+Div(text="""<b>Multiplier =</b> """),
+Div(text="""<b>Multiplier =</b> """)]
+
+counter = 0
+for mode in modes:
+    mode.modify_mode_text(siesmicParameters, mode_information[counter])
+    counter += 1
 
 
 def show_undef_config():
@@ -466,6 +482,10 @@ def calculate_ERS():
     # Plot the updated Elastic Response Spectrum
     plot_ERS(ERSplot, siesmicParameters)
     
+    for mode in modes:
+        mode.modify_location_in_ERS(siesmicParameters)
+        ERSplot.line(x='x',y='y',source=mode.locationInERS,color=colors[0])
+    
 calculate_ERS_button = Button(label="Re-calculate Elastic Response Spectrum", button_type="success")
 calculate_ERS_button.on_click(calculate_ERS)
 '''
@@ -478,9 +498,9 @@ curdoc().add_root(
                       column(
                              row(
                                    column(time_plot, def_undef_choices_text, row(undef_config_button, Spacer(width=180), def_config_button)),
-                                   mode_one,
-                                   mode_two,
-                                   mode_three,
+                                   column(mode_one,mode_information[0]),
+                                   column(mode_two,mode_information[1]),
+                                   column(mode_three,mode_information[2])
                                 ),
                              Spacer(height=60),
                              siesmic_input_plot
