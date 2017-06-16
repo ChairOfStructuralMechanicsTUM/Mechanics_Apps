@@ -6,6 +6,7 @@ from bokeh.models.glyphs import Text
 from bokeh.io import curdoc
 import numpy as np
 from os.path import dirname, join, split
+#from sidefuns import side1, side2, side3
 
 
 #main1
@@ -38,6 +39,9 @@ class Frame(object):
         self.label          = ColumnDataSource(data=dict(x=[] , y=[], name = []))
         self.dline          = ColumnDataSource(data=dict(x=[], y=[]))
         self.dlabel         = ColumnDataSource(data=dict(x=[] , y=[], name = []))
+        self.w1             = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
+        self.w2             = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
+        self.wdline         = ColumnDataSource(data=dict(x1=[], x2 =[], y1 = [], y2=[]))
 
         #self.mag_slider     = Slider(title= self.name + " Kraftbetrag", value=self.mag_val, start=self.mag_start, end=self.mag_end, step=1)
         #self.loc_slider     = Slider(title= self.name + " Kraftposition", value=self.loc_val, start=self.loc_start, end=self.loc_end, step=1)
@@ -51,10 +55,7 @@ class Frame(object):
     def get_param(self):
         return self.p_loc
 
-
-
-
-#some constants
+#global constants:
 a           = 0.5
 b           = 0.7
 FScale      = 150.0
@@ -69,7 +70,6 @@ plotxf = 0.8+ps
 ploty0 = -0.1
 plotyf = 1.0
 #Arrow Sources:
-#p_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 arr_scal        = 450.0
 arr_lw          = 20.0
 ground          = 0.07
@@ -86,7 +86,7 @@ t_line          = dict(x=[0.7,0.9], y=[ground,ground])
 mag_start   = -100
 mag_end     = 100
 mag_val     = 0
-mag_slider  = Slider(title="Kraftbetrag", value=mag_val, start=mag_start, end=mag_end, step=1)
+mag_slider  = Slider(title="Magnitude", value=mag_val, start=mag_start, end=mag_end, step=1)
 
 #Toggle button:
 button = Button(label="Save Deformed Frame", button_type="success")
@@ -94,7 +94,9 @@ rbutton = Button(label="Reset", button_type="success")
 loc_start = 0
 loc_end = 100
 loc_val = 50
-loc_slider = Slider(title="Kraftposition", value=loc_val, start=loc_start, end=loc_end, step=1)
+loc_slider = Slider(title="Position", value=loc_val, start=loc_start, end=loc_end, step=1)
+
+
 #p2loc_slider = Slider(title=f2.name + " Kraftposition", value=loc_val, start=loc_start, end=loc_end, step=1)
 
 
@@ -107,6 +109,7 @@ def create_orig(o):
 ya =[0,0]
 xb = [0,0]
 a_fig = dict(xa = [orig.x0, orig.xf] , ya = [0,0], iay = [0-0.1,0+0.1], iax1 = [orig.x0,orig.x0], iax2 = [orig.xf,orig.xf] )
+
 
 
 def create_prof(f):
@@ -128,6 +131,7 @@ def create_prof(f):
     if (i == 0):
         f.dline.data = dict(x = [], y = [] )
         f.dline.data = dict(x = [], y = [], name = [] )
+
 
 def side1(f,paramInt,i):
     x1          = []
@@ -464,9 +468,9 @@ def compute_shift(paramInt1, paramInt2, i):
 
 def create_shift(f):
     if (f.get_mag() == 0):
-        if (f.get_mag() == 0):
-            f.e_s.data = dict(xS= [], xE= [],
-            yS= [], yE=[], lW = [] )
+        #if (f.get_loc() == 0):
+        f.e_s.data = dict(xS= [], xE= [],
+        yS= [], yE=[], lW = [] )
     else:
         paramInt1 = f.get_param()
         #print orig.pts.data["y"]
@@ -480,13 +484,30 @@ def create_shift(f):
         if (paramInt1 < 30):
             d2 = paramInt1 / 30.0 * 0.5 + 0.1
             d1 = 0.1
-
             f.e_s.data = dict(xS= [ d1 ], xE= [d1 + localDouble1[0]],
             yS= [d2], yE=[d2], lW = [abs(localDouble1[0]*sclr) ] )
+
+            if (f.name == "F1"):
+                y1 = -0.05
+                y2 = -0.05
+            elif (f.name == "F2"):
+                y1 = 0.7
+                y2 = 0.7
+            x1 = d1 + localDouble1[0]
+            x2 = d1
 
         elif ((30 <= paramInt1) & (paramInt1 <= 70)):
             d1 = (paramInt1 - 30) / 40.0 * 0.7 + 0.1
             d2 = 0.6
+
+            if (f.name == "F1"):
+                x1 = 0
+                x2 = 0
+            elif (f.name == "F2"):
+                x1 = 0.8
+                x2 = 0.8
+            y1 = d2 + localDouble1[1]
+            y2 = d2
 
             f.e_s.data = dict(xS= [ d1 ], xE= [d1],
             yS= [d2 + localDouble1[1] ], yE=[d2], lW = [abs(localDouble1[1]*sclr) ] )
@@ -495,27 +516,33 @@ def create_shift(f):
             d1 = 0.8
             d2 = 0.6 - (paramInt1 - 70) / 30.0 * 0.5
 
+            if (f.name == "F1"):
+                y1 = -0.05
+                y2 = -0.05
+            elif (f.name == "F2"):
+                y1 = 0.7
+                y2 = 0.7
+
+            x1 = d1 + localDouble1[0]
+            x2 = d1
             f.e_s.data = dict(xS= [ d1], xE= [d1 + localDouble1[0] ],
             yS= [d2], yE=[d2], lW = [ abs(localDouble1[0]*sclr ) ] )
 
-'''
-        if (paramInt2 < 30):
-            d2 = paramInt2 / 30.0 * 0.5 + 0.1
-            d1 = 0.1
-            f2.e_s.data = dict(xS= [ d1 + localDouble2[0] ], xE= [d1],
-            yS= [d2], yE=[d2], lW = [abs(localDouble2[0]*sclr ) ] )
-        elif((30 <= paramInt2) & (paramInt2 <= 70)):
-            d1 = (paramInt2 - 30) / 40.0 * 0.7 + 0.1
-            d2 = 0.6
-            f2.e_s.data = dict(xS= [ d1 ], xE= [d1],
-            yS= [d2], yE=[d2 + localDouble1[1] ], lW = [abs(localDouble1[1]*sclr) ] )
-        elif(paramInt2 > 70):
-            d1 = 0.8
-            d2 = 0.6 - (paramInt2 - 70) / 30.0 * 0.5
+        f.w1.data = dict(xS= [x1], xE= [x2],
+        yS= [y1], yE=[y2])
 
-            f2.e_s.data = dict(xS= [ d1 ], xE= [d1 + localDouble2[0]],
-            yS= [d2], yE=[d2], lW = [abs(localDouble2[0] *sclr) ] )
-'''
+        f.w2.data = dict(xS= [ x2 ], xE= [x1],
+        yS= [y2], yE=[y1])
+
+
+def create_wdline(f):
+    if f.get_mag() == 0:
+        f.wdline.data = dict(x1 = [] , x2 = [] ,y1 = [] , y2 = [])
+    else:
+        f.wdline.data = dict(x1 = [ f.w1.data['xS'][0], f.w1.data['xS'][0] ]  , x2 = [  f.w2.data['xS'][0], f.w2.data['xS'][0] ] ,
+        y1 = [ f.w1.data['yS'][0] , f.e_s.data['yS'][0] ] , y2 = [ f.w2.data['yS'][0], f.e_s.data['yS'][0] ] )
+
+
 
 
 
@@ -526,11 +553,14 @@ def update_fun(attr,old,new):
         create_prof(f1)
         create_shift(f1)
         f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
+        create_wdline(f1)
     elif changer != 0:
         f2.set_param(loc_slider.value)
         f2.set_mag(mag_slider.value)
+        create_wdline(f2)
         create_prof(f2)
         create_shift(f2)
+        create_wdline(f2)
         f2.tri.data = dict(x = [0.1,f2.pts.data["x"][-1]], y = [0.1,f2.pts.data["y"][-1]], size = [tri_size,tri_size])
 
 def button_fun():
@@ -571,7 +601,7 @@ def init():
     f2.tri.data             = dict(x = [], y = [], size = [])
     f1.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     f2.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    f1.pts.data = dict(x = [], y = [] )
+    f1.pts.data             = dict(x = [], y = [] )
     #f1.tri.data             = dict(x = [0.1,0.8], y = [0.1,0.1], size = [tri_size,tri_size])
     f1.tri.data             = dict(x = [], y = [], size = [])
     f2.set_param(loc_val)
@@ -588,19 +618,31 @@ create_orig(orig)
 
 abshift = 0.02
 xb      = -0.015
-plot = Figure(tools = "",title="Maxwell",title_location = "above", x_range=(plotx0,plotxf), y_range=(ploty0,plotyf),plot_width=1000, plot_height=1000)
+
+plot = Figure(tools = "",title="Maxwell",title_location = "above",
+    x_range=(plotx0,plotxf), y_range=(ploty0,plotyf),plot_width=1000, plot_height=1000)
+
 plot.line(x='x', y='y', source=orig.pts, color="grey",line_width=3)
 plot.line(x='x', y='y', source=f1.pts, color="#0065BD",line_width=5)
-plot.line(x='x', y='y', source=f2.pts, color="#E37222",line_width=5)
+#plot.line(x='x', y='y', source=f2.pts, color="#E37222",line_width=5)
 plot.line(x='x', y='y', source=t_line, color="Black",line_width=5)
-plot.line(x='x', y='y', source=f1.dline, color="Black",line_width=3,line_dash = 'dashed',line_alpha = 0.3)
-plot.line(x='x', y='y', source=f2.dline, color="Black",line_width=3,line_dash = 'dashed',line_alpha = 0.3)
+
+plot.line(x='x', y='y', source=f1.dline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+plot.line(x='x', y='y', source=f2.dline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+
+plot.line(x = 'x1' , y = 'y1',source = f1.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+plot.line(x = 'x2' , y = 'y2',source = f1.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+#plot.line(x = 'x1' , y = 'y1',source = f2.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+#plot.line(x = 'x2' , y = 'y2',source = f2.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+
 plot.multi_line( [ [orig.x0, orig.xf],[orig.x0,orig.x0],[orig.xf,orig.xf] ], [ [0,0] ,[0-abshift,0+abshift] , [0-abshift,0+abshift] ], color=["black", "black","black"], line_width=10)
 plot.multi_line( [ [xb,xb],[xb-abshift,xb+abshift],[xb-abshift,xb+abshift] ], [ [orig.y0,orig.yf], [orig.y0,orig.y0], [orig.yf,orig.yf] ], color=["black", "black","black"], line_width=10)
+#Frame bases:
 plot.triangle(x='x', y='y', size = 'size', source= default,color="grey" ,  line_width=2)
 plot.triangle(x='x', y='y', size = 'size', source= f1.tri,color="#0065BD", line_width=2)
 plot.triangle(x='x', y='y', size = 'size', source= f2.tri,color="#E37222", line_width=2)
-plot.axis.visible = False
+
+plot.axis.visible = True
 plot.outline_line_width = 7
 plot.outline_line_alpha = 0.3
 plot.outline_line_color = "Black"
@@ -618,6 +660,13 @@ labelsn1 = LabelSet(x='x', y='y', text='name', level='glyph',
 labelsn2 = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=0, y_offset=0, source=f2.dlabel,text_color="#E37222", text_font_size = '12pt', render_mode='canvas')
 
+#labelsw1 = LabelSet(x=0.0, y=0.0, text="hi", level='glyph',
+#              x_offset=10, y_offset=10,text_color="#E37222", text_font_size = '12pt', render_mode='canvas')
+#
+#labelsw2 = LabelSet(x='xS', y='yS', text=wji, level='glyph',
+#              x_offset=10, y_offset=10, source=f2.w1,text_color="#E37222", text_font_size = '12pt', render_mode='canvas')
+
+
 #P arrow:
 p1_arrow_glyph = Arrow(end=NormalHead(line_color="#0065BD",line_width= 4, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.arrow_source,line_color="#0065BD")
@@ -627,6 +676,14 @@ e1_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3, size=6,l
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f1.e_s,line_color="#A2AD00",line_alpha = 0.5)
 e2_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3, size=6,line_alpha = 0.5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.e_s,line_color="#A2AD00",line_alpha = 0.5)
+w11_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3, size=6,line_alpha = 0.5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f1.w1,line_color="#A2AD00",line_alpha = 0.5)
+w12_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3, size=6,line_alpha = 0.5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f1.w2,line_color="#A2AD00",line_alpha = 0.5)
+w21_arrow_glyph = Arrow(end=OpenHead(line_color="#Black",line_width= 3, size=6,line_alpha = 0.5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.w1,line_color="#A2AD00",line_alpha = 0.5)
+w22_arrow_glyph = Arrow(end=OpenHead(line_color="#Black",line_width= 3, size=6,line_alpha = 0.5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.w2,line_color="#A2AD00",line_alpha = 0.5)
 
 #Text:
 #abtext_glyph = Text( x=[ (orig.x0+orig.xf)/2, (0-0.03)] , y=[ (0-0.03), (orig.y0+orig.yf)/2 ], text="text", text_color="Black")
@@ -638,12 +695,17 @@ plot.add_layout(p1_arrow_glyph)
 plot.add_layout(p2_arrow_glyph)
 plot.add_layout(e1_arrow_glyph)
 plot.add_layout(e2_arrow_glyph)
+plot.add_layout(w11_arrow_glyph)
+plot.add_layout(w12_arrow_glyph)
+plot.add_layout(w21_arrow_glyph)
+plot.add_layout(w22_arrow_glyph)
 plot.add_glyph(absource,abtext_glyph)
-#plot.add_glyph(dsource, dtext_glyph)
 plot.add_layout(labels1)
 plot.add_layout(labels2)
 plot.add_layout(labelsn1)
 plot.add_layout(labelsn2)
+#plot.add_layout(labelsw1)
+#plot.add_layout(labelsw2)
 
 
 
