@@ -7,7 +7,7 @@
 
 #Import libraries:
 from bokeh.plotting import Figure, output_file , show
-from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow, NormalHead, Button
+from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow, NormalHead, Button, Div
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
 import numpy as np
@@ -20,8 +20,8 @@ xf              = 0.0
 fenster         = 16
 xstart          = 0.02 * fenster
 zstart          = 0.1 * fenster
-zbifi           = 3
-step            = 0.05
+zbifi           = (0.46368*2)
+step            = 0.01
 f_end           = 1.5
 old_slide_val   = 0
 #label_length    = dict(x=[],y=[],name=[])
@@ -90,6 +90,7 @@ col2 = Column("Pinned-Pinned",2.0*col1.h,1.0*col1.fcrit)                        
 col3 = Column("Pinned-Fixed",3.0*col1.h,1.0*col2.fcrit)                        #beam: "Pinned-Fixed" Column
 col4 = Column("Fixed-Fixed",4.0*col1.h,1.0*col2.fcrit)                          #beam: "Fixed-Fixed" Column
 
+zbifi = zbifi / col1.h
 
 #where the columns start on the graph:
 col1.xstart = xstart
@@ -98,9 +99,10 @@ col3.xstart = xstart + 8.0
 col4.xstart = xstart + 12.0
 
 #source for length labels (L,2L, etc)
+h_shift = 1.5
 label_length = ColumnDataSource(data=dict(x = [], y = []))
 label_length.data = dict(x = [col1.xstart,col2.xstart,col3.xstart,col4.xstart],
-        y = [col1.h/1.5,col2.h/1.5,col3.h/1.5,col4.h/1.5], name = ["L","2L","3L","4L"])
+        y = [col1.h/h_shift,col2.h/h_shift,col3.h/h_shift,col4.h/h_shift], name = ["L","2L","3L","4L"])
 
 #, "name" = ["L","2L","3L","4L"]
 #creation of the floors of the columns:
@@ -135,11 +137,14 @@ conplot     = ColumnDataSource(data=dict(x=[] , y=[]))
 
 #create the arrays for the graph
 #bk = 0.95
-bk = 1.05
+#bk = 1.05
+bk = 1.0
 y2 = []
 xbifi = []
-bx = 0.05
-for i in xrange(0, 1+int( (f_end-col3.fcrit)/step )  ):
+bx = 0.01
+bk = bk + bx
+#step = 0.1*step
+for i in xrange(0, 1+int( (f_end-col3.fcrit)/(step))  ):
     yb  = zbifi * ( factor * np.sqrt( np.sqrt( bk/col3.fcrit)-1) )
     bk += step
     y2.append(yb)
@@ -262,7 +267,7 @@ def fun_figures():
     col4.square.data = dict(x=[col4.pts.data['x'][-1]], y=[col4.pts.data['y'][-1]-.2])
 
 def init():
-    '''Initializes plot'''
+    '''Initializes plot. When Reset button is clicked, this is the function that is called'''
     global old_slide_val
     old_slide_val       = 0
     col1.harrow.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -274,82 +279,94 @@ def init():
     col4.reset()
     fun_update(None,None,None)
 
+def fun_check1(attr,old,new):
+    '''fun_check1 checks whether slider value is less than previous slider value. If
+    so, then the slider is kept at older value.'''
+    global old_slide_val
+    if weight_slide.value <= old_slide_val:
+        weight_slide.value = fun_onewayslider(old_slide_val,weight_slide.value)
+    elif weight_slide.value > old_slide_val:
+        fun_update(attr,old,new)
+    else:
+        print "does not work"
+
+
 def fun_update(attr,old,new):
     '''Function: Updates the plot when the weight slider is used'''
     global Druckkraft
     global old_slide_val
-    if weight_slide.value < old_slide_val:
-        weight_slide.value = fun_onewayslider(old_slide_val,weight_slide.value)
-        return
-    else:
-        print "hi"
-        #weight_slide.value = fun_onewayslider(old_slide_val,weight_slide.value)
-        Druckkraft = weight_slide.value
-        col1.h -= 5.0E-4
-        col2.h -= 5.0E-4
-        col3.h -= 5.0E-4
-        col4.h -= 5.0E-4
 
-        if(Druckkraft > col1.fcrit):
-            col1.deflection  = ( factor * np.sqrt(np.sqrt(Druckkraft/col1.fcrit)-1) )
-            col1.h          -= 0.005
-            col1.harrow.data = dict(xS=[col1.xstart+1], xE=[col1.pts.data['x'][-1]+0.1],
-            yS=[col1.pts.data['y'][-1]], yE=[col1.pts.data['y'][-1]], lW = [weight_slide.value*2])
-            col1.wlabel.data = dict(x = [col1.pts.data['x'][-1]+0.1] , y = [col1.pts.data['y'][-1]], name = ['w'] )
+    #weight_slide.value = fun_onewayslider(old_slide_val,weight_slide.value)
+    Druckkraft = weight_slide.value
+    col1.h -= 5.0E-4
+    col2.h -= 5.0E-4
+    col3.h -= 5.0E-4
+    col4.h -= 5.0E-4
 
-        if(Druckkraft > col2.fcrit):
-            col2.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col2.fcrit)-1) )
-            col2.h         -= 0.005
-        if(Druckkraft > col3.fcrit):
-            col3.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col3.fcrit)-1) )
-            col3.h         -= 0.005
-        if(Druckkraft > col4.fcrit):
-            col4.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col4.fcrit)-1) )
-            col4.h         -= 0.005
+    if(Druckkraft > col1.fcrit):
+        col1.deflection  = ( factor * np.sqrt(np.sqrt(Druckkraft/col1.fcrit)-1) )
+        col1.h          -= 0.005
+        col1.harrow.data = dict(xS=[col1.pts.data['x'][0]], xE=[col1.pts.data['x'][-1]+0.1],
+        yS=[col1.pts.data['y'][-1]], yE=[col1.pts.data['y'][-1]], lW = [weight_slide.value*2])
+        col1.wlabel.data = dict(x = [col1.pts.data['x'][-1]+0.1] , y = [col1.pts.data['y'][-1]], name = ['w'] )
 
-        fun_col1(col1.xstart,zstart)
-        fun_col2(col2.xstart,zstart)
-        fun_col3(col3.xstart,zstart)
-        fun_col4(col4.xstart,zstart)
-        col1.fun_arrow()
-        col2.fun_arrow()
-        col3.fun_arrow()
-        col4.fun_arrow()
-        col1.fun_labels()
-        col2.fun_labels()
-        col3.fun_labels()
-        col4.fun_labels()
-        fun_figures()
-        fun_bifurkation()
-        old_slide_val = weight_slide.value
+    if(Druckkraft > col2.fcrit):
+        col2.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col2.fcrit)-1) )
+        col2.h         -= 0.005
+    if(Druckkraft > col3.fcrit):
+        col3.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col3.fcrit)-1) )
+        col3.h         -= 0.005
+    if(Druckkraft > col4.fcrit):
+        col4.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col4.fcrit)-1) )
+        col4.h         -= 0.005
+
+    fun_col1(col1.xstart,zstart)
+    fun_col2(col2.xstart,zstart)
+    fun_col3(col3.xstart,zstart)
+    fun_col4(col4.xstart,zstart)
+    col1.fun_arrow()
+    col2.fun_arrow()
+    col3.fun_arrow()
+    col4.fun_arrow()
+    col1.fun_labels()
+    col2.fun_labels()
+    col3.fun_labels()
+    col4.fun_labels()
+    fun_figures()
+    fun_bifurkation()
+    old_slide_val = weight_slide.value
+
+################################################################################
+####Plotting section:
+################################################################################
 
 
-##Plotting section:
+#Main plot:
 plot = Figure(tools = "",title="Knickung", x_range=(-2,fenster), y_range=(-.5,fenster+2))
-plot.line(x='x', y='y', source = col1.pts, color='#003359',line_width=5)
-plot.line(x='x', y='y', source = col2.pts, color='#003359',line_width=5)
-plot.line(x='x', y='y', source = col3.pts, color='#003359',line_width=5)
-plot.line(x='x', y='y', source = col4.pts, color='#003359',line_width=5)
-
+plot.line(x='x', y='y', source = col1.pts, color='#003359',line_width=5)        #Column 1
+plot.line(x='x', y='y', source = col2.pts, color='#003359',line_width=5)        #Column 2
+plot.line(x='x', y='y', source = col3.pts, color='#003359',line_width=5)        #Column 3
+plot.line(x='x', y='y', source = col4.pts, color='#003359',line_width=5)        #Column 4
+#Create the floors for each column:
 plot.line(x='x', y='y', source = col1.floor, color='black',line_width=6)
 plot.line(x='x', y='y', source = col2.floor, color='black',line_width=6)
 plot.line(x='x', y='y', source = col3.floor, color='black',line_width=6)
 plot.line(x='x', y='y', source = col4.floor, color='black',line_width=6)
-
+#Create walls for columns that require a wall:
 plot.line(x='x', y='y', source = col2.wall, color='black',line_width=6)
 plot.line(x='x', y='y', source = col3.wall, color='black',line_width=6)
 plot.multi_line(xs='x', ys='y', source = col4.wall, color='black',line_width=6)
-
+#Create circles for columns that have pins:
 plot.circle(x='x', y='y', source = col2.cir1, color='black',size = 10)
 plot.circle(x='x', y='y', source = col2.cir2, color='black',size = 10)
 plot.circle(x='x', y='y', source = col3.cir2, color='black',size = 10)
-
+#Create the shapes of the ends of the columns:
 plot.triangle(x='x', y='y', source = col2.tri1, color='black',angle =0.0,fill_alpha =0, size = 20)
 plot.triangle(x='x', y='y', source = col2.tri2, color='black',angle =np.pi/2,fill_alpha =0, size = 20)
 plot.triangle(x='x', y='y', source = col3.tri2, color='black',angle =np.pi/2,fill_alpha = 0, size = 20)
 plot.square(x='x', y='y', source = col4.square, color='black',size = 20)
-
-plot.axis.visible = True
+#Main plot properties:
+plot.axis.visible = False
 plot.grid.visible = False
 plot.outline_line_width = 4
 plot.outline_line_alpha = 0.5
@@ -365,7 +382,7 @@ col3_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
 x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col3.arrow,line_color="#A2AD00")
 col4_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
 x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col4.arrow,line_color="#A2AD00")
-col1_ha = Arrow(end=NormalHead(line_color="blue",line_width= 4, size=6),
+col1_ha = Arrow(end=NormalHead(line_color="blue",line_width= 4, size=3),
 x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col1.harrow,line_color="blue")
 
 #Labels section:
@@ -381,6 +398,7 @@ labels_L = LabelSet(x = 'x', y = 'y', text = 'name', source = label_length,
     level = 'glyph', x_offset = -50, y_offset = +20, render_mode = 'canvas')
 labels_w = LabelSet(x = 'x', y = 'y', text = 'name', source = col1.wlabel,
     level = 'glyph' ,x_offset = 10, y_offset = 0, text_color = "blue", render_mode = 'canvas')
+#label properties
 labels1.text_font_size = '10pt'
 labels2.text_font_size = '10pt'
 labels3.text_font_size = '10pt'
@@ -399,34 +417,50 @@ plot.add_layout(labels4)
 plot.add_layout(labels_L)
 plot.add_layout(labels_w)
 
-
-
-
-#Bifurkation plot (Plot1):
+#Bifurcation plot (Plot1):
 plot1 = Figure(tools = "",title="Buckling Displacement", x_range=(0.05,f_end), y_range=(-ybifi[-1],ybifi[-1]), width = 400, height = 200)
 plot1.line(x='x', y='y', source = posplot, color='blue',line_width=3)
 plot1.line(x='x', y='y', source = negplot, color='red',line_width=3)
 plot1.line(x='x', y='y', source = conplot, color='red',line_width=3)
 plot1.line(x=[1,1], y = [-10,10], color = 'Black', line_width = 2, line_dash = 'dashed', line_alpha = 0.3 )
-plot1.axis.visible = True
+plot1.xaxis[0].visible = True
+plot1.yaxis[0].visible = True
 plot1.grid.visible = False
 plot1.outline_line_width = 2
 plot1.outline_line_alpha = 0.5
 plot1.outline_line_color = "Black"
 plot1.title.text_font_size = "10pt"
 plot1.xaxis[0].axis_label = 'Force Ratio (F/Fcrit)'
-plot1.yaxis[0].axis_label = 'displacement (w)'
+plot1.yaxis[0].axis_label = 'displacement (w/L)'
+
+
+################################################################################
 
 #Create Reset Button:
 button = Button(label="Reset", button_type="success")
 
-#Let program know what buttons do when clicked:
-weight_slide.on_change('value', fun_update)
+#Let program know what functions button calls when clicked:
+weight_slide.on_change('value', fun_check1)
 button.on_click(init)
 
 #Initialization at the beginning:
 init()
 
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
+
+
+
+################################################################################
+####Output section
+################################################################################
 #Output to the browser:
-curdoc().add_root(row(column(weight_slide,plot1,button),plot))
+curdoc().add_root(column(description,
+                    row(
+                        column(plot1,weight_slide,button),
+                        plot) ) )
+
+
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
