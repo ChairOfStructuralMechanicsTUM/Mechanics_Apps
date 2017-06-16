@@ -106,8 +106,9 @@ def extract_parameters():
     etxracts the necessary parameters from the input widgets
     :return: float T_0, float N, lambda function f
     """
-    T_0 = float(sympify(t0_input.value))  # Interval
-    N = float(sympify(N_input.value))  # Number of sampled values
+    T_0 = float(sympify(t0_input.value.replace(',','.')))  # Interval
+    t0_input.value = str(T_0)
+    N = float(sympify(N_input.value.replace(',','.')))  # Number of sampled values
 
     if N > 10**5:  # we do not accept more than 10**5 sampling points!
         N = 10**5
