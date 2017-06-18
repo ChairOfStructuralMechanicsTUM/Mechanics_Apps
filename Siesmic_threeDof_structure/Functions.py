@@ -3,6 +3,7 @@ import numpy as np
 from numpy import linalg as LA
 from scipy import linalg
 from bokeh.models.ranges import Range1d
+from bokeh.models.widgets import Div
 
 class Structure:
     
@@ -33,6 +34,17 @@ class Structure:
         
         # Mass locations
         self.massLocations = np.zeros((3,2))
+        
+        # Force indicator (forces indicate in the plotting domain the force 
+        # carried by each of the truss members besides the location where to
+        # display the force values) ((Here default value are given))
+        self.forces = ColumnDataSource(
+                                       data=dict(
+                                                 x=[0,0,0],
+                                                 y=[0,0,0],
+                                                 force=['Force = ','Force = ','Force = ']
+                                                )
+                                      )
         
     def update_system(self, displacement):
         self.update_masses(displacement)
@@ -111,15 +123,41 @@ class Structure:
         xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
         ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
         self.trusses[5].data =dict( x=xs, y=ys ) 
+
+    def update_force_indicator_location(self):
+        # first force indicator
+        x1 = self.trusses[1].data['x'][0] + 2.5 # where 0.5 is an offset value
+        y1 = (self.trusses[1].data['y'][1] + self.trusses[1].data['y'][0]) / 2
         
+        # second force indicator
+        x2 = self.trusses[3].data['x'][0] + 2.5
+        y2 = (self.trusses[3].data['y'][1] + self.trusses[3].data['y'][0]) / 2
+              
+        # third force indicator
+        x3 = self.trusses[5].data['x'][0] + 2.5
+        y3 = (self.trusses[5].data['y'][1] + self.trusses[5].data['y'][0]) / 2
+              
+        # update the source fle
+        self.forces.data = dict(x=[x1,x2,x3],y=[y1,y2,y3],force=self.forces.data['force'])
+              
+    def update_force_indicator_value(self, forces):
         
-class ModeShape( Structure ):
+        self.forces.data = dict(
+                                x = self.forces.data['x'],
+                                y = self.forces.data['y'],
+                                force = ['Force = '+str(forces[0])+' N','Force = '+str(forces[1])+' N','Force = '+str(forces[2])+' N']
+                               )
+        
+class Mode( Structure ):
     
     def __init__(self, masses, massSupports, trusses, trussLength, base, frequency, modeShape):
         Structure.__init__(self, masses, massSupports, trusses, trussLength, base)
         self.frequency = frequency
         self.modeShape = modeShape
         self.locationInERS = ColumnDataSource(data=dict(x=[0],y=[0])) # with default values
+        
+        self.multiplier_text = Div(text="""<b>Multiplier =</b> """)
+        self.frequency_text  = Div(text="""<b>Natural Frequency =</b> """)
     
     def get_maximum_displacement( self, siesmicParameters ):
         r = np.ones(3)
@@ -127,21 +165,27 @@ class ModeShape( Structure ):
         period = 2*np.pi / self.frequency
         Sa = siesmicParameters.get_Sa( period )
         
-        return beta*Sa*(1/self.frequency**2)*self.modeShape
+        multiplier = beta*Sa*(1/self.frequency**2)
+        
+        self.modify_mode_text( multiplier )
+        
+        return multiplier*self.modeShape
 
     def modify_location_in_ERS( self, siesmicParameters ):
         period = 2*np.pi / self.frequency
         Sa = siesmicParameters.get_Sa( period )
         self.locationInERS.data = dict(x=[period,period,0],y=[0,Sa,Sa])
         
-    def modify_mode_text(self,siesmicParameters, modeText):
-        r = np.ones(3)
-        beta = np.dot( self.modeShape, np.dot( self.M, r ) )
-        period = 2*np.pi / self.frequency
-        Sa = siesmicParameters.get_Sa( period )
-        multiplier = beta*Sa*(1/self.frequency**2)
+    def modify_mode_text(self, multiplier):        
+        self.multiplier_text.text = """<b>Multiplier =</b> """ + str(multiplier)
         
-        modeText.text += str(multiplier)
+    def modify_frequency_text(self):
+        self.frequency_text.text = """<b>Natural Frequency =</b> """ + str(self.frequency) + " rad/sec"
+        
+    def normalize_mode_shape(self):
+        m = np.dot(self.modeShape , np.dot(self.M , self.modeShape))
+        if m != 1:
+            self.modeShape = self.modeShape / np.sqrt(m)
         
 class SiesmicParameters():
     
@@ -427,8 +471,8 @@ def plot_ERS( plot, siesmicParameters ):
         y[i] = siesmicParameters.get_Sa(T)
 
     siesmicParameters.ERSdata.data = dict(x=x, y=y)
-    plot.line(x='x',y='y',source=siesmicParameters.ERSdata)
-    maxVal = max(abs(i) for i in y)
-    plot.y_range = Range1d(0, 1.1*maxVal)
-    plot.x_range = Range1d(0, x[-1])
+#    plot.line(x='x',y='y',source=siesmicParameters.ERSdata)
+#    maxVal = max(abs(i) for i in y)
+#    plot.y_range = Range1d(0, 1.1*maxVal)
+#    plot.x_range = Range1d(0, x[-1])
 		

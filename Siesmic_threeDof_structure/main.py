@@ -8,7 +8,7 @@ from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 from bokeh.io import curdoc
 from Functions import *
-from bokeh.models import Arrow, OpenHead, Button, Slider
+from bokeh.models import Arrow, OpenHead, Button, Slider, Toggle, LabelSet
 from bokeh.layouts import column, row, widgetbox
 from bokeh.models.widgets import TextInput, RadioGroup, Div
 from os.path import dirname, join, split
@@ -22,7 +22,7 @@ from bokeh.models.layouts import Spacer
 Create the plotting domain 
 ###############################################################################
 '''
-xmin, xmax = -2.5,2.5
+xmin, xmax = -10,10
 ymin, ymax = 0,10
 time_plot = figure(
                       plot_width=400,
@@ -30,7 +30,7 @@ time_plot = figure(
                       x_range=[xmin,xmax], 
                       y_range=[ymin,ymax],
                       
-                      title = '',
+                      title = 'Structure',
                   )
 time_plot.title.text_font_size = "25px"
 time_plot.title.align = "center"
@@ -41,10 +41,10 @@ time_plot.yaxis.visible=False
 mode_one = figure(
                       plot_width=200,
                       plot_height=400,
-                      x_range=[xmin,xmax], 
+                      x_range=[xmin/2,xmax/2], 
                       y_range=[ymin,ymax],
                       
-                      title = '',
+                      title = 'First Mode',
                    )
 mode_one.title.text_font_size = "25px"
 mode_one.title.align = "center"
@@ -55,10 +55,10 @@ mode_one.yaxis.visible=False
 mode_two = figure(
                       plot_width=200,
                       plot_height=400,
-                      x_range=[xmin,xmax], 
+                      x_range=[xmin/2,xmax/2], 
                       y_range=[ymin,ymax],
                      
-                      title = '',
+                      title = 'Second Mode',
                    )
 mode_two.title.text_font_size = "25px"
 mode_two.title.align = "center"
@@ -69,10 +69,10 @@ mode_two.yaxis.visible=False
 mode_three = figure(
                       plot_width=200,
                       plot_height=400,
-                      x_range=[xmin,xmax], 
+                      x_range=[xmin/2,xmax/2], 
                       y_range=[ymin,ymax],
                       
-                      title = '',
+                      title = 'Third Mode',
                    )
 mode_three.title.text_font_size = "25px"
 mode_three.title.align = "center"
@@ -165,9 +165,20 @@ base =dict(
 
 ############################### Create Structure ##############################
 structure = Structure(masses, massSupports, trussSources, trussLength, base)
+structure.update_force_indicator_location()
+structure.update_force_indicator_value([0,0,0]) # initial state of the structure has zero forces
 
 ############################## Plot structure #################################
 plot( time_plot, structure, radius, color)
+time_plot.add_layout(
+                      LabelSet(
+                                  x='x', y='y',
+                                  text='force',
+                                  text_color='black',text_font_size="5pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=structure.forces
+                              )
+                    )
 
 '''
 ###############################################################################
@@ -180,32 +191,32 @@ construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRatio, t
 '''
 ###############################################################################
 Define here the time loop that leads to the solution of the system of equations
-in time domain
+in time domain (not needed right now!)
 ###############################################################################
 '''
-timeStep = 0.01 #seconds
-
-# siesmicInput is an array which has a list of time in seconds in its first 
-# index and a list of the ampitude in m/s2 in its second index
-siesmicInput = ColumnDataSource(data=dict(amplitude=[0],time=[0],color=["33FF33"]))
-siesmicInput.data = read_siesmic_input(file='data/preDefinedTwo.txt')
-
-# Plot the siesmic input signal into the siesmic_input_plot
-siesmic_input_plot.line( x='time', y='amplitude', color="#33FF33", source=siesmicInput,   line_width=1)
-siesmic_input_plot.circle(x='time', y='amplitude', color="color", source=siesmicInput, radius=0.01)
-
-# Modify the y-range of the signal plot
-maxValue = max(abs(i) for i in siesmicInput.data['amplitude'])
-
-siesmic_input_plot.y_range = Range1d(-maxValue, maxValue)
-siesmic_input_plot.x_range = Range1d(0, siesmicInput.data['time'][-1])
-
-siesmicInput.data['color'][100] = siesmicInput.data['color'][100]*0 + '#000000'
-
-# the solution data structure consists of a vector which contains the time-doma
-# -in displacement of the massesm in addition to the displacement of the base
-solution = ColumnDataSource(data=dict(time=[0],amplitude=[0]))
-solution = solve_time_domain(structure, siesmicInput)
+#timeStep = 0.01 #seconds
+#
+## siesmicInput is an array which has a list of time in seconds in its first 
+## index and a list of the ampitude in m/s2 in its second index
+#siesmicInput = ColumnDataSource(data=dict(amplitude=[0],time=[0],color=["33FF33"]))
+#siesmicInput.data = read_siesmic_input(file='data/preDefinedTwo.txt')
+#
+## Plot the siesmic input signal into the siesmic_input_plot
+#siesmic_input_plot.line( x='time', y='amplitude', color="#33FF33", source=siesmicInput,   line_width=1)
+#siesmic_input_plot.circle(x='time', y='amplitude', color="color", source=siesmicInput, radius=0.01)
+#
+## Modify the y-range of the signal plot
+#maxValue = max(abs(i) for i in siesmicInput.data['amplitude'])
+#
+#siesmic_input_plot.y_range = Range1d(-maxValue, maxValue)
+#siesmic_input_plot.x_range = Range1d(0, siesmicInput.data['time'][-1])
+#
+#siesmicInput.data['color'][100] = siesmicInput.data['color'][100]*0 + '#000000'
+#
+## the solution data structure consists of a vector which contains the time-doma
+## -in displacement of the massesm in addition to the displacement of the base
+#solution = ColumnDataSource(data=dict(time=[0],amplitude=[0]))
+#solution = solve_time_domain(structure, siesmicInput)
 
 '''
 ###############################################################################
@@ -214,10 +225,10 @@ the modal parametes (here, the eigenfrequencies and the eigenmodes)
 ###############################################################################
 '''
 ###################### Solve the eigenvalue problem ###########################
-# Construct default data sources
+# Construct the modes
 modes = list()
 for i in range(0,3):
-    modes.append( ModeShape(masses, massSupports, trussSources, trussLength, base, frequency=0, modeShape=np.zeros(3)) )
+    modes.append( Mode(masses, massSupports, trussSources, trussLength, base, frequency=0, modeShape=np.zeros(3)) )
 
 # Get the modal parameters
 eigenvalues, eigenvectors = solve_modal_analysis(structure)
@@ -226,32 +237,31 @@ eigenvalues, eigenvectors = solve_modal_analysis(structure)
 counter = 0
 for mode in modes:
     construct_system(mode, mass, massRatio, bendingStiffness, stiffnessRatio, trussLength)
-    mode.update_system( eigenvectors[:,counter].real )
     mode.frequency = np.sqrt(eigenvalues[counter].real)
     mode.modeShape = eigenvectors[:,counter].real
+    mode.normalize_mode_shape()
+    mode.update_system( mode.modeShape ) # displacement represented by the mode shape itself
+    mode.modify_frequency_text()
 
     counter += 1
-    
-
-    
-# plot the eigenmode shapes into the modes_plot
-colorList = ['#33FF33' , '#FF33FF', '#FFFF33'] # colors represent the three modes
-
-# Construct the siesmic parametes for the building
-# INITIALIZE WITH DEFAULT VALUES
-siesmicParameters = SiesmicParameters(a=0.4,gamma=1.0,S=1.0,eta=1.0,beta=2.5,undergroundParamter = 'A-R')
-GetMaximumDisplacement(modes,siesmicParameters)
 
 ########################## Output the results #################################
-plot( mode_one  , modes[0], radius, color)
+plot( mode_one  , modes[2], radius, color)
 plot( mode_two  , modes[1], radius, color)
-plot( mode_three, modes[2], radius, color)
+plot( mode_three, modes[0], radius, color)
 '''
 ###############################################################################
 Construc the Elastic Response Spectrum
 ###############################################################################
 '''
+# Construct the siesmic parametes for the building
+# INITIALIZE WITH DEFAULT VALUES
+siesmicParameters = SiesmicParameters(a=0.4,gamma=1.0,S=1.0,eta=1.0,beta=2.5,undergroundParamter = 'A-R')
+GetMaximumDisplacement(modes,siesmicParameters)
+
 plot_ERS(ERSplot, siesmicParameters )
+ERSplot.line(x='x',y='y',source=siesmicParameters.ERSdata)
+
 colors = ['#FF0000','#00FF00','#0000FF']
 for mode in modes:
     mode.modify_location_in_ERS(siesmicParameters)
@@ -274,168 +284,159 @@ Define here the main interactivities which are:
 '''
 ############################ (1) masses slider ################################
 def update_mass(attr,old,new):
+    global mass
+    mass = new
     construct_system(structure, new, massRatio, bendingStiffness, stiffnessRatio, trussLength)
+    for mode in modes:
+         construct_system(mode, new, massRatio, bendingStiffness, stiffnessRatio, trussLength)
     
 mass_Slider = Slider(
                        title=u" Mass of the individual point mass (kg) ",
-                       value=6000, start=5000, end=10000, step=100,width=600
+                       value=6000, start=5000, end=10000, step=100,width=300
                     )
 mass_Slider.on_change('value',update_mass)
 
 ####################### (2) bending stiffness slider ##########################
 def update_bendingStiffness(attr,old,new):
+    global bendingStiffness
+    bendingStiffness = new
     construct_system(structure, mass, massRatio, new, stiffnessRatio, trussLength)
+    for mode in modes:
+         construct_system(mode, mass, massRatio, new, stiffnessRatio, trussLength)
     
 bendingStiffness_Slider = Slider(
                                    title=u" Bending stiffness of the individual column () ",
-                                   value=89e6, start=80e6, end=100e6, step=1e6,width=600
+                                   value=89e6, start=80e6, end=100e6, step=1e6,width=300
                                 )
 bendingStiffness_Slider.on_change('value',update_bendingStiffness)
     
 ############################# (3) time slider #################################
-def update_time(attr,old,new):
-    global counter
-    
-    displacement = [solution[0,counter], solution[1,counter], solution[2,counter]]
-
-#    structure.update_masses( displacement )
-#    structure.update_massSupprts( displacement )
-#    structure.update_truss_sources()
-    
-    counter = int(new/timeStep)
-    
-time_Slider = Slider(
-                       title=u" Time (second) ",
-                       value=0, start=0, end=30, step=0.01,width=600
-                    )
-time_Slider.on_change('value',update_time)
+#def update_time(attr,old,new):
+#    global counter
+#    
+#    displacement = [solution[0,counter], solution[1,counter], solution[2,counter]]
+#
+##    structure.update_masses( displacement )
+##    structure.update_massSupprts( displacement )
+##    structure.update_truss_sources()
+#    
+#    counter = int(new/timeStep)
+#    
+#time_Slider = Slider(
+#                       title=u" Time (second) ",
+#                       value=0, start=0, end=30, step=0.01,width=300
+#                    )
+#time_Slider.on_change('value',update_time)
 
 
 ############################# (4) Play button #################################  
-def play():
-    timeStep = 0.01 #seconds
-    period = timeStep*1000
-    curdoc().add_periodic_callback(play_system, period)
-      
-play_button = Button(label="Play", button_type="success")
-play_button.on_click(play)
-
-counter = 0
-def play_system():
-    global counter
-
-    counter += 1
-    time_Slider.value = counter*0.01
-
-    displacement = [solution[0,counter], solution[1,counter], solution[2,counter]]
-
-#    structure.update_masses( displacement )
-#    structure.update_massSupprts( displacement )
-#    structure.update_truss_sources()
-    
-    print('value = ',radio_group.active)
-    #color = siesmicInput.data['color']
-    #color[counter] = '#000000'
-    #siesmicInput.data['color'] = siesmicInput.data['color']*0 + color
-
-    siesmicInput.data['color'][counter] = siesmicInput.data['color'][counter]*0 + '#000000'
+#def play():
+#    timeStep = 0.01 #seconds
+#    period = timeStep*1000
+#    curdoc().add_periodic_callback(play_system, period)
+#      
+#play_button = Button(label="Play", button_type="success")
+#play_button.on_click(play)
+#
+#counter = 0
+#def play_system():
+#    global counter
+#
+#    counter += 1
+#    time_Slider.value = counter*0.01
+#
+#    displacement = [solution[0,counter], solution[1,counter], solution[2,counter]]
+#
+##    structure.update_masses( displacement )
+##    structure.update_massSupprts( displacement )
+##    structure.update_truss_sources()
+#    
+#    print('value = ',radio_group.active)
+#    #color = siesmicInput.data['color']
+#    #color[counter] = '#000000'
+#    #siesmicInput.data['color'] = siesmicInput.data['color']*0 + color
+#
+#    siesmicInput.data['color'][counter] = siesmicInput.data['color'][counter]*0 + '#000000'
 
 ############################ (5) Pause button #################################
-def pause():
-    curdoc().remove_periodic_callback(play_system)
-    
-pause_button = Button(label="Pause", button_type="success")
-pause_button.on_click(pause)
+#def pause():
+#    curdoc().remove_periodic_callback(play_system)
+#    
+#pause_button = Button(label="Pause", button_type="success")
+#pause_button.on_click(pause)
 
 ################################ Solve System #################################
 def solve_system():
+    
+    # Re-solve the eigenvalue problem
     eigenvalues, eigenvectors = solve_modal_analysis(structure)
-    print('eigenvalues = ',eigenvalues)
+
     # update the modes with the new values
     counter = 0
-    for mode in modes:
-        construct_system(mode, mass, massRatio, bendingStiffness, stiffnessRatio, trussLength)
-        mode.update_system( eigenvectors[:,counter].real )
+    for mode in modes: 
         mode.frequency = np.sqrt(eigenvalues[counter].real)
         mode.modeShape = eigenvectors[:,counter].real
 
+        mode.normalize_mode_shape()
+        mode.update_system( mode.modeShape )
+        mode.modify_frequency_text()
+
+        # Update the location of the mode shapes in the ERS diagram
         mode.modify_location_in_ERS(siesmicParameters)
-        ERSplot.line(x='x',y='y',source=mode.locationInERS,color=colors[0])
+        
         counter += 1
+    
+    # re-plot the mode shapes (Thery are in reversed order 2-1-0 because the
+    # eignenvalue function solves the eigenvalues in reversed order)
+    #plot( mode_one  , modes[2], radius, color)
+    #plot( mode_two  , modes[1], radius, color)
+    #plot( mode_three, modes[0], radius, color)
+    
+    # Show the deformed configuration whenever the solve system button is pushed
+    if ( def_config_button.active ):
+        show_def_config(True)
+    else:
+        pass
     
 solve_system_button = Button(label="Solve System", button_type="success")
 solve_system_button.on_click(solve_system)
 
 ############################### (6) data box ##################################
-text_input = TextInput(value="default", title="Label:")
+#text_input = TextInput(value="default", title="Label:")
+#
+#def compute_system():
+#    '''
+#    Here we need to:
+#        (1) construct/re-construct the siesmic-signal and its plot
+#        (2) compute/re-compute the eigenfrequencies and eigenmodes and plot them
+#        (3) compute/re-compute the time dependent solution of the system
+#    '''
+#    global siesmicInput, eigenvalues, eigenmodeOne, eigenmodeTwo, eigenmodeThree, solution
+#    curdoc().remove_periodic_callback(play_system)
+#    time_Slider.value = 0.0
+#    
+#    ################################## (1) ####################################
+#    #siesmicInput = read_siesmic_input(file=text_input.value)
+#    
+#    ################################## (2) ####################################
+#    eigenvalues, eigenmodeOne, eigenmodeTwo, eigenmodeThree = solve_modal_analysis(structure)
+#    
+#    ################################## (3) ####################################
+#    solution = solve_time_domain(structure, siesmicInput)
+#    
+#enter_data_button = Button(label="Pause", button_type="success")
+#enter_data_button.on_click(compute_system)
 
-def compute_system():
-    '''
-    Here we need to:
-        (1) construct/re-construct the siesmic-signal and its plot
-        (2) compute/re-compute the eigenfrequencies and eigenmodes and plot them
-        (3) compute/re-compute the time dependent solution of the system
-    '''
-    global siesmicInput, eigenvalues, eigenmodeOne, eigenmodeTwo, eigenmodeThree, solution
-    curdoc().remove_periodic_callback(play_system)
-    time_Slider.value = 0.0
-    
-    ################################## (1) ####################################
-    #siesmicInput = read_siesmic_input(file=text_input.value)
-    
-    ################################## (2) ####################################
-    eigenvalues, eigenmodeOne, eigenmodeTwo, eigenmodeThree = solve_modal_analysis(structure)
-    
-    ################################## (3) ####################################
-    solution = solve_time_domain(structure, siesmicInput)
-    
-enter_data_button = Button(label="Pause", button_type="success")
-enter_data_button.on_click(compute_system)
-
-Erdbebenzonen_text = Div(text="""<b>Erdbebenzonen</b>""")
+##################### (7) Choices possible to modify ERS ######################
+Erdbebenzonen_text = Div(text="""<b>Earthquake Zones</b>""")
 Erdbebenzonen_choices = RadioGroup(
         labels=["Zone 0", "Zone 1", "Zone 2", "Zone 3"], active=0)
 Bedeutungsbeiwert_text = Div(text="""<b>Bedeutungsbeiwert</b>""")
 Bedeutungsbeiwert_choices = RadioGroup(
         labels=["Residential Building", "School or Residential Complexe", "Hospital"], active=0)
-untergrundParamter_text = Div(text="""<b>Untergrundparamter</b>""")
+untergrundParamter_text = Div(text="""<b>Underground Parameter</b>""")
 untergrundParamter_choices = RadioGroup(
         labels=["A-R", "B-R", "C-R", "B-T", "C-T", "C-S"], active=0)
-
-def_undef_choices_text = Div(text="""<b>Choose which configuration to show</b> """)
-
-mode_information = [
-Div(text="""<b>Multiplier =</b> """),
-Div(text="""<b>Multiplier =</b> """),
-Div(text="""<b>Multiplier =</b> """)]
-
-counter = 0
-for mode in modes:
-    mode.modify_mode_text(siesmicParameters, mode_information[counter])
-    counter += 1
-
-
-def show_undef_config():
-    maxes = np.zeros((3,3))
-    counter = 0
-    for mode in modes:
-        maxes[:,counter] = mode.get_maximum_displacement(siesmicParameters)
-        counter += 1
-        
-    maximumDisp = np.sqrt( maxes[:,0]**2 + maxes[:,1]**2 + maxes[:,2]**2 )
-    structure.update_system( maximumDisp )
-    structure.massLocations[:,1] = maximumDisp
-    plot( time_plot, structure, radius, color)
-    
-def show_def_config():
-    structure.update_system( np.zeros(3) )
-    plot( time_plot, structure, radius, color)
-
-undef_config_button = Button(label="Undeformed_Configuration", button_type="success",width=25)
-undef_config_button.on_click(show_undef_config)
-
-def_config_button = Button(label="Deformed_Configuration", button_type="success",width=25)
-def_config_button.on_click(show_def_config)
 
 def calculate_ERS():
     # re-assign "Erdbebenzonen" value
@@ -488,39 +489,85 @@ def calculate_ERS():
     
 calculate_ERS_button = Button(label="Re-calculate Elastic Response Spectrum", button_type="success")
 calculate_ERS_button.on_click(calculate_ERS)
+
+#################### (8) Choose which configuration to show ###################
+def_undef_choices_text = Div(text="""<b>Choose which configuration to show</b> """)
+
+def show_def_config(active):
+    
+    if active == True:
+        undef_config_button.active = False
+        maxes = np.zeros((3,3))
+        counter = 0
+        for mode in modes:
+            maxes[:,counter] = mode.get_maximum_displacement(siesmicParameters)
+            counter += 1
+            
+        maximumDisp = np.sqrt( maxes[:,0]**2 + maxes[:,1]**2 + maxes[:,2]**2 )
+        structure.update_system( maximumDisp )
+        structure.massLocations[:,1] = maximumDisp
+        #plot( time_plot, structure, radius, color)
+        
+        # Calculate forces
+        force1 = (12*bendingStiffness*stiffnessRatio[0] / trussLength**3) * structure.masses[0].data['x'][0]
+        force2 = (12*bendingStiffness*stiffnessRatio[1] / trussLength**3) * (structure.masses[1].data['x'][0] - structure.masses[0].data['x'][0])
+        force3 = (12*bendingStiffness*stiffnessRatio[2] / trussLength**3) * (structure.masses[2].data['x'][0] - structure.masses[1].data['x'][0])
+        structure.update_force_indicator_value( [int(force1),int(force2),int(force3)] )
+    else:
+        pass
+    
+def show_undef_config(active):
+    if active == True:
+        def_config_button.active = False
+        structure.update_system( np.zeros(3) )
+        #plot( time_plot, structure, radius, color)
+    else:
+        pass
+
+def_config_button = Toggle(label="Deformed Configuration", button_type="success",width=25)
+def_config_button.on_click(show_def_config)
+
+undef_config_button = Toggle(label="Undeformed Configuration", button_type="success",width=25)
+undef_config_button.on_click(show_undef_config)
+
 '''
 ###############################################################################
 Construct and show the resulting plot
 ###############################################################################
-'''
+'''                             
 curdoc().add_root(
-                  row(
-                      column(
-                             row(
-                                   column(time_plot, def_undef_choices_text, row(undef_config_button, Spacer(width=180), def_config_button)),
-                                   column(mode_one,mode_information[0]),
-                                   column(mode_two,mode_information[1]),
-                                   column(mode_three,mode_information[2])
-                                ),
-                             Spacer(height=60),
-                             siesmic_input_plot
-                            ),
-                      column(
-                             play_button,
-                             pause_button,
-                             Spacer(height=60),
-                             time_Slider,
-                             bendingStiffness_Slider,
-                             mass_Slider,
-                             row(column(
-                                         Erdbebenzonen_text,Erdbebenzonen_choices,
-                                         Bedeutungsbeiwert_text,Bedeutungsbeiwert_choices,
-                                         untergrundParamter_text,untergrundParamter_choices),
-                                 column(ERSplot, calculate_ERS_button, solve_system_button)
-                                )
-                            )
-                     )
-                 )    
+                    row(
+                        column(
+                                row(
+                                    time_plot, 
+                                    column(
+                                           def_undef_choices_text, 
+                                           row(
+                                               undef_config_button,
+                                               Spacer(width=180), 
+                                               def_config_button
+                                              ),
+                                           bendingStiffness_Slider,
+                                           mass_Slider,
+                                           solve_system_button
+                                          )
+                                   ),
+                                row(
+                                    column(mode_one,modes[2].frequency_text,modes[2].multiplier_text),
+                                    column(mode_two,modes[1].frequency_text,modes[1].multiplier_text),
+                                    column(mode_three,modes[0].frequency_text,modes[0].multiplier_text)
+                                   )
+                              ),
+                        column(
+                               Erdbebenzonen_text,Erdbebenzonen_choices,
+                               Bedeutungsbeiwert_text,Bedeutungsbeiwert_choices,
+                               untergrundParamter_text,untergrundParamter_choices
+                              ),
+                        column(
+                               ERSplot, calculate_ERS_button
+                              )
+                       )
+                 )
 # get path of parent directory and only use the name of the Parent Directory 
 # for the tab name. Replace underscores '_' and minuses '-' with blanks ' '		
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  
