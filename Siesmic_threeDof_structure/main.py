@@ -534,39 +534,46 @@ undef_config_button.on_click(show_undef_config)
 ###############################################################################
 Construct and show the resulting plot
 ###############################################################################
-'''                             
+'''       
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
 curdoc().add_root(
-                    row(
-                        column(
-                                row(
-                                    time_plot, 
-                                    column(
-                                           def_undef_choices_text, 
-                                           row(
-                                               undef_config_button,
-                                               Spacer(width=180), 
-                                               def_config_button
-                                              ),
-                                           bendingStiffness_Slider,
-                                           mass_Slider,
-                                           solve_system_button
-                                          )
-                                   ),
-                                row(
-                                    column(mode_one,modes[2].frequency_text,modes[2].multiplier_text),
-                                    column(mode_two,modes[1].frequency_text,modes[1].multiplier_text),
-                                    column(mode_three,modes[0].frequency_text,modes[0].multiplier_text)
-                                   )
-                              ),
-                        column(
-                               Erdbebenzonen_text,Erdbebenzonen_choices,
-                               Bedeutungsbeiwert_text,Bedeutungsbeiwert_choices,
-                               untergrundParamter_text,untergrundParamter_choices
-                              ),
-                        column(
-                               ERSplot, calculate_ERS_button
-                              )
-                       )
+                    column(
+                            description,
+                            row(
+                                column(
+                                        row(
+                                            time_plot, 
+                                            column(
+                                                   def_undef_choices_text, 
+                                                   row(
+                                                       undef_config_button,
+                                                       Spacer(width=180), 
+                                                       def_config_button
+                                                      ),
+                                                   bendingStiffness_Slider,
+                                                   mass_Slider,
+                                                   solve_system_button
+                                                  )
+                                           ),
+                                        row(
+                                            column(mode_one,modes[2].frequency_text,modes[2].multiplier_text),
+                                            column(mode_two,modes[1].frequency_text,modes[1].multiplier_text),
+                                            column(mode_three,modes[0].frequency_text,modes[0].multiplier_text)
+                                           )
+                                      ),
+                                column(
+                                       Erdbebenzonen_text,Erdbebenzonen_choices,
+                                       Bedeutungsbeiwert_text,Bedeutungsbeiwert_choices,
+                                       untergrundParamter_text,untergrundParamter_choices
+                                      ),
+                                column(
+                                       ERSplot, calculate_ERS_button
+                                      )
+                               )
+                          )
                  )
 # get path of parent directory and only use the name of the Parent Directory 
 # for the tab name. Replace underscores '_' and minuses '-' with blanks ' '		
