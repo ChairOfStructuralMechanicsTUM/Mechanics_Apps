@@ -83,8 +83,8 @@ mode_three.yaxis.visible=False
 ERSplot = figure(
                       plot_width=400,
                       plot_height=400,
-                      x_range=[0,0.15], 
-                      y_range=[0,0.5],
+                      x_range=[0,3.0], 
+                      y_range=[0,3.0],
                       
                       title = 'Elastic Response Spectrum',
                    )
@@ -305,7 +305,7 @@ def update_bendingStiffness(attr,old,new):
          construct_system(mode, mass, massRatio, new, stiffnessRatio, trussLength)
     
 bendingStiffness_Slider = Slider(
-                                   title=u" Bending stiffness of the individual column () ",
+                                   title=u" Bending stiffness of the individual column (N*m*m) ",
                                    value=89e6, start=80e6, end=100e6, step=1e6,width=300
                                 )
 bendingStiffness_Slider.on_change('value',update_bendingStiffness)
@@ -372,25 +372,19 @@ def solve_system():
     eigenvalues, eigenvectors = solve_modal_analysis(structure)
 
     # update the modes with the new values
+    magnification = int(mode_amp_factor.value)
     counter = 0
     for mode in modes: 
         mode.frequency = np.sqrt(eigenvalues[counter].real)
-        mode.modeShape = eigenvectors[:,counter].real
-
+        mode.modeShape = eigenvectors[:,counter].real * magnification
         mode.normalize_mode_shape()
-        mode.update_system( mode.modeShape )
+        mode.update_system( mode.modeShape*magnification )
         mode.modify_frequency_text()
 
         # Update the location of the mode shapes in the ERS diagram
         mode.modify_location_in_ERS(siesmicParameters)
         
         counter += 1
-    
-    # re-plot the mode shapes (Thery are in reversed order 2-1-0 because the
-    # eignenvalue function solves the eigenvalues in reversed order)
-    #plot( mode_one  , modes[2], radius, color)
-    #plot( mode_two  , modes[1], radius, color)
-    #plot( mode_three, modes[0], radius, color)
     
     # Show the deformed configuration whenever the solve system button is pushed
     if ( def_config_button.active ):
@@ -402,7 +396,8 @@ solve_system_button = Button(label="Solve System", button_type="success")
 solve_system_button.on_click(solve_system)
 
 ############################### (6) data box ##################################
-#text_input = TextInput(value="default", title="Label:")
+maximum_disp_amp_factor = TextInput(value="1", title="Maximum Displacement Magnification Factor:")
+mode_amp_factor = TextInput(value="1", title="Mode Magnification Factor:")
 #
 #def compute_system():
 #    '''
@@ -430,10 +425,10 @@ solve_system_button.on_click(solve_system)
 ##################### (7) Choices possible to modify ERS ######################
 Erdbebenzonen_text = Div(text="""<b>Earthquake Zones</b>""")
 Erdbebenzonen_choices = RadioGroup(
-        labels=["Zone 0", "Zone 1", "Zone 2", "Zone 3"], active=0)
+        labels=["Zone 0", "Zone 1", "Zone 2", "Zone 3"], active=1)
 Bedeutungsbeiwert_text = Div(text="""<b>Bedeutungsbeiwert</b>""")
 Bedeutungsbeiwert_choices = RadioGroup(
-        labels=["Residential Building", "School or Residential Complexe", "Hospital"], active=0)
+        labels=["Residential Building", "School or Residential Complexes", "Hospital"], active=0)
 untergrundParamter_text = Div(text="""<b>Underground Parameter</b>""")
 untergrundParamter_choices = RadioGroup(
         labels=["A-R", "B-R", "C-R", "B-T", "C-T", "C-S"], active=0)
@@ -443,10 +438,12 @@ def calculate_ERS():
     a = 0
     value1 = Erdbebenzonen_choices.active
     if value1 == 0:
+        a = 0.0
+    if value1 == 1:
         a = 0.4
-    elif value1 == 1:
-        a = 0.6
     elif value1 == 2:
+        a = 0.6
+    elif value1 == 3:
         a = 0.8
     
     # re-assign "Bedeutungsbeiwert"
@@ -479,6 +476,7 @@ def calculate_ERS():
     siesmicParameters.a = a
     siesmicParameters.gamma = gamma
     siesmicParameters.undergroundParamter = undergroundParameter
+    siesmicParameters.determine_periods_and_S
     
     # Plot the updated Elastic Response Spectrum
     plot_ERS(ERSplot, siesmicParameters)
@@ -503,12 +501,13 @@ def show_def_config(active):
             maxes[:,counter] = mode.get_maximum_displacement(siesmicParameters)
             counter += 1
             
-        maximumDisp = np.sqrt( maxes[:,0]**2 + maxes[:,1]**2 + maxes[:,2]**2 )
+        maximumDisp = np.sqrt( maxes[:,0]**2 + maxes[:,1]**2 + maxes[:,2]**2 ) * int(maximum_disp_amp_factor.value)
         structure.update_system( maximumDisp )
         structure.massLocations[:,1] = maximumDisp
         #plot( time_plot, structure, radius, color)
         
         # Calculate forces
+        structure.update_force_indicator_location()
         force1 = (12*bendingStiffness*stiffnessRatio[0] / trussLength**3) * structure.masses[0].data['x'][0]
         force2 = (12*bendingStiffness*stiffnessRatio[1] / trussLength**3) * (structure.masses[1].data['x'][0] - structure.masses[0].data['x'][0])
         force3 = (12*bendingStiffness*stiffnessRatio[2] / trussLength**3) * (structure.masses[2].data['x'][0] - structure.masses[1].data['x'][0])
@@ -520,7 +519,8 @@ def show_undef_config(active):
     if active == True:
         def_config_button.active = False
         structure.update_system( np.zeros(3) )
-        #plot( time_plot, structure, radius, color)
+        structure.update_force_indicator_location()
+        
     else:
         pass
 
@@ -555,6 +555,8 @@ curdoc().add_root(
                                                       ),
                                                    bendingStiffness_Slider,
                                                    mass_Slider,
+                                                   maximum_disp_amp_factor,
+                                                   mode_amp_factor,
                                                    solve_system_button
                                                   )
                                            ),

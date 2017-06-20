@@ -126,15 +126,15 @@ class Structure:
 
     def update_force_indicator_location(self):
         # first force indicator
-        x1 = self.trusses[1].data['x'][0] + 2.5 # where 0.5 is an offset value
+        x1 = (self.trusses[1].data['x'][0] + self.trusses[1].data['x'][1]) / 2 + 2.5 # where 2.5 is an offset value
         y1 = (self.trusses[1].data['y'][1] + self.trusses[1].data['y'][0]) / 2
         
         # second force indicator
-        x2 = self.trusses[3].data['x'][0] + 2.5
+        x2 = (self.trusses[3].data['x'][0] + self.trusses[3].data['x'][1]) / 2 + 2.5
         y2 = (self.trusses[3].data['y'][1] + self.trusses[3].data['y'][0]) / 2
               
         # third force indicator
-        x3 = self.trusses[5].data['x'][0] + 2.5
+        x3 = (self.trusses[5].data['x'][0] + self.trusses[5].data['x'][1]) / 2 + 2.5
         y3 = (self.trusses[5].data['y'][1] + self.trusses[5].data['y'][0]) / 2
               
         # update the source fle
@@ -242,11 +242,10 @@ class SiesmicParameters():
         if period >= 0 and period < self.periods[0]:
             return self.a * self.gamma * self.S * (1+period/self.periods[0]*(self.beta/1-1))
         elif period >= self.periods[0] and period < self.periods[1]:
-            print('period = ',period)
             return self.a * self.gamma * self.S * self.beta / 1 
-        elif period > self.periods[1] and period < self.periods[2]:
+        elif period >= self.periods[1] and period < self.periods[2]:
             return self.a * self.gamma * self.S * self.beta / 1 * (self.periods[1]/period)
-        elif (period > self.periods[2]):
+        elif (period >= self.periods[2]):
             return self.a * self.gamma * self.S * self.beta / 1 * self.periods[1]**2/period**2
 
             
