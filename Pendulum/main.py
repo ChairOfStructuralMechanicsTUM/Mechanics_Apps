@@ -2,7 +2,7 @@ from MoveMassTool import *
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
-from bokeh.models import ColumnDataSource, Slider, Button, RadioButtonGroup, Arrow, OpenHead
+from bokeh.models import ColumnDataSource, Slider, Button, RadioButtonGroup, Arrow, OpenHead, Div
 from math import sin, cos, pi, atan2, sqrt, acos
 from mpmath import csc
 from os.path import dirname, join, split
@@ -275,10 +275,10 @@ moveTo=moveToSingle
 getKinEng=getKinEngSingle
 
 # draw pendulum diagram
-fig = figure(title="Energy Balance",tools="",x_range=(-4.5,4.5),y_range=(3,12),width=500,height=500)
+fig = figure(title="Kinetic energy balance",tools="",x_range=(-4.5,4.5),y_range=(3,12),width=500,height=500)
 fig.add_tools(MoveMassTool())
 fig.tool_events.on_change('geometries', on_mouse_move)
-fig.title.text_font_size="20pt"
+fig.title.text_font_size="16pt"
 fig.axis.visible=False
 fig.grid.visible=False
 fig.outline_line_color = None
@@ -296,13 +296,13 @@ fig.add_layout(arrow_glyph)
 dPhiText = fig.text(x='x',y='y',text='t',source=dPhiArrowText,color="black",text_align="left")
 
 # draw phase diagram
-phase_diagramm = figure(title="Phasendiagramm (Phase diagram)",tools="",x_range=(-3.14,3.14),y_range=(-5,5))
-phase_diagramm.title.text_font_size="20pt"
+phase_diagramm = figure(title="Phase diagram",tools="",x_range=(-3.14,3.14),y_range=(-5,5))
+phase_diagramm.title.text_font_size="16pt"
 phase_diagramm.axis.major_label_text_font_size="12pt"
 phase_diagramm.axis.axis_label_text_font_style="normal"
-phase_diagramm.axis.axis_label_text_font_size="16pt"
-phase_diagramm.xaxis.axis_label=u"\u03C6"
-phase_diagramm.yaxis.axis_label=u"\u03C6\u0307"
+phase_diagramm.axis.axis_label_text_font_size="12pt"
+phase_diagramm.xaxis.axis_label=u"\u03C6 [rad]"
+phase_diagramm.yaxis.axis_label=u"\u03C6\u0307 [rad/s]"
 phase_diagramm.ellipse(x='x',y='y',width=0.02,height=0.02,color="#0065BD",source=basicPhaseDiagram)
 phase_diagramm.ellipse(x='x',y='y',width=0.2,height=0.2,color="#E37222",source=currentPoint)
 
@@ -354,14 +354,14 @@ def change_mass(attr,old,new):
     TotEng=getTotEng()
     plot()
 ## Create slider to choose mass of blob
-mass_input = Slider(title="Masse (mass) [kg]", value=5, start=0.5, end=10.0, step=0.1,width=200)
+mass_input = Slider(title="Mass [kg]", value=5, start=0.5, end=10.0, step=0.1,width=200)
 mass_input.on_change('value',change_mass)
 
 def change_lam(attr,old,new):
     global lam
     lam=new
 ## Create slider to choose damper coefficient
-lam_input = Slider(title=u"D\u00E4mpfungskonstante (Damper Coefficient) [N*s/m]", value=0.0, start=0.0, end=5.0, step=0.2,width=400)
+lam_input = Slider(title=u"Damper coefficient [N*s/m]", value=0.0, start=0.0, end=5.0, step=0.2,width=400)
 lam_input.on_change('value',change_lam)
 
 def change_phi0(attr,old,new):
@@ -375,7 +375,7 @@ def change_phi0(attr,old,new):
     elif (Phi0!=new):
         phi0_input.value=Phi0
 ## Create slider to choose damper coefficient
-phi0_input = Slider(title=u"\u03C6\u2080", value=0.0, start=-3.0, end=3.0, step=0.2,width=200)
+phi0_input = Slider(title=u"\u03C6\u2080 [rad]", value=0.0, start=-3.0, end=3.0, step=0.2,width=200)
 phi0_input.on_change('value',change_phi0)
 
 def change_phi0dot(attr,old,new):
@@ -390,7 +390,7 @@ def change_phi0dot(attr,old,new):
     elif (dPhi0!=new):
         dphi0_input.value=dPhi0
 ## Create slider to choose damper coefficient
-dphi0_input = Slider(title=u"\u03C6\u0307\u2080", value=0.0, start=-5.0, end=5.0, step=0.5,width=200)
+dphi0_input = Slider(title=u"\u03C6\u02D9\u2080 [rad/s]", value=0.0, start=-5.0, end=5.0, step=0.5,width=200)
 dphi0_input.on_change('value',change_phi0dot)
 
 # create selector for pendulum type which updates function handles and appropriate properties
@@ -423,10 +423,14 @@ def swapPendulumType(attr,old,new):
         drawPhiAngle()
 
 pendulum_type_input = RadioButtonGroup(
-        labels=["Single Pendulum", "Double Pendulum"], active=0)
+        labels=["Single pendulum", "Double pendulum"], active=0)
 pendulum_type_input.on_change('active',swapPendulumType)
 
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
 ## Send to window
-curdoc().add_root(column(row(column(fig,row(Play_button,Spacer(width=10),Stop_button,Spacer(width=10),Reset_button),pendulum_type_input),phase_diagramm),row(mass_input,lam_input,phi0_input,dphi0_input)))
+curdoc().add_root(column(description, row(column(fig,row(Play_button,Spacer(width=10),Stop_button,Spacer(width=10),Reset_button),pendulum_type_input),phase_diagramm),row(mass_input,lam_input,phi0_input,dphi0_input)))
 curdoc().add_periodic_callback(evolve,100)
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
