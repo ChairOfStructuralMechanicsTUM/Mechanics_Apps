@@ -79,8 +79,8 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [ ] 13) Moment is a free vector (rem)
 
 #### Supplementary course/Ergaenzungskurs Technical mechanics (ft, qa):
-- [x] 1) Spring pendulum/Federpendel (eb, qa)
-- [ ] 2) Pendulum/Schwerependel (eb)
+- [x] 1) Damped oscillator/Federpendel (eb, qa, ft)
+- [x] 2) Pendulum/Schwerependel (eb, ft)
 - [ ] 3) Base-excited oscillator/Fusspunkterregter Schwinger (eb)
 - [ ] 4) Tuned mass damper/Schwingungstilger (eb, rd)
 - [ ] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter) (ak, vu)
@@ -107,7 +107,7 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [x] 1) Diffraction (br)
 
 #### Integral transform method (fm, he):
-- [ ] 1) Leakage (br)
+- [x] 1) Dampling (br)
 
 ### Supervisors
 - Francesca Taddei ft
