@@ -4,7 +4,7 @@ from Mass import *
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div, HoverTool, Range1d
+from bokeh.models import Slider, Button, Div, HoverTool, Range1d, Div
 from os.path import dirname, join, split
 
 # z = lam/(2*sqrt(k*m))
@@ -97,7 +97,7 @@ def change_lam(attr,old,new):
     dashpot.changeDamperCoeff(new)
 
 ## Create slider to choose damper coefficient
-lam_input = Slider(title="Damping coefficient [N*s/m]", value=initial_lambda_value, start=0.0, end=10, step=0.1,width=400)
+lam_input = Slider(title="Damping coefficient [Ns/m]", value=initial_lambda_value, start=0.0, end=10, step=0.1,width=400)
 lam_input.on_change('value',change_lam)
 
 def change_initV(attr,old,new):
@@ -157,8 +157,12 @@ stop_button.on_click(stop)
 reset_button = Button(label="Reset", button_type="success",width=100)
 reset_button.on_click(reset)
 
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
 ## Send to window
-curdoc().add_root(column(title_box, \
+curdoc().add_root(column(description, \
     row(column(Spacer(height=100),play_button,pause_button,stop_button,reset_button),Spacer(width=10),fig,p), \
     row(mass_input,kappa_input),row(lam_input,initV_input)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

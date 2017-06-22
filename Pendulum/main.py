@@ -390,7 +390,7 @@ def change_phi0dot(attr,old,new):
     elif (dPhi0!=new):
         dphi0_input.value=dPhi0
 ## Create slider to choose damper coefficient
-dphi0_input = Slider(title=u"\u03C6\u02D9\u2080 [rad/s]", value=0.0, start=-5.0, end=5.0, step=0.5,width=200)
+dphi0_input = Slider(title=u"\u03C6\u0307\u2080 [rad/s]", value=0.0, start=-5.0, end=5.0, step=0.5,width=200)
 dphi0_input.on_change('value',change_phi0dot)
 
 # create selector for pendulum type which updates function handles and appropriate properties
