@@ -4,7 +4,7 @@ TO-DO:
 [X]Change F1 frame to blue (changed)
 [X] Change to english
 []add in description
-[]Change displacement arrows
+[X]Change displacement arrows
 []add in ratio
 []add in graph of changes
 [X]Change force text to respective color (changed)
