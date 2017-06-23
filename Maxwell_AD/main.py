@@ -6,7 +6,6 @@ from bokeh.models.glyphs import Text
 from bokeh.io import curdoc
 import numpy as np
 from os.path import dirname, join, split
-#from sidefuns import side1, side2, side3
 
 
 #main1
@@ -467,17 +466,17 @@ def compute_shift(paramInt1, paramInt2, i):
     return localDouble
 
 def create_shift(f):
-    if (f.get_mag() == 0):
+    #if (f.get_mag() == 0):
         #if (f.get_loc() == 0):
-        f.e_s.data = dict(xS= [], xE= [],
-        yS= [], yE=[], lW = [] )
-    else:
+    #    f.e_s.data = dict(xS= [], xE= [],
+    #    yS= [], yE=[], lW = [] )
+    #else:
         paramInt1 = f.get_param()
         #print orig.pts.data["y"]
         #sprint f2.pts.data["x"]
         #print f2.pts.data["y"]
         localDouble1 = compute_shift(paramInt1,paramInt1, f.get_mag())
-
+        #print localDouble1
         d2 = 0
         d1 = 0
         sclr = 10
@@ -495,7 +494,6 @@ def create_shift(f):
                 y2 = 0.7
             x1 = d1 + localDouble1[0]
             x2 = d1
-
         elif ((30 <= paramInt1) & (paramInt1 <= 70)):
             d1 = (paramInt1 - 30) / 40.0 * 0.7 + 0.1
             d2 = 0.6
@@ -529,10 +527,10 @@ def create_shift(f):
             yS= [d2], yE=[d2], lW = [ abs(localDouble1[0]*sclr ) ] )
 
         f.w1.data = dict(xS= [x1], xE= [x2],
-        yS= [y1], yE=[y2])
+        yS= [y1], yE=[y2] )
 
         f.w2.data = dict(xS= [ x2 ], xE= [x1],
-        yS= [y2], yE=[y1])
+        yS= [y2], yE=[y1] )
 
 
 def create_wdline(f):
@@ -541,9 +539,6 @@ def create_wdline(f):
     else:
         f.wdline.data = dict(x1 = [ f.w1.data['xS'][0], f.w1.data['xS'][0] ]  , x2 = [  f.w2.data['xS'][0], f.w2.data['xS'][0] ] ,
         y1 = [ f.w1.data['yS'][0] , f.e_s.data['yS'][0] ] , y2 = [ f.w2.data['yS'][0], f.e_s.data['yS'][0] ] )
-
-
-
 
 
 def update_fun(attr,old,new):
@@ -557,11 +552,13 @@ def update_fun(attr,old,new):
     elif changer != 0:
         f2.set_param(loc_slider.value)
         f2.set_mag(mag_slider.value)
-        create_wdline(f2)
         create_prof(f2)
         create_shift(f2)
-        create_wdline(f2)
         f2.tri.data = dict(x = [0.1,f2.pts.data["x"][-1]], y = [0.1,f2.pts.data["y"][-1]], size = [tri_size,tri_size])
+        create_wdline(f2)
+        f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
+
+
 
 def button_fun():
     global changer
@@ -569,16 +566,16 @@ def button_fun():
     f1.set_param(loc_slider.value)
     f1.set_mag(mag_slider.value)
     create_prof(f1)
-    create_shift(f2)
     mag_slider.value        = mag_val
     loc_slider.value        = loc_val
-    update_fun(None,None,None)
+    f2.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    #update_fun(None,None,None)
+
 #Force 1 sliders:
 #f1.loc_slider.on_change('value', update_fun)
 #f1.mag_slider.on_change('value', update_fun)
 
-loc_slider.on_change('value', update_fun)
-mag_slider.on_change('value', update_fun)
+
 
 #default.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
 #Force 2 sliders:
@@ -606,25 +603,31 @@ def init():
     f1.tri.data             = dict(x = [], y = [], size = [])
     f2.set_param(loc_val)
     f2.set_mag(mag_val)
+
 def clearf2():
     f2.pts.data             = dict(x = [], y = [] )
 
 button.on_click(button_fun)
 rbutton.on_click(init)
 rbutton.on_click(clearf2)
-
+loc_slider.on_change('value', update_fun)
+mag_slider.on_change('value', update_fun)
 #init()
 create_orig(orig)
 
 abshift = 0.02
 xb      = -0.015
+f1color = "#0065BD"
+f2color = "#E37222"
 
-plot = Figure(tools = "",title="Maxwell",title_location = "above",
-    x_range=(plotx0,plotxf), y_range=(ploty0,plotyf),plot_width=1000, plot_height=1000)
+
+plot = Figure(tools = "", x_range=(plotx0,plotxf), y_range=(ploty0,plotyf),plot_width=1000, plot_height=1000)
+
+
 
 plot.line(x='x', y='y', source=orig.pts, color="grey",line_width=3)
-plot.line(x='x', y='y', source=f1.pts, color="#0065BD",line_width=5)
-#plot.line(x='x', y='y', source=f2.pts, color="#E37222",line_width=5)
+plot.line(x='x', y='y', source=f1.pts, color=f1color,line_width=5)
+plot.line(x='x', y='y', source=f2.pts, color=f2color,line_width=5)
 plot.line(x='x', y='y', source=t_line, color="Black",line_width=5)
 
 plot.line(x='x', y='y', source=f1.dline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
@@ -632,15 +635,15 @@ plot.line(x='x', y='y', source=f2.dline, color="Black",line_width=2,line_dash = 
 
 plot.line(x = 'x1' , y = 'y1',source = f1.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
 plot.line(x = 'x2' , y = 'y2',source = f1.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
-#plot.line(x = 'x1' , y = 'y1',source = f2.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
-#plot.line(x = 'x2' , y = 'y2',source = f2.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+plot.line(x = 'x1' , y = 'y1',source = f2.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+plot.line(x = 'x2' , y = 'y2',source = f2.wdline, color="Black",line_width=2,line_dash = 'dashed',line_alpha = 0.3)
 
 plot.multi_line( [ [orig.x0, orig.xf],[orig.x0,orig.x0],[orig.xf,orig.xf] ], [ [0,0] ,[0-abshift,0+abshift] , [0-abshift,0+abshift] ], color=["black", "black","black"], line_width=10)
 plot.multi_line( [ [xb,xb],[xb-abshift,xb+abshift],[xb-abshift,xb+abshift] ], [ [orig.y0,orig.yf], [orig.y0,orig.y0], [orig.yf,orig.yf] ], color=["black", "black","black"], line_width=10)
 #Frame bases:
 plot.triangle(x='x', y='y', size = 'size', source= default,color="grey" ,  line_width=2)
-plot.triangle(x='x', y='y', size = 'size', source= f1.tri,color="#0065BD", line_width=2)
-plot.triangle(x='x', y='y', size = 'size', source= f2.tri,color="#E37222", line_width=2)
+plot.triangle(x='x', y='y', size = 'size', source= f1.tri,color=f1color, line_width=2)
+plot.triangle(x='x', y='y', size = 'size', source= f2.tri,color=f2color, line_width=2)
 
 plot.axis.visible = True
 plot.outline_line_width = 7
@@ -652,38 +655,44 @@ plot.title.align = "center"
 
 
 labels1 = LabelSet(x='x', y='y', text='name', level='glyph',
-              x_offset=0, y_offset=0, source=f1.label, text_color="#0065BD", text_font_size = '16pt',  render_mode='canvas')
+              x_offset=0, y_offset=0, source=f1.label, text_color=f1color, text_font_size = '16pt',  render_mode='canvas')
 labels2 = LabelSet(x='x', y='y', text='name', level='glyph',
-              x_offset=0, y_offset=0, source=f2.label,text_color="#E37222", text_font_size = '16pt', render_mode='canvas')
+              x_offset=0, y_offset=0, source=f2.label,text_color=f2color, text_font_size = '16pt', render_mode='canvas')
 labelsn1 = LabelSet(x='x', y='y', text='name', level='glyph',
-              x_offset=0, y_offset=0, source=f1.dlabel,text_color="#E37222", text_font_size = '12pt', render_mode='canvas')
+              x_offset=0, y_offset=-20, source=f1.dlabel,text_color=f2color, text_font_size = '10pt', render_mode='canvas')
 labelsn2 = LabelSet(x='x', y='y', text='name', level='glyph',
-              x_offset=0, y_offset=0, source=f2.dlabel,text_color="#E37222", text_font_size = '12pt', render_mode='canvas')
+              x_offset=0, y_offset=-20, source=f2.dlabel,text_color=f2color, text_font_size = '10pt', render_mode='canvas')
 
 #labelsw1 = LabelSet(x=0.0, y=0.0, text="hi", level='glyph',
-#              x_offset=10, y_offset=10,text_color="#E37222", text_font_size = '12pt', render_mode='canvas')
+#              x_offset=10, y_offset=10,text_color=f2color, text_font_size = '12pt', render_mode='canvas')
 #
-#labelsw2 = LabelSet(x='xS', y='yS', text=wji, level='glyph',
-#              x_offset=10, y_offset=10, source=f2.w1,text_color="#E37222", text_font_size = '12pt', render_mode='canvas')
+#labelsw2 = LabelSet(x='xS', y='yS', text='wji', level='glyph',
+#              x_offset=10, y_offset=10, source=f2.w1,text_color=f2color, text_font_size = '12pt', render_mode='canvas')
 
 
 #P arrow:
-p1_arrow_glyph = Arrow(end=NormalHead(line_color="#0065BD",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.arrow_source,line_color="#0065BD")
-p2_arrow_glyph = Arrow(end=NormalHead(line_color="#E37222",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f2.arrow_source,line_color="#E37222")
-e1_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3, size=6,line_alpha = 0.5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f1.e_s,line_color="#A2AD00",line_alpha = 0.5)
-e2_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3, size=6,line_alpha = 0.5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.e_s,line_color="#A2AD00",line_alpha = 0.5)
-w11_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3, size=6,line_alpha = 0.5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f1.w1,line_color="#A2AD00",line_alpha = 0.5)
-w12_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3, size=6,line_alpha = 0.5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f1.w2,line_color="#A2AD00",line_alpha = 0.5)
-w21_arrow_glyph = Arrow(end=OpenHead(line_color="#Black",line_width= 3, size=6,line_alpha = 0.5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.w1,line_color="#A2AD00",line_alpha = 0.5)
-w22_arrow_glyph = Arrow(end=OpenHead(line_color="#Black",line_width= 3, size=6,line_alpha = 0.5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.w2,line_color="#A2AD00",line_alpha = 0.5)
+p1_arrow_glyph = Arrow(end=NormalHead(line_color=f1color,line_width= 4, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.arrow_source,line_color=f1color)
+p2_arrow_glyph = Arrow(end=NormalHead(line_color=f2color,line_width= 4, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f2.arrow_source,line_color=f2color)
+
+#e arrow:
+e1_arrow_glyph = Arrow(end=OpenHead(line_color=f1color,line_width= 3, size=6,line_alpha = 0.5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f1.e_s,line_color=f1color,line_alpha = 0.5)
+e2_arrow_glyph = Arrow(end=OpenHead(line_color=f2color,line_width= 3, size=6,line_alpha = 0.5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.e_s,line_color=f2color,line_alpha = 0.5)
+
+#F1 w arrow
+w11_arrow_glyph = Arrow(end=OpenHead(line_color=f1color,line_width= 3, size=6,line_alpha = 0.5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f1.w1,line_color=f1color,line_alpha = 0.4)
+w12_arrow_glyph = Arrow(end=OpenHead(line_color=f1color,line_width= 3, size=6,line_alpha = 0.5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f1.w2,line_color=f1color,line_alpha = 0.4)
+
+#F2 w arrow
+w21_arrow_glyph = Arrow(end=OpenHead(line_color=f2color,line_width= 3, size=6,line_alpha = 0.5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.w1,line_color=f2color,line_alpha = 0.4)
+w22_arrow_glyph = Arrow(end=OpenHead(line_color=f2color,line_width= 3, size=6,line_alpha = 0.5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.w2,line_color=f2color,line_alpha = 0.4)
 
 #Text:
 #abtext_glyph = Text( x=[ (orig.x0+orig.xf)/2, (0-0.03)] , y=[ (0-0.03), (orig.y0+orig.yf)/2 ], text="text", text_color="Black")
