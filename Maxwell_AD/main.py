@@ -40,7 +40,7 @@ class Frame(object):
         self.label          = ColumnDataSource(data=dict(x=[] , y=[], name = []))
         self.dline          = ColumnDataSource(data=dict(x=[], y=[]))
         self.dlabel         = ColumnDataSource(data=dict(x=[] , y=[], name = []))
-        self.w1             = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
+        self.w1             = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], name = []))
         self.w2             = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
         self.wdline         = ColumnDataSource(data=dict(x1=[], x2 =[], y1 = [], y2=[]))
 
@@ -491,18 +491,19 @@ def compute_shift(paramInt1, paramInt2, i):
     return localDouble
 
 def create_shift(f):
-    '''Changes the values of the arrows that display how much of a shift has occurred'''
+    '''Changes the values of the arrows that display how much of
+    a shift has occurred'''
+
     if (f.get_mag() == 0):
-        if (f.get_loc() == 0):
-        f.e_s.data = dict(xS= [], xE= [],
-        yS= [], yE=[], lW = [] )
+        if (f.get_param() == 0):
+            f.e_s.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
     else:
         paramInt1 = f.get_param()
-        #print orig.pts.data["y"]
-        #sprint f2.pts.data["x"]
-        #print f2.pts.data["y"]
         localDouble1 = compute_shift(paramInt1,paramInt1, f.get_mag())
-        #print localDouble1
+        if (f.name == "F1"):
+            names = "(wij)n1"
+        elif (f.name == "F2"):
+            names = "(wji)n2"
         d2 = 0
         d1 = 0
         sclr = 10
@@ -553,7 +554,7 @@ def create_shift(f):
             yS= [d2], yE=[d2], lW = [ abs(localDouble1[0]*sclr ) ] )
 
         f.w1.data = dict(xS= [x1], xE= [x2],
-        yS= [y1], yE=[y2] )
+        yS= [y1], yE=[y2], name = [names] )
 
         f.w2.data = dict(xS= [ x2 ], xE= [x1],
         yS= [y2], yE=[y1] )
@@ -592,6 +593,7 @@ def update_fun(attr,old,new):
         create_wdline(f2)
         f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
 
+
 def button_fun():
     '''Function called when the 'save deformed frame' function is clicked.
     This button changes the changer value to 1, which affects update_fun
@@ -602,36 +604,56 @@ def button_fun():
     f1.set_param(loc_slider.value)
     f1.set_mag(mag_slider.value)
     create_prof(f1)
+    create_shift(f1)
+    create_wdline(f1)
     mag_slider.value        = mag_val
     loc_slider.value        = loc_val
     f2.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    #update_fun(None,None,None)
+    f2.w1.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
+    f2.w2.data              = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    f2.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
 
-def init():
+
+def initial():
     '''Function that initializes everything'''
     global changer
     changer                 = 0
+
     f1.label.data           = dict(x=[0.45] , y=[0.62], name = ["F1"])
-    f2.label.data           = dict(x=[] , y=[], name = [])
-    mag_slider.value        = mag_val
-    loc_slider.value        = loc_val
     f1.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    f1.pts.data             = dict(x = [], y = [] )
+    f1.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    f1.tri.data             = dict(x = [], y = [], size = [])
+    f1.seg.data             = dict(x0=[], x1=[], y0=[], y1=[])
+    f1.dline.data           = dict(x=[], y=[])
+    f1.dlabel.data          = dict(x=[] , y=[], name = [])
+    f1.w1.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
+    f1.w2.data              = dict(xS=[], xE=[], yS=[], yE=[])
+    f1.wdline.data          = dict(x1=[], x2 =[], y1 = [], y2=[])
+
+    f2.label.data           = dict(x=[] , y=[], name = [])
     f2.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     f2.tri.data             = dict(x = [], y = [], size = [])
-    f1.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     f2.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    f1.pts.data             = dict(x = [], y = [] )
-    #f1.tri.data             = dict(x = [0.1,0.8], y = [0.1,0.1], size = [tri_size,tri_size])
-    f1.tri.data             = dict(x = [], y = [], size = [])
     f2.set_param(loc_val)
     f2.set_mag(mag_val)
+    f2.seg.data             = dict(x0=[], x1=[], y0=[], y1=[])
+    f2.dline.data           = dict(x=[], y=[])
+    f2.dlabel.data          = dict(x=[] , y=[], name = [])
+    f2.w1.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
+    f2.w2.data              = dict(xS=[], xE=[], yS=[], yE=[])
+    f2.wdline.data          = dict(x1=[], x2 =[], y1 = [], y2=[])
+    #f1.__init__("F1","n1")
+    #f2.__init__("F2","n2")
+    mag_slider.value        = mag_val
+    loc_slider.value        = loc_val
 
 def clearf2():
     '''Clears the f2 frame'''
     f2.pts.data             = dict(x = [], y = [] )
 
 button.on_click(button_fun)
-rbutton.on_click(init)
+rbutton.on_click(initial)
 rbutton.on_click(clearf2)
 loc_slider.on_change('value', update_fun)
 mag_slider.on_change('value', update_fun)
@@ -710,19 +732,25 @@ labels2 = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=0, y_offset=0, source=f2.label,text_color=f2color,
               text_font_size = '16pt', render_mode='canvas')
 labelsn1 = LabelSet(x='x', y='y', text='name', level='glyph',
-              x_offset=0, y_offset=-20, source=f1.dlabel,text_color=f2color,
+              x_offset=0, y_offset=-20, source=f1.dlabel,text_color=f1color,
               text_font_size = '10pt', render_mode='canvas')
-labelsn2 = LabelSet(x='x', y='y', text='name', level='glyph',
+labelsn2 = LabelSet(x='x', y='y', text="name", level='glyph',
               x_offset=0, y_offset=-20, source=f2.dlabel,text_color=f2color,
               text_font_size = '10pt', render_mode='canvas')
-labelsw1 = LabelSet(x=, y=0.0, text="(wij)n1", level='glyph',
-              x_offset=10, y_offset=10,text_color=f2color,
-              text_font_size = '12pt', render_mode='canvas')
 
+labelsw1 = LabelSet(x='xS', y = 'yS', text='name', level='glyph',
+                x_offset=0, y_offset=-20,source = f1.w1, text_color=f1color,
+                text_font_size = '12pt', render_mode='canvas')
+labelsw2 = LabelSet(x='xE', y = 'yS', text='name', level='glyph',
+                x_offset=0, y_offset=10,source = f2.w1, text_color=f2color,
+                text_font_size = '12pt', render_mode='canvas')
 absource = ColumnDataSource(dict(x=[ (orig.x0+orig.xf)/2,
         (0-0.05)], y=[ (0-0.05), (orig.y0+orig.yf)/2 ], text=['a','b']))
-        abtext_glyph = Text( x='x' , y='y', text='text' ,text_color="Black",
+
+abtext_glyph = Text( x='x' , y='y', text='text' ,text_color="Black",
         text_font_size="16pt",text_font_style = "bold")
+
+
 
 ########
 
@@ -768,8 +796,8 @@ plot.add_layout(labels1)
 plot.add_layout(labels2)
 plot.add_layout(labelsn1)
 plot.add_layout(labelsn2)
-#plot.add_layout(labelsw1)
-#plot.add_layout(labelsw2)
+plot.add_layout(labelsw1)
+plot.add_layout(labelsw2)
 #########
 
 
