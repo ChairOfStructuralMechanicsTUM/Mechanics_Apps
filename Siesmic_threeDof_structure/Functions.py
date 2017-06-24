@@ -45,16 +45,36 @@ class Structure:
                                                  force=['Force = ','Force = ','Force = ']
                                                 )
                                       )
+                                      
+        self.massIndicators = ColumnDataSource(
+                                               data=dict(
+                                                         x=[0,0,0],
+                                                         y=[0,0,0],
+                                                         mass=['','','']
+                                                        )
+                                              )
+                                               
+        self.stiffnessIndicators = ColumnDataSource(
+                                                    data=dict(
+                                                              x=[0,0,0],
+                                                              y=[0,0,0],
+                                                              stiffness=['','','']
+                                                             )
+                                                   )
         
     def update_system(self, displacement):
         self.update_masses(displacement)
+        self.update_mass_indicator_locaiton()
         self.update_massSupprts(displacement)
+        self.update_stiffness_indicator_locaiton()
         self.update_truss_sources()
         
     def update_masses(self, displacement):
         self.masses[0].data['x'] = self.masses[0].data['x']*0 + [displacement[0]]
         self.masses[1].data['x'] = self.masses[1].data['x']*0 + [displacement[1]]
         self.masses[2].data['x'] = self.masses[2].data['x']*0 + [displacement[2]]
+
+        self.update_mass_indicator_locaiton
 
     def update_massSupprts(self, displacement):
         self.massSupports[0].data['x'] = self.massSupports[0].data['x']*0 + [-self.trussLength/2+displacement[0], self.trussLength/2+displacement[0]]
@@ -148,36 +168,70 @@ class Structure:
                                 force = ['Force = '+str(forces[0])+' N','Force = '+str(forces[1])+' N','Force = '+str(forces[2])+' N']
                                )
         
+    def update_mass_indicator_locaiton(self):
+        updateLocation = list()
+        for i in self.masses:
+            updateLocation.append( i.data['y'][0] + 0.5 )
+        self.massIndicators.data = dict(
+                                        x=[self.masses[0].data['x'][0], self.masses[1].data['x'][0], self.masses[2].data['x'][0]],
+                                        y=updateLocation,
+                                        mass=self.massIndicators.data['mass']
+                                       )
+        
+    def update_stiffness_indicator_locaiton(self):
+        updateLocationX = list()
+        updateLocationY = list()
+        counter = 0
+        for i in self.massSupports:
+            updateLocationY.append( (i.data['y'][0] + self.trussLength*counter) / 2 )
+            updateLocationX.append( (i.data['x'][1] + 1.0) )
+            counter += 1
+        self.stiffnessIndicators.data = dict(
+                                             x=updateLocationX,
+                                             y=updateLocationY,
+                                             stiffness=self.stiffnessIndicators.data['stiffness']
+                                            )
+        
 class Mode( Structure ):
     
-    def __init__(self, masses, massSupports, trusses, trussLength, base, frequency, modeShape):
+    def __init__(self, ID, masses, massSupports, trusses, trussLength, base, frequency, modeShape):
         Structure.__init__(self, masses, massSupports, trusses, trussLength, base)
+        self.id = ID
         self.frequency = frequency
         self.modeShape = modeShape
+        self.maxModeShape = np.array([0,0,0]) # 0 is a default value
         self.locationInERS = ColumnDataSource(data=dict(x=[0],y=[0])) # with default values
+        self.participationFactor = 0 # 0 is a default value
         
-        self.multiplier_text = Div(text="""<b>Multiplier =</b> """)
+        self.multiplier_text = Div(text="""<b>\u03b2S\u2090/\u03C9\u00B2 =</b> """+ str(0))
         self.frequency_text  = Div(text="""<b>Natural Frequency =</b> """)
     
     def get_maximum_displacement( self, siesmicParameters ):
         r = np.ones(3)
-        beta = np.dot( self.modeShape, np.dot( self.M, r ) )
+        self.participationFactor = np.dot( self.modeShape, np.dot( self.M, r ) )
         period = 2*np.pi / self.frequency
         Sa = siesmicParameters.get_Sa( period )
         
-        multiplier = beta*Sa*(1/self.frequency**2)
+        multiplier = self.participationFactor*Sa*(1/self.frequency**2)
         
         self.modify_mode_text( multiplier )
         
-        return multiplier*self.modeShape
+        self.maxModeShape = multiplier*self.modeShape
+        return self.maxModeShape
 
     def modify_location_in_ERS( self, siesmicParameters ):
         period = 2*np.pi / self.frequency
         Sa = siesmicParameters.get_Sa( period )
         self.locationInERS.data = dict(x=[period,period,0],y=[0,Sa,Sa])
         
-    def modify_mode_text(self, multiplier):        
-        self.multiplier_text.text = """<b>Multiplier =</b> """ + str(multiplier)
+    def modify_mode_text(self, multiplier):  
+        if self.id == 2:
+            self.multiplier_text.text = """<b>\u03b2S\u2090/\u03C9\u00B2 =</b> """+ str(multiplier)
+        elif self.id == 1:
+            self.multiplier_text.text = """<b>\u03b2S\u2090/\u03C9\u00B2 =</b> """+ str(multiplier)
+        elif self.id == 0:
+            self.multiplier_text.text = """<b>\u03b2S\u2090/\u03C9\u00B2 =</b> """+ str(multiplier)
+        #self.multiplier_text.text = """<b>Multiplier =</b> """ 
         
     def modify_frequency_text(self):
         self.frequency_text.text = """<b>Natural Frequency =</b> """ + str(self.frequency) + " rad/sec"
@@ -186,6 +240,14 @@ class Mode( Structure ):
         m = np.dot(self.modeShape , np.dot(self.M , self.modeShape))
         if m != 1:
             self.modeShape = self.modeShape / np.sqrt(m)
+            
+    def normalized_mode_withMax_one(self):
+        maxAmplitude = 0.0
+        for component in self.modeShape:
+            if abs(component) > maxAmplitude:
+                maxAmplitude = abs(component)
+            
+        return self.modeShape / maxAmplitude
         
 class SiesmicParameters():
     
@@ -205,6 +267,19 @@ class SiesmicParameters():
         self.determine_periods_and_S()
         
         self.ERSdata = ColumnDataSource(data=dict(x=[0],y=[0])) # Elastic Response Spectrum data
+        
+        self.informationTable = ColumnDataSource(
+                                                 data=dict(
+                                                           subject=['Period (second)','Participation Factor (\u03b2)','Modal Mass',
+                                                                    'Spectral Acceleration (m/s\u2082)','Total Force (N)',
+                                                                    'First Storey Max. Displacement (m)','Second Storey Max. Displacement',
+                                                                    'Third Storey Max. Displacement','First Storey Total Force',
+                                                                    'Second Storey Total Force','Third Storey Total Force'],
+                                                            modeOne  =[0,0,0,0,0,0,0,0,0,0,0],
+                                                            modeTwo  =[0,0,0,0,0,0,0,0,0,0,0],
+                                                            modeThree=[0,0,0,0,0,0,0,0,0,0,0]
+                                                          )
+                                                )
         
     def determine_periods_and_S(self):
         if self.undergroundParamter == 'A-R':
@@ -246,9 +321,54 @@ class SiesmicParameters():
         elif period >= self.periods[1] and period < self.periods[2]:
             return self.a * self.gamma * self.S * self.beta / 1 * (self.periods[1]/period)
         elif (period >= self.periods[2]):
-            return self.a * self.gamma * self.S * self.beta / 1 * self.periods[1]**2/period**2
+            return self.a * self.gamma * self.S * self.beta / 1 * self.periods[1]*self.periods[2]/period**2
 
+    def update_data_table(self, modes):
+        
+        data = np.zeros((11,3))
+        
+        counter = 0
+        for mode in modes:
+            # fill-in the period
+            data[0,counter] = 2*np.pi / mode.frequency
+    
+            # fill-in the Participation Factor
+            data[1,counter] = mode.participationFactor
+
+            # fill-in the Modal mass
+            data[2,counter] = 0
+
+            # fill-in the Spectral acceleration
+            data[3,counter] = self.get_Sa(data[0,counter])
             
+            # fill-in the First Storey Max. Displacement
+            data[5,counter] = mode.maxModeShape[counter]
+            # fill-in the Second Storey Max. Displacement
+            data[6,counter] = mode.maxModeShape[counter]
+            # fill-in the Third Storey Max. Displacement
+            data[7,counter] = mode.maxModeShape[counter]
+            
+            
+            maxForce = np.dot(mode.K , mode.maxModeShape)
+            # fill-in the First Storey Total Force
+            data[8,counter] = maxForce[0]
+            # fill-in the Second Storey Total Force
+            data[9,counter] = maxForce[1]
+            # fill-in the Third Storey Total Force
+            data[10,counter] = maxForce[2]
+
+            # fill-in the Total Force
+            data[4,counter] = maxForce[0] + maxForce[1] + maxForce[2]
+
+            counter += 1
+        
+        # update the table data
+        self.informationTable.data = dict(
+                                          subject = self.informationTable.data['subject'],
+                                          modeOne = data[:,0],
+                                          modeTwo = data[:,1],
+                                          modeThree = data[:,2]
+                                         )
 def cubic_N1 (xi):
     #xi = 2*x/length - 1
     return( 0.25 * ((1-xi)**2) * (2+xi) )
@@ -279,6 +399,10 @@ def linIntepolate(y1, y2, x1, x2, noNodes, length):
     return(nodes)
     
 def construct_truss_sources(massOne, massTwo, massThree, length):
+    
+    # The convention used here is that the first entry of both the x and y vectors
+    # represent the lower node and the second represents the upper node
+
     trussOne   = dict(
                         x=[massOne['x'][0] - length/2, massOne['x'][0] - length/2],
                         y=[massOne['y'][0] - length  , massOne['y'][0]           ]
@@ -348,6 +472,18 @@ def construct_masses_and_supports(length):
     return masses, massSupports
      
 def construct_system(structure, mass, massRation, bendingStiffness, stiffnessRatio, trussLength):
+    structure.massIndicators.data = dict(
+                                         x=structure.massIndicators.data['x'],
+                                         y=structure.massIndicators.data['y'],
+                                         mass=[str(massRation[0])+'m',str(massRation[1])+'m',str(massRation[2])+'m']
+                                        )
+    
+    structure.stiffnessIndicators.data = dict(
+                                     x=structure.stiffnessIndicators.data['x'],
+                                     y=structure.stiffnessIndicators.data['y'],
+                                     stiffness=[str(stiffnessRatio[0])+'EI',str(stiffnessRatio[1])+'EI',str(stiffnessRatio[2])+'EI']
+                                    )
+    
     structure.M = np.array([[massRation[0],      0      ,     0       ],
                             [      0      ,massRation[1],     0       ],
                             [      0      ,      0      ,massRation[2]]]) * mass
@@ -425,20 +561,20 @@ def solve_modal_analysis(structure):
     return eigenvalues, eigenvectors
     
 def plot( plot_name, subject, radius, color ):
-    plot_name.line( x='x', y='y', source=subject.massSupports[0], color='#000000', line_width=5)
-    plot_name.line( x='x', y='y', source=subject.massSupports[1], color='#000000', line_width=5)
-    plot_name.line( x='x', y='y', source=subject.massSupports[2], color='#000000', line_width=5)
+    plot_name.line( x='x', y='y', source=subject.massSupports[0], color=color, line_width=5)
+    plot_name.line( x='x', y='y', source=subject.massSupports[1], color=color, line_width=5)
+    plot_name.line( x='x', y='y', source=subject.massSupports[2], color=color, line_width=5)
     
     plot_name.circle( x='x',y='y',radius=radius,color=color,source=subject.masses[0] )
     plot_name.circle( x='x',y='y',radius=radius,color=color,source=subject.masses[1] )
     plot_name.circle( x='x',y='y',radius=radius,color=color,source=subject.masses[2] )
     
-    plot_name.line( x='x', y='y', source=subject.trusses[0], line_width=2)
-    plot_name.line( x='x', y='y', source=subject.trusses[1], line_width=2)
-    plot_name.line( x='x', y='y', source=subject.trusses[2], line_width=2)
-    plot_name.line( x='x', y='y', source=subject.trusses[3], line_width=2)
-    plot_name.line( x='x', y='y', source=subject.trusses[4], line_width=2)
-    plot_name.line( x='x', y='y', source=subject.trusses[5], line_width=2)
+    plot_name.line( x='x', y='y', color=color, source=subject.trusses[0], line_width=2)
+    plot_name.line( x='x', y='y', color=color, source=subject.trusses[1], line_width=2)
+    plot_name.line( x='x', y='y', color=color, source=subject.trusses[2], line_width=2)
+    plot_name.line( x='x', y='y', color=color, source=subject.trusses[3], line_width=2)
+    plot_name.line( x='x', y='y', color=color, source=subject.trusses[4], line_width=2)
+    plot_name.line( x='x', y='y', color=color, source=subject.trusses[5], line_width=2)
     
     plot_name.line( x='x', y='y', source=subject.base, color='#000000', line_width=20 )
     
@@ -456,8 +592,8 @@ def GetMaximumDisplacement( modes, siesmicParameters ):
         
         maximumDisplacement.append( siesmicParameters.get_Sa(period[i]) )
         
-def plot_ERS( plot, siesmicParameters ):
-    n = 100
+def update_ERS_plot_data( siesmicParameters ):
+    n = 1000
     tMin = 0.0
     tMax = siesmicParameters.periods[2] + 1
     x = np.zeros(n)
