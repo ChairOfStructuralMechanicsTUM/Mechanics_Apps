@@ -9,11 +9,18 @@ The following points are important for all developers.
 * Apps that are not executable using ```bokeh serve --show app_directory``` should **not** be pushed to master, you may use a branch for experimental apps.
 * Develop app in directory format (see http://bokeh.pydata.org/en/latest/docs/user_guide/server.html#directory-format).
 * Use the **same** name for the directory and the title of the app. The title of the app shall explain the mechanical content - not the method of visualization. (e.g. use "conservation of momentum" instead of "boat with three swimmers"). See also coding style above.
-* Lanuage: The Language of everything (titles, explanations, comments in code, etc.) within the whole project is **English**!
-* Avoid global variable! 
+* The Language of everything (titles, explanations, comments in code, etc.) within the whole project is **English**!
 * For the description file, formulas can be added with the aid of MathJax http://docs.mathjax.org/en/latest/start.html
 * If your app is completed ask your supervisor whether there are any additional improvements to be done or if the app is ready for publication.
 * Write a mail to Francesca that your app is ready for publication.
+
+## Developer Hints
+
+* Try to avoid global variables! Otherwise the app might behave strangely.
+* For complex behaviour try to introduce objects, that bundle the functionality and the data (e.g. https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/blob/master/Rollercoaster/DraggablePath.py)
+* Try to avoid very long scripts. It is usually not a good idea to have more than 500 lines of code in one script, no one can understand this.
+* Try to avoid very long and complex functions. It might be helpful to subdivide a function into several functions that partially solve a certain task.
+* Don't use ```from ... import *```. It is hard to understand the origin of a function or variable if it is not imported explicitly. Better use ```from ... import foo, bar```.
 
 # Francesca Final Acceptance and Publication
 
