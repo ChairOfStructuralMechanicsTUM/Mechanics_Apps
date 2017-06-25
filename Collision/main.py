@@ -72,19 +72,27 @@ tolerance = 0.1
 velocityTolerance = 0.05
 Active = False
 
-# Construct source files
-update_particle_source(0,x1,y1)
-update_particle_source(1,x2,y2)
-                            
-circleOneSource = get_particle_source(0)
-circleTwoSource = get_particle_source(1)
+# Construct particles
+particleOne = Particle(m1, r1, c1, np.array([x1,y1]), velocityVectorOne)
+particleTwo = Particle(m2, r2, c2, np.array([x2,y2]), velocityVectorTwo)
 
-construct_arrow_source( 0, circleOneSource, velocityVectorOne )
-construct_arrow_source( 1, circleTwoSource, velocityVectorTwo )
+# Construct source files
+#update_particle_source(0,x1,y1)
+#update_particle_source(1,x2,y2)
+particleOne.update_position_source()
+particleTwo.update_position_source()
+                            
+#circleOneSource = get_particle_source(0)
+#circleTwoSource = get_particle_source(1)
+
+#construct_arrow_source( 0, circleOneSource, velocityVectorOne )
+#construct_arrow_source( 1, circleTwoSource, velocityVectorTwo )
+particleOne.construct_velocity_source()
+particleTwo.construct_velocity_source()
   
 # Add figures to the play ground
-playGround.circle( x='x',y='y',radius=r1,color=c1,source=circleOneSource )
-playGround.circle( x='x',y='y',radius=r2,color=c2,source=circleTwoSource )
+playGround.circle( x='x', y='y', source=particleOne.get_position_source(), color=particleOne.color, radius=particleOne.radius )
+playGround.circle( x='x', y='y', source=particleTwo.get_position_source(), color=particleTwo.color, radius=particleTwo.radius )
 
 playGround.add_layout( 
                       Arrow(    
@@ -97,7 +105,7 @@ playGround.add_layout(
                             y_start=['ys'][0],
                             x_end=['xe'][0], 
                             y_end=['ye'][0], 
-                            source = get_arrow_source(0)
+                            source = particleOne.get_velocity_source()
                            ) 
                      )
 playGround.add_layout( 
@@ -111,9 +119,11 @@ playGround.add_layout(
                             y_start=['ys'][0],
                             x_end=['xe'][0], 
                             y_end=['ye'][0], 
-                            source = get_arrow_source(1)
+                            source = particleTwo.get_velocity_source()
                            ) 
                      )
+                            
+system = CollidingSystem([[xMin,xMax],[yMin,yMax]], [particleOne, particleTwo])
 
 '''
 ###############################################################################
@@ -123,61 +133,69 @@ through time
 '''
 # Calculate the new location of the two balls
 def compute_tranjectory():
-    global velocityVectorOne, velocityVectorTwo, Cr
     
-    circleOneSource = get_particle_source(0)
-    circleTwoSource = get_particle_source(1)
+#    circleOneSource = get_particle_source(0)
+#    circleTwoSource = get_particle_source(1)
     
     # Compute the new position of the circles' center
-    circleOneSource.data['x'] = [ velocityVectorOne[0]*dt 
-                                + circleOneSource.data['x'][0] ]
-    circleOneSource.data['y'] = [ velocityVectorOne[1]*dt
-                                + circleOneSource.data['y'][0] ]
+    particleOne.position[0] += particleOne.velocity[0]*dt
+    particleOne.position[1] += particleOne.velocity[1]*dt
+    particleOne.update_position_source()
     
-    circleTwoSource.data['x'] = [ velocityVectorTwo[0]*dt 
-                                + circleTwoSource.data['x'][0] ]
-    circleTwoSource.data['y'] = [ velocityVectorTwo[1]*dt
-                                + circleTwoSource.data['y'][0] ]
+    particleTwo.position[0] += particleTwo.velocity[0]*dt
+    particleTwo.position[1] += particleTwo.velocity[1]*dt
+    particleTwo.update_position_source()
+#    circleOneSource.data['x'] = [ velocityVectorOne[0]*dt 
+#                                + circleOneSource.data['x'][0] ]
+#    circleOneSource.data['y'] = [ velocityVectorOne[1]*dt
+#                                + circleOneSource.data['y'][0] ]
+    
+#    circleTwoSource.data['x'] = [ velocityVectorTwo[0]*dt 
+#                                + circleTwoSource.data['x'][0] ]
+#    circleTwoSource.data['y'] = [ velocityVectorTwo[1]*dt
+#                                + circleTwoSource.data['y'][0] ]
 
     # Determine the seperating distance between the centers of the balls
-    dx = circleOneSource.data['x'][0] - circleTwoSource.data['x'][0]
-    dy = circleOneSource.data['y'][0] - circleTwoSource.data['y'][0]
+#    dx = circleOneSource.data['x'][0] - circleTwoSource.data['x'][0]
+#    dy = circleOneSource.data['y'][0] - circleTwoSource.data['y'][0]
+    dx = particleOne.position[0] - particleTwo.position[0]
+    dy = particleOne.position[1] - particleTwo.position[1]
     distance = np.sqrt( dx*dx + dy*dy )
     
     # Detect Walls
-    if (   abs( circleOneSource.data['x'][0] + r1 - xMax ) <= abs(velocityVectorOne[0])*dt + tolerance
-        or abs( circleOneSource.data['x'][0] - r1 - xMin ) <= abs(velocityVectorOne[0])*dt + tolerance):
+    if (   abs( particleOne.position[0] + particleOne.radius - xMax ) <= abs(particleOne.velocity[0])*dt + tolerance
+        or abs( particleOne.position[0] - particleOne.radius - xMin ) <= abs(particleOne.velocity[0])*dt + tolerance):
         
         # The negative sign is to reflect the ball
-        velocityVectorOne[0] *= -1
+        particleOne.velocity[0] *= -1
 
-    elif (   abs( circleTwoSource.data['x'][0] + r2 - xMax ) <= abs(velocityVectorTwo[0])*dt + tolerance
-          or abs( circleTwoSource.data['x'][0] - r2 - xMin ) <= abs(velocityVectorTwo[0])*dt + tolerance):
+    elif (   abs( particleTwo.position[0] + particleTwo.radius - xMax ) <= abs(particleTwo.velocity[0])*dt + tolerance
+          or abs( particleTwo.position[0] - particleTwo.radius - xMin ) <= abs(particleTwo.velocity[0])*dt + tolerance):
         
-        velocityVectorTwo[0] *= -1
+        particleTwo.velocity[0] *= -1
 
-    if (   abs( circleOneSource.data['y'][0] + r1 - yMax ) <= abs(velocityVectorOne[1])*dt + tolerance 
-        or abs( circleOneSource.data['y'][0] - r1 - yMin ) <= abs(velocityVectorOne[1])*dt + tolerance):
+    if (   abs( particleOne.position[1] + particleOne.radius - yMax ) <= abs(particleOne.velocity[1])*dt + tolerance 
+        or abs( particleOne.position[1] - particleOne.radius - yMin ) <= abs(particleOne.velocity[1])*dt + tolerance):
         
-        velocityVectorOne[1] *= -1
+        particleOne.velocity[1] *= -1
 
-    elif (   abs( circleTwoSource.data['y'][0] + r2 - yMax ) <= abs(velocityVectorTwo[1])*dt + tolerance
-          or abs( circleTwoSource.data['y'][0] - r2 - yMin ) <= abs(velocityVectorTwo[1])*dt + tolerance):
+    elif (   abs( particleTwo.position[1] + particleOne.radius - yMax ) <= abs(particleTwo.velocity[1])*dt + tolerance
+          or abs( particleTwo.position[1] - particleOne.radius - yMin ) <= abs(particleTwo.velocity[1])*dt + tolerance):
         
-        velocityVectorTwo[1] *= -1
+        particleTwo.velocity[1] *= -1
 
     # Detect each other
     # Calculate the distance between each others' centers
-    dx = circleOneSource.data['x'][0]-circleTwoSource.data['x'][0]
-    dy = circleOneSource.data['y'][0]-circleTwoSource.data['y'][0]
+    dx = particleOne.position[0]-particleTwo.position[0]
+    dy = particleOne.position[1]-particleTwo.position[1]
     distance = np.sqrt( dx*dx + dy*dy )
 
     # Unit vector aiming from ball 2 to ball 1
     normal2Vector = np.array( [-dx,-dy] )/distance
 
     # Determine the pre-collision speed of both balls
-    v1Before = velocityVectorOne
-    v2Before = velocityVectorTwo
+    v1Before = particleOne.velocity
+    v2Before = particleTwo.velocity
     
     # Determine the normal component of each ball's velocity (w.r.t previously 
     # computer normal vector)
@@ -247,8 +265,8 @@ def compute_tranjectory():
         v2After = v2NormalVector + v2TangentVector
         
         # Update the source data file of both balls
-        velocityVectorOne = v1After
-        velocityVectorTwo = v2After
+        particleOne.velocity = v1After
+        particleTwo.velocity = v2After
 
     else:
         pass
@@ -256,37 +274,40 @@ def compute_tranjectory():
     # Update the kinetic energies and velocity arrows plotted by each bar 
     # according to the new velocities calculated previously
     update_bars()
-    update_velocity_arrows()
-    update_particle_source(0,circleOneSource.data['x'][0],circleOneSource.data['y'][0])
-    update_particle_source(1,circleTwoSource.data['x'][0],circleTwoSource.data['y'][0])
     
-def update_velocity_arrows():
+    particleOne.update_velocity_source()
+    particleTwo.update_velocity_source()
     
-    circleOneSource = get_particle_source(0)
-    circleTwoSource = get_particle_source(1)
-
-    update_arrow_source(
-                         0,
-                         circleOneSource, 
-                         velocityVectorOne
-                       )
-    update_arrow_source(
-                         1,
-                         circleTwoSource,
-                         velocityVectorTwo
-                       )
+    particleOne.update_position_source()
+    particleTwo.update_position_source()
+    
+#def update_velocity_arrows():
+#    
+#    circleOneSource = get_particle_source(0)
+#    circleTwoSource = get_particle_source(1)
+#
+#    update_arrow_source(
+#                         0,
+#                         circleOneSource, 
+#                         velocityVectorOne
+#                       )
+#    update_arrow_source(
+#                         1,
+#                         circleTwoSource,
+#                         velocityVectorTwo
+#                       )
     
 def update_bars():
     # Determine the new kinetic energy of both balls
     yellowBallKE = 0.5*m1*( 
-                            velocityVectorOne[0]**2
-                          + velocityVectorOne[1]**2
+                            particleOne.velocity[0]**2
+                          + particleOne.velocity[1]**2
                           )
     
 
     redBallKE = 0.5*m2*( 
-                         velocityVectorTwo[0]**2
-                       + velocityVectorTwo[1]**2
+                         particleTwo.velocity[0]**2
+                       + particleTwo.velocity[1]**2
                        )
     
     
@@ -305,18 +326,22 @@ Add the interactive functionalities
 ########################### Creating reset button #############################
 periodicCallback = 0
 def Reset():
-    global velocityVectorOne, velocityVectorTwo, Active, periodicCallback
+    global Active, periodicCallback
 	
     # Update the source data file to the very initial data
-    update_particle_source(0,x1,y1)
-    update_particle_source(1,x2,y2)
-
+    particleOne.update_position(x1,y1)
+    particleOne.update_position_source()
+    
+    particleTwo.update_position(x2,y2)
+    particleTwo.update_position_source()
+    
     # Update the velocity vectors
-    velocityVectorOne = np.array([1.0, 0.0])
-    velocityVectorTwo = np.array([0.0, 0.0])
+    particleOne.update_velocity(1,0)
+    particleTwo.update_velocity(0,0)
 
     # Update the velocity arrows' source file
-    update_velocity_arrows()
+    particleOne.update_velocity_source()
+    particleTwo.update_velocity_source()
     
     # Update the height of the bars accordingly
     update_bars()
@@ -370,10 +395,10 @@ play_button.on_click(play)
     
 ##################### Creating velocity direction slider ######################
 def update_ballOne_VelocityDir(attr,old,new):
-    global velocityVectorOne
+
     if Active == False:
         angle = new
-        velocityMagnitude = np.sqrt( np.dot(velocityVectorOne, velocityVectorOne) )
+        velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity) )
         
         if velocityMagnitude == 0:
             # Create some default velocity vector
@@ -384,7 +409,7 @@ def update_ballOne_VelocityDir(attr,old,new):
                                                               np.sin(np.deg2rad(angle))
                                                             ])
             
-        update_velocity_arrows()
+        particleOne.update_velocity(velocityVectorOne[0], velocityVectorOne[1])
 
     else:
         pass
@@ -397,10 +422,10 @@ ballOneVelocityDirSlider.on_change('value',update_ballOne_VelocityDir)
 
 ##################### Creating velocity magnitude slider ######################
 def update_ballOne_VelocityMag(attr,old,new):
-    global velocityVectorOne
+
     if Active == False:
         magnitude = new
-        velocityMagnitude = np.sqrt( np.dot(velocityVectorOne, velocityVectorOne))
+        velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity))
         if velocityMagnitude == 0.0:
             # Create some default velocity vector
             velocityVectorOne = np.array([1.0,0.0])
@@ -408,8 +433,7 @@ def update_ballOne_VelocityMag(attr,old,new):
             velocityVectorOne *= 1/velocityMagnitude                        
             velocityVectorOne *= magnitude
             
-        update_velocity_arrows()
-
+        particleOne.update_velocity(velocityVectorOne[0],velocityVectorOne[1])
     else:
         pass
    
@@ -424,7 +448,7 @@ def update_ballTwo_VelocityDir(attr,old,new):
     global velocityVectorTwo
     if Active == False:
         angle = new
-        velocityMagnitude = np.sqrt( np.dot(velocityVectorTwo, velocityVectorTwo) )
+        velocityMagnitude = np.sqrt( np.dot(particleTwo.velocity, particleTwo.velocity) )
         
         if velocityMagnitude == 0:
             # Create some default velocity vector
@@ -435,7 +459,7 @@ def update_ballTwo_VelocityDir(attr,old,new):
                                                               np.sin(np.deg2rad(angle))
                                                             ]) 
             
-        update_velocity_arrows()
+        particleTwo.update_velocity(velocityVectorTwo[0],velocityVectorTwo[1])
         
     else:
         pass
@@ -451,7 +475,7 @@ def update_ballTwo_VelocityMag(attr,old,new):
     global velocityVectorTwo
     if Active == False:
         magnitude = new
-        velocityMagnitude = np.sqrt( np.dot(velocityVectorTwo, velocityVectorTwo))
+        velocityMagnitude = np.sqrt( np.dot(particleTwo.velocity, particleTwo.velocity))
         if velocityMagnitude == 0:
             # Create some default velocity vector
             velocityVectorTwo = np.array([1.0,0.0])
@@ -459,7 +483,7 @@ def update_ballTwo_VelocityMag(attr,old,new):
             velocityVectorTwo *= 1/velocityMagnitude                      
             velocityVectorTwo *= magnitude
             
-        update_velocity_arrows()
+        particleTwo.update_velocity(velocityVectorTwo[0],velocityVectorTwo[1])
 
     else:
         pass
@@ -486,7 +510,7 @@ playGround.add_tools(MoveNodeTool())
 
 def on_mouse_move(attr, old, new):
     if Active == False:
-        if (modify_location(attr,old,new)==1):
+        if (system.modify_location(old,new)==1):
             # if the path is changed then update the drawing
             pass
     else:
