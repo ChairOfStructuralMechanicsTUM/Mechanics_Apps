@@ -71,7 +71,7 @@ class BarChart(object):
         self.fig.xaxis.major_label_text_font_size="15pt"
         self.fig.xaxis.major_tick_line_color=None
         self.fig.xaxis.major_label_orientation=0
-        self.fig.yaxis.axis_label="Momentum (kg*m/second)"
+        self.fig.yaxis.axis_label="speed (m/second)"
         self.fig.yaxis.axis_label_text_font_size="14pt"
         self.fig.min_border_bottom = 5
         self.fig.title.text = 'Boat'

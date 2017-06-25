@@ -380,13 +380,13 @@ jump_button = Button(label="Jump!", button_type="success")
 jump_button.on_click(jump)
 
 
-eFig = BC.BarChart([""], [boatSpeed*mass*3], ["#98C6EA"], [1])
+eFig = BC.BarChart([""], [boatSpeed*3], ["#98C6EA"], [1])
 eFig.Width(200)
 eFig.Height(300)
 eFig.fig.yaxis.visible=True
 def update_bars ():
     global boatSpeed
-    eFig.setHeight(0,boatSpeed*mass)
+    eFig.setHeight(0,boatSpeed)
     
 
 '''
