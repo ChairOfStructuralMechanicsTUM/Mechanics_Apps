@@ -9,7 +9,7 @@ TO-DO:
 []add in graph of changes
 [X]Change force text to respective color (changed)
 [X]Change 'save' button to 'save deformed frame' (changed)
-[]Fix 'save' button. in all cases
+[X]Fix 'save' button. in all cases
 [X]F2 should appear at the default position
 [X]F1 should move with the position (changed)
 [X]F1, F2 bigger text (changed)

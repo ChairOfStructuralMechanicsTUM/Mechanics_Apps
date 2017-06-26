@@ -618,7 +618,14 @@ def initial():
     '''Function that initializes everything'''
     global changer
     changer                 = 0
+    mag_slider.value        = mag_val
+    loc_slider.value        = loc_val
+    clearf1()
+    clearf2()
 
+def clearf1():
+    '''Clears the f1 frame'''
+    f1.pts.data             = dict(x = [], y = [] )
     f1.label.data           = dict(x=[0.45] , y=[0.62], name = ["F1"])
     f1.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     f1.pts.data             = dict(x = [], y = [] )
@@ -631,6 +638,9 @@ def initial():
     f1.w2.data              = dict(xS=[], xE=[], yS=[], yE=[])
     f1.wdline.data          = dict(x1=[], x2 =[], y1 = [], y2=[])
 
+def clearf2():
+    '''Clears the f2 frame'''
+    f2.pts.data             = dict(x = [], y = [] )
     f2.label.data           = dict(x=[] , y=[], name = [])
     f2.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     f2.tri.data             = dict(x = [], y = [], size = [])
@@ -643,18 +653,13 @@ def initial():
     f2.w1.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
     f2.w2.data              = dict(xS=[], xE=[], yS=[], yE=[])
     f2.wdline.data          = dict(x1=[], x2 =[], y1 = [], y2=[])
-    #f1.__init__("F1","n1")
-    #f2.__init__("F2","n2")
-    mag_slider.value        = mag_val
-    loc_slider.value        = loc_val
 
-def clearf2():
-    '''Clears the f2 frame'''
-    f2.pts.data             = dict(x = [], y = [] )
+
 
 button.on_click(button_fun)
 rbutton.on_click(initial)
-rbutton.on_click(clearf2)
+#rbutton.on_click(clearf2)
+#rbutton.on_click(clearf1)
 loc_slider.on_change('value', update_fun)
 mag_slider.on_change('value', update_fun)
 
@@ -663,6 +668,8 @@ mag_slider.on_change('value', update_fun)
 ################################################################################
 
 create_orig(orig)                                                               #Stationary frame is created
+initial()
+
 
 ################################################################################
 ###Plot Section

@@ -1,0 +1,99 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+<h1>Maxwell Recipricosity 'Betti's Theorem'</h1>
+
+<p>
+ In the following app, 
+In the following app, four columns with different boundary conditions are subjected to the same compressive load.
+As the load increases, the columns suddenly transition from a <bold>stable</bold> mode of deformation to an <bold>unstable</bold> mode of deformation resulting in the phenomenon known as buckling.
+Buckling depends on many different factors such as shape, length, and elasticity of the column. </p>
+
+<h2> Euler Buckling Equation </h2>
+<p>
+  Buckling can be modeled by a second order differential equation known as the Euler Buckling Equation:
+    <img src= "images/diffeq" alt="Euler Differential Equation" style="width:100px;height:35px;">
+
+</p>
+
+<p>
+  The solution of this differential equation can be represented in the form of sines and cosines:
+  <img src= "images/solution.png" alt="Euler Solution" style="width:100px;height:35px;">
+</p>
+
+<p>
+  Where constants A,B,C,D are determined by the boundary conditions of the column.
+</p>
+
+
+In order to determine the maximum load a column can withstand before buckling, one can utilize the 'Euler' Formula at the critical load (the lowest value) and obtain:
+<img src= "images/eeuler.gif" alt="Euler Critical Equation" style="width:100px;height:35px;">
+<p> Where: </p>
+<ul>
+<li> F is the calculated critical force where buckling will occur.</li>
+<li> E is the modulus of elasticity of the material.</li>
+<li> I is the moment of inertia of the cross section of the column. </li>
+<li> L is the length of the column.</li>
+<li> c is the column effective length factor. c changes with the boundary conditions and is the governing parameter in this application.</li>
+</ul>
+
+<p>
+  c varies for each boundary condition. The boundary conditions used in this app have the following c-values:
+</p>
+<ul>
+<li> Free-Fixed:      c = 1/4 </li>
+<li> Pinned-Pinned:   c = 1 </li>
+<li> Pinned-Fixed:    c = 2 </li>
+<li> Fixed-Fixed:     c = 4 </li>
+</ul>
+
+<h2> Bifurcation Plot</h2>
+
+<p>Buckling can be described mathematically as a bifurcation in the solution to the equations of static equilibrium (see bifurcation plot).
+The bifurcation plot shows the displacement 'w' (normalized to L). </p>
+
+
+<h2>Important properties to note:</h2>
+<ul>
+<li> The length of the Free-Fixed column is of length L. Each subsequent column is a multiple of L. </li>
+<li> All measurements and calculations are dimensionless.
+  The lengths have all been normalized with respect to L and the loads have been normalized with respect to the critical load. </li>
+<li> The columns all have the same modulus of elasticity and the same moment of inertia.
+  In other words, aside from their respective lengths, the columns are all the same in material and shape. </li>
+<li> The way in which a column will buckle is determined by the boundary conditions. </li>
+<li> The Force Ratio slider can only go one way.
+  Once the beams have buckled, click the Reset button to reset the figure to the original state.</li>
+</ul>
+
+
+----- For more information, see https://en.wikipedia.org/wiki/Buckling -----
+<hr>
