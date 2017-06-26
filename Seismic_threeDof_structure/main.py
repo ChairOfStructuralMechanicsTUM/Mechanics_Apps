@@ -125,6 +125,8 @@ Define the objects to be plotted within the plotting domain
     (1) masses
     (2) truss members
     (3) base
+These three elements will then form the structure which is an object that holds
+all of the information
 ###############################################################################
 '''
 ###################### Structure general properties ###########################
@@ -134,16 +136,18 @@ structure_color  = '#85929E'
 
 ################################ (1) masses ###################################
 '''
+                                 trussLength
+                                <---------->
                                 ====Mass3===
                                 |          |
                                 |          |
                                 ====Mass2===
                                 |          |
                                 |          |
-                                ====Mass1===
-                                |          |
-                                |          |
-                               BASE-BASE-BASE
+                                ====Mass1===   ^
+                                |          |   | trussLength
+                                |          |   |
+                               BASE-BASE-BASE  v
                                    <--->
 '''
 # Starting amount of mass in kg
@@ -152,11 +156,11 @@ mass = 10000.0
 # Data structure which contains the coordinates of the masses and mass supports
 masses, massSupports = construct_masses_and_supports(length = 3.0)
 
-# Add the masses representted by circles to the plot
+# Radius of the circles that represent the masses
 radius = 0.5
 
 ############################ (2) truss members ################################
-trussLength = 3.0
+trussLength = 3.0 # meters
 
 # Starting amount of bendingStiffness in N*m^2
 bendingStiffness = 10000
@@ -171,8 +175,11 @@ base =dict(
 
 ############################### Create Structure ##############################
 structure = Structure(masses, massSupports, trussSources, trussLength, base)
-#structure.update_force_indicator_location()
-#structure.update_force_indicator_value([0,0,0]) # initial state of the structure has zero forces
+
+structure.update_system([0,0,0])
+
+# Construct the mass and stiffness matric, in addition to the lebels to be defined later
+construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRatio, trussLength)
 
 ############################## Plot structure #################################
 plot( time_plot, structure, radius, structure_color )
@@ -198,20 +205,13 @@ time_plot.add_layout(
                                   source=structure.stiffnessIndicators
                               )
                     )
-'''
-###############################################################################
-Construct the system of equations that needs to be solved
-###############################################################################
-'''
-# Initialize the mass, stiffness, and damping matrices respectively
-construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRatio, trussLength)
 
-'''
-###############################################################################
-Define here the time loop that leads to the solution of the system of equations
-in time domain (not needed right now!)
-###############################################################################
-'''
+#'''
+################################################################################
+#Define here the time loop that leads to the solution of the system of equations
+#in time domain (not needed right now!)
+################################################################################
+#'''
 #timeStep = 0.01 #seconds
 #
 ## siesmicInput is an array which has a list of time in seconds in its first 
@@ -279,32 +279,34 @@ Construct the Elastic Response Spectrum
 siesmicParameters = SiesmicParameters(a=0.4,gamma=1.0,S=1.0,eta=1.0,beta=2.5,undergroundParamter = 'A-R')
 #GetMaximumDisplacement(modes,siesmicParameters)
 
+# To construct the ERS plot data source
 update_ERS_plot_data( siesmicParameters )
 
+# plot the line drawn by the ERS data source
 ERSplot.line(x='x',y='y',source=siesmicParameters.ERSdata)
 
+# Allocate each mode in the ERS plot
 counter = 0
 for mode in modes:
     mode.modify_location_in_ERS(siesmicParameters)
+    maxes = mode.get_maximum_displacement(siesmicParameters) # maxes will be used just to let the function run
     ERSplot.line(x='x',y='y',source=mode.locationInERS,color=mode_colors[counter])
     counter+=1
 
 '''
 ###############################################################################
 Define here the main interactivities which are:
-    (1) sliders to modify the amount of masses
-    (2) sliders to modify the bending stiffness of the trusses
-    (3) time slider to enable the user to trace the time evolution of the masse
-        s' displacement
-    (4) Play bottun for the time slider to play automatically
-    (5) Pause bottun for the time slider to pause from playing
-    (6) data collecting box where the user can define the siesmic input data fi
-        -le to read from, in addition to a bottun that the user needs to press
-        in order for the new defined data file to be read and correspondingly 
-        the system to be solved/re-solved
+    (1) Solve button
+    (2) Mass input
+    (3) Stiffness input
+    (4) Choices possible to modify ERS and the corresponding "Re-calculate ERS plot"
+    (6) Choose which configuration of the structure whether it's deformed or 
+        undeformed to be plotted
+    (7) Table that summerizes everything about the problem and the obtained sol
+        -ion
 ###############################################################################
 '''
-################################ Solve System #################################
+###################################### (1) ####################################
 def solve_system():
     
     if int(mass_input.value) < 1000 or int(mass_input.value) > 1e10:
@@ -350,11 +352,13 @@ def solve_system():
 solve_system_button = Button(label="Solve System", button_type="success")
 solve_system_button.on_click(solve_system)
 
-############################### (6) data box ##################################
+##################################### (2) #####################################
 mass_input = TextInput(value="10000", title="Mass (kg)")
+
+##################################### (3) #####################################
 stiffness_input = TextInput(value="10000", title="Stiffness(N*m"+"\u00B2"+")")
 
-##################### (7) Choices possible to modify ERS ######################
+##################################### (4) #####################################
 Erdbebenzonen_text = Div(text="""<b>Earthquake Zones</b>""")
 Erdbebenzonen_choices = RadioGroup(
         labels=["Zone 0", "Zone 1", "Zone 2", "Zone 3"], active=1)
@@ -419,7 +423,7 @@ def calculate_ERS():
 calculate_ERS_button = Button(label="Re-calculate Elastic Response Spectrum", button_type="success")
 calculate_ERS_button.on_click(calculate_ERS)
 
-#################### (8) Choose which configuration to show ###################
+#################################### (5) ######################################
 def_undef_choices_text = Div(text="""<b>Choose which configuration to show</b> """)
 
 def show_def_config(active):
@@ -449,7 +453,7 @@ def show_undef_config(active):
     if active == True:
         def_config_button.active = False
         structure.update_system( np.zeros(3) )
-        structure.update_force_indicator_location()
+#        structure.update_force_indicator_location()
         
     else:
         pass
@@ -460,6 +464,7 @@ def_config_button.on_click(show_def_config)
 undef_config_button = Toggle(label="Undeformed Configuration", button_type="success",width=25)
 undef_config_button.on_click(show_undef_config)
 
+##################################### (6) #####################################
 columns = [
             TableColumn(field="subject", title="Subject"),
             TableColumn(field="modeOne", title="Mode One"),
