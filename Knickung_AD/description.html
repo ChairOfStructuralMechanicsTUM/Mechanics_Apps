@@ -30,6 +30,11 @@ code {
 }
 </style>
 
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
 <h1>Column Buckling with different Boundary Conditions</h1>
 
 <p>
@@ -40,13 +45,13 @@ Buckling depends on many different factors such as shape, length, and elasticity
 <h2> Euler Buckling Equation </h2>
 <p>
   Buckling can be modeled by a second order differential equation known as the Euler Buckling Equation:
-    <img src= "images/diffeq" alt="Euler Differential Equation" style="width:100px;height:35px;">
+    $$ EI {d^2 w \over dx^2} + Pw = 0 $$
 
 </p>
 
 <p>
   The solution of this differential equation can be represented in the form of sines and cosines:
-  <img src= "images/solution.png" alt="Euler Solution" style="width:100px;height:35px;">
+  $$ w = A \sin{\sqrt{ {P \over EI} x } } + B \cos{\sqrt{ {P \over EI} } x} + Cx + D $$
 </p>
 
 <p>
@@ -55,7 +60,7 @@ Buckling depends on many different factors such as shape, length, and elasticity
 
 
 In order to determine the maximum load a column can withstand before buckling, one can utilize the 'Euler' Formula at the critical load (the lowest value) and obtain:
-<img src= "images/eeuler.gif" alt="Euler Critical Equation" style="width:100px;height:35px;">
+$$ P_{cr} = { c \pi^2 E I \over L^2 } $$
 <p> Where: </p>
 <ul>
 <li> F is the calculated critical force where buckling will occur.</li>
