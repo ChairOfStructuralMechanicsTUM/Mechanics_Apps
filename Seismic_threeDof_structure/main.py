@@ -293,6 +293,8 @@ for mode in modes:
     ERSplot.line(x='x',y='y',source=mode.locationInERS,color=mode_colors[counter])
     counter+=1
 
+ERS_plot_text = Div(text="""<b>Note: This plot is designed for systems with damping ratio of 5%</b> """)
+
 '''
 ###############################################################################
 Define here the main interactivities which are:
@@ -363,8 +365,8 @@ stiffness_input = TextInput(value="10000", title="Stiffness(N*m"+"\u00B2"+")")
 ##################################### (4) #####################################
 Erdbebenzonen_text = Div(text="""<b>Earthquake Zones</b>""")
 Erdbebenzonen_choices = RadioGroup(
-        labels=["Zone 0", "Zone 1", "Zone 2", "Zone 3"], active=1)
-Bedeutungsbeiwert_text = Div(text="""<b>Bedeutungsbeiwert</b>""")
+        labels=["Zone 1", "Zone 2", "Zone 3"], active=0)
+Bedeutungsbeiwert_text = Div(text="""<b>Importance Coefficient</b>""")
 Bedeutungsbeiwert_choices = RadioGroup(
         labels=["Residential Building", "School or Residential Complexes", "Hospital"], active=0)
 untergrundParamter_text = Div(text="""<b>Underground Parameter</b>""")
@@ -376,12 +378,10 @@ def calculate_ERS():
     a = 0
     value1 = Erdbebenzonen_choices.active
     if value1 == 0:
-        a = 0.0
-    if value1 == 1:
         a = 0.4
-    elif value1 == 2:
+    elif value1 == 1:
         a = 0.6
-    elif value1 == 3:
+    elif value1 == 2:
         a = 0.8
     
     # re-assign "Bedeutungsbeiwert"
@@ -515,7 +515,7 @@ curdoc().add_root(
                                        untergrundParamter_text,untergrundParamter_choices
                                       ),
                                 column(
-                                       ERSplot, calculate_ERS_button,data_table
+                                       ERSplot, ERS_plot_text, calculate_ERS_button,data_table
                                       )
                                )
                           )
