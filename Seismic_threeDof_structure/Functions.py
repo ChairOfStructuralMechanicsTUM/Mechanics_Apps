@@ -160,13 +160,13 @@ class Structure:
         # update the source fle
         self.forces.data = dict(x=[x1,x2,x3],y=[y1,y2,y3],force=self.forces.data['force'])
               
-    def update_force_indicator_value(self, forces):
-        
-        self.forces.data = dict(
-                                x = self.forces.data['x'],
-                                y = self.forces.data['y'],
-                                force = ['Force = '+str(forces[0])+' N','Force = '+str(forces[1])+' N','Force = '+str(forces[2])+' N']
-                               )
+#    def update_force_indicator_value(self, forces):
+#        
+#        self.forces.data = dict(
+#                                x = self.forces.data['x'],
+#                                y = self.forces.data['y'],
+#                                force = ['Force = '+str(forces[0])+' N','Force = '+str(forces[1])+' N','Force = '+str(forces[2])+' N']
+#                               )
         
     def update_mass_indicator_locaiton(self):
         updateLocation = list()
@@ -342,11 +342,11 @@ class SiesmicParameters():
             data[3,counter] = self.get_Sa(data[0,counter])
             
             # fill-in the First Storey Max. Displacement
-            data[5,counter] = mode.maxModeShape[counter]
+            data[5,counter] = mode.maxModeShape[0]
             # fill-in the Second Storey Max. Displacement
-            data[6,counter] = mode.maxModeShape[counter]
+            data[6,counter] = mode.maxModeShape[1]
             # fill-in the Third Storey Max. Displacement
-            data[7,counter] = mode.maxModeShape[counter]
+            data[7,counter] = mode.maxModeShape[2]
             
             
             maxForce = np.dot(mode.K , mode.maxModeShape)
@@ -471,11 +471,11 @@ def construct_masses_and_supports(length):
     
     return masses, massSupports
      
-def construct_system(structure, mass, massRation, bendingStiffness, stiffnessRatio, trussLength):
+def construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRatio, trussLength):
     structure.massIndicators.data = dict(
                                          x=structure.massIndicators.data['x'],
                                          y=structure.massIndicators.data['y'],
-                                         mass=[str(massRation[0])+'m',str(massRation[1])+'m',str(massRation[2])+'m']
+                                         mass=[str(massRatio[0])+'m',str(massRatio[1])+'m',str(massRatio[2])+'m']
                                         )
     
     structure.stiffnessIndicators.data = dict(
@@ -484,9 +484,9 @@ def construct_system(structure, mass, massRation, bendingStiffness, stiffnessRat
                                      stiffness=[str(stiffnessRatio[0])+'EI',str(stiffnessRatio[1])+'EI',str(stiffnessRatio[2])+'EI']
                                     )
     
-    structure.M = np.array([[massRation[0],      0      ,     0       ],
-                            [      0      ,massRation[1],     0       ],
-                            [      0      ,      0      ,massRation[2]]]) * mass
+    structure.M = np.array([[massRatio[0],      0      ,     0       ],
+                            [      0      ,massRatio[1],     0       ],
+                            [      0      ,      0      ,massRatio[2]]]) * mass
                            
     structure.K = np.array([
                             [stiffnessRatio[0]+stiffnessRatio[1],         -stiffnessRatio[1]        ,         0         ],
@@ -606,8 +606,3 @@ def update_ERS_plot_data( siesmicParameters ):
         y[i] = siesmicParameters.get_Sa(T)
 
     siesmicParameters.ERSdata.data = dict(x=x, y=y)
-#    plot.line(x='x',y='y',source=siesmicParameters.ERSdata)
-#    maxVal = max(abs(i) for i in y)
-#    plot.y_range = Range1d(0, 1.1*maxVal)
-#    plot.x_range = Range1d(0, x[-1])
-		

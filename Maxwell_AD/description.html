@@ -30,14 +30,10 @@ code {
 }
 </style>
 
-<script type="text/javascript" async
-  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
-
-<h1>Column Buckling with different Boundary Conditions</h1>
+<h1>Maxwell Recipricosity 'Betti's Theorem'</h1>
 
 <p>
+ In the following app, 
 In the following app, four columns with different boundary conditions are subjected to the same compressive load.
 As the load increases, the columns suddenly transition from a <bold>stable</bold> mode of deformation to an <bold>unstable</bold> mode of deformation resulting in the phenomenon known as buckling.
 Buckling depends on many different factors such as shape, length, and elasticity of the column. </p>
@@ -45,13 +41,13 @@ Buckling depends on many different factors such as shape, length, and elasticity
 <h2> Euler Buckling Equation </h2>
 <p>
   Buckling can be modeled by a second order differential equation known as the Euler Buckling Equation:
-    $$ EI {d^2 w \over dx^2} + Pw = 0 $$
+    <img src= "images/diffeq" alt="Euler Differential Equation" style="width:100px;height:35px;">
 
 </p>
 
 <p>
   The solution of this differential equation can be represented in the form of sines and cosines:
-  $$ w = A \sin{\sqrt{ {P \over EI} x } } + B \cos{\sqrt{ {P \over EI} } x} + Cx + D $$
+  <img src= "images/solution.png" alt="Euler Solution" style="width:100px;height:35px;">
 </p>
 
 <p>
@@ -60,7 +56,7 @@ Buckling depends on many different factors such as shape, length, and elasticity
 
 
 In order to determine the maximum load a column can withstand before buckling, one can utilize the 'Euler' Formula at the critical load (the lowest value) and obtain:
-$$ P_{cr} = { c \pi^2 E I \over L^2 } $$
+<img src= "images/eeuler.gif" alt="Euler Critical Equation" style="width:100px;height:35px;">
 <p> Where: </p>
 <ul>
 <li> F is the calculated critical force where buckling will occur.</li>
