@@ -340,6 +340,8 @@ def solve_system():
         # Update the location of the mode shapes in the ERS diagram
         mode.modify_location_in_ERS(siesmicParameters)
         
+        maxes = mode.get_maximum_displacement(siesmicParameters) # maxes will be used just to let the function run
+        
         counter += 1
     
     siesmicParameters.update_data_table(modes)
@@ -436,6 +438,7 @@ def show_def_config(active):
             maxes[:,counter] = mode.get_maximum_displacement(siesmicParameters)
             counter += 1
             
+        print('maxes = ',maxes)
         maximumDisp = np.sqrt( maxes[:,0]**2 + maxes[:,1]**2 + maxes[:,2]**2 ) * 1000 # to convert to mm
         structure.update_system( maximumDisp )
         structure.massLocations[:,1] = maximumDisp

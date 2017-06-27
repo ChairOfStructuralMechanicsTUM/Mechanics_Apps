@@ -327,7 +327,7 @@ class SiesmicParameters():
         
         data = np.zeros((11,3))
         
-        counter = 0
+        counter = 2
         for mode in modes:
             # fill-in the period
             data[0,counter] = 2*np.pi / mode.frequency
@@ -360,7 +360,7 @@ class SiesmicParameters():
             # fill-in the Total Force
             data[4,counter] = maxForce[0] + maxForce[1] + maxForce[2]
 
-            counter += 1
+            counter -= 1
         
         # update the table data
         self.informationTable.data = dict(
