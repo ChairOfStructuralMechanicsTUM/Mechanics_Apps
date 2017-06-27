@@ -292,15 +292,13 @@ description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 # add area image
-appname = split(dirname(__file__))[-1]
-img_source = appname+"/static/images/Diffraction_areas.jpg" # join(dirname(__file__), "static/images/Diffraction_areas.jpg") # path of the image
 area_image = Div(text="""
 <p>
-<img src=%s width=500>
+<img src=/Diffraction/static/images/Diffraction_areas.jpg width=500>
 </p>
 <p>
 Characteristic regions and wave parameters
-</p>""" % (img_source), render_as_text=False, width=350)
+</p>""" , render_as_text=False, width=350)
 
 # create layout
 controls = widgetbox([phi0_slider,wavelength_slider,textbox],width=550)  # all controls
