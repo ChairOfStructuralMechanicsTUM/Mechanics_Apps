@@ -1,15 +1,4 @@
 .idea
 **.pyc
-*.md~
-AppOverviewPage/www/index.html~
-*.py~
-*.sh~
-*.html~
-*.md~
-*.md~
+*~
 *.md#
-README.md~
-appnames.conf~
-*.cmd~
-server.conf
-server.conf
