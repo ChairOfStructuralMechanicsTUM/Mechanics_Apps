@@ -30,70 +30,62 @@ code {
 }
 </style>
 
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
 <h1>Maxwell Recipricosity 'Betti's Theorem'</h1>
 
 <p>
- In the following app, 
-In the following app, four columns with different boundary conditions are subjected to the same compressive load.
-As the load increases, the columns suddenly transition from a <bold>stable</bold> mode of deformation to an <bold>unstable</bold> mode of deformation resulting in the phenomenon known as buckling.
-Buckling depends on many different factors such as shape, length, and elasticity of the column. </p>
+ Maxwell Recipricosity states that a point \(i\) subjected to a force which causes a deflection at point \(j\), will experience the same amount of deflection if the same force is applied to point \(j\)
 
-<h2> Euler Buckling Equation </h2>
+ <h2> Theory </h2>
+ <p>
+   In order to prove the reciprocal nature of two loads, consider a simple linear beam with a force \(F_{1}\) at point \(i\) and another force \(F_{2}\) at point \(j\).
+</p>
+   <ul>
+   <li> Let \(F_{1}\) at point \(i\) produce a deflection \(w_{ji}\) at point \(j\) and a deflection \(w_{ii}\) at point \(i\).</li>
+   <li> Let \(F_{2}\) at point \(j\) produce a deflection \(w_{ij}\) at point \(i\) and a deflection \(w_{jj}\) at point \(j\).</li>
+   <li> Let the total resultant work done be the same, regardless if \(F_{1}\) is applied first or if \(F_{2}\) is applied first. ( \(W_{1} = W_{2}\) ) </li>
+   <li> Let both forces be equal (\(F_{1} = F_{2}\) ) </li>
+   </ul>
+
 <p>
-  Buckling can be modeled by a second order differential equation known as the Euler Buckling Equation:
-    <img src= "images/diffeq" alt="Euler Differential Equation" style="width:100px;height:35px;">
+  Since the total work will be the same independent of whether \(F_{1}\) or \(F_{2}\) is applied to the beam first, the work can described in the following way:
+</p>
+  <ul>
+   <li> Case 1: \(W_{1}\) is the work when \(F_{2}\) is applied first and then \(F_{1}\) is applied. </li>
+   <li> Case 2: \(W_{2}\) is the work when \(F_{1}\) is applied first and then \(F_{2}\) is applied. </li>
+   <li> After both forces have been applied, it is easy to see that \(W_{1} = W_{2}\) in both cases.
+  </ul>
+
+<p>
+  By setting the work equal to each other, we end up with the following equations:
+  $$ W_{1} = {1/2} F_{2} w_{jj} + 1/2 F_{1} w_{ii} + F_{2} w_{ji} $$
+  $$ W_{2} = 1/2 F_{1} w_{ii} + 1/2 F_{2} w_{jj} + F_{1} w_{ij} $$
+  $$ 1/2 F_{2} w_{jj} + 1/2 F_{1} w_{ii} + F_{2} w_{ji} = 1/2 F_{1} w_{ii} + 1/2 F_{2} w_{jj} + F_{1} w_{ij} $$
+
+  Simplifying this equation leads us to the final form:
+
+  $$ w_{ji} = w_{ij} $$
+
+  Maxwell Reciprocisity Theorem
 
 </p>
 
+<h2> About this App </h2>
 <p>
-  The solution of this differential equation can be represented in the form of sines and cosines:
-  <img src= "images/solution.png" alt="Euler Solution" style="width:100px;height:35px;">
-</p>
-
-<p>
-  Where constants A,B,C,D are determined by the boundary conditions of the column.
-</p>
-
-
-In order to determine the maximum load a column can withstand before buckling, one can utilize the 'Euler' Formula at the critical load (the lowest value) and obtain:
-<img src= "images/eeuler.gif" alt="Euler Critical Equation" style="width:100px;height:35px;">
-<p> Where: </p>
 <ul>
-<li> F is the calculated critical force where buckling will occur.</li>
-<li> E is the modulus of elasticity of the material.</li>
-<li> I is the moment of inertia of the cross section of the column. </li>
-<li> L is the length of the column.</li>
-<li> c is the column effective length factor. c changes with the boundary conditions and is the governing parameter in this application.</li>
-</ul>
-
-<p>
-  c varies for each boundary condition. The boundary conditions used in this app have the following c-values:
-</p>
-<ul>
-<li> Free-Fixed:      c = 1/4 </li>
-<li> Pinned-Pinned:   c = 1 </li>
-<li> Pinned-Fixed:    c = 2 </li>
-<li> Fixed-Fixed:     c = 4 </li>
-</ul>
-
-<h2> Bifurcation Plot</h2>
-
-<p>Buckling can be described mathematically as a bifurcation in the solution to the equations of static equilibrium (see bifurcation plot).
-The bifurcation plot shows the displacement 'w' (normalized to L). </p>
-
-
-<h2>Important properties to note:</h2>
-<ul>
-<li> The length of the Free-Fixed column is of length L. Each subsequent column is a multiple of L. </li>
-<li> All measurements and calculations are dimensionless.
-  The lengths have all been normalized with respect to L and the loads have been normalized with respect to the critical load. </li>
-<li> The columns all have the same modulus of elasticity and the same moment of inertia.
-  In other words, aside from their respective lengths, the columns are all the same in material and shape. </li>
-<li> The way in which a column will buckle is determined by the boundary conditions. </li>
-<li> The Force Ratio slider can only go one way.
-  Once the beams have buckled, click the Reset button to reset the figure to the original state.</li>
+  <li> A frame with height \(a\) and length \(b\) is subjected to a load which causes the frame to deform. </li>
+  <li> One leg of the frame is stationary while the other leg is able to move freely. </li>
+  <li> The magnitude of the force is controlled by the 'Magnitude' slider. </li>
+  <li> The position of the force is controlled by the 'Position' slider. </li>
+  <li> Once satisfied with the location and magnitude of F1, the location is saved by clicking 'Save Deformed Frame'.
+  This will also activate the second frame and force F2. </li>
+  <li> In order to return back to a clean slate, click the 'Reset' button. </li>
 </ul>
 
 
------ For more information, see https://en.wikipedia.org/wiki/Buckling -----
 <hr>

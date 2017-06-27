@@ -1,5 +1,5 @@
 from bokeh.plotting import Figure, output_file , show
-from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, NormalHead, Arrow
+from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, NormalHead, Arrow, Div
 from bokeh.layouts import column, row, widgetbox
 from bokeh.models.widgets import Button
 from bokeh.models.glyphs import Text
@@ -809,8 +809,15 @@ plot.add_layout(labelsw2)
 
 
 ################################################################################
+###add app description
+################################################################################
+description_filename = join(dirname(__file__), "description.html")
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
+
+################################################################################
 ###Send to the browser
 ################################################################################
 #curdoc().add_root( row(column(f1.mag_slider,f1.loc_slider,f2.mag_slider,f2.loc_slider, toggle),plot ) )
-curdoc().add_root( column(plot,row(mag_slider, loc_slider),button,rbutton) )
+curdoc().add_root( column(description,plot,row(mag_slider, loc_slider),button,rbutton) )
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
