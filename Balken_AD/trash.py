@@ -1,25 +1,5 @@
-from bokeh.plotting import Figure, output_file , show
-from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
-from bokeh.layouts import column, row, widgetbox
-from bokeh.io import curdoc
-from bokeh.models.widgets import Button, CheckboxGroup
-import numpy as np
-from deflection_funs import Fun_Deflection
+#trash
 
-
-
-#Concentrated Force class
-class Beam(object):
-    def __init__(self):
-        self.resol = 100
-        self.x0 = 0                  #starting value of Beam
-        self.xf = 10                 #ending value of Beam
-        self.E  = 500.0e1            #modulus of elasticity
-        self.I  = 30                 #moment of inertia
-        self.length  = self.xf-self.x0         #length of Beam
-        self.lthi = 2
-        self.plotwidth = 20
-        self.source = ColumnDataSource(data=dict(x = np.linspace(self.x0,self.xf,self.resol), y = np.ones(self.resol) * 0 ))
 
 class Force(Beam):
     def __init__(self,name,which=0):
