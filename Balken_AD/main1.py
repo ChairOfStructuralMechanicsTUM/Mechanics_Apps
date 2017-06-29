@@ -173,9 +173,7 @@ f3.mag_slider.on_change('value', fun_update)
 f4.mag_slider.on_change('value', fun_update)
 f5.mag_slider.on_change('value', fun_update)
 
-#p_mag_slide.on_change('value', Fun_Update)
 fb.loc_slider.on_change('value', fun_update)
-#fb.mag_slider.on_change('value', fun_update)
 
 #lth_slide.on_change('value',Fun_Update)
 #checkbox.on_change('active',Fun_Update)

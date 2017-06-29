@@ -18,6 +18,7 @@ class Beam(object):
         self.I                  = 1                 #moment of inertia
         self.length             = self.xf-self.x0         #length of Beam
         self.lthi               = 2
+        self.lth                = self.lthi
         #self.plotwidth          = 20
         self.source             = ColumnDataSource(data=dict(x = np.linspace(self.x0,self.xf,self.resol), y = np.ones(self.resol) * 0 ))
 
