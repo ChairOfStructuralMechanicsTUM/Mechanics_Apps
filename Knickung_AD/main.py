@@ -342,7 +342,7 @@ def fun_update(attr,old,new):
 
 
 #Main plot:
-plot = Figure(tools = "",title="Knickung", x_range=(-2,fenster), y_range=(-.5,fenster+2))
+plot = Figure(tools = "", x_range=(-2,fenster), y_range=(-.5,fenster+2))
 plot.line(x='x', y='y', source = col1.pts, color='#003359',line_width=5)        #Column 1
 plot.line(x='x', y='y', source = col2.pts, color='#003359',line_width=5)        #Column 2
 plot.line(x='x', y='y', source = col3.pts, color='#003359',line_width=5)        #Column 3
@@ -431,7 +431,7 @@ plot1.outline_line_alpha = 0.5
 plot1.outline_line_color = "Black"
 plot1.title.text_font_size = "10pt"
 plot1.xaxis[0].axis_label = 'Force Ratio (F/Fcrit)'
-plot1.yaxis[0].axis_label = 'displacement (w/L)'
+plot1.yaxis[0].axis_label = 'Displacement (w/L)'
 
 
 ################################################################################
@@ -450,6 +450,8 @@ init()
 description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
+description1_filename = join(dirname(__file__), "description1.html")
+description1 = Div(text=open(description1_filename).read(), render_as_text=False, width=1200)
 
 
 
@@ -457,10 +459,10 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 ####Output section
 ################################################################################
 #Output to the browser:
-curdoc().add_root(column(description,
+curdoc().add_root(column(description1,
                     row(
                         column(plot1,weight_slide,button),
-                        plot) ) )
+                        plot), description )  )
 
 
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
