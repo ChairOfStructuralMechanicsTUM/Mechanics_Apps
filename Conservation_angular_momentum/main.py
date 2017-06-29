@@ -75,47 +75,56 @@ The objects include:
     (2) Rotating rectangle
 '''
 ########################## (1) Rotating circle ################################
-construct_circle_source( 
-                        center=[ [0.0,0.0], [0.0,0.0] ], 
-                        radius=[ 4.0, 3.0 ], 
-                        color=[ "#33FF33","#FFFFFF" ]
-                       )
-construct_cross_source()
+#construct_circle_source( 
+#                        center=[ [0.0,0.0], [0.0,0.0] ], 
+#                        radius=[ 4.0, 3.0 ], 
+#                        color=[ "#33FF33","#FFFFFF" ]
+#                       )
+#construct_cross_source()
+#
+#circleSource = get_circle_source()
+#crossSource = get_cross_source()
 
-circleSource = get_circle_source()
-crossSource = get_cross_source()
+rotatingObject = RotatingObject()
+rotatingObject.construct_circle_source( 
+                                       [[0.0,0.0], [0.0,0.0]],
+                                       [4.0, 3.0],
+                                       ["#33FF33","#FFFFFF"]
+                                      )
+rotatingObject.construct_cross_source()
+
+rect_width  = 12 
+rect_height = 8
 
 ######################### (2) Rotating rectangle ##############################
-construct_rectangle_source( center=[0.0,0.0] )
-
-rectangelSource = get_rectangle_source()
+#construct_rectangle_source( center=[0.0,0.0] )
+rotatingObject.construct_rectangle_source([0.0,0.0],12,8)
+mouseTouch = MouseTouch([[xMin,xMax],[yMin,yMax]], rotatingObject)
+#rectangelSource = get_rectangle_source()
 
 '''
 ####################### Define the evolution function #########################
 '''
 def compute_tranjectory():
-    global crossSource
-
     ######################## Rotate the inner wheel ###########################
-    crossSource = get_cross_source()
+    #crossSource = get_cross_source()
 
-    angle = crossSource.data['angle']
+    angle = rotatingObject.crossSource.data['angle']
 
-    onesVector = np.ones(2)
-    rotation_speed_wheel = get_velocity('circle') * J_base/J_circle # rad/sec
-    angle += onesVector * rotation_speed_wheel * dt
+    rotation_speed_wheel = rotatingObject.get_velocity('circle') * J_base/J_circle # rad/sec
+    angle = [angle[0]+rotation_speed_wheel * dt , angle[1]+rotation_speed_wheel * dt]
     
-    update_cross_source( angle )
+    rotatingObject.update_cross_source( angle )
     
     ###################### Rotate the rectangular base ########################
-    rectanguleSource = get_rectangle_source()
+    #rectanguleSource = get_rectangle_source()
     
-    angle = rectanguleSource.data['angle'][0]
+    angle = rotatingObject.baseSource.data['angle'][0]
 
-    rotation_speed_base  = get_velocity('base')  # rad/sec
+    rotation_speed_base  = rotatingObject.get_velocity('base')  # rad/sec
     angle += rotation_speed_base * dt
     
-    update_rectangle_source( angle )    
+    rotatingObject.update_rectangle_source( angle )    
     
     update_bars(rotation_speed_wheel, rotation_speed_base)
    
@@ -147,11 +156,11 @@ def Reset():
     if periodicCallback == 0 and Active == True:
         curdoc().remove_periodic_callback(compute_tranjectory)
         periodicCallback += 1
-        set_velocity(0)
+        rotatingObject.set_velocity(0)
         
         angle = np.array([0,np.pi/2])
-        update_cross_source( angle )
-        update_rectangle_source( angle=0 ) 
+        rotatingObject.update_cross_source( angle )
+        rotatingObject.update_rectangle_source( angle=0 ) 
         update_bars(get_velocity('circle'), get_velocity('base'))
         
     else:
@@ -191,9 +200,9 @@ play_button.on_click(play)
 playGround.add_tools(MoveNodeTool())
 
 def on_mouse_move(attr, old, new):
-    global rotation_speed_wheel, rotation_speed_base
+    #global rotation_speed_wheel, rotation_speed_base
 
-    if (modify_location(attr,old,new)==1) and Active == True:
+    if (mouseTouch.modify_location(old,new)==1) and Active == True:
         # if the path is changed then update the drawing
         pass
     
@@ -219,9 +228,9 @@ playGround.rect(
                 x = 'x',
                 y = 'y',
                 angle = 'angle',
-                source=rectangelSource,
-                width = 12,
-                height = 8,
+                width ='width',
+                height='height',
+                source=rotatingObject.baseSource,
                 color = "#F22633",
                 height_units = 'data'
                )
@@ -231,14 +240,14 @@ playGround.circle(
                     y = 'y',
                     radius  = 'radius',
                     color = 'color',
-                    source = circleSource,
+                    source = rotatingObject.circleSource,
                  )
 
 playGround.rect(
                   x = 'x',
                   y = 'y',
                   angle = 'angle',
-                  source = crossSource,
+                  source = rotatingObject.crossSource,
                   width = 1,
                   height = 6,
                   color="#33FF33",
