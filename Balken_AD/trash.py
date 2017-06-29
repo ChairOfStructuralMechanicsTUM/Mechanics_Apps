@@ -1,6 +1,17 @@
 #trash
 
 
+'''
+class SupportB(Force):
+    def __init__(self,name):
+        Force.__init__(self,name,0.0,1.0)
+
+    def fun_clear(self):
+        self.triangle_source = ColumnDataSource(data=dict(x= [], y= [], size = []))
+        self.arrow_source.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [])
+'''
+
+
 class Force(Beam):
     def __init__(self,name,which=0):
         Beam.__init__(self)
@@ -61,3 +72,33 @@ class Force(Beam):
             self.xE = [-5]
         self.dy = Fun_Deflection(self.loc,l - self.loc, l, self.mag, np.linspace(self.x0,self.xf,self.resol), self.xf, self.resol, self.E, self.I)
         self.arrow_source.data = dict(xS= self.xS, xE= self.xE, yS= self.yS, yE=self.yE, lW = self.lW )
+
+
+        '''
+        def Fun_Update(attr,old,new):
+            #1names = []
+            #1rmag = 0
+            #1rloc = 0
+            #1rdy  = np.ones(beam.resol) * 0
+            for i in range(0,number):
+                flist[i].update_arrow(fb.loc_slider.value)         #update the concentrated loads
+                rmag += flist[i].mag
+                rloc += flist[i].loc
+                rdy  = np.add(rdy,flist[i].dy)
+                #names.append(flist[i].name)
+            rloc = rloc / number
+            a = rloc - beam.x0
+            b = fb.loc - rloc
+            beam.source.data['y'] = rdy
+
+            if fb.loc_slider.value == 0: #cantilever
+                Fun_Cantilever()
+            else:
+            #Update the support forces
+                #1fa.mag = Fun_F(rmag,b,fb.loc_slider.value)
+                #1fb.mag = Fun_F(rmag,a,fb.loc_slider.value)
+                #1fa.update_arrow(fb.loc_slider.value)
+                #1fb.update_arrow(fb.loc_slider.value)
+                #1triangle_source.data = dict(x = [0.0,fb.loc], y = [0-move_tri, 0-move_tri], size = [20,20])
+                #names = names + fa.name + fb.name
+        '''

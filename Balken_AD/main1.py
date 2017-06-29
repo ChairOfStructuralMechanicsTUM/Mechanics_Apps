@@ -9,7 +9,7 @@ from classes import *
 
 #initialization of objects
 canti       = Cantilever()
-norm        = Beam()
+norm        = Norm()
 fa          = Support("A",0.0,0.0)                                                    #creation of support a.
 fb          = Support("B",0.0,norm.xf)                                                    #creation of support b
 f1          = Load("F1")                                                            #1st load
@@ -19,13 +19,6 @@ f4          = Load("F4")                                                        
 f5          = Load("F5")                                                            #5th load on frame
 resultant   = Force("Resultant",0.0,0.0)                                                           #creation of (theoretical) resultant load
 
-#sliders:
-
-
-#Cantilever rectangle source:
-
-
-#move_tri = 0.25
 
 def fun_f(p_mag,k,l):
     f_mag = -1.0 * (p_mag *k) / l
@@ -34,7 +27,11 @@ def fun_f(p_mag,k,l):
 def calc_resultant(f1,f2,f3,f4,f5):
     resultant.mag           = (f1.mag + f2.mag + f3.mag + f4.mag + f5.mag) / 5.0
     resultant.loc           = (f1.loc + f2.loc + f3.loc + f4.loc + f5.loc) / 5.0
-    resultant.deflection    = (f1.deflection + f2.deflection + f3.deflection + f4.deflection + f5.deflection)
+    #print f1.deflection
+    print "f1 %r, f2 %r , f3 %r , f4 %r , f5 %r" %(len(f1.deflection),len(f2.deflection),len(f3.deflection),len(f4.deflection),len(f5.deflection))
+    resultant.deflection    = ( np.asarray(f1.deflection) + np.asarray(f2.deflection)
+            + np.asarray(f3.deflection) + np.asarray(f4.deflection)
+            + np.asarray(f5.deflection) )
 
 def update_supports():
     a = resultant.loc
@@ -50,6 +47,10 @@ def fun_update(attr,old,new):
     f3.update_arrow()
     f4.update_arrow()
     f5.update_arrow()
+    print "length of fb arrow_source %r" %(len(fb.arrow_source.data))
+    print "canti length %r , %r " %( len(canti.source.data['x']),len(canti.source.data['y']) )
+    print "norm length %r , %r " %( len(norm.source.data['x']),len(norm.source.data['y']) )
+
 
     if fb.loc == 0:
         fun_cantilever()
@@ -68,7 +69,8 @@ def fun_normal():
     f5.deflection = norm.fun_deflection(f5.loc, fb.loc, f5.mag)
     calc_resultant(f1,f2,f3,f4,f5)
     norm.source.data['y'] = resultant.deflection
-
+    #print resultant.deflection
+    #print fb.loc
 
 def fun_cantilever():
     norm.clear_beam()
@@ -84,16 +86,22 @@ def fun_cantilever():
     canti.source.data['y'] = resultant.deflection
 
 print "hi"
+#print canti.source.data
+
 
 ###Main Plot:
-plot = Figure(title="Doppeltgelagerter Balken und Einzellast", x_range=(0-.5,1+.5), y_range=(-2.5,2.5))
+plot = Figure(title="Doppeltgelagerter Balken und Einzellast", x_range=(0-.1,1+.1), y_range=(-1,1))
+plot.line(x='x', y='y', source=norm.source, color='#0065BD',line_width=20)
+plot.line(x='x', y='y', source=canti.source, color='#0065BD',line_width=20)
+#plot.line(x = [1 ,2, 3] , y = [1 ,2, 3])
 #plot.line(x='x', y='y', source=norm.source, color='#0065BD',line_width=20)
-#plot.line(x='x', y='y', source=norm.source, color='#0065BD',line_width=20)
-#plot.triangle(x='x', y='y', size = 'size', source= triangle_source,color="#E37222", line_width=2)
+plot.triangle(x='x', y='y', size = 'size', source= fb.triangle_source,color="#E37222", line_width=2)
+plot.triangle(x='x', y='y', size = 'size', source= fa.triangle_source,color="#E37222", line_width=2)
 plot.quad(top='top', bottom='bottom', left='left',
     right='right', source = canti.quad_source, color="#808080", fill_alpha = 0.5)
 plot.segment(x0='x0', y0='y0', x1='x1',
           y1='y1', source = canti.segment_source, color="#F4A582", line_width=2)
+
 plot.axis.visible = False
 plot.outline_line_width = 7
 plot.outline_line_alpha = 0.3
@@ -114,24 +122,34 @@ plot1.axis.visible = False
 ###arrow plotting:
 #P arrow:'''
 f1_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.arrow_source,line_color="#A2AD00")
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=f1.arrow_source,line_color="#A2AD00")
 
 f2_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f2.arrow_source,line_color="#A2AD00")
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=f2.arrow_source,line_color="#A2AD00")
+f3_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=f3.arrow_source,line_color="#A2AD00")
 
-#Position 2 arrow:
+f4_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=f4.arrow_source,line_color="#A2AD00")
+
+f5_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=f5.arrow_source,line_color="#A2AD00")
 fb_arrow_glyph = Arrow(end=OpenHead(line_color="#003359",line_width= 4,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width = "lW", source=fa.arrow_source,line_color="#003359")
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=fa.arrow_source,line_color="#003359")
 #Position 1 arrow:
 fa_arrow_glyph = Arrow(end=OpenHead(line_color="#003359",line_width= 4,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width = "lW", source=fb.arrow_source,line_color="#003359" )
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=fb.arrow_source,line_color="#003359" )
 
 ###add layouts:
 #plot.add_layout(labels)
-plot.add_layout(fb_arrow_glyph)
-plot.add_layout(f2_arrow_glyph)
 plot.add_layout(f1_arrow_glyph)
+plot.add_layout(f2_arrow_glyph)
+plot.add_layout(f3_arrow_glyph)
+plot.add_layout(f4_arrow_glyph)
+plot.add_layout(f5_arrow_glyph)
+
 plot.add_layout(fa_arrow_glyph)
+plot.add_layout(fb_arrow_glyph)
 
 ###Reset Button
 #button = Button(label="Reset", button_type="success")
@@ -145,12 +163,19 @@ plot.add_layout(fa_arrow_glyph)
 ###on_change:
 f1.loc_slider.on_change('value', fun_update)
 f2.loc_slider.on_change('value', fun_update)
-f2.mag_slider.on_change('value', fun_update)
+f3.loc_slider.on_change('value', fun_update)
+f4.loc_slider.on_change('value', fun_update)
+f5.loc_slider.on_change('value', fun_update)
+
 f1.mag_slider.on_change('value', fun_update)
+f2.mag_slider.on_change('value', fun_update)
+f3.mag_slider.on_change('value', fun_update)
+f4.mag_slider.on_change('value', fun_update)
+f5.mag_slider.on_change('value', fun_update)
 
 #p_mag_slide.on_change('value', Fun_Update)
 fb.loc_slider.on_change('value', fun_update)
-fb.mag_slider.on_change('value', fun_update)
+#fb.mag_slider.on_change('value', fun_update)
 
 #lth_slide.on_change('value',Fun_Update)
 #checkbox.on_change('active',Fun_Update)
@@ -209,4 +234,4 @@ curdoc().add_root( row( column(column1),  column(plot) ) )
 
 #f1.mag_slider,f2.mag_slider,fb.mag_slider,f1.loc_slider,f2.loc_slider,fb.loc_slider),
 
-curdoc().add_root( plot)
+curdoc().add_root( column(plot,fb.loc_slider,f1.loc_slider,f2.loc_slider,f3.loc_slider,f4.loc_slider,f5.loc_slider,f1.mag_slider,f2.mag_slider,f3.mag_slider,f4.mag_slider,f5.mag_slider))

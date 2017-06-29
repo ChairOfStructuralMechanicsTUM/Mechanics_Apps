@@ -14,12 +14,13 @@ class Beam(object):
         self.resol              = 100
         self.x0                 = 0                                             #starting value of Beam
         self.xf                 = 1                  #ending value of Beam
-        self.E                  = 500.0e1            #modulus of elasticity
-        self.I                  = 30                 #moment of inertia
+        self.E                  = 1            #modulus of elasticity
+        self.I                  = 1                 #moment of inertia
         self.length             = self.xf-self.x0         #length of Beam
         self.lthi               = 2
         #self.plotwidth          = 20
         self.source             = ColumnDataSource(data=dict(x = np.linspace(self.x0,self.xf,self.resol), y = np.ones(self.resol) * 0 ))
+
     def clear_beam(self):
         self.source.data        = dict(x = [], y = [])
 
@@ -41,14 +42,15 @@ class Cantilever(Beam):
         self.quad_source.data   = dict(top = [], bottom = [], left = [] , right = [])
         self.segment_source.data= dict(x0= [], y0= [],x1 = [], y1 =[])
 
-    def deflection(self,b,p):
+    def fun_deflection(self,b,p):
         '''Calculates the deflection of the beam when it is cantilever'''
         #b is the distance from the wall to the concentrated load
-        x = self.source.data
+        x = self.source.data['x']
         ynew = []
+        xf = self.xf
         a = xf - b;     #The a for cantilever is the distance between
                         #the free end and the concentrated load.
-        for i in range(0,resol):
+        for i in range(0,self.resol):
             if x[i] < a:
                 #dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
                 dy = (  ( p * (b**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - b )
@@ -66,6 +68,7 @@ class Norm(Beam):
         Beam.__init__(self)
 
     def fun_deflection(self,a,l,p):
+        print "l %r" %l
         b       = l - a
         xf      = self.xf
         resol   = self.resol
@@ -75,7 +78,7 @@ class Norm(Beam):
         ynew1   = []
         ynew2   = []
         ynew    = []
-        for i in range(0,int(l*(resol/10) ) ):
+        for i in range(0,int(l*resol) ):
             if a > l:
                 dy = ( ( p * b * x[i]) / (6 * E * I * l) ) * ( (l**2) - (x[i]**2) )
             else:
@@ -87,7 +90,7 @@ class Norm(Beam):
                     dy = ( (p * a * (l-x[i]) ) / (6 * E * I * l) ) * ( (2*l*x[i]) - (x[i]**2) - (a**2) )
             ynew1.append(dy)
 
-        new_range = int(resol - l*10)
+        new_range = int(resol - l*100)
         for i in range(0,new_range):
             dy1 = -1 *( ( (p * a * b * x[i]) / (6 * E * I * l) ) * (l + a) )
             ynew2.append(dy1)
@@ -120,12 +123,12 @@ class Force(object):
         self.magi = magi
         self.loci = loci
         self.arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
-        self.mag_slider = Slider(title=self.name + " amplitude", value=self.magi, start=-2*self.magi, end=2*self.magi, step=1)
+        self.mag_slider = Slider(title=self.name + " amplitude", value=self.magi, start=-1, end=1, step=0.01)
 
 class Load(Force):
     def __init__(self,name):
         Force.__init__(self,name,0.0,0.5)
-        self.deflection = []
+        self.deflection = np.array([])
         self.loc_slider = Slider(title=self.name + " Position",value = 1.0,
                     start = 0.0, end = 1.0, step = 0.01)
 
@@ -137,7 +140,7 @@ class Load(Force):
         elif self.mag != 0:
             self.arrow_source.data = dict (xS= [self.loc], xE= [self.loc],
                 yS= [(self.mag/abs(self.mag)) * (1 - self.mag)],
-                yE= [(self.mag/abs(self.mag)) * 1])
+                yE= [(self.mag/abs(self.mag)) * 1] )
         #self.dy = Fun_Deflection(self.loc, l, self.mag, self.resol, self.E, self.I)
 
 
@@ -192,13 +195,14 @@ class Support(Force):
             start = 0.0, end = 1.0, step = 0.01)
     def fun_clear(self):
         self.triangle_source.data = dict(x = [], y = [], size = [])
-        self.arrow_source.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [])
+        self.arrow_source.data = dict(xS= [], xE= [], yS= [], yE=[])
 
-    def update_arrow(self, l):
+    def update_arrow(self):
         if self.name == "A":
             self.loc = 0
         elif self.name == "B":
-            self.loc = l
+            self.loc = self.loc_slider.value
+
         if self.mag == 0:
             self.arrow_source.data = dict (xS= [], xE= [], yS= [], yE= [])
         elif self.mag != 0:
@@ -207,4 +211,4 @@ class Support(Force):
                 yE= [(self.mag/abs(self.mag)) * 1])
         #self.dy = Fun_Deflection(self.loc,l - self.loc, l, self.mag, np.linspace(self.x0,self.xf,self.resol), self.xf, self.resol, self.E, self.I)
         #self.arrow_source.data = dict(xS= self.xS, xE= self.xE, yS= self.yS, yE=self.yE, lW = self.lW )
-        self.triangle_source.data = dict(x = [0.0,self.loc], y = [0-move_tri, 0-move_tri], size = [20,20])
+        self.triangle_source.data = dict(x = [self.loc], y = [0-self.move_tri], size = [20])
