@@ -683,10 +683,11 @@ f2color = "#E37222"                                                             
 
 ########Main PLot:
 plot = Figure(tools = "", x_range=(plotx0,plotxf),
-        y_range=(ploty0,plotyf),plot_width=1000, plot_height=1000)
+        y_range=(ploty0,plotyf),plot_width=750, plot_height=650)
 #Plot properties:
-plot.axis.visible = True
-plot.outline_line_width = 7
+plot.axis.visible = False
+plot.grid.visible = False
+plot.outline_line_width = 4
 plot.outline_line_alpha = 0.3
 plot.outline_line_color = "Black"
 plot.title.text_color = "black"
@@ -719,10 +720,10 @@ plot.line(x = 'x2' , y = 'y2',source = f2.wdline, color="Black",
 #creation of the a and b scale reference things:
 plot.multi_line( [ [orig.x0, orig.xf],[orig.x0,orig.x0],[orig.xf,orig.xf] ],
         [ [0,0] ,[0-abshift,0+abshift] , [0-abshift,0+abshift] ],
-        color=["black", "black","black"], line_width=10)
+        color=["black", "black","black"], line_width=5)
 plot.multi_line( [ [xb,xb],[xb-abshift,xb+abshift],[xb-abshift,xb+abshift] ],
         [ [orig.y0,orig.yf], [orig.y0,orig.y0], [orig.yf,orig.yf] ],
-        color=["black", "black","black"], line_width=10)
+        color=["black", "black","black"], line_width=5)
 
 #Frame bases:
 plot.triangle(x='x', y='y', size = 'size', source= default,color="grey", line_width=2)
@@ -812,12 +813,15 @@ plot.add_layout(labelsw2)
 ###add app description
 ################################################################################
 description_filename = join(dirname(__file__), "description.html")
+description1_filename = join(dirname(__file__), "description1.html")
+
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description1 = Div(text=open(description1_filename).read(), render_as_text=False, width=1200)
 
 
 ################################################################################
 ###Send to the browser
 ################################################################################
 #curdoc().add_root( row(column(f1.mag_slider,f1.loc_slider,f2.mag_slider,f2.loc_slider, toggle),plot ) )
-curdoc().add_root( column(description,plot,row(mag_slider, loc_slider),button,rbutton) )
+curdoc().add_root( column(description,plot,row(mag_slider, loc_slider), row(button,rbutton), description1 ) )
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
