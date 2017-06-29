@@ -4,6 +4,160 @@ from MoveNodeTool import *
 import numpy as np
 from timeit import default_timer as timer
 
+class RotatingObject():
+    
+    def __init__(self):
+        self.circleSource  = 0
+        self.crossSource   = 0
+        self.baseSource    = 0
+        
+        self.crossSpeed    = 0
+        self.baseSpeed     = 0
+
+    def construct_circle_source( self, center, radius, color ):
+        centerX = list()
+        centerY = list()
+        for i in range(len(center)):
+            centerX.append(center[i][0])
+            centerY.append(center[i][1])
+            
+        self.circleSource = ColumnDataSource(
+                                             data=dict(
+                                                       x = centerX,
+                                                       y = centerY,
+                                                       radius = radius,
+                                                       color = color,
+                                                      )
+                                            )
+    def construct_cross_source(self):
+        center = [self.circleSource.data['x'][0] , self.circleSource.data['y'][0]]
+
+        self.crossSource = ColumnDataSource(
+                                            data=dict(
+                                                      x=[center[0], center[0]],
+                                                      y=[center[1], center[1]],
+                                                      angle = [0, np.pi/2]
+                                                     )
+                                           )   
+                                            
+    def update_cross_source( self, angle ):
+        self.crossSource.data = dict(
+                                     x=self.crossSource.data['x'],
+                                     y=self.crossSource.data['y'],
+                                     angle=[angle[0],angle[1]]
+                                    ) 
+
+    def construct_rectangle_source( self, center, width, height):
+        self.baseSource = ColumnDataSource(
+                                           data=dict(
+                                                     x = [center[0]],
+                                                     y = [center[1]],
+                                                     width=[width],
+                                                     height=[height],
+                                                     angle = [0.0]
+                                                    )
+                                          ) 
+                                           
+    def update_rectangle_source( self, angle ):
+        self.baseSource.data = dict(
+                                    x=self.baseSource.data['x'],
+                                    y=self.baseSource.data['y'],   
+                                    width=self.baseSource.data['width'],
+                                    height=self.baseSource.data['height'],
+                                    angle=[angle]
+                                   )    
+        
+    def set_velocity(self, value):
+
+        self.crossSpeed = value 
+        self.baseSpeed  =-value
+        
+    def get_velocity(self, objectName):
+        
+        if objectName == 'base':
+            return self.baseSpeed
+        elif objectName == 'circle':
+            return self.crossSpeed
+        else:
+            raise Exception("This rotating object doesn't exist")
+            
+   
+class MouseTouch():
+    
+    def __init__(self, domain, rotatingObject):
+        self.domain         = domain
+        self.rotatingObject = rotatingObject
+        self.currentNode    = -1
+        self.oldAngle       = 0
+        self.olderAngle     = 0
+        
+    def inNode (self, xPos, yPos, new):
+        
+        baseWidth = self.rotatingObject.baseSource.data['width'][0]
+        baseHeight = self.rotatingObject.baseSource.data['height'][0]
+        if abs(xPos)<=(baseWidth/2) and abs(yPos)<=(baseHeight/2) and np.sqrt( new[0][u'x']**2 + new[0][u'y']**2 ) >= self.rotatingObject.circleSource.data['radius'][1]:
+            self.rotatingObject.set_velocity(0)
+            return 0
+        else:
+            return -1
+    
+    # modify path by dragging nodes
+    def modify_location(self, old, new):
+        
+        # if there is a previous node (not first time the function is called)
+        # and the node has not been released (new['x']=-1 on release to prepare for future calls)
+        if (len(old)==1 and new[0][u'x']!=-1):
+            # if first call for this node
+            if (self.currentNode==-1):
+                # determine which node and remember it
+                XStart = old[0][u'x']
+                YStart = old[0][u'y']
+                XStart = new[0][u'x']
+                YStart = new[0][u'y']
+    
+                self.currentNode = self.inNode(XStart,YStart,new)
+                
+                if self.currentNode == 0:
+                    newAngle = abs(np.arctan(YStart/XStart))
+                    if XStart > 0 and YStart > 0:
+                        pass
+                    elif XStart < 0 and YStart > 0:
+                        newAngle += 2*(np.pi - newAngle)
+                    elif XStart < 0 and YStart < 0:
+                        newAngle += 2*np.pi
+                    else:
+                        newAngle *= -1
+                        
+                    self.oldAngle = newAngle
+    
+            # if not first call then move node
+            else: 
+                XStart = new[0][u'x']
+                YStart = new[0][u'y']
+                newAngle = abs(np.arctan(YStart/XStart))
+                self.olderAngle = newAngle
+                
+                if XStart > 0 and YStart > 0:
+                    pass
+                elif XStart < 0 and YStart > 0:
+                    newAngle += 2*(np.pi - newAngle)
+                elif XStart < 0 and YStart < 0:
+                    newAngle += 2*np.pi
+                else:
+                    newAngle *= -1
+                    
+                self.rotatingObject.update_rectangle_source( self.rotatingObject.baseSource.data['angle'][0] + newAngle - self.oldAngle )
+                self.oldAngle = newAngle
+                    
+            return 1
+        else:
+            # when node is released reset current node to -1
+            # so a new node is moved next time
+            self.rotatingObject.set_velocity(self.oldAngle - self.olderAngle) 
+            
+            self.currentNode=-1
+            return -1
+    
 '''
 The particleSource, particleXPos, particleYPos are stored in this file because
 they are used extensively by the functions inNode() and modify_location(), and
