@@ -3,6 +3,103 @@ from bokeh.models import ColumnDataSource
 from MoveNodeTool import *
 import numpy as np
 
+class Particle():
+    
+    def __init__(self):
+        self.source      = ColumnDataSource(data=dict(x=[0],y=[0]))
+        self.position    = [0,0]
+        self.velocity    = [0,0]
+        self.traceSource = ColumnDataSource(data=dict(x=[0],y=[0]))
+        self.velocitySource      = ColumnDataSource(data=dict(x=[0],y=[0]))
+        self.pressGradSource     = ColumnDataSource(data=dict(x=[0],y=[0]))
+        self.coriolisForceSource = ColumnDataSource(data=dict(x=[0],y=[0]))
+        
+    def update_position(self, x, y):
+        self.position[0] = x
+        self.position[1] = y
+        self.update_source(x, y)
+        
+    def update_source(self, x, y):
+        self.source.data = dict(x=[x],y=[y])
+        
+    def set_velocity(self, velocity):
+        self.velocity = velocity
+        arrowTailPosition = [ 
+                             self.source.data['x'][0],
+                             self.source.data['y'][0]
+                            ]
+
+        self.velocitySource.data = dict(
+                                         xs=[arrowTailPosition[0]],
+                                         ys=[arrowTailPosition[1]],
+                                         xe=[arrowTailPosition[0]+velocity[0]],
+                                         ye=[arrowTailPosition[1]+velocity[1]]
+                                       ) 
+
+    def set_pressGrad(self, pressGrad):
+        arrowTailPosition = [ 
+                             self.source.data['x'][0],
+                             self.source.data['y'][0]
+                            ]
+
+        self.pressGradSource.data = dict(
+                                         xs=[arrowTailPosition[0]],
+                                         ys=[arrowTailPosition[1]],
+                                         xe=[arrowTailPosition[0]+pressGrad[0]],
+                                         ye=[arrowTailPosition[1]+pressGrad[1]]
+                                        ) 
+    
+    def set_coriolisForce(self, coriollisForce):
+        arrowTailPosition = [ 
+                             self.source.data['x'][0],
+                             self.source.data['y'][0]
+                            ]
+
+        self.coriolisForceSource.data = dict(
+                                             xs=[arrowTailPosition[0]],
+                                             ys=[arrowTailPosition[1]],
+                                             xe=[arrowTailPosition[0]+coriollisForce[0]],
+                                             ye=[arrowTailPosition[1]+coriollisForce[1]]
+                                            ) 
+
+        
+class MouseTouch():
+    
+    def __init__(self, domain, particle):
+        self.particle = particle
+        
+        self.domain = domain # in form [[xmin,xmax],[ymin,ymax]]
+        
+        self.currentNode = -1
+        
+    def inNode (self, xPos,yPos):
+        for i in range(0,len(self.particle.source.data['x'])):
+            if (abs(xPos-self.particle.source.data['x'][i])<=0.1 and abs(yPos-self.particle.source.data['y'][i])<=0.1):
+                return i
+        return -1
+    
+    # modify path by dragging nodes
+    def modify_location(self, old, new):
+        # if there is a previous node (not first time the function is called)
+        # and the node has not been released (new['x']=-1 on release to prepare for future calls)
+        if (len(old)==1 and new[0][u'x']!=-1):
+            # if first call for this node
+            if (self.currentNode==-1):
+                # determine which node and remember it
+                XStart=old[0][u'x']
+                YStart=old[0][u'y']
+                self.currentNode=self.inNode(XStart,YStart)
+            # if not first call then move node
+            if (self.currentNode!=-1):
+                # update node position
+                self.particle.update_position(new[0][u'x'], new[0][u'y'])
+
+            return 1
+        else:
+            # when node is released reset current node to -1
+            # so a new node is moved next time
+            self.currentNode=-1
+            return -1
 '''
 The particleSource, particleXPos, particleYPos are stored in this file because
 they are used extensively by the functions inNode() and modify_location(), and
@@ -120,101 +217,3 @@ def get_pressure_grad( position, Xgrid, Ygrid, presGrad ):
     
     return presGradActual
     
-'''
-The functions inNode() and modify_location() are concerned with the 
-functionality of changing the position of the particle (ball) using the mouse.
-For more information, get in touch with Emily Bourne, whom I got this code from.
-'''
-# find index of node in which coordinates are found
-# (return -1 if not in a node)
-def inNode (xPos,yPos):
-    global particleXPos, particleYPos
-    for i in range(0,len(particleXPos)):
-        if (abs(xPos-particleXPos[i])<=0.1 and abs(yPos-particleYPos[i])<=0.1):
-            return i
-    return -1
-
-# modify path by dragging nodes
-def modify_location(attr, old, new):
-
-    global currentNode, particleSource, particleXPos, particleYPos
-    # if there is a previous node (not first time the function is called)
-    # and the node has not been released (new['x']=-1 on release to prepare for future calls)
-    if (len(old)==1 and new[0][u'x']!=-1):
-        # if first call for this node
-        if (currentNode==-1):
-            # determine which node and remember it
-            XStart=old[0][u'x']
-            YStart=old[0][u'y']
-            currentNode=inNode(XStart,YStart)
-        # if not first call then move node
-        if (currentNode!=-1):
-            # update node position
-            particleSource.data=dict(x=[new[0][u'x']],y=[new[0][u'y']])
-            particleXPos[currentNode]=new[0][u'x']
-            particleYPos[currentNode]=new[0][u'y']
-        return 1
-    else:
-        # when node is released reset current node to -1
-        # so a new node is moved next time
-        currentNode=-1
-        return -1
-
-'''
-The following six functions are constructed here in order to pass the export 
-particle source file here to the main file, and to reduce the number of lines
-in the main file as well
-'''
-def update_particle_source(x,y):
-    global particleXPos, particleYPos, particleSource
-    #print('update_particle_positions() has been accessed')
-    particleXPos[0]=x
-    particleYPos[0]=y
-    particleSource.data = dict(x=[x],y=[y])
-
-def get_particle_source():
-    return particleSource
-
-def update_particle_position(x,y):
-    global particleXPos, particleYPos
-    particleXPos[0] = x
-    particleYPos[0] = y
-
-def get_particle_position():
-    return np.array([ particleXPos[0] , particleYPos[0] ])
-    
-def construct_arrow_source( tailPosition, tailHeadDistance ):
-    arrowTailPosition = np.array([ 
-                                  tailPosition.data['x'][0],
-                                  tailPosition.data['y'][0]
-                                ])
-    arrowHeadPosition = np.array([
-                                  tailPosition.data['x'][0]+tailHeadDistance[0],
-                                  tailPosition.data['y'][0]+tailHeadDistance[1]
-                                ])
-    arrowSource = ColumnDataSource(
-                                   data=dict(
-                                             xs=[arrowTailPosition[0]],
-                                             ys=[arrowTailPosition[1]],
-                                             xe=[arrowHeadPosition[0]],
-                                             ye=[arrowHeadPosition[1]]
-                                            )
-                                  ) 
-    return arrowSource
-    
-def update_arrow_source( tailPosition, tailHeadDistance ):
-    arrowTailPosition = np.array([ 
-                                  tailPosition.data['x'][0],
-                                  tailPosition.data['y'][0]
-                                ])
-    arrowHeadPosition = np.array([
-                                  tailPosition.data['x'][0]+tailHeadDistance[0],
-                                  tailPosition.data['y'][0]+tailHeadDistance[1]
-                                ])
-    arrowSourceData = dict(
-                             xs=[arrowTailPosition[0]],
-                             ys=[arrowTailPosition[1]],
-                             xe=[arrowHeadPosition[0]],
-                             ye=[arrowHeadPosition[1]]
-                          ) 
-    return arrowSourceData

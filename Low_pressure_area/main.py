@@ -12,8 +12,8 @@ from os.path import dirname, join, split
 Create the plotting domain (the low pressure area!)
 ###############################################################################
 '''
-xmin, xmax = -1200,1200
-ymin, ymax = -1200,1200
+xmin, xmax = -1,1
+ymin, ymax = -1,1
 plot = figure(
               plot_width=800,
               plot_height=800,
@@ -78,36 +78,34 @@ plot.text(
          )
 
 ######################## (2) Travelling particle ##############################
-dt = 0.1
-particleRadius = 50
-particleMass   = 20
-update_particle_position(x=0.0,y=1.0)         # Initial particle's position
-velocity = np.array([0,0])                   # Initial particle's velocity
+# Construct the particle object
+particle = Particle()
 
-position = get_particle_position()
-print('position = [',position[0],',',position[1],']')
-update_particle_source(position[0],position[1])
+dt = 0.1
+particleRadius = 0.05#50
+particleMass   = 2
+
+particle.update_position(x=0.0,y=-1.0)
+velocity = np.array([0,0])                   # Initial particle's velocity
+particle.set_velocity(velocity)
+
 
 plot.circle(
             x = 'x',
             y = 'y',
             radius = particleRadius,
             color = '#33FF33',
-            source = get_particle_source()
+            source = particle.source
            )
-traceSource = ColumnDataSource(data = dict(x=[],y=[]) )
+
 plot.ellipse(
-             x='x',y='y',width=0.5,height=0.5,
+             x='x',y='y',width=0.01,height=0.01,
              color="#0065BD",
-             source=traceSource
+             source=particle.traceSource#traceSource
             )
 
 ###################### (3) Forces and velocity arrows #########################
 # Defining the velocity arrow
-particleSource = get_particle_source()
-
-velocityArrowSource = construct_arrow_source( particleSource, velocity )
-
 plot.add_layout( 
                 Arrow(    
                       end=OpenHead(
@@ -120,22 +118,19 @@ plot.add_layout(
                       x_end=['xe'][0], 
                       y_end=['ye'][0], 
                       line_color="yellow",
-                      source = velocityArrowSource
+                      source =particle.velocitySource
                      ) 
                 )
 
 # Defining the pressure gradient force arrow                               
 currentPressGrad = get_pressure_grad(
-                                     get_particle_position(),
+                                     particle.position,
                                      X, 
                                      Y,
                                      presGrad
                                     )
 
-presGradArrowSource = construct_arrow_source( 
-                                             particleSource, 
-                                             0.1*currentPressGrad 
-                                            )
+particle.set_pressGrad(0.1*currentPressGrad)
                                     
 plot.add_layout( 
                 Arrow(    
@@ -149,7 +144,7 @@ plot.add_layout(
                       x_end=['xe'][0], 
                       y_end=['ye'][0], 
                       line_color="black",
-                      source = presGradArrowSource
+                      source = particle.pressGradSource
                      ) 
                 )
          
@@ -164,10 +159,7 @@ coriolisForce = np.array([
                           coriolisForce[1]
                          ])
 
-coriolisForceArrowSource = construct_arrow_source( 
-                                                  particleSource,
-                                                  coriolisForce 
-                                                 )
+particle.set_coriolisForce(coriolisForce)
 
 plot.add_layout( 
                 Arrow(    
@@ -181,7 +173,7 @@ plot.add_layout(
                       x_end=['xe'][0], 
                       y_end=['ye'][0], 
                       line_color="red",
-                      source = coriolisForceArrowSource
+                      source = particle.coriolisForceSource
                      ) 
                 )
 
@@ -199,34 +191,24 @@ phi0   = -np.pi/2
 paramDouble1 = -1.5708
 
 def compute_tranjectory():
-    global velocity, position, coriolisForce, currentPressGrad
-    
-    particleSource = get_particle_source()
-    position = get_particle_position()
+    position = particle.position
     
     theta = np.arccos(position[0]/np.sqrt(position[0]**2 + position[1]**2))
     XStart = position[0]
     YStart = position[1]
 
     if XStart >= 0 and YStart >= 0:
-        #print('Q1')
         pass
     elif XStart <= 0 and YStart >= 0:
-        #print('Q2')
         theta += 2*(np.pi/2 - theta)
     elif XStart <= 0 and YStart <= 0:
-        #print('Q3')
         theta -= np.pi
     else:
-        #print('Q4')
         theta *= -1
     paramDouble1 = theta
-    print('theta = ',theta)
 
     d5 = rKlein + (rGross-rKlein)*np.exp(-4.0*lamda*paramDouble1)
-    #print('d5 = ', d5)
     d6 = phi0 + omega*(paramDouble1 + 1.0/lamda*(np.exp(-lamda*paramDouble1) - 1.0))
-    #print('d6 = ',d6)
     d7 = -(rGross-rKlein) * 4.0 * lamda * np.exp(-4.0 * lamda * paramDouble1)
     d8 = omega * (1.0 - np.exp(-lamda*paramDouble1))
     
@@ -238,29 +220,22 @@ def compute_tranjectory():
     
     d12 = d7*np.sin(d6) + d5*d8*np.cos(d6) 
 
-    #coriolisForce = np.array([
-    #                          coriolisForce[0],
-    #                          coriolisForce[1]
-    #                        ])
     coriolisForce = np.array([
                               1.5*d12,
                               0.0
                              ])
     
-#    currentPressGrad = get_pressure_grad(
-#                                         [particleSource.data['x'][0],
-#                                          particleSource.data['y'][0]],
-#                                         X, Y,
-#                                         presGrad
-#                                        )
+    currentPressGrad = get_pressure_grad(
+                                         particle.position,
+                                         X, Y,
+                                         presGrad
+                                        )
     currentPressGrad = np.array([ 1.5*d10, 1.5*d11 ])
-#    acceleration = ( coriolisForce + currentPressGrad ) / particleMass
-#    velocity = velocity + acceleration*dt
-#    position = np.array([particleSource.data['x'][0],particleSource.data['y'][0]]) + velocity*dt
-    position[0] = d5*np.cos(d6) 
-    position[1] = d5*np.sin(d6) 
-    #print("position = [",position[0],",",position[1],"]")
-
+    acceleration = ( coriolisForce + currentPressGrad ) / particleMass
+    
+    velocity = np.array(particle.velocity) + acceleration*dt
+    position = np.array([particle.source.data['x'][0],particle.source.data['y'][0]]) + velocity*dt
+                        
     # Safety checks to prevent the particle from getting outside the domain
     if position[0] > xmax :
         position[0] -= xmax/50
@@ -275,39 +250,23 @@ def compute_tranjectory():
         position[1] += ymax/50
         velocity[1]  *= -1
 
-    traceSource.stream( 
-                          dict(
-                               x = [position[0]],
-                               y = [position[1]]
-                              )
-                      )
-    if len(traceSource.data['x']) == 100:
-        traceSource.data = dict(
-                                x=traceSource.data['x'][1:100],
-                                y=traceSource.data['y'][1:100]
+    particle.traceSource.stream( 
+                                  dict(
+                                       x = [position[0]],
+                                       y = [position[1]]
+                                      )
                                )
+    if len(particle.traceSource.data['x']) == 100:
+        particle.traceSource.data = dict(
+                                            x=traceSource.data['x'][1:100],
+                                            y=traceSource.data['y'][1:100]
+                                        )
                 
-    update_particle_source(position[0],position[1])
-    update_particle_position( x=position[0] , y=position[1] )
-    
-    particleSource = get_particle_source()
-   # coriolisForce = -2*particleMass*np.cross(
-   #                                          angularVelocity, 
-   #                                          np.array([ velocity[0],velocity[1],0 ])
-    #                                        )
-    #coriolisForce = np.array([ particleSource.data['x'][0], 0 ])
 
-    velocityArrowSource.data = update_arrow_source( particleSource, velocity )
-    
-    coriolisForceArrowSource.data = update_arrow_source( 
-                                                        particleSource, 
-                                                        coriolisForce
-                                                       )
-    
-    presGradArrowSource.data = update_arrow_source( 
-                                                   particleSource,
-                                                   currentPressGrad
-                                                  )
+    particle.update_position(position[0],position[1])
+    particle.set_pressGrad(currentPressGrad)
+    particle.set_coriolisForce(coriolisForce)
+    particle.set_velocity(velocity)
     
 '''
 ###############################################################################
@@ -315,11 +274,12 @@ Add the interactive functionalities
 ###############################################################################
 '''
 #################### Moving the ball through the mouse ########################
+mouseTouch = MouseTouch([[xmin,xmax],[ymin,ymax]] , particle)
 plot.add_tools(MoveNodeTool())
 
 def on_mouse_move(attr, old, new):
 
-    if (modify_location(attr,old,new)==1):
+    if (mouseTouch.modify_location(old,new)==1):
         # if the path is changed then update the drawing
         pass
 
@@ -353,35 +313,28 @@ play_button.on_click(play)
 ########################### Creating reset button #############################
 periodicCallback = 0
 def Reset():
-    global velocity, Active, periodicCallback
+    global Active, periodicCallback
     
-    #jumpingSource.data = dict(x=[],y=[]) 
-    
-    position = np.array([ 0,-1 ])
-    velocity = np.array([ 0,0  ])
+    position = [ 0,-1 ]
+    velocity = [ 0, 0 ]
 
-    update_particle_source(position[0],position[1])
-    update_particle_position( x=position[0] , y=position[1] )
+    particle.update_position(position[0],position[1])
+
+    particle.set_velocity(velocity)
     
-    velocityArrowSource.data = update_arrow_source( particleSource, velocity )
-    
-    coriolisForce = np.array([ particleSource.data['x'][0], 0 ])
-    coriolisForceArrowSource.data = update_arrow_source( 
-                                                        particleSource,
-                                                        0.1*coriolisForce 
-                                                       )
+    coriolisForce = np.array([ particle.source.data['x'][0], 0 ])
+
+    particle.set_coriolisForce(coriolisForce)
     
     currentPressGrad = get_pressure_grad(
-                                         [particleSource.data['x'][0],
-                                          particleSource.data['y'][0]],
+                                         [particle.source.data['x'][0],
+                                          particle.source.data['y'][0]],
                                          X, 
                                          Y,
                                          presGrad
                                         )
-    presGradArrowSource.data = update_arrow_source( 
-                                                   particleSource, 
-                                                   0.1*currentPressGrad
-                                                  )
+
+    particle.set_pressGrad(currentPressGrad)
 
     # The preiodic callback has been removed here because when the pause 
     # button is set to False, this reactivates the periodic callback
@@ -402,7 +355,7 @@ reset_button.on_click(Reset)
 Add all the components together and initiate the app
 ###############################################################################
 '''
-curdoc().add_periodic_callback(compute_tranjectory,500)
+curdoc().add_periodic_callback(compute_tranjectory,100)
 curdoc().add_root(
                   row(
                       plot,
