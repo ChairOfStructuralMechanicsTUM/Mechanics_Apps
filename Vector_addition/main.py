@@ -89,7 +89,7 @@ V1_label_glyph=LabelSet(x='x', y='y',text='V1',text_font_size="15pt",level='glyp
 V2_label_glyph=LabelSet(x='x', y='y',text='V2',text_font_size="15pt",level='glyph',source=V2_label_source)
 Resultant_label_glyph = LabelSet(x='x',y='y',text='R',text_font_size="15pt",level='glyph',source=Resultant_label_source)
 
-p = figure(tools="", x_range=(-200,200), y_range=(-200,200),plot_width=1200, plot_height=1000)
+p = figure(tools="", x_range=(-200,200), y_range=(-200,200),plot_width=750, plot_height=625)
 p.title.text_font_size="20pt"
 p.line(x='x',y='y',line_dash='dashed',source= V2parallel_line_source, color="black")
 p.line(x='x',y='y',line_dash='dashed',source= V1parallel_line_source, color="black")

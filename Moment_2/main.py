@@ -37,7 +37,7 @@ def initialise():
     P1_arrow_source.data = dict(xS=[0], xE=[0], yS=[-10], yE=[0], lW = [5])
     P1_label_source.data = dict(x=[1],y=[-7],P1=['P1'])
     P2_arrow_source.data = dict(xS=[40], xE=[40], yS=[10], yE=[0], lW = [5])
-    P2_label_source.data = dict(x=[37.5],y=[5],P2=['P2'])
+    P2_label_source.data = dict(x=[77.5],y=[5],P2=['P2'])
     F1_arrow_source.data = dict(xS=[0], xE=[0], yS=[10], yE=[0], lW = [5])
     F1_label_source.data = dict(x=[1],y=[5],F1=['F1'])
     F2_arrow_source.data = dict(xS=[40], xE=[40], yS=[-10], yE=[0], lW = [5])
@@ -48,6 +48,11 @@ def initialise():
 
 
 plot = figure(title="Moment_2", x_range=(0-2,40+2), y_range=(-50,50))
+plot.axis.axis_label_text_font_style="normal"
+plot.axis.axis_label_text_font_size="14pt"
+plot.xaxis.axis_label="Distance [m]"
+plot.yaxis.axis_label="Force[N]"
+
 my_line=plot.line(x='x', y='y', source=plot_source, color='#0065BD',line_width=20)
 plot.triangle(x='x', y='y', size = 'size', source= triangle_source,color="#E37222", line_width=2)
 
@@ -88,17 +93,30 @@ def changeF1F2(attr,old,new):
      F1_label_source.data = dict(x=[1+new],y=[5],F1=['F1'])
      F2_arrow_source.data = dict(xS=[40-new], xE=[40-new], yS=[-YS], yE=[0], lW = [5])
      F2_label_source.data = dict(x=[37.5-new],y=[-7],F2=['F2'])
-     XcordinatesT=[None]*(new+1)
-     XcordinatesB=[None]*(new+1)
-     YcordinatesT=[None]*(new+1)
-     YcordinatesB=[None]*(new+1)
-     i=0
+     XcordinatesT=[None]*(2*new+3)
+     XcordinatesB=[None]*(2*new+3)
+     YcordinatesT=[None]*(2*new+3)
+     YcordinatesB=[None]*(2*new+3)
+    
+    
+     XcordinatesT[0]=0
+     XcordinatesB[0]=40
+     YcordinatesT[0]=10
+     YcordinatesB[0]=-10
+     i=1
+     count = 1
      for i in range(new+1):
-         XcordinatesT[i]=i
-         XcordinatesB[i]=40-i
-         y=float(400/(40-(2*(i))))
-         YcordinatesT[i]=y
-         YcordinatesB[i]=-y
+         XcordinatesT[count]=(i-0.5)
+         XcordinatesT[count+1]=(i)
+         XcordinatesB[count]=40-(i-0.5)
+         XcordinatesB[count+1]=40-(i)
+         y=float(400/(40-(2*(i-0.5))))
+         y1=float(400/(40-(2*(i))))
+         YcordinatesT[count]=y
+         YcordinatesT[count+1]=y1
+         YcordinatesB[count]=-y
+         YcordinatesB[count+1]=-y1
+         count=count+2
                      
                      
      new_dataT= {
