@@ -226,11 +226,11 @@ class Mode( Structure ):
         
     def modify_mode_text(self, multiplier):  
         if self.id == 2:
-            self.multiplier_text.text = """<b>\u03b2S\u2090/\u03C9\u00B2 =</b> """+ str(multiplier)
+            self.multiplier_text.text = " "u"\u03b2S"u"\u2090(T)/"u"\u03C9"u"\u00B2="+ str(multiplier)
         elif self.id == 1:
-            self.multiplier_text.text = """<b>\u03b2S\u2090/\u03C9\u00B2 =</b> """+ str(multiplier)
+            self.multiplier_text.text = " "u"\u03b2S"u"\u2090(T)/"u"\u03C9"u"\u00B2="+ str(multiplier)
         elif self.id == 0:
-            self.multiplier_text.text = """<b>\u03b2S\u2090/\u03C9\u00B2 =</b> """+ str(multiplier)
+            self.multiplier_text.text = " "u"\u03b2S"u"\u2090(T)/"u"\u03C9"u"\u00B2="+ str(multiplier)
         #self.multiplier_text.text = """<b>Multiplier =</b> """ 
         
     def modify_frequency_text(self):

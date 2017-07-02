@@ -12,29 +12,29 @@ class Graphs:
         self.vt.axis.axis_label_text_font_size="14pt"
         self.vt.axis.major_label_text_font_size="12pt"
         self.vt.axis.axis_label_text_font_style="normal"
-        self.vt.xaxis.axis_label = "Zeit (s)"
-        self.vt.yaxis.axis_label = "Geschwindigkeit (m/s)"
+        self.vt.xaxis.axis_label = "Time (s)"
+        self.vt.yaxis.axis_label = "Velocity (m/s)"
         # create acceleration vs. time (or displacement) graph
         self.at=figure(tools="",x_range=(0,10),y_range=(-10,0))
         self.at.axis.axis_label_text_font_size="14pt"
         self.at.axis.major_label_text_font_size="12pt"
         self.at.axis.axis_label_text_font_style="normal"
-        self.at.xaxis.axis_label = "Zeit (s)"
-        self.at.yaxis.axis_label = u"Beschleunigung (m/s\u00B2)"
+        self.at.xaxis.axis_label = "Time (s)"
+        self.at.yaxis.axis_label = u"Acceleration (m/s\u00B2)"
         # create time vs. displacement graph
         self.st=figure(tools="",x_range=(0,30),y_range=(0,10))
         self.st.axis.axis_label_text_font_size="14pt"
         self.st.axis.major_label_text_font_size="12pt"
         self.st.axis.axis_label_text_font_style="normal"
-        self.st.xaxis.axis_label = "Weg (m)"
-        self.st.yaxis.axis_label = "Zeit (s)"
+        self.st.xaxis.axis_label = "Travelled Distance (m)"
+        self.st.yaxis.axis_label = "Time (s)"
         # create velocity vs. displacement graph
         self.vs=figure(tools="",x_range=(0,30),y_range=(0,10))
         self.vs.axis.axis_label_text_font_size="14pt"
         self.vs.axis.major_label_text_font_size="12pt"
         self.vs.axis.axis_label_text_font_style="normal"
-        self.vs.xaxis.axis_label = "Weg (m)"
-        self.vs.yaxis.axis_label = "Geschwindigkeit (m/s)"
+        self.vs.xaxis.axis_label = "Travelled Distance (m)"
+        self.vs.yaxis.axis_label = "Velocity (m/s)"
         # create necessary column data sources
         self.atSource = ColumnDataSource(data=dict(ts=[],a=[]))
         self.UserAtSource = ColumnDataSource(data=dict(ts=[],a=[]))
@@ -199,10 +199,10 @@ class Graphs:
     def swapSetup(self):
         # change between methods by figure
         if (self.s_or_t=='t'):
-            self.at.xaxis.axis_label = "Weg (m)"
+            self.at.xaxis.axis_label = "Travelled Distance (m)"
             self.at.x_range.end=30
             self.s_or_t='s'
         else:
-            self.at.xaxis.axis_label = "Zeit (s)"
+            self.at.xaxis.axis_label = "Time (s)"
             self.at.x_range.end=10
             self.s_or_t='t'

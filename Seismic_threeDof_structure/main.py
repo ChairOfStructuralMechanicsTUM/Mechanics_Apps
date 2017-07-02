@@ -99,7 +99,7 @@ ERSplot.xaxis.visible=True
 ERSplot.xaxis.visible=True
 ERSplot.xaxis.axis_label= 'Period ( second )'
 ERSplot.yaxis.visible=True
-ERSplot.yaxis.axis_label= 'S'+'\u2090'+' ( m/s'+'\u00B2'+' )'
+ERSplot.yaxis.axis_label= "S"u"\u2090 (m/s"u"\u00B2)"
 
 siesmic_input_plot = figure(
                       plot_width=800,
@@ -163,7 +163,7 @@ radius = 0.5
 trussLength = 3.0 # meters
 
 # Starting amount of bendingStiffness in N*m^2
-bendingStiffness = 10000
+bendingStiffness = 1000000
 
 trussSources = construct_truss_sources(masses[0], masses[1], masses[2], trussLength)
 
@@ -360,7 +360,7 @@ solve_system_button.on_click(solve_system)
 mass_input = TextInput(value="10000", title="Mass (kg)")
 
 ##################################### (3) #####################################
-stiffness_input = TextInput(value="10000", title="Stiffness(N*m"+"\u00B2"+")")
+stiffness_input = TextInput(value="10000", title="Stiffness(N*m"u"\u00B2)")
 
 ##################################### (4) #####################################
 Erdbebenzonen_text = Div(text="""<b>Earthquake Zones</b>""")

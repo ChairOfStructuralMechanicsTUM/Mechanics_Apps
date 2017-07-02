@@ -21,23 +21,23 @@ class Problem:
         
         ## set up interactions
         # input for v0 or v(s)
-        self.Vs = TextInput(value=str(self.v), title="Anfangsgeschwindigkeit",width=300)
+        self.Vs = TextInput(value=str(self.v), title="Initial Velocity",width=300)
         self.Vs.on_change('value',self.getNewV)
         # choice of v0 or v(s) method
-        self.VMethod = Select(title="", value="Anfangsgeschwindigkeit",
-            options=["Anfangsgeschwindigkeit", u"Webabh\u00E4ngige Geschwindigkeit"])
+        self.VMethod = Select(title="", value="Initial Velocity",
+            options=["Initial Velocity", "Distance-dependent Velocity"])
         self.VMethod.on_change('value',self.changeModel)
         # get user value for acceleration
-        self.UserAcceleration = TextInput(value="", title="Beschleunigung :")
+        self.UserAcceleration = TextInput(value="", title="Acceleration :")
         # button which runs the simulation
-        self.startSim = Button(label=u"Uberpr\u00FCfen",button_type="success",width=100)
+        self.startSim = Button(label="Start",button_type="success",width=100)
         self.startSim.on_click(self.test)
         # reset button
         self.reset_button = Button(label="Reset",button_type="success")
         self.reset_button.on_click(self.Reset)
         #self.idealAcc = -self.v**2/40.0
         # checkbox for whether equations as a function of time are visible
-        self.eqVis = checkbox_group = CheckboxGroup(labels=["Gleichung als Funktion der Zeit anzeigen"], active=[])
+        self.eqVis = checkbox_group = CheckboxGroup(labels=["Show equations as a function of the time"], active=[])
         self.eqVis.on_change('active',self.toggleEquation)
         # save space to write equations as a function of time
         self.eqst = Paragraph(text="")
@@ -53,7 +53,7 @@ class Problem:
         self.VsSqrt = Button(label=u"\u221A",button_type="success",width=100)
         self.VsSqrt.on_click(self.addSqrtVs)
         # button to plot t(s) and v(s)/a(s) over simulation data
-        self.TestEqs = Button(label=u"Gleichungen \u00FCberpr\u00FCfen",button_type="success",width=100)
+        self.TestEqs = Button(label="Check equations",button_type="success",width=100)
         self.TestEqs.on_click(self.plot_attempt)
         
         # initialise initial time and displacement
@@ -271,10 +271,10 @@ class Problem:
     
     def changeModel(self,attr,old,new):
         # change problem type
-        if (new=="Anfangsgeschwindigkeit"):
+        if (new=="Initial Velocity"):
             # if new problem type is where user provides v0
             # update input title to indicate this
-            self.Vs.title="Anfangsgeschwindigkeit = "
+            self.Vs.title="Initial Velocity = "
             # allow user to test v(s) rather that a(s)
             self.UserVs.title="v(s) = "
             # remember which model is in use
@@ -289,11 +289,11 @@ class Problem:
             # enable viewer to see s(t) and v(t)
             self.eqVis.disabled=False
             # rename acceleration input
-            self.UserAcceleration.title="Beschleunigung :"
-        elif (new==u"Webabh\u00E4ngige Geschwindigkeit"):
+            self.UserAcceleration.title="Acceleration :"
+        elif (new=="Distance-dependent Velocity"):
             # if new problem type is where user provides v(s)
             # update input title to indicate this
-            self.Vs.title=u"Webabh\u00E4ngige Geschwindigkeit, v(s)="
+            self.Vs.title="Distance-dependent Velocity, v(s)="
             # allow user to test a(s) rather that v(s)
             self.UserVs.title="a(s) = "
             # remember which model is in use
