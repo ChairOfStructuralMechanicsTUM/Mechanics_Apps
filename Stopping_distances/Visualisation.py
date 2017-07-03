@@ -30,7 +30,7 @@ class Visualisation:
             x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=self.arrow,line_color="#003359",line_width=2)
         self.fig.add_layout(arrow_glyph)
         # create the label for the velocity and add it to the diagram
-        v_glyph=LabelSet(x='x', y='y',text='S',text_color='#003359',text_font_size="15pt",level='glyph',source=self.v_label)
+        v_glyph=LabelSet(x='x', y='y',text='S',text_color='#003359',level='glyph',source=self.v_label)
         self.fig.add_layout(v_glyph)
     
     def setV(self,v_0):
