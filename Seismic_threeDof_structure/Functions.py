@@ -68,11 +68,12 @@ class Structure:
         self.update_massSupprts(displacement)
         self.update_stiffness_indicator_locaiton()
         self.update_truss_sources()
+        #print('truss1 = ',self.trusses[1].data['x'])
         
     def update_masses(self, displacement):
-        self.masses[0].data['x'] = self.masses[0].data['x']*0 + [displacement[0]]
-        self.masses[1].data['x'] = self.masses[1].data['x']*0 + [displacement[1]]
-        self.masses[2].data['x'] = self.masses[2].data['x']*0 + [displacement[2]]
+        self.masses[0].data = dict(x=[displacement[0]] , y=self.masses[0].data['y'])
+        self.masses[1].data = dict(x=[displacement[1]] , y=self.masses[1].data['y'])
+        self.masses[2].data = dict(x=[displacement[2]] , y=self.masses[2].data['y'])
 
         self.update_mass_indicator_locaiton
 
@@ -92,12 +93,13 @@ class Structure:
 
         ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
         xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
+        
         self.trusses[0].data = dict( x=xs, y=ys )
 
         # truss2
         x1 =   self.trussLength/2
         x2 = self.masses[0].data['x'][0] + self.trussLength/2
-        y1 = self.masses[0].data['y'][0] - self.trussLength
+        y1 = 0.0
         y2 = self.masses[0].data['y'][0] 
 
         xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
@@ -109,7 +111,7 @@ class Structure:
         x2 = self.masses[1].data['x'][0] - self.trussLength/2
         y1 = self.masses[0].data['y'][0] 
         y2 = self.masses[1].data['y'][0] 
-
+        
         xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
         ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
         self.trusses[2].data =dict( x=xs, y=ys )
@@ -119,7 +121,7 @@ class Structure:
         x2 = self.masses[1].data['x'][0] + self.trussLength/2
         y1 = self.masses[0].data['y'][0]
         y2 = self.masses[1].data['y'][0]  
-
+        
         xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
         ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
         self.trusses[3].data =dict( x=xs, y=ys )
@@ -129,7 +131,7 @@ class Structure:
         x2 = self.masses[2].data['x'][0] - self.trussLength/2
         y1 = self.masses[1].data['y'][0]
         y2 = self.masses[2].data['y'][0]
-
+        
         xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
         ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
         self.trusses[4].data =dict( x=xs, y=ys )
@@ -139,7 +141,7 @@ class Structure:
         x2 = self.masses[2].data['x'][0] + self.trussLength/2
         y1 = self.masses[1].data['y'][0]
         y2 = self.masses[2].data['y'][0]
-
+        
         xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
         ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
         self.trusses[5].data =dict( x=xs, y=ys ) 
@@ -226,11 +228,11 @@ class Mode( Structure ):
         
     def modify_mode_text(self, multiplier):  
         if self.id == 2:
-            self.multiplier_text.text = " "u"\u03b2S"u"\u2090(T)/"u"\u03C9"u"\u00B2="+ str(multiplier)
+            self.multiplier_text.text = " "u"<b>\u03b2S"u"\u2090(T)/"u"\u03C9"u"\u00B2 = </b>"+ str(multiplier)
         elif self.id == 1:
-            self.multiplier_text.text = " "u"\u03b2S"u"\u2090(T)/"u"\u03C9"u"\u00B2="+ str(multiplier)
+            self.multiplier_text.text = " "u"<b>\u03b2S"u"\u2090(T)/"u"\u03C9"u"\u00B2 = </b>"+ str(multiplier)
         elif self.id == 0:
-            self.multiplier_text.text = " "u"\u03b2S"u"\u2090(T)/"u"\u03C9"u"\u00B2="+ str(multiplier)
+            self.multiplier_text.text = " "u"<b>\u03b2S"u"\u2090(T)/"u"\u03C9"u"\u00B2 = </b>"+ str(multiplier)
         #self.multiplier_text.text = """<b>Multiplier =</b> """ 
         
     def modify_frequency_text(self):
@@ -370,17 +372,23 @@ class SiesmicParameters():
                                           modeThree = data[:,2]
                                          )
 def cubic_N1 (xi):
-    #xi = 2*x/length - 1
-    return( 0.25 * ((1-xi)**2) * (2+xi) )
+    #print('xi = ',xi)
+    #print('cubic_N1 = ',0.25 * ((1-xi)*(1-xi)) * (2+xi))
+    return 0.25 * (1-xi)*(1-xi) * (2+xi)
 def cubic_N2 (xi):
-    #xi = 2*x/length - 1
-    return( 0.25 * ((1+xi)**2) * (2-xi) )
+    #print('xi = ',xi)
+    #print('cubic_N2 = ',0.25 * ((1+xi)*(1+xi)) * (2-xi))
+    return 0.25 * (1+xi)*(1+xi) * (2-xi)
     
 def cubicInterpolate(y1, y2, x1, x2, noNodes,length):
     nodes = np.ones(noNodes)
-    for i in range(noNodes):
-        x = (2/(noNodes-1))*i - 1
-        nodes[i] =  cubic_N1(x)*y1 + cubic_N2(x)*y2
+    i = 0.0
+    while i<noNodes:
+        x = i*2.0/(float(noNodes)-1.0) - 1.0
+        nodes[int(i)] = cubic_N1(x)*y1 + cubic_N2(x)*y2
+        #print('value = ',nodes[int(i)])
+        i += 1.0
+        #print('------------------------------')
 
     return(nodes)
     
@@ -392,9 +400,11 @@ def linear_N2 (y,a,b):
     
 def linIntepolate(y1, y2, x1, x2, noNodes, length):
     nodes = np.ones(noNodes)
-    for i in range(0, noNodes):
+    i = 0.0
+    while i<noNodes:
         x = i/(noNodes-1) * length + x1
-        nodes[i] = linear_N1(x,x1,x2)*y1 + linear_N2(x,x1,x2)*y2
+        nodes[int(i)] = linear_N1(x,x1,x2)*y1 + linear_N2(x,x1,x2)*y2
+        i += 1
 
     return(nodes)
     

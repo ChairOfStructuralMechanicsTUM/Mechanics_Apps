@@ -40,7 +40,7 @@ time_plot.yaxis.axis_label= "Height (m)"
 time_plot.xaxis.axis_label="Maximum Relative Displacement (mm)"
 
 mode_one = figure(
-                      plot_width=200,
+                      plot_width=300,
                       plot_height=400,
                       x_range=[xmin/2,xmax/2], 
                       y_range=[ymin,ymax],
@@ -50,12 +50,12 @@ mode_one = figure(
 mode_one.title.text_font_size = "25px"
 mode_one.title.align = "center"
 mode_one.grid.visible=False
-mode_one.xaxis.visible=False
+mode_one.xaxis.visible=True
 mode_one.yaxis.visible=True
 mode_one.yaxis.axis_label= "Height (m)"
 
 mode_two = figure(
-                      plot_width=200,
+                      plot_width=300,
                       plot_height=400,
                       x_range=[xmin/2,xmax/2], 
                       y_range=[ymin,ymax],
@@ -65,12 +65,12 @@ mode_two = figure(
 mode_two.title.text_font_size = "25px"
 mode_two.title.align = "center"
 mode_two.grid.visible=False
-mode_two.xaxis.visible=False
+mode_two.xaxis.visible=True
 mode_two.yaxis.visible=True
 mode_two.yaxis.axis_label= "Height (m)"
 
 mode_three = figure(
-                      plot_width=200,
+                      plot_width=300,
                       plot_height=400,
                       x_range=[xmin/2,xmax/2], 
                       y_range=[ymin,ymax],
@@ -80,7 +80,7 @@ mode_three = figure(
 mode_three.title.text_font_size = "25px"
 mode_three.title.align = "center"
 mode_three.grid.visible=False
-mode_three.xaxis.visible=False
+mode_three.xaxis.visible=True
 mode_three.yaxis.visible=True
 mode_three.yaxis.axis_label= "Height (m)"
 
@@ -414,7 +414,7 @@ def calculate_ERS():
     siesmicParameters.a = a
     siesmicParameters.gamma = gamma
     siesmicParameters.undergroundParamter = undergroundParameter
-    siesmicParameters.determine_periods_and_S
+    siesmicParameters.determine_periods_and_S()
     
     # Plot the updated Elastic Response Spectrum
     update_ERS_plot_data( siesmicParameters )
@@ -438,7 +438,6 @@ def show_def_config(active):
             maxes[:,counter] = mode.get_maximum_displacement(siesmicParameters)
             counter += 1
             
-        print('maxes = ',maxes)
         maximumDisp = np.sqrt( maxes[:,0]**2 + maxes[:,1]**2 + maxes[:,2]**2 ) * 1000 # to convert to mm
         structure.update_system( maximumDisp )
         structure.massLocations[:,1] = maximumDisp
@@ -480,6 +479,8 @@ data_table = DataTable(source=siesmicParameters.informationTable, columns=column
 Construct and show the resulting plot
 ###############################################################################
 '''       
+#print ("###########################")
+#print('interp. test: ',cubicInterpolate(0,3,0,1,30,3))
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
