@@ -44,7 +44,7 @@ mode_one = figure(
                       plot_height=400,
                       x_range=[xmin/2,xmax/2], 
                       y_range=[ymin,ymax],
-                      
+                      tools = '',
                       title = 'First Mode',
                    )
 mode_one.title.text_font_size = "25px"
@@ -53,13 +53,14 @@ mode_one.grid.visible=False
 mode_one.xaxis.visible=True
 mode_one.yaxis.visible=True
 mode_one.yaxis.axis_label= "Height (m)"
+mode_one.xaxis.axis_label= "Normalized Displacement [m]"
 
 mode_two = figure(
                       plot_width=300,
                       plot_height=400,
                       x_range=[xmin/2,xmax/2], 
-                      y_range=[ymin,ymax],
-                     
+                      y_range=[ymin,ymax],  
+                      tools = '',
                       title = 'Second Mode',
                    )
 mode_two.title.text_font_size = "25px"
@@ -68,13 +69,14 @@ mode_two.grid.visible=False
 mode_two.xaxis.visible=True
 mode_two.yaxis.visible=True
 mode_two.yaxis.axis_label= "Height (m)"
+mode_two.xaxis.axis_label= "Normalized Displacement [m]"
 
 mode_three = figure(
                       plot_width=300,
                       plot_height=400,
                       x_range=[xmin/2,xmax/2], 
                       y_range=[ymin,ymax],
-                      
+                      tools = '',
                       title = 'Third Mode',
                    )
 mode_three.title.text_font_size = "25px"
@@ -83,6 +85,7 @@ mode_three.grid.visible=False
 mode_three.xaxis.visible=True
 mode_three.yaxis.visible=True
 mode_three.yaxis.axis_label= "Height (m)"
+mode_three.xaxis.axis_label= "Normalized Displacement [m]"
 
 ERSplot = figure(
                       plot_width=400,
@@ -189,7 +192,7 @@ time_plot.add_layout(
                       LabelSet(
                                   x='x', y='y',
                                   text='mass',
-                                  text_color='black',text_font_size="5pt",
+                                  text_color='black',text_font_size="10pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                                   source=structure.massIndicators
                               )
@@ -200,7 +203,7 @@ time_plot.add_layout(
                       LabelSet(
                                   x='x', y='y',
                                   text='stiffness',
-                                  text_color='black',text_font_size="5pt",
+                                  text_color='black',text_font_size="10pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                                   source=structure.stiffnessIndicators
                               )
@@ -357,10 +360,10 @@ solve_system_button = Button(label="Solve System", button_type="success")
 solve_system_button.on_click(solve_system)
 
 ##################################### (2) #####################################
-mass_input = TextInput(value="10000", title="Mass (kg)")
+mass_input = TextInput(value="10000", title="Mass [kg]")
 
 ##################################### (3) #####################################
-stiffness_input = TextInput(value="10000", title="Stiffness(N*m"u"\u00B2)")
+stiffness_input = TextInput(value="10000000", title="Stiffness [N*m"u"\u00B2]")
 
 ##################################### (4) #####################################
 Erdbebenzonen_text = Div(text="""<b>Earthquake Zones</b>""")
@@ -473,14 +476,22 @@ columns = [
             TableColumn(field="modeTwo", title="Mode Two"),
             TableColumn(field="modeThree", title="Mode Three"),
           ]   
-data_table = DataTable(source=siesmicParameters.informationTable, columns=columns, width=600, height=800)
+data_table = DataTable(source=siesmicParameters.informationTable, columns=columns, width=600, height=350)
+data_table_text = Div(text="""<b>Input Data and Results of the Modal Analysis</b> """,width = 600)
+
+##################################### (7) #####################################
+columns = [
+            TableColumn(field="storey", title="Storey"),
+            TableColumn(field="maxDisp", title="Maximum Displacement [mm]"),
+          ]   
+max_disp_data_table = DataTable(source=structure.maximumDisplacement, columns=columns, width=400, height=150)
+max_disp_data_table_text = Div(text="""<b>Maximum Displacement Achieved by the Structure</b> """,width = 600)
+
 '''
 ###############################################################################
 Construct and show the resulting plot
 ###############################################################################
 '''       
-#print ("###########################")
-#print('interp. test: ',cubicInterpolate(0,3,0,1,30,3))
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
@@ -516,7 +527,13 @@ curdoc().add_root(
                                        untergrundParamter_text,untergrundParamter_choices
                                       ),
                                 column(
-                                       ERSplot, ERS_plot_text, calculate_ERS_button,data_table
+                                       ERSplot, 
+                                       ERS_plot_text, 
+                                       calculate_ERS_button,
+                                       data_table_text,
+                                       data_table, 
+                                       max_disp_data_table_text,
+                                       max_disp_data_table
                                       )
                                )
                           )

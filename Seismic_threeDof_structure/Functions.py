@@ -61,6 +61,8 @@ class Structure:
                                                               stiffness=['','','']
                                                              )
                                                    )
+                                                    
+        self.maximumDisplacement = ColumnDataSource(data=dict(storey=["First","Seconds","Third"],maxDisp=[0.0,0.0,0.0]))
         
     def update_system(self, displacement):
         self.update_masses(displacement)
@@ -180,6 +182,9 @@ class Structure:
                                         mass=self.massIndicators.data['mass']
                                        )
         
+        # Update the value of the maximum displacement of the structure in the table
+        self.update_maximum_displacement()
+        
     def update_stiffness_indicator_locaiton(self):
         updateLocationX = list()
         updateLocationY = list()
@@ -192,6 +197,12 @@ class Structure:
                                              x=updateLocationX,
                                              y=updateLocationY,
                                              stiffness=self.stiffnessIndicators.data['stiffness']
+                                            )
+        
+    def update_maximum_displacement(self):
+        self.maximumDisplacement.data = dict(
+                                             storey=["First","Seconds","Third"],
+                                             maxDisp=[self.masses[0].data['x'][0], self.masses[1].data['x'][0], self.masses[2].data['x'][0]]
                                             )
         
 class Mode( Structure ):
@@ -272,11 +283,11 @@ class SiesmicParameters():
         
         self.informationTable = ColumnDataSource(
                                                  data=dict(
-                                                           subject=['Period (second)','Participation Factor (\u03b2)','Modal Mass',
-                                                                    'Spectral Acceleration (m/s\u2082)','Total Force (N)',
-                                                                    'First Storey Max. Displacement (m)','Second Storey Max. Displacement',
-                                                                    'Third Storey Max. Displacement','First Storey Total Force',
-                                                                    'Second Storey Total Force','Third Storey Total Force'],
+                                                           subject=['Period [second]',"Participation Factor ("u"\u03b2)","Modal Mass ("u"\u03b1)",
+                                                                    "Spectral Acceleration [m/s"u"\u00B2]",'Total Force [N]',
+                                                                    'First Storey Max. Displacement [mm]','Second Storey Max. Displacement [mm]',
+                                                                    'Third Storey Max. Displacement [mm]','First Storey Total Force [N]',
+                                                                    'Second Storey Total Force [N]','Third Storey Total Force [N]'],
                                                             modeOne  =[0,0,0,0,0,0,0,0,0,0,0],
                                                             modeTwo  =[0,0,0,0,0,0,0,0,0,0,0],
                                                             modeThree=[0,0,0,0,0,0,0,0,0,0,0]
@@ -338,17 +349,20 @@ class SiesmicParameters():
             data[1,counter] = mode.participationFactor
 
             # fill-in the Modal mass
-            data[2,counter] = 0
+            tempValue = 0
+            for comp in modes:
+                tempValue += comp.participationFactor**2
+            data[2,counter] = mode.participationFactor**2 / tempValue
 
             # fill-in the Spectral acceleration
             data[3,counter] = self.get_Sa(data[0,counter])
             
             # fill-in the First Storey Max. Displacement
-            data[5,counter] = mode.maxModeShape[0]
+            data[5,counter] = mode.maxModeShape[0] * 1000 # to convert to mm
             # fill-in the Second Storey Max. Displacement
-            data[6,counter] = mode.maxModeShape[1]
+            data[6,counter] = mode.maxModeShape[1] * 1000 # to convert to mm 
             # fill-in the Third Storey Max. Displacement
-            data[7,counter] = mode.maxModeShape[2]
+            data[7,counter] = mode.maxModeShape[2] * 1000 # to convert to mm
             
             
             maxForce = np.dot(mode.K , mode.maxModeShape)
@@ -586,7 +600,7 @@ def plot( plot_name, subject, radius, color ):
     plot_name.line( x='x', y='y', color=color, source=subject.trusses[4], line_width=2)
     plot_name.line( x='x', y='y', color=color, source=subject.trusses[5], line_width=2)
     
-    plot_name.line( x='x', y='y', source=subject.base, color='#000000', line_width=20 )
+    plot_name.line( x='x', y='y', source=subject.base, color='#000000', line_width=5 )
     
 def GetMaximumDisplacement( modes, siesmicParameters ):
     
