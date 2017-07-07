@@ -202,7 +202,11 @@ class Structure:
     def update_maximum_displacement(self):
         self.maximumDisplacement.data = dict(
                                              storey=["First","Seconds","Third"],
-                                             maxDisp=[self.masses[0].data['x'][0], self.masses[1].data['x'][0], self.masses[2].data['x'][0]]
+                                             maxDisp=[
+                                                      round(self.masses[0].data['x'][0],3),
+                                                      round(self.masses[1].data['x'][0],3),
+                                                      round(self.masses[2].data['x'][0],3)
+                                                     ]
                                             )
         
 class Mode( Structure ):
@@ -343,38 +347,38 @@ class SiesmicParameters():
         counter = 2
         for mode in modes:
             # fill-in the period
-            data[0,counter] = 2*np.pi / mode.frequency
+            data[0,counter] = round(2*np.pi / mode.frequency , 3)
     
             # fill-in the Participation Factor
-            data[1,counter] = mode.participationFactor
+            data[1,counter] = round(mode.participationFactor, 3)
 
             # fill-in the Modal mass
             tempValue = 0
             for comp in modes:
                 tempValue += comp.participationFactor**2
-            data[2,counter] = mode.participationFactor**2 / tempValue
+            data[2,counter] = round(mode.participationFactor**2 / tempValue , 3)
 
             # fill-in the Spectral acceleration
-            data[3,counter] = self.get_Sa(data[0,counter])
+            data[3,counter] = round(self.get_Sa(data[0,counter]) , 3)
             
             # fill-in the First Storey Max. Displacement
-            data[5,counter] = mode.maxModeShape[0] * 1000 # to convert to mm
+            data[5,counter] = round(mode.maxModeShape[0] * 1000 , 3) # to convert to mm
             # fill-in the Second Storey Max. Displacement
-            data[6,counter] = mode.maxModeShape[1] * 1000 # to convert to mm 
+            data[6,counter] = round(mode.maxModeShape[1] * 1000 , 3) # to convert to mm 
             # fill-in the Third Storey Max. Displacement
-            data[7,counter] = mode.maxModeShape[2] * 1000 # to convert to mm
+            data[7,counter] = round(mode.maxModeShape[2] * 1000 , 3)# to convert to mm
             
             
             maxForce = np.dot(mode.K , mode.maxModeShape)
             # fill-in the First Storey Total Force
-            data[8,counter] = maxForce[0]
+            data[8,counter] = round(maxForce[0] , 3)
             # fill-in the Second Storey Total Force
-            data[9,counter] = maxForce[1]
+            data[9,counter] = round(maxForce[1] , 3)
             # fill-in the Third Storey Total Force
-            data[10,counter] = maxForce[2]
+            data[10,counter] = round(maxForce[2] , 3)
 
             # fill-in the Total Force
-            data[4,counter] = maxForce[0] + maxForce[1] + maxForce[2]
+            data[4,counter] = round(maxForce[0] + maxForce[1] + maxForce[2] , 3)
 
             counter -= 1
         

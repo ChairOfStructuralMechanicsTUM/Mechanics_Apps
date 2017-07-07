@@ -36,8 +36,8 @@ time_plot.title.align = "center"
 time_plot.grid.visible=False
 time_plot.xaxis.visible=True
 time_plot.yaxis.visible=True
-time_plot.yaxis.axis_label= "Height (m)"
-time_plot.xaxis.axis_label="Maximum Relative Displacement (mm)"
+time_plot.yaxis.axis_label= "Height [m]"
+time_plot.xaxis.axis_label="Maximum Relative Displacement [mm]"
 
 mode_one = figure(
                       plot_width=300,
@@ -52,7 +52,7 @@ mode_one.title.align = "center"
 mode_one.grid.visible=False
 mode_one.xaxis.visible=True
 mode_one.yaxis.visible=True
-mode_one.yaxis.axis_label= "Height (m)"
+mode_one.yaxis.axis_label= "Height [m]"
 mode_one.xaxis.axis_label= "Normalized Displacement"
 
 mode_two = figure(
@@ -68,7 +68,7 @@ mode_two.title.align = "center"
 mode_two.grid.visible=False
 mode_two.xaxis.visible=True
 mode_two.yaxis.visible=True
-mode_two.yaxis.axis_label= "Height (m)"
+mode_two.yaxis.axis_label= "Height [m]"
 mode_two.xaxis.axis_label= "Normalized Displacement"
 
 mode_three = figure(
@@ -84,7 +84,7 @@ mode_three.title.align = "center"
 mode_three.grid.visible=False
 mode_three.xaxis.visible=True
 mode_three.yaxis.visible=True
-mode_three.yaxis.axis_label= "Height (m)"
+mode_three.yaxis.axis_label= "Height [m]"
 mode_three.xaxis.axis_label= "Normalized Displacement"
 
 ERSplot = figure(
@@ -100,9 +100,9 @@ ERSplot.title.align = "center"
 ERSplot.grid.visible=True
 ERSplot.xaxis.visible=True
 ERSplot.xaxis.visible=True
-ERSplot.xaxis.axis_label= 'Period ( second )'
+ERSplot.xaxis.axis_label= 'Period [second]'
 ERSplot.yaxis.visible=True
-ERSplot.yaxis.axis_label= "S"u"\u2090 (m/s"u"\u00B2)"
+ERSplot.yaxis.axis_label= "S"u"\u2090 [m/s"u"\u00B2]"
 
 siesmic_input_plot = figure(
                       plot_width=800,
@@ -117,8 +117,8 @@ siesmic_input_plot.title.align = "center"
 siesmic_input_plot.grid.visible=True
 siesmic_input_plot.xaxis.visible=True
 siesmic_input_plot.yaxis.visible=True
-siesmic_input_plot.xaxis.axis_label = 'Time (second)'
-siesmic_input_plot.yaxis.axis_label = 'Acceleration (meter^2/second)'
+siesmic_input_plot.xaxis.axis_label = 'Time [second]'
+siesmic_input_plot.yaxis.axis_label = 'Acceleration [meter"u"\u00B2/second]'
 
 Active = True
 
