@@ -53,7 +53,7 @@ mode_one.grid.visible=False
 mode_one.xaxis.visible=True
 mode_one.yaxis.visible=True
 mode_one.yaxis.axis_label= "Height (m)"
-mode_one.xaxis.axis_label= "Normalized Displacement [m]"
+mode_one.xaxis.axis_label= "Normalized Displacement"
 
 mode_two = figure(
                       plot_width=300,
@@ -69,7 +69,7 @@ mode_two.grid.visible=False
 mode_two.xaxis.visible=True
 mode_two.yaxis.visible=True
 mode_two.yaxis.axis_label= "Height (m)"
-mode_two.xaxis.axis_label= "Normalized Displacement [m]"
+mode_two.xaxis.axis_label= "Normalized Displacement"
 
 mode_three = figure(
                       plot_width=300,
@@ -85,7 +85,7 @@ mode_three.grid.visible=False
 mode_three.xaxis.visible=True
 mode_three.yaxis.visible=True
 mode_three.yaxis.axis_label= "Height (m)"
-mode_three.xaxis.axis_label= "Normalized Displacement [m]"
+mode_three.xaxis.axis_label= "Normalized Displacement"
 
 ERSplot = figure(
                       plot_width=400,
