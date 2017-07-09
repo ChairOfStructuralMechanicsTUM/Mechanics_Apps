@@ -359,6 +359,8 @@ def construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRati
                             [                0                  ,         -stiffnessRatio[2]        ,  stiffnessRatio[2]]
                           ]) * 12 * bendingStiffness / trussLength**3
                             
+    structure.C = 0.1*structure.M + 0.2*structure.K
+                            
 def plot( plot_name, subject, radius, color ):
     plot_name.line( x='x', y='y', source=subject.massSupports[0], color=color, line_width=5)
     plot_name.line( x='x', y='y', source=subject.massSupports[1], color=color, line_width=5)
@@ -393,8 +395,8 @@ def read_seismic_input(file):
                 counter += 1
 
     # create colors
-    color = list()
-    for i in amplitude:
-        color.append('#33FF33')
+    #color = list()
+    #for i in amplitude:
+        #color.append('#33FF33')
         
-    return dict(amplitude=amplitude,time=time,color=color)
+    return ColumnDataSource(data=dict(amplitude=amplitude,time=time))

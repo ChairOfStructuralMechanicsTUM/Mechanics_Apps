@@ -8,7 +8,7 @@ from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 from bokeh.io import curdoc
 from Functions import *
-from bokeh.models import Arrow, OpenHead, Button, Slider, Toggle, LabelSet
+from bokeh.models import Arrow, OpenHead, Button, Slider, Toggle, LabelSet, Legend
 from bokeh.layouts import column, row, widgetbox
 from bokeh.models.widgets import TextInput, RadioGroup, Div, DataTable,TableColumn,DateFormatter
 from os.path import dirname, join, split
@@ -23,7 +23,7 @@ Create the plotting domain
 '''
 xmin1, xmax1 = -10,10
 ymin1, ymax1 = 0,10
-signal_plotstructure_plot = figure(
+structure_plot = figure(
                                       plot_width=400,
                                       plot_height=400,
                                       x_range=[xmin1,xmax1], 
@@ -39,14 +39,14 @@ structure_plot.yaxis.visible=True
 structure_plot.yaxis.axis_label= "Height [m]"
 structure_plot.xaxis.axis_label="Maximum Relative Displacement [mm]"
 
-xmin2, xmax2 = -10,10
-ymin2, ymax2 = 0,10
+xmin2, xmax2 = 0,1800
+ymin2, ymax2 = -0.5,0.5
 signal_plot = figure(
                       plot_width=400,
                       plot_height=400,
                       x_range=[xmin2,xmax2], 
                       y_range=[ymin2,ymax2],
-                      tools = '',
+                      #tools = '',
                       title = 'Structure',
                     )
 signal_plot.title.text_font_size = "25px"
@@ -57,14 +57,14 @@ signal_plot.yaxis.visible=True
 signal_plot.yaxis.axis_label= "Height [m]"
 signal_plot.xaxis.axis_label="Maximum Relative Displacement [mm]"
 
-xmin3, xmax3 = -10,10
-ymin3, ymax3 = 0,10
+xmin3, xmax3 = 0,1800
+ymin3, ymax3 = -0.5,0.5
 max_displacement_plot = figure(
                                   plot_width=400,
                                   plot_height=400,
                                   x_range=[xmin3,xmax3], 
                                   y_range=[ymin3,ymax3],
-                                  tools = '',
+                                  #tools = '',
                                   title = 'Structure',
                               )
 max_displacement_plot.title.text_font_size = "25px"
@@ -95,8 +95,11 @@ Construct the structure
                                BASE-BASE-BASE  v
                                    <--->
 '''
+structure_color  = '#85929E'
+
 # Starting amount of mass in kg
 mass = 10000.0
+massRatio = np.array([2.0, 1.5, 1.0])  
 
 # Data structure which contains the coordinates of the masses and mass supports
 masses, massSupports = construct_masses_and_supports(length = 3.0)
@@ -109,6 +112,7 @@ trussLength = 3.0 # meters
 
 # Starting amount of bendingStiffness in N*m^2
 bendingStiffness = 1000000
+stiffnessRatio = np.array([3.0, 2.0, 1.0])
 
 trussSources = construct_truss_sources(masses[0], masses[1], masses[2], trussLength)
 
@@ -127,10 +131,10 @@ structure.update_system([0,0,0])
 construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRatio, trussLength)
 
 ############################## Plot structure #################################
-plot( time_plot, structure, radius, structure_color )
+plot( structure_plot, structure, radius, structure_color )
 
 # label that indicates the mass 
-time_plot.add_layout(
+structure_plot.add_layout(
                       LabelSet(
                                   x='x', y='y',
                                   text='mass',
@@ -141,7 +145,7 @@ time_plot.add_layout(
                     )
                       
 # Label that indicates the stiffness
-time_plot.add_layout(
+structure_plot.add_layout(
                       LabelSet(
                                   x='x', y='y',
                                   text='stiffness',
@@ -157,20 +161,20 @@ Read and plot the seismic signals
 ###############################################################################
 '''
 # There will be three signals to be read
-signalOne   = read_seismic_input(file='')
-signalTwo   = read_seismic_input(file='')
-signalThree = read_seismic_input(file='')
+signalOne   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Force.txt')
+signalTwo   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Force.txt')
+signalThree = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Force.txt')
 
 # Plot the signals into signal_plot
-signalOne_plot   = signal_plot.line(x='time',y='amplitude',color='color',source=signalOne,line_width=3)
-signalTwo_plot   = signal_plot.line(x='time',y='amplitude',color='color',source=signalOne,line_width=3)
-signalThree_plot = signal_plot.line(x='time',y='amplitude',color='color',source=signalOne,line_width=3)
+signalOne_plot   = signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=3)
+#signalTwo_plot   = signal_plot.line(x='time',y='amplitude',color='color',source=signalOne,line_width=3)
+#signalThree_plot = signal_plot.line(x='time',y='amplitude',color='color',source=signalOne,line_width=3)
 
 # Create legend for the signal_plot
 legend2 = Legend(items=[
     ("Signal One  ", [signalOne_plot  ]),
-    ("Signal Two  ", [signalTwo_plot  ]),
-    ("Signal Three", [signalThree_plot]),
+    #("Signal Two  ", [signalTwo_plot  ]),
+    #("Signal Three", [signalThree_plot]),
 ], location=(0, 0))
 
 signal_plot.add_layout(legend2, 'above')
@@ -190,16 +194,29 @@ responseTwo_thirdStorey = ColumnDataSource(data=dict(time=signalTwo.data['time']
 responseThree_thirdStorey = ColumnDataSource(data=dict(time=signalThree.data['time'],amplitude=responseThree_amplitudes[2,:]))
 
 # Plot the third floor initial displacement for each signal
-responseOne_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseOne_thirdStorey,line_color = "#33FF33")
-responseTwo_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseTwo_thirdStorey,line_color = "#33FF22")
-responseThree_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseThree_thirdStorey,line_color = "#33FF11")
+responseOne_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseOne_thirdStorey,line_width=1)
+#responseTwo_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseTwo_thirdStorey,line_color = "#33FF22",line_width=0.1)
+#responseThree_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseThree_thirdStorey,line_color = "#33FF11",line_width=0.1)
 
 # Create legend for the signal_plot
-legend2 = Legend(items=[
+legend3 = Legend(items=[
     ("Response One  ", [responseOne_thirdStorey_plot  ]),
-    ("Response Two  ", [responseTwo_thirdStorey_plot  ]),
-    ("Response Three", [responseThree_thirdStorey_plot]),
+    #("Response Two  ", [responseTwo_thirdStorey_plot  ]),
+    #("Response Three", [responseThree_thirdStorey_plot]),
 ], location=(0, 0))
 
-signal_plot.add_layout(legend2, 'above')
-signal_plot.legend.click_policy="hide"
+max_displacement_plot.add_layout(legend3, 'above')
+max_displacement_plot.legend.click_policy="hide"
+
+'''
+###############################################################################
+Plot everything 
+###############################################################################
+'''
+curdoc().add_root(
+                    row(structure_plot,signal_plot,max_displacement_plot)
+                 )
+
+# get path of parent directory and only use the name of the Parent Directory 
+# for the tab name. Replace underscores '_' and minuses '-' with blanks ' '		
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  
