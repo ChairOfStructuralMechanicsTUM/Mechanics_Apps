@@ -25,7 +25,7 @@ xmin1, xmax1 = -10,10
 ymin1, ymax1 = 0,10
 structure_plot = figure(
                                       plot_width=400,
-                                      plot_height=400,
+                                      plot_height=600,
                                       x_range=[xmin1,xmax1], 
                                       y_range=[ymin1,ymax1],
                                       
@@ -37,43 +37,43 @@ structure_plot.grid.visible=False
 structure_plot.xaxis.visible=True
 structure_plot.yaxis.visible=True
 structure_plot.yaxis.axis_label= "Height [m]"
-structure_plot.xaxis.axis_label="Maximum Relative Displacement [mm]"
+structure_plot.xaxis.axis_label="Relative Displacement [mm]"
 
 xmin2, xmax2 = 0,1800
 ymin2, ymax2 = -0.5,0.5
 signal_plot = figure(
-                      plot_width=400,
+                      plot_width=1000,
                       plot_height=400,
                       x_range=[xmin2,xmax2], 
                       y_range=[ymin2,ymax2],
                       #tools = '',
-                      title = 'Structure',
+                      title = 'Seismic Signals',
                     )
 signal_plot.title.text_font_size = "25px"
 signal_plot.title.align = "center"
 signal_plot.grid.visible=False
 signal_plot.xaxis.visible=True
 signal_plot.yaxis.visible=True
-signal_plot.yaxis.axis_label= "Height [m]"
-signal_plot.xaxis.axis_label="Maximum Relative Displacement [mm]"
+signal_plot.yaxis.axis_label= "Amplitude [m/s"u"\u00B2]"
+signal_plot.xaxis.axis_label="Time [second]"
 
 xmin3, xmax3 = 0,1800
 ymin3, ymax3 = -0.5,0.5
 max_displacement_plot = figure(
-                                  plot_width=400,
+                                  plot_width=1000,
                                   plot_height=400,
                                   x_range=[xmin3,xmax3], 
                                   y_range=[ymin3,ymax3],
                                   #tools = '',
-                                  title = 'Structure',
+                                  title = 'Structure Response (Third Storey Deflection)',
                               )
 max_displacement_plot.title.text_font_size = "25px"
 max_displacement_plot.title.align = "center"
 max_displacement_plot.grid.visible=False
 max_displacement_plot.xaxis.visible=True
 max_displacement_plot.yaxis.visible=True
-max_displacement_plot.yaxis.axis_label= "Height [m]"
-max_displacement_plot.xaxis.axis_label="Maximum Relative Displacement [mm]"
+max_displacement_plot.yaxis.axis_label= "Amplitude [mm]"
+max_displacement_plot.xaxis.axis_label="Time [second]"
 
 '''
 ###############################################################################
@@ -166,15 +166,15 @@ signalTwo   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Force.
 signalThree = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Force.txt')
 
 # Plot the signals into signal_plot
-signalOne_plot   = signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=3)
-#signalTwo_plot   = signal_plot.line(x='time',y='amplitude',color='color',source=signalOne,line_width=3)
-#signalThree_plot = signal_plot.line(x='time',y='amplitude',color='color',source=signalOne,line_width=3)
+signalOne_plot   = signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=1)
+signalTwo_plot   = signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=1)
+signalThree_plot = signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=1)
 
 # Create legend for the signal_plot
 legend2 = Legend(items=[
     ("Signal One  ", [signalOne_plot  ]),
-    #("Signal Two  ", [signalTwo_plot  ]),
-    #("Signal Three", [signalThree_plot]),
+    ("Signal Two  ", [signalTwo_plot  ]),
+    ("Signal Three", [signalThree_plot]),
 ], location=(0, 0))
 
 signal_plot.add_layout(legend2, 'above')
@@ -195,14 +195,14 @@ responseThree_thirdStorey = ColumnDataSource(data=dict(time=signalThree.data['ti
 
 # Plot the third floor initial displacement for each signal
 responseOne_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseOne_thirdStorey,line_width=1)
-#responseTwo_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseTwo_thirdStorey,line_color = "#33FF22",line_width=0.1)
-#responseThree_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseThree_thirdStorey,line_color = "#33FF11",line_width=0.1)
+responseTwo_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseTwo_thirdStorey,line_width=1)
+responseThree_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseThree_thirdStorey,line_width=1)
 
 # Create legend for the signal_plot
 legend3 = Legend(items=[
     ("Response One  ", [responseOne_thirdStorey_plot  ]),
-    #("Response Two  ", [responseTwo_thirdStorey_plot  ]),
-    #("Response Three", [responseThree_thirdStorey_plot]),
+    ("Response Two  ", [responseTwo_thirdStorey_plot  ]),
+    ("Response Three", [responseThree_thirdStorey_plot]),
 ], location=(0, 0))
 
 max_displacement_plot.add_layout(legend3, 'above')
@@ -210,11 +210,102 @@ max_displacement_plot.legend.click_policy="hide"
 
 '''
 ###############################################################################
+Define interactivities 
+###############################################################################
+'''
+time = 0
+dt   = 0.1
+periodicCallback = 0
+Active = False
+
+def update_structure():
+    global time
+    
+    # Update time
+    time += dt
+    if time >= time_slider.end:
+        time = 0
+        time_slider.value = time_slider.start
+    else:
+        time_slider.value += time_slider.step
+        
+    if signal_choices.active == 0:
+        displacement = responseOne_amplitudes[:,int(time/dt)]*10
+    elif signal_choices.active == 1:
+        displacement = responseTwo_amplitudes[:,int(time/dt)]*10
+    elif signal_choices.active == 2:
+        displacement = responseThree_amplitudes[:,int(time/dt)]*10
+
+    structure.update_system(displacement)
+    
+    
+def update_time(attr,old,new):
+    global time
+    time = new
+    
+    if signal_choices.active == 0:
+        displacement = responseOne_amplitudes[:,int(time/dt)]*10
+    elif signal_choices.active == 1:
+        displacement = responseTwo_amplitudes[:,int(time/dt)]*10
+    elif signal_choices.active == 2:
+        displacement = responseThree_amplitudes[:,int(time/dt)]*10
+
+    structure.update_system(displacement)
+    #update_structure()
+    
+time_slider = Slider(
+                      title=u" Time [second] ", 
+                      value=0, start=0, end=300, step=0.1, width=300
+                    )
+time_slider.on_change('value',update_time)
+
+
+signal_choices = RadioGroup(
+        labels=["Signal 1", "Signal 2", "Signal 3"], active=0)
+
+def pause():
+    global Active
+    # When active pause animation
+    if Active == True:
+        curdoc().remove_periodic_callback(update_structure)
+        Active=False
+    else:
+        pass
+        
+pause_button = Button(label="Pause", button_type="success")
+pause_button.on_click(pause)
+
+def play():
+    global Active, periodicCallback
+    
+    if Active == False:
+        curdoc().add_periodic_callback(update_structure, 100)
+        Active=True
+        periodicCallback = 0
+    else:
+        pass
+    
+play_button = Button(label="Play", button_type="success")
+play_button.on_click(play)
+
+'''
+###############################################################################
 Plot everything 
 ###############################################################################
 '''
 curdoc().add_root(
-                    row(structure_plot,signal_plot,max_displacement_plot)
+                    row(
+                        column(
+                               structure_plot,
+                               time_slider,
+                               play_button,
+                               pause_button
+                              ),
+                        column(
+                               signal_plot,
+                               max_displacement_plot
+                              )
+                       )
                  )
 
 # get path of parent directory and only use the name of the Parent Directory 
