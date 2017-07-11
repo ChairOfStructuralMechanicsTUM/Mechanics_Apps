@@ -34,9 +34,9 @@ code {
   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
 </script>
 
-<hr>
+<!--<hr>-->
 
-<h2> Euler Buckling Equation </h2>
+<h4> Euler Buckling Equation </h4>
 <p>
   Buckling can be modeled by a second order differential equation known as the Euler Buckling Equation:
     $$ EI {d^2 w \over dx^2} + Pw = 0 $$
@@ -57,21 +57,21 @@ In order to determine the maximum load a column can withstand before buckling, o
 $$ P_{cr} = { c \pi^2 E I \over L^2 } $$
 <p> Where: </p>
 <ul>
-<li> F is the calculated critical force where buckling will occur.</li>
-<li> E is the modulus of elasticity of the material.</li>
-<li> I is the moment of inertia of the cross section of the column. </li>
-<li> L is the length of the column.</li>
-<li> c is the column effective length factor. c changes with the boundary conditions and is the governing parameter in this application.</li>
+<li> \(F\) is the calculated critical force where buckling will occur.</li>
+<li> \(E\) is the modulus of elasticity of the material.</li>
+<li> \(I\) is the moment of inertia of the cross section of the column. </li>
+<li> \(L\) is the length of the column.</li>
+<li> \(c\) is the column effective length factor. \(c\) changes with the boundary conditions and is the governing parameter in this application.</li>
 </ul>
 
 <p>
-  c varies for each boundary condition. The boundary conditions used in this app have the following c-values:
+ \(c\) varies for each boundary condition. The boundary conditions used in this app have the following c-values:
 </p>
 <ul>
-<li> Free-Fixed:      c = 1/4 </li>
-<li> Pinned-Pinned:   c = 1 </li>
-<li> Pinned-Fixed:    c = 2 </li>
-<li> Fixed-Fixed:     c = 4 </li>
+<li> Free-Fixed:      \(c = 1/4\) </li>
+<li> Pinned-Pinned:   \(c = 1\) </li>
+<li> Pinned-Fixed:    \(c = 2\) </li>
+<li> Fixed-Fixed:     \(c = 4\) </li>
 </ul>
 <p>Buckling can be described mathematically as a bifurcation in the solution to the equations of static equilibrium (see bifurcation plot).
-The bifurcation plot shows the displacement 'w' (normalized to L). </p>
+The bifurcation plot shows the displacement \(w\) (normalized to \(L\)). </p>

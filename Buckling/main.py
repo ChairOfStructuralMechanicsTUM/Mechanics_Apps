@@ -368,7 +368,7 @@ plot.square(x='x', y='y', source = col4.square, color='black',size = 20)
 #Main plot properties:
 plot.axis.visible = False
 plot.grid.visible = False
-plot.outline_line_width = 4
+plot.outline_line_width = 1
 plot.outline_line_alpha = 0.5
 plot.outline_line_color = "Black"
 plot.title.text_font_size = "18pt"
@@ -426,7 +426,7 @@ plot1.line(x=[1,1], y = [-10,10], color = 'Black', line_width = 2, line_dash = '
 plot1.xaxis[0].visible = True
 plot1.yaxis[0].visible = True
 plot1.grid.visible = False
-plot1.outline_line_width = 2
+plot1.outline_line_width = 1
 plot1.outline_line_alpha = 0.5
 plot1.outline_line_color = "Black"
 plot1.title.text_font_size = "10pt"
