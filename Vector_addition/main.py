@@ -1,7 +1,6 @@
 """
 Python Bokeh program which interactively change two vectos and display its sum
 
-done by :Rishith Ellath Meethal
 """
 
 
@@ -47,7 +46,7 @@ def updateVector1 ():
         xE=Vector1*cos(theta1)
         yE=Vector1*sin(theta1)
         Vector1_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        V1_label_source.data = dict (x=[xE+3],y=[yE+3],V1=['V1'])
+        V1_label_source.data = dict (x=[xE+3],y=[yE-3],V1=["V"u"\u2081"])
 
 def updateVector2 ():
     global Vector2, theta2
@@ -59,7 +58,7 @@ def updateVector2 ():
         xE=Vector2*cos(theta2)
         yE=Vector2*sin(theta2)
         Vector2_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        V2_label_source.data = dict (x=[xE+3],y=[yE+3],V2=['V2'])
+        V2_label_source.data = dict (x=[xE-3],y=[yE+3],V2=["V"u"\u2082"])
 
 def updateResultant():
     global vector1,vector2,theta1,theta2

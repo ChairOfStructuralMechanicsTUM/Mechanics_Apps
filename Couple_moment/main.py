@@ -35,19 +35,19 @@ ForcegraphBottom=ColumnDataSource(data=dict(x=[], y=[]))
 
 def initialise():
     P1_arrow_source.data = dict(xS=[0], xE=[0], yS=[-10], yE=[0], lW = [5])
-    P1_label_source.data = dict(x=[1],y=[-7],P1=['P1'])
+    P1_label_source.data = dict(x=[1],y=[-7],P1=["P"u"\u2081"])
     P2_arrow_source.data = dict(xS=[40], xE=[40], yS=[10], yE=[0], lW = [5])
-    P2_label_source.data = dict(x=[77.5],y=[5],P2=['P2'])
+    P2_label_source.data = dict(x=[37.5],y=[5],P2=["P"u"\u2082"])
     F1_arrow_source.data = dict(xS=[0], xE=[0], yS=[10], yE=[0], lW = [5])
-    F1_label_source.data = dict(x=[1],y=[5],F1=['F1'])
+    F1_label_source.data = dict(x=[1],y=[5],F1=["F"u"\u2081"])
     F2_arrow_source.data = dict(xS=[40], xE=[40], yS=[-10], yE=[0], lW = [5])
-    F2_label_source.data = dict(x=[37.5],y=[-7],F2=['F2'])
+    F2_label_source.data = dict(x=[37.5],y=[-7],F2=["F"u"\u2082"])
     triangle_source.data = dict(x = [20], y = [-2], size = [20,20]) 
     ForcegraphTop.data      = dict(x =[0],y =[10] )
     ForcegraphBottom.data      = dict(x =[40],y =[-10] )
 
 
-plot = figure(title="Moment_2", x_range=(0-2,40+2), y_range=(-50,50))
+plot = figure(title="Couple_moment", x_range=(0-2,40+2), y_range=(-50,50))
 plot.axis.axis_label_text_font_style="normal"
 plot.axis.axis_label_text_font_size="14pt"
 plot.xaxis.axis_label="Distance [m]"
@@ -90,9 +90,9 @@ def changeF1F2(attr,old,new):
      ForcegraphBottom.data      = dict(x =[40],y =[-10] )
      YS = 400/(40-2*new)
      F1_arrow_source.data = dict(xS=[0+new], xE=[0+new], yS=[YS], yE=[0], lW = [5])
-     F1_label_source.data = dict(x=[1+new],y=[5],F1=['F1'])
+     F1_label_source.data = dict(x=[1+new],y=[5],F1=["F"u"\u2081"])
      F2_arrow_source.data = dict(xS=[40-new], xE=[40-new], yS=[-YS], yE=[0], lW = [5])
-     F2_label_source.data = dict(x=[37.5-new],y=[-7],F2=['F2'])
+     F2_label_source.data = dict(x=[37.5-new],y=[-7],F2=["F"u"\u2082"])
      XcordinatesT=[None]*(2*new+3)
      XcordinatesB=[None]*(2*new+3)
      YcordinatesT=[None]*(2*new+3)
