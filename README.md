@@ -67,14 +67,14 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [ ] 1) Tensile testing/Zugversuch (eb,rr)
 - [ ] 2) Transverse strain/Querdehnung (eb,rr)
 - [ ] 3) Doble-supported beam with point load/Balken (ad)
-- [ ] 4) Maxwell's reciprocity theorem/Reziprozitaetssatz von Maxwell (ad)
-- [ ] 5) Buckling/Knickung (ad)
+- [x] 4) Maxwell's reciprocity theorem/Reziprozitaetssatz von Maxwell (ad)
+- [x] 5) Buckling/Knickung (ad)
 - [ ] 6) Funicular/Seilbahn (br)
 - [ ] 7) Polar moment of inertia/Polares Flaechentraegheitmoments/ ()
 - [ ] 8) Combined moment of inertia/Zusammenges. Flaechentraegheitmoments ()
 - [ ] 9) Combined center of mass moment/Zusammenges. Schwerpunktsmoment ()
 - [ ] 10) Maypole/Maibaum ()
-- [ ] 11) Vector addition (rem)
+- [x] 11) Vector addition (rem)
 - [ ] 12) What is a moment (rem)
 - [ ] 13) Moment is a free vector (rem)
 
@@ -88,7 +88,7 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [ ] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma)
 - [ ] 8) Collision/Stoss (ma)
 - [x] 9) Rollercoaster (eb)
-- [ ] 10) Stopping distances (eb)
+- [x] 10) Stopping distances (eb)
 - [x] 11) Projectiles/Wurfgeschoss (eb)
 - [ ] 12) Rolling Condition/Abrollbedingungen (eb)
 - [ ] 13) Rolling test/Rollversuch (eb)
@@ -107,7 +107,7 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [x] 1) Diffraction (br)
 
 #### Integral transform method (fm, he):
-- [x] 1) Dampling (br)
+- [x] 1) Sampling (br)
 
 ### Supervisors
 - Francesca Taddei ft
