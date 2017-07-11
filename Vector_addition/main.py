@@ -47,7 +47,7 @@ def updateVector1 ():
         xE=Vector1*cos(theta1)
         yE=Vector1*sin(theta1)
         Vector1_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        V1_label_source.data = dict (x=[xE+1],y=[yE+1],V1=['V1'])
+        V1_label_source.data = dict (x=[xE+3],y=[yE+3],V1=['V1'])
 
 def updateVector2 ():
     global Vector2, theta2
@@ -59,7 +59,7 @@ def updateVector2 ():
         xE=Vector2*cos(theta2)
         yE=Vector2*sin(theta2)
         Vector2_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        V2_label_source.data = dict (x=[xE+1],y=[yE+1],V2=['V2'])
+        V2_label_source.data = dict (x=[xE+3],y=[yE+3],V2=['V2'])
 
 def updateResultant():
     global vector1,vector2,theta1,theta2
@@ -70,7 +70,7 @@ def updateResultant():
         VectorResultant_source.data = dict(xS=[], yS=[], xE=[], yE=[])
     else:
         VectorResultant_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        Resultant_label_source.data = dict (x=[xE+1],y=[yE+1],R=['R'])
+        Resultant_label_source.data = dict (x=[xE+3],y=[yE+3],R=['R'])
         
     #fors showing the resultant paralleogram
     V1parallel_line_source.data = dict(x=[Vector2*cos(theta2),xE], y=[Vector2*sin(theta2),yE])
@@ -99,9 +99,9 @@ p.add_layout(VectorResultant_glyph)
 p.add_layout(V1_label_glyph)
 p.add_layout(V2_label_glyph)
 p.add_layout(Resultant_label_glyph)
-p.axis.visible = False
-p.grid.visible = False
-p.background_fill_color = "#D1F4FF"
+#p.axis.visible = False
+#p.grid.visible = False
+#p.background_fill_color = "#D1F4FF"
 
 init()
 

@@ -51,7 +51,7 @@ plot = figure(title="Moment_2", x_range=(0-2,40+2), y_range=(-50,50))
 plot.axis.axis_label_text_font_style="normal"
 plot.axis.axis_label_text_font_size="14pt"
 plot.xaxis.axis_label="Distance [m]"
-plot.yaxis.axis_label="Force[N]"
+plot.yaxis.axis_label="Force [N]"
 
 my_line=plot.line(x='x', y='y', source=plot_source, color='#0065BD',line_width=20)
 plot.triangle(x='x', y='y', size = 'size', source= triangle_source,color="#E37222", line_width=2)
@@ -77,8 +77,8 @@ plot.add_layout(P1_label_glyph)
 plot.add_layout(P2_label_glyph)
 plot.add_layout(F1_label_glyph)
 plot.add_layout(F2_label_glyph)
-plot.line(x='x',y='y', source=ForcegraphTop,line_width=3,line_color='red',legend=" Force change" )
-plot.line(x='x',y='y', source=ForcegraphBottom,line_width=3,line_color='red',legend=" Force change" )
+plot.line(x='x',y='y', source=ForcegraphTop,line_width=3,line_color='red',legend=" Force amplitude" )
+plot.line(x='x',y='y', source=ForcegraphBottom,line_width=3,line_color='red',legend=" Force amplitude" )
 
 
 initialise()
@@ -133,7 +133,7 @@ def changeF1F2(attr,old,new):
      ForcegraphBottom.stream(new_dataB)
      
 #creating  slider to change location of Forces F1 and F2
-F1F2Location_slider= Slider(title="Change Location of F1 & F2 together",value= 0,start = 0, end = 19, step = 1)
+F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082 together",value= 0,start = 0, end = 19, step = 1)
 F1F2Location_slider.on_change('value',changeF1F2)
 
 #adding description from HTML file
@@ -141,4 +141,4 @@ description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 curdoc().add_root(column(description,row(plot,column(F1F2Location_slider))))
-curdoc().title = "Moment_2"
+#curdoc().title = ""
