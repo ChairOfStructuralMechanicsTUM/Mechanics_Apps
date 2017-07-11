@@ -84,8 +84,8 @@ ground          = 0.07                                                          
 ################################################################################
 orig            = Frame("o","0")                                                #Creation of original frame. This frame is a reference of the original location
 default     = dict(x = [0.1,0.8], y = [0.1,0.1], size = [tri_size,tri_size])    #Creation of triangle of original frame
-f1              = Frame("F1","n1")                                              #Creation of object Frame 1 "F1". This frame is the first to be deformed
-f2              = Frame("F2","n2")                                              #Creation of object Frame 2
+f1              = Frame("F"u"\u2081","n"u"\u2081")                                              #Creation of object Frame 1 "F1". This frame is the first to be deformed
+f2              = Frame("F"u"\u2082","n"u"\u2082")                                              #Creation of object Frame 2
 t_line          = dict(x=[0.7,0.9], y=[ground,ground])                          #Creation of Line
 
 
@@ -500,10 +500,10 @@ def create_shift(f):
     else:
         paramInt1 = f.get_param()
         localDouble1 = compute_shift(paramInt1,paramInt1, f.get_mag())
-        if (f.name == "F1"):
-            names = "(wij)n1"
-        elif (f.name == "F2"):
-            names = "(wji)n2"
+        if (f.name == "F"u"\u2081"):
+            names = "(w"u"\u1d62"u"\u2c7c)n"u"\u2081"
+        elif (f.name == "F"u"\u2082"):
+            names = "(w"u"\u2c7c"u"\u1d62)n"u"\u2082"
         d2 = 0
         d1 = 0
         sclr = 10
@@ -513,10 +513,10 @@ def create_shift(f):
             f.e_s.data = dict(xS= [ d1 ], xE= [d1 + localDouble1[0]],
             yS= [d2], yE=[d2], lW = [abs(localDouble1[0]*sclr) ] )
 
-            if (f.name == "F1"):
+            if (f.name ==  "F"u"\u2081"):
                 y1 = -0.05
                 y2 = -0.05
-            elif (f.name == "F2"):
+            elif (f.name ==  "F"u"\u2082"):
                 y1 = 0.7
                 y2 = 0.7
             x1 = d1 + localDouble1[0]
@@ -525,10 +525,10 @@ def create_shift(f):
             d1 = (paramInt1 - 30) / 40.0 * 0.7 + 0.1
             d2 = 0.6
 
-            if (f.name == "F1"):
+            if (f.name ==  "F"u"\u2081"):
                 x1 = 0
                 x2 = 0
-            elif (f.name == "F2"):
+            elif (f.name ==  "F"u"\u2082"):
                 x1 = 0.8
                 x2 = 0.8
             y1 = d2 + localDouble1[1]
@@ -541,10 +541,10 @@ def create_shift(f):
             d1 = 0.8
             d2 = 0.6 - (paramInt1 - 70) / 30.0 * 0.5
 
-            if (f.name == "F1"):
+            if (f.name ==  "F"u"\u2081"):
                 y1 = -0.05
                 y2 = -0.05
-            elif (f.name == "F2"):
+            elif (f.name ==  "F"u"\u2082"):
                 y1 = 0.7
                 y2 = 0.7
 
@@ -626,7 +626,7 @@ def initial():
 def clearf1():
     '''Clears the f1 frame'''
     f1.pts.data             = dict(x = [], y = [] )
-    f1.label.data           = dict(x=[0.45] , y=[0.62], name = ["F1"])
+    f1.label.data           = dict(x=[0.45] , y=[0.62], name = [ "F"u"\u2081"])
     f1.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     f1.pts.data             = dict(x = [], y = [] )
     f1.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -687,7 +687,7 @@ plot = Figure(tools = "", x_range=(plotx0,plotxf),
 #Plot properties:
 plot.axis.visible = False
 plot.grid.visible = False
-plot.outline_line_width = 4
+plot.outline_line_width = 1
 plot.outline_line_alpha = 0.3
 plot.outline_line_color = "Black"
 plot.title.text_color = "black"
@@ -720,10 +720,10 @@ plot.line(x = 'x2' , y = 'y2',source = f2.wdline, color="Black",
 #creation of the a and b scale reference things:
 plot.multi_line( [ [orig.x0, orig.xf],[orig.x0,orig.x0],[orig.xf,orig.xf] ],
         [ [0,0] ,[0-abshift,0+abshift] , [0-abshift,0+abshift] ],
-        color=["black", "black","black"], line_width=5)
+        color=["black", "black","black"], line_width=1)
 plot.multi_line( [ [xb,xb],[xb-abshift,xb+abshift],[xb-abshift,xb+abshift] ],
         [ [orig.y0,orig.yf], [orig.y0,orig.y0], [orig.yf,orig.yf] ],
-        color=["black", "black","black"], line_width=5)
+        color=["black", "black","black"], line_width=1)
 
 #Frame bases:
 plot.triangle(x='x', y='y', size = 'size', source= default,color="grey", line_width=2)
@@ -756,7 +756,7 @@ absource = ColumnDataSource(dict(x=[ (orig.x0+orig.xf)/2,
         (0-0.05)], y=[ (0-0.05), (orig.y0+orig.yf)/2 ], text=['a','b']))
 
 abtext_glyph = Text( x='x' , y='y', text='text' ,text_color="Black",
-        text_font_size="16pt",text_font_style = "bold")
+        text_font_size="16pt",text_font_style = "italic")
 
 
 
