@@ -78,7 +78,7 @@ plot.add_layout(P2_label_glyph)
 plot.add_layout(F1_label_glyph)
 plot.add_layout(F2_label_glyph)
 plot.line(x='x',y='y', source=ForcegraphTop,line_width=3,line_color='red',legend=" Force amplitude", line_dash='dotted')
-plot.line(x='x',y='y', source=ForcegraphBottom,line_width=3,line_color='red',legend=" Force amplitude" )
+plot.line(x='x',y='y', source=ForcegraphBottom,line_width=3,line_color='red',legend=" Force amplitude",line_dash='dotted' )
 
 
 initialise()
@@ -93,10 +93,10 @@ def changeF1F2(attr,old,new):
      F1_label_source.data = dict(x=[1+new],y=[5],F1=["F"u"\u2081"])
      F2_arrow_source.data = dict(xS=[40-new], xE=[40-new], yS=[-YS], yE=[0], lW = [5])
      F2_label_source.data = dict(x=[37.5-new],y=[-7],F2=["F"u"\u2082"])
-     XcordinatesT=[None]*(2*new+3)
-     XcordinatesB=[None]*(2*new+3)
-     YcordinatesT=[None]*(2*new+3)
-     YcordinatesB=[None]*(2*new+3)
+     XcordinatesT=[None]*(new+2)
+     XcordinatesB=[None]*(new+2)
+     YcordinatesT=[None]*(new+2)
+     YcordinatesB=[None]*(new+2)
     
     
      XcordinatesT[0]=0
@@ -106,17 +106,13 @@ def changeF1F2(attr,old,new):
      i=1
      count = 1
      for i in range(new+1):
-         XcordinatesT[count]=(i-0.5)
-         XcordinatesT[count+1]=(i)
-         XcordinatesB[count]=40-(i-0.5)
-         XcordinatesB[count+1]=40-(i)
-         y=float(400/(40-(2*(i-0.5))))
-         y1=float(400/(40-(2*(i))))
+         XcordinatesT[count]=(i)
+         XcordinatesB[count]=40-(i)
+
+         y=400/float((40-(2*(i))))  # calculation of Force which will make equal amount of moment
          YcordinatesT[count]=y
-         YcordinatesT[count+1]=y1
          YcordinatesB[count]=-y
-         YcordinatesB[count+1]=-y1
-         count=count+2
+         count=count+1
                      
                      
      new_dataT= {
