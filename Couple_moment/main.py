@@ -77,7 +77,7 @@ plot.add_layout(P1_label_glyph)
 plot.add_layout(P2_label_glyph)
 plot.add_layout(F1_label_glyph)
 plot.add_layout(F2_label_glyph)
-plot.line(x='x',y='y', source=ForcegraphTop,line_width=3,line_color='red',legend=" Force amplitude" )
+plot.line(x='x',y='y', source=ForcegraphTop,line_width=3,line_color='red',legend=" Force amplitude", line_dash='dotted')
 plot.line(x='x',y='y', source=ForcegraphBottom,line_width=3,line_color='red',legend=" Force amplitude" )
 
 
