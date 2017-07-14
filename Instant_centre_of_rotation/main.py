@@ -4,7 +4,7 @@
 """
 from bokeh.plotting import figure
 from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, Slider, LabelSet
+from bokeh.models import ColumnDataSource, Slider, LabelSet, Div
 from bokeh.io import curdoc
 from numpy import math,loadtxt
 from os.path import dirname, join, split 
@@ -12,7 +12,7 @@ from os.path import dirname, join, split
 #define constant length
 l=4;
 #load txt file which includes the coordinates of the spurkurve line
-DataPlotter = loadtxt('Leiter/graph.txt');
+DataPlotter = loadtxt('Instant_centre_of_rotation/graph.txt');
 DataPlotterDictionary = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]; 
 #data sources for drawing
 bar_position_source=ColumnDataSource(data=dict(x=[], y=[]))
@@ -37,8 +37,8 @@ def init():
 ########### Main ###########
 ## Initialise
 init()
-p = figure(plot_height=875, plot_width=1000,title="Momentalpol der Leiter (Instant Center of Rotation)", tools="", x_range=(-1,5), y_range=(-1,5))
-p.title.text_font_size="18pt"
+p = figure(plot_height=875, plot_width=1000, tools="", x_range=(-1,5), y_range=(-1,5))
+#p.title.text_font_size="18pt"
 #  remove graph lines
 p.axis.visible = False
 p.grid.visible = False
@@ -62,7 +62,7 @@ p.legend.location="top_right"
 p.legend.label_text_font_size="15pt"
 
 ## Create slider widget to choose angle wmega
-Wmega_input = Slider(title="angle w in radians", value=0.0, start=0.0, end=math.pi/2, step=math.pi/40)
+Wmega_input = Slider(title="angle "u"\u03B8 in radians", value=0.0, start=0.0, end=math.pi/2, step=math.pi/40)
 
 def slide(attrname, old, new): #function which updates the drawing for the change of angle wmega with the use of the bar
     global DataPlotter, DataPlotterDictionary
@@ -88,7 +88,14 @@ def slide(attrname, old, new): #function which updates the drawing for the chang
     i=int(new*40/math.pi)
     spurkurve.data = dict(x=DataPlotter[0:DataPlotterDictionary[i],0],y=DataPlotter[0:DataPlotterDictionary[i],1])
 Wmega_input.on_change('value',slide)
-curdoc().add_root(column(row(p),Wmega_input))
+
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
+
+curdoc().add_root(column(description,row(p),Wmega_input))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 
 
