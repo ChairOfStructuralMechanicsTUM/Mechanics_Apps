@@ -4,10 +4,14 @@ import numpy as np
 
 
 class DraggableCart(DraggableAxisAlignedRectangle):
+    """
+    a cart being attached to a draggable rectangle.
+    """
 
     def __init__(self, plot, w, h, x, y):
         DraggableAxisAlignedRectangle.__init__(self, plot, w, h, x, y)
         # create cart
+        # todo currently this is just a triangle. We should use a more fancy looking cart. See Seilbahn_original.jpg
         xs = [np.array([self._pos[0],
                         (self._pos + self._dims)[0],
                         (self._pos + .5 * self._dims)[0]])]

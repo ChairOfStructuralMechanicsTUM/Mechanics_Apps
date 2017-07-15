@@ -8,6 +8,7 @@ class DraggablePost(DraggableAxisAlignedRectangle):
     def __init__(self, plot, w, h, x, y):
         DraggableAxisAlignedRectangle.__init__(self, plot, w, h, x, y)
         # create post holding the cable
+        # todo currently this is just a triangle. We should use a more fancy looking post. See Seilbahn_original.jpg
         self._post_height = 5
         post_tip = self._compute_tip_position()
         xs = [[self._pos[0],
@@ -35,6 +36,10 @@ class DraggablePost(DraggableAxisAlignedRectangle):
         self._update_post_data_source(xs, ys)
 
     def _compute_tip_position(self):
+        """
+        helper function for the position of the tip.
+        :return:
+        """
         return self._pos + self._dims * .5 + self._post_height * np.array([0, 1])
 
     def get_post_tip_position(self):

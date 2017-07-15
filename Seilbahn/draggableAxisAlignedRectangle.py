@@ -3,6 +3,10 @@ import numpy as np
 
 
 class DraggableAxisAlignedRectangle:
+    """
+    class for a rectangle that can be dragged around in the figure by pressing and holding the left mouse button, while
+    mouse points on the rectangle. The rectangle can be "dragged".
+    """
 
     def __init__(self, plot, w, h, x, y):
         """
@@ -41,5 +45,11 @@ class DraggableAxisAlignedRectangle:
             return False
 
     def translate(self, dx, dy):
+        """
+        translate rectangle position by dx, dy
+        :param dx: shift in x direction
+        :param dy: shift in y direction
+        :return:
+        """
         self._pos += np.array([dx, dy])
         self._update_rectangle_data_source()
