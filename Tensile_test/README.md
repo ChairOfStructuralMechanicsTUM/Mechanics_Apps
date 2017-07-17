@@ -7,3 +7,4 @@ The app can be run using the command "bokeh serve --show Zugversuch/" from the p
 ## To Do
 - [ ] Not running: check the type of error
 - [ ] Delete or avoid global variables
+- [ ] Remove possibility to reverse loading 
