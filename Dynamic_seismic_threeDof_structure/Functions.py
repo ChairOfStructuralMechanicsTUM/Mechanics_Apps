@@ -228,7 +228,7 @@ def linIntepolate(y1, y2, x1, x2, noNodes, length):
     return nodes
 
 def solve_time_domain(structure, seismicInput):
-    dt = 0.1
+    dt = seismicInput.data['time'][1] - seismicInput.data['time'][0]
     N  = len(seismicInput.data['amplitude'])
     
     M = structure.M
@@ -236,9 +236,11 @@ def solve_time_domain(structure, seismicInput):
     K = structure.K
     
     F = np.zeros((3,N))
-    F[0,:] = seismicInput.data['amplitude']
+    #F[0,:] = seismicInput.data['amplitude']
+    #F[1,:] = seismicInput.data['amplitude']
+    #F[2,:] = seismicInput.data['amplitude']
     
-    x0 = np.array([0,0,0])
+    x0 = np.array([0,0.0025,0.005])
     v0 = np.array([0,0,0])
     
     y = np.zeros((3,len( F[0,:] ))) # 3 refers to the number of dofs (3 storeys)
@@ -250,13 +252,12 @@ def solve_time_domain(structure, seismicInput):
     y[:,1] = y0
 
     for i in range(2,len(F[0,:])):
-        A = (M/(dt*dt) + C/(2*dt))
+        #A = (M/(dt*dt) + C/(2*dt))
+        A = M/(dt**2) + C/dt + K
 
-        B = np.dot(
-                   2*M/(dt*dt) - K,
-                   y[:,i-1]) + np.dot((C/(2*dt) - M/(dt*dt)),y[:,i-2] + F[:,i-1]
-                  )
-
+        #B = np.dot( 2*M/(dt*dt) - K, y[:,i-1]) + np.dot((C/(2*dt) - M/(dt*dt)) , y[:,i-2] + np.dot(-M,F[:,i-1]))
+        B = -np.dot(M,F[:,i]) + np.dot(M/(dt**2) , 2*y[:,i-1]-y[:,i-2]) + np.dot(C/dt,y[:,i-1])
+        
         yNew = np.dot(inv(A) , B)
         
         y[:,i] = yNew  
@@ -359,7 +360,7 @@ def construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRati
                             [                0                  ,         -stiffnessRatio[2]        ,  stiffnessRatio[2]]
                           ]) * 12 * bendingStiffness / trussLength**3
                             
-    structure.C = 0.1*structure.M + 0.2*structure.K
+    structure.C = 0.00*structure.M + 0.00*structure.K
                             
 def plot( plot_name, subject, radius, color ):
     plot_name.line( x='x', y='y', source=subject.massSupports[0], color=color, line_width=5)
@@ -383,20 +384,43 @@ def read_seismic_input(file):
     amplitude   = list()
     time           = list()
     
-    counter = 0
+    wordCounter = 0
+    lineCounter = 0
+    npts = 0
+    
     with open( file,'r' ) as f:
         for line in f:
-            counter = 0
+            #counter = 0
             for word in line.split():
+                if lineCounter == 3 and wordCounter == 2:
+                    npts = int(word)
+                    
+                if lineCounter == 3 and wordCounter == 6:
+                    dt = float(word)
+                
+                if lineCounter >= 4:
+                    amplitude.append(float(word)*9.81)
+                '''
                 if (counter % 2 == 0):
                     time.append(float(word))
                 else:
                     amplitude.append(float(word))
                 counter += 1
+                '''
+                wordCounter += 1
+            wordCounter = 0
+            lineCounter += 1
 
+    print('npts = ',npts)
+    print('dt = ',dt)
+    print('size = ',len(amplitude))
+    # Create time list
+    for i in range(0,npts):
+        time.append(i*dt)
+        
     # create colors
     #color = list()
     #for i in amplitude:
         #color.append('#33FF33')
         
-    return ColumnDataSource(data=dict(amplitude=amplitude,time=time))
+    return ColumnDataSource(data=dict(amplitude=np.array(amplitude),time=np.array(time)))

@@ -15,6 +15,7 @@ from os.path import dirname, join, split
 from Functions import *
 from bokeh.models.ranges import Range1d
 from bokeh.models.layouts import Spacer
+from bokeh.models.ranges import Range
 
 '''
 ###############################################################################
@@ -98,7 +99,7 @@ Construct the structure
 structure_color  = '#85929E'
 
 # Starting amount of mass in kg
-mass = 10000.0
+mass = 1000.0
 massRatio = np.array([2.0, 1.5, 1.0])  
 
 # Data structure which contains the coordinates of the masses and mass supports
@@ -161,14 +162,49 @@ Read and plot the seismic signals
 ###############################################################################
 '''
 # There will be three signals to be read
-signalOne   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Force.txt')
-signalTwo   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Force.txt')
-signalThree = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Force.txt')
+signalOne   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/San_Ramon_Fire_Station/RSN215_LIVERMOR_A-SRM070.AT2')
+signalTwo   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Rio_Hondo/RSN8837_14383980_CIRIOHNE.AT2')
+signalThree = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Bevagna/RSN4346_UBMARCHE.P_A-BEV000.AT2')
+
+# Calculate the maximum achieved amplitude in all three signals
+maxAmplitude = 0
+for element in signalOne.data['amplitude']:
+    if abs(element) > maxAmplitude:
+        maxAmplitude = abs(element)
+        
+for element in signalTwo.data['amplitude']:
+    if abs(element) > maxAmplitude:
+        maxAmplitude = abs(element)
+        
+for element in signalThree.data['amplitude']:
+    if abs(element) > maxAmplitude:
+        maxAmplitude = abs(element)
+        
+# Calculate the maximum achieved time in all three signals
+maxTime = 0
+for element in signalOne.data['time']:
+    if abs(element) > maxAmplitude:
+        maxTime = abs(element)
+        
+for element in signalTwo.data['time']:
+    if abs(element) > maxAmplitude:
+        maxTime = abs(element)
+        
+for element in signalThree.data['time']:
+    if abs(element) > maxAmplitude:
+        maxTime = abs(element)
+        
+# Modify the plotting ranges of the signal_plot
+signal_plot.y_range.start = -maxAmplitude
+signal_plot.y_range.end = maxAmplitude #= Range(-maxAmplitude,maxAmplitude)
+signal_plot.x_range.start = 0
+signal_plot.x_range.end = maxTime #= Range(0,maxTime)
+print('maxTime = ',maxTime)
 
 # Plot the signals into signal_plot
 signalOne_plot   = signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=1)
-signalTwo_plot   = signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=1)
-signalThree_plot = signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=1)
+signalTwo_plot   = signal_plot.line(x='time',y='amplitude',source=signalTwo,line_width=1)
+signalThree_plot = signal_plot.line(x='time',y='amplitude',source=signalThree,line_width=1)
 
 # Create legend for the signal_plot
 legend2 = Legend(items=[
@@ -189,9 +225,10 @@ responseOne_amplitudes = solve_time_domain(structure, signalOne)
 responseTwo_amplitudes = solve_time_domain(structure, signalTwo)
 responseThree_amplitudes = solve_time_domain(structure, signalThree)
 
-responseOne_thirdStorey = ColumnDataSource(data=dict(time=signalOne.data['time'],amplitude=responseOne_amplitudes[2,:]))
-responseTwo_thirdStorey = ColumnDataSource(data=dict(time=signalTwo.data['time'],amplitude=responseTwo_amplitudes[2,:]))
-responseThree_thirdStorey = ColumnDataSource(data=dict(time=signalThree.data['time'],amplitude=responseThree_amplitudes[2,:]))
+# Note: multiplied by 1000 to convert from meter to milimeter
+responseOne_thirdStorey = ColumnDataSource(data=dict(time=signalOne.data['time'],amplitude=responseOne_amplitudes[2,:]*1000))
+responseTwo_thirdStorey = ColumnDataSource(data=dict(time=signalTwo.data['time'],amplitude=responseTwo_amplitudes[2,:]*1000))
+responseThree_thirdStorey = ColumnDataSource(data=dict(time=signalThree.data['time'],amplitude=responseThree_amplitudes[2,:]*1000))
 
 # Plot the third floor initial displacement for each signal
 responseOne_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseOne_thirdStorey,line_width=1)
@@ -230,11 +267,11 @@ def update_structure():
         time_slider.value += time_slider.step
         
     if signal_choices.active == 0:
-        displacement = responseOne_amplitudes[:,int(time/dt)]*10
+        displacement = responseOne_amplitudes[:,int(time/dt)]*1000
     elif signal_choices.active == 1:
-        displacement = responseTwo_amplitudes[:,int(time/dt)]*10
+        displacement = responseTwo_amplitudes[:,int(time/dt)]*1000
     elif signal_choices.active == 2:
-        displacement = responseThree_amplitudes[:,int(time/dt)]*10
+        displacement = responseThree_amplitudes[:,int(time/dt)]*1000
 
     structure.update_system(displacement)
     
@@ -244,11 +281,11 @@ def update_time(attr,old,new):
     time = new
     
     if signal_choices.active == 0:
-        displacement = responseOne_amplitudes[:,int(time/dt)]*10
+        displacement = responseOne_amplitudes[:,int(time/dt)]*1000
     elif signal_choices.active == 1:
-        displacement = responseTwo_amplitudes[:,int(time/dt)]*10
+        displacement = responseTwo_amplitudes[:,int(time/dt)]*1000
     elif signal_choices.active == 2:
-        displacement = responseThree_amplitudes[:,int(time/dt)]*10
+        displacement = responseThree_amplitudes[:,int(time/dt)]*1000
 
     structure.update_system(displacement)
     #update_structure()
@@ -299,7 +336,8 @@ curdoc().add_root(
                                structure_plot,
                                time_slider,
                                play_button,
-                               pause_button
+                               pause_button,
+                               signal_choices
                               ),
                         column(
                                signal_plot,
