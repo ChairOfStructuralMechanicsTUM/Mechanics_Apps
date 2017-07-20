@@ -234,33 +234,58 @@ def solve_time_domain(structure, seismicInput):
     M = structure.M
     C = structure.C
     K = structure.K
+    I = np.array([[1,0,0],[0,1,0],[0,0,1]])
     
     F = np.zeros((3,N))
-    #F[0,:] = seismicInput.data['amplitude']
-    #F[1,:] = seismicInput.data['amplitude']
-    #F[2,:] = seismicInput.data['amplitude']
+    F[0,:] = seismicInput.data['amplitude']
+    F[1,:] = seismicInput.data['amplitude']
+    F[2,:] = seismicInput.data['amplitude']
     
-    x0 = np.array([0,0.0025,0.005])
-    v0 = np.array([0,0,0])
+    x0 = np.array([0.0,0.0,0.0])
+    v0 = np.array([0.0,0.0,0.0])
     
     y = np.zeros((3,len( F[0,:] ))) # 3 refers to the number of dofs (3 storeys)
+    y_dot = np.zeros((3,len( F[0,:] )))
+    y_dotdot = np.zeros((3,len( F[0,:] )))
+    
     y[:,0] = x0
     a0 = np.dot(inv(M),( np.dot(-M,F[:,0]) - np.dot(C,v0) - np.dot(K,x0) ))
     
     y0 = x0 - dt*v0 + (dt*dt/2)*a0
 
     y[:,1] = y0
-
+    
+    '''
+    Generalized alpha method
+    '''
+    rho_infinity = 0.5
+    alpha_f2 = rho_infinity/(rho_infinity+1)
+    alpha_m2 = (2*rho_infinity-1)/(rho_infinity+1)
+    beta2    = 0.25*(1-alpha_m2+alpha_f2)**2
+    gamma2   = 0.5-alpha_m2+alpha_f2
+    
+    #A = M + dt*gamma2*C + dt*dt*beta2*K
+    #invA = inv(A)
     for i in range(2,len(F[0,:])):
         #A = (M/(dt*dt) + C/(2*dt))
         A = M/(dt**2) + C/dt + K
+        #tempVec = y[:,i-1] + 0.5*(-np.dot(M,F[:,i-1])-np.dot(C,y_dot[:,i-1])-np.dot(K,y[:,i-1]))*dt
+        #y[:,i] = y[:,i-1] + tempVec*dt
+        #y_dot[:,i] = np.dot(inv(I+C) , tempVec + 0.5*(-np.dot(M,F[:,i])-np.dot(K,y[:,i])))
 
         #B = np.dot( 2*M/(dt*dt) - K, y[:,i-1]) + np.dot((C/(2*dt) - M/(dt*dt)) , y[:,i-2] + np.dot(-M,F[:,i-1]))
         B = -np.dot(M,F[:,i]) + np.dot(M/(dt**2) , 2*y[:,i-1]-y[:,i-2]) + np.dot(C/dt,y[:,i-1])
         
         yNew = np.dot(inv(A) , B)
         
-        y[:,i] = yNew  
+        y[:,i] = yNew
+        
+        #'''
+        #Gen. alpha
+        #'''
+        #y_dotdot[:,i] = np.dot(invA , -np.dot(M,F[:,i]) -np.dot(dt*(1-gamma2)*C+dt*dt*(0.5-beta2)*K,y_dotdot[:,i-1]) -np.dot(C+dt*K,y_dot[:,i-1]) - np.dot(K,y_dot[:,i-1]))
+        #y_dot[:,i] = y_dot[:,i-1] +dt*((1-gamma2)*y_dotdot[:,i-1]+gamma2*y_dotdot[:,i])
+        #y[:,i] = y[:,i-1] +dt*y_dot[:,i-1] +dt*dt*((0.5-beta2)*y_dotdot[:,i-1]+beta2*y_dotdot[:,i]) 
 
     return y
     
@@ -360,7 +385,7 @@ def construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRati
                             [                0                  ,         -stiffnessRatio[2]        ,  stiffnessRatio[2]]
                           ]) * 12 * bendingStiffness / trussLength**3
                             
-    structure.C = 0.00*structure.M + 0.00*structure.K
+    structure.C = 0.0*structure.M + 0.0*structure.K
                             
 def plot( plot_name, subject, radius, color ):
     plot_name.line( x='x', y='y', source=subject.massSupports[0], color=color, line_width=5)
