@@ -156,6 +156,7 @@ structure_plot.add_layout(
                               )
                     )
                       
+color = ['#FF0000','#00FF00','#0000FF']
 '''
 ###############################################################################
 Read and plot the seismic signals
@@ -180,31 +181,37 @@ for element in signalThree.data['amplitude']:
     if abs(element) > maxAmplitude:
         maxAmplitude = abs(element)
         
-# Calculate the maximum achieved time in all three signals
+# Calculate the maximum achieved time in all three signals and max time-step
 maxTime = 0
-for element in signalOne.data['time']:
-    if abs(element) > maxAmplitude:
-        maxTime = abs(element)
-        
-for element in signalTwo.data['time']:
-    if abs(element) > maxAmplitude:
-        maxTime = abs(element)
-        
-for element in signalThree.data['time']:
-    if abs(element) > maxAmplitude:
-        maxTime = abs(element)
+maxTimeStep = 0
+
+if maxTime < signalOne.data['time'][-1]:
+    maxTime = abs(signalOne.data['time'][-1])
+if maxTime < signalTwo.data['time'][-1]:
+    maxTime = abs(signalTwo.data['time'][-1])
+if maxTime < signalThree.data['time'][-1]:
+    maxTime = abs(signalThree.data['time'][-1])
+    
+if maxTimeStep < signalOne.data['time'][1] - signalOne.data['time'][0]:
+    maxTimeStep = signalOne.data['time'][1] - signalOne.data['time'][0]
+if maxTimeStep < signalTwo.data['time'][1] - signalTwo.data['time'][0]:
+    maxTimeStep = signalTwo.data['time'][1] - signalTwo.data['time'][0]
+if maxTimeStep < signalThree.data['time'][1] - signalThree.data['time'][0]:
+    maxTimeStep = signalThree.data['time'][1] - signalThree.data['time'][0]
         
 # Modify the plotting ranges of the signal_plot
 signal_plot.y_range.start = -maxAmplitude
 signal_plot.y_range.end = maxAmplitude #= Range(-maxAmplitude,maxAmplitude)
 signal_plot.x_range.start = 0
 signal_plot.x_range.end = maxTime #= Range(0,maxTime)
+
 print('maxTime = ',maxTime)
+print('maxTimeStep = ',maxTimeStep)
 
 # Plot the signals into signal_plot
-signalOne_plot   = signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=1)
-signalTwo_plot   = signal_plot.line(x='time',y='amplitude',source=signalTwo,line_width=1)
-signalThree_plot = signal_plot.line(x='time',y='amplitude',source=signalThree,line_width=1)
+signalOne_plot   = signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=1,color=color[0])
+signalTwo_plot   = signal_plot.line(x='time',y='amplitude',source=signalTwo,line_width=1,color=color[1])
+signalThree_plot = signal_plot.line(x='time',y='amplitude',source=signalThree,line_width=1,color=color[2])
 
 # Create legend for the signal_plot
 legend2 = Legend(items=[
@@ -231,9 +238,28 @@ responseTwo_thirdStorey = ColumnDataSource(data=dict(time=signalTwo.data['time']
 responseThree_thirdStorey = ColumnDataSource(data=dict(time=signalThree.data['time'],amplitude=responseThree_amplitudes[2,:]*1000))
 
 # Plot the third floor initial displacement for each signal
-responseOne_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseOne_thirdStorey,line_width=1)
-responseTwo_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseTwo_thirdStorey,line_width=1)
-responseThree_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseThree_thirdStorey,line_width=1)
+responseOne_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseOne_thirdStorey,line_width=1,color=color[0])
+responseTwo_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseTwo_thirdStorey,line_width=1,color=color[1])
+responseThree_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseThree_thirdStorey,line_width=1,color=color[2])
+
+# Calculate the maximum achieved amplitude in all three signals
+maxResponseAmplitude = 0
+for element in responseOne_thirdStorey.data['amplitude']:
+    if abs(element) > maxResponseAmplitude:
+        maxResponseAmplitude = abs(element)
+        
+for element in responseTwo_thirdStorey.data['amplitude']:
+    if abs(element) > maxResponseAmplitude:
+        maxResponseAmplitude = abs(element)
+        
+for element in responseThree_thirdStorey.data['amplitude']:
+    if abs(element) > maxResponseAmplitude:
+        maxResponseAmplitude = abs(element)
+
+max_displacement_plot.y_range.start = -maxResponseAmplitude
+max_displacement_plot.y_range.end = maxResponseAmplitude #= Range(-maxAmplitude,maxAmplitude)
+max_displacement_plot.x_range.start = 0
+max_displacement_plot.x_range.end = maxTime #= Range(0,maxTime)
 
 # Create legend for the signal_plot
 legend3 = Legend(items=[
@@ -251,7 +277,7 @@ Define interactivities
 ###############################################################################
 '''
 time = 0
-dt   = 0.1
+dt   = maxTimeStep
 periodicCallback = 0
 Active = False
 
@@ -292,7 +318,7 @@ def update_time(attr,old,new):
     
 time_slider = Slider(
                       title=u" Time [second] ", 
-                      value=0, start=0, end=300, step=0.1, width=300
+                      value=0, start=0, end=maxTime, step=maxTimeStep, width=300
                     )
 time_slider.on_change('value',update_time)
 
