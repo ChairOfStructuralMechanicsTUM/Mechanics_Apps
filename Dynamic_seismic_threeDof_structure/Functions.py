@@ -238,8 +238,8 @@ def solve_time_domain(structure, seismicInput):
     
     F = np.zeros((3,N))
     F[0,:] = seismicInput.data['amplitude']
-    F[1,:] = seismicInput.data['amplitude']
-    F[2,:] = seismicInput.data['amplitude']
+    #F[1,:] = seismicInput.data['amplitude']
+    #F[2,:] = seismicInput.data['amplitude']
     
     x0 = np.array([0.0,0.0,0.0])
     v0 = np.array([0.0,0.0,0.0])
@@ -251,41 +251,91 @@ def solve_time_domain(structure, seismicInput):
     y[:,0] = x0
     a0 = np.dot(inv(M),( np.dot(-M,F[:,0]) - np.dot(C,v0) - np.dot(K,x0) ))
     
-    y0 = x0 - dt*v0 + (dt*dt/2)*a0
-
-    y[:,1] = y0
+    u0 = np.array([0.0,0.0,0.0])
+    v0 = np.array([0.0,0.0,0.0])
+    a0 = np.array([0.0,0.0,0.0])
+    f0 = F[:,0]
+    u1 = u0
+    v1 = v0
+    a1 = a0
+    f1 = f0
     
-    '''
-    Generalized alpha method
-    '''
-    rho_infinity = 0.5
-    alpha_f2 = rho_infinity/(rho_infinity+1)
-    alpha_m2 = (2*rho_infinity-1)/(rho_infinity+1)
-    beta2    = 0.25*(1-alpha_m2+alpha_f2)**2
-    gamma2   = 0.5-alpha_m2+alpha_f2
+    pInf = 0.15
+    alphaM = (2.0 * pInf - 1.0) / (pInf + 1.0)
+    alphaF = pInf / (pInf + 1.0)
+    beta = 0.25 * (1 - alphaM + alphaF)**2
+    gamma = 0.5 - alphaM + alphaF
+    
+        # coefficients for LHS
+    a1h = (1.0 - alphaM) / (beta * dt**2)
+    a2h = (1.0 - alphaF) * gamma / (beta * dt)
+    a3h = 1.0 - alphaF
+
+    # coefficients for mass
+    a1m = a1h
+    a2m = a1h * dt
+    a3m = (1.0 - alphaM - 2.0 * beta) / (2.0 * beta)
+    
+    #coefficients for damping
+    a1b = (1.0 - alphaF) * gamma / (beta * dt)
+    a2b = (1.0 - alphaF) * gamma / beta - 1.0
+    a3b = (1.0 - alphaF) * (0.5 * gamma / beta - 1.0) * dt
+    
+    # coefficient for stiffness
+    a1k = -1.0 * alphaF
+    
+    # coefficients for velocity update
+    a1v = gamma / (beta * dt)
+    a2v = 1.0 - gamma / beta
+    a3v = (1.0 - gamma / (2 * beta)) * dt
+    
+    # coefficients for acceleration update
+    a1a = a1v / (dt * gamma)
+    a2a = -1.0 / (beta * dt)
+    a3a = 1.0 - 1.0 / (2.0 * beta) 
+    #y0 = x0 - dt*v0 + (dt*dt/2)*a0
+    #y[:,1] = y0
     
     #A = M + dt*gamma2*C + dt*dt*beta2*K
     #invA = inv(A)
-    for i in range(2,len(F[0,:])):
+    for i in range(1,len(F[0,:])):
         #A = (M/(dt*dt) + C/(2*dt))
-        A = M/(dt**2) + C/dt + K
+        
         #tempVec = y[:,i-1] + 0.5*(-np.dot(M,F[:,i-1])-np.dot(C,y_dot[:,i-1])-np.dot(K,y[:,i-1]))*dt
         #y[:,i] = y[:,i-1] + tempVec*dt
         #y_dot[:,i] = np.dot(inv(I+C) , tempVec + 0.5*(-np.dot(M,F[:,i])-np.dot(K,y[:,i])))
 
         #B = np.dot( 2*M/(dt*dt) - K, y[:,i-1]) + np.dot((C/(2*dt) - M/(dt*dt)) , y[:,i-2] + np.dot(-M,F[:,i-1]))
+        '''
+        A = M/(dt**2) + C/dt + K
         B = -np.dot(M,F[:,i]) + np.dot(M/(dt**2) , 2*y[:,i-1]-y[:,i-2]) + np.dot(C/dt,y[:,i-1])
-        
         yNew = np.dot(inv(A) , B)
-        
         y[:,i] = yNew
+        '''
+        #print('np.dot(-M,F[:,i]) = ',np.dot(-M,F[:,i]))
+        Ff = (1.0 - alphaF) * np.dot(-M,F[:,i]) + alphaF * f0
+        #print('F = ',F)
+		
+        LHS = a1h * M + a2h * C + a3h * K 
+        RHS = np.dot(M,(a1m * u0 + a2m * v0 + a3m * a0))
+        RHS += np.dot(C,(a1b * u0 + a2b * v0 + a3b * a0)) 
+        RHS += np.dot(a1k * K, u0) + Ff
+
+        # update self.f1
+        f1 = np.dot(-M,F[:,i])
         
-        #'''
-        #Gen. alpha
-        #'''
-        #y_dotdot[:,i] = np.dot(invA , -np.dot(M,F[:,i]) -np.dot(dt*(1-gamma2)*C+dt*dt*(0.5-beta2)*K,y_dotdot[:,i-1]) -np.dot(C+dt*K,y_dot[:,i-1]) - np.dot(K,y_dot[:,i-1]))
-        #y_dot[:,i] = y_dot[:,i-1] +dt*((1-gamma2)*y_dotdot[:,i-1]+gamma2*y_dotdot[:,i])
-        #y[:,i] = y[:,i-1] +dt*y_dot[:,i-1] +dt*dt*((0.5-beta2)*y_dotdot[:,i-1]+beta2*y_dotdot[:,i]) 
+        # updates self.u1,v1,a1
+        u1 = np.linalg.solve(LHS, RHS)
+        y[:,i] = u1
+        v1 = a1v * (u1 - u0) + a2v * v0 + a3v * a0
+        a1 = a1a * (u1 - u0) + a2a * v0 + a3a * a0
+
+        u0 = u1
+        v0 = v1
+        a0 = a1
+        
+        # update the force   
+        f0 = f1
 
     return y
     
