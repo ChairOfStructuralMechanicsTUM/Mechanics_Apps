@@ -43,7 +43,7 @@ structure_plot.xaxis.axis_label="Relative Displacement [mm]"
 xmin2, xmax2 = 0,1800
 ymin2, ymax2 = -0.5,0.5
 signal_plot = figure(
-                      plot_width=1000,
+                      plot_width=700,
                       plot_height=400,
                       x_range=[xmin2,xmax2], 
                       y_range=[ymin2,ymax2],
@@ -61,7 +61,7 @@ signal_plot.xaxis.axis_label="Time [second]"
 xmin3, xmax3 = 0,1800
 ymin3, ymax3 = -0.5,0.5
 max_displacement_plot = figure(
-                                  plot_width=1000,
+                                  plot_width=700,
                                   plot_height=400,
                                   x_range=[xmin3,xmax3], 
                                   y_range=[ymin3,ymax3],
@@ -75,6 +75,23 @@ max_displacement_plot.xaxis.visible=True
 max_displacement_plot.yaxis.visible=True
 max_displacement_plot.yaxis.axis_label= "Amplitude [mm]"
 max_displacement_plot.xaxis.axis_label="Time [second]"
+
+ERSplot = figure(
+                      plot_width=400,
+                      plot_height=800,
+                      x_range=[0,3.0], 
+                      y_range=[0,3.0],
+                      
+                      title = 'Elastic Response Spectrum',
+                   )
+ERSplot.title.text_font_size = "25px"
+ERSplot.title.align = "center"
+ERSplot.grid.visible=True
+ERSplot.xaxis.visible=True
+ERSplot.xaxis.visible=True
+ERSplot.xaxis.axis_label= 'Period [second]'
+ERSplot.yaxis.visible=True
+ERSplot.yaxis.axis_label= "S"u"\u2090 [m/s"u"\u00B2]"
 
 '''
 ###############################################################################
@@ -225,6 +242,58 @@ signal_plot.legend.click_policy="hide"
 
 '''
 ###############################################################################
+Reading ERS data
+###############################################################################
+'''
+ERS_dataOne = read_ERS_data(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/San_Ramon_Fire_Station/_SearchResults.csv')
+ERS_dataTwo = read_ERS_data(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Rio_Hondo/_SearchResults.csv')
+ERS_dataThree = read_ERS_data(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Bevagna/_SearchResults.csv')
+
+# Plot the ERS_data into signal_plot
+ERS_dataOne_plot   = ERSplot.line(x='period',y='acceleration',source=ERS_dataOne,line_width=1,color=color[0])
+ERS_dataTwo_plot   = ERSplot.line(x='period',y='acceleration',source=ERS_dataTwo,line_width=1,color=color[1])
+ERS_dataThree_plot = ERSplot.line(x='period',y='acceleration',source=ERS_dataThree,line_width=1,color=color[2])
+
+# Calculate the maximum achieved amplitude in all three signals
+maxAcceleration = 0
+for element in ERS_dataOne.data['acceleration']:
+    if abs(element) > maxAcceleration:
+        maxAcceleration = abs(element)
+        
+for element in ERS_dataTwo.data['acceleration']:
+    if abs(element) > maxAcceleration:
+        maxAcceleration = abs(element)
+        
+for element in ERS_dataThree.data['acceleration']:
+    if abs(element) > maxAcceleration:
+        maxAcceleration = abs(element)
+        
+maxPeriod = 0
+
+if maxPeriod < ERS_dataOne.data['period'][-1]:
+    maxPeriod = abs(ERS_dataOne.data['period'][-1])
+if maxPeriod < ERS_dataTwo.data['period'][-1]:
+    maxPeriod = abs(ERS_dataTwo.data['period'][-1])
+if maxPeriod < ERS_dataTwo.data['period'][-1]:
+    maxPeriod = abs(ERS_dataTwo.data['period'][-1])
+    
+ERSplot.y_range.start = 0
+ERSplot.y_range.end = maxAcceleration
+ERSplot.x_range.start = 0
+ERSplot.x_range.end = maxPeriod
+
+# Create legend for the signal_plot
+legend3 = Legend(items=[
+    ("ERS data One  ", [ERS_dataOne_plot  ]),
+    ("ERS data Two  ", [ERS_dataTwo_plot  ]),
+    ("ERS data Three", [ERS_dataThree_plot]),
+], location=(0, 0))
+
+ERSplot.add_layout(legend3, 'above')
+ERSplot.legend.click_policy="hide"
+
+'''
+###############################################################################
 Solve the structure (in time domain)
 ###############################################################################
 '''
@@ -285,7 +354,7 @@ def update_structure():
     global time
     
     # Update time
-    time += dt
+    time += maxTimeStep
     if time >= time_slider.end:
         time = 0
         time_slider.value = time_slider.start
@@ -293,11 +362,11 @@ def update_structure():
         time_slider.value += time_slider.step
         
     if signal_choices.active == 0:
-        displacement = responseOne_amplitudes[:,int(time/dt)]*1000
+        displacement = responseOne_amplitudes[:,int(time/maxTimeStep)]*1000
     elif signal_choices.active == 1:
-        displacement = responseTwo_amplitudes[:,int(time/dt)]*1000
+        displacement = responseTwo_amplitudes[:,int(time/maxTimeStep)]*1000
     elif signal_choices.active == 2:
-        displacement = responseThree_amplitudes[:,int(time/dt)]*1000
+        displacement = responseThree_amplitudes[:,int(time/maxTimeStep)]*1000
 
     structure.update_system(displacement)
     
@@ -307,12 +376,27 @@ def update_time(attr,old,new):
     time = new
     
     if signal_choices.active == 0:
-        displacement = responseOne_amplitudes[:,int(time/dt)]*1000
+        if time < signalOne.data['time'][-1]:
+            displacement = responseOne_amplitudes[:,int(time/maxTimeStep)]*1000
+        else:
+            displacement = responseOne_amplitudes[:,0]*1000
+            time = 0
+            time_slider.value = time_slider.start
     elif signal_choices.active == 1:
-        displacement = responseTwo_amplitudes[:,int(time/dt)]*1000
+        if time < signalTwo.data['time'][-1]:
+            displacement = responseTwo_amplitudes[:,int(time/maxTimeStep)]*1000
+        else:
+            displacement = responseTwo_amplitudes[:,0]*1000
+            time = 0
+            time_slider.value = time_slider.start
     elif signal_choices.active == 2:
-        displacement = responseThree_amplitudes[:,int(time/dt)]*1000
-
+        if time < signalThree.data['time'][-1]:
+            displacement = responseThree_amplitudes[:,int(time/maxTimeStep)]*1000
+        else:
+            displacement = responseThree_amplitudes[:,0]*1000
+            time = 0
+            time_slider.value = time_slider.start
+            
     structure.update_system(displacement)
     #update_structure()
     
@@ -342,7 +426,7 @@ def play():
     global Active, periodicCallback
     
     if Active == False:
-        curdoc().add_periodic_callback(update_structure, 100)
+        curdoc().add_periodic_callback(update_structure,100)
         Active=True
         periodicCallback = 0
     else:
@@ -365,10 +449,12 @@ curdoc().add_root(
                                pause_button,
                                signal_choices
                               ),
+                        
                         column(
                                signal_plot,
-                               max_displacement_plot
-                              )
+                               max_displacement_plot,
+                              ),
+                        ERSplot
                        )
                  )
 

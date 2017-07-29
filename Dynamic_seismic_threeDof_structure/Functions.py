@@ -475,27 +475,38 @@ def read_seismic_input(file):
                 
                 if lineCounter >= 4:
                     amplitude.append(float(word)*9.81)
-                '''
-                if (counter % 2 == 0):
-                    time.append(float(word))
-                else:
-                    amplitude.append(float(word))
-                counter += 1
-                '''
+
                 wordCounter += 1
             wordCounter = 0
             lineCounter += 1
 
-    print('npts = ',npts)
-    print('dt = ',dt)
-    print('size = ',len(amplitude))
     # Create time list
     for i in range(0,npts):
         time.append(i*dt)
         
-    # create colors
-    #color = list()
-    #for i in amplitude:
-        #color.append('#33FF33')
-        
     return ColumnDataSource(data=dict(amplitude=np.array(amplitude),time=np.array(time)))
+
+def read_ERS_data(file):
+    acceleration = list()
+    period = list()
+    
+    wordCounter = 0
+    lineCounter = 0
+    
+    with open( file,'r' ) as f:
+        for line in f:
+            for word in line.split(','):
+                if lineCounter > 45 and lineCounter < 157: #input data situated between line 45 and 157 in the data file
+                    if wordCounter == 0:
+                        #print(word)
+                        period.append(float(word))
+                    elif wordCounter == 1:
+                        acceleration.append(float(word)*9.81) # multiplication by 9.81 to convert it to m/sec/sec
+                    wordCounter += 1
+                #wordCounter += 1
+            wordCounter = 0
+            lineCounter += 1
+    
+    print('len(period) = ',len(period) )
+    print('len(accel.) = ',len(acceleration))
+    return ColumnDataSource(data=dict(period=period,acceleration=acceleration))
