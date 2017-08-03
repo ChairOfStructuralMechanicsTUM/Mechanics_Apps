@@ -1,5 +1,6 @@
 import numpy as np
 from bokeh.plotting import ColumnDataSource
+from bokeh.models import Arrow, OpenHead, LabelSet
 
 class Person():
     
@@ -34,24 +35,28 @@ def create_people(
                       jumpingPositionX, jumpingPositionY
                  ):
 
-    mass = 75
+    mass = 75.0
     
     if N == 1:
-        separatingDistance = 0
+        separatingDistance = 0.0
     else:
-        separatingDistance = (L-1)/(N-1)
+        separatingDistance = (L-1.0)/(float(N)-1.0)
+
     standingShiftingList = np.ones((N,28))
     jumpingShiftingList = np.ones((N,29))
     
     distanceList = np.zeros(N)
     
-    counter = N/2 - 0.5 
+    counter = float(N)/2.0 - 0.5 
     for i in range(0,N):
-        distanceList[i] += counter
+        distanceList[i] += float(counter)
         counter -= 1
+        
     for i in range(0,N):
-        standingShiftingList[i,:] *= distanceList[i] *separatingDistance
-        jumpingShiftingList[i,:] *= distanceList[i] *separatingDistance
+        for j in range(0,28):
+            standingShiftingList[i,j] = distanceList[i] *separatingDistance
+        for j in range(0,29):
+            jumpingShiftingList[i,j] = distanceList[i] *separatingDistance
             
     listPeople = list()
     for i in range(N):
@@ -72,3 +77,137 @@ def update_source(source,newPerson):
     source.data['c'].append('#FF33FF')
     
     print('source length now is : ', len(source.data['c']))
+    
+def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
+    # Create arrows for the boat
+    boatArrows_sources = list()
+    boatArrows_intities = list()
+    
+    boatColors = ['#000000']+colors
+    for i in range(0,6):
+        boatArrows_sources.append(ColumnDataSource(data=dict(xs=[5],ys=[0],xe=[5],ye=[0])))
+        boatArrows_intities.append(
+                                   Arrow(    
+                                            end=OpenHead(
+                                                         line_color=boatColors[i],
+                                                         line_width=3,
+                                                         size=10
+                                                        ),
+                                            x_start=['xs'][0],
+                                            y_start=['ys'][0],
+                                            x_end=['xe'][0], 
+                                            y_end=['ye'][0], 
+                                            line_color=boatColors[i],
+                                            source=boatArrows_sources[i]
+                                        ) 
+                                  )
+        diagram.add_layout( boatArrows_intities[i] )                      
+        
+    boatArrows_sources[0].data = dict(
+                                        xs=[5],ys=[0],xe=[5],ye=[boatSpeed]
+                                     )
+                                            
+    # Create arrows for the swimmers
+    swimmerArrows_sources = list()
+    swimmerArrows_intities = list()
+    
+    for i in range(0,5):
+        xPos = i*5+10
+        swimmerArrows_sources.append(
+                                     [ ColumnDataSource(data=dict(xs=[xPos],ys=[0],xe=[xPos],ye=[0])),
+                                       ColumnDataSource(data=dict(xs=[xPos+1],ys=[0],xe=[xPos+1],ye=[0])) ]
+                                    )
+        
+        relativeVelocityArrow = Arrow(    
+                                            end=OpenHead(
+                                                         line_color="#FFCC00",
+                                                         line_width=3,
+                                                         size=10
+                                                        ),
+                                            x_start=['xs'][0],
+                                            y_start=['ys'][0],
+                                            x_end=['xe'][0], 
+                                            y_end=['ye'][0], 
+                                            line_color = "#FFCC00",
+                                            source=swimmerArrows_sources[i][0]
+                                        ) 
+        absoluteVelocityArrow = Arrow(    
+                                            end=OpenHead(
+                                                         line_color=colors[i],
+                                                         line_width=3,
+                                                         size=10
+                                                        ),
+                                            x_start=['xs'][0],
+                                            y_start=['ys'][0],
+                                            x_end=['xe'][0], 
+                                            y_end=['ye'][0],
+                                            line_color=colors[i],
+                                            source=swimmerArrows_sources[i][1]
+                                        ) 
+                                            
+        swimmerArrows_intities.append( [relativeVelocityArrow, absoluteVelocityArrow] )
+                                            
+        diagram.add_layout( relativeVelocityArrow )
+        diagram.add_layout( absoluteVelocityArrow )
+    '''
+    # Create labels for both the boat and the swimmers
+    boatLabel = LabelSet(
+                          x=5, y=-1,
+                          text='f',
+                          text_color='black',text_font_size="15pt",
+                          level='glyph',text_baseline="middle",text_align="center",
+                        )
+    swimmersLabels = list()
+    for i in range(0,5):
+        xPos = i*5+10
+        swimmersLabels.append(
+                               LabelSet(
+                                          x=xPos, y=-1,
+                                          text='f',
+                                          text_color='black',text_font_size="15pt",
+                                          level='glyph',text_baseline="middle",text_align="center",
+                                       )
+                             )
+    '''
+    return boatArrows_sources, swimmerArrows_sources
+        
+def reset_arrows_velocityDiagram( boatArrows_sources, swimmerArrows_sources, boatSpeed ):
+    for i in range(0,6):
+        boatArrows_sources[i].data=dict(xs=[5],ys=[0],xe=[5],ye=[0])
+        
+    boatArrows_sources[0].data = dict(
+                                    xs=[5],ys=[0],xe=[5],ye=[boatSpeed]
+                                 )
+    
+    for i in range(0,5):
+        xPos = i*5+10
+        swimmerArrows_sources[i][0].data=dict(xs=[xPos],ys=[0],xe=[xPos],ye=[0])
+        swimmerArrows_sources[i][1].data=dict(xs=[xPos],ys=[0],xe=[xPos],ye=[0])
+        
+def modify_swimmer_arrows( boatArrows_sources, swimmerArrows_sources, swimmer, velocityIncrease, boatSpeed ):
+    currentBoatSpeed = boatSpeed
+
+    # Modify the swimmer's arrows
+    position = swimmer.n*5 + 10
+    #print('x = ',swimmerArrows_sources[swimmer.n][0].data['])
+    swimmerArrows_sources[swimmer.n][0].data = dict(
+                                                    xs = [position],
+                                                    ys = [currentBoatSpeed],
+                                                    xe = [position],
+                                                    ye = [currentBoatSpeed - swimmer.relativeVelocity[0]]
+                                                   )
+    
+    swimmerArrows_sources[swimmer.n][1].data = dict(
+                                                    xs = [position+1],
+                                                    ys = [0],
+                                                    xe = [position+1],
+                                                    ye = [currentBoatSpeed - swimmer.relativeVelocity[0]]
+                                                  )
+
+    # Modify the boat's arrow
+    boatArrows_sources[swimmer.n + 1].data = dict(
+                                                    xs = [5],
+                                                    ys = [boatArrows_sources[swimmer.n].data['ye'][0]],
+                                                    xe = [5],
+                                                    ye = [boatArrows_sources[swimmer.n].data['ye'][0] + velocityIncrease]
+                                                 )
