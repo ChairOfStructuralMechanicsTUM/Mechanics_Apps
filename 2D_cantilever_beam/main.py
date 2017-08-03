@@ -549,10 +549,10 @@ colorBar.title.text_font_size="16pt"
 colorBarXCoords = list()
 colorBarYCoords = list()
 for i in range(50):
-    lowerLeft = [i/10 , -0.5]
-    upperLeft = [i/10 , 0.5]
-    lowerRight= [i/10 + 1/10, -0.5]
-    upperRight= [i/10 + 1/10, 0.5]
+    lowerLeft = [float(i)/10, -0.5]
+    upperLeft = [float(i)/10, 0.5]
+    lowerRight= [float(i)/10 + 1.0/10.0, -0.5]
+    upperRight= [float(i)/10 + 1.0/10.0, 0.5]
 
     colorBarXCoords.append([lowerLeft[0], upperLeft[0], upperRight[0], lowerRight[0]])
     colorBarYCoords.append([lowerLeft[1], upperLeft[1], upperRight[1], lowerRight[1]])
@@ -560,14 +560,15 @@ colorBarColorList = list()
 colorBarAlphaList = list()
 
 # Determine the color distribution in the color bar
-smallestValue,biggestValue = 0,10
+smallestValue,biggestValue = 0.0,10.0
 valuesRange = list()
 for i in range(50):
-    valuesRange.append(smallestValue + (i/49)*(biggestValue - smallestValue))
+    valuesRange.append(smallestValue + (float(i)/49.0)*(biggestValue - smallestValue))
+
 for i in range(50):
     colorBarColorList.append(functions.color_determiner( smallestValue, biggestValue, valuesRange[i] ))
     colorBarAlphaList.append( 1 )
-    
+
 def update_colorBar_extremas(smallesValue, biggestValue):
     colorBar.title.text = str(smallesValue)+" Pa                                                                      "+str(biggestValue)+" Pa"
 
