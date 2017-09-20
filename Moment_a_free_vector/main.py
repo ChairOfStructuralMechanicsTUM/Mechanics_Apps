@@ -1,105 +1,148 @@
-# -*- coding: utf-8 -*-
 """
-Created on Fri Jul 07 14:27:08 2017
+Python Bokeh program which shows why Couple moment is called a free vector
 
 """
-from bokeh.plotting import figure 
-from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead,Div
+
+
+from bokeh.plotting import figure
+from bokeh.layouts import column, row, Spacer
+from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead, Button, Line,Div
 from bokeh.io import curdoc
-from os.path import dirname, join
-import numpy as np
+from numpy import loadtxt
+from os.path import dirname, join, split
+from math import radians, cos, sin, tan
+
+#Initialise Variables
+Sp=0    # Distnace the Force couple that can be moved along the dotted line
+theta = radians(90)
+Vector1=50              #Any vector which form a couple with Vector 2
+Vector2=Vector1         #Any vector which form a couple with Vector 1
+Vector1_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
+Vector2_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
+V1_label_source = ColumnDataSource(data=dict(x=[],y=[],V1=[]))
+V2_label_source = ColumnDataSource(data=dict(x=[],y=[],V2=[]))
+RigidBody_label_source = ColumnDataSource(data=dict(x=[],y=[],RG=[]))
+
+Distance_line_source = ColumnDataSource(data=dict(x=[],y=[]))   # To draw the line between the points of application of Vectors
+
+
+NewpositionLine1_source = ColumnDataSource(data=dict(x=[],y=[]))
+NewpositionLine2_source = ColumnDataSource(data=dict(x=[],y=[]))
 
 
 
-#Force Vectors
-P1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
-P2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
-
-lineR1 = ColumnDataSource(data=dict(x = [], y = [] )) 
-lineR2 = ColumnDataSource(data=dict(x = [], y = [] )) 
-#labels for Forces
-P1_label_source = ColumnDataSource(data=dict(x=[],y=[],P1=[]))
-P2_label_source = ColumnDataSource(data=dict(x=[],y=[],P2=[]))
-
-One_label_source = ColumnDataSource(data=dict(x=[],y=[],One=[]))
-Two_label_source = ColumnDataSource(data=dict(x=[],y=[],Two=[]))
-Three_label_source = ColumnDataSource(data=dict(x=[],y=[],Three=[]))
-
-#plot corresponding  to  change in  Force
-
-def initialise():
-    P1_arrow_source.data = dict(xS=[0], xE=[5], yS=[-30], yE=[-18], lW = [5])
-    P1_label_source.data = dict(x=[1],y=[-20],P1=['P1'])
-    P2_arrow_source.data = dict(xS=[14], xE=[9], yS=[-6], yE=[-18], lW = [5])
-    P2_label_source.data = dict(x=[10],y=[-15],P2=['P2'])   
-    One_label_source.data = dict(x=[17],y=[-20],One=['One'])
-    Two_label_source.data = dict(x=[9],y=[12],Two=['Two'])
-    Three_label_source.data = dict(x=[33],y=[22],Three=['Three'])
-    lineR1.data = dict (x=[0,5],y=[0,-18])
-    lineR2.data = dict (x=[0,9],y=[0,-18])
+#responsible for the display of initial conditions 
+def init ():
+    updateVector1()
+    updateVector2()
+    Distance_line_source.data = dict(x=[-150,-100], y=[-150,-150])
+    NewpositionLine1_source.data = dict(x=[-150,100],y=[-150,100])
+    NewpositionLine2_source.data = dict(x=[-100,150],y=[-150,100])
+    RigidBody_label_source.data=dict(x=[30],y=[-200],RG=["Rigid Body"])
     
-
-
-plot = figure(title="Moment_a_free_vector", x_range=(0-2,40+2), y_range=(-50,50))
-plot.axis.axis_label_text_font_style="normal"
-plot.axis.axis_label_text_font_size="14pt"
-#plot.xaxis.axis_label="Distance [m]"
-#plot.yaxis.axis_label="Force[N]"
-plot.oval(x=[20], y=[0], width=45, height=90,
-          angle=-0.7, color="#1D91C0")
-plot.circle([15,7,30], [-18,10,20], size=10,color="red")
-
-
-plot.line(x='x', y='y', source=lineR1, color="black",line_width=3)
-plot.line(x='x', y='y', source=lineR2, color="black",line_width=3)
-
-#plotting Vectors as arrows
-P1_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=P1_arrow_source,line_color="#A2AD00")
-P2_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=P2_arrow_source,line_color="#A2AD00")
-P1_label_glyph=LabelSet(x='x', y='y',text='P1',text_font_size="15pt",level='glyph',source=P1_label_source)
-P2_label_glyph=LabelSet(x='x', y='y',text='P2',text_font_size="15pt",level='glyph',source=P2_label_source)
-One_label_glyph=LabelSet(x='x', y='y',text='One',text_font_size="15pt",level='glyph',source=One_label_source)
-Two_label_glyph=LabelSet(x='x', y='y',text='Two',text_font_size="15pt",level='glyph',source=Two_label_source)
-Three_label_glyph=LabelSet(x='x', y='y',text='Three',text_font_size="15pt",level='glyph',source=Three_label_source)
-
-
-#plot.line(x='x',y='y', source=R2_line,line_width=3,line_color='red',legend=" R1" )
-#plot.line(x='x',y='y', source=R2_line,line_width=3,line_color='red',legend=" R2" )
-
-plot.add_layout(P1_arrow_glyph)
-plot.add_layout(P2_arrow_glyph)
-plot.add_layout(P1_label_glyph)
-plot.add_layout(P2_label_glyph)
-plot.add_layout(One_label_glyph)
-plot.add_layout(Two_label_glyph)
-plot.add_layout(Three_label_glyph)
-
-
-initialise()
-
-def FindM(attr,old,new):
-    if new == 1:
-        lineR1.data = dict (x=[15,5],y=[-18,-18])
-        lineR2.data = dict (x=[15,9],y=[-18,-18])
-    if new == 2:
-        lineR1.data = dict (x=[7,5],y=[10,-18])
-        lineR2.data = dict (x=[7,9],y=[10,-18])
-    if new == 3 :
-        lineR1.data = dict (x=[30,5],y=[20,-18])
-        lineR2.data = dict (x=[30,9],y=[20,-18])
+# update Vectors
+def updateVector1 ():     # To update Vector 1 based on Angle it makes with horiizontal & its position on dotted line
+    global Sp,theta,Vector1
  
-
+    if (Vector1== 0):
+        Vector1_source.data = dict(xS=[],yS=[],xE=[],yE=[])
     
-#creating  slider to change location of Forces F1 and F2
-FindMoment_slider= Slider(title="Find Couple Moment at",value= 0,start = 0, end = 3, step = 1)
-FindMoment_slider.on_change('value',FindM)
+    else:
+    # else the arrow is proportional to the Vector1
+        Vector1 = 50/(sin(theta))
+        xS=-150+Sp
+        yS=-150+Sp
+        xE=xS+Vector1*cos(theta)
+        yE=yS+Vector1*sin(theta)
+        Vector1_source.data = dict(xS=[xS], yS=[yS], xE=[xE], yE=[yE])
+        V1_label_source.data = dict (x=[xE+3],y=[yE-3],V1=["V"u"\u2081"])    
+        
+        
+        
+def updateVector2 ():               # To update Vector 2 based on Angle it makes with horiizontal & its position on dotted line
+    global Sp,Vector2, theta
+    # if Vector2 = 0 then there is no arrow
+    if (Vector2== 0):
+        Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+    else:
+        # else the arrow is proportional to the Vector1
+        Vector2 = 50/(sin(theta))
+        xS=-100+Sp
+        yS=-150+Sp
+        xE=xS-(Vector2*cos(theta))
+        yE=yS-(Vector2*sin(theta))
+        Vector2_source.data = dict(xS=[xS], yS=[yS], xE=[xE], yE=[yE])
+        V2_label_source.data = dict (x=[xE+3],y=[yE+3],V2=["V"u"\u2082"])
+        
+def UpdateDistanceLine():     #To update the distance line between Vectors
+    global Sp
+    
+    Distance_line_source.data = dict(x=[-150+Sp,-100+Sp], y=[-150+Sp,-150+Sp])
+  
+    
+        
+# adding the vectors to the plot
+Vector1_glyph = Arrow(end=OpenHead(line_color="black",line_width=10,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Vector1_source,line_color="black",line_width=7)
+Vector2_glyph = Arrow(end=OpenHead(line_color="blue",line_width=10,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Vector2_source,line_color="blue",line_width=7)
+V1_label_glyph=LabelSet(x='x', y='y',text='V1',text_font_size="15pt",level='glyph',source=V1_label_source)
+V2_label_glyph=LabelSet(x='x', y='y',text='V2',text_font_size="15pt",level='glyph',source=V2_label_source)
 
-#adding description from HTML file
+RigidBody_label_glyph=LabelSet(x='x', y='y',text='RG',text_font_size="15pt",level='glyph',source=RigidBody_label_source)
+
+
+
+p = figure(tools="", x_range=(-200,200), y_range=(-200,200),plot_width=750, plot_height=625)
+p.title.text_font_size="20pt"
+p.ellipse(x=[-5], y=[-5], width=[410], height=300,
+          angle=-40, color="#CAB2D6")   # eelliplse centres at (-5,-5) as rigid body
+p.line(x='x',y='y',line_dash='dashed',source= Distance_line_source, color="red")   
+p.line(x='x',y='y',line_dash='dashed',source= NewpositionLine1_source, color="black")
+p.line(x='x',y='y',line_dash='dashed',source= NewpositionLine2_source, color="black")
+
+p.add_layout(Vector1_glyph)
+p.add_layout(Vector2_glyph)
+p.add_layout(V1_label_glyph)
+p.add_layout(V2_label_glyph)
+p.add_layout(RigidBody_label_glyph)
+
+p.axis.visible = False
+p.grid.visible = False
+p.background_fill_color = "#D1F4FF"
+init()
+
+#Changing Distance along dotted line
+def changeCouplePosition(attr,old,new):
+    global Sp,Vector1, Active, DistanceSlider
+  
+    Sp=new
+    Vector1=50
+    updateVector1()
+    updateVector2()
+    UpdateDistanceLine()
+    
+#changing theta
+def changetheta(attr,old,new):
+    global Vector1, Active, AngleVector1Slider,theta
+  
+    theta=radians(new)
+    updateVector1()
+    updateVector2()
+          
+## Create slider to move couple along dotted line
+DistanceSlider = Slider(title="Distance S",value=0,start=0,end=240,step=5)
+DistanceSlider.on_change('value',changeCouplePosition)
+
+## Create slider to move change the angle vector 1 makes with horizontal line
+AngleVector1Slider= Slider(title="Angle of Vector 1", value=90.0, start=5.0, end=175.0, step=5)
+AngleVector1Slider.on_change('value',changetheta)
+
+# add app description
 description_filename = join(dirname(__file__), "description.html")
+
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
-curdoc().add_root(column(description,row(plot,column(FindMoment_slider))))
-curdoc().title = "Moment_a_free_vector"
+## Send to window
+curdoc().add_root(column(description,column(row(p,column(DistanceSlider,AngleVector1Slider)))))
+curdoc().title = "Moment a free vector"
