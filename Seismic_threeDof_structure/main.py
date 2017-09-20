@@ -269,9 +269,9 @@ for mode in modes:
 ########################## Output the results #################################
 mode_colors = ['#0000FF','#00FF00','#D4AC0D']
 
-plot( mode_one  , modes[2], radius, mode_colors[0])
+plot( mode_one  , modes[2], radius, mode_colors[2])
 plot( mode_two  , modes[1], radius, mode_colors[1])
-plot( mode_three, modes[0], radius, mode_colors[2])
+plot( mode_three, modes[0], radius, mode_colors[0])
 '''
 ###############################################################################
 Construct the Elastic Response Spectrum

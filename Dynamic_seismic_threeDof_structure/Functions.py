@@ -228,38 +228,114 @@ def linIntepolate(y1, y2, x1, x2, noNodes, length):
     return nodes
 
 def solve_time_domain(structure, seismicInput):
-    dt = 0.1
+    dt = seismicInput.data['time'][1] - seismicInput.data['time'][0]
     N  = len(seismicInput.data['amplitude'])
     
     M = structure.M
     C = structure.C
     K = structure.K
+    I = np.array([[1,0,0],[0,1,0],[0,0,1]])
     
     F = np.zeros((3,N))
     F[0,:] = seismicInput.data['amplitude']
+    #F[1,:] = seismicInput.data['amplitude']
+    #F[2,:] = seismicInput.data['amplitude']
     
-    x0 = np.array([0,0,0])
-    v0 = np.array([0,0,0])
+    x0 = np.array([0.0,0.0,0.0])
+    v0 = np.array([0.0,0.0,0.0])
     
     y = np.zeros((3,len( F[0,:] ))) # 3 refers to the number of dofs (3 storeys)
+    y_dot = np.zeros((3,len( F[0,:] )))
+    y_dotdot = np.zeros((3,len( F[0,:] )))
+    
     y[:,0] = x0
     a0 = np.dot(inv(M),( np.dot(-M,F[:,0]) - np.dot(C,v0) - np.dot(K,x0) ))
     
-    y0 = x0 - dt*v0 + (dt*dt/2)*a0
+    u0 = np.array([0.0,0.0,0.0])
+    v0 = np.array([0.0,0.0,0.0])
+    a0 = np.array([0.0,0.0,0.0])
+    f0 = F[:,0]
+    u1 = u0
+    v1 = v0
+    a1 = a0
+    f1 = f0
+    
+    pInf = 0.15
+    alphaM = (2.0 * pInf - 1.0) / (pInf + 1.0)
+    alphaF = pInf / (pInf + 1.0)
+    beta = 0.25 * (1 - alphaM + alphaF)**2
+    gamma = 0.5 - alphaM + alphaF
+    
+        # coefficients for LHS
+    a1h = (1.0 - alphaM) / (beta * dt**2)
+    a2h = (1.0 - alphaF) * gamma / (beta * dt)
+    a3h = 1.0 - alphaF
 
-    y[:,1] = y0
-
-    for i in range(2,len(F[0,:])):
-        A = (M/(dt*dt) + C/(2*dt))
-
-        B = np.dot(
-                   2*M/(dt*dt) - K,
-                   y[:,i-1]) + np.dot((C/(2*dt) - M/(dt*dt)),y[:,i-2] + F[:,i-1]
-                  )
-
-        yNew = np.dot(inv(A) , B)
+    # coefficients for mass
+    a1m = a1h
+    a2m = a1h * dt
+    a3m = (1.0 - alphaM - 2.0 * beta) / (2.0 * beta)
+    
+    #coefficients for damping
+    a1b = (1.0 - alphaF) * gamma / (beta * dt)
+    a2b = (1.0 - alphaF) * gamma / beta - 1.0
+    a3b = (1.0 - alphaF) * (0.5 * gamma / beta - 1.0) * dt
+    
+    # coefficient for stiffness
+    a1k = -1.0 * alphaF
+    
+    # coefficients for velocity update
+    a1v = gamma / (beta * dt)
+    a2v = 1.0 - gamma / beta
+    a3v = (1.0 - gamma / (2 * beta)) * dt
+    
+    # coefficients for acceleration update
+    a1a = a1v / (dt * gamma)
+    a2a = -1.0 / (beta * dt)
+    a3a = 1.0 - 1.0 / (2.0 * beta) 
+    #y0 = x0 - dt*v0 + (dt*dt/2)*a0
+    #y[:,1] = y0
+    
+    #A = M + dt*gamma2*C + dt*dt*beta2*K
+    #invA = inv(A)
+    for i in range(1,len(F[0,:])):
+        #A = (M/(dt*dt) + C/(2*dt))
         
-        y[:,i] = yNew  
+        #tempVec = y[:,i-1] + 0.5*(-np.dot(M,F[:,i-1])-np.dot(C,y_dot[:,i-1])-np.dot(K,y[:,i-1]))*dt
+        #y[:,i] = y[:,i-1] + tempVec*dt
+        #y_dot[:,i] = np.dot(inv(I+C) , tempVec + 0.5*(-np.dot(M,F[:,i])-np.dot(K,y[:,i])))
+
+        #B = np.dot( 2*M/(dt*dt) - K, y[:,i-1]) + np.dot((C/(2*dt) - M/(dt*dt)) , y[:,i-2] + np.dot(-M,F[:,i-1]))
+        '''
+        A = M/(dt**2) + C/dt + K
+        B = -np.dot(M,F[:,i]) + np.dot(M/(dt**2) , 2*y[:,i-1]-y[:,i-2]) + np.dot(C/dt,y[:,i-1])
+        yNew = np.dot(inv(A) , B)
+        y[:,i] = yNew
+        '''
+        #print('np.dot(-M,F[:,i]) = ',np.dot(-M,F[:,i]))
+        Ff = (1.0 - alphaF) * np.dot(-M,F[:,i]) + alphaF * f0
+        #print('F = ',F)
+		
+        LHS = a1h * M + a2h * C + a3h * K 
+        RHS = np.dot(M,(a1m * u0 + a2m * v0 + a3m * a0))
+        RHS += np.dot(C,(a1b * u0 + a2b * v0 + a3b * a0)) 
+        RHS += np.dot(a1k * K, u0) + Ff
+
+        # update self.f1
+        f1 = np.dot(-M,F[:,i])
+        
+        # updates self.u1,v1,a1
+        u1 = np.linalg.solve(LHS, RHS)
+        y[:,i] = u1
+        v1 = a1v * (u1 - u0) + a2v * v0 + a3v * a0
+        a1 = a1a * (u1 - u0) + a2a * v0 + a3a * a0
+
+        u0 = u1
+        v0 = v1
+        a0 = a1
+        
+        # update the force   
+        f0 = f1
 
     return y
     
@@ -359,7 +435,7 @@ def construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRati
                             [                0                  ,         -stiffnessRatio[2]        ,  stiffnessRatio[2]]
                           ]) * 12 * bendingStiffness / trussLength**3
                             
-    structure.C = 0.1*structure.M + 0.2*structure.K
+    structure.C = 0.0*structure.M + 0.0*structure.K
                             
 def plot( plot_name, subject, radius, color ):
     plot_name.line( x='x', y='y', source=subject.massSupports[0], color=color, line_width=5)
@@ -383,20 +459,54 @@ def read_seismic_input(file):
     amplitude   = list()
     time           = list()
     
-    counter = 0
+    wordCounter = 0
+    lineCounter = 0
+    npts = 0
+    
     with open( file,'r' ) as f:
         for line in f:
-            counter = 0
+            #counter = 0
             for word in line.split():
-                if (counter % 2 == 0):
-                    time.append(float(word))
-                else:
-                    amplitude.append(float(word))
-                counter += 1
+                if lineCounter == 3 and wordCounter == 2:
+                    npts = int(word)
+                    
+                if lineCounter == 3 and wordCounter == 6:
+                    dt = float(word)
+                
+                if lineCounter >= 4:
+                    amplitude.append(float(word)*9.81)
 
-    # create colors
-    #color = list()
-    #for i in amplitude:
-        #color.append('#33FF33')
+                wordCounter += 1
+            wordCounter = 0
+            lineCounter += 1
+
+    # Create time list
+    for i in range(0,npts):
+        time.append(i*dt)
         
-    return ColumnDataSource(data=dict(amplitude=amplitude,time=time))
+    return ColumnDataSource(data=dict(amplitude=np.array(amplitude),time=np.array(time)))
+
+def read_ERS_data(file):
+    acceleration = list()
+    period = list()
+    
+    wordCounter = 0
+    lineCounter = 0
+    
+    with open( file,'r' ) as f:
+        for line in f:
+            for word in line.split(','):
+                if lineCounter > 45 and lineCounter < 157: #input data situated between line 45 and 157 in the data file
+                    if wordCounter == 0:
+                        #print(word)
+                        period.append(float(word))
+                    elif wordCounter == 1:
+                        acceleration.append(float(word)*9.81) # multiplication by 9.81 to convert it to m/sec/sec
+                    wordCounter += 1
+                #wordCounter += 1
+            wordCounter = 0
+            lineCounter += 1
+    
+    print('len(period) = ',len(period) )
+    print('len(accel.) = ',len(acceleration))
+    return ColumnDataSource(data=dict(period=period,acceleration=acceleration))
