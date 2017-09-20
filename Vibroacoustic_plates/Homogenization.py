@@ -1,0 +1,89 @@
+import math
+
+
+def homogenize( E, G, NU, D ):
+
+
+    # Quantity of layers (needs to be uneven)
+    Quantity = len(D)
+    if Quantity % 2 == 0:
+        print "Amount of layers must be uneven"
+        return
+
+    if Quantity == 0:
+        print "No Homogenisation needed"
+        return
+
+    # conver the array of NU from 2D to 1D
+    nu = []
+    for i in range( len(NU) ):
+        for Element in NU[ i ]:
+            nu.append( Element )
+
+#===============================================================================
+# For comprehensibility
+# Sum up all layers turned differently
+# then the first(and last) layer D[1] + D[3] +...
+#===============================================================================
+
+    Turned_Layers = sum(D[1:-1:2])
+    # total Thickness
+
+    TN = sum(D)
+    G1_eff =(G[0]*(sum(D[0::2]))+G[0]*(Turned_Layers))/TN
+    G2_eff = G[1]*G[2]*TN/(G[2]*(sum(D[0::2]))+G[1]*(Turned_Layers))
+
+    G3_eff = G[2]*G[1]*TN/(G[1]*(sum(D[0::2]))+G[2]*(Turned_Layers))
+    #====================================
+
+    Matrjoschka = 0
+    #copysign(x,y):
+    #Return x with the sign of y. (There is no sign() in Python)
+    # Middle Part
+    for i in range(1,(Quantity+1)/2): # 1,2,3...Quantity  # X%Y rest of modulo division X/Y???
+        Matrjoschka = -math.copysign(1,i%2 -1) * (1-E[1]/E[0]) * sum(D[i:-i])**3 + Matrjoschka
+
+    # Homogenisation of Parameters
+    E1_eff = E[0]/TN**3 *(TN**3     +   Matrjoschka)
+    E2_eff = E[0]/TN**3 *(E[1]/E[0]*TN**3   -   Matrjoschka)
+    E3_eff = E[2]
+    #====================================
+
+    # nu[0-5]=n12,nu13,nu23,nu21,nu31,nu32
+    nu12_eff_1 = ((sum(D[0::2]))*nu[0]+(Turned_Layers)*nu[3])/TN
+    nu21_eff_1 = ((sum(D[0::2]))*nu[3]+(Turned_Layers)*nu[0])/TN
+    nu13_eff_1 = ((sum(D[0::2]))*nu[1]+(Turned_Layers)*nu[2])/TN
+    nu31_eff_1 = ((sum(D[0::2]))*nu[4]+(Turned_Layers)*nu[5])/TN
+    nu23_eff_1 = ((sum(D[0::2]))*nu[2]+(Turned_Layers)*nu[1])/TN
+    nu32_eff_1 = ((sum(D[0::2]))*nu[5]+(Turned_Layers)*nu[4])/TN
+
+    nu12_eff_2 = nu21_eff_1*E1_eff/E2_eff
+    nu21_eff_2 = nu12_eff_1*E2_eff/E1_eff
+    nu13_eff_2 = nu31_eff_1*E1_eff/E3_eff
+    nu31_eff_2 = nu13_eff_1*E3_eff/E1_eff
+    nu23_eff_2 = nu32_eff_1*E2_eff/E3_eff
+    nu32_eff_2 = nu23_eff_1*E3_eff/E2_eff
+
+    nu12_eff = (nu12_eff_1 + nu12_eff_2)/2
+    nu21_eff = (nu21_eff_1 + nu21_eff_2)/2
+    nu13_eff = (nu13_eff_1 + nu13_eff_2)/2
+    nu31_eff = (nu31_eff_1 + nu31_eff_2)/2
+    nu23_eff = (nu23_eff_1 + nu23_eff_2)/2
+    nu32_eff = (nu32_eff_1 + nu32_eff_2)/2
+
+    ### ========= Check and return results  =======
+    # Checking criteria for stability all values must be positive
+    Check1 =  1-nu12_eff*nu21_eff
+    Check2 =  1-nu13_eff*nu31_eff
+    Check3 =  1-nu23_eff*nu32_eff
+    Check4 =  1-nu12_eff*nu21_eff-nu13_eff*nu31_eff-nu23_eff*nu32_eff-2*nu12_eff*nu23_eff*nu31_eff
+
+
+    return { "ElasticModulus" : [ E1_eff,E2_eff,E3_eff ],
+             "ShearModulus" : [ G1_eff,G2_eff,G3_eff ],
+             "PoissonRatios": [ [ nu12_eff, nu13_eff, nu23_eff ], [ nu21_eff, nu31_eff, nu32_eff ] ],
+             "TotalThickness" : sum(D) }
+
+    # ORIGINAL OUTPUT FOR Nu
+    # TODO: Ask Christoph if the outpu is correct
+    #[ nu12_eff,nu21_eff,nu13_eff,nu31_eff,nu23_eff,nu32_eff ], \
