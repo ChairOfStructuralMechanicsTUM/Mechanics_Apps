@@ -259,16 +259,23 @@ def main( ):
                                          active = 0 )
 
 
+    
+    LayersInfo = Message( Color = "black",
+                              Size = 2,
+                              MessageHeader = "Number of layers: " )
+
     WarningMessage = Message( Color = "grey",
                               Size = 3 ,
-                              MessageHeader = "Warning: " );
+                              MessageHeader = "Warning: " )
 
 
     Info = Div( text = "*Thickness of top to center layer separated by "
-                       "semicolon or space",
+                       "semicolon or space: <br>"
+					   "&nbsp;Symmetric cross section with odd number of layers"
+                       " and crosswise layup assumed.",
                 render_as_text = False,
                 width = 500,
-                height = 20 )
+                height = 30 )
 
     # SPECIFY THE LAYOUT:
     Buttons = row( row( Spacer( width = 50 ),
@@ -292,6 +299,7 @@ def main( ):
                         MaterialProperties.Table,
                         GEOMETRY_TITEL,
                         GeometryProperties.Table,
+                        LayersInfo.Widget,
                         Info,
                         WarningMessage.Widget )
 
@@ -306,6 +314,7 @@ def main( ):
     ApplyButton.on_click( partial( updateData,
                                    Tables,
                                    Graph,
+                                   LayersInfo,
                                    WarningMessage ) )
 
 
@@ -327,14 +336,15 @@ def main( ):
     SetDefaultButton.on_click( partial( setDeafultSettings,
                                         Tables,
                                         Graph,
+                                        LayersInfo,
                                         WarningMessage ) )
 
 
-    ShowInput.on_click( partial( showInput, Tables ) )
+    ShowInput.on_click( partial( showInput, Tables, LayersInfo ) )
 
 
     # ================= RUN SIMULATION WITH DEFAULT DATA =====================
-    updateData( Tables, Graph, WarningMessage )
+    updateData( Tables, Graph, LayersInfo, WarningMessage )
 
 
     #updateGraph( Graph, 4 )
@@ -352,16 +362,17 @@ def main( ):
 # ===============================================================================
 #                               HELPER FUNCTIONS
 # ===============================================================================
-def updateData( Tables, Graph, WarningMessage ):
+def updateData( Tables, Graph, LayersInfo, WarningMessage ):
 
     # clean the warning message
+    LayersInfo.clean()
     WarningMessage.clean()
 
     LayerThicknessBuffer = Tables[ "GeometryProperties" ].getValue( 0, 2 )
     try:
 
         Layers = getLayersFromString( Tables[ "GeometryProperties" ].getValue( 0, 2 ) )
-
+        LayersInfo.printMessage( str( len( Layers ) ) )
         # Homogenize the input data
         if len(Layers) != 1:
             makeMultiLayerMask( Tables )
@@ -606,6 +617,7 @@ def precomputePoissonRatios( Tables ):
 
 def setDeafultSettings( Tables,
                         Graph,
+                        LayersInfo,
                         WarningMessage ):
 
     WarningMessage.clean()
@@ -630,16 +642,19 @@ def setDeafultSettings( Tables,
     #Tables[ "PoissonRatios" ].resetByDefault( )
     #Tables[ "GeometryProperties" ].resetByDefault( )
 
-    updateData( Tables, Graph, WarningMessage )
+    updateData( Tables, Graph, LayersInfo, WarningMessage )
 
 
-def showInput( Tables ):
+def showInput( Tables, LayersInfo ):
 
     Tables[ "ElasticModulus" ].fillTableWithBufferData( "Input" )
     Tables[ "ShearModulus" ].fillTableWithBufferData( "Input")
     Tables[ "PoissonRatios" ].fillTableWithBufferData( "Input" )
     Tables[ "MaterialProperties" ].fillTableWithBufferData( "Input" )
     Tables[ "GeometryProperties" ].fillTableWithBufferData( "Input" )
+
+    Layers = getLayersFromString( Tables[ "GeometryProperties" ].getValue( 0, 2 ) )
+    LayersInfo.printMessage( str( len( Layers ) ) )
 
 
 def makeMask( Tables, Mode ):
