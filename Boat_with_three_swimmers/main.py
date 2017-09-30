@@ -88,7 +88,12 @@ boatSource = ColumnDataSource(data=dict(x = boatX,
 scene.patch(x = 'x', y = 'y', fill_color= boatColor, source = boatSource)
 
 # People information
+
+## Create the trace of jumping swimmers list
 listSources = list()
+for i in range(0,6):
+    listSources.append(ColumnDataSource(data=dict(x=[],y=[])))
+    
 N = 1                                # Number of people on the boat
 jumpSpeed = 0.25                     # Speed with respect to the moving boat
 
@@ -131,7 +136,7 @@ listYCoords = list()
 for person in listPeople:
     listXCoords.append(person.standingPosition[0])
     listYCoords.append(person.standingPosition[1])
-    listSources.append(ColumnDataSource(data=person.jumpingPath))
+    #listSources.append(ColumnDataSource(data=person.jumpingPath))
     
 swimmers_colors = ['#454545','#FF0000','#00FF00','#0000FF','#999999']
     
@@ -249,11 +254,11 @@ def updateNoPersons(attr,old,new):
             counter += 1
         personSource.data = dict(x=listXCoords, y=listYCoords,c=listColors)
         
-        # Including the newly created people jumping trace in the corresponding
-        # source data file
-        listSources = list()
-        for person in listPeople:
-            listSources.append(ColumnDataSource(data=person.jumpingPath))
+#        # Including the newly created people jumping trace in the corresponding
+#        # source data file
+#        listSources = list()
+#        for person in listPeople:
+#            listSources.append(ColumnDataSource(data=person.jumpingPath))
             
         reset_arrows_velocityDiagram( boatArrows_sources, swimmerArrows_sources, boatSpeed )
             
@@ -329,9 +334,9 @@ def reset ():
                                    jumpingPositionX, jumpingPositionY
                               )    
     
-    listSources = list()
-    for person in listPeople:
-        listSources.append(ColumnDataSource(data=person.jumpingPath))
+#    listSources = list()
+#    for person in listPeople:
+#        listSources.append(ColumnDataSource(data=person.jumpingPath))
         
     # Reseting the data inside the people source file 
     listXCoords = list()
