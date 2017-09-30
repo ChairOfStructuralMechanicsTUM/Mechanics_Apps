@@ -91,7 +91,7 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
                                             end=OpenHead(
                                                          line_color=boatColors[i],
                                                          line_width=3,
-                                                         size=10
+                                                         size=5
                                                         ),
                                             x_start=['xs'][0],
                                             y_start=['ys'][0],
@@ -122,7 +122,7 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
                                             end=OpenHead(
                                                          line_color="#FFCC00",
                                                          line_width=3,
-                                                         size=10
+                                                         size=5
                                                         ),
                                             x_start=['xs'][0],
                                             y_start=['ys'][0],
@@ -135,7 +135,7 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
                                             end=OpenHead(
                                                          line_color=colors[i],
                                                          line_width=3,
-                                                         size=10
+                                                         size=5
                                                         ),
                                             x_start=['xs'][0],
                                             y_start=['ys'][0],
@@ -149,25 +149,33 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
                                             
         diagram.add_layout( relativeVelocityArrow )
         diagram.add_layout( absoluteVelocityArrow )
-    '''
+    
     # Create labels for both the boat and the swimmers
     boatLabel = LabelSet(
-                          x=5, y=-1,
-                          text='f',
+                          x=5, y=-2,
+                          text='Boat Speed \n (Absolute)',
                           text_color='black',text_font_size="15pt",
                           level='glyph',text_baseline="middle",text_align="center",
                         )
+#    diagram.add_layout( LabelSet(
+#                                  x=5, y=-2,
+#                                  text='f',
+#                                  text_color='black',text_font_size="15pt",
+#                                  level='glyph',text_baseline="middle",text_align="center",
+#                              ))
+    '''
     swimmersLabels = list()
     for i in range(0,5):
         xPos = i*5+10
         swimmersLabels.append(
                                LabelSet(
-                                          x=xPos, y=-1,
+                                          x=xPos, y=-2,
                                           text='f',
                                           text_color='black',text_font_size="15pt",
                                           level='glyph',text_baseline="middle",text_align="center",
                                        )
                              )
+        diagram.add_layout( swimmersLabels[i] )
     '''
     return boatArrows_sources, swimmerArrows_sources
         

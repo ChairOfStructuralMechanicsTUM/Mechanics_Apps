@@ -22,7 +22,7 @@ yMin , yMax = 0,10
 scene = figure(
                 title="Water Scene with the Boat and its Swimmers",
                 x_range=(xMin,xMax),
-                y_range=(yMin,yMax),width=1000, height=400,
+                y_range=(yMin,yMax),width=1200, height=400,
                 tools=''
               )
 scene.title.align = "center"
@@ -44,6 +44,7 @@ velocity_diagram.title.align = "center"
 velocity_diagram.title.text_font_size = "25px"
 velocity_diagram.grid.visible=True
 velocity_diagram.xaxis.visible=False
+velocity_diagram.yaxis.axis_label="Velocity (m/s)"
 velocity_diagram.yaxis.visible=True
 
 '''
@@ -134,11 +135,13 @@ for person in listPeople:
     
 swimmers_colors = ['#454545','#FF0000','#00FF00','#0000FF','#999999']
     
-personSource = ColumnDataSource(data=dict(
-                                              x=listXCoords, 
-                                              y=listYCoords,
-                                              c=[swimmers_colors[0]]
-                               )         )
+personSource = ColumnDataSource(
+                                data=dict(
+                                          x=listXCoords, 
+                                          y=listYCoords,
+                                          c=[swimmers_colors[0]]
+                                         )         
+                               )
 
 scene.patches(xs='x',ys='y',fill_color='c',source =personSource )
 
@@ -252,6 +255,8 @@ def updateNoPersons(attr,old,new):
         for person in listPeople:
             listSources.append(ColumnDataSource(data=person.jumpingPath))
             
+        reset_arrows_velocityDiagram( boatArrows_sources, swimmerArrows_sources, boatSpeed )
+            
     else:
         pass
     
@@ -287,7 +292,7 @@ def play ():
     elif (not Active):
         curdoc().add_periodic_callback(move_boat, 50)
         Active=True
-    update_bars()
+    #update_bars()
 
 play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
@@ -365,6 +370,7 @@ def jump ():
                 # calculate the increase in the boat velocity after the swimmer jumps
                 velocity_increase = person.mass*person.relativeVelocity[0] / (person.mass*people_still_onboard + mass)
                 modify_swimmer_arrows( boatArrows_sources, swimmerArrows_sources, person, velocity_increase, boatSpeed )
+                
                 # the relative velocity of the swimmer is converted to absolute by subtracting the boat's velocity
                 person.relativeVelocity[0] -= boatSpeed
 
@@ -401,7 +407,7 @@ def jump ():
                              )
                 break
             counter += 1
-        update_bars()
+        #update_bars()
 
     else:
         pass
@@ -410,13 +416,13 @@ jump_button = Button(label="Jump!", button_type="success")
 jump_button.on_click(jump)
 
 
-eFig = BC.BarChart([""], [boatSpeed*3], ["#98C6EA"], [1])
-eFig.Width(200)
-eFig.Height(300)
-eFig.fig.yaxis.visible=True
-def update_bars ():
-    global boatSpeed
-    eFig.setHeight(0,boatSpeed)
+#eFig = BC.BarChart([""], [boatSpeed*3], ["#98C6EA"], [1])
+#eFig.Width(200)
+#eFig.Height(300)
+#eFig.fig.yaxis.visible=True
+#def update_bars ():
+#    global boatSpeed
+#    eFig.setHeight(0,boatSpeed)
     
 
 '''
@@ -431,11 +437,11 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 
 area_image = Div(text="""
 <p>
-<img src="/Boat_with_three_swimmers/static/images/picture.jpg" width=600>
+<img src="/Boat_with_three_swimmers/static/images/High_resolution_picture.png" width=600>
 </p>
 <p>
 Technical Information for Boat and Swimmers
-</p>""", render_as_text=False, width=600)
+</p>""", render_as_text=False, width=300)
 
 curdoc().add_root(
                   column(
