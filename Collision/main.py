@@ -77,16 +77,9 @@ particleOne = Particle(m1, r1, c1, np.array([x1,y1]), velocityVectorOne)
 particleTwo = Particle(m2, r2, c2, np.array([x2,y2]), velocityVectorTwo)
 
 # Construct source files
-#update_particle_source(0,x1,y1)
-#update_particle_source(1,x2,y2)
 particleOne.update_position_source()
 particleTwo.update_position_source()
-                            
-#circleOneSource = get_particle_source(0)
-#circleTwoSource = get_particle_source(1)
 
-#construct_arrow_source( 0, circleOneSource, velocityVectorOne )
-#construct_arrow_source( 1, circleTwoSource, velocityVectorTwo )
 particleOne.construct_velocity_source()
 particleTwo.construct_velocity_source()
   
@@ -133,10 +126,6 @@ through time
 '''
 # Calculate the new location of the two balls
 def compute_tranjectory():
-    
-#    circleOneSource = get_particle_source(0)
-#    circleTwoSource = get_particle_source(1)
-    
     # Compute the new position of the circles' center
     particleOne.position[0] += particleOne.velocity[0]*dt
     particleOne.position[1] += particleOne.velocity[1]*dt
@@ -145,19 +134,8 @@ def compute_tranjectory():
     particleTwo.position[0] += particleTwo.velocity[0]*dt
     particleTwo.position[1] += particleTwo.velocity[1]*dt
     particleTwo.update_position_source()
-#    circleOneSource.data['x'] = [ velocityVectorOne[0]*dt 
-#                                + circleOneSource.data['x'][0] ]
-#    circleOneSource.data['y'] = [ velocityVectorOne[1]*dt
-#                                + circleOneSource.data['y'][0] ]
-    
-#    circleTwoSource.data['x'] = [ velocityVectorTwo[0]*dt 
-#                                + circleTwoSource.data['x'][0] ]
-#    circleTwoSource.data['y'] = [ velocityVectorTwo[1]*dt
-#                                + circleTwoSource.data['y'][0] ]
 
     # Determine the seperating distance between the centers of the balls
-#    dx = circleOneSource.data['x'][0] - circleTwoSource.data['x'][0]
-#    dy = circleOneSource.data['y'][0] - circleTwoSource.data['y'][0]
     dx = particleOne.position[0] - particleTwo.position[0]
     dy = particleOne.position[1] - particleTwo.position[1]
     distance = np.sqrt( dx*dx + dy*dy )
@@ -280,22 +258,6 @@ def compute_tranjectory():
     
     particleOne.update_position_source()
     particleTwo.update_position_source()
-    
-#def update_velocity_arrows():
-#    
-#    circleOneSource = get_particle_source(0)
-#    circleTwoSource = get_particle_source(1)
-#
-#    update_arrow_source(
-#                         0,
-#                         circleOneSource, 
-#                         velocityVectorOne
-#                       )
-#    update_arrow_source(
-#                         1,
-#                         circleTwoSource,
-#                         velocityVectorTwo
-#                       )
     
 def update_bars():
     # Determine the new kinetic energy of both balls
