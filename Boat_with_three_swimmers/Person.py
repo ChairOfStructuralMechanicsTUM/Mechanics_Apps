@@ -238,11 +238,7 @@ def modify_swimmer_arrows( boatArrows_sources, swimmerArrows_sources, swimmer, v
     
     for i in range(0,5):
         if i > swimmer.n:
-            print('i = ',i)
-            print('swimmer.n = ',swimmer.n)
-            print('hellow')
             position = float(i*5 + 10)
-            print('position = ',position)
             swimmerArrows_sources[i][2].data = dict(
                                                     xs = [position-0.5],
                                                     ys = [0],

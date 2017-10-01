@@ -438,7 +438,7 @@ Add all the components together and initiate the app
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = Div(text=open(description_filename).read(), render_as_text=False, width=600)
 
 area_image = Div(text="""
 <p>
@@ -446,11 +446,14 @@ area_image = Div(text="""
 </p>
 <p>
 Technical Information for Boat and Swimmers
-</p>""", render_as_text=False, width=300)
+</p>""", render_as_text=False, width=600)
 
 curdoc().add_root(
                   column(
-                         description,
+                         row(
+                             description,
+                             area_image
+                            ),
                          scene,
                          row(
                              column(
@@ -461,7 +464,6 @@ curdoc().add_root(
                                     reset_button
                                    ),
                              velocity_diagram,
-                             area_image
                             )
                         )
                  )
