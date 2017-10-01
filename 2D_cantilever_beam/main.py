@@ -11,9 +11,9 @@ from bokeh.models.layouts import Spacer
 length = 5.0
 height = 1.0
 thickness = 1.0
-E = 1000000000
-Py = 0 #-1000
-Pz = 0 #2000
+E = 1000000000.0
+Py = 0.0 #-1000
+Pz = 0.0 #2000
 
 # Define mesh for visualization
 noElementsX = 80
@@ -384,7 +384,7 @@ def fun_change_Pz(attrname, old, new):
     if sourceXZdef.data['y'][0][3] <= 0:
         sourceArrowXZ.data = dict(
                                       xs=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
-                                      ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Pz)/5000+0.25],
+                                      ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Pz)/5000.0+0.25],
                                       xe=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ye=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
                                  )
@@ -396,7 +396,7 @@ def fun_change_Pz(attrname, old, new):
     else:
         sourceArrowXZ.data = dict(
                                       xs=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
-                                      ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Pz)/5000-0.25],
+                                      ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Pz)/5000.0-0.25],
                                       xe=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ye=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
                                  )
@@ -443,8 +443,8 @@ sourceFyLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fy']
 sourceFzLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fz'] ))
 
 # Construct the force sliders
-Yforce_slider = Slider(title="Y-direction Force", value=0, start=-5000, end=5000, step=100)
-Zforce_slider = Slider(title="Z-direction Force", value=0, start=-5000, end=5000, step=100)
+Yforce_slider = Slider(title="Y-direction Force", value=0.0, start=-5000.0, end=5000.0, step=100.0)
+Zforce_slider = Slider(title="Z-direction Force", value=0.0, start=-5000.0, end=5000.0, step=100.0)
 
 # Construct the figures which will visulize the beams
 plotUndefXY = Figure(    

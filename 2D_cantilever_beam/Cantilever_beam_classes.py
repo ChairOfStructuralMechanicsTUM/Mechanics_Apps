@@ -55,9 +55,9 @@ def construct_deformed_beam_centerLine( Py, Pz, E,
     xComponent = 0.0
     yComponent = 0.0
     for i in range(noElementsX + 1):
-        yComponent = amplificationFactor*Py*xComponent*xComponent*( 3*length - xComponent )/(6*E*I)
+        yComponent = amplificationFactor*Py*xComponent*xComponent*( 3.0*length - xComponent )/(6.0*E*I)
         deformedBeamXY.append( [xComponent, yComponent] )
-        angle = np.arctan((Py/E*I)*(length*xComponent-xComponent*xComponent/2))
+        angle = np.arctan((Py/E*I)*(length*xComponent-xComponent*xComponent/2.0))
         xIncrement = elementSizeX*np.cos(angle)
         xComponent += xIncrement
 
@@ -67,9 +67,9 @@ def construct_deformed_beam_centerLine( Py, Pz, E,
     xComponent = 0.0
     zComponent = 0.0
     for i in range(noElementsX + 1):
-        zComponent = -amplificationFactor*Pz*xComponent*xComponent*( 3*length - xComponent )/(6*E*I)
+        zComponent = -amplificationFactor*Pz*xComponent*xComponent*( 3.0*length - xComponent )/(6.0*E*I)
         deformedBeamXZ.append( [xComponent, zComponent] )
-        angle = np.arctan( ( Pz/E*I )*( length*xComponent - xComponent*xComponent/2 ) )
+        angle = np.arctan( ( Pz/E*I )*( length*xComponent - xComponent*xComponent/2.0 ) )
         xIncrement = elementSizeX*np.cos( angle )
         xComponent += xIncrement
         
@@ -83,14 +83,14 @@ def color_determiner( minimumValue, maximumValue, currentValue ):
         minimumPoint = [minimumValue , 0]
         maximumPoint = [maximumValue , 816]
         colorIndex = (maximumPoint[1] /(maximumPoint[0] - minimumPoint[0]))*(currentValue - minimumPoint[0])
-        ratio = colorIndex / 816
+        ratio = colorIndex / 816.0
         
         # Cases
         if ratio <= 0.25:
             R = '33'
             B = 'ff'
             # determine G
-            value = (255 / 204) * ( colorIndex )
+            value = (255.0 / 204.0) * ( colorIndex )
             hexG = hex( int(value) )
             FstringHexG,SstringHexG = hexG.split( 'x' )
             G = SstringHexG
@@ -99,7 +99,7 @@ def color_determiner( minimumValue, maximumValue, currentValue ):
             R = '33'
             G = 'ff'
             # determine B
-            value = ((51 - 255) / 204) * ( colorIndex - 408 ) + 51
+            value = ((51.0 - 255.0) / 204.0) * ( colorIndex - 408.0 ) + 51.0
             hexB = hex( int(value) )
             FstringHexB,SstringHexB = hexB.split( 'x' )
             B = SstringHexB  
@@ -108,7 +108,7 @@ def color_determiner( minimumValue, maximumValue, currentValue ):
             G = 'ff'
             B = '33'
             # determine R
-            value = ((255 - 51) / 204) * ( colorIndex - 612 ) + 255
+            value = ((255.0 - 51.0) / 204.0) * ( colorIndex - 612.0 ) + 255.0
             hexR = hex( int(value) )
             FstringHexR,SstringHexR = hexR.split( 'x' )
             R = SstringHexR         
@@ -117,7 +117,7 @@ def color_determiner( minimumValue, maximumValue, currentValue ):
             R = 'ff'
             B = '33'
             # determine G
-            value = ((51 - 255) / 204) * ( colorIndex - 816 ) + 51
+            value = ((51.0 - 255.0) / 204.0) * ( colorIndex - 816.0 ) + 51.0
             hexG = hex( int(value) )
             FstringHexG,SstringHexG = hexG.split( 'x' )
             G = SstringHexG  
@@ -156,10 +156,10 @@ def construct_normal_vectors( deformedBeam ):
             averageNormalVector1.append( [0,1] )
             averageNormalVector2.append( [0,-1] )
         else:
-            xComp1 = (normalVector1[i][0] + normalVector1[i+1][0]) / 2
-            xComp2 = (normalVector2[i][0] + normalVector2[i+1][0]) / 2
-            yComp1 = (normalVector1[i][1] + normalVector1[i+1][1]) / 2
-            yComp2 = (normalVector2[i][1] + normalVector2[i+1][1]) / 2
+            xComp1 = (normalVector1[i][0] + normalVector1[i+1][0]) / 2.0
+            xComp2 = (normalVector2[i][0] + normalVector2[i+1][0]) / 2.0
+            yComp1 = (normalVector1[i][1] + normalVector1[i+1][1]) / 2.0
+            yComp2 = (normalVector2[i][1] + normalVector2[i+1][1]) / 2.0
             normal1 = [xComp1,yComp1]
             normal2 = [xComp2,yComp2]
             averageNormalVector1.append(normal1)
@@ -229,8 +229,8 @@ def elements_color_determiner( deformed,
             else:
                 pass
             
-            strainXXup = (-P*( verticalMultiplier - 1.0 )*(length-xIncrement) ) / (height*thickness*thickness) /(noElementsY/2 - 1) + additionalValue
-            strainXXbottom = (P*( verticalMultiplier - 1.0 )*(length-xIncrement) ) / (height*thickness*thickness) /(noElementsY/2 - 1) + additionalValue
+            strainXXup = (-P*( verticalMultiplier - 1.0 )*(length-xIncrement) ) / (height*thickness*thickness) /(noElementsY/2.0 - 1.0) + additionalValue
+            strainXXbottom = (P*( verticalMultiplier - 1.0 )*(length-xIncrement) ) / (height*thickness*thickness) /(noElementsY/2.0 - 1.0) + additionalValue
             
             elementColor = color_determiner( smallestValue , biggestValue , strainXXup )
             colorList.append(elementColor)
