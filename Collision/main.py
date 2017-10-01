@@ -422,7 +422,7 @@ ballOneVelocityDirSlider.on_change('value',update_ballOne_VelocityDir)
 
 ##################### Creating velocity magnitude slider ######################
 def update_ballOne_VelocityMag(attr,old,new):
-
+    global velocityVectorOne
     if Active == False:
         magnitude = new
         velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity))
@@ -434,6 +434,8 @@ def update_ballOne_VelocityMag(attr,old,new):
             velocityVectorOne *= magnitude
             
         particleOne.update_velocity(velocityVectorOne[0],velocityVectorOne[1])
+        
+        update_bars()
     else:
         pass
    
@@ -485,6 +487,7 @@ def update_ballTwo_VelocityMag(attr,old,new):
             
         particleTwo.update_velocity(velocityVectorTwo[0],velocityVectorTwo[1])
 
+        update_bars()
     else:
         pass
     
