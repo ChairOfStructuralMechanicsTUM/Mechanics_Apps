@@ -11,7 +11,6 @@ from os.path import dirname, join
 from bokeh.models.layouts import Spacer
 from os.path import dirname, join, split
 from bokeh.models import Arrow, OpenHead
-from bokeh.models.layouts import Spacer
 
 '''
 ###############################################################################
@@ -254,12 +253,6 @@ def updateNoPersons(attr,old,new):
             listColors.append(swimmers_colors[counter])
             counter += 1
         personSource.data = dict(x=listXCoords, y=listYCoords,c=listColors)
-        
-#        # Including the newly created people jumping trace in the corresponding
-#        # source data file
-#        listSources = list()
-#        for person in listPeople:
-#            listSources.append(ColumnDataSource(data=person.jumpingPath))
             
         reset_arrows_velocityDiagram( boatArrows_sources, swimmerArrows_sources, boatSpeed )
             
@@ -274,30 +267,30 @@ numberPersonsSlider.on_change('value',updateNoPersons)
 
 
 ########################### Creating pause button #############################
-def pause (toggled):
-    global Active
-    # When active pause animation
-    if (toggled):
-        curdoc().remove_periodic_callback(move_boat)
-        Active=False
-    else:
-        curdoc().add_periodic_callback(move_boat, 50)
-        Active=True
-        
-pause_button = Toggle(label="Pause", button_type="success")
-pause_button.on_click(pause)
+#def pause ():
+#    global Active
+#    # When active pause animation
+#    if Active == True:
+#        curdoc().remove_periodic_callback(move_boat)
+#        Active=False
+#    else:
+#        pass
+#        
+#pause_button = Button(label="Pause", button_type="success")
+#pause_button.on_click(pause)
 
 ########################### Creating play button ##############################
 def play ():
     global Active
     # if inactive, reactivate animation
-    if (pause_button.active):
-        # deactivating pause button reactivates animation
-        # (calling add_periodic_callback twice gives errors)
-        pause_button.active=False
-    elif (not Active):
+    if Active == True:
+        curdoc().remove_periodic_callback(move_boat)
+        Active=False
+        play_button.label = "Play"
+    else:
         curdoc().add_periodic_callback(move_boat, 50)
         Active=True
+        play_button.label = "Pause"
     #update_bars()
 
 play_button = Button(label="Play", button_type="success")
@@ -334,10 +327,6 @@ def reset ():
                                    standingPositionX, standingPositionY,
                                    jumpingPositionX, jumpingPositionY
                               )    
-    
-#    listSources = list()
-#    for person in listPeople:
-#        listSources.append(ColumnDataSource(data=person.jumpingPath))
         
     # Reseting the data inside the people source file 
     listXCoords = list()
@@ -456,7 +445,7 @@ curdoc().add_root(
                              column(
                                     numberPersonsSlider,
                                     play_button,
-                                    pause_button,
+                                    #pause_button,
                                     jump_button,
                                     reset_button
                                    ),
