@@ -11,6 +11,7 @@ from os.path import dirname, join
 from bokeh.models.layouts import Spacer
 from os.path import dirname, join, split
 from bokeh.models import Arrow, OpenHead
+from bokeh.models.layouts import Spacer
 
 '''
 ###############################################################################
@@ -419,15 +420,6 @@ def jump ():
 
 jump_button = Button(label="Jump!", button_type="success")
 jump_button.on_click(jump)
-
-
-#eFig = BC.BarChart([""], [boatSpeed*3], ["#98C6EA"], [1])
-#eFig.Width(200)
-#eFig.Height(300)
-#eFig.fig.yaxis.visible=True
-#def update_bars ():
-#    global boatSpeed
-#    eFig.setHeight(0,boatSpeed)
     
 
 '''
@@ -442,18 +434,23 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 
 area_image = Div(text="""
 <p>
-<img src="/Boat_with_three_swimmers/static/images/High_resolution_picture.png" width=600>
+<img src="/Boat_with_three_swimmers/static/images/High_resolution_picture.png" width=400>
 </p>
 <p>
 Technical Information for Boat and Swimmers
-</p>""", render_as_text=False, width=600)
+</p>""", render_as_text=False, width=400)
 
 curdoc().add_root(
                   column(
                          row(
                              description,
-                             area_image
+                             Spacer(width=100),
+                             column(
+                                    Spacer(height=100),
+                                    area_image
+                                   )
                             ),
+                         Spacer(height=50),
                          scene,
                          row(
                              column(

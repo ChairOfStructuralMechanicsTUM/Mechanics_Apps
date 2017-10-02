@@ -1,6 +1,6 @@
 import numpy as np
 from bokeh.plotting import ColumnDataSource
-from bokeh.models import Arrow, OpenHead, LabelSet
+from bokeh.models import Arrow, OpenHead, LabelSet, Label
 
 class Person():
     
@@ -167,18 +167,42 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
         diagram.add_layout( startingVelocityArrow )
     
     # Create labels for both the boat and the swimmers
-    boatLabel = LabelSet(
-                          x=5, y=-2,
-                          text='Boat Speed \n (Absolute)',
-                          text_color='black',text_font_size="15pt",
-                          level='glyph',text_baseline="middle",text_align="center",
-                        )
-#    diagram.add_layout( LabelSet(
-#                                  x=5, y=-2,
-#                                  text='f',
-#                                  text_color='black',text_font_size="15pt",
-#                                  level='glyph',text_baseline="middle",text_align="center",
-#                              ))
+    diagram.add_layout( Label(
+                                  x=5, y=-2,
+                                  text='Boat',
+                                  text_color='black',text_font_size="8pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                              ))
+    diagram.add_layout( Label(
+                                  x=10, y=-2,
+                                  text='Black Swimmer',
+                                  text_color='black',text_font_size="8pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                              ))
+    diagram.add_layout( Label(
+                                  x=15, y=-2,
+                                  text='Red Swimmer',
+                                  text_color='black',text_font_size="8pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                              ))
+    diagram.add_layout( Label(
+                                  x=20, y=-2,
+                                  text='Orange Swimmer',
+                                  text_color='black',text_font_size="8pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                              ))
+    diagram.add_layout( Label(
+                                  x=25, y=-2,
+                                  text='Blue Swimmer',
+                                  text_color='black',text_font_size="8pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                              ))
+    diagram.add_layout( Label(
+                                  x=30, y=-2,
+                                  text='Grey Swimmer',
+                                  text_color='black',text_font_size="8pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                              ))
     '''
     swimmersLabels = list()
     for i in range(0,5):
