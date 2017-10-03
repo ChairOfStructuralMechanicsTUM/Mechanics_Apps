@@ -234,19 +234,17 @@ def solve_time_domain(structure, seismicInput):
     M = structure.M
     C = structure.C
     K = structure.K
-    I = np.array([[1,0,0],[0,1,0],[0,0,1]])
     
     F = np.zeros((3,N))
     F[0,:] = seismicInput.data['amplitude']
-    #F[1,:] = seismicInput.data['amplitude']
-    #F[2,:] = seismicInput.data['amplitude']
-    
     x0 = np.array([0.0,0.0,0.0])
     v0 = np.array([0.0,0.0,0.0])
     
+    ###########################################################################
+    ######### Generalized-alpha (high order time integration method) ##########
+    ### Credit to the implementation of Máté Péntek from Statik Lehrestuhl ####
+    ###########################################################################
     y = np.zeros((3,len( F[0,:] ))) # 3 refers to the number of dofs (3 storeys)
-    y_dot = np.zeros((3,len( F[0,:] )))
-    y_dotdot = np.zeros((3,len( F[0,:] )))
     
     y[:,0] = x0
     a0 = np.dot(inv(M),( np.dot(-M,F[:,0]) - np.dot(C,v0) - np.dot(K,x0) ))
@@ -306,12 +304,7 @@ def solve_time_domain(structure, seismicInput):
         #y_dot[:,i] = np.dot(inv(I+C) , tempVec + 0.5*(-np.dot(M,F[:,i])-np.dot(K,y[:,i])))
 
         #B = np.dot( 2*M/(dt*dt) - K, y[:,i-1]) + np.dot((C/(2*dt) - M/(dt*dt)) , y[:,i-2] + np.dot(-M,F[:,i-1]))
-        '''
-        A = M/(dt**2) + C/dt + K
-        B = -np.dot(M,F[:,i]) + np.dot(M/(dt**2) , 2*y[:,i-1]-y[:,i-2]) + np.dot(C/dt,y[:,i-1])
-        yNew = np.dot(inv(A) , B)
-        y[:,i] = yNew
-        '''
+
         #print('np.dot(-M,F[:,i]) = ',np.dot(-M,F[:,i]))
         Ff = (1.0 - alphaF) * np.dot(-M,F[:,i]) + alphaF * f0
         #print('F = ',F)
@@ -336,7 +329,26 @@ def solve_time_domain(structure, seismicInput):
         
         # update the force   
         f0 = f1
+    
+    '''
+    ###########################################################################
+    ################## Low-order time integration method ######################
+    ###########################################################################
+    y = np.zeros((3,len( F[0,:] )))
+    y[:,0] = x0
+    a0 = np.dot(inv(M),( F[:,0] - np.dot(C,v0) - np.dot(K,x0) ))
+    
+    y0 = x0 - dt*v0 + (dt*dt/2)*a0
 
+    y[:,1] = y0
+    
+
+    for i in range(2,len(F[0,:])):
+        A = M/(dt**2) + C/dt + K
+        B = -np.dot(M,F[:,i]) + np.dot(M/(dt**2) , 2*y[:,i-1]-y[:,i-2]) + np.dot(C/dt,y[:,i-1])
+        yNew = np.dot(inv(A) , B)
+        y[:,i] = yNew 
+    '''
     return y
     
 def construct_truss_sources(massOne, massTwo, massThree, length):
