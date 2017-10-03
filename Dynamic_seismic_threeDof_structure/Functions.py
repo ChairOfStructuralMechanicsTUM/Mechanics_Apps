@@ -448,7 +448,26 @@ def construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRati
                             [                0                  ,         -stiffnessRatio[2]        ,  stiffnessRatio[2]]
                           ]) * 12 * bendingStiffness / trussLength**3
                             
-    structure.C = 0.0*structure.M + 0.0*structure.K
+                            
+    '''
+    Rayleigh damping coefficients were chosen based on the following formula:
+    alpha = 2*w1*w2/(w2**2-w1**2) * (w2*xsi1 - w1*xsi2)
+    beta  = 2/(w2**2-w1**2) * (w2*xsi2 - w1*xsi1)
+    **the equation brought from paper "EVALUATION OF ADDED MASS MODELING
+    APPROACHES FOR THE DESIGN OF MEMBRANE STRUCTURES BY FULLY COUPLED FSI 
+    SIMULATIONS"
+    
+    w1 --- angular frequency of the first mode
+    w2 --- angular frequency of the second mode
+    xsi1 --- damping ratio of first mode
+    xsi2 --- damping ratio of second mode
+    
+    for the given structure, w1 and w2 equal 12.498 rad/sec and 26.722 rad/sec
+    respectively. And since we need the damping ratio of the structure to be 
+    5 %, hence xsi1 and xsi2 are assigned with 0.05. As a result, alpha and 
+    beta equal to 0.8515 and 0.0026 respectively.
+    '''
+    structure.C = 0.8515*structure.M + 0.0026*structure.K
                             
 def plot( plot_name, subject, radius, color ):
     plot_name.line( x='x', y='y', source=subject.massSupports[0], color=color, line_width=5)
