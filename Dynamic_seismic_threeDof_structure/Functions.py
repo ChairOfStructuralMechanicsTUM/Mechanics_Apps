@@ -234,6 +234,7 @@ def solve_time_domain(structure, seismicInput):
     M = structure.M
     C = structure.C
     K = structure.K
+    #I = np.array([[1,0,0],[0,1,0],[0,0,1]])
     
     F = np.zeros((3,N))
     F[0,:] = seismicInput.data['amplitude']
@@ -242,7 +243,7 @@ def solve_time_domain(structure, seismicInput):
     
     ###########################################################################
     ######### Generalized-alpha (high order time integration method) ##########
-    ### Credit to the implementation of Máté Péntek from Statik Lehrestuhl ####
+    ###### Credit to inplementation of Mate Pentek from Statik Lehrstuhl ######
     ###########################################################################
     y = np.zeros((3,len( F[0,:] ))) # 3 refers to the number of dofs (3 storeys)
     

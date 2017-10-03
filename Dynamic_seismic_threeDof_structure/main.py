@@ -408,32 +408,23 @@ time_slider.on_change('value',update_time)
 
 
 signal_choices = RadioGroup(
-        labels=["Signal 1", "Signal 2", "Signal 3"], active=0)
+        labels=["Response One", "Response Two", "Response Three"], active=0)
 
-def pause():
-    global Active
-    # When active pause animation
-    if Active == True:
-        curdoc().remove_periodic_callback(update_structure)
-        Active=False
-    else:
-        pass
-        
-pause_button = Button(label="Pause", button_type="success")
-pause_button.on_click(pause)
-
-def play():
+def playPause():
     global Active, periodicCallback
     
     if Active == False:
         curdoc().add_periodic_callback(update_structure,100)
         Active=True
         periodicCallback = 0
+        playPause_button.label = "Pause"
     else:
-        pass
+        curdoc().remove_periodic_callback(update_structure)
+        Active=False
+        playPause_button.label = "Play"
     
-play_button = Button(label="Play", button_type="success")
-play_button.on_click(play)
+playPause_button = Button(label="Play", button_type="success")
+playPause_button.on_click(playPause)
 
 '''
 ###############################################################################
@@ -445,8 +436,7 @@ curdoc().add_root(
                         column(
                                structure_plot,
                                time_slider,
-                               play_button,
-                               pause_button,
+                               playPause_button,
                                signal_choices
                               ),
                         
