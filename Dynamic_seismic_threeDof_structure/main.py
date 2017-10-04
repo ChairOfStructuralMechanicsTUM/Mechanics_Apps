@@ -180,9 +180,11 @@ Read and plot the seismic signals
 ###############################################################################
 '''
 # There will be three signals to be read
-signalOne   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/San_Ramon_Fire_Station/RSN215_LIVERMOR_A-SRM070.AT2')
-signalTwo   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Rio_Hondo/RSN8837_14383980_CIRIOHNE.AT2')
-signalThree = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Bevagna/RSN4346_UBMARCHE.P_A-BEV000.AT2')
+signalOne   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/San_Ramon_Fire_Station/RSN215_LIVERMOR_A-SRM070.AT2', scale = 1.9187
+)
+signalTwo   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Rio_Hondo/RSN8837_14383980_CIRIOHNE.AT2', scale = 2.9467
+)
+signalThree = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Pleasanton/RSN20075_40199209_1826HNN.AT2', scale = 127.8333)
 
 # Calculate the maximum achieved amplitude in all three signals
 maxAmplitude = 0

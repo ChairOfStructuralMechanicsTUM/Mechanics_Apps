@@ -487,7 +487,7 @@ def plot( plot_name, subject, radius, color ):
     
     plot_name.line( x='x', y='y', source=subject.base, color='#000000', line_width=5 )
     
-def read_seismic_input(file):
+def read_seismic_input(file, scale):
     amplitude   = list()
     time           = list()
     
@@ -506,7 +506,7 @@ def read_seismic_input(file):
                     dt = float(word)
                 
                 if lineCounter >= 4:
-                    amplitude.append(float(word)*9.81)
+                    amplitude.append(float(word)*9.81*scale)
 
                 wordCounter += 1
             wordCounter = 0
