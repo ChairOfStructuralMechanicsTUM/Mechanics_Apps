@@ -6,6 +6,7 @@ from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
 from bokeh.models import Slider, Button, Div, HoverTool, Range1d, Div
 from os.path import dirname, join, split
+from bokeh.models.widgets import TextInput
 
 # z = lam/(2*sqrt(k*m))
 # z = 1 => crit damped
@@ -73,10 +74,33 @@ Position = ColumnDataSource(data = dict(t=[0],s=[0]))
 initial_velocity_value=-5.0
 Active=False
 
+'''
+################### Define the external force parameters ######################
+F = Fo sin( Omega*t + alpha )
+'''
+Fo_input    = TextInput(value="10", title="Fo [N]")
+Omega_input = TextInput(value="1" , title="Omega [1/s]")
+alpha_input = TextInput(value="0" , title="alpha [rad]")
+Force_equation_text = Div(text="""<b>External force of the form: Fo sin( Omega*t + alpha )</b>""")
+
+def Get_external_force_value():
+    Fo = float(Fo_input.value)
+    Omega = float(Omega_input.value)
+    alpha = float(alpha_input.value)
+    
+    return [Fo, Omega, alpha]
+
+
 def evolve():
     global mass, Bottom_Line, Linking_Line, t, s, y_range_plot, x_range_plot
     mass.FreezeForces()
-    disp=mass.evolve(dt)
+    
+    # Read the external force parameters
+    externalForce = Get_external_force_value()
+    
+    # Solve for the new displacement of the mass
+    disp=mass.evolve(t, dt, externalForce)
+    
     s+=disp.y
     Bottom_Line.data=dict(
                           x=[mass_center_x-mass_width , mass_center_x+mass_width],
@@ -93,7 +117,6 @@ def evolve():
     if abs(s) > abs(y_range_plot.start):
         y_range_plot.start = -abs(s)*1.1 
         y_range_plot.end =  abs(s)*1.1  # multiplied by 1.1 for having an adsmall margin
-        
     if t > x_range_plot.end:
         x_range_plot.end = t*2
 
@@ -296,7 +319,31 @@ description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 ## Send to window
-curdoc().add_root(column(description, \
-    row(column(Spacer(height=100),play_button,pause_button,reset_button),Spacer(width=10),fig,p), \
-    row(mass_input,kappa_input),row(lam_input,initV_input)))
+curdoc().add_root(
+                    column(description, 
+                           row(
+                               column(
+                                      Spacer(height=100),
+                                      play_button,
+                                      pause_button,
+                                      reset_button
+                                     ),
+                               Spacer(width=10),
+                               fig,
+                               p
+                              ), 
+                           row(
+                               mass_input,
+                               kappa_input,
+                               Fo_input,
+                               Omega_input,
+                               alpha_input,
+                               Force_equation_text
+                              ),
+                           row(
+                               lam_input,
+                               initV_input
+                              )
+                          )
+                 )
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
