@@ -21,54 +21,145 @@ s=0
 t=0
 dt=0.03
 
-mass = CircularMass(initial_mass_value,0,9,2,2)
+mass_center_x = 0
+mass_center_y = 15
+mass_width    = 2
+mass_height   = 2
+mass = CircularMass(
+                    initial_mass_value,
+                    mass_center_x,
+                    mass_center_y,
+                    mass_width,
+                    mass_height
+                   )
 mass.changeInitV(initial_velocity_value)
-spring = Spring((-2,18),(-2,11),7,initial_kappa_value)
-dashpot = Dashpot((2,18),(2,11),initial_lambda_value)
-mass.linkObj(spring,(-2,11))
-mass.linkObj(dashpot,(2,11))
-Bottom_Line = ColumnDataSource(data = dict(x=[-2,2],y=[11,11]))
-Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[11,9]))
+
+spring_start_coord = (mass_center_x-mass_width , 0)
+spring_end_coord   = (mass_center_x-mass_width , mass_center_y-mass_height)
+spring_length      = 11
+spring = Spring(
+                spring_start_coord,
+                spring_end_coord,
+                spring_length,
+                initial_kappa_value
+               )
+mass.linkObj(spring,(mass_center_x-mass_width , mass_center_y-mass_height))
+
+dashpot_start_coord = (mass_center_x+mass_width , 0)
+dashpot_end_coord   = (mass_center_x+mass_width , mass_center_y-mass_height)
+dashpot = Dashpot(
+                  dashpot_start_coord,
+                  dashpot_end_coord,
+                  initial_lambda_value
+                 )
+mass.linkObj(dashpot,(mass_center_x+mass_width , mass_center_y-mass_height))
+
+Bottom_Line = ColumnDataSource(
+                               data = dict(
+                                           x=[mass_center_x-mass_width , mass_center_x+mass_width],
+                                           y=[spring_end_coord[1] , spring_end_coord[1]]
+                                          )
+                              )
+
+Linking_Line = ColumnDataSource(
+                                data = dict(
+                                            x=[mass_center_x , mass_center_x],
+                                            y=[spring_end_coord[1] , spring_end_coord[1]+2]
+                                           )
+                               )
+
 Position = ColumnDataSource(data = dict(t=[0],s=[0]))
 
 initial_velocity_value=-5.0
 Active=False
 
 def evolve():
-    global mass, Bottom_Line, Linking_Line, t, s
+    global mass, Bottom_Line, Linking_Line, t, s, y_range_plot, x_range_plot
     mass.FreezeForces()
     disp=mass.evolve(dt)
     s+=disp.y
-    Bottom_Line.data=dict(x=[-2,2],y=[11+s, s+11])
-    Linking_Line.data=dict(x=[0,0],y=[11+s, 9+s])
+    Bottom_Line.data=dict(
+                          x=[mass_center_x-mass_width , mass_center_x+mass_width],
+                          y=[spring_end_coord[1]+s , spring_end_coord[1]+s]
+                         )
+    Linking_Line.data=dict(
+                           x=[mass_center_x , mass_center_x],
+                           y=[spring_end_coord[1]+s , spring_end_coord[1]+2+s]
+                          )
     t+=dt
     Position.stream(dict(t=[t],s=[s]))
+    
+    # Change boundaries of displacement-time plot if exceeded
+    if abs(s) > abs(y_range_plot.start):
+        y_range_plot.start = -abs(s)*1.1 
+        y_range_plot.end =  abs(s)*1.1  # multiplied by 1.1 for having an adsmall margin
+        
+    if t > x_range_plot.end:
+        x_range_plot.end = t*2
 
 title_box = Div(text="""<h2 style="text-align:center;">Spring pendulum</h2>""",width=1000)
 
 # drawing
-fig = figure(title="", tools="", x_range=(-7,7), y_range=(0,20),width=350,height=500)
+fig = figure(title="", tools="", x_range=(-7,7), y_range=(-5,20),width=350,height=500)
 fig.title.text_font_size="20pt"
-fig.axis.visible = False
+fig.axis.visible = True
 fig.grid.visible = False
 fig.outline_line_color = None
 spring.plot(fig,width=2)
 dashpot.plot(fig,width=2)
-fig.line(x=[-2,2],y=[19,19],color="black",line_width=3)
-fig.line(x=[0,0],y=[18,19],color="black",line_width=3)
-fig.line(x=[-2,2],y=[18,18],color="black",line_width=3)
-fig.multi_line(xs=[[-2,-1.25],[-1,-0.25],[0,0.75],[1,1.75],[2,2.75]],
-    ys=[[19,19.75],[19,19.75],[19,19.75],[19,19.75],[19,19.75]],
-    color="black",
-    line_width=3)
+
+# Define the ground base for both the spring and the dashpot
+fig.line(
+         x=[mass_center_x-mass_width , mass_center_x+mass_width],
+         y=[spring_start_coord[1] , spring_start_coord[1]],
+         color="black",line_width=3
+        )
+fig.line(
+         x=[mass_center_x , mass_center_x],
+         y=[spring_start_coord[1]-1 , spring_start_coord[1]],
+         color="black",line_width=3
+        )
+fig.line(
+         x=[mass_center_x-mass_width , mass_center_x+mass_width],
+         y=[spring_start_coord[1]-1 , spring_start_coord[1]-1],
+         color="black",line_width=3
+        )
+fig.multi_line(
+               xs=[
+                   [mass_center_x-2 , mass_center_x-2-0.75],
+                   [mass_center_x-1 , mass_center_x-1-0.75],
+                   [mass_center_x-0 , mass_center_x-0-0.75],
+                   [mass_center_x+1 , mass_center_x+1-0.75],
+                   [mass_center_x+2 , mass_center_x+2-0.75]
+                  ],
+               ys=[
+                   [spring_start_coord[1]-1 , spring_start_coord[1]-1-0.75],
+                   [spring_start_coord[1]-1 , spring_start_coord[1]-1-0.75],
+                   [spring_start_coord[1]-1 , spring_start_coord[1]-1-0.75],
+                   [spring_start_coord[1]-1 , spring_start_coord[1]-1-0.75],
+                   [spring_start_coord[1]-1 , spring_start_coord[1]-1-0.75]
+                  ],
+               color="black",
+               line_width=3
+              )
+
+
 fig.line(x='x',y='y',source=Bottom_Line,color="black",line_width=3)
 fig.line(x='x',y='y',source=Linking_Line,color="black",line_width=3)
 mass.plot(fig)
 
 # plot
+x_range_plot = Range1d(0,10)
+y_range_plot = Range1d(-5,5)
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
-p = figure(title="", y_range=(-5,5), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=500, \
-    toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
+p = figure(
+           title="",
+           y_range = y_range_plot, 
+           x_range = x_range_plot, 
+           height=500, \
+           toolbar_location="right", 
+           tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]
+          ) #ywheel_zoom,xwheel_pan,reset,
 p.line(x='t',y='s',source=Position,color="black")
 p.axis.major_label_text_font_size="12pt"
 p.axis.axis_label_text_font_style="normal"
@@ -121,28 +212,71 @@ def play():
         curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
         Active=True
 
-def stop():
-    global Position, t, s, Bottom_Line, Linking_Line, spring, mass, dashpot
-    pause()
-    t=0
-    s=0
-    Position.data=dict(t=[0],s=[0])
-    Bottom_Line.data = dict(x=[-2,2],y=[11,11])
-    Linking_Line.data = dict(x=[0,0],y=[11,9])
-    spring.compressTo(Coord(-2,18),Coord(-2,11))
-    dashpot.compressTo(Coord(2,18),Coord(2,11))
-    mass.moveTo((0,9))
-    mass.resetLinks(spring,(-2,11))
-    mass.resetLinks(dashpot,(2,11))
-    mass.changeInitV(initV_input.value)
+#def stop():
+#    global Position, t, s, Bottom_Line, Linking_Line, spring, mass, dashpot
+#    pause()
+#    t=0
+#    s=0
+#    Position.data=dict(t=[0],s=[0])
+#    Bottom_Line.data = dict(
+#                               x=[mass_center_x-mass_width , mass_center_x+mass_width],
+#                               y=[spring_end_coord[1] , spring_end_coord[1]]
+#                           )
+#
+#    Linking_Line.data = dict(
+#                                x=[mass_center_x , mass_center_x],
+#                                y=[spring_end_coord[1] , spring_end_coord[1]+2]
+#                            )
+#    
+#    spring.compressTo(
+#                      Coord(spring_start_coord[0] , spring_start_coord[1]),
+#                      Coord(spring_end_coord[0] , spring_end_coord[0])
+#                     )
+#    
+#    dashpot.compressTo(
+#                       Coord(d,18),
+#                       Coord(2,11)
+#                      )
+#    mass.moveTo((mass_center_x , mass_center_y))
+#    mass.resetLinks(spring,(-2,11))
+#    mass.resetLinks(dashpot,(2,11))
+#    mass.changeInitV(initV_input.value)
 
 def reset():
-    stop()
+    global Position, t, s, Bottom_Line, Linking_Line, spring, mass, dashpot
+    
     mass_input.value = initial_mass_value
     kappa_input.value = initial_kappa_value
     lam_input.value = initial_lambda_value
     initV_input.value = initial_velocity_value
     mass.changeInitV(initV_input.value)
+    pause()
+    t=0
+    s=0
+    Position.data=dict(t=[0],s=[0])
+    Bottom_Line.data = dict(
+                               x=[mass_center_x-mass_width , mass_center_x+mass_width],
+                               y=[spring_end_coord[1] , spring_end_coord[1]]
+                           )
+
+    Linking_Line.data = dict(
+                                x=[mass_center_x , mass_center_x],
+                                y=[spring_end_coord[1] , spring_end_coord[1]+2]
+                            )
+    
+    spring.compressTo(
+                      Coord(spring_start_coord[0] , spring_start_coord[1]),
+                      Coord(spring_end_coord[0] , spring_end_coord[1])
+                     )
+    
+    dashpot.compressTo(
+                       Coord(dashpot_start_coord[0] , dashpot_start_coord[1]),
+                       Coord(dashpot_end_coord[0] , dashpot_end_coord[1])
+                      )
+    mass.moveTo((mass_center_x , mass_center_y))
+    
+    mass.resetLinks(spring,(mass_center_x-mass_width , mass_center_y-mass_height))
+    mass.resetLinks(dashpot,(mass_center_x+mass_width , mass_center_y-mass_height))
 
     #this could reset also the plot, but needs the selenium package:
     #reset_button = selenium.find_element_by_class_name('bk-tool-icon-reset')
@@ -152,8 +286,8 @@ play_button = Button(label="Play", button_type="success",width=100)
 play_button.on_click(play)
 pause_button = Button(label="Pause", button_type="success",width=100)
 pause_button.on_click(pause)
-stop_button = Button(label="Stop", button_type="success", width=100)
-stop_button.on_click(stop)
+#stop_button = Button(label="Stop", button_type="success", width=100)
+#stop_button.on_click(stop)
 reset_button = Button(label="Reset", button_type="success",width=100)
 reset_button.on_click(reset)
 
@@ -163,6 +297,6 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 
 ## Send to window
 curdoc().add_root(column(description, \
-    row(column(Spacer(height=100),play_button,pause_button,stop_button,reset_button),Spacer(width=10),fig,p), \
+    row(column(Spacer(height=100),play_button,pause_button,reset_button),Spacer(width=10),fig,p), \
     row(mass_input,kappa_input),row(lam_input,initV_input)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
