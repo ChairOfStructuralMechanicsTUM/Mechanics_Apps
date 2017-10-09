@@ -36,7 +36,7 @@ class Spring(object):
         direction = end-start
         # find normalising constant (=length)
         length = direction.norm()
-        self.direction = direction/length
+        self.direction = Coord(direction.x/length,direction.y/length)
         # define (normalised) perpendicular vector for spike directions
         perpVect = Coord(direction.y/length,-direction.x/length)
         # create values to help with loop
@@ -53,9 +53,11 @@ class Spring(object):
             # loop over the 4 points in the coil
             for j in range(0,4):
                 # save points
-                step = direction*0.05+direction*0.9*float(i+j/4.0)/self.nCoils+wiggle[j]
-                Pos['x'].append(start.x+step.x)
-                Pos['y'].append(start.y+step.y)
+                # step = direction*0.05+direction*0.9*float(i+j/4.0)/self.nCoils+wiggle[j]
+                stepx = direction.x*0.05+direction.x*0.9*float(i+j/4.0)/self.nCoils+wiggle[j].x
+                stepy = direction.y*0.05+direction.y*0.9*float(i+j/4.0)/self.nCoils+wiggle[j].y
+                Pos['x'].append(start.x+stepx)
+                Pos['y'].append(start.y+stepy)
         
         # add final points
         Pos['x'].append(end.x-0.05*direction.x)
@@ -69,7 +71,7 @@ class Spring(object):
         return length
     
     ## draw spring on figure
-    def plot(self,fig,colour="#808080",width=1):
+    def plot(self,fig,colour="black",width=1):
         fig.line(x='x',y='y',color=colour,source=self.Position,line_width=width)
     
     ## place spring in space

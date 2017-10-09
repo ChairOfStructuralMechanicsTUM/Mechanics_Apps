@@ -83,7 +83,7 @@ class Dashpot(object):
         return displacement.prod_scal(self.direction)
     
     ## draw dashpot on figure
-    def plot(self,fig,colour="#808080",width=1):
+    def plot(self,fig,colour="black",width=1):
         fig.line(x='x',y='y',color=colour,source=self.Casing,line_width=width)
         fig.line(x='x',y='y',color=colour,source=self.Piston,line_width=width)
         fig.line(x='x',y='y',color=colour,source=self.Line1,line_width=width)

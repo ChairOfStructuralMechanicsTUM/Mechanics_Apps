@@ -69,15 +69,15 @@ class Coord(object):
     
     # function returning the norm
     def norm(self):
-        return sqrt(self.x**2+self.y**2)
+        return float(sqrt(self.x**2+self.y**2))
     
     # function returning the direction
     def direction(self):
-        return Coord(self.x,self.y)/self.norm()
+        return Coord(self.x/self.norm(),self.y/self.norm())
     
     # function returning the perpendicular direction
     def perp(self):
-        return Coord(self.y,-self.x)/self.norm()
+        return Coord(self.y/self.norm(),-self.x/self.norm())
     
     def copy(self):
         return Coord(self.x,self.y)

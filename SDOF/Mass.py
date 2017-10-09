@@ -151,7 +151,8 @@ class CircularMass(DiscreteMass):
         self.shape = ColumnDataSource(data=dict(x=[x],y=[y],w=[w],h=[h]))
     
     # add CircularMass to figure
-    def plot(self,fig,colour="#0065BD",width=1):
+    def plot(self,fig,colour="#3070b3",width=1):
+    # def plot(self,fig,colour="#0065BD",width=1):
         fig.ellipse(x='x',y='y',width='w',height='h',color=colour,source=self.shape,line_width=width)
     
     # displace mass to position (used for reset)
