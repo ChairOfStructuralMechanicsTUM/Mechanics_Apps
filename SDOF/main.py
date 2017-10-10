@@ -3,9 +3,11 @@ from Dashpot import *
 from Mass import *
 
 from bokeh.plotting import figure
-from bokeh.layouts import column, row, Spacer
+from bokeh.layouts import column, row, Spacer, gridplot
 from bokeh.io import curdoc
 from bokeh.models import Slider, Button, Div, HoverTool, Range1d, Div, Arrow, NormalHead, CDSView, IndexFilter
+from bokeh.models.tickers import FixedTicker
+from bokeh.models.callbacks import CustomJS
 
 from os.path import dirname, join, split
 from math import sqrt, exp, pow, sin , cos, ceil, pi, atan2
@@ -23,8 +25,8 @@ initial_damping_coefficient_value = 7
 ## input parameters for the analytic solution
 initial_velocity_value = -5
 initial_displacement_value = 0
-frequency_ratio_value = 0.5
-force_value = 100
+frequency_ratio_value = 1
+force_value = 10
 ef = sqrt(initial_spring_constant_value/initial_mass_value)
 D = initial_damping_coefficient_value / (2*initial_mass_value*ef)
 damped_ef = ef * sqrt(1-pow(D,2))
@@ -50,11 +52,12 @@ displacement_homogeneous = ColumnDataSource(data = dict(t=[0],s=[0]))
 arrow_line = ColumnDataSource(data = dict(x1=[0],y1=[15],x2=[0],y2=[12]))
 amplification_function = ColumnDataSource(data = dict(beta=[0],V=[1]))
 phase_angle = ColumnDataSource(data = dict(beta=[0],phi=[0]))
-for beta in range(0,105):
-    amplification_function.stream(dict(beta=[beta/30],V=[1]))
-    phase_angle.stream(dict(beta=[beta/30],phi=[1]))
+for beta in range(1,75):
+    amplification_function.stream(dict(beta=[beta/25],V=[1]))
+    phase_angle.stream(dict(beta=[beta/25],phi=[1]))
+current_ratio = ColumnDataSource(data = dict(beta=[0],V=[1],phi=[0]))
 
-initial_velocity_value=-5.0
+initial_velocity_value=-0.0
 Active=False
 
 def evolve():
@@ -63,15 +66,14 @@ def evolve():
     global ef, damped_ef, D, excitation_frequency_value
     # mass.FreezeForces()
     # disp=mass.evolve(dt)
-
     #########
     k = spring.getSpringConstant
     # particular (steady-state) part
-    s_p = force_value / ( k * pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2) ) \
-        * ( ( 1-pow(D,2) ) * sin(excitation_frequency_value*t) - 2*D*frequency_ratio_value*cos(excitation_frequency_value*t) )
+    s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
+        * ( ( 1-pow(frequency_ratio_value,2) ) * sin(excitation_frequency_value*t) - 2*D*frequency_ratio_value*cos(excitation_frequency_value*t) )
     # homogeneous (transient) part
     s_h = exp(-D*ef*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) ) \
-        + force_value * exp(-D*ef*t) / ( k * pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2) ) \
+        + force_value * exp(-D*ef*t) / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
         * ( 2*D*frequency_ratio_value*cos(damped_ef*t) + ef/damped_ef * ( 2*frequency_ratio_value*pow(D,2) - frequency_ratio_value * (1-pow(frequency_ratio_value,2)) ) * sin(damped_ef*t) )
     #########
 
@@ -87,10 +89,10 @@ def evolve():
 title_box = Div(text="""<h2 style="text-align:center;">Single degree-of-freedom system</h2>""",width=1000)
 
 # sdof drawing
-fig = figure(title="", tools="", x_range=(-7,7), y_range=(0,20),width=350,height=500)
+fig = figure(title="", tools="", x_range=(-7,7), y_range=(0,20),width=350,height=450)
 fig.title.text_font_size="20pt"
-fig.axis.visible = True
-fig.grid.visible = True
+fig.axis.visible = False
+fig.grid.visible = False
 fig.outline_line_color = None
 # fig.line(x=[-7,7],y=[9,9],color="blue",line_width=3)
 fig.line(x=[-2,2],y=[.75,.75],color="black",line_width=3)
@@ -108,7 +110,7 @@ fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red", line_wi
 
 # time plot
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
-p = figure(title="", y_range=(-5,5), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=500, \
+p = figure(title="", y_range=(-5,5), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
     toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
 p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
 p.line(x='t',y='s',source=displacement_particular,color="#98c6ea",legend="Particular Solution",muted_color="#98c6ea",muted_alpha=0.2)
@@ -125,43 +127,60 @@ p.legend.click_policy="mute"
 def compute_amp_and_phase_angle():
     global amplification_function, phase_angle, D, frequency_ratio_value, current_ratio
     # beta scaled with 30!
-    print(D)
-    for beta in range(0,105):
-        if D == 0 and beta == 30:
+    for beta in range(0,75):
+        if D == 0 and beta == 25:
             V = 1000
         else:
-            V = 1 / sqrt( pow(1-pow(beta/30,2),2) + pow(2*D*beta/30,2) )
+            V = 1 / sqrt( pow(1-pow(beta/25,2),2) + pow(2*D*beta/25,2) )
 
-        if D == 0 and beta < 30:
+        if D == 0 and beta < 25:
             phi = 0
-        elif D == 0 and beta >= 30:
+        elif D == 0 and beta > 25:
             phi = 180
-        elif not D == 0 and beta == 30:
+        elif beta == 25:
             phi = 90
         else:
-            phi = atan2(2*D*beta , (1-pow(beta/30,2))) * 180 / pi
+            phi = atan2( 2*D*beta/25, 1-pow(beta/25,2) ) * 180 / pi
 
         amplification_function.patch({ 'V':[(beta,V)] })
         phase_angle.patch({ 'phi':[(beta,phi)] })
 
-    current_ratio = CDSView(source=amplification_function, filters=[IndexFilter([ceil(frequency_ratio_value*30)+1])])
+    # current_ratio = CDSView(source=amplification_function, filters=[IndexFilter([ceil(frequency_ratio_value*30)+1])])
+    plot_current_ratio()
 
-def compute_phase_angle():
-    global phase_angle, D, frequency_ratio_value
+def plot_current_ratio():
+    global amplification_function, frequency_ratio_value, current_ratio
+    if D == 0 and frequency_ratio_value == 1:
+        V = 1000
+    else:
+        V = 1 / sqrt( pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2) )
+
+    if D == 0 and frequency_ratio_value < 1:
+        phi = 0
+    elif frequency_ratio_value == 1:
+        phi = 90
+    elif D == 0 and frequency_ratio_value > 1:
+        phi = 180
+    else:
+        phi = atan2( 2*D*frequency_ratio_value, 1-pow(frequency_ratio_value,2) ) * 180 / pi
+    current_ratio.data=dict(beta=[frequency_ratio_value],V=[V],phi=[phi])
+
+    # current_ratio = CDSView(source=amplification_function, filters=[IndexFilter([ceil(frequency_ratio_value*30)+1])])
 
 compute_amp_and_phase_angle()
-p_af = figure(title="Amplification Function", x_range=(0,3.0), y_range=(0,5), width=300, height=300)
+p_af = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=300, height=300)
 p_af.line(x='beta', y='V', source=amplification_function)
-p_af.circle(x='beta', y='V', size=10, color="#e37222", source=amplification_function, view=current_ratio)
-p_af.xaxis.axis_label="Frequency ratio"
+p_af.circle(x='beta', y='V', size=10, color="#e37222", source=current_ratio)
+# p_af.xaxis.axis_label="Frequency ratio"
 p_af.yaxis.axis_label="Amplification"
 # p_af.axis.axis_label_text_font_style="normal"
 # p_af.axis.axis_label_text_font_size="14pt"
-p_pa = figure(title="Phase Angle", x_range=(0,3.0), y_range=(0,190), width=300, height=300)
+p_pa = figure(title="", tools="", x_range=(0,3.0), y_range=(0,180), width=300, height=300)
 p_pa.line(x='beta', y='phi', source=phase_angle)
-p_pa.circle(x='beta', y='phi', size=10, color="#e37222", source=phase_angle, view=current_ratio)
+p_pa.circle(x='beta', y='phi', size=10, color="#e37222", source=current_ratio)
 p_pa.xaxis.axis_label="Frequency ratio"
 p_pa.yaxis.axis_label="Phase angle"
+p_pa.yaxis.ticker = FixedTicker(ticks=[0,90,180])
 
 def move_system(disp):
     global mass, spring, damper, Bottom_Line, Linking_Line
@@ -198,7 +217,7 @@ def change_damping_coefficient(attr,old,new):
     updateParameters()
     compute_amp_and_phase_angle()
 
-damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=initial_damping_coefficient_value, start=0.0, end=10, step=0.5,width=400)
+damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=initial_damping_coefficient_value, callback_policy="mouseup", start=0.0, end=10, step=0.5,width=400)
 damping_coefficient_input.on_change('value',change_damping_coefficient)
 
 ## Create slider to choose initial velocity
@@ -227,9 +246,20 @@ def change_frequency_ratio(attr,old,new):
     if (not Active):
         frequency_ratio_value = new
         updateParameters()
+        plot_current_ratio()
+        
 
-frequency_ratio_input = Slider(title="Initial velocity [m/s]", value=frequency_ratio_value, start=-10.0, end=10.0, step=0.5,width=400)
+frequency_ratio_input = Slider(title="Frequency ratio", value=frequency_ratio_value, start=0.1, end=3.0, step=0.1,width=400)
 frequency_ratio_input.on_change('value',change_frequency_ratio)
+
+## Create slider to choose the frequency ratio
+def change_force_value(attr,old,new):
+    global Active, force_value
+    if (not Active):
+        force_value = new
+
+force_value_input = Slider(title="Force", value=force_value, start=0, end=100.0, step=1,width=400)
+force_value_input.on_change('value',change_force_value)
 
 def pause():
     global Active
@@ -303,7 +333,10 @@ description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 ## Send to window
+hspace = 20
 curdoc().add_root(column(description, \
-    row(column(Spacer(height=100),play_button,pause_button,stop_button,reset_button),Spacer(width=10),fig,p,p_af,p_pa), \
-    row(mass_input,spring_constant_input),row(damping_coefficient_input,initial_velocity_input),row(initial_displacement_input)))
+    row(column(Spacer(height=200),play_button,pause_button,stop_button,reset_button),Spacer(width=10),fig,p,Spacer(width=10),gridplot([p_af,p_pa],ncols=1,plot_width=250,plot_height=250,merge_tools=True,toolbar_location="below")), \
+    row(mass_input,Spacer(width=hspace),spring_constant_input,Spacer(width=hspace),damping_coefficient_input), \
+    row(initial_displacement_input,Spacer(width=hspace),initial_velocity_input), \
+    row(frequency_ratio_input,Spacer(width=hspace),force_value_input) ))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
