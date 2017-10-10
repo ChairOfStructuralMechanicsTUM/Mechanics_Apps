@@ -12,21 +12,16 @@ from bokeh.models.callbacks import CustomJS
 from os.path import dirname, join, split
 from math import sqrt, exp, pow, sin , cos, ceil, pi, atan2
 
-# z = lam/(2*sqrt(k*m))
-# z = 1 => crit damped
-# z > 1 => over damped
-# z < 1 => under damped
-
 ## initial values
 initial_mass_value = 8
 initial_spring_constant_value = 50
-initial_damping_coefficient_value = 7
+initial_damping_coefficient_value = 1.5
+initial_velocity_value = 0
+initial_displacement_value = 0
+frequency_ratio_value = 0.5
+force_value = 1
 
 ## input parameters for the analytic solution
-initial_velocity_value = -5
-initial_displacement_value = 0
-frequency_ratio_value = 1
-force_value = 10
 ef = sqrt(initial_spring_constant_value/initial_mass_value)
 D = initial_damping_coefficient_value / (2*initial_mass_value*ef)
 damped_ef = ef * sqrt(1-pow(D,2))
@@ -37,11 +32,9 @@ t=0
 dt=0.03
 
 mass = CircularMass(initial_mass_value,0,10,2,2)
-mass.changeInitV(initial_velocity_value)
 spring = Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
 damper = Dashpot((2,.75),(2,8),initial_damping_coefficient_value)
-# mass.linkObj(spring,(-2,7))
-# mass.linkObj(damper,(2,7))
+
 Bottom_Line = ColumnDataSource(data = dict(x=[-2,2],y=[8,8]))
 Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[8,10]))
 
@@ -57,15 +50,13 @@ for beta in range(1,75):
     phase_angle.stream(dict(beta=[beta/25],phi=[1]))
 current_ratio = ColumnDataSource(data = dict(beta=[0],V=[1],phi=[0]))
 
-initial_velocity_value=-0.0
 Active=False
 
 def evolve():
     global Bottom_Line, Linking_Line, t, s
     global mass, spring, damper, initial_velocity_value, initial_displacement_value, frequency_ratio_value, force_value
     global ef, damped_ef, D, excitation_frequency_value
-    # mass.FreezeForces()
-    # disp=mass.evolve(dt)
+    
     #########
     k = spring.getSpringConstant
     # particular (steady-state) part
@@ -77,7 +68,10 @@ def evolve():
         * ( 2*D*frequency_ratio_value*cos(damped_ef*t) + ef/damped_ef * ( 2*frequency_ratio_value*pow(D,2) - frequency_ratio_value * (1-pow(frequency_ratio_value,2)) ) * sin(damped_ef*t) )
     #########
 
-    # s+=disp.y
+    # scale with force/stiffness and multiply with -1
+    factor = 1 / k
+    s_p = - s_p / factor
+    s_h = - s_h / factor
     s = s_p + s_h
     
     move_system(s)
@@ -105,12 +99,12 @@ fig.line(x='x',y='y',source=Linking_Line,color="black",line_width=3)
 spring.plot(fig,width=2)
 damper.plot(fig,width=2)
 mass.plot(fig)
-fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red", line_width=2,
+arrow = fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red", line_width=2,
     x_start='x1', y_start='y1', x_end='x2', y_end='y2', source=arrow_line))
 
 # time plot
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
-p = figure(title="", y_range=(-5,5), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
+p = figure(title="", y_range=(-2,2), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
     toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
 p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
 p.line(x='t',y='s',source=displacement_particular,color="#98c6ea",legend="Particular Solution",muted_color="#98c6ea",muted_alpha=0.2)
@@ -183,13 +177,16 @@ p_pa.yaxis.axis_label="Phase angle"
 p_pa.yaxis.ticker = FixedTicker(ticks=[0,90,180])
 
 def move_system(disp):
-    global mass, spring, damper, Bottom_Line, Linking_Line
+    global mass, spring, damper, Bottom_Line, Linking_Line, force_value
     mass.moveTo((0,10+disp))
     spring.draw(Coord(-2,.75),Coord(-2,8+disp))
     damper.draw(Coord(2,.75),Coord(2,8+disp))
     Bottom_Line.data=dict(x=[-2,2],y=[8+disp, 8+disp])
     Linking_Line.data=dict(x=[0,0],y=[8+disp, 10+disp])
-    arrow_line.data=dict(x1=[0],x2=[0],y1=[15+disp],y2=[12+disp])
+    if force_value > 0:
+        arrow_line.data=dict(x1=[0],x2=[0],y1=[15+disp],y2=[12+disp])
+    else:
+        arrow_line.data=dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp])
 
 ## Create slider to choose mass
 def change_mass(attr,old,new):
@@ -198,7 +195,7 @@ def change_mass(attr,old,new):
     updateParameters()
     compute_amp_and_phase_angle()
 
-mass_input = Slider(title="Mass [kg]", value=initial_mass_value, start=0.5, end=10.0, step=0.5, width=400)
+mass_input = Slider(title="Mass [kg]", value=initial_mass_value, start=3, end=10.0, step=0.5, width=400)
 mass_input.on_change('value',change_mass)
 
 ## Create slider to choose spring constant
@@ -224,17 +221,17 @@ damping_coefficient_input.on_change('value',change_damping_coefficient)
 def change_initV(attr,old,new):
     global mass, Active, initial_velocity_value, initial_velocity_input
     if (not Active):
-        mass.changeInitV(new)
+        mass.changeInitV(-new)
 
 initial_velocity_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initial_velocity_input.on_change('value',change_initV)
 
 ## Create slider to choose initial displacement
 def change_initial_displacement(attr,old,new):
-    global Active, initial_displacement_value
+    global Active, initial_displacement_value, spring
     if (not Active):
-        initial_displacement_value = new
-        move_system(new)
+        initial_displacement_value = new / spring.getSpringConstant
+        move_system(-new)
         updateParameters()
 
 initial_displacement_input = Slider(title="Initial displacement [m]", value=initial_displacement_value, start=-2.0, end=2.0, step=0.5,width=400)
@@ -254,11 +251,17 @@ frequency_ratio_input.on_change('value',change_frequency_ratio)
 
 ## Create slider to choose the frequency ratio
 def change_force_value(attr,old,new):
-    global Active, force_value
+    global Active, force_value, arrow_line
     if (not Active):
         force_value = new
+        current_y1 = arrow_line.data["y1"][0]
+        current_y2 = arrow_line.data["y2"][0]
+        if new == 1:
+            arrow_line.data=dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20])
+        else:
+            arrow_line.data=dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
 
-force_value_input = Slider(title="Force", value=force_value, start=0, end=100.0, step=1,width=400)
+force_value_input = Slider(title="Force", value=force_value, start=0, end=1.0, step=1,width=400)
 force_value_input.on_change('value',change_force_value)
 
 def pause():
@@ -274,7 +277,7 @@ def play():
         Active=True
 
 def stop():
-    global displacement, t, s, Bottom_Line, Linking_Line, spring, mass, damper, initial_displacement_value
+    global displacement, t, s, Bottom_Line, Linking_Line, spring, mass, damper, initial_displacement_value, force_value
     pause()
     t=0
     s=0
@@ -285,11 +288,11 @@ def stop():
     Linking_Line.data = dict(x=[0,0],y=[8,10])
     spring.compressTo(Coord(-2,.75),Coord(-2,8))
     damper.compressTo(Coord(2,.75),Coord(2,8))
-    mass.moveTo((0,10))
-    arrow_line.data=dict(x1=[0],x2=[0],y1=[15],y2=[12])
-    # mass.resetLinks(spring,(-2,11))
-    # mass.resetLinks(damper,(2,11))
-    mass.changeInitV(initial_velocity_input.value)
+    mass.moveTo((0,10+initial_displacement_value))
+    if force_value > 0:
+        arrow_line.data=dict(x1=[0],x2=[0],y1=[15],y2=[12])
+    else:
+        arrow_line.data=dict(x1=[0],x2=[0],y1=[35],y2=[32])
 
 def reset():
     stop()
@@ -297,7 +300,7 @@ def reset():
     spring_constant_input.value = initial_spring_constant_value
     damping_coefficient_input.value = initial_damping_coefficient_value
     initial_velocity_input.value = initial_velocity_value
-    mass.changeInitV(initial_velocity_input.value)
+    initial_displacement_input.value = initial_displacement_value
 
     #this could reset also the plot, but needs the selenium package:
     #reset_button = selenium.find_element_by_class_name('bk-tool-icon-reset')
@@ -325,8 +328,8 @@ pause_button = Button(label="Pause", button_type="success",width=100)
 pause_button.on_click(pause)
 stop_button = Button(label="Stop", button_type="success", width=100)
 stop_button.on_click(stop)
-reset_button = Button(label="Reset", button_type="success",width=100)
-reset_button.on_click(reset)
+# reset_button = Button(label="Reset", button_type="success",width=100)
+# reset_button.on_click(reset)
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
@@ -335,7 +338,7 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 ## Send to window
 hspace = 20
 curdoc().add_root(column(description, \
-    row(column(Spacer(height=200),play_button,pause_button,stop_button,reset_button),Spacer(width=10),fig,p,Spacer(width=10),gridplot([p_af,p_pa],ncols=1,plot_width=250,plot_height=250,merge_tools=True,toolbar_location="below")), \
+    row(column(Spacer(height=200),play_button,pause_button,stop_button),Spacer(width=10),fig,p,Spacer(width=10),gridplot([p_af,p_pa],ncols=1,plot_width=250,plot_height=250,merge_tools=True,toolbar_location="below")), \
     row(mass_input,Spacer(width=hspace),spring_constant_input,Spacer(width=hspace),damping_coefficient_input), \
     row(initial_displacement_input,Spacer(width=hspace),initial_velocity_input), \
     row(frequency_ratio_input,Spacer(width=hspace),force_value_input) ))
