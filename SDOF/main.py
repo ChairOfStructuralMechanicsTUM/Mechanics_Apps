@@ -235,7 +235,6 @@ def change_initV(attr,old,new):
     global Active, initial_velocity_value, spring
     if (not Active):
         initial_velocity_value = float(new) / spring.getSpringConstant
-        print(new,spring.getSpringConstant,initial_velocity_value)
 
 initial_velocity_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initial_velocity_input.on_change('value',change_initV)
