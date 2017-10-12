@@ -14,13 +14,13 @@ from os.path import dirname, join, split
 from math import sqrt, exp, pow, sin , cos, ceil, pi, atan2, sinh, cosh
 
 ## initial values
-initial_mass_value = 8
-initial_spring_constant_value = 50
+initial_mass_value = 8.
+initial_spring_constant_value = 50.
 initial_damping_coefficient_value = 1.5
-initial_velocity_value = 0
-initial_displacement_value = 0
+initial_velocity_value = 0.
+initial_displacement_value = 0.
 frequency_ratio_value = 0.5
-force_value = 1
+force_value = 1.
 
 ## input parameters for the analytic solution
 ef = sqrt(initial_spring_constant_value/initial_mass_value)
@@ -214,7 +214,7 @@ mass_input.on_change('value',change_mass)
 ## Create slider to choose spring constant
 def change_spring_constant(attr,old,new):
     global spring
-    spring.changeSpringConst(new)
+    spring.changeSpringConst(float(new))
     updateParameters()
 
 spring_constant_input = Slider(title="Spring stiffness [N/m]", value=initial_spring_constant_value, start=10.0, end=200, step=10,width=400)
@@ -223,7 +223,7 @@ spring_constant_input.on_change('value',change_spring_constant)
 ## Create slider to choose damping coefficient
 def change_damping_coefficient(attr,old,new):
     global damper
-    damper.changeDamperCoeff(new)
+    damper.changeDamperCoeff(float(new))
     updateParameters()
     compute_amp_and_phase_angle()
 
@@ -234,7 +234,8 @@ damping_coefficient_input.on_change('value',change_damping_coefficient)
 def change_initV(attr,old,new):
     global Active, initial_velocity_value, spring
     if (not Active):
-        initial_velocity_value = new / spring.getSpringConstant
+        initial_velocity_value = float(new) / spring.getSpringConstant
+        print(new,spring.getSpringConstant,initial_velocity_value)
 
 initial_velocity_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initial_velocity_input.on_change('value',change_initV)
@@ -243,7 +244,7 @@ initial_velocity_input.on_change('value',change_initV)
 def change_initial_displacement(attr,old,new):
     global Active, initial_displacement_value, spring
     if (not Active):
-        initial_displacement_value = new / spring.getSpringConstant
+        initial_displacement_value = float(new) / spring.getSpringConstant
         move_system(-new)
         updateParameters()
 
