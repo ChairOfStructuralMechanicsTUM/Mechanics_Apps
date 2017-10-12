@@ -24,7 +24,7 @@ force_value = 1
 
 ## input parameters for the analytic solution
 ef = sqrt(initial_spring_constant_value/initial_mass_value)
-D = initial_damping_coefficient_value / (2*initial_mass_value*ef)
+D = initial_damping_coefficient_value / (2.0*initial_mass_value*ef)
 damped_ef = ef * sqrt(1-pow(D,2))
 excitation_frequency_value = frequency_ratio_value * ef
 
@@ -47,11 +47,10 @@ arrow_line = ColumnDataSource(data = dict(x1=[0],y1=[15],x2=[0],y2=[12]))
 amplification_function = ColumnDataSource(data = dict(beta=[0],V=[1]))
 phase_angle = ColumnDataSource(data = dict(beta=[0],phi=[0]))
 for beta in range(1,75):
-    amplification_function.stream(dict(beta=[beta/25],V=[1]))
-    phase_angle.stream(dict(beta=[beta/25],phi=[1]))
+    amplification_function.stream(dict(beta=[beta/25.0],V=[1]))
+    phase_angle.stream(dict(beta=[beta/25.0],phi=[1]))
 current_ratio = ColumnDataSource(data = dict(beta=[0],V=[1],phi=[0]))
-parameters = ColumnDataSource(data = dict(names1=[u'ω',u"ω*"],names2=["D",u"Ω"],values1=[round(ef,4),round(damped_ef,4)],values2=[round(D,4),round(excitation_frequency_value,4)]))
-
+parameters = ColumnDataSource(data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)]))
 Active=False
 
 def evolve():
@@ -83,19 +82,18 @@ def evolve():
             s_h = exp(-ef*D*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) )
         elif D == 1:
             s_h = exp(-ef*t) * ( initial_displacement_value + ( initial_velocity_value + ef * initial_displacement_value ) * t )
-        else:
-            # ef_overdamped = ef * sqrt(pow(D,2)-1)
+        elif D > 1:
             s_h = exp(-ef*D*t) * ( initial_displacement_value * cosh(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sinh(damped_ef*t) )
         s_p = 0
 
     #########
 
-    # scale with 1/stiffness and multiply with -1
-    s_p = - s_p * k
-    s_h = - s_h * k
+    # scale with 1/stiffness
+    s_p = s_p * k
+    s_h = s_h * k
     s = s_p + s_h
     
-    move_system(s)
+    move_system(-s)
     displacement.stream(dict(t=[t],s=[s]))
     displacement_particular.stream(dict(t=[t],s=[s_p]))
     displacement_homogeneous.stream(dict(t=[t],s=[s_h]))
@@ -125,7 +123,7 @@ arrow = fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red",
 
 # time plot
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
-p = figure(title="", y_range=(-2,2), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
+p = figure(title="", y_range=(2,-2), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
     toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
 p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
 p.line(x='t',y='s',source=displacement_particular,color="#a2ad00",legend="Particular Solution",muted_color="#98c6ea",muted_alpha=0.2)
@@ -146,7 +144,7 @@ def compute_amp_and_phase_angle():
         if D == 0 and beta == 25:
             V = 1000
         else:
-            V = 1 / sqrt( pow(1-pow(beta/25,2),2) + pow(2*D*beta/25,2) )
+            V = 1 / sqrt( pow(1-pow(beta/25.0,2),2) + pow(2*D*beta/25.0,2) )
 
         if D == 0 and beta < 25:
             phi = 0
@@ -155,8 +153,7 @@ def compute_amp_and_phase_angle():
         elif beta == 25:
             phi = 90
         else:
-            phi = atan2( 2*D*beta/25, 1-pow(beta/25,2) ) * 180 / pi
-
+            phi = atan2( 2*D*beta/25.0, 1-pow(beta/25.0,2) ) * 180.0 / pi
         amplification_function.patch({ 'V':[(beta,V)] })
         phase_angle.patch({ 'phi':[(beta,phi)] })
 
@@ -220,7 +217,7 @@ def change_spring_constant(attr,old,new):
     spring.changeSpringConst(new)
     updateParameters()
 
-spring_constant_input = Slider(title="Spring stiffness [N/m]", value=initial_spring_constant_value, start=0.0, end=200, step=10,width=400)
+spring_constant_input = Slider(title="Spring stiffness [N/m]", value=initial_spring_constant_value, start=10.0, end=200, step=10,width=400)
 spring_constant_input.on_change('value',change_spring_constant)
 
 ## Create slider to choose damping coefficient
@@ -235,9 +232,9 @@ damping_coefficient_input.on_change('value',change_damping_coefficient)
 
 ## Create slider to choose initial velocity
 def change_initV(attr,old,new):
-    global mass, Active, initial_velocity_value, initial_velocity_input
+    global Active, initial_velocity_value, spring
     if (not Active):
-        mass.changeInitV(-new)
+        initial_velocity_value = new / spring.getSpringConstant
 
 initial_velocity_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initial_velocity_input.on_change('value',change_initV)
@@ -336,7 +333,7 @@ def updateParameters():
     else:
         damped_ef = ef * sqrt(pow(D,2)-1)
     excitation_frequency_value = frequency_ratio_value * ef
-    parameters.data = dict(names1=[u'ω',u"ω*"],names2=["D",u"Ω"],values1=[round(ef,4),round(damped_ef,4)],values2=[round(D,4),round(excitation_frequency_value,4)])
+    parameters.data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)])
 
 play_button = Button(label="Play", button_type="success",width=100)
 play_button.on_click(play)
