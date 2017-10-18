@@ -1,3 +1,19 @@
+from __future__ import division
+
+from os.path import dirname, split
+
+import numpy as np
+from numpy import pi, cos, sin, sqrt, log10
+import time
+
+from bokeh.driving import count
+from bokeh.io import curdoc
+from bokeh.models import ColumnDataSource, Div
+from bokeh.layouts import widgetbox, row, column
+from bokeh.models.layouts import Spacer
+from bokeh.plotting import Figure
+from bokeh.models.widgets import Slider, TextInput
+
 import numpy as np
 import logging
 
@@ -158,6 +174,7 @@ def automatic_update():
     """
     Function that is regularly called by the periodic callback. Updates the plots to the current user view.
     """
+    print source_view.data
     user_view_has_changed = my_bokeh_utils.check_user_view(source_view.data, plot)
     if user_view_has_changed:
 
@@ -247,9 +264,11 @@ fun_tabs.on_change('active', type_input_change)  # add callback for panel tabs
 controls = column(degree,fun_tabs)
 
 # initialize data
+source_view.data = my_bokeh_utils.get_user_view(plot)
 function_change()
 
 # regularly update user view
-curdoc().add_periodic_callback(automatic_update, 100)
+curdoc().add_periodic_callback(automatic_update, 1000)
 # make layout
 curdoc().add_root(row(plot, controls, height=600, width=800))
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
