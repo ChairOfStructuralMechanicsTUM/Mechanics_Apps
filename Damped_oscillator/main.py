@@ -191,6 +191,15 @@ p.axis.axis_label_text_font_size="14pt"
 p.xaxis.axis_label="Time [s]"
 p.yaxis.axis_label="Displacement [m]"
 
+'''
+###############################################################################
+Define the system paramters
+###############################################################################
+'''
+########################### Text of system buttons ############################
+system_paramters_text = Div(text="""<b>System Paramters</b> """,width = 600)
+
+################################# Max Slider ##################################
 def change_mass(attr,old,new):
     global mass
     mass.changeMass(new)
@@ -210,10 +219,10 @@ def change_mass(attr,old,new):
                                   FrequencyRatio_range
                               )
 
-## Create slider to choose mass of blob
 mass_input = Slider(title="Mass [kg]", value=initial_mass_value, start=0.5, end=10.0, step=0.5, width=400)
 mass_input.on_change('value',change_mass)
 
+########################### Spring Stiffness Slider ###########################
 def change_kappa(attr,old,new):
     global spring
     spring.changeSpringConst(new)
@@ -233,10 +242,10 @@ def change_kappa(attr,old,new):
                                   FrequencyRatio_range
                               )
 
-## Create slider to choose spring constant
 kappa_input = Slider(title="Spring stiffness [N/m]", value=initial_kappa_value, start=0.0, end=200, step=10,width=400)
 kappa_input.on_change('value',change_kappa)
 
+############################## Damping Slider #################################
 def change_lam(attr,old,new):
     global dashpot
     dashpot.changeDamperCoeff(new)
@@ -256,31 +265,40 @@ def change_lam(attr,old,new):
                                   FrequencyRatio_amplification_range
                               )
 
-## Create slider to choose damper coefficient
 lam_input = Slider(title="Damping coefficient [Ns/m]", value=initial_lambda_value, start=0.0, end=10, step=0.1,width=400)
 lam_input.on_change('value',change_lam)
 
+############################# Initial Velocity ################################
 def change_initV(attr,old,new):
     global mass, Active, initial_velocity_value, initV_input
     if (not Active):
         mass.changeInitV(new)
 
-## Create slider to choose damper coefficient
 initV_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
 
+'''
+###############################################################################
+Animation paramters
+###############################################################################
+'''
+################################ Pause Button #################################
 def pause():
     global Active
     if (Active):
         curdoc().remove_periodic_callback(evolve)
         Active=False
-
+pause_button = Button(label="Pause", button_type="success",width=100)
+pause_button.on_click(pause)
+        
+################################ Play Button ##################################
 def play():
     global Active
     if (not Active):
         curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
         Active=True
-
+play_button = Button(label="Play", button_type="success",width=100)
+play_button.on_click(play)
 #def stop():
 #    global Position, t, s, Bottom_Line, Linking_Line, spring, mass, dashpot
 #    pause()
@@ -311,6 +329,7 @@ def play():
 #    mass.resetLinks(dashpot,(2,11))
 #    mass.changeInitV(initV_input.value)
 
+################################# Reset Button ################################
 def reset():
     global Position, t, s, Bottom_Line, Linking_Line, spring, mass, dashpot
     
@@ -350,11 +369,21 @@ def reset():
     x_range_plot.end = 10
     y_range_plot.end = 5
     y_range_plot.start = -5
-
+    
+reset_button = Button(label="Reset", button_type="success",width=100)
+reset_button.on_click(reset)
     #this could reset also the plot, but needs the selenium package:
     #reset_button = selenium.find_element_by_class_name('bk-tool-icon-reset')
     #click_element_at_position(selenium, reset_button, 10, 10)
 
+'''
+###############################################################################
+External force parameters
+###############################################################################
+'''
+############################### Update State ##################################
+
+# This function updates the state of the system in the plots
 def update_state():
     force_forced_amplfication_function(
                                   mass.mass,
@@ -371,21 +400,8 @@ def update_state():
                                   Amplification_range,
                                   FrequencyRatio_amplification_range
                               )
-
-play_button = Button(label="Play", button_type="success",width=100)
-play_button.on_click(play)
-pause_button = Button(label="Pause", button_type="success",width=100)
-pause_button.on_click(pause)
-#stop_button = Button(label="Stop", button_type="success", width=100)
-#stop_button.on_click(stop)
-reset_button = Button(label="Reset", button_type="success",width=100)
-reset_button.on_click(reset)
 state_update_button = Button(label="Update State", button_type="success",width=100)
 state_update_button.on_click(update_state)
-
-# add app description
-description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 '''
 #################### Construct Amplification function plot ####################
@@ -458,21 +474,10 @@ phaseAngle_plot = figure(
                            )
 phaseAngle_plot.line(x='x',y='y', source = phaseAngle_function_source)
 phaseAngle_plot.circle(x='x', y='y', radius = 0.1, source = phaseAngle_state_source)
-#Amplification_frequencyRatio_plot = figure(
-#                                           title="",
-#                                           y_range = y_range_plot, 
-#                                           x_range = x_range_plot, 
-#                                           height=500, \
-#                                           toolbar_location="right", 
-#                                           tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]
-#                                          ) #ywheel_zoom,xwheel_pan,reset,
-#p.line(x='t',y='s',source=Position,color="black")
-#p.axis.major_label_text_font_size="12pt"
-#p.axis.axis_label_text_font_style="normal"
-#p.axis.axis_label_text_font_size="14pt"
-#p.xaxis.axis_label="Time [s]"
-#p.yaxis.axis_label="Displacement [m]"
 
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 ## Send to window
 curdoc().add_root(
