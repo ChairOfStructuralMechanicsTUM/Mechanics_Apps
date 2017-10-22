@@ -7,6 +7,7 @@ from bokeh.io import curdoc
 from bokeh.models import Slider, Button, Div, HoverTool, Range1d, Div
 from os.path import dirname, join, split
 from bokeh.models.widgets import TextInput
+from Functions import force_forced_amplfication_function, phaseAngle_function
 
 # z = lam/(2*sqrt(k*m))
 # z = 1 => crit damped
@@ -20,7 +21,7 @@ initial_lambda_value = 2
 initial_velocity_value = -5
 s=0
 t=0
-dt=0.03
+dt=0.01
 
 mass_center_x = 0
 mass_center_y = 15
@@ -193,6 +194,21 @@ p.yaxis.axis_label="Displacement [m]"
 def change_mass(attr,old,new):
     global mass
     mass.changeMass(new)
+    force_forced_amplfication_function(
+                                  mass.mass,
+                                  spring.kappa,
+                                  dashpot.lam,
+                                  float(Fo_input.value),
+                                  1.0/2.0/dt,
+                                  float(Omega_input.value),
+                                  1000,
+                                  
+                                  Amplification_function_source,
+                                  Amplification_state_source,
+                                  
+                                  Amplification_range,
+                                  FrequencyRatio_range
+                              )
 
 ## Create slider to choose mass of blob
 mass_input = Slider(title="Mass [kg]", value=initial_mass_value, start=0.5, end=10.0, step=0.5, width=400)
@@ -201,6 +217,21 @@ mass_input.on_change('value',change_mass)
 def change_kappa(attr,old,new):
     global spring
     spring.changeSpringConst(new)
+    force_forced_amplfication_function(
+                                  mass.mass,
+                                  spring.kappa,
+                                  dashpot.lam,
+                                  float(Fo_input.value),
+                                  1.0/2.0/dt,
+                                  float(Omega_input.value),
+                                  1000,
+                                  
+                                  Amplification_function_source,
+                                  Amplification_state_source,
+                                  
+                                  Amplification_range,
+                                  FrequencyRatio_range
+                              )
 
 ## Create slider to choose spring constant
 kappa_input = Slider(title="Spring stiffness [N/m]", value=initial_kappa_value, start=0.0, end=200, step=10,width=400)
@@ -209,6 +240,21 @@ kappa_input.on_change('value',change_kappa)
 def change_lam(attr,old,new):
     global dashpot
     dashpot.changeDamperCoeff(new)
+    force_forced_amplfication_function(
+                                  mass.mass,
+                                  spring.kappa,
+                                  dashpot.lam,
+                                  float(Fo_input.value),
+                                  1.0/2.0/dt,
+                                  float(Omega_input.value),
+                                  1000,
+                                  
+                                  Amplification_function_source,
+                                  Amplification_state_source,
+                                  
+                                  Amplification_range,
+                                  FrequencyRatio_amplification_range
+                              )
 
 ## Create slider to choose damper coefficient
 lam_input = Slider(title="Damping coefficient [Ns/m]", value=initial_lambda_value, start=0.0, end=10, step=0.1,width=400)
@@ -300,10 +346,31 @@ def reset():
     
     mass.resetLinks(spring,(mass_center_x-mass_width , mass_center_y-mass_height))
     mass.resetLinks(dashpot,(mass_center_x+mass_width , mass_center_y-mass_height))
+    
+    x_range_plot.end = 10
+    y_range_plot.end = 5
+    y_range_plot.start = -5
 
     #this could reset also the plot, but needs the selenium package:
     #reset_button = selenium.find_element_by_class_name('bk-tool-icon-reset')
     #click_element_at_position(selenium, reset_button, 10, 10)
+
+def update_state():
+    force_forced_amplfication_function(
+                                  mass.mass,
+                                  spring.kappa,
+                                  dashpot.lam,
+                                  float(Fo_input.value),
+                                  1.0/2.0/dt,
+                                  float(Omega_input.value),
+                                  1000,
+                                  
+                                  Amplification_function_source,
+                                  Amplification_state_source,
+                                  
+                                  Amplification_range,
+                                  FrequencyRatio_amplification_range
+                              )
 
 play_button = Button(label="Play", button_type="success",width=100)
 play_button.on_click(play)
@@ -313,10 +380,99 @@ pause_button.on_click(pause)
 #stop_button.on_click(stop)
 reset_button = Button(label="Reset", button_type="success",width=100)
 reset_button.on_click(reset)
+state_update_button = Button(label="Update State", button_type="success",width=100)
+state_update_button.on_click(update_state)
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+
+'''
+#################### Construct Amplification function plot ####################
+'''
+Amplification_function_source = ColumnDataSource(data=dict(x=[0],y=[0])) # Default values
+Amplification_state_source    = ColumnDataSource(data=dict(x=[0],y=[0]))
+
+Amplification_range = Range1d(0,0)
+FrequencyRatio_amplification_range = Range1d(0,0)
+
+force_forced_amplfication_function(
+                                      mass.mass,
+                                      spring.kappa,
+                                      dashpot.lam,
+                                      float(Fo_input.value),
+                                      1.0/2.0/dt,
+                                      float(Omega_input.value),
+                                      1000,
+                                      
+                                      Amplification_function_source,
+                                      Amplification_state_source,
+                                      
+                                      Amplification_range,
+                                      FrequencyRatio_amplification_range
+                                  )
+
+Amplification_plot = figure(
+                            plot_width = 600,
+                            plot_height= 600,
+                            x_range  = FrequencyRatio_amplification_range,
+                            y_range  = Amplification_range,
+                            title = 'Amplification Function',
+                            tools=''
+                           )
+Amplification_plot.line(x='x',y='y', source = Amplification_function_source)
+Amplification_plot.circle(x='x', y='y', radius = 0.1, source = Amplification_state_source)
+
+'''
+#################### Construct Phase Angle function plot ######################
+'''
+phaseAngle_function_source = ColumnDataSource(data=dict(x=[0],y=[0])) # Default values
+phaseAngle_state_source    = ColumnDataSource(data=dict(x=[0],y=[0]))
+
+phaseAngle_range = Range1d(0,0)
+FrequencyRatio_phaseAngle_range = Range1d(0,0)
+
+phaseAngle_function(
+                                      mass.mass,
+                                      spring.kappa,
+                                      dashpot.lam,
+                                      float(Fo_input.value),
+                                      1.0/2.0/dt,
+                                      float(Omega_input.value),
+                                      1000,
+                                      
+                                      phaseAngle_function_source,
+                                      phaseAngle_state_source,
+                                      
+                                      phaseAngle_range,
+                                      FrequencyRatio_phaseAngle_range
+                                  )
+
+phaseAngle_plot = figure(
+                            plot_width = 600,
+                            plot_height= 600,
+                            x_range  = FrequencyRatio_phaseAngle_range,
+                            y_range  = phaseAngle_range,
+                            title = 'Phase Angle Function',
+                            tools=''
+                           )
+phaseAngle_plot.line(x='x',y='y', source = phaseAngle_function_source)
+phaseAngle_plot.circle(x='x', y='y', radius = 0.1, source = phaseAngle_state_source)
+#Amplification_frequencyRatio_plot = figure(
+#                                           title="",
+#                                           y_range = y_range_plot, 
+#                                           x_range = x_range_plot, 
+#                                           height=500, \
+#                                           toolbar_location="right", 
+#                                           tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]
+#                                          ) #ywheel_zoom,xwheel_pan,reset,
+#p.line(x='t',y='s',source=Position,color="black")
+#p.axis.major_label_text_font_size="12pt"
+#p.axis.axis_label_text_font_style="normal"
+#p.axis.axis_label_text_font_size="14pt"
+#p.xaxis.axis_label="Time [s]"
+#p.yaxis.axis_label="Displacement [m]"
+
 
 ## Send to window
 curdoc().add_root(
@@ -326,11 +482,14 @@ curdoc().add_root(
                                       Spacer(height=100),
                                       play_button,
                                       pause_button,
-                                      reset_button
+                                      reset_button,
+                                      state_update_button
                                      ),
                                Spacer(width=10),
                                fig,
-                               p
+                               p,
+                               Amplification_plot,
+                               phaseAngle_plot
                               ), 
                            row(
                                mass_input,
