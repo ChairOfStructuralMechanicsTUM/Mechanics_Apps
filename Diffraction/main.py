@@ -225,14 +225,16 @@ def do_time_measurement(frame_no, computation_time):
 
     frame_end_time = this_frame_end_time
 
+frame_no = 0
 
-@count()
-def update(frame_no):
+def update():
     """
     called regularly by periodic update
     :param t: time
     :return:
     """
+    global frame_no  # todo remove global if possible
+    frame_no += 1
     t = frame_no * target_frame_time / 1000.0
     computation_start_time = time.time()
 
@@ -260,7 +262,7 @@ def initialize():
     """
     set_parameter_visualization()
     source_checker.data = dict(SliderHasChanged=[True])
-    update(0)
+    update()
 
 
 # add callback behaviour
