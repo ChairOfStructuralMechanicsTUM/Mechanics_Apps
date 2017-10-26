@@ -1,33 +1,38 @@
 # Mechanics Apps
-Webbased visualization for mechanics content via Bokeh
-This Repository contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Müller, TUM (Technical University of Munich).
+This repository contains the python codes for webbased-visualization for mechanics principles, via Bokeh.
+It contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Müller, TUM (Technical University of Munich).
 
 ## Overview
+The use of this repository is only suggested for developers. If you are only interested in using the completed apps, please visit the following website:
+http://www.bm.bgu.tum.de/lehre/interactive-apps/
+We use two different bokeh servers for different groups of apps, in order to avoid conflicts: the simplest apps run on one server, the most complex ones run on a second server.
+
+This repository contains one folder for each App, with a main file and subfunction-files. The following files are important for the installation of the Bokeh framework:
 
 ### Files
+(.cmd is used for windows and .sh is udes for Linux. From a .sh file you can create the .exe file with http://www.f2ko.de/en/b2e.php)
 
-* ```Mechanic_Apps.exe``` one click executable for apps. A browser windows pops up, where the individual apps are presented
-* ```Mechanic_Apps.cmd/sh``` corresponding shell scripts. Using http://www.f2ko.de/en/b2e.php the exe is created
-* ```serverrunner.sh``` runs a python server hosting the overview page
-* ```bokehrunner.sh``` runs a bokeh server hosting the bokeh apps
-* ```installer.cmd/sh``` for installation of python packages
-* ```appnames.conf``` all names of the apps that are run on the bokeh server are collected here
-* ```server.conf``` for configuration of the server
+* ```installer.cmd/sh``` for installation of the current bokeh version and the necessary python packages
+* ```server_autorun.cmd/sh``` calls the files for running the bokeh servers (bokehrunner.sh and bokehrunner_testing.sh)
+* ```bokehrunner.sh``` runs a bokeh server hosting the simplest bokeh apps
+* ```bokehrunner_testing.sh``` runs another bokeh server hosting the more advanced bokeh apps (or prototypes)
+* ```appnames.conf``` the list of the names of the simple apps that are completed and ready to run on the first bokeh server
+* ```appnames_testing.conf``` the list of the names of the complex apps that are completed and ready to run on the second bokeh server
+* ```server.conf``` for configuration of the server, it contains the IP Address of the server, the server port and the bokeh ports (which can be multiple)
 
 ### Directories
 
-* ```AppOverviewPage/``` all data for the overview page is collected here
+* ```AppOverviewPage/``` contains screenshots of the apps for a webpage, such as the overview page of the Chair of Structural Mechanics (http://www.bm.bgu.tum.de/lehre/interactive-apps/)
 * ```<other>/``` different bokeh apps in directory format (see http://bokeh.pydata.org/en/latest/docs/user_guide/server.html#directory-format)
 
 ## Server Architecture
 
-We provide access to the apps through a bokeh server in directory format (see http://bokeh.pydata.org/en/latest/docs/user_guide/server.html#directory-format). Our overview website is hosted by a python twisted (https://twistedmatrix.com/trac/). From there requests are forwarded requests to the bokeh server (http://bokeh.pydata.org/).
+We provide access to the apps through a bokeh server (http://bokeh.pydata.org/) in directory format (see http://bokeh.pydata.org/en/latest/docs/user_guide/server.html#directory-format). 
 
 The server can be run in two modes:
 
 * online mode: provide access to apps through the internet.
-* offline mode: run the server locally and present apps to
-lecture audience.
+* offline mode: run the server locally
 
 ### General Server Setup
 
@@ -37,31 +42,30 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 2. install Git
     * Linux: see https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
     * Windows: see https://git-for-windows.github.io/
+	* For windows we also suggest a desktop version of github: see https://desktop.github.com/ 
 3. clone **this** repository (*Linux:* from command line, *Windows:* by opening git bash) ```git clone https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps.git```)
 4. install additional python packages (bokeh, nodejs, flexx, twisted) by running ```$ ./installer.sh```, ```$ ./installer.cmd```. *Windows:* Right click on script >> Run as administrator. Please check the version of tornado, which is being installed automatically. Bokeh is not compatible with tornado verions >= 4.5, so please make sure, that tornado version 4.4.2 is installed.
-5. configure the server with ```server.conf```. If you want to run the server locally, just use the existing configuration. If you want to run the server online, insert the global ip address and make sure that the server port is open to the world wide web. In ```appnames.conf``` write the folder names of the apps you want to run on the server.
+5. configure the server with ```server.conf``` to your own server settings. If you want to run the server locally, just use the existing configuration. If you want to run the server online, insert the global ip address and make sure that the server port is open to the world wide web. 
+6. In ```appnames.conf``` write the folder names of the apps you want to run on the server.
 
 ### Running the Server
 
-* **Local running** If you just want to use the apps locally, just run Mechanic_Apps.exe (or Linux .sh). You can also access 127.0.0.1:8080 if your browser does not open automatically.
-* **Web running** If you want to publish to the web, run server_autorun ```$ ./serverrunner.sh``` and ```$ ./bokehrunner.sh```. Access your global IP in your browser (or the corresponding IP address set in ```server.conf```)
+* **Local running** 
+	- If you just want to run a single app locally:
+		- open a command window and enter:  ```boke serve --show Directory_name```
+		
+		- For example: 	```boke serve --show Diffraction```
+		
+	- The browser should open automatically, showing the app. You can also directly access *localhost:Port* (For example *localhost:5006/Diffraction*) if your browser does not open automatically.
+	
+* **Web running** 
+	- If you want to publish to the web, 
+		- add the app to the file ```appnames.conf```
+		- run server_autorun.exe. 
+		- Navigate to *Global_IP:Port* in your browser (or the corresponding IP address set in ```server.conf```). For example: *127.0.0.1:5006*
+		- In our case, we use a proxy name for the *IP:Port*, which is *apps.bm.bgu.tum.de:5006* in order to display a more approrpate website name.
 
-### Server Login to LRZ Windows VM
-
-This guide explains the necessary steps for accessing the Server Setup at TUM: We access a Windows VM running at LRZ (https://www.lrz.de/services/serverbetrieb/).
-
-1. Access the VPN network of LRZ: see https://www.lrz.de/services/netz/mobil/vpn_en/
-    * install Cisco AnyConnect (easy on Windows, more complicated for other OS)
-https://www.lrz.de/services/netz/mobil/vpn_en/anyconnect_en/
-    * log on to
-https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
-2. connect to the VM
-    * use a remote desktop client (on Ubuntu ```remmina```)
-    * get the address of the server from Francesca or Julian
-    * make sure that your LRZ account has the right to access the server.
-    * Use your LRZ credentials for login (your have to add the prefix ```ads\``` to your username: ads\ga00xxx).
-
-### Apps
+### Apps 
 
 #### Technical mechanics (jf):
 - [ ] 1) Tensile testing/Zugversuch (eb,rr)
@@ -75,7 +79,7 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 - [ ] 9) Combined center of mass moment/Zusammenges. Schwerpunktsmoment ()
 - [ ] 10) Maypole/Maibaum ()
 - [x] 11) Vector addition (rem)
-- [ ] 12) What is a moment (rem)
+- [x] 12) Couple-moment (rem)
 - [ ] 13) Moment is a free vector (rem)
 
 #### Supplementary course/Ergaenzungskurs Technical mechanics (ft, qa):
@@ -99,25 +103,27 @@ https://asa-cluster.lrz.de with your credentials: max.mustermann(at)tum.de
 
 
 #### Structural dynamics (cs):
-- [x] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
+- [ ] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
 - [ ] 2) 2D cantilever beam (ma)
-- [ ] 3) Seismic example (ma)
+- [x] 3) Seismic example (ma)
 
-#### Technical Acoustics II (ag):
+#### Technical Acoustics II (ag, cw):
 - [x] 1) Diffraction (br)
+- [ ] 2) Vibroacoustic plates (rd)
 
 #### Integral transform method (fm, he):
 - [x] 1) Sampling (br)
 
 ### Supervisors
-- Francesca Taddei ft
-- Axel Greim ag
-- Quirin Aumann qa
-- Moritz Becker mb
-- Julian Freisinger jf
-- Franziska Mittermeier fm
-- Hannes Englert he
-- Corinna Schmausser cs
+- Francesca Taddei (ft)
+- Axel Greim (ag)
+- Quirin Aumann (qa)
+- Moritz Becker (mb)
+- Julian Freisinger (jf)
+- Franziska Mittermeier (fm)
+- Hannes Englert (he)
+- Corinna Schmausser (cs)
+- Christoph Winter (cw)
 
 ### Developers
 
