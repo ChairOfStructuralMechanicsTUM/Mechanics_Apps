@@ -52,22 +52,18 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 
 * **Local running** 
 	- If you just want to run a single app locally:
-		- open a command window and enter: 
-	
-		- ```boke serve --show Directory_name```
+		- open a command window and enter:  ```boke serve --show Directory_name```
 		
-		- For example:
-		
-		```boke serve --show Diffraction```
+		- For example: 	```boke serve --show Diffraction```
 		
 	- The browser should open automatically, showing the app. You can also directly access *localhost:Port* (For example *localhost:5006/Diffraction*) if your browser does not open automatically.
 	
 * **Web running** 
 	- If you want to publish to the web, 
-	- add the app to the file ```appnames.conf```
-	- run server_autorun.exe. 
-	- Navigate to *Global_IP:Port* in your browser (or the corresponding IP address set in ```server.conf```). For example: *127.0.0.1:5006*
-	- In our case, we use a proxy name for the *IP:Port*, which is *apps.bm.bgu.tum.de:5006* in order to display a more approrpate website name.
+		- add the app to the file ```appnames.conf```
+		- run server_autorun.exe. 
+		- Navigate to *Global_IP:Port* in your browser (or the corresponding IP address set in ```server.conf```). For example: *127.0.0.1:5006*
+		- In our case, we use a proxy name for the *IP:Port*, which is *apps.bm.bgu.tum.de:5006* in order to display a more approrpate website name.
 
 ### Apps 
 
