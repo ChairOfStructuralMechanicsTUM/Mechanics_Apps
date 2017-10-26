@@ -23,34 +23,13 @@ class Dashpot(object):
             end.x-self.direction.x/8.0-perpVect.x/2.0],y=[end.y-self.direction.y/8.0+perpVect.y/2.0,
             start.y+self.direction.y/8.0+perpVect.y/2.0,start.y+self.direction.y/8.0-perpVect.y/2.0,
             end.y-self.direction.y/8.0-perpVect.y/2.0])
-        
-        print('start = [',start.x,' , ',start.y,']')
-        print('self.direction = [',self.direction.x,' , ',self.direction.y,']')
-        print('perpVect = [',perpVect.x,' , ',perpVect.y,']')
-        self.Line1Start=dict(
-                             x=[
-                                start.x,
-                                start.x+self.direction.x/8.0
-                               ],
-                             y=[
-                                start.y,
-                                start.y+self.direction.y/8.0
-                               ]
-                            )
-        
-        self.PistonStart=dict(
-                              x=[
-                                 end.x-self.direction.x/2.0+perpVect.x/2.0,
-                                 end.x-self.direction.x/2.0-perpVect.x/2.0
-                                ],
-                              y=[
-                                 end.y-self.direction.y/5.0+perpVect.y/2.0,
-                                 end.y-self.direction.y/5.0-perpVect.y/2.0
-                                ]
-                             )
-        
+        self.Line1Start=dict(x=[start.x,
+            start.x+self.direction.x/8.0],y=[start.y,start.y+self.direction.y/8.0])
+        self.PistonStart=dict(x=[end.x-self.direction.x/2.0+perpVect.x/2.0,
+            end.x-self.direction.x/2.0-perpVect.x/2.0], y=[end.y-self.direction.y/2.0+perpVect.y/2.0,
+            end.y-self.direction.y/2.0-perpVect.y/2.0])
         self.Line2Start=dict(x=[end.x,
-            end.x-self.direction.x/2.0],y=[end.y,end.y-self.direction.y/5.0])
+            end.x-self.direction.x/2.0],y=[end.y,end.y-self.direction.y/2.0])
         # Create ColumnDataSources with initial positions
         self.Casing = ColumnDataSource(data=self.CasingStart)
         self.Line1 = ColumnDataSource(data=self.Line1Start)

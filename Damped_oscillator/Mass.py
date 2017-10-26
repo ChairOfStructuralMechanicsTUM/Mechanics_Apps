@@ -2,7 +2,6 @@ from bokeh.models import ColumnDataSource
 from Coord import *
 from copy import deepcopy
 from abc import ABCMeta, abstractmethod
-import numpy as np
 
 class Mass(object):
     __metaclass__ = ABCMeta
@@ -73,12 +72,10 @@ class Mass(object):
         self.nextStepObjForces=[]
     
     ## carry out 1 time step
-    def evolve(self, t, dt,externalForceParameters):
-        # Read the external force
-        externalForce = self.External_force(t, externalForceParameters)
+    def evolve(self,dt):
         # find the total force:
         # Start with gravitational force
-        F=Coord(0,-self.mass*9.81+externalForce)
+        F=Coord(0,-self.mass*9.81)
         for i in range(0,len(self.thisStepForces)):
             # add all forces acting on mass (e.g. spring, dashpot)
             F+=self.thisStepForces.pop()
@@ -101,12 +98,6 @@ class Mass(object):
             self.affectedObjects[i][1]+=displacement
         return displacement
     
-    def External_force(self, t, parameters):
-        Fo = parameters[0]
-        Omega = parameters[1]
-        alpha = parameters[2]
-        return Fo*np.sin( Omega*t +alpha )
-        
     # displace mass by disp
     def move(self,disp):
         temp=deepcopy(dict(self.shape.data))
