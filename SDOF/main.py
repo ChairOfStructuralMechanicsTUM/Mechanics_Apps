@@ -62,7 +62,10 @@ def evolve():
     k = spring.getSpringConstant
 
     if force_value > 0:
-        if D < 1 and not frequency_ratio_value == 1:
+        if D == 0 and frequency_ratio_value == 1:
+            s_p = 0.5 * (initial_displacement_value * cos(ef*t) + initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * (sin(ef*t) - ef*t*cos(ef*t)))
+            s_h = s_p
+        else:
             # particular (steady-state) part
             s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
                 * ( ( 1-pow(frequency_ratio_value,2) ) * sin(excitation_frequency_value*t) - 2*D*frequency_ratio_value*cos(excitation_frequency_value*t) )
@@ -70,12 +73,6 @@ def evolve():
             s_h = exp(-D*ef*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) ) \
                 + force_value * exp(-D*ef*t) / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
                 * ( 2*D*frequency_ratio_value*cos(damped_ef*t) + ef/damped_ef * ( 2*frequency_ratio_value*pow(D,2) - frequency_ratio_value * (1-pow(frequency_ratio_value,2)) ) * sin(damped_ef*t) )
-        elif D == 0 and frequency_ratio_value == 1:
-            s_p = 0.5 * (initial_displacement_value * cos(ef*t) + initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * (sin(ef*t) - ef*t*cos(ef*t)))
-            s_h = s_p
-        else:
-            s_p = 0
-            s_h = 0
 
     else:
         if D < 1:

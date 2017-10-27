@@ -3,11 +3,11 @@ from Coord import *
 from copy import deepcopy
 
 class Dashpot(object):
-    def __init__(self,start,end,lam=1.0):
+    def __init__(self,start,end,damping_constant=1.0):
         start=Coord(start[0],start[1])
         end=Coord(end[0],end[1])
         # define dashpot constant
-        self.lam=lam
+        self.damping_constant=damping_constant
         # save points
         self.start=start
         self.end=end
@@ -36,15 +36,6 @@ class Dashpot(object):
         self.Piston = ColumnDataSource(data=self.PistonStart)
         self.Line2 = ColumnDataSource(data=self.Line2Start)
         self.direction=self.direction.direction()
-        # objects that are influenced by the dashpot
-        self.actsOn = []
-        
-    ## add influenced object
-    def linkTo(self,obj,point):
-        if (point==self.start):
-            self.actsOn.append((obj,'s'))
-        else:
-            self.actsOn.append((obj,'e'))
     
     ## define dashpot co-ordinates
     def draw(self,start,end):
@@ -89,37 +80,10 @@ class Dashpot(object):
         fig.line(x='x',y='y',color=colour,source=self.Line1,line_width=width)
         fig.line(x='x',y='y',color=colour,source=self.Line2,line_width=width)
     
-    ## place dashpot in space over a certain time
-    def compressTo(self,start,end):
-        dt=0.03
-        # draw dashpot and collect displacement
-        displacement=self.draw(start,end)
-        # calculate the force exerted on/by the dashpot
-        F = -self.lam*displacement/dt
-        for i in range(0,len(self.actsOn)):
-            self.actsOn[i][0].applyForce(F*self.out(self.actsOn[i][1]),self)
-        # return the force
-        return F
-    
-    ## if a point (start) is moved then compress dashpot accordingly and calculate resulting force
-    def movePoint(self,start,moveVect):
-        if (start==self.start):
-            return self.compressTo(start+moveVect,self.end)
-        else:
-            return self.compressTo(self.start,start+moveVect)
-    
-    # return outward direction
-    def out(self,se):
-        # -1*direction
-        if (se=='s'):
-            return -self.direction
-        else:
-            return self.direction
-    
-    def changeDamperCoeff(self,lam):
-        self.lam=lam
+    def changeDamperCoeff(self,damping_constant):
+        self.damping_constant=damping_constant
 
     @property
     def getDampingCoefficient(self):
-        return self.lam
+        return self.damping_constant
 
