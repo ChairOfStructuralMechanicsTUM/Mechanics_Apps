@@ -222,7 +222,7 @@ default_function_period_end.on_change('value', type_input_change)
 sample_function_type.on_change('active', type_input_change)
 
 # initialize plot
-toolset = "crosshair,pan,reset,resize,save,wheel_zoom"
+toolset = "crosshair,pan,reset,save,wheel_zoom"
 # Generate a figure container
 plot = Figure(plot_height=fs.resolution,
               plot_width=fs.resolution,

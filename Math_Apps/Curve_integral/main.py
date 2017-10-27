@@ -229,7 +229,7 @@ cy_input.on_change('value', curve_change)
 parameter_input.on_change('value', parameter_change)
 
 # initialize plot
-toolset = "crosshair,pan,reset,resize,save,wheel_zoom"
+toolset = "crosshair,pan,reset,save,wheel_zoom"
 # Generate a figure container for the field
 plot_field = Figure(plot_height=400,
                     plot_width=400,

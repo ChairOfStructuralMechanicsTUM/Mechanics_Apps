@@ -176,7 +176,7 @@ def refresh_contour():
 
 
 # initialize plot
-toolset = ["crosshair,pan,reset,resize,save,wheel_zoom,tap"]
+toolset = ["crosshair,pan,save,wheel_zoom,tap"]
 # Generate a figure container for the field
 plot = Figure(plot_height=lagrange_settings.res_x,
               plot_width=lagrange_settings.res_y,

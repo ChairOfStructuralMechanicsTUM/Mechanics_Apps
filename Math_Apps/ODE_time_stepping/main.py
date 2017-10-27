@@ -186,7 +186,7 @@ odes = RadioButtonGroup(labels=ode_settings.odetype_labels, active=ode_settings.
 odes.on_change('active', update_data)
 
 # initialize plot
-toolset = "crosshair,pan,reset,resize,wheel_zoom,box_zoom"
+toolset = "crosshair,pan,reset,wheel_zoom,box_zoom"
 # Generate a figure container
 plot = Figure(plot_height=ode_settings.y_res,
               plot_width=ode_settings.x_res,

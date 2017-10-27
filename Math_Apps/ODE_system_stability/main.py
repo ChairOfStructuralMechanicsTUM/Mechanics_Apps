@@ -241,7 +241,7 @@ def refresh_user_view():
 
 
 # initialize plot
-toolset = "crosshair,pan,reset,resize,save,wheel_zoom,tap"
+toolset = "crosshair,pan,reset,save,wheel_zoom,tap"
 # Generate a figure container
 plot = Figure(plot_height=400,
               plot_width=400,

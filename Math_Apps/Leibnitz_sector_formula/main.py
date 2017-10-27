@@ -125,7 +125,7 @@ sample_curve_input = Dropdown(label="choose a sample function pair or enter one 
 sample_curve_input.on_click(sample_curve_change)
 
 # initialize plot
-toolset = "crosshair,pan,reset,resize,save,wheel_zoom"
+toolset = "crosshair,pan,reset,save,wheel_zoom"
 # Generate a figure container
 plot = Figure(plot_height=400, plot_width=400, tools=toolset,
               title="Leibnitz sector formula",
