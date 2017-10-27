@@ -3,6 +3,7 @@ from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
 from bokeh.models import ColumnDataSource, Slider, Button, RadioButtonGroup, Arrow, OpenHead, Div
+from bokeh.events import Pan
 from math import sin, cos, pi, atan2, sqrt, acos
 from mpmath import csc
 from os.path import dirname, join, split
@@ -211,29 +212,14 @@ def evolve():
         Active=False
         curdoc().remove_periodic_callback(evolve)
 
-# function for tool
-def on_mouse_move(attr, old, new):
-    global Active
+# function to move the mass by clicking it
+def on_mouse_move(event):
+    global Active, TotEng
     if (not Active):
-        global inMass, massSelected, massTo, TotEng
-        # if the function has already been called starting from a valid position
-        if (inMass and new[0][u'y']!=-1):
-            moveTo(new[0][u'x'],new[0][u'y'])
-        # if first call
-        elif (not massSelected):
-            (X,Y)=getCurrentXY()
-            # if the first click was on the mass then allow function to modify situation
-            if ((new[0][u'x']-X)**2+(new[0][u'y']-Y)**2<0.25):
-                inMass=True
-            # indicate that the first call has been carried out
-            massSelected=True
-        # if last call
-        elif (new[0][u'y']==-1):
-            massSelected=False
-            inMass=False
-            TotEng=getTotEng()
-            plot()
-            drawPhiAngle()
+        moveTo(event.x,event.y)
+        TotEng=getTotEng()
+        plot()
+        drawPhiAngle()
 
 # function which moves mass to new angle for single pendulum
 def moveToSingle(X,Y):
@@ -277,7 +263,7 @@ getKinEng=getKinEngSingle
 # draw pendulum diagram
 fig = figure(title="Kinetic energy balance",tools="",x_range=(-4.5,4.5),y_range=(3,12),width=500,height=500)
 fig.add_tools(MoveMassTool())
-fig.tool_events.on_change('geometries', on_mouse_move)
+fig.on_event(Pan, on_mouse_move)
 fig.title.text_font_size="16pt"
 fig.axis.visible=False
 fig.grid.visible=False
