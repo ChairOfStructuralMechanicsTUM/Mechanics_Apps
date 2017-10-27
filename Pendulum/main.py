@@ -417,6 +417,8 @@ description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 ## Send to window
-curdoc().add_root(column(description, row(column(fig,row(Play_button,Spacer(width=10),Stop_button,Spacer(width=10),Reset_button),pendulum_type_input),phase_diagramm),row(mass_input,lam_input,phi0_input,dphi0_input)))
+hspace = 20
+curdoc().add_root(column(description, row(column(fig,row(Play_button,Spacer(width=hspace),Stop_button,Spacer(width=hspace),Reset_button),pendulum_type_input),phase_diagramm), \
+    row(mass_input,Spacer(width=hspace),lam_input,Spacer(width=hspace),phi0_input,Spacer(width=hspace),dphi0_input)))
 curdoc().add_periodic_callback(evolve,100)
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
