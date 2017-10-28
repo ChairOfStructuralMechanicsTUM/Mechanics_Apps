@@ -8,6 +8,7 @@ from bokeh.models import Arrow, OpenHead, Div
 from bokeh.models.layouts import Spacer
 from Functions import *
 from os.path import dirname, join, split
+from bokeh.events import Pan
 
 '''
 ###############################################################################
@@ -473,15 +474,15 @@ Cr_Slider.on_change('value',update_Cr_value)
 #################### Moving the balls through the mouse #######################
 playGround.add_tools(MoveNodeTool())
 
-def on_mouse_move(attr, old, new):
+def on_mouse_move(event):
     if Active == False:
-        if (system.modify_location(old,new)==1):
+        if (system.modify_location(event)==1):
             # if the path is changed then update the drawing
             pass
     else:
         pass
 
-playGround.tool_events.on_change('geometries', on_mouse_move)
+playGround.on_event(Pan, on_mouse_move)
 
 '''
 ###############################################################################

@@ -79,42 +79,28 @@ class CollidingSystem():
         
         self.currentNode = -1
         
-    def modify_location(self, old, new):
-        particleRadius = self.particles[0].radius
-        # if there is a previous node (not first time the function is called)
-        # and the node has not been released (new['x']=-1 on release to prepare for future calls)
-        if (len(old)==1 and new[0][u'x']!=-1):
-            # if first call for this node
-            if (self.currentNode==-1):
-                # determine which node and remember it
-                XStart=old[0][u'x']
-                YStart=old[0][u'y']
-    
-                self.currentNode = self.inNode(XStart,YStart)
-    
-            # if not first call then move node
-            if (self.currentNode!=-1):
-                if abs(new[0][u'x']+particleRadius-self.domain[0][1]) <= particleRadius or abs(new[0][u'x']-particleRadius-self.domain[0][0]) <= particleRadius:
-                    pass
-                elif abs(new[0][u'y']+particleRadius-self.domain[1][1]) <= particleRadius or abs(new[0][u'y']-particleRadius-self.domain[1][0]) <= particleRadius:
-                    pass
-                else:
-                    # update node position
-                    self.particles[self.currentNode].update_position(new[0][u'x'], new[0][u'y'])
-    
-                    self.particles[self.currentNode].update_velocity_source()
-                    
-            return 1
-        else:
-            # when node is released reset current node to -1
-            # so a new node is moved next time
-            self.currentNode=-1
-            return -1  
+    def modify_location(self, click_position):
         
-    def inNode(self, xPos, yPos):
+        self.currentNode = self.inNode(click_position)
+        particleRadius = self.particles[0].radius
+        # if the clicking happened over one of the particels (currentNode != -1)
+        if (self.currentNode != -1):
+            if abs(click_position.x+particleRadius-self.domain[0][1]) <= particleRadius or abs(click_position.x-particleRadius-self.domain[0][0]) <= particleRadius:
+                pass
+            elif abs(click_position.y+particleRadius-self.domain[1][1]) <= particleRadius or abs(click_position.y-particleRadius-self.domain[1][0]) <= particleRadius:
+                pass
+            else:
+                # update node position
+                self.particles[self.currentNode].update_position(click_position.x, click_position.y)
+
+                self.particles[self.currentNode].update_velocity_source()
+                    
+        return 1 
+        
+    def inNode(self, click_position):
         counter = 0
         for particle in self.particles:
-            if (abs(xPos-particle.position[0])<=0.3 and abs(yPos-particle.position[1])<=0.3):
+            if (abs(click_position.x-particle.position[0])<=particle.radius and abs(click_position.y-particle.position[1])<=particle.radius):
                     return counter
             counter += 1
         return -1
