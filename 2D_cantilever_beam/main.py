@@ -153,89 +153,89 @@ def deformed_cantilever_beam_determiner_XZ(
                 biggestValue, smallestValue
            )
 
-def undeformed_cantilever_beam_determiner( 
-                                          length, height, thickness, E, Py, Pz,
-                                          noElementsX, noElementsY, 
-                                          noElementsZ, elementSizeX, 
-                                          elementSizeY, elementSizeZ,
-                                          amplificationFactor 
-                                         ):
-    
-    # Construct The undeformed beam's center line
-    undeformedBeamXY, undeformedBeamXZ = functions.construct_undeformed_beam_centerline( 
-                                                                                            noElementsX, 
-                                                                                            noElementsY, 
-                                                                                            noElementsZ,
-                                                                                            elementSizeX
-                                                                                       )
-
-    # Construct normal vectors for both XY and XZ projections of the beam
-    normalVecrtorsXYUpperUndef, normalVectorsXYLowerUndef = functions.construct_normal_vectors( undeformedBeamXY )
-    normalVecrtorsXZUpperUndef, normalVectorsXZLowerUndef = functions.construct_normal_vectors( undeformedBeamXZ )
-
-    # Construct mesh for the undeformed and the deformed beams    
-    listUndeformedElementsXY = functions.construct_deformed_elements( 
-                                                                        undeformedBeamXY,
-                                                                        elementSizeX,
-                                                                        elementSizeY,
-                                                                        noElementsX,
-                                                                        noElementsY,
-                                                                        normalVecrtorsXYUpperUndef,
-                                                                        normalVectorsXYLowerUndef
-                                                                    )
-    listUndeformedElementsXZ = functions.construct_deformed_elements( 
-                                                                        undeformedBeamXZ,
-                                                                        elementSizeX,
-                                                                        elementSizeZ,
-                                                                        noElementsX,
-                                                                        noElementsZ,
-                                                                        normalVecrtorsXZUpperUndef,
-                                                                        normalVectorsXZLowerUndef
-                                                                    )
-    
-    # Determine the patches' X,Y,Z coordinates
-    XCoordsUndefXY , YCoordsUndefXY = functions.create_coordinates_list( listUndeformedElementsXY )
-    XCoordsUndefXZ , YCoordsUndefXZ = functions.create_coordinates_list( listUndeformedElementsXZ )
-
-    # Detemine the color of the elements
-    biggestValue, smallestValue, listValuesUpperXY, listValuesLowerXZ = functions.values_determiner( 
-                                                                                                        Py, Pz,
-                                                                                                        length,
-                                                                                                        height,
-                                                                                                        thickness,
-                                                                                                        E, elementSizeX
-                                                                                                   )
-    # Coloring the undeformed elements
-    colorListUndeformedXY = functions.elements_color_determiner(
-                                                                    False,
-                                                                    'XY',
-                                                                    listUndeformedElementsXY,
-                                                                    noElementsX,
-                                                                    noElementsY,
-                                                                    E, height, thickness,
-                                                                    length, Py, 
-                                                                    smallestValue, biggestValue,
-                                                                    listValuesLowerXZ
-                                                               )    
-    colorListUndeformedXZ = functions.elements_color_determiner(
-                                                                    False,
-                                                                    'XZ',
-                                                                    listUndeformedElementsXZ,
-                                                                    noElementsX,
-                                                                    noElementsZ,
-                                                                    E, thickness, height,
-                                                                    length, Pz, 
-                                                                    biggestValue, smallestValue,
-                                                                    listValuesUpperXY
-                                                               )
-
-    return (
-                listUndeformedElementsXY, listUndeformedElementsXY,
-                XCoordsUndefXY, XCoordsUndefXZ,
-                YCoordsUndefXY, YCoordsUndefXZ, 
-                colorListUndeformedXY, colorListUndeformedXZ,
-                biggestValue, smallestValue
-           )    
+#def undeformed_cantilever_beam_determiner( 
+#                                          length, height, thickness, E, Py, Pz,
+#                                          noElementsX, noElementsY, 
+#                                          noElementsZ, elementSizeX, 
+#                                          elementSizeY, elementSizeZ,
+#                                          amplificationFactor 
+#                                         ):
+#    
+#    # Construct The undeformed beam's center line
+#    undeformedBeamXY, undeformedBeamXZ = functions.construct_undeformed_beam_centerline( 
+#                                                                                            noElementsX, 
+#                                                                                            noElementsY, 
+#                                                                                            noElementsZ,
+#                                                                                            elementSizeX
+#                                                                                       )
+#
+#    # Construct normal vectors for both XY and XZ projections of the beam
+#    normalVecrtorsXYUpperUndef, normalVectorsXYLowerUndef = functions.construct_normal_vectors( undeformedBeamXY )
+#    normalVecrtorsXZUpperUndef, normalVectorsXZLowerUndef = functions.construct_normal_vectors( undeformedBeamXZ )
+#
+#    # Construct mesh for the undeformed and the deformed beams    
+#    listUndeformedElementsXY = functions.construct_deformed_elements( 
+#                                                                        undeformedBeamXY,
+#                                                                        elementSizeX,
+#                                                                        elementSizeY,
+#                                                                        noElementsX,
+#                                                                        noElementsY,
+#                                                                        normalVecrtorsXYUpperUndef,
+#                                                                        normalVectorsXYLowerUndef
+#                                                                    )
+#    listUndeformedElementsXZ = functions.construct_deformed_elements( 
+#                                                                        undeformedBeamXZ,
+#                                                                        elementSizeX,
+#                                                                        elementSizeZ,
+#                                                                        noElementsX,
+#                                                                        noElementsZ,
+#                                                                        normalVecrtorsXZUpperUndef,
+#                                                                        normalVectorsXZLowerUndef
+#                                                                    )
+#    
+#    # Determine the patches' X,Y,Z coordinates
+#    XCoordsUndefXY , YCoordsUndefXY = functions.create_coordinates_list( listUndeformedElementsXY )
+#    XCoordsUndefXZ , YCoordsUndefXZ = functions.create_coordinates_list( listUndeformedElementsXZ )
+#
+#    # Detemine the color of the elements
+#    biggestValue, smallestValue, listValuesUpperXY, listValuesLowerXZ = functions.values_determiner( 
+#                                                                                                        Py, Pz,
+#                                                                                                        length,
+#                                                                                                        height,
+#                                                                                                        thickness,
+#                                                                                                        E, elementSizeX
+#                                                                                                   )
+#    # Coloring the undeformed elements
+#    colorListUndeformedXY = functions.elements_color_determiner(
+#                                                                    False,
+#                                                                    'XY',
+#                                                                    listUndeformedElementsXY,
+#                                                                    noElementsX,
+#                                                                    noElementsY,
+#                                                                    E, height, thickness,
+#                                                                    length, Py, 
+#                                                                    smallestValue, biggestValue,
+#                                                                    listValuesLowerXZ
+#                                                               )    
+#    colorListUndeformedXZ = functions.elements_color_determiner(
+#                                                                    False,
+#                                                                    'XZ',
+#                                                                    listUndeformedElementsXZ,
+#                                                                    noElementsX,
+#                                                                    noElementsZ,
+#                                                                    E, thickness, height,
+#                                                                    length, Pz, 
+#                                                                    biggestValue, smallestValue,
+#                                                                    listValuesUpperXY
+#                                                               )
+#
+#    return (
+#                listUndeformedElementsXY, listUndeformedElementsXY,
+#                XCoordsUndefXY, XCoordsUndefXZ,
+#                YCoordsUndefXY, YCoordsUndefXZ, 
+#                colorListUndeformedXY, colorListUndeformedXZ,
+#                biggestValue, smallestValue
+#           )    
 
 # Construct the deformed beam in XY plane
 (listDeformedElementsXY, XCoordsDefXY,
@@ -257,16 +257,16 @@ def undeformed_cantilever_beam_determiner(
                                amplificationFactor
                            )
 
-# Construct the undeformed beams in XY and XZ planes
-(listUndeformedElementsXY, listUndeformedElementsXZ, XCoordsUndefXY,
- XCoordsUndefXZ, YCoordsUndefXY, YCoordsUndefXZ,
- colorListUndeformedXY, colorListUndeformedXZ,
- biggestValue, smallestValue) = undeformed_cantilever_beam_determiner( 
-                               length, height, thickness, E, Py, Pz,
-                               noElementsX, noElementsY, noElementsZ,
-                               elementSizeX, elementSizeY, elementSizeZ,
-                               amplificationFactor
-                           )
+## Construct the undeformed beams in XY and XZ planes
+#(listUndeformedElementsXY, listUndeformedElementsXZ, XCoordsUndefXY,
+# XCoordsUndefXZ, YCoordsUndefXY, YCoordsUndefXZ,
+# colorListUndeformedXY, colorListUndeformedXZ,
+# biggestValue, smallestValue) = undeformed_cantilever_beam_determiner( 
+#                               length, height, thickness, E, Py, Pz,
+#                               noElementsX, noElementsY, noElementsZ,
+#                               elementSizeX, elementSizeY, elementSizeZ,
+#                               amplificationFactor
+#                           )
     
 # Create alpha list for the transparency of the colored patches
 alphaList = list()
@@ -415,9 +415,9 @@ def init_data():
 
 
 # Construct the source file of all the beams
-sourceXYundef = ColumnDataSource(data=dict( x=XCoordsUndefXY, y=YCoordsUndefXY, c =colorListUndeformedXY, a=alphaList ))
+#sourceXYundef = ColumnDataSource(data=dict( x=XCoordsUndefXY, y=YCoordsUndefXY, c =colorListUndeformedXY, a=alphaList ))
 sourceXYdef   = ColumnDataSource(data=dict( x=XCoordsDefXY,   y=YCoordsDefXY,   c =colorListDeformedXY,   a=alphaList ))
-sourceXZundef = ColumnDataSource(data=dict( x=XCoordsUndefXZ, y=YCoordsUndefXZ, c =colorListUndeformedXZ, a=alphaList ))
+#sourceXZundef = ColumnDataSource(data=dict( x=XCoordsUndefXZ, y=YCoordsUndefXZ, c =colorListUndeformedXZ, a=alphaList ))
 sourceXZdef   = ColumnDataSource(data=dict( x=XCoordsDefXZ,   y=YCoordsDefXZ,   c =colorListDeformedXZ,   a=alphaList ))
 
 # Construct the source file of both the arrows
@@ -447,30 +447,30 @@ Yforce_slider = Slider(title="Y-direction Force", value=0.0, start=-5000.0, end=
 Zforce_slider = Slider(title="Z-direction Force", value=0.0, start=-5000.0, end=5000.0, step=100.0)
 
 # Construct the figures which will visulize the beams
-plotUndefXY = Figure(    
-                         plot_width=350    , 
-                         plot_height=350   ,
-                         x_range = ( 0,6 ) ,
-                         y_range= ( -3,3 ) ,
-                         title = 'Undefromed Cofiguration in XY plane',
-                         tools = '',
-                    )
-plotUndefXY.xaxis.major_tick_line_color=None
-plotUndefXY.xaxis.major_label_text_color=None
-plotUndefXY.xaxis.minor_tick_line_color=None
-plotUndefXY.yaxis.major_tick_line_color=None
-plotUndefXY.yaxis.major_label_text_color=None
-plotUndefXY.yaxis.minor_tick_line_color=None
-plotUndefXY.grid.visible = False
-plotUndefXY.title.text_font_size="12.5pt"
-plotUndefXY.xaxis.axis_label_text_font_size="14pt"
-plotUndefXY.yaxis.axis_label_text_font_size="14pt"
-plotUndefXY.xaxis.axis_label="x"
-plotUndefXY.yaxis.axis_label="y"
+#plotUndefXY = Figure(    
+#                         plot_width=350    , 
+#                         plot_height=350   ,
+#                         x_range = ( 0,6 ) ,
+#                         y_range= ( -3,3 ) ,
+#                         title = 'Undefromed Cofiguration in XY plane',
+#                         tools = '',
+#                    )
+#plotUndefXY.xaxis.major_tick_line_color=None
+#plotUndefXY.xaxis.major_label_text_color=None
+#plotUndefXY.xaxis.minor_tick_line_color=None
+#plotUndefXY.yaxis.major_tick_line_color=None
+#plotUndefXY.yaxis.major_label_text_color=None
+#plotUndefXY.yaxis.minor_tick_line_color=None
+#plotUndefXY.grid.visible = False
+#plotUndefXY.title.text_font_size="12.5pt"
+#plotUndefXY.xaxis.axis_label_text_font_size="14pt"
+#plotUndefXY.yaxis.axis_label_text_font_size="14pt"
+#plotUndefXY.xaxis.axis_label="x"
+#plotUndefXY.yaxis.axis_label="y"
 
 plotDefXY = Figure(    
-                       plot_width=350    , 
-                       plot_height=350   ,
+                       plot_width=500    , 
+                       plot_height=500   ,
                        x_range = ( 0,6 ) ,
                        y_range= ( -3,3 ) ,
                        title = 'Defromed Cofiguration in XY plane',
@@ -489,30 +489,30 @@ plotDefXY.yaxis.axis_label_text_font_size="14pt"
 plotDefXY.xaxis.axis_label="x"
 plotDefXY.yaxis.axis_label="y"
 
-plotUndefXZ = Figure(    
-                         plot_width=350    , 
-                         plot_height=350   ,
-                         x_range = ( 0,6 ) ,
-                         y_range= ( -3,3 ) ,
-                         title = 'Undefromed Cofiguration in XZ plane',
-                         tools = ''
-                    )
-plotUndefXZ.xaxis.major_tick_line_color=None
-plotUndefXZ.xaxis.major_label_text_color=None
-plotUndefXZ.xaxis.minor_tick_line_color=None
-plotUndefXZ.yaxis.major_tick_line_color=None
-plotUndefXZ.yaxis.major_label_text_color=None
-plotUndefXZ.yaxis.minor_tick_line_color=None
-plotUndefXZ.grid.visible = False
-plotUndefXZ.title.text_font_size="12.5pt"
-plotUndefXZ.xaxis.axis_label_text_font_size="14pt"
-plotUndefXZ.yaxis.axis_label_text_font_size="14pt"
-plotUndefXZ.xaxis.axis_label="x"
-plotUndefXZ.yaxis.axis_label="z"
+#plotUndefXZ = Figure(    
+#                         plot_width=350    , 
+#                         plot_height=350   ,
+#                         x_range = ( 0,6 ) ,
+#                         y_range= ( -3,3 ) ,
+#                         title = 'Undefromed Cofiguration in XZ plane',
+#                         tools = ''
+#                    )
+#plotUndefXZ.xaxis.major_tick_line_color=None
+#plotUndefXZ.xaxis.major_label_text_color=None
+#plotUndefXZ.xaxis.minor_tick_line_color=None
+#plotUndefXZ.yaxis.major_tick_line_color=None
+#plotUndefXZ.yaxis.major_label_text_color=None
+#plotUndefXZ.yaxis.minor_tick_line_color=None
+#plotUndefXZ.grid.visible = False
+#plotUndefXZ.title.text_font_size="12.5pt"
+#plotUndefXZ.xaxis.axis_label_text_font_size="14pt"
+#plotUndefXZ.yaxis.axis_label_text_font_size="14pt"
+#plotUndefXZ.xaxis.axis_label="x"
+#plotUndefXZ.yaxis.axis_label="z"
 
 plotDefXZ = Figure(    
-                       plot_width=350    , 
-                       plot_height=350   ,
+                       plot_width=500    , 
+                       plot_height=500   ,
                        x_range = ( 0,6 ) ,
                        y_range= ( -3,3 ) ,
                        title = 'Defromed Cofiguration in XZ plane',
@@ -535,7 +535,7 @@ plotDefXZ.yaxis.axis_label="z"
 colorBar = Figure(
                       title = '',
                       title_location="below",
-                      plot_width=700,
+                      plot_width=1000   ,
                       plot_height=75,
                       x_range=(0,5),
                       y_range=(-0.5,0.5),   
@@ -570,16 +570,16 @@ for i in range(50):
     colorBarAlphaList.append( 1 )
 
 def update_colorBar_extremas(smallesValue, biggestValue):
-    colorBar.title.text = str(smallesValue)+" Pa                                                                      "+str(biggestValue)+" Pa"
+    colorBar.title.text = str(smallesValue)+" Pa" + " "*120 + str(biggestValue)+" Pa"
 
 # Construct the source file for the color bar
 colorBarSource = ColumnDataSource(data=dict( x=colorBarXCoords, y=colorBarYCoords, c =colorBarColorList, a=colorBarAlphaList ))
 
 # Construct the patches 
 colorBar.patches( xs='x', ys='y', source=colorBarSource, color = 'c', alpha = 'a' )
-plotUndefXY.patches(xs='x', ys='y', source=sourceXYundef, color = 'c', alpha = 'a')
+#plotUndefXY.patches(xs='x', ys='y', source=sourceXYundef, color = 'c', alpha = 'a')
 plotDefXY.patches  (xs='x', ys='y', source=sourceXYdef  , color = 'c', alpha = 'a')
-plotUndefXZ.patches(xs='x', ys='y', source=sourceXZundef, color = 'c', alpha = 'a')
+#plotUndefXZ.patches(xs='x', ys='y', source=sourceXZundef, color = 'c', alpha = 'a')
 plotDefXZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
 
 # Construct the arrows
@@ -643,5 +643,22 @@ description_filename = join(dirname(__file__), "description.html")
 
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
-curdoc().add_root(row(description,row(column(row(column(plotUndefXY,plotDefXY) , column(plotUndefXZ,plotDefXZ)),colorBar),column(Yforce_slider,Zforce_slider,Spacer(height=30),area_image))))
+#curdoc().add_root(row(description,row(column(row(column(plotUndefXY,plotDefXY) , column(plotUndefXZ,plotDefXZ)),colorBar),column(Yforce_slider,Zforce_slider,Spacer(height=30),area_image))))
+curdoc().add_root(
+                    column(
+                            description,
+                            row(
+                                   column(
+                                           row(plotDefXY, plotDefXZ),
+                                           colorBar
+                                         ),
+                                   column(
+                                          Yforce_slider,
+                                          Zforce_slider,
+                                          Spacer(height=30),
+                                          area_image
+                                         )
+                               )
+                          )
+                 )
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
