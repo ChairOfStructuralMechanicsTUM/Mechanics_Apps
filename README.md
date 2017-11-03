@@ -38,7 +38,7 @@ The server can be run in two modes:
 
 If you are using a Linux system, please execute the ```.sh``` scripts, under Windows use the ```.cmd``` scripts if available.
 
-1. install Anaconda with python **version 2.7**: https://www.continuum.io/downloads (Choose installation for all users if possible)
+1. install Anaconda with python **version 2.7**: https://www.continuum.io/downloads !!Choose installation for all users if possible!!
 2. install Git
     * Linux: see https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
     * Windows: see https://git-for-windows.github.io/
@@ -52,9 +52,9 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 
 * **Local running** 
 	- If you just want to run a single app locally:
-		- open a command window and enter:  ```boke serve --show Directory_name```
+		- open a command window and enter:  ```bokeh serve --show Directory_name```
 		
-		- For example: 	```boke serve --show Diffraction```
+		- For example: 	```bokeh serve --show Diffraction```
 		
 	- The browser should open automatically, showing the app. You can also directly access *localhost:Port* (For example *localhost:5006/Diffraction*) if your browser does not open automatically.
 	
