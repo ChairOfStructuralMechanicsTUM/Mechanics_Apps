@@ -1,7 +1,8 @@
 # Link bokeh libraries
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
-from bokeh.io import curdoc, show, set_curdoc
+from bokeh.io import curdoc, show
+from bokeh.io.doc import set_curdoc
 from bokeh.models import Div, Label, Plot, ColumnDataSource
 from bokeh.plotting import figure, output_file, show
 from bokeh.models.glyphs import Text
