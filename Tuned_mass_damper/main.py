@@ -6,7 +6,7 @@ from Integrator import *
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div, Arrow, OpenHead
+from bokeh.models import Slider, Button, Div, Arrow, OpenHead, Range1d
 from math import cos, sin, radians, sqrt, pi, atan2
 from os.path import dirname, join, split
 
@@ -63,7 +63,7 @@ Int = Integrator([topMass,mainMass],oscAmp,dashpot)
 ## functions
 
 def evolve():
-    global topMass, mainMass, oscForceAngle, oscAmp, omega, dt, t
+    global topMass, mainMass, oscForceAngle, oscAmp, omega, dt, t, displacement_range, time_range
     t+=dt
     # current force applied to main mass
     F=oscAmp*cos(oscForceAngle)
@@ -75,6 +75,48 @@ def evolve():
     
     ## draw force arrow
     h=mainMass.getTop()
+    
+    ###########################################################################
+    # Stream the new displacement to the displacement-time diagram
+    mainMass_center_y = x1
+    #mainMass_height   = h
+    topMass_center_y = x2
+    #topMass_height   = 4
+    
+    mainMass_position = mainMass.currentPos['y'][0]#+mainMass.currentPos['y'][1]/2
+    topMass_position = topMass.currentPos['y'][0]#+topMass.currentPos['y'][1]/2
+
+    mainMass_displacement = mainMass_position - mainMass_center_y#-mainMass_height/2
+    topMass_displacement = topMass_position - topMass_center_y#-topMass_height/2
+
+    print('topMass_displacement = ',topMass_displacement)
+    mainMass_displacementTime_source.stream(
+                                           dict(
+                                                t=[t],
+                                                y=[mainMass_displacement]
+                                               )
+                                          )
+    topMass_displacementTime_source.stream(
+                                           dict(
+                                                t=[t],
+                                                y=[topMass_displacement]
+                                               )
+                                          )
+                                           
+    # Change boundaries of displacement-time plot if exceeded
+    # Determine the bigger displacement achieved by the two masses
+    bigger_displacement = max(mainMass_displacement, topMass_displacement)
+    smaller_displacement = min(mainMass_displacement, topMass_displacement)
+    
+    if bigger_displacement > displacement_range.end:
+        #displacement_range.start = -abs(bigger_displacement)*1.1 
+        displacement_range.end =  abs(bigger_displacement)*1.1  # multiplied by 1.1 for having an adsmall margin
+    if smaller_displacement < displacement_range.start:
+        displacement_range.start = smaller_displacement*1.1
+    if t > time_range.end:
+        time_range.end = t*2
+    ###########################################################################
+    
     # reduce F to make arrow normal sized on drawing
     F/=50.0
     # draw arrow in correct direction
@@ -173,7 +215,7 @@ def omegaScanStep():
 title_box = Div(text="""<h2 style="text-align:center;">Schwingungstilger (Tuned mass damper)</h2>""",width=1000)
 
 ## create simulation drawing
-fig = figure(title="", tools="", x_range=(-7,7), y_range=(0,20),width=350,height=500)
+fig = figure(title="", x_range=(-7,7), y_range=(0,20),width=350,height=500)
 fig.title.text_font_size="20pt"
 fig.axis.visible = False
 fig.grid.visible = False
@@ -208,18 +250,18 @@ def change_mass(attr,old,new):
         global topMass, omega, m2
         topMass.changeMass(new)
         m2=new
-        global m1, g, k1, k2, x2, x1, h
-        l2=m2*g/k2+x2-x1-h
-        spring.changeL0(l2)
-        l1=g*(m1+m2)/k1+x1
-        baseSpring.changeL0(l1)
+        #global m1, g, k1, k2, x2, x1, h
+        #l2=m2*g/k2+x2-x1-h
+        #spring.changeL0(l2)
+        #l1=g*(m1+m2)/k1+x1
+        #baseSpring.changeL0(l1)
         # recalculate graph for new values
         calculateGraphPlot()
         change_Omega(None,None,omega)
     elif (new!=topMass.mass):
         mass_input.value=topMass.mass
 ## Create slider to choose mass of upper mass
-mass_input = Slider(title="Masse (mass) [kg]", value=m2, start=0, end=100.0, step=1,width=400)
+mass_input = Slider(title="Masse (mass) [kg]", value=m2, start=1, end=100.0, step=1,width=400)
 mass_input.on_change('value',change_mass)
 
 def change_kappa(attr,old,new):
@@ -228,11 +270,11 @@ def change_kappa(attr,old,new):
         global spring, omega, k2
         spring.changeSpringConst(new)
         k2=new
-        global m1, m2, g, k1, x2, x1, h
-        l2=m2*g/k2+x2-x1-h
-        spring.changeL0(l2)
-        l1=g*(m1+m2)/k1+x1
-        baseSpring.changeL0(l1)
+#        global m1, m2, g, k1, x2, x1, h
+#        l2=m2*g/k2+x2-x1-h
+#        spring.changeL0(l2)
+#        l1=g*(m1+m2)/k1+x1
+#        baseSpring.changeL0(l1)
         # recalculate graph for new values
         calculateGraphPlot()
         # plot frequency on new graph
@@ -240,7 +282,7 @@ def change_kappa(attr,old,new):
     elif (new!=spring.kappa):
         kappa_input.value=spring.kappa
 ## Create slider to choose spring constant
-kappa_input = Slider(title="Federsteifigkeit (Spring stiffness) [N/m]", value=k2, start=0.0, end=200, step=10,width=400)
+kappa_input = Slider(title="Federsteifigkeit (Spring stiffness) [N/m]", value=k2, start=1.0, end=200, step=10,width=400)
 kappa_input.on_change('value',change_kappa)
 
 def change_lam(attr,old,new):
@@ -279,28 +321,28 @@ omega_input.on_change('value',change_Omega)
 def stop():
     global Active
     if (Active):
-        try:
-            curdoc().remove_periodic_callback(evolve)
-            Active=False
-        except:
-            pass
-        try:
-            global t, phi, omega_input
-            curdoc().remove_periodic_callback(omegaScanStep)
-            Active=False
-            omega_input.value=Omega0+alpha*t
-            t=0
-            phi=0
-        except:
-            pass
+#        try:
+        curdoc().remove_periodic_callback(evolve)
+        Active=False
+#        except:
+#            pass
+#        try:
+#            global t, phi, omega_input
+#            curdoc().remove_periodic_callback(omegaScanStep)
+#            Active=False
+#            omega_input.value=Omega0+alpha*t
+#            t=0
+#            phi=0
+#        except:
+#            pass
 def play():
     global Active
     if (not Active):
-        reset()
+        #reset()
         curdoc().add_periodic_callback(evolve,100)
         Active=True
 def reset():
-    global spring, topMass, dashpot, mainMass, baseSpring, oscForceAngle, x1, x2, h
+    global spring, topMass, dashpot, mainMass, baseSpring, oscForceAngle, x1, x2, h, t
     mass_input.value=8.0
     kappa_input.value=80.0
     lam_input.value=3.7
@@ -324,6 +366,18 @@ def reset():
     mainMass.changeInitV(0)
     oscForceAngle = pi/2
     Arrow_source.data=dict(xS=[], xE=[], yS=[], yE=[])
+    
+    # Clear the displacement-time diagram related data structures
+    mainMass_displacementTime_source.data=dict(t=[0],y=[0]) # Default values
+    topMass_displacementTime_source.data=dict(t=[0],y=[0]) # Default values
+    time_source.data=dict(x=[0],y=[0])
+    
+    displacement_range.start = 0
+    displacement_range.end   = 0
+    time_range.end   = 0
+    time_range.start = 0
+    
+    t = 0
 def omega_scan():
     global Active, t
     if (not Active):
@@ -348,9 +402,37 @@ omega_scan_button.on_click(omega_scan)
 calculateGraphPlot()
 change_Omega(None,None,1.0)
 
+'''
+###############################################################################
+Define the displacement-time diagram for both masses
+###############################################################################
+'''
+mainMass_displacementTime_source = ColumnDataSource(data=dict(t=[0],y=[0])) # Default values
+topMass_displacementTime_source = ColumnDataSource(data=dict(t=[0],y=[0])) # Default values
+time_source    = ColumnDataSource(data=dict(x=[0],y=[0]))
+
+displacement_range = Range1d(0,0)
+time_range = Range1d(0,0)
+
+displacementTime_plot = figure(
+                                plot_width = 600,
+                                plot_height= 600,
+                                x_range  = time_range,
+                                y_range  = displacement_range,
+                                title = 'Displacement-Time Diagram',
+                                tools=''
+                              )
+displacementTime_plot.title.text_font_size = "25px"
+displacementTime_plot.title.align = "center"
+displacementTime_plot.axis.axis_label_text_font_size="14pt"
+displacementTime_plot.xaxis.axis_label="Time [second]"
+displacementTime_plot.yaxis.axis_label="Displacement [meter]"
+
+displacementTime_plot.line(x='t',y='y', source = mainMass_displacementTime_source, color='#0033FF', legend='Main mass')
+displacementTime_plot.line(x='t',y='y', source = topMass_displacementTime_source, color='#330011', legend='Top mass')
+
 ## Send to window
-curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,stop_button,reset_button,omega_scan_button),Spacer(width=10),fig,p),
+curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,stop_button,reset_button,omega_scan_button),Spacer(width=10),fig,displacementTime_plot,p),
 #curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,stop_button,reset_button),Spacer(width=10),fig,test_fig),
     row(mass_input,kappa_input),row(lam_input,omega_input)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
-
