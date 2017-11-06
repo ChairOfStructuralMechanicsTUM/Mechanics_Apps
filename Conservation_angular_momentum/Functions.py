@@ -88,75 +88,57 @@ class MouseTouch():
         self.domain         = domain
         self.rotatingObject = rotatingObject
         self.currentNode    = -1
-        self.oldAngle       = 0
-        self.olderAngle     = 0
+        self.angles          = list()
         
-    def inNode (self, xPos, yPos, new):
+    def inNode (self, click_position):
         
         baseWidth = self.rotatingObject.baseSource.data['width'][0]
         baseHeight = self.rotatingObject.baseSource.data['height'][0]
-        if abs(xPos)<=(baseWidth/2) and abs(yPos)<=(baseHeight/2) and np.sqrt( new[0][u'x']**2 + new[0][u'y']**2 ) >= self.rotatingObject.circleSource.data['radius'][1]:
+
+        xPos = click_position.x
+        yPos = click_position.y
+        
+        if np.sqrt( xPos**2 + yPos**2 ) >= self.rotatingObject.circleSource.data['radius'][1]:
             self.rotatingObject.set_velocity(0)
             return 0
         else:
             return -1
     
     # modify path by dragging nodes
-    def modify_location(self, old, new):
+    def modify_location(self, click_position):
         
-        # if there is a previous node (not first time the function is called)
-        # and the node has not been released (new['x']=-1 on release to prepare for future calls)
-        if (len(old)==1 and new[0][u'x']!=-1):
-            # if first call for this node
-            if (self.currentNode==-1):
-                # determine which node and remember it
-                XStart = old[0][u'x']
-                YStart = old[0][u'y']
-                XStart = new[0][u'x']
-                YStart = new[0][u'y']
-    
-                self.currentNode = self.inNode(XStart,YStart,new)
-                
-                if self.currentNode == 0:
-                    newAngle = abs(np.arctan(YStart/XStart))
-                    if XStart > 0 and YStart > 0:
-                        pass
-                    elif XStart < 0 and YStart > 0:
-                        newAngle += 2*(np.pi - newAngle)
-                    elif XStart < 0 and YStart < 0:
-                        newAngle += 2*np.pi
-                    else:
-                        newAngle *= -1
-                        
-                    self.oldAngle = newAngle
-    
-            # if not first call then move node
-            else: 
-                XStart = new[0][u'x']
-                YStart = new[0][u'y']
-                newAngle = abs(np.arctan(YStart/XStart))
-                self.olderAngle = newAngle
-                
-                if XStart > 0 and YStart > 0:
-                    pass
-                elif XStart < 0 and YStart > 0:
-                    newAngle += 2*(np.pi - newAngle)
-                elif XStart < 0 and YStart < 0:
-                    newAngle += 2*np.pi
-                else:
-                    newAngle *= -1
-                    
-                self.rotatingObject.update_rectangle_source( self.rotatingObject.baseSource.data['angle'][0] + newAngle - self.oldAngle )
-                self.oldAngle = newAngle
-                    
-            return 1
-        else:
-            # when node is released reset current node to -1
-            # so a new node is moved next time
-            self.rotatingObject.set_velocity(self.oldAngle - self.olderAngle) 
+        self.currentNode = self.inNode(click_position)
+        
+        x = click_position.x
+        y = click_position.y
+
+        
+        if self.currentNode == 0:
+            newAngle = abs(np.arctan(y/x))
+            if x > 0 and y > 0:
+                pass
+            elif x < 0 and y > 0:
+                newAngle += 2*(np.pi - newAngle)
+            elif x < 0 and y < 0:
+                newAngle += np.pi
+            else:
+                newAngle += 2*(2*np.pi - newAngle)
             
-            self.currentNode=-1
-            return -1
+            self.rotatingObject.update_rectangle_source( self.rotatingObject.baseSource.data['angle'][0] + newAngle - self.oldAngle )
+            
+            self.angles.append(newAngle)
+                
+        return 1
+
+    def set_speed(self,event):
+        # This equivalent value of the velocity is empirical (no basis)
+        rotationSpeed = (self.angles[-3] - self.angles[-1] )*10
+
+        self.angles = list()
+        
+        self.rotatingObject.set_velocity(rotationSpeed) 
+        
+        return 1
     
 '''
 The particleSource, particleXPos, particleYPos are stored in this file because

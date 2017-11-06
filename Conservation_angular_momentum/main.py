@@ -22,6 +22,7 @@ from bokeh.models import Button
 from bokeh.models import Div
 from Functions import *
 from os.path import dirname, join, split
+from bokeh.events import Pan, PanEnd
 
 '''
 ######################## Define the plotting space ############################
@@ -75,16 +76,6 @@ The objects include:
     (2) Rotating rectangle
 '''
 ########################## (1) Rotating circle ################################
-#construct_circle_source( 
-#                        center=[ [0.0,0.0], [0.0,0.0] ], 
-#                        radius=[ 4.0, 3.0 ], 
-#                        color=[ "#33FF33","#FFFFFF" ]
-#                       )
-#construct_cross_source()
-#
-#circleSource = get_circle_source()
-#crossSource = get_cross_source()
-
 rotatingObject = RotatingObject()
 rotatingObject.construct_circle_source( 
                                        [[0.0,0.0], [0.0,0.0]],
@@ -93,14 +84,12 @@ rotatingObject.construct_circle_source(
                                       )
 rotatingObject.construct_cross_source()
 
+######################### (2) Rotating rectangle ##############################
 rect_width  = 12 
 rect_height = 8
 
-######################### (2) Rotating rectangle ##############################
-#construct_rectangle_source( center=[0.0,0.0] )
-rotatingObject.construct_rectangle_source([0.0,0.0],12,8)
+rotatingObject.construct_rectangle_source([0.0,0.0], rect_width, rect_height)
 mouseTouch = MouseTouch([[xMin,xMax],[yMin,yMax]], rotatingObject)
-#rectangelSource = get_rectangle_source()
 
 '''
 ####################### Define the evolution function #########################
@@ -197,16 +186,37 @@ play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
 
 ############################## (4) Mouse touch ################################
-playGround.add_tools(MoveNodeTool())
+#playGround.add_tools(MoveNodeTool())
+#
+#def on_mouse_move(attr, old, new):
+#    #global rotation_speed_wheel, rotation_speed_base
+#
+#    if (mouseTouch.modify_location(old,new)==1) and Active == True:
+#        # if the path is changed then update the drawing
+#        pass
+#    
+#playGround.tool_events.on_change('geometries', on_mouse_move)
 
-def on_mouse_move(attr, old, new):
-    #global rotation_speed_wheel, rotation_speed_base
+#playGround.add_tools(MoveNodeTool())
 
-    if (mouseTouch.modify_location(old,new)==1) and Active == True:
+def on_mouse_move(event):
+    if (mouseTouch.modify_location(event)==1):
         # if the path is changed then update the drawing
         pass
-    
-playGround.tool_events.on_change('geometries', on_mouse_move)
+    else:
+        pass
+
+playGround.on_event(Pan, on_mouse_move)
+
+
+def on_mouse_stop(event):
+    if (mouseTouch.set_speed(event)==1):
+        # if the path is changed then update the drawing
+        pass
+    else:
+        pass
+
+playGround.on_event(PanEnd, on_mouse_stop)
 
 '''
 ########################### Plot the application ##############################
