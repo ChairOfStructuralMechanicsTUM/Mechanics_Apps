@@ -532,7 +532,7 @@ def read_ERS_data(file):
                     if wordCounter == 0:
                         #print(word)
                         period.append(float(word))
-                    elif wordCounter == 1:
+                    elif wordCounter == 5:
                         acceleration.append(float(word)*9.81) # multiplication by 9.81 to convert it to m/sec/sec
                     wordCounter += 1
                 #wordCounter += 1
