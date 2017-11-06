@@ -539,6 +539,20 @@ def read_ERS_data(file):
             wordCounter = 0
             lineCounter += 1
     
-    print('len(period) = ',len(period) )
-    print('len(accel.) = ',len(acceleration))
     return ColumnDataSource(data=dict(period=period,acceleration=acceleration))
+    
+def Read_ERS_info(file):
+
+    data = list()
+    wordCounter = 0
+    lineCounter = 0                    
+    with open( file, 'r') as f:
+        for line in f:
+            if lineCounter == 34:
+                for word in line.split(','):
+                    if wordCounter >= 9 and wordCounter <= 15:
+                        data.append(word)
+                    wordCounter += 1
+            lineCounter += 1
+
+    return data

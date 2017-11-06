@@ -61,7 +61,7 @@ signal_plot.xaxis.axis_label="Time [second]"
 xmin3, xmax3 = 0,1800
 ymin3, ymax3 = -0.5,0.5
 max_displacement_plot = figure(
-                                  plot_width=700,
+                                  plot_width=720,
                                   plot_height=400,
                                   x_range=[xmin3,xmax3], 
                                   y_range=[ymin3,ymax3],
@@ -77,7 +77,7 @@ max_displacement_plot.yaxis.axis_label= "Amplitude [mm]"
 max_displacement_plot.xaxis.axis_label="Time [second]"
 
 ERSplot = figure(
-                      plot_width=400,
+                      plot_width=800,
                       plot_height=800,
                       x_range=[0,3.0], 
                       y_range=[0,3.0],
@@ -271,7 +271,6 @@ for element in ERS_dataThree.data['acceleration']:
         maxAcceleration = abs(element)
         
 maxPeriod = 0
-
 if maxPeriod < ERS_dataOne.data['period'][-1]:
     maxPeriod = abs(ERS_dataOne.data['period'][-1])
 if maxPeriod < ERS_dataTwo.data['period'][-1]:
@@ -286,13 +285,38 @@ ERSplot.x_range.end = maxPeriod
 
 # Create legend for the signal_plot
 legend3 = Legend(items=[
-    ("ERS data One  ", [ERS_dataOne_plot  ]),
-    ("ERS data Two  ", [ERS_dataTwo_plot  ]),
-    ("ERS data Three", [ERS_dataThree_plot]),
+    ("ERS Signal One  ", [ERS_dataOne_plot  ]),
+    ("ERS Signal Two  ", [ERS_dataTwo_plot  ]),
+    ("ERS Signal Three", [ERS_dataThree_plot]),
 ], location=(0, 0))
 
 ERSplot.add_layout(legend3, 'above')
 ERSplot.legend.click_policy="hide"
+
+############################ ERS data information #############################
+ERS_dataOne_info = Read_ERS_info(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/San_Ramon_Fire_Station/_SearchResults.csv')
+ERS_dataTwo_info = Read_ERS_info(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Rio_Hondo/_SearchResults.csv')
+ERS_dataThree_info = Read_ERS_info(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Bevagna/_SearchResults.csv')
+
+informationTable = ColumnDataSource(
+                                     data=dict(
+                                               subject=['Earthquake Name', 'Year',
+                                                        'Station Name', 'Magnitude',
+                                                        'Mechanism', 'Rjb (km)',
+                                                        'Rrup (km)'],
+                                                signalOne  =ERS_dataOne_info,
+                                                signalTwo  =ERS_dataTwo_info,
+                                                signalThree=ERS_dataThree_info
+                                              )
+                                    )
+columns = [
+            TableColumn(field="subject", title="Subject"),
+            TableColumn(field="signalOne", title="Signal One"),
+            TableColumn(field="signalTwo", title="Signal Two"),
+            TableColumn(field="signalThree", title="Signal Three"),
+          ]   
+data_table = DataTable(source=informationTable, columns=columns, width=800, height=280)
+data_table_title = Div(text="""<b>Information about the seismac signals</b> """,width = 600)
 
 '''
 ###############################################################################
@@ -303,7 +327,7 @@ responseOne_amplitudes = solve_time_domain(structure, signalOne)
 responseTwo_amplitudes = solve_time_domain(structure, signalTwo)
 responseThree_amplitudes = solve_time_domain(structure, signalThree)
 
-# Note: multiplied by 1000 to convert from meter to milimeter
+# Note: multiplied by 1000 to convert from meter to millimeter
 responseOne_thirdStorey = ColumnDataSource(data=dict(time=signalOne.data['time'],amplitude=responseOne_amplitudes[2,:]*1000))
 responseTwo_thirdStorey = ColumnDataSource(data=dict(time=signalTwo.data['time'],amplitude=responseTwo_amplitudes[2,:]*1000))
 responseThree_thirdStorey = ColumnDataSource(data=dict(time=signalThree.data['time'],amplitude=responseThree_amplitudes[2,:]*1000))
@@ -446,7 +470,7 @@ curdoc().add_root(
                                signal_plot,
                                max_displacement_plot,
                               ),
-                        ERSplot
+                        column(ERSplot, data_table_title, data_table)
                        )
                  )
 
