@@ -44,7 +44,7 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
     * Windows: see https://git-for-windows.github.io/
 	* For windows we also suggest a desktop version of github: see https://desktop.github.com/ 
 3. clone **this** repository (*Linux:* from command line, *Windows:* by opening git bash) ```git clone https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps.git```)
-4. install additional python packages (bokeh, nodejs, flexx, twisted) by running ```$ ./installer.sh```, ```$ ./installer.cmd```. *Windows:* Right click on script >> Run as administrator. Please check the version of tornado, which is being installed automatically. Bokeh is not compatible with tornado verions >= 4.5, so please make sure, that tornado version 4.4.2 is installed.
+4. install additional python packages (bokeh, nodejs, flexx, twisted) by running ```$ ./installer.sh```, ```$ ./installer.cmd```. *Windows:* Right click on script >> Run as administrator.
 5. configure the server with ```server.conf``` to your own server settings. If you want to run the server locally, just use the existing configuration. If you want to run the server online, insert the global ip address and make sure that the server port is open to the world wide web. 
 6. In ```appnames.conf``` write the folder names of the apps you want to run on the server.
 
