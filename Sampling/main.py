@@ -6,7 +6,7 @@ import numpy as np
 from numpy.fft import ifft, fft, fftshift
 
 from bokeh.io import curdoc
-from bokeh.models import ColumnDataSource, VBox, Div
+from bokeh.models import ColumnDataSource, Div
 from bokeh.layouts import widgetbox, layout, column
 from bokeh.plotting import Figure
 from bokeh.models.widgets import TextInput, Dropdown, CheckboxButtonGroup
@@ -132,7 +132,7 @@ def approximate_fourier_transform(T_0, N, f_function):
     T_S = T_0 / N  # Length of one sampling interval
 
     t_samples = np.arange(0, T_0, T_S)  # Grid in the Time Domain
-    f_samples = np.arange(-(N/2) / T_0, (N/2 - 1) / T_0, 1/ T_0)  # Grid in the Frequency Domain
+    f_samples = np.arange(-(N/2) / T_0, (N/2 - 1) / T_0 + 1, 1/ T_0)  # Grid in the Frequency Domain
 
     # Function sampling
     x_samples = f_function(t_samples)
@@ -346,7 +346,7 @@ description = Div(text=open(description_filename).read(), render_as_text=False)
 
 # create layout
 controls = [f_input, sample_fun_input_f, t0_input, N_input, nyquist_button]
-controls_box = widgetbox(controls, responsive=True)  # all controls
+controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
 curdoc().add_root(layout([[description],[plot_original, plot_transform_real],
                           [controls_box, plot_transform_imag]],
                          sizing_mode='stretch_both')) # add plots and controls to root
