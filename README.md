@@ -89,7 +89,7 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - [ ] 4) Tuned mass damper/Schwingungstilger (eb, rd)
 - [ ] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter) (ak, vu)
 - [ ] 6) Coriolis force/Drehscheibe-Corioliskraft (eb)
-- [ ] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma)
+- [x] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma)
 - [ ] 8) Collision/Stoss (ma)
 - [x] 9) Rollercoaster (eb)
 - [x] 10) Stopping distances (eb)
