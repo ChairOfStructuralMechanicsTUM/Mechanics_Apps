@@ -121,7 +121,7 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
         
         relativeVelocityArrow = Arrow(    
                                             end=OpenHead(
-                                                         line_color="#FFCC00",
+                                                         line_color="#DAD7CB",
                                                          line_width=3,
                                                          size=5
                                                         ),
@@ -129,7 +129,7 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
                                             y_start=['ys'][0],
                                             x_end=['xe'][0], 
                                             y_end=['ye'][0], 
-                                            line_color = "#FFCC00",
+                                            line_color = "#DAD7CB",
                                             source=swimmerArrows_sources[i][0]
                                         ) 
         absoluteVelocityArrow = Arrow(    
@@ -175,31 +175,31 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
                               ))
     diagram.add_layout( Label(
                                   x=10, y=-2,
-                                  text='Black Swimmer',
-                                  text_color='black',text_font_size="8pt",
-                                  level='glyph',text_baseline="middle",text_align="center",
-                              ))
-    diagram.add_layout( Label(
-                                  x=15, y=-2,
-                                  text='Red Swimmer',
-                                  text_color='black',text_font_size="8pt",
-                                  level='glyph',text_baseline="middle",text_align="center",
-                              ))
-    diagram.add_layout( Label(
-                                  x=20, y=-2,
                                   text='Orange Swimmer',
                                   text_color='black',text_font_size="8pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                               ))
     diagram.add_layout( Label(
-                                  x=25, y=-2,
+                                  x=15, y=-2,
+                                  text='Green Swimmer',
+                                  text_color='black',text_font_size="8pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                              ))
+    diagram.add_layout( Label(
+                                  x=20, y=-2,
                                   text='Blue Swimmer',
                                   text_color='black',text_font_size="8pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                               ))
     diagram.add_layout( Label(
+                                  x=25, y=-2,
+                                  text='Yellow Swimmer',
+                                  text_color='black',text_font_size="8pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                              ))
+    diagram.add_layout( Label(
                                   x=30, y=-2,
-                                  text='Grey Swimmer',
+                                  text='Red Swimmer',
                                   text_color='black',text_font_size="8pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                               ))
