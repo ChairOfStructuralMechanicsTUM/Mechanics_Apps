@@ -60,7 +60,7 @@ dt = 0.05
 # Water information
 waterX = np.array( [xMin,xMin,xMax,xMax] )
 waterY = np.array( [yMin,yMax/3,yMax/3,yMin] )
-scene.patch(waterX, waterY, fill_color="#0033cc")
+scene.patch(waterX, waterY, color="#0073CF")
 
 # Boat information
 mass = 300.0                           # Mass of the boat
@@ -81,11 +81,11 @@ boatY = np.array( [
                   ] )
 startBoatSpeed = 2
 boatSpeed = 2.0
-boatColor = '#cc9900'
+boatColor = '#DAD7CB'
 boatSource = ColumnDataSource(data=dict(x = boatX,
                                         y = boatY,
                                         ))
-scene.patch(x = 'x', y = 'y', fill_color= boatColor, source = boatSource)
+scene.patch(x = 'x', y = 'y', color= boatColor, source = boatSource)
 
 # People information
 
@@ -138,7 +138,7 @@ for person in listPeople:
     listYCoords.append(person.standingPosition[1])
     #listSources.append(ColumnDataSource(data=person.jumpingPath))
     
-swimmers_colors = ['#454545','#FF0000','#00FF00','#0000FF','#999999']
+swimmers_colors = ['#E37222','#A2AD00','#64A0C8','#FFDC00','#C4071B']
     
 personSource = ColumnDataSource(
                                 data=dict(
@@ -148,7 +148,7 @@ personSource = ColumnDataSource(
                                          )         
                                )
 
-scene.patches(xs='x',ys='y',fill_color='c',source =personSource )
+scene.patches(xs='x',ys='y',color='c',source =personSource )
 
 
 boatArrows_sources, swimmerArrows_sources = create_arrows_velocityDiagram(velocity_diagram, swimmers_colors, boatSpeed)
@@ -261,7 +261,7 @@ def updateNoPersons(attr,old,new):
     
 numberPersonsSlider = Slider(
                                  title=u" Number of swimmers on board ", 
-                                 value=1, start=1, end=5, step=1,width=350
+                                 value=1, start=1, end=5, step=1,width=300
                             )
 numberPersonsSlider.on_change('value',updateNoPersons)
 
@@ -310,7 +310,10 @@ def reset ():
     else:
         curdoc().remove_periodic_callback(move_boat)
         Active = False
-    
+
+    #Reset Play Button
+    play_button.label = "Play"
+
     # Reset the coordinates defining the boat in its source data file
     boatSource.data = dict(x = boatX, y = boatY)
     boatSpeed = startBoatSpeed
@@ -397,7 +400,7 @@ def jump ():
                 # Start plotting the path of the person's own jump
                 scene.ellipse(
                               x='x',y='y',width=0.1,height=0.1,
-                              color="#0065BD",
+                              color="#005293",
                               source=listSources[counter]
                              )
                 break
@@ -422,12 +425,13 @@ description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=600)
 
 area_image = Div(text="""
+<h2>
+Technical Information for Boat and Swimmers
+</h2>
 <p>
 <img src="/Boat_with_three_swimmers/static/images/High_resolution_picture.png" width=400>
 </p>
-<p>
-Technical Information for Boat and Swimmers
-</p>""", render_as_text=False, width=400)
+""", render_as_text=False, width=400)
 
 curdoc().add_root(
                   column(
@@ -441,6 +445,7 @@ curdoc().add_root(
                             ),
                          Spacer(height=50),
                          scene,
+                         Spacer(height=50),
                          row(
                              column(
                                     numberPersonsSlider,
@@ -449,6 +454,7 @@ curdoc().add_root(
                                     jump_button,
                                     reset_button
                                    ),
+                             Spacer(width=100),
                              velocity_diagram,
                             )
                         )
