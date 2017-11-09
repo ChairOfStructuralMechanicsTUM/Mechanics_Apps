@@ -38,10 +38,10 @@ playGround.yaxis.visible = False
 # Define the energy bar
 barsFig = BC.BarChart(
                       ["Green ball",
-                      "Red ball",
+                      "Orange ball",
                       "Whole system"],
                       [50,50,50],
-                      ["#33FF33","#FF3333","#460BF8"],
+                      ["#A2AD00","#E37222","#003359"],
                       [1,1,1]
                      )
 barsFig.Width(300)
@@ -58,13 +58,13 @@ Define the objects to be plotted within the plotting domain
 # Define the initial location of the two colliding balls (in our 2D app, circles)
 x1,x2 = 3.0,5.0
 y1,y2 = 2.0,2.0
-r1,r2 = 0.5,0.5
-m1,m2 = 3,1
-c1,c2 = '#33FF33','#FF3333'
+r1,r2 = 0.5,0.35
+m1,m2 = 2,1
+c1,c2 = '#A2AD00','#E37222'
 velocityVectorOne = np.array([1.0,0.0])
 velocityVectorTwo = np.array([0.0,0.0])
 
-# Collusion Parameters
+# Collision Parameters
 Cr = 1.0
 
 # Define the dynamic simulation parameters

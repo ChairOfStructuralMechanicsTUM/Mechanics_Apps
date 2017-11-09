@@ -13,7 +13,7 @@ class Particle():
         self.position = position
         self.velocity = velocity
         
-        # Columnd data sources
+        # Column data sources
         self.positionInPlot = ColumnDataSource(data=dict(x=[0],y=[0]))
         self.velocityInPlot = ColumnDataSource(data=dict(xs=[0],ys=[0],xe=[0],ye=[0]))
         
