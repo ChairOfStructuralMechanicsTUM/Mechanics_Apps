@@ -21,7 +21,7 @@ yMin, yMax = 0, 10
 
 playGround = Figure(
                         plot_width = 600,
-                        plot_height= 800,
+                        plot_height= 650,
                         x_range  =(xMin, xMax),
                         y_range  =(yMin, yMax),
                         title = 'Collision Play Ground',
@@ -35,18 +35,7 @@ playGround.xaxis.visible = False
 playGround.yaxis.visible = False
 
 
-# Define the energy bar
-barsFig = BC.BarChart(
-                      ["Green ball",
-                      "Orange ball",
-                      "Whole system"],
-                      [50,50,50],
-                      ["#A2AD00","#E37222","#003359"],
-                      [1,1,1]
-                     )
-barsFig.Width(300)
-barsFig.Height(650)
-barsFig.values='timing'
+
 
 '''
 ###############################################################################
@@ -61,8 +50,30 @@ y1,y2 = 2.0,2.0
 r1,r2 = 0.5,0.35
 m1,m2 = 2,1
 c1,c2 = '#A2AD00','#E37222'
-velocityVectorOne = np.array([1.0,0.0])
-velocityVectorTwo = np.array([0.0,0.0])
+v_x1,v_y1 = 1.0,1.0
+v_x2,v_y2 = -2.0,-1.0
+
+dirOne = np.arctan2(v_y1,v_x1)/np.pi*180
+dirTwo = np.arctan2(v_y2,v_x2)/np.pi*180
+
+if dirOne < 0:
+    dirOne += 360
+else:
+    pass
+
+if dirTwo < 0:
+    dirTwo += 360
+else:
+    pass
+
+
+magOne = np.sqrt( v_x1 ** 2 + v_y1 ** 2 )
+magTwo = np.sqrt( v_x2 ** 2 + v_y2 ** 2 )
+
+
+
+velocityVectorOne = np.array([v_x1,v_y1])
+velocityVectorTwo = np.array([v_x2,v_y2])
 
 # Collision Parameters
 Cr = 1.0
@@ -118,6 +129,44 @@ playGround.add_layout(
                      )
                             
 system = CollidingSystem([[xMin,xMax],[yMin,yMax]], [particleOne, particleTwo])
+
+'''
+##  Define the energy bar
+'''
+
+barsFig = BC.BarChart(
+                      ["Green ball",
+                      "Orange ball",
+                      "Whole system"],
+                      [50,50,50],
+                      ["#A2AD00","#E37222","#003359"],
+                      [1,1,1]
+                     )
+barsFig.Width(300)
+barsFig.Height(650)
+barsFig.values='timing'
+
+
+def update_bars():
+    # Determine the new kinetic energy of both balls
+    yellowBallKE = 0.5 * m1 * (
+        particleOne.velocity[0] ** 2
+        + particleOne.velocity[1] ** 2
+    )
+
+    redBallKE = 0.5 * m2 * (
+        particleTwo.velocity[0] ** 2
+        + particleTwo.velocity[1] ** 2
+    )
+
+    totalKE = yellowBallKE + redBallKE
+
+    # Update the bar heights accordingly
+    barsFig.setHeight(0, yellowBallKE)
+    barsFig.setHeight(1, redBallKE)
+    barsFig.setHeight(2, totalKE)
+
+update_bars()
 
 '''
 ###############################################################################
@@ -260,26 +309,7 @@ def compute_tranjectory():
     particleOne.update_position_source()
     particleTwo.update_position_source()
     
-def update_bars():
-    # Determine the new kinetic energy of both balls
-    yellowBallKE = 0.5*m1*( 
-                            particleOne.velocity[0]**2
-                          + particleOne.velocity[1]**2
-                          )
-    
 
-    redBallKE = 0.5*m2*( 
-                         particleTwo.velocity[0]**2
-                       + particleTwo.velocity[1]**2
-                       )
-    
-    
-    totalKE = yellowBallKE + redBallKE
-    
-    # Update the bar heights accordingly
-    barsFig.setHeight(0,yellowBallKE)
-    barsFig.setHeight(1,redBallKE)
-    barsFig.setHeight(2,totalKE)
     
 '''
 ###############################################################################
@@ -290,21 +320,22 @@ Add the interactive functionalities
 periodicCallback = 0
 def Reset():
     global Active, periodicCallback
-	
+
+
     # Update the source data file to the very initial data
     particleOne.update_position(x1,y1)
-    particleOne.update_position_source()
+    #particleOne.update_position_source() - > not necessary anymore - already impied in particle.update_position()
     
     particleTwo.update_position(x2,y2)
-    particleTwo.update_position_source()
+    #particleTwo.update_position_source() - > not necessary anymore - already impied in particle.update_position()
     
     # Update the velocity vectors
-    particleOne.update_velocity(1,0)
-    particleTwo.update_velocity(0,0)
+    particleOne.update_velocity(v_x1, v_y1)
+    particleTwo.update_velocity(v_x2, v_y2)
 
-    # Update the velocity arrows' source file
-    particleOne.update_velocity_source()
-    particleTwo.update_velocity_source()
+    # Update the velocity arrows' source file - > not necessary anymore - already impied in particle.update_velocity()
+    #particleOne.update_velocity_source()
+    #particleTwo.update_velocity_source()
     
     # Update the height of the bars accordingly
     update_bars()
@@ -321,10 +352,10 @@ def Reset():
     Active = False
     
     # Return the solider to their default values
-    ballOneVelocityDirSlider.value = 0.0
-    ballTwoVelocityDirSlider.value = 0.0
-    ballOneVelocityMagSlider.value  = 1.0
-    ballTwoVelocityMagSlider.value  = 0.0
+    ballOneVelocityDirSlider.value = dirOne
+    ballTwoVelocityDirSlider.value = dirTwo
+    ballOneVelocityMagSlider.value  = magOne
+    ballTwoVelocityMagSlider.value  = magTwo
 
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)
@@ -358,7 +389,7 @@ play_button.on_click(play)
     
 ##################### Creating velocity direction slider ######################
 def update_ballOne_VelocityDir(attr,old,new):
-
+    global velocityVectorOne
     if Active == False:
         angle = new
         velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity) )
@@ -366,6 +397,8 @@ def update_ballOne_VelocityDir(attr,old,new):
         if velocityMagnitude == 0:
             # Create some default velocity vector
             velocityVectorOne = np.array([1.0,0.0])
+            # Update respective Magnitude slider
+            ballOneVelocityMagSlider.value = 1
         else:
             velocityVectorOne = velocityMagnitude * np.array([
                                                               np.cos(np.deg2rad(angle)),
@@ -378,8 +411,8 @@ def update_ballOne_VelocityDir(attr,old,new):
         pass
     
 ballOneVelocityDirSlider = Slider(
-                                  title=u" Green Ball Velocity Direction ( degrees ) ",
-                                  value=0, start=0, end=360, step=1.0, width=300
+                                  title=u" Green Ball Velocity Direction (deg) ",
+                                  value=dirOne , start=0, end=360, step=1.0, width=260
                                  )
 ballOneVelocityDirSlider.on_change('value',update_ballOne_VelocityDir)
 
@@ -397,14 +430,20 @@ def update_ballOne_VelocityMag(attr,old,new):
             velocityVectorOne *= magnitude
             
         particleOne.update_velocity(velocityVectorOne[0],velocityVectorOne[1])
-        
+
+        #Reset respective direction Slider if magnitude == 0
+        if magnitude == 0.0:
+            ballOneVelocityDirSlider.value = 0
+        else:
+            pass
+
         update_bars()
     else:
         pass
    
 ballOneVelocityMagSlider = Slider(
-                                  title=u" Green Ball Velocity Magnitude ( meter/second ) ",
-                                  value=1, start=0, end=5, step=0.1, width=300
+                                  title=u" Green Ball Velocity Magnitude (m/s) ",
+                                  value=magOne, start=0, end=5, step=0.1, width=260
                                  )
 ballOneVelocityMagSlider.on_change('value',update_ballOne_VelocityMag)
 
@@ -418,6 +457,8 @@ def update_ballTwo_VelocityDir(attr,old,new):
         if velocityMagnitude == 0:
             # Create some default velocity vector
             velocityVectorTwo = np.array([1.0,0.0])
+            # Update respective Magnitude slider
+            ballTwoVelocityMagSlider.value = 1
         else:
             velocityVectorTwo = velocityMagnitude * np.array([
                                                               np.cos(np.deg2rad(angle)),
@@ -430,8 +471,8 @@ def update_ballTwo_VelocityDir(attr,old,new):
         pass
     
 ballTwoVelocityDirSlider = Slider(  
-                                  title=u" Red Ball Velocity Direction ( degrees ) ",
-                                  value=0, start=0, end=360, step=1.0, width=300
+                                  title=u" Orange Ball Velocity Direction (deg) ",
+                                  value=dirTwo, start=0, end=360, step=1.0, width=260
                                  )
 ballTwoVelocityDirSlider.on_change('value',update_ballTwo_VelocityDir)
 
@@ -450,13 +491,19 @@ def update_ballTwo_VelocityMag(attr,old,new):
             
         particleTwo.update_velocity(velocityVectorTwo[0],velocityVectorTwo[1])
 
+        # Reset respective direction Slider if magnitude == 0
+        if magnitude == 0.0:
+            ballTwoVelocityDirSlider.value = 0
+        else:
+            pass
+
         update_bars()
     else:
         pass
     
 ballTwoVelocityMagSlider = Slider(
-                                  title=u" Red Ball Velocity Magnitude ( meter/second ) ", 
-                                  value=0, start=0, end=5, step=0.1, width=300
+                                  title=u" Orange Ball Velocity Magnitude (m/s) ",
+                                  value=magTwo, start=0, end=5, step=0.1, width=260
                                  )
 ballTwoVelocityMagSlider.on_change('value',update_ballTwo_VelocityMag)
 
@@ -467,7 +514,7 @@ def update_Cr_value(attr,old,new):
 
 Cr_Slider = Slider(
                    title=u" Coefficient of Restitution ",
-                   value=1, start=0, end=1, step=0.1,width=600
+                   value=1, start=0, end=1, step=0.1,width=530
                   )
 Cr_Slider.on_change('value',update_Cr_value)
 
@@ -492,48 +539,51 @@ Add all the components together and initiate the app
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1000)
 
 area_image = Div(text="""
+<h2>
+Particles' Parameters:
+</h2>
 <p>
-<img src="/Collision/static/images/particles_information.png" width=500>
+<img src="/Collision/static/images/particles_information.png" width=450>
 </p>
-<p>
-Particles' Parameters
-</p>""", render_as_text=False, width=350)
+""", render_as_text=False, width=450)
 
-buttons = widgetbox(reset_button, play_button, pause_button,width=150)
+#buttons = widgetbox(reset_button, play_button, pause_button,width=150)
 
 curdoc().add_root(	
                   column(
                          description,
                          row(
-                             barsFig.getFig(),
                              playGround,
+                             barsFig.getFig()
+                         ),
+                         row(
                              column(
                                     row(
-                                        Spacer(width=220),
-                                        buttons
-                                       ),
+                                        widgetbox(play_button,width=150),
+                                        widgetbox(pause_button,width=150),
+                                        widgetbox(reset_button,width=150)
+                             ),
+                                     area_image),
+                             column(
                                     row(
-                                        column(
-                                               ballOneVelocityDirSlider,
-                                               ballOneVelocityMagSlider,
-                                              ),
-                                        column(
-                                               ballTwoVelocityDirSlider,
-                                               ballTwoVelocityMagSlider
-                                              )
-                                       ),
+                                        ballOneVelocityDirSlider,
+                                        Spacer(width=10),
+                                        ballOneVelocityMagSlider,
+                                        ),
+                                    row(
+                                        ballTwoVelocityDirSlider,
+                                        Spacer(width=10),
+                                        ballTwoVelocityMagSlider
+                                        ),
                                     Cr_Slider,
-                                    row(
-                                        Spacer(width=35),
-                                        area_image
-                                       )
-                                  )
-                            )
+                             )
+
                         )
-                 )    
+                 )
+)
                                     
 # get path of parent directory and only use the name of the Parent Directory 
 # for the tab name. Replace underscores '_' and minuses '-' with blanks ' '				 
