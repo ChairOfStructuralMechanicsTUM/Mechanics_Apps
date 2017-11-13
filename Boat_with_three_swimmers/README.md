@@ -11,9 +11,9 @@ however, the boat at the same instant recieves the same amount of momentum in th
 - [x] For 3 and 5 people the figures of people are not symmetric wrt the boat (also phyton versions...)
 - [x] Absolute speed of swimmer after jump = speed of boat before jump - relative speed of jumper
 - [x] Vizualisation of relative and absoulte speed of jumper in comparison to absolute speed of boat in a diagram with arrows
-- [ ] Legend for the velocity diagram 
-- [ ] Use scaling factor of 1.3 for velocities in diagram in order to use the whole vertical axis and improve the optical apperence of the arrows (ratio of their length to the size of their arrow heads)
-- [ ] Improve optics:
+- [x] Legend for the velocity diagram 
+- [x] Use scaling factor of 1.3 for velocities in diagram in order to use the whole vertical axis and improve the optical apperence of the arrows (ratio of their length to the size of their arrow heads)
+- [x] Improve optics:
 
         - Drawing with "technical data": 
           vector grafics, 
