@@ -44,15 +44,18 @@ Define the objects to be plotted within the plotting domain
  (2) Velocity arrows
 ###############################################################################
 '''
-# Define the initial location of the two colliding balls (in our 2D app, circles)
-x1,x2 = 3.0,5.0
+# Define the initial parameters of the two colliding balls (in our 2D app, circles)
+x1,x2 = 4.0,6.0
 y1,y2 = 2.0,2.0
 r1,r2 = 0.5,0.35
 m1,m2 = 2,1
 c1,c2 = '#A2AD00','#E37222'
-v_x1,v_y1 = 1.0,1.0
-v_x2,v_y2 = -2.0,-1.0
 
+# initial velocity vector
+v_x1,v_y1 = 0.0,0.0
+v_x2,v_y2 = 3.0,0.0
+
+# initial  direction of velocity vector
 dirOne = np.arctan2(v_y1,v_x1)/np.pi*180
 dirTwo = np.arctan2(v_y2,v_x2)/np.pi*180
 
@@ -66,7 +69,7 @@ if dirTwo < 0:
 else:
     pass
 
-
+# initial magnitude of velocity vector
 magOne = np.sqrt( v_x1 ** 2 + v_y1 ** 2 )
 magTwo = np.sqrt( v_x2 ** 2 + v_y2 ** 2 )
 
@@ -185,11 +188,7 @@ def compute_tranjectory():
     particleTwo.position[1] += particleTwo.velocity[1]*dt
     particleTwo.update_position_source()
 
-    # Determine the seperating distance between the centers of the balls
-    dx = particleOne.position[0] - particleTwo.position[0]
-    dy = particleOne.position[1] - particleTwo.position[1]
-    distance = np.sqrt( dx*dx + dy*dy )
-    
+
     # Detect Walls
     if (   abs( particleOne.position[0] + particleOne.radius - xMax ) <= abs(particleOne.velocity[0])*dt + tolerance
         or abs( particleOne.position[0] - particleOne.radius - xMin ) <= abs(particleOne.velocity[0])*dt + tolerance):
@@ -218,20 +217,20 @@ def compute_tranjectory():
     dy = particleOne.position[1]-particleTwo.position[1]
     distance = np.sqrt( dx*dx + dy*dy )
 
-    # Unit vector aiming from ball 2 to ball 1
+    # Unit vector aiming from ball 1 to ball 2
     normal2Vector = np.array( [-dx,-dy] )/distance
 
     # Determine the pre-collision speed of both balls
-    v1Before = particleOne.velocity
+    v1Before = particleOne.velocity #array
     v2Before = particleTwo.velocity
     
     # Determine the normal component of each ball's velocity (w.r.t previously 
-    # computer normal vector)
-    v1Normal = np.dot(v1Before,normal2Vector)
+    # computed normal vector)
+    v1Normal = np.dot(v1Before,normal2Vector) #scalar
     v2Normal = np.dot(v2Before,normal2Vector)
     
     # Determine the tangential component of each ball's velocity
-    v1TangentVector = v1Before - v1Normal*normal2Vector
+    v1TangentVector = v1Before - v1Normal*normal2Vector #array
     v2TangentVector = v2Before - v2Normal*normal2Vector
 
     # This list of if statements determines the cases where collision can take
@@ -260,11 +259,11 @@ def compute_tranjectory():
     elif v1Normal >= 0 and v2Normal <= 0:
         collision = True
 
-    # This if statement is excuted whenever the distance between the two balls 
+    # This if statement is executed whenever the distance between the two balls
     # is close "enough" and the collision boolean variable is True
-    seperation = abs(r1+r2)
+    separation = abs(r1+r2)
     
-    if (abs(distance - seperation) <= 0.1 and collision == True):
+    if (abs(distance - separation) <= tolerance and collision == True):
         
         # Calculate the new normal velocity component of each ball according to
         # the law of collision
@@ -282,7 +281,7 @@ def compute_tranjectory():
         v1Normal = v1NormalAfter
         v2Normal = v2NormalAfter
         
-        # Getting the vector form of the normal velcoity after collision
+        # Getting the vector form of the normal velocity after collision
         v1NormalVector = v1Normal*normal2Vector
         v2NormalVector = v2Normal*normal2Vector
         
@@ -321,26 +320,7 @@ periodicCallback = 0
 def Reset():
     global Active, periodicCallback
 
-
-    # Update the source data file to the very initial data
-    particleOne.update_position(x1,y1)
-    #particleOne.update_position_source() - > not necessary anymore - already impied in particle.update_position()
-    
-    particleTwo.update_position(x2,y2)
-    #particleTwo.update_position_source() - > not necessary anymore - already impied in particle.update_position()
-    
-    # Update the velocity vectors
-    particleOne.update_velocity(v_x1, v_y1)
-    particleTwo.update_velocity(v_x2, v_y2)
-
-    # Update the velocity arrows' source file - > not necessary anymore - already impied in particle.update_velocity()
-    #particleOne.update_velocity_source()
-    #particleTwo.update_velocity_source()
-    
-    # Update the height of the bars accordingly
-    update_bars()
-    
-    # The preiodic callback has been removed here because when the pause 
+    # The preiodic callback has been removed here because when the pause
     # button is set to False, this reactivates the periodic callback
     if periodicCallback == 0 and Active == True:
         curdoc().remove_periodic_callback(compute_tranjectory)
@@ -348,44 +328,86 @@ def Reset():
 
     else:
         pass
-    
+
     Active = False
-    
+
     # Return the solider to their default values
     ballOneVelocityDirSlider.value = dirOne
     ballTwoVelocityDirSlider.value = dirTwo
-    ballOneVelocityMagSlider.value  = magOne
-    ballTwoVelocityMagSlider.value  = magTwo
+    ballOneVelocityMagSlider.value = magOne
+    ballTwoVelocityMagSlider.value = magTwo
+
+    # Update the source data file to the very initial data
+    particleOne.update_position(x1,y1)
+    #particleOne.update_position_source() #- > not necessary anymore - already implied in particle.update_position()
+    
+    particleTwo.update_position(x2,y2)
+    #particleTwo.update_position_source() #- > not necessary anymore - already implied in particle.update_position()
+    
+    # Update the velocity vectors
+    particleOne.update_velocity(v_x1, v_y1)
+    particleTwo.update_velocity(v_x2, v_y2)
+
+    # Update the velocity arrows' source file - > not necessary anymore - already implied in particle.update_velocity()
+    #particleOne.update_velocity_source()
+    #particleTwo.update_velocity_source()
+
+    playpause_button.label = "Play"
+
+    # Update the height of the bars accordingly
+    update_bars()
+
+    
+
 
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)
 
 ########################### Creating pause button #############################
-def pause():
-    global Active
-    # When active pause animation
-    if Active == True:
-        curdoc().remove_periodic_callback(compute_tranjectory)
-        Active=False
-    else:
-        pass
-        
-pause_button = Button(label="Pause", button_type="success")
-pause_button.on_click(pause)
+# def pause():
+#     global Active
+#     # When active pause animation
+#     if Active == True:
+#         curdoc().remove_periodic_callback(compute_tranjectory)
+#         Active=False
+#     else:
+#         pass
+#
+# pause_button = Button(label="Pause", button_type="success")
+# pause_button.on_click(pause)
 
 ########################### Creating play button ##############################
-def play():
+# def play():
+#     global Active, periodicCallback
+#
+#     if Active == False:
+#         curdoc().add_periodic_callback(compute_tranjectory, 10)
+#         Active=True
+#         periodicCallback = 0
+#     else:
+#         pass
+#
+# play_button = Button(label="Play", button_type="success")
+# play_button.on_click(play)
+
+
+########################### Creating play-pause button ##############################
+def playpause():
     global Active, periodicCallback
-    
+
     if Active == False:
         curdoc().add_periodic_callback(compute_tranjectory, 10)
-        Active=True
+        Active = True
+        playpause_button.label = "Pause"
         periodicCallback = 0
     else:
-        pass
-        
-play_button = Button(label="Play", button_type="success")
-play_button.on_click(play)
+        curdoc().remove_periodic_callback(compute_tranjectory)
+        Active = False
+        playpause_button.label = "Play"
+
+
+playpause_button = Button(label="Play", button_type="success")
+playpause_button.on_click(playpause)
     
 ##################### Creating velocity direction slider ######################
 def update_ballOne_VelocityDir(attr,old,new):
@@ -562,9 +584,9 @@ curdoc().add_root(
                          row(
                              column(
                                     row(
-                                        widgetbox(play_button,width=150),
-                                        widgetbox(pause_button,width=150),
-                                        widgetbox(reset_button,width=150)
+                                        widgetbox(playpause_button,width=225),
+                                        #widgetbox(pause_button,width=150),
+                                        widgetbox(reset_button,width=225)
                              ),
                                      area_image),
                              column(
