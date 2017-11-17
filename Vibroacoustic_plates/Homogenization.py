@@ -2,7 +2,18 @@ import math
 
 
 def homogenize( E, G, NU, D ):
+    """
+    The function takes parameters of a composite material and converts it to
+    the properties of an isotropic material.
+    Developer: Christoph Winter ( christoph.winter@tum.de )
 
+    :param E: Elastic Modulus. 2D list of floats
+    :param G: ShearModulus. 2D list of floats
+    :param NU: Poisson Ratios. 2D list of floats
+    :param D: Thickness of layers. 1D list of floats
+    :return: dictionary that contains the following properties: Elastic Modulus (list),
+    Shear Modulus(list), Poisson Ratios (list), Total Thickness (float)
+    """
 
     # Quantity of layers (needs to be uneven)
     Quantity = len(D)
@@ -81,9 +92,6 @@ def homogenize( E, G, NU, D ):
 
     return { "ElasticModulus" : [ E1_eff,E2_eff,E3_eff ],
              "ShearModulus" : [ G1_eff,G2_eff,G3_eff ],
-             "PoissonRatios": [ [ nu12_eff, nu13_eff, nu23_eff ], [ nu21_eff, nu31_eff, nu32_eff ] ],
+             "PoissonRatios": [ [ nu12_eff, nu13_eff, nu23_eff ],
+                                [ nu21_eff, nu31_eff, nu32_eff ] ],
              "TotalThickness" : sum(D) }
-
-    # ORIGINAL OUTPUT FOR Nu
-    # TODO: Ask Christoph if the outpu is correct
-    #[ nu12_eff,nu21_eff,nu13_eff,nu31_eff,nu23_eff,nu32_eff ], \

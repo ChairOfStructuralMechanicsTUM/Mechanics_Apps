@@ -1,27 +1,13 @@
 # Link bokeh libraries
-from bokeh.plotting import figure
-from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc, show
-from bokeh.io.doc import set_curdoc
 from bokeh.models import Div, Label, Plot, ColumnDataSource
-from bokeh.plotting import figure, output_file, show
-from bokeh.models.glyphs import Text
 from bokeh.models.widgets import Button, RadioButtonGroup, Select, Slider
-from bokeh.models.widgets import TextInput, AutocompleteInput
 from bokeh.plotting import figure
-
 
 # Link third-party python libraries
-from math import cos, sin, radians, sqrt, pi, atan2
 from functools import partial
-import matplotlib.pyplot as plt
-import threading
-from multiprocessing import Process
-import time
 
 # Link custom files
-
-from LatexSupport import LatexLabel
 from UnicodeSymbols import *
 from Helper import *
 from Graphs import *
@@ -29,16 +15,19 @@ from GraphClass import GraphObject
 from MessageClass import Message
 from Functions import *
 from Homogenization import *
-
-# TODO: change the name of the module
 from InteractiveTable import *
 
 
 def main( ):
+    """
+    The main function only describes both graphical and comunication parts of the app.
+    It creates and initializes all necessary widgets. At the end the function calls
+    doc.add_root to display the objects on a browser
+    :return:
+    """
+
     # Quasi constant
     FrequencyRange = np.logspace( 0, 5, 1000 )
-    # the main function only describes both graphical and comunication
-    # of the app.
     doc = curdoc()
 
     # ========================== GRAPHICAL PART ================================
@@ -56,8 +45,7 @@ def main( ):
                            "Modes in Band",
                            "Modal Density",
                            "Modal Overlap Factor",
-                           "Maximum Element Size (FEM)",
-                           "Scheme"],
+                           "Maximum Element Size (FEM)"],
                             FrequencyRange,
                             Width = 850,
                             Height = 550)
@@ -136,6 +124,7 @@ def main( ):
     PoissonRatios = InteractiveTable( TableName = "POISSON'S RATIOS",
                                       Rows = 2,
                                       Columns = 3 )
+
     PoissonRatios.setTitels( [ [ POISSON_RATIO_XY,
                                  POISSON_RATIO_XZ,
                                  POISSON_RATIO_YZ ],
@@ -172,6 +161,7 @@ def main( ):
     MaterialProperties = InteractiveTable( TableName = "MATERIAL PROPERTIES",
                                            Rows = 1,
                                            Columns = 2 )
+
     MaterialProperties.setTitels( [ [ "Density", "Loss Factor" ] ] )
 
     Data = [ [ "450.0", "0.012" ] ]
@@ -262,8 +252,8 @@ def main( ):
 
     
     LayersInfo = Message( Color = "black",
-                              Size = 2,
-                              MessageHeader = "Number of layers: " )
+                          Size = 2,
+                          MessageHeader = "Number of layers: " )
 
     WarningMessage = Message( Color = "grey",
                               Size = 3 ,
@@ -277,6 +267,12 @@ def main( ):
                 render_as_text = False,
                 width = 500,
                 height = 30 )
+
+
+    Scheme = Div( text = "<p><b><center><font size=4> Layout scheme </font></center></b></p>"
+                         "<img src='/VibroacousticApp/static/images/scheme.png'>",
+                width = 550,
+                height = 550 )
 
     # SPECIFY THE LAYOUT:
     Buttons = row( row( Spacer( width = 50 ),
@@ -302,10 +298,11 @@ def main( ):
                         GeometryProperties.Table,
                         LayersInfo.Widget,
                         Info,
-                        WarningMessage.Widget )
+                        Spacer( height = 30 ),
+                        Scheme)
 
 
-    RightSide = column( Graph.Widget , Buttons )
+    RightSide = column( Graph.Widget , Buttons,WarningMessage.Widget )
 
 
     # ========================= COMMUNICATION PART =============================
@@ -348,9 +345,6 @@ def main( ):
     updateData( Tables, Graph, LayersInfo, WarningMessage )
 
 
-    #updateGraph( Graph, 4 )
-
-
     # RUN ALL WIDJETS
     doc.add_root( column( Spacer( height = 20 ),
                       row( LeftSide,
@@ -364,6 +358,22 @@ def main( ):
 #                               HELPER FUNCTIONS
 # ===============================================================================
 def updateData( Tables, Graph, LayersInfo, WarningMessage ):
+    """
+    At the begining the function reads the layers thickness of a composite material and
+    converts its properties to the property of the isotropic one. Then the properties of
+    the isotropic material are assigned to the tables if necessary. Additionally
+    the function tests the input parameters of the isotropic material on
+    consistency.
+
+    At the end the function performs all computations using table data and stores
+    the result of them into the Graph instance containers
+
+    :param Tables: dictionary (container with tables)
+    :param Graph: an instance of GraphObject class
+    :param LayersInfo: MessageClass instance
+    :param WarningMessage: MessageClass instance
+    :return:
+    """
 
     # clean the warning message
     LayersInfo.clean()
@@ -489,21 +499,26 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
     except TableCorrupted as Error:
         WarningMessage.printMessage( str(Error) )
 
-
+    #'''
     except:
         Message = "Error: Unexpected error. Please, refer to the code"
         WarningMessage.printMessage( Message )
-
+    #'''
 
 def updateGraph( Graph, GraphNumber ):
-
+    """
+    The function calls an appropriate plot-function based on the mode (value) of
+    the radio-button
+    :param Graph: an instance of GraphObject class
+    :param GraphNumber: int
+    :return:
+    """
 
     # Update the graph ID ( GraphNumber - it's a built-in bohek variable that
     # belongs to the RadioButton widget )
     Graph.setPlottingGraphNumber( GraphNumber )
 
     plotEigenfrequenciesPlate( Graph )
-
 
     # Depict coresponding lines based on the graph chosen by the user
     if (GraphNumber == 0):
@@ -524,12 +539,25 @@ def updateGraph( Graph, GraphNumber ):
     if (GraphNumber == 5):
         plotMaximumElementSize( Graph )
 
+    if (GraphNumber == 6):
+        plotScheme( Graph )
+
 
 def updateMode( Tables,
                 WarningMessage,
                 Graph,
                 Properties ):
 
+    """
+    The function saves the current state of the tables and calls "cangeMode" function
+    IMPORTANT: "Properties" is redundant, however, it's necessary to kick off the
+    first default run from main()
+    :param Tables: dictionary (container with tables)
+    :param WarningMessage: MessageClass instance
+    :param Graph: an instance of GraphObject class
+    :param Properties: boolean (Isotropic and Orthotropic)
+    :return:
+    """
 
     WarningMessage.clean( )
     Graph.setMode( Properties )
@@ -550,10 +578,22 @@ def updateMode( Tables,
 
 
 def cangeMode( Tables, WarningMessage, Mode ):
+    """
+    The function performs the following modification to the talbes if the user switches to
+    the isotropic case:
+        E1 = E2 = E3
+        G12 = G13 = G23
+        N12 = Nij = ... for all possible i and j within the set (1,2,3)
 
+    If the user switches back to orthotropic case the function restores the data
+    of the tables back that was modified for the isotropic case
+    :param Tables: dictionary (container with tables)
+    :param WarningMessage: MessageClass instance
+    :param Mode: boolean (Isotropic and Orthotropic)
+    :return:
+    """
 
     if ( Mode == 1 ):
-
 
         UniformValue = Tables[ "ElasticModulus" ].getValue( 0, 0 )
         Tables[ "ElasticModulus" ].setValue( 0, 1, UniformValue )
@@ -588,11 +628,50 @@ def cangeMode( Tables, WarningMessage, Mode ):
         Tables[ "PoissonRatios" ].restoreValue( 0, 1 )
         Tables[ "PoissonRatios" ].restoreValue( 0, 2 )
 
-        pass
     precomputePoissonRatios( Tables )
 
 
+def setDeafultSettings( Tables, Graph, LayersInfo, WarningMessage ):
+    """
+    The function sets up the default values for the tables
+    :param Tables: dictionary (container with tables)
+    :param Graph: an instance of GraphObject class
+    :param LayersInfo: MessageClass instance
+    :param WarningMessage: MessageClass instance
+    :return:
+    """
+
+    WarningMessage.clean()
+
+    if Graph.getMode() == 0:
+
+        Tables[ "ElasticModulus" ].fillTableWithBufferData( "DefaultOrthotropic" )
+        Tables[ "ShearModulus" ].fillTableWithBufferData( "DefaultOrthotropic" )
+        Tables[ "PoissonRatios" ].fillTableWithBufferData( "DefaultOrthotropic" )
+        Tables[ "MaterialProperties" ].fillTableWithBufferData( "DefaultOrthotropic" )
+        Tables[ "GeometryProperties" ].fillTableWithBufferData( "DefaultOrthotropic" )
+
+    if Graph.getMode() == 1:
+        Tables[ "ElasticModulus" ].fillTableWithBufferData( "DefaultIsotropic" )
+        Tables[ "ShearModulus" ].fillTableWithBufferData( "DefaultIsotropic" )
+        Tables[ "PoissonRatios" ].fillTableWithBufferData( "DefaultIsotropic" )
+        Tables[ "MaterialProperties" ].fillTableWithBufferData( "DefaultIsotropic" )
+        Tables[ "GeometryProperties" ].fillTableWithBufferData( "DefaultIsotropic" )
+
+    updateData( Tables, Graph, LayersInfo, WarningMessage )
+
+
 def precomputePoissonRatios( Tables ):
+    """
+    The function computes and updates the values of the following table entries:
+        N21 = N12 * E2 / E1;
+        N31 = N13 * E3 / E1;
+        N32 = N23 * E3 / E2;
+    These values have to be always computed automatically
+
+    :param Tables: dictionary (container with tables)
+    :return:
+    """
 
     # update value of nu_21
     Temp = Tables[ "PoissonRatios" ].getFloatValue( 0, 0 )    \
@@ -616,37 +695,14 @@ def precomputePoissonRatios( Tables ):
     Tables[ "PoissonRatios" ].assignValue( 1, 2, str( round(Temp,5) ) )
 
 
-def setDeafultSettings( Tables,
-                        Graph,
-                        LayersInfo,
-                        WarningMessage ):
-
-    WarningMessage.clean()
-
-    if Graph.getMode() == 0:
-
-        Tables[ "ElasticModulus" ].fillTableWithBufferData( "DefaultOrthotropic" )
-        Tables[ "ShearModulus" ].fillTableWithBufferData( "DefaultOrthotropic" )
-        Tables[ "PoissonRatios" ].fillTableWithBufferData( "DefaultOrthotropic" )
-        Tables[ "MaterialProperties" ].fillTableWithBufferData( "DefaultOrthotropic" )
-        Tables[ "GeometryProperties" ].fillTableWithBufferData( "DefaultOrthotropic" )
-
-    if Graph.getMode() == 1:
-        Tables[ "ElasticModulus" ].fillTableWithBufferData( "DefaultIsotropic" )
-        Tables[ "ShearModulus" ].fillTableWithBufferData( "DefaultIsotropic" )
-        Tables[ "PoissonRatios" ].fillTableWithBufferData( "DefaultIsotropic" )
-        Tables[ "MaterialProperties" ].fillTableWithBufferData( "DefaultIsotropic" )
-        Tables[ "GeometryProperties" ].fillTableWithBufferData( "DefaultIsotropic" )
-
-    #Tables[ "ElasticModulus" ].resetByDefault( )
-    #Tables[ "ShearModulus" ].resetByDefault( )
-    #Tables[ "PoissonRatios" ].resetByDefault( )
-    #Tables[ "GeometryProperties" ].resetByDefault( )
-
-    updateData( Tables, Graph, LayersInfo, WarningMessage )
-
-
 def showInput( Tables, LayersInfo ):
+    """
+    The function restores the inrormation of the tables that was modified during
+    the homogenization procedure. It allows the user to look at the original input date
+    :param Tables: dictionary (container with tables)
+    :param LayersInfo: MessageClass instance
+    :return:
+    """
 
     Tables[ "ElasticModulus" ].fillTableWithBufferData( "Input" )
     Tables[ "ShearModulus" ].fillTableWithBufferData( "Input")
@@ -659,6 +715,15 @@ def showInput( Tables, LayersInfo ):
 
 
 def makeMask( Tables, Mode ):
+    """
+    The function gets the current data from the table and stores them into
+    the corresponding tables buffers to allow the user to retrieve the old info back.
+    The function distinguishes the modes and stores the info into either isotropic or
+    orthotropic buffes
+    :param Tables: dictionary (container with tables)
+    :param Mode: boolean (Isotropic or Orthotropic)
+    :return:
+    """
 
     # get data from the corresponding tables
     ElasticModulusData = Tables[ "ElasticModulus" ].getRawData( )
@@ -698,6 +763,12 @@ def makeMask( Tables, Mode ):
 
 
 def makeMultiLayerMask( Tables ):
+    """
+    The function gets the current data from the table and stores them into
+    the corresponding tables buffers to allow the user to retrieve the old info back
+    :param Tables: dictionary (container with tables)
+    :return:
+    """
 
     # get data from the corresponding tables
     ElasticModulusData = Tables[ "ElasticModulus" ].getRawData( )

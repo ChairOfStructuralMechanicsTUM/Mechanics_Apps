@@ -1,6 +1,5 @@
 import math
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def wave_speeds( ElasticModulusData,
@@ -10,10 +9,28 @@ def wave_speeds( ElasticModulusData,
                  GeometryPropertiesData,
                  Isotrop,
                  freq ):
-    # Isotrop is a boolean
+    """
+    <description> <reference>
+    Developer: Christoph Winter ( christoph.winter@tum.de )
+    :param ElasticModulusData: 1D list of flaots
+    :param ShearModulusData: 1D list of floats
+    :param PoissonRatiosData: 2D list of floats
+    :param MaterialPropertiesData: 1D list of floats
+    :param GeometryPropertiesData: 1D list of floats
+    :param Isotrop: boolean
+    :param freq: 1D list of floats
+    :return: dictionary with the floowing keys: c_B (1D list of floats),
+    c_B_eff (1D list of floats), c_B_shea (float), c_g (list of floats),
+    c_g_eff (1D list if floats), c_S ( float ), c_S_outofplane (1D list of floats),
+    c_S_outofplane_1 (float), c_S_outofplane_2 (float), c_L (1D list of floats),
+    c_L_thick ( float ), f_thickmode_shear (1D list of floats),
+    f_thickmode_shear_x (1D list of floats), f_thickmode_shear_y (1D list of floats),
+    fR_B (1D list of floats), fR_g (1D list of floats),
+    f_thickmode_long (1D list of floats)
+    """
+
 
     # Wellengeschwindigkeiten
-
     Subs = len( ElasticModulusData )
 
     # Omega Vektor
@@ -346,6 +363,21 @@ def wave_speeds( ElasticModulusData,
 
 #def ModaleDichte(c_L, c_S, c_B_eff, c_g_eff, Geometry, Isotrop, Bending, Compressional, Shear, Sum):
 def ModaleDichte(c_L, c_S, c_B_eff, c_g_eff, Geometry, Isotrop, freq ):
+    """
+    <description> <reference>
+    Developer: Christoph Winter ( christoph.winter@tum.de )
+    :param c_L: 1D list of floats
+    :param c_S: float
+    :param c_B_eff: 1D list of floats
+    :param c_g_eff: 1D list of floats
+    :param Geometry:1D list of floats
+    :param Isotrop: boolean
+    :param freq: 1D list of floats
+    :return: dictionary with the following keys: bending_np (1D list of floats),
+    compressional_np (1D list of floats), shear_np (1D list of floats),
+    sum_np (1D list of floats)
+    """
+
 
     # allocate numpy arrays
     n_f = np.zeros(freq.size)
@@ -395,6 +427,21 @@ def ModesInBand( ElasticModulusData,
                  GeometryPropertiesData,
                  Isotrop,
                  freq ):
+
+    """
+    <description> <reference>
+    Developer: Christoph Winter ( christoph.winter@tum.de )
+    :param ElasticModulusData: 1D list of floats
+    :param ShearModulusData: 1D list of floats
+    :param PoissonRatiosData: 2D list of floats
+    :param MaterialPropertiesData: 1D list of floats
+    :param GeometryPropertiesData: 1D list if floats
+    :param Isotrop: boolean
+    :param freq: 1D list of floats
+    :return: dictionary with the following keys: bending (1D list of floats),
+    compressional (1D list of floats), shear (1D list of floats), sum (1D list of floats),
+    freq_T (1D list of floats)
+    """
 
     fmstart = freq[ 0 ]
     fmend = freq[ -1 ]
@@ -483,7 +530,19 @@ def EigenfrequenciesPlate( ElasticModulusData,
                            GeometryPropertiesData,
                            Isotrop,
                            freq ):
-
+    """
+    <description> <reference>
+    Developer: Christoph Winter ( christoph.winter@tum.de )
+    :param ElasticModulusData: 1D list of floats
+    :param ShearModulusData: 1D list of floats
+    :param PoissonRatiosData: 2D list of floats
+    :param MaterialPropertiesData: 1D list of floats
+    :param GeometryPropertiesData: 1D list of floats
+    :param Isotrop: boolean
+    :param freq: 1D list of floats
+    :return: dictionary with the following keys: f11 (float), f12 (float),
+    f21 (float), f22 (float)
+    """
 
     # Input Variables
     thickness = GeometryPropertiesData[ 0 ][ 2 ]
@@ -557,6 +616,16 @@ def ModalOverlapFactor( MaterialPropertiesData,
                         ModalDensities,
                         Frequency ):
 
+    """
+    <description> <reference>
+    Developer: Christoph Winter ( christoph.winter@tum.de )
+    :param MaterialPropertiesData: 1D list of floats
+    :param ModalDensities: dictionary with keys: "bending", "compressional" and "shear"
+    :param Frequency: 1D list of floats
+    :return: dictionary with the following keys: Mhp_Bending (1D list of floats),
+    Mhp_Shear (1D list of floats), Mhp_QuasiLongitudinal (1D list of floats)
+    """
+
     BendingDensity = ModalDensities[ "bending" ]
     CompressionalDensity = ModalDensities[ "compressional" ]
     ShearDensity = ModalDensities[ "shear" ]
@@ -574,6 +643,16 @@ def ModalOverlapFactor( MaterialPropertiesData,
 
 def MaximumElementSize( C_B_Array, C_B_eff_Array, Frequency ):
 
+    """
+    <description> <reference>
+    Developer: Christoph Winter ( christoph.winter@tum.de )
+    :param C_B_Array: 1D list of floats
+    :param C_B_eff_Array: 1D list of floats
+    :param Frequency: 1D list of floats
+    :return: dictionary with the following keys: Lamda (1D list of floats),
+    Lamda_Eff (1D list of floats), ElementSize (1D list of floats)
+    """
+
     LamdaH = [ C_B / f for C_B, f in zip( C_B_Array, Frequency ) ]
     LamdaH_Effective = [ C_B_eff / f for C_B_eff, f in zip( C_B_eff_Array, Frequency ) ]
     ElementSize = [ 0.25 * Entry for Entry in LamdaH_Effective ]
@@ -581,5 +660,3 @@ def MaximumElementSize( C_B_Array, C_B_eff_Array, Frequency ):
     return { "Lamda" : LamdaH,
              "Lamda_Eff" : LamdaH_Effective,
              "ElementSize" : ElementSize }
-
-

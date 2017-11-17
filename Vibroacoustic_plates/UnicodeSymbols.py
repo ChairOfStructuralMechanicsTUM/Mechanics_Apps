@@ -1,3 +1,8 @@
+"""
+The file defines the some Greek letters as pre-defined constants that have to be used
+within the application. All letters are defined using the unicode encoding
+"""
+
 OMEGA_UNICODE = u"\u03C9"
 MU_UNICODE = u"\u03BC"
 NU_UNICODE = u"\u03B7"
@@ -14,7 +19,7 @@ SUBSCRIPT_THREE = u"\u2083"
 #-------------------------------------------------------------------------------
 #                              User define variables
 #-------------------------------------------------------------------------------
-#                           ELASTIC MODULUS
+#..............................  ELASTIC MODULUS  ..............................
 EMODUL_X = "E" + SUBSCRIPT_ONE
 EMODUL_Y = "E" + SUBSCRIPT_TWO
 EMODUL_Z = "E" + SUBSCRIPT_THREE
@@ -25,7 +30,7 @@ EMODUL_XZ = "G" + SUBSCRIPT_ONE + SUBSCRIPT_THREE
 EMODUL_YZ = "G" + SUBSCRIPT_TWO + SUBSCRIPT_THREE
 
 
-#                               NU
+#....................................   NU  ....................................
 POISSON_RATIO_XY = NU_UNICODE + SUBSCRIPT_ONE + SUBSCRIPT_TWO
 POISSON_RATIO_XZ = NU_UNICODE + SUBSCRIPT_ONE + SUBSCRIPT_THREE
 POISSON_RATIO_YZ = NU_UNICODE + SUBSCRIPT_TWO + SUBSCRIPT_THREE

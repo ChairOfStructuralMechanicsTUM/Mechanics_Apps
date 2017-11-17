@@ -1,25 +1,48 @@
 class Flag:
-    """ This class is created to make built-in python variables to be mutable"""
 
     def __init__( self, Input ):
+        """
+        This class is created to make built-in python variables to be mutable
+        :param Input: A premeticve data type like: int, float and so on
+        :return
+        """
         self.__Value = Input
 
     def getFlag(self):
+        """
+        The function returns the value of the instance
+        :return: A primitive data type like: int, float and so on
+        """
         return self.__Value
 
 
     def setFlag(self, Input ):
+        """
+        The function updates the value of the instance
+        :param Input: A primitive data type like: int, float and so on
+        :return
+        """
         self.__Value = Input
 
 
 class DataCorrupted(Exception):
+    """
+    Class represents the ...
+    """
     pass
 
 
 def testInputData( Mode, Nu):
+    """
+    The function checks the consistency of the input data. If values of the input
+    data are not consistent the function throws a corresponding error
+    :param Mode: a boolean value. An Isotropic or Orthotropic case
+    :param Nu: 2D list with Poisson's ratio (float) values
+    :return:
+    """
 
     if ( Mode == 0 ):
-        # Checking criteria for stability all values must be positive
+        # Checking criteria for stability. All values have to be positive
         FirstTerm = Nu[ 0 ][ 0 ] * Nu[ 1 ][ 0 ]
         SecondTerm = Nu[ 0 ][ 1 ] * Nu[ 1 ][ 1 ]
         ThirdTerm = Nu[ 0 ][ 2 ] * Nu[ 1 ][ 2 ]
@@ -41,10 +64,16 @@ def testInputData( Mode, Nu):
             raise DataCorrupted("The material property is not feasible.</p>"
                                 "<p> Current mode: ISOTROPIC; Threshold: 0.49 </p>"
                                 "<p> Change: POISSON'S RATIOS VALUE")
-        pass
+
 
 
 def isInputNegative( Input ):
+    """
+    The function checks whether the input 1D or 2D list contains a negative entry.
+    If there is one the function throws a corresponding error
+    :param Input: 1D or 2D list
+    :return:
+    """
 
     nColumns = 0
     nRows = 0
@@ -72,7 +101,17 @@ class WrongLayersThikness(Exception):
 
 
 def getLayersFromString( aString ):
+    '''
+    The function converts an input string to a list of floats values that represent
+    the thickness of the layers. Moreover, the entries of the input string are mirrored.
+    The additional values represent the bottom layers of a composite material
 
+    The function throws an error if the input string is corrupted. The exception can
+    be thrown from any function that the current one contains
+
+    :param aString: python string
+    :return: list of layers thicknesses
+    '''
     LayersThickness = parseString( aString )
     checkLayerConsistency( LayersThickness )
     Layers = mirrorLayers( LayersThickness )
@@ -81,6 +120,13 @@ def getLayersFromString( aString ):
 
 
 def parseString( aString ):
+    """
+    The function converts an input string to a list of floats values that represent
+    the thickness of the layers
+    :param aString: python string
+    :return: list of corresponding float numbers
+    """
+
     DILIMETERS = [';','|']
     EMPTY_STRING = ''
 
@@ -112,7 +158,12 @@ def parseString( aString ):
     return LayersThickness
 
 def checkLayerConsistency( Layers ):
-
+    """
+    The function checks whether there is an entry with a negative or zero value
+    within the input list. If there is one the function throws a corresponding error
+    :param Layers: list of float numbers
+    :return:
+    """
     for Layer in Layers:
         if Layer < 0.0:
             raise WrongLayersThikness("The thickness of one of the layers "
@@ -121,10 +172,15 @@ def checkLayerConsistency( Layers ):
             raise WrongLayersThikness("The thickness of one of the layers "
                                       "is eqaul to zero" )
 
-    pass
 
 def mirrorLayers( TopLayers ):
-
+    """
+    The functions mirrors the input list placing the last entry of the input list
+    at the center of the output list. If the input list contains only one entry the
+    function returns just a float number
+    :param TopLayers: list of float values
+    :return: list of float numbers or a float number
+    """
     nTopLayers = len( TopLayers )
     if nTopLayers == 1:
         # Return the input data if there is only one layer
