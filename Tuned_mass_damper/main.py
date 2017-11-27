@@ -69,8 +69,8 @@ Define the displacement-time diagram for both masses
 mainMass_displacementTime_source = ColumnDataSource(data=dict(x=[0],y=[0])) # Default values
 topMass_displacementTime_source = ColumnDataSource(data=dict(x=[0],y=[0])) # Default values
 
-displacement_range = Range1d(0,0)
-time_range = Range1d(0,0)
+displacement_range = Range1d(-1,1)
+time_range = Range1d(0,5)
 
 displacementTime_plot = figure(
                                 plot_width = 600,
@@ -98,8 +98,8 @@ mainMass_amplificationFrequency_source = ColumnDataSource(data=dict(x=[0],y=[0])
 topMass_amplificationFrequency_source = ColumnDataSource(data=dict(x=[0],y=[0]))
 mainMass_phaseAngleFrequency_source = ColumnDataSource(data=dict(x=[0],y=[0]))
 topMass_phaseAngleFrequency_source = ColumnDataSource(data=dict(x=[0],y=[0]))
-Amplification_current_source = ColumnDataSource(data=dict(x=[0],y=[0]))
-PhaseAngle_current_source = ColumnDataSource(data=dict(x=[0],y=[0]))
+Amplification_current_source = ColumnDataSource(data=dict(x=[0],y=[0],c=['#000000']))
+PhaseAngle_current_source = ColumnDataSource(data=dict(x=[0],y=[0],c=['#000000']))
 
 Amplificaiton_range = Range1d(0,0)
 PhaseAngle_range = Range1d(0,0)
@@ -139,8 +139,8 @@ Amplification_Frequency_plot.line(x='x',y='y', source = topMass_amplificationFre
 PhaseAngle_Frequency_plot.line(x='x',y='y', source = mainMass_phaseAngleFrequency_source, color='#0033FF', legend='Main mass')
 PhaseAngle_Frequency_plot.line(x='x',y='y', source = topMass_phaseAngleFrequency_source, color='#330011', legend='Top mass')
 
-Amplification_Frequency_plot.circle(x='x',y='y', radius=0.1, source=Amplification_current_source,color="c")
-PhaseAngle_Frequency_plot.circle(x='x',y='y', radius=0.1, source=PhaseAngle_current_source,color="c")
+Amplification_Frequency_plot.circle(x='x',y='y', color='c', source=Amplification_current_source, radius=0.1)
+PhaseAngle_Frequency_plot.circle(x='x',y='y', color='c', source=PhaseAngle_current_source, radius=0.1)
 
 ## functions
 
@@ -363,19 +363,7 @@ mass_input = Slider(title="Mass [kg]", value=m2, start=1, end=100.0, step=1,widt
 mass_input.on_change('value',change_mass)
 
 def change_kappa(attr,old,new):
-    global  m1, k1, k2, c2, oscAmp, mainMass_amplificationFrequency_source, mainMass_amplificationFrequency_source, topMass_amplificationFrequency_source, mainMass_phaseAngleFrequency_source, topMass_phaseAngleFrequency_source, Amplificaiton_range, PhaseAngle_range, Frequency_range
-    
-    Calculate_MagnificationFactor_PhaseAngle( 
-                                       m1, mass_input.value, k1, kappa_input.value, lam_input.value,
-                                       oscAmp, omega_input.end, omega_input.value, 200,
-                                       mainMass_amplificationFrequency_source, 
-                                       topMass_amplificationFrequency_source,
-                                       mainMass_phaseAngleFrequency_source,
-                                       topMass_phaseAngleFrequency_source,
-                                       Amplificaiton_range, 
-                                       PhaseAngle_range, 
-                                       Frequency_range,
-                                      )
+    Update_system()
     global Active
     if (not Active):
         global spring, omega, k2
@@ -397,19 +385,8 @@ kappa_input = Slider(title="Spring Stiffness [N/m]", value=k2, start=1.0, end=20
 kappa_input.on_change('value',change_kappa)
 
 def change_lam(attr,old,new):
-    global  m1, k1, k2, c2, oscAmp, mainMass_amplificationFrequency_source, mainMass_amplificationFrequency_source, topMass_amplificationFrequency_source, mainMass_phaseAngleFrequency_source, topMass_phaseAngleFrequency_source, Amplificaiton_range, PhaseAngle_range, Frequency_range
-    
-    Calculate_MagnificationFactor_PhaseAngle( 
-                                       m1, mass_input.value, k1, kappa_input.value, lam_input.value,
-                                       oscAmp, omega_input.end, omega_input.value, 200,
-                                       mainMass_amplificationFrequency_source, 
-                                       topMass_amplificationFrequency_source,
-                                       mainMass_phaseAngleFrequency_source,
-                                       topMass_phaseAngleFrequency_source,
-                                       Amplificaiton_range, 
-                                       PhaseAngle_range, 
-                                       Frequency_range,
-                                      )
+
+    Update_system()
     global Active
     if (not Active):
         global dashpot, omega,c2
@@ -426,7 +403,7 @@ lam_input = Slider(title=u"Damper Coefficient [N*s/m]", value=c2, start=0.0, end
 lam_input.on_change('value',change_lam)
 
 def change_Omega(attr,old,new):
-    global m1, k1, k2, c2, oscAmp, Amplification_current_source, PhaseAngle_current_source
+    #global m1, k1, k2, c2, oscAmp, Amplification_current_source, PhaseAngle_current_source
     if (not Active):
         global omega, oscAmp
         omega = new
@@ -437,11 +414,13 @@ def change_Omega(attr,old,new):
             # find amplitude for current frequency from AmplitudeFrequency graph
             Position.data=dict(om=[new],A=[AmplitudeFrequency.data['A'][int(floor(new*10))-1]])
             
-        Calculate_Current_Amplification_PhaseAngle(
-                                               m1, mass_input.value, k1, kappa_input.value, lam_input.value, 
-                                               oscAmp, omega_input.end, omega,
-                                               Amplification_current_source, PhaseAngle_current_source
-                                              )
+#        Calculate_Current_Amplification_PhaseAngle(
+#                                               m1, mass_input.value, k1, kappa_input.value, lam_input.value, 
+#                                               oscAmp, omega_input.end, omega,
+#                                               Amplification_current_source, PhaseAngle_current_source
+#                                              )
+        Update_current_state()
+        
     elif (new!=omega):
         omega_input.value=omega
 ## Create slider to choose damper coefficient
@@ -520,8 +499,8 @@ reset_button.on_click(reset)
 omega_scan_button = Button(label=u"\u03C9 scan", button_type="success",width=100)
 omega_scan_button.on_click(omega_scan)
 
-def Update_state():
-    global  m1, k1, k2, c2, oscAmp, mainMass_amplificationFrequency_source, mainMass_amplificationFrequency_source, topMass_amplificationFrequency_source, mainMass_phaseAngleFrequency_source, topMass_phaseAngleFrequency_source, Amplificaiton_range, PhaseAngle_range, Frequency_range
+def Update_system():
+    #global  m1, k1, k2, c2, oscAmp, mainMass_amplificationFrequency_source, mainMass_amplificationFrequency_source, topMass_amplificationFrequency_source, mainMass_phaseAngleFrequency_source, topMass_phaseAngleFrequency_source, Amplificaiton_range, PhaseAngle_range, Frequency_range
     
     Calculate_MagnificationFactor_PhaseAngle( 
                                        m1, mass_input.value, k1, kappa_input.value, lam_input.value,
@@ -534,8 +513,13 @@ def Update_state():
                                        PhaseAngle_range, 
                                        Frequency_range,
                                       )
-update_state_button = Button(label=u"\u03C9 Update State", button_type="success",width=100)
-update_state_button.on_click(Update_state)
+    
+def Update_current_state():
+    Calculate_Current_Amplification_PhaseAngle(
+                                                m1, mass_input.value, k1, kappa_input.value,
+                                                lam_input.value, oscAmp, omega_input.end, omega_input.value,
+                                                Amplification_current_source, PhaseAngle_current_source
+                                              )
 
 # setup initial conditions
 calculateGraphPlot()

@@ -110,10 +110,9 @@ def Calculate_MagnificationFactor_PhaseAngle(
                       ])
 
     eigenvalues, eigenvectors = eig(K_eigen, -1j*M_eigen)
-    #print('eigenvalue1 = ',np.sqrt(abs(eigenvalues[0])))
-    #print('eigenvalue2 = ',np.sqrt(abs(eigenvalues[1])))    
-    We1 = min(np.sqrt(abs(eigenvalues[0])) , np.sqrt(abs(eigenvalues[1])))#np.sqrt(k1/m1)
-    We2 = max(np.sqrt(abs(eigenvalues[0])) , np.sqrt(abs(eigenvalues[1])))#np.sqrt(k2/m2)
+
+    We1 = min(np.sqrt(abs(eigenvalues[0])) , np.sqrt(abs(eigenvalues[1])))
+    We2 = max(np.sqrt(abs(eigenvalues[0])) , np.sqrt(abs(eigenvalues[1])))
     
     eta_max1 = Omega_max / We1
     eta_max2 = Omega_max / We2
@@ -143,17 +142,14 @@ def Calculate_MagnificationFactor_PhaseAngle(
     
     Y = list()
     for i in range(0,n_points):
-        #omeg = Omega_max*(float(i)/float(n_points-1))
         inverse = inv(omega[i]*1j*M + D) 
         vector = np.dot( inverse , F )
         Y.append(vector)
     Y = np.transpose( np.array(Y) )
-    #print('Y = ',Y[:,2])
+
     # Interpretation of the result
     Amplification1 = np.sqrt(np.real(Y[0,:])**2 + np.imag(Y[0,:])**2) / (Fo/k1)
     Amplification2 = np.sqrt(np.real(Y[1,:])**2 + np.imag(Y[1,:])**2) / (Fo/k2)
-    #print('amp1 = ',Amplification1)
-    #print('amp2 = ',Amplification2)
     
     Phase1 = np.arctan(-np.imag(Y[0,:]) / np.real(Y[0,:]))
     Phase2 = np.arctan(-np.imag(Y[1,:]) / np.real(Y[1,:]))
@@ -163,9 +159,6 @@ def Calculate_MagnificationFactor_PhaseAngle(
     for i in range(0,len(Phase2)):
         if Phase2[i] < 0:
             Phase2[i] += np.pi
-
-    #print('angle = ',-np.imag(Y[0,:]) / np.real(Y[0,:]),'::: phase1 = ', Phase1 )
-    #print('angle = ',-np.imag(Y[1,:]) / np.real(Y[1,:]),'::: phase2 = ', Phase2 )
     
     # Define again the source files
     Amplification1_source.data = dict(x=eta1, y=Amplification1)
@@ -177,8 +170,6 @@ def Calculate_MagnificationFactor_PhaseAngle(
     # Determine maximum amplification and phase angle
     Max_Amplification = max( np.max(Amplification1) , np.max(Amplification2) )
     Max_PhaseAngle    = max( np.max(Phase1) , np.max(Phase2) )
-    #print('max amp = ',Max_Amplification)
-    #print('max phase = ',Max_PhaseAngle)
     
     # Define the boundaries of the plot
     frequencyRatio_range.end =  max(eta_max1, eta_max2)
@@ -204,8 +195,7 @@ def Calculate_Current_Amplification_PhaseAngle(
                       ])
 
     eigenvalues, eigenvectors = eig(K_eigen, -1j*M_eigen)
-    #print('eigenvalue1 = ',np.sqrt(abs(eigenvalues[0])))
-    #print('eigenvalue2 = ',np.sqrt(abs(eigenvalues[1])))    
+  
     We1 = min(np.sqrt(abs(eigenvalues[0])) , np.sqrt(abs(eigenvalues[1])))#np.sqrt(k1/m1)
     We2 = max(np.sqrt(abs(eigenvalues[0])) , np.sqrt(abs(eigenvalues[1])))#np.sqrt(k2/m2)
     
