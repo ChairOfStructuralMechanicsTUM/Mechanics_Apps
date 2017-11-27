@@ -330,19 +330,8 @@ System_Parameters_text = Div(text="""<b>System Parameters</b> """)
 ExternalForce_Parameter_text = Div(text="""<b>External Force Parameters</b> """)
 
 def change_mass(attr,old,new):
-    global  m1, k1, k2, c2, oscAmp, mainMass_amplificationFrequency_source, mainMass_amplificationFrequency_source, topMass_amplificationFrequency_source, mainMass_phaseAngleFrequency_source, topMass_phaseAngleFrequency_source, Amplificaiton_range, PhaseAngle_range, Frequency_range
-    
-    Calculate_MagnificationFactor_PhaseAngle( 
-                                       m1, mass_input.value, k1, kappa_input.value, lam_input.value,
-                                       oscAmp, omega_input.end, omega_input.value, 200,
-                                       mainMass_amplificationFrequency_source, 
-                                       topMass_amplificationFrequency_source,
-                                       mainMass_phaseAngleFrequency_source,
-                                       topMass_phaseAngleFrequency_source,
-                                       Amplificaiton_range, 
-                                       PhaseAngle_range, 
-                                       Frequency_range,
-                                      )
+    Update_system()
+    Update_current_state()
     global Active
     if (not Active):
         global topMass, omega, m2
@@ -364,6 +353,7 @@ mass_input.on_change('value',change_mass)
 
 def change_kappa(attr,old,new):
     Update_system()
+    Update_current_state()
     global Active
     if (not Active):
         global spring, omega, k2
@@ -387,6 +377,7 @@ kappa_input.on_change('value',change_kappa)
 def change_lam(attr,old,new):
 
     Update_system()
+    Update_current_state()
     global Active
     if (not Active):
         global dashpot, omega,c2
