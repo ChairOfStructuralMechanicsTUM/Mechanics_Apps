@@ -270,7 +270,7 @@ def main( ):
 
 
     Scheme = Div( text = "<p><b><center><font size=4> Layout scheme </font></center></b></p>"
-                         "<img src='/VibroacousticApp/static/images/scheme.png'>",
+                         "<img src='/Vibroacoustic_plates/static/images/scheme.png'>",
                 width = 550,
                 height = 550 )
 
