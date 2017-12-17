@@ -231,13 +231,33 @@ def Calculate_Current_Amplification_PhaseAngle(
         Phase_current_1 += np.pi
     if Phase_current_2 < 0:
         Phase_current_2 += np.pi
+#    Amplification_current_source.data = dict(
+#                                               x=[eta_1,eta_2], 
+#                                               y=[Amplification_current_1,Amplification_current_2],
+#                                               c=['#0033FF', '#330011']
+#                                              )
+#    PhaseAngle_current_source.data = dict(
+#                                               x=[eta_1,eta_2], 
+#                                               y=[Phase_current_1,Phase_current_2],
+#                                               c=['#0033FF', '#330011']
+#                                              )
+    ### To show only the main mass' state ###
     Amplification_current_source.data = dict(
-                                               x=[eta_1,eta_2], 
-                                               y=[Amplification_current_1,Amplification_current_2],
-                                               c=['#0033FF', '#330011']
+                                               x=[eta_1], 
+                                               y=[Amplification_current_1],
+                                               c=['#0033FF']
                                               )
     PhaseAngle_current_source.data = dict(
-                                               x=[eta_1,eta_2], 
-                                               y=[Phase_current_1,Phase_current_2],
-                                               c=['#0033FF', '#330011']
+                                               x=[eta_1], 
+                                               y=[Phase_current_1],
+                                               c=['#0033FF']
                                               )
+    
+def Clear_Time_History(main_displacement_time_source, topMass_displacement_time_source):
+    # Get the last displacement of both main and top masses
+    MainMass_end = main_displacement_time_source.data['y'][-1]
+    TopMass_end  = topMass_displacement_time_source.data['y'][-1]
+
+    # Clear the sources and initialize it with last displacement
+    main_displacement_time_source.data = dict(x=[0],y=[MainMass_end])
+    topMass_displacement_time_source.data = dict(x=[0],y=[TopMass_end])

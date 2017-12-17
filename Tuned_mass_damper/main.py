@@ -10,6 +10,8 @@ from bokeh.models import Slider, Button, Div, Arrow, OpenHead, Range1d
 from math import cos, sin, radians, sqrt, pi, atan2
 from os.path import dirname, join, split
 from Functions import Calculate_MagnificationFactor_PhaseAngle, Calculate_Current_Amplification_PhaseAngle
+from Functions import Clear_Time_History
+import numpy as np
 
 ## create and link objects
 g=9.81
@@ -69,8 +71,9 @@ Define the displacement-time diagram for both masses
 mainMass_displacementTime_source = ColumnDataSource(data=dict(x=[0],y=[0])) # Default values
 topMass_displacementTime_source = ColumnDataSource(data=dict(x=[0],y=[0])) # Default values
 
-displacement_range = Range1d(-1,1)
-time_range = Range1d(0,5)
+# Initial space and time plot-boundaries
+displacement_range = Range1d(-2,2)
+time_range = Range1d(0,10)
 
 displacementTime_plot = figure(
                                 plot_width = 600,
@@ -134,10 +137,10 @@ PhaseAngle_Frequency_plot.xaxis.axis_label="Frequency Ratio"
 PhaseAngle_Frequency_plot.yaxis.axis_label="Phase Angle [rad]"
 
 Amplification_Frequency_plot.line(x='x',y='y', source = mainMass_amplificationFrequency_source, color='#0033FF', legend='Main mass')
-Amplification_Frequency_plot.line(x='x',y='y', source = topMass_amplificationFrequency_source, color='#330011', legend='Top mass')
+#Amplification_Frequency_plot.line(x='x',y='y', source = topMass_amplificationFrequency_source, color='#330011', legend='Top mass')
 
 PhaseAngle_Frequency_plot.line(x='x',y='y', source = mainMass_phaseAngleFrequency_source, color='#0033FF', legend='Main mass')
-PhaseAngle_Frequency_plot.line(x='x',y='y', source = topMass_phaseAngleFrequency_source, color='#330011', legend='Top mass')
+#PhaseAngle_Frequency_plot.line(x='x',y='y', source = topMass_phaseAngleFrequency_source, color='#330011', legend='Top mass')
 
 Amplification_Frequency_plot.circle(x='x',y='y', color='c', source=Amplification_current_source, radius=0.1)
 PhaseAngle_Frequency_plot.circle(x='x',y='y', color='c', source=PhaseAngle_current_source, radius=0.1)
@@ -147,6 +150,7 @@ PhaseAngle_Frequency_plot.circle(x='x',y='y', color='c', source=PhaseAngle_curre
 def evolve():
     global topMass, mainMass, oscForceAngle, oscAmp, omega, dt, t, displacement_range, time_range, mainMass_displacementTime_source, topMass_displacementTime_source
     t+=dt
+    
     # current force applied to main mass
     F=oscAmp*cos(oscForceAngle)
     mainMass.applyForce(Coord(0,F),None)
@@ -297,7 +301,7 @@ def omegaScanStep():
 title_box = Div(text="""<h2 style="text-align:center;">Schwingungstilger (Tuned mass damper)</h2>""",width=1000)
 
 ## create simulation drawing
-fig = figure(title="", x_range=(-7,7), y_range=(0,20),width=350,height=500)
+fig = figure(title="", tools = "pan,wheel_zoom,box_zoom", x_range=(-7,7), y_range=(0,20),width=350,height=500)
 fig.title.text_font_size="20pt"
 fig.axis.visible = False
 fig.grid.visible = False
@@ -348,7 +352,7 @@ def change_mass(attr,old,new):
     elif (new!=topMass.mass):
         mass_input.value=topMass.mass
 ## Create slider to choose mass of upper mass
-mass_input = Slider(title="Mass [kg]", value=m2, start=1, end=100.0, step=1,width=400)
+mass_input = Slider(title="Top Mass' Mass [kg]", value=m2, start=1, end=100.0, step=1,width=400)
 mass_input.on_change('value',change_mass)
 
 def change_kappa(attr,old,new):
@@ -371,7 +375,7 @@ def change_kappa(attr,old,new):
     elif (new!=spring.kappa):
         kappa_input.value=spring.kappa
 ## Create slider to choose spring constant
-kappa_input = Slider(title="Spring Stiffness [N/m]", value=k2, start=1.0, end=200, step=10,width=400)
+kappa_input = Slider(title="Top Mass' Spring Stiffness [N/m]", value=k2, start=1.0, end=200, step=10,width=400)
 kappa_input.on_change('value',change_kappa)
 
 def change_lam(attr,old,new):
@@ -390,7 +394,7 @@ def change_lam(attr,old,new):
     elif (new!=dashpot.lam):
         lam_input.value=dashpot.lam
 ## Create slider to choose damper coefficient
-lam_input = Slider(title=u"Damper Coefficient [N*s/m]", value=c2, start=0.0, end=15, step=0.1,width=400)
+lam_input = Slider(title=u"Top Mass' Damper Coefficient [N*s/m]", value=c2, start=0.0, end=15, step=0.1,width=400)
 lam_input.on_change('value',change_lam)
 
 def change_Omega(attr,old,new):
@@ -405,11 +409,6 @@ def change_Omega(attr,old,new):
             # find amplitude for current frequency from AmplitudeFrequency graph
             Position.data=dict(om=[new],A=[AmplitudeFrequency.data['A'][int(floor(new*10))-1]])
             
-#        Calculate_Current_Amplification_PhaseAngle(
-#                                               m1, mass_input.value, k1, kappa_input.value, lam_input.value, 
-#                                               oscAmp, omega_input.end, omega,
-#                                               Amplification_current_source, PhaseAngle_current_source
-#                                              )
         Update_current_state()
         
     elif (new!=omega):
@@ -470,6 +469,9 @@ def reset():
     time_range.start = 0
     
     t = 0
+
+
+    
 def omega_scan():
     global Active, t
     if (not Active):
@@ -479,6 +481,24 @@ def omega_scan():
         Active=True
         Arrow_glyph.start=ArrowHead_glyph
         Arrow_glyph.end=None
+        
+def ClearAndReset_DisplacementTime_History():
+    global mainMass_displacementTime_source, topMass_displacementTime_source, displacement_range, time_range, t
+    
+    # Clear Displacement-Time sources
+    Clear_Time_History(
+                       mainMass_displacementTime_source,
+                       topMass_displacementTime_source
+                      )
+
+    # Reset Displacement-Time plot time boundary
+    time_range.end   = 10
+    time_range.start = 0
+    
+    # Reset time
+    t = 0
+    
+    
 
 ## create buttons to control simulation
 PlayStop_button = Button(label="Play", button_type="success",width=100)
@@ -490,9 +510,10 @@ reset_button.on_click(reset)
 omega_scan_button = Button(label=u"\u03C9 scan", button_type="success",width=100)
 omega_scan_button.on_click(omega_scan)
 
-def Update_system():
-    #global  m1, k1, k2, c2, oscAmp, mainMass_amplificationFrequency_source, mainMass_amplificationFrequency_source, topMass_amplificationFrequency_source, mainMass_phaseAngleFrequency_source, topMass_phaseAngleFrequency_source, Amplificaiton_range, PhaseAngle_range, Frequency_range
-    
+ClearResetTimeHistory_button = Button(label="Clear Displacement-Time plot", button_type="success",width=100)
+ClearResetTimeHistory_button.on_click(ClearAndReset_DisplacementTime_History)
+
+def Update_system():    
     Calculate_MagnificationFactor_PhaseAngle( 
                                        m1, mass_input.value, k1, kappa_input.value, lam_input.value,
                                        oscAmp, omega_input.end, omega_input.value, 200,
@@ -516,21 +537,9 @@ def Update_current_state():
 calculateGraphPlot()
 change_Omega(None,None,1.0)
 
-
-
-
-
-Calculate_MagnificationFactor_PhaseAngle( 
-                                   m1, mass_input.value, k1, kappa_input.value, lam_input.value,
-                                   oscAmp, omega_input.end, omega_input.value, 200,
-                                   mainMass_amplificationFrequency_source, 
-                                   topMass_amplificationFrequency_source,
-                                   mainMass_phaseAngleFrequency_source,
-                                   topMass_phaseAngleFrequency_source,
-                                   Amplificaiton_range, 
-                                   PhaseAngle_range, 
-                                   Frequency_range,
-                                  )
+# Fill the Amplification factor and Phase angle diagrams
+Update_system()
+Update_current_state()
 
 
 ## Send to window
@@ -550,6 +559,7 @@ curdoc().add_root(
                                   #Spacer(height=100),
                                   Simulation_Controls_text,
                                   PlayStop_button,
+                                  ClearResetTimeHistory_button,
                                   reset_button,
                                   #omega_scan_button
                                  ),
