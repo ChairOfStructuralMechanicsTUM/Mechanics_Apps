@@ -316,7 +316,7 @@ columns = [
             TableColumn(field="signalThree", title="Signal Three"),
           ]   
 data_table = DataTable(source=informationTable, columns=columns, width=800, height=280)
-data_table_title = Div(text="""<b>Information about the seismac signals</b> """,width = 600)
+data_table_title = Div(text="""<b>Information about the seismic signals</b> """,width = 600)
 
 '''
 ###############################################################################
