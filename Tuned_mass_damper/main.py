@@ -6,7 +6,7 @@ from Integrator import *
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div, Arrow, OpenHead, Range1d
+from bokeh.models import Slider, Button, Div, Arrow, OpenHead, Range1d, LabelSet
 from math import cos, sin, radians, sqrt, pi, atan2
 from os.path import dirname, join, split
 from Functions import Calculate_MagnificationFactor_PhaseAngle, Calculate_Current_Amplification_PhaseAngle
@@ -49,6 +49,8 @@ AmplitudeFrequency = ColumnDataSource(data = dict(omega=[],A=[]))
 Position = ColumnDataSource(data = dict(om=[],A=[]))
 # create ColumnDataSource for arrow showing force
 Arrow_source = ColumnDataSource(data = dict(xS=[], xE=[], yS=[], yE=[]))
+# create ColumnDataSource for force label
+ForceLabel_source = ColumnDataSource(data=dict(x=[0],y=[0],t=[0]))
 # create vector of forces applied during simulation
 ForceList = [0,0]
 # create initial
@@ -144,7 +146,6 @@ PhaseAngle_Frequency_plot.line(x='x',y='y', source = mainMass_phaseAngleFrequenc
 
 Amplification_Frequency_plot.circle(x='x',y='y', color='c', source=Amplification_current_source, radius=0.1)
 PhaseAngle_Frequency_plot.circle(x='x',y='y', color='c', source=PhaseAngle_current_source, radius=0.1)
-
 ## functions
 
 def evolve():
@@ -204,16 +205,19 @@ def evolve():
     ###########################################################################
     
     # reduce F to make arrow normal sized on drawing
-    F/=50.0
+    F_for_vis = F/50.0
+    OscAmp_for_vis = oscAmp/50
     # draw arrow in correct direction
     if (F<0):
-        Arrow_source.data=dict(xS=[3], xE=[3], yS=[h], yE=[h-F])
+        Arrow_source.data=dict(xS=[3], xE=[3], yS=[h], yE=[h-F_for_vis])
         Arrow_glyph.start=ArrowHead_glyph
         Arrow_glyph.end=None
     else:
-        Arrow_source.data=dict(xS=[3], xE=[3], yS=[h], yE=[h+F])
+        Arrow_source.data=dict(xS=[3], xE=[3], yS=[h], yE=[h+F_for_vis])
         Arrow_glyph.start=None
         Arrow_glyph.end=ArrowHead_glyph
+        
+    ForceLabel_source.data=dict(x=[3], y=[1.1*(h+OscAmp_for_vis)], t=['Force = '+str(round(F,1))])
 
 ## calculate Amplitude as a function of frequency
 def calculateGraphPlot():
@@ -317,6 +321,17 @@ ArrowHead_glyph = OpenHead(line_color="#E37222",line_width=3,size=10)
 Arrow_glyph = Arrow(x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Arrow_source,
     line_color="#E37222",line_width=3)
 fig.add_layout(Arrow_glyph)
+
+# Construct and add external force label
+fig.add_layout(
+               LabelSet(
+                          x='x', y='y',
+                          text='t',
+                          text_color='black',text_font_size="15pt",
+                          level='glyph',text_baseline="middle",text_align="center",
+                          source=ForceLabel_source
+                       )
+              )
 
 ## create amplitude frequency diagram
 p = figure(title="", tools="",x_range=(0,10),y_range=(0,5),height=500)
