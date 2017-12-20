@@ -90,8 +90,8 @@ def homogenize( E, G, NU, D ):
     Check4 =  1-nu12_eff*nu21_eff-nu13_eff*nu31_eff-nu23_eff*nu32_eff-2*nu12_eff*nu23_eff*nu31_eff
 
 
-    return { "ElasticModulus" : [ E1_eff,E2_eff,E3_eff ],
-             "ShearModulus" : [ G1_eff,G2_eff,G3_eff ],
-             "PoissonRatios": [ [ nu12_eff, nu13_eff, nu23_eff ],
-                                [ nu21_eff, nu31_eff, nu32_eff ] ],
+    return { "ElasticModulus" : [ format(E1_eff,'.2E'),format(E2_eff,'.2E'),format(E3_eff,'.2E') ],
+             "ShearModulus" : [ format(G1_eff,'.2E'),format(G2_eff,'.2E'),format(G3_eff,'.2E') ],
+             "PoissonRatios": [ [ format(nu12_eff,'.5f'), format(nu13_eff,'.5f'), format(nu23_eff,'.5f') ],
+                                [ format(nu21_eff,'.5f'), format(nu31_eff,'.5f'), format(nu32_eff,'.5f') ] ],
              "TotalThickness" : sum(D) }
