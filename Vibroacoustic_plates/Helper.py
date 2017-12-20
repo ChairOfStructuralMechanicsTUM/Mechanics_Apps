@@ -82,14 +82,14 @@ def isInputNegative( Input ):
         nColumns = len( Input[ 0 ] )
         nRows = len( Input )
 
-        for i in xrange( nRows ):
-            for j in xrange( nColumns ):
+        for i in range( nRows ):
+            for j in range( nColumns ):
                 if Input[ i ][ j ] < 0:
                     raise DataCorrupted("the material properties are not feasible" )
 
     else:
 
-        for i in xrange( len( Input ) ):
+        for i in range( len( Input ) ):
 
             if Input[ i ] < 0:
                 raise DataCorrupted("the material properties are not feasible" )

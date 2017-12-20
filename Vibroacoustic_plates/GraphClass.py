@@ -14,8 +14,8 @@ class GraphCorrupted(Exception):
 
 class GraphObject:
     # Private class variables
-    IMAGE_COUNTER = 0;
-    _MAX_NUMBER_OF_LINES = 15
+    IMAGE_COUNTER = 0
+    _MAX_NUMBER_OF_LINES = 20
     _MAX_NUMBER_OF_DOTTED_LINES = 3
 
     def __init__( self, GraphNames, aRange, Width = 650, Height = 550 ):
@@ -73,7 +73,7 @@ class GraphObject:
 
         # Mode represents to states, namely: orthotropic(0) and isotropic(1)
         self.__Mode = 0
-        self.__PlottingGraphNumber = 0;
+        self.__PlottingGraphNumber = 0
 
 
         # ........................ Initialize all widgets ..........................
@@ -82,7 +82,7 @@ class GraphObject:
                                    Size = 2 ,
                                    FontStyle = "n",
                                    MessageHeader = "",
-                                   Width = self.Width  );
+                                   Width = self.Width  )
 
 
 
@@ -101,7 +101,7 @@ class GraphObject:
                              x_range = [1, 10000] )
 
         self.Graph.y_range.range_padding = 0.0
-
+        
         self.Graph.yaxis.axis_label = "Default"
         self.Graph.xaxis.axis_label = "Default"
 
@@ -214,20 +214,25 @@ class GraphObject:
         :return:
         """
         for i in range( GraphObject._MAX_NUMBER_OF_LINES ):
-            self.Graph.legend[ 0 ].items[ i ] = LegendItem( label = "" ) #self.Graph.legend[ 0 ].items[ i ].label[ 'value' ] = ""
             self.GraphData[ i ].data = dict(XData = [], YData = [])
-            self.Lines[ i ].glyph.line_color = 'white'
 
 
         for i in range( GraphObject._MAX_NUMBER_OF_DOTTED_LINES ):
-
             # remove circles from the graph
             self.Circles[ i ].data_source.data.update( { "x": [],"y": [] } )
 
-            # adjust the legend of the top lines
-            self.Graph.legend[ 0 ].items[ i ] \
-                                = LegendItem( label = "",
-                                              renderers = [ self.Lines[ i ] ] )
+    def cleanLabels( self, nLabels=_MAX_NUMBER_OF_LINES ):
+        """
+        The function cleans all unused labels from the legend. nLabels specifies how
+        many plots shall remain in the graph.
+        :param nLabels: int
+        :return:
+        """
+
+        for i in range( nLabels, GraphObject._MAX_NUMBER_OF_LINES ):
+            self.Graph.legend[ 0 ].items[ i ] = LegendItem( label = "" )
+            self.Lines[ i ].glyph.line_color = 'white'
+
 
     def defineLine(self, ID ,Name, Color, Style):
         """

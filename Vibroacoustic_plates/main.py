@@ -18,6 +18,7 @@ from Homogenization import *
 from InteractiveTable import *
 
 
+
 def main( ):
     """
     The main function only describes both graphical and comunication parts of the app.
@@ -47,7 +48,7 @@ def main( ):
                            "Modal Overlap Factor",
                            "Maximum Element Size (FEM)"],
                             FrequencyRange,
-                            Width = 850,
+                            Width = 950,
                             Height = 550)
 
 
@@ -140,6 +141,7 @@ def main( ):
 
     PoissonRatios.setValues( DataOrthotropic )
 
+
     PoissonRatios.addBuffer( BufferName = "DefaultIsotropic",
                              BufferData = DataIsotropic )
 
@@ -188,7 +190,7 @@ def main( ):
                                            Rows =  1,
                                            Columns =  3 )
 
-    GeometryProperties.setTitels( [ [ "Length", "Width", "Thickness of the layers*" ] ] )
+    GeometryProperties.setTitels( [ [ "Length", "Width", "Thicknesses of the layers*" ] ] )
 
     Data = [ [ "2.5", "3.0", "0.027" ] ]
     GeometryProperties.setValues( Data )
@@ -234,9 +236,9 @@ def main( ):
                           width = 100 )
 
 
-    PrintReport = Button( label = "Print Report",
-                          button_type = "primary",
-                          width = 100 )
+    # PrintReport = Button( label = "Print Report",
+    #                       button_type = "primary",
+    #                       width = 100 )
 
 
     ShowInput = Button( label = "Show Input",
@@ -260,7 +262,7 @@ def main( ):
                               MessageHeader = "Warning: " )
 
 
-    Info = Div( text = "*Thickness of top to center layer separated by "
+    Info = Div( text = "*Thicknesses of top to center layer separated by "
                        "semicolon or space: <br>"
 					   "&nbsp;Symmetric cross section with odd number of layers"
                        " and crosswise layup assumed.",
@@ -270,9 +272,33 @@ def main( ):
 
 
     Scheme = Div( text = "<p><b><center><font size=4> Layout scheme </font></center></b></p>"
-                         "<img src='/Vibroacoustic_plates/static/images/scheme.png'>",
-                width = 550,
-                height = 550 )
+                         "<img src='/Vibroacoustic_plates/static/images/scheme.png' width=300 height=300>",
+                width = 300,
+                height = 300 )
+
+    Description = Div( text = "The application Vibroacoustics of Plates can be classified in two steps: <br><br>"
+                "<b>1.</b> Insert the physical properties of a homogenous plate or of a single layer"
+                "&nbsp;in the case of a layered plate (default values are given) on the left and press <i>'Apply'</i>. <br><br>"
+                "<b>Notice</b> that in the case of a layered plate, a symmetric cross section"
+                "&nbsp;with an odd number of layers and a crosswise layup is assumed (cf. Scheme)."
+                "&nbsp;Therefore, the thicknesses of the top to the center layer have to be inserted."
+                "&nbsp;The material properties are homogenized through the thickness."
+                "&nbsp;Thus, the input data of the single layer"
+                "&nbsp;is overwritten by homogenized material parameters of the plate after pressing <i>'Apply'</i>."
+                "&nbsp;The input data of the single layers can be checked by pressing the"
+                "&nbsp;button <i>'Show Input'</i>. <br><br>"
+                "<b>2.</b> On the right, dynamic properties of the plate and of"
+                "&nbsp;its wave types are plotted. These can be studied"
+                "&nbsp;using e.g. the zoom function and saved as .png."
+					   ,
+                render_as_text = False,
+                width = 1000,
+                height = 30 )
+    
+    Title = Div ( text = "<b><h1> Vibroacoustics of Plates</b><h1>",
+                 render_as_text = False,
+                 width = 900,
+                 height = 30)
 
     # SPECIFY THE LAYOUT:
     Buttons = row( row( Spacer( width = 50 ),
@@ -280,10 +306,10 @@ def main( ):
                         Spacer( width = 50 ),
                         ShowInput,
                         Spacer( width = 50 ),
-                        SetDefaultButton,
-                        Spacer( width = 50 ),
-                        PrintReport ) )
+                        SetDefaultButton ) )
 
+    Headline = column( Title,
+                       row( Description, Spacer( width = 50 ), Scheme ) )
 
     LeftSide = column( ModeRadioButtons,
                         ELASTIC_MODULUS_TITEL,
@@ -298,11 +324,12 @@ def main( ):
                         GeometryProperties.Table,
                         LayersInfo.Widget,
                         Info,
-                        Spacer( height = 30 ),
-                        Scheme)
+                        Spacer( height = 20 ) )
+                        #Scheme)
 
 
-    RightSide = column( Graph.Widget , Buttons,WarningMessage.Widget )
+    RightSide = column( Graph.Widget , Buttons,WarningMessage.Widget,
+                        Spacer( height = 40 ) )
 
 
     # ========================= COMMUNICATION PART =============================
@@ -331,7 +358,7 @@ def main( ):
 
     # Set up callback function for all the "Default" button that are responsible
     # for assigning the default data to all entries
-    SetDefaultButton.on_click( partial( setDeafultSettings,
+    SetDefaultButton.on_click( partial( setDefaultSettings,
                                         Tables,
                                         Graph,
                                         LayersInfo,
@@ -345,7 +372,8 @@ def main( ):
     updateData( Tables, Graph, LayersInfo, WarningMessage )
 
 
-    # RUN ALL WIDJETS
+    # RUN ALL WIDGETS
+    doc.add_root(Headline)
     doc.add_root( column( Spacer( height = 20 ),
                       row( LeftSide,
                            Spacer( width = 50 ),
@@ -389,9 +417,9 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
             makeMultiLayerMask( Tables )
 
             HomogenizedData = homogenize( Tables[ "ElasticModulus" ].getData( )[ 0 ],
-                                          Tables[ "ShearModulus" ].getData( )[ 0 ],
-                                          Tables[ "PoissonRatios" ].getData( ),
-                                          Layers )
+                                            Tables[ "ShearModulus" ].getData( )[ 0 ],
+                                            Tables[ "PoissonRatios" ].getData( ),
+                                            Layers )
 
             #cangeMode( Tables, WarningMessage, Graph.getMode( ) )
 
@@ -467,19 +495,19 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
 
 
         Graph.Containers[ "MaxElementSize" ] = MaximumElementSize(
-                                                   Graph.Containers[ "WaveVelocity" ][ "c_B" ],
-                                                   Graph.Containers[ "WaveVelocity" ][ "c_B_eff" ],
-                                                   Graph.getRange( ) )
+                                                    Graph.Containers[ "WaveVelocity" ][ "c_B" ],
+                                                    Graph.Containers[ "WaveVelocity" ][ "c_B_eff" ],
+                                                    Graph.getRange( ) )
 
 
         Graph.Containers[ "EigenFrequency" ] = EigenfrequenciesPlate(
-                                                      ElasticModulusData,
-                                                      ShearModulusData,
-                                                      PoissonRatiosData,
-                                                      MaterialPropertiesData,
-                                                      GeometryPropertiesData,
-                                                      bool( Graph.getMode() ),
-                                                      Graph.getRange() )
+                                                        ElasticModulusData,
+                                                        ShearModulusData,
+                                                        PoissonRatiosData,
+                                                        MaterialPropertiesData,
+                                                        GeometryPropertiesData,
+                                                        bool( Graph.getMode() ),
+                                                        Graph.getRange() )
 
         # Update the current graph with new data
         updateGraph( Graph, Graph.getCurrentGraphNumber( ) )
@@ -538,10 +566,6 @@ def updateGraph( Graph, GraphNumber ):
 
     if (GraphNumber == 5):
         plotMaximumElementSize( Graph )
-
-    if (GraphNumber == 6):
-        plotScheme( Graph )
-
 
 def updateMode( Tables,
                 WarningMessage,
@@ -631,7 +655,7 @@ def cangeMode( Tables, WarningMessage, Mode ):
     precomputePoissonRatios( Tables )
 
 
-def setDeafultSettings( Tables, Graph, LayersInfo, WarningMessage ):
+def setDefaultSettings( Tables, Graph, LayersInfo, WarningMessage ):
     """
     The function sets up the default values for the tables
     :param Tables: dictionary (container with tables)
