@@ -464,7 +464,7 @@ def reset():
     lam_input.value=3.7
     omega_input.value=1.0
     # if simulation is running, then stop it
-    stop()
+    PlayStop()
     # reset objects
     spring.compressTo(Coord(-4,x2),Coord(-4,x2-h))
     # (done twice to implement 0 velocity)
@@ -486,11 +486,10 @@ def reset():
     # Clear the displacement-time diagram related data structures
     mainMass_displacementTime_source.data=dict(x=[0],y=[0]) # Default values
     topMass_displacementTime_source.data=dict(x=[0],y=[0]) # Default values
-    time_source.data=dict(x=[0],y=[0])
     
-    displacement_range.start = 0
-    displacement_range.end   = 0
-    time_range.end   = 0
+    displacement_range.start = -2
+    displacement_range.end   = 2
+    time_range.end   = 10
     time_range.start = 0
     
     t = 0
