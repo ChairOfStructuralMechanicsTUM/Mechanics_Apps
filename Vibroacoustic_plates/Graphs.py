@@ -1,5 +1,6 @@
 from Colors import *
 from bokeh.models.annotations import LegendItem
+from bokeh.events import Reset
 
 
 def plotWaveSpeedGraphWithLimits( GraphInstance ):
@@ -30,6 +31,7 @@ def plotWaveSpeedGraphWithLimits( GraphInstance ):
     """
 
     GraphInstance.cleanGraph()
+    GraphInstance.cleanLabels( 15 )
     GraphInstance.Graph.yaxis.axis_label = "Wave Velocity in m/s"
     GraphInstance.Graph.xaxis.axis_label = "Frequency in Hz"
 
@@ -273,188 +275,186 @@ def plotWaveSpeedGraphWithLimits( GraphInstance ):
                               DARK_BLUE,
                               'dotted' )
 
-    COUNTER += 1
 
 def plotWaveSpeedGraph( GraphInstance ):
+    """
+    At the beginning the function cleans the GraphInstance from the previous plot. Then
+    it adjusts the following lines with corresponding labels and colors on the plot:
+        WaveVelocity - c_L
+        WaveVelocity - c_L_thick
+        WaveVelocity - c_S
+        WaveVelocity - c_S_outofplane_1
+        WaveVelocity - c_S_outofplane_2
+        WaveVelocity - c_B_shear
+        WaveVelocity - c_B
+        WaveVelocity - c_B_eff
+        WaveVelocity - c_g
+        WaveVelocity - c_g_eff
+    :param GraphInstance: an instance of GraphObject class
+    :return:
+    """
+    
+    GraphInstance.cleanGraph()
+    GraphInstance.cleanLabels( 10 )
+    GraphInstance.Graph.yaxis.axis_label = "Wave Velocity in m/s"
+    GraphInstance.Graph.xaxis.axis_label = "Frequency in Hz"
 
-        """
-        At the beginning the function cleans the GraphInstance from the previous plot. Then
-        it adjusts the following lines with corresponding labels and colors on the plot:
-            WaveVelocity - c_L
-            WaveVelocity - c_L_thick
-            WaveVelocity - c_S
-            WaveVelocity - c_S_outofplane_1
-            WaveVelocity - c_S_outofplane_2
-            WaveVelocity - c_B_shear
-            WaveVelocity - c_B
-            WaveVelocity - c_B_eff
-            WaveVelocity - c_g
-            WaveVelocity - c_g_eff
-        :param GraphInstance: an instance of GraphObject class
-        :return:
-        """
+    # Find the maximum values in both x and y direction to be able to
+    # depict both vertical and horizontal lines
+    MaxCoordinateY = max( GraphInstance.Containers[ "WaveVelocity" ][ "c_g" ] )
+    MaxCoordinateX = max( GraphInstance.getRange( ) )
+    MinCoordinateY = min( GraphInstance.Containers[ "WaveVelocity" ][ "c_B_eff" ] )
+    MinCoordinateX = min( GraphInstance.getRange( ) )
 
-        GraphInstance.cleanGraph()
-        GraphInstance.Graph.yaxis.axis_label = "Wave Velocity in m/s"
-        GraphInstance.Graph.xaxis.axis_label = "Frequency in Hz"
+    COUNTER = 0
+    # ............................ c_L graph ...................................
+    # 'Quasi-longitudial, in-plane'
+    RangeX = [ MinCoordinateX, MaxCoordinateX ]
+    RangeY = [ GraphInstance.Containers[ "WaveVelocity" ][ "c_L" ][ 0 ],
+                GraphInstance.Containers[ "WaveVelocity" ][ "c_L" ][ 0 ] ]
 
-        # Find the maximum values in both x and y direction to be able to
-        # depict both vertical and horizontal lines
-        MaxCoordinateY = max( GraphInstance.Containers[ "WaveVelocity" ][ "c_g" ] )
-        MaxCoordinateX = max( GraphInstance.getRange( ) )
-        MinCoordinateY = min( GraphInstance.Containers[ "WaveVelocity" ][ "c_B_eff" ] )
-        MinCoordinateX = min( GraphInstance.getRange( ) )
+    GraphInstance.GraphData[ COUNTER ].data = dict( XData = RangeX,
+                                                YData = RangeY )
 
-        COUNTER = 0
-        # ............................ c_L graph ...................................
-        # 'Quasi-longitudial, in-plane'
+    if GraphInstance.getMode( ) == 0:
+
+        GraphInstance.defineLine( COUNTER, 'Quasi-longitudial, in-plane',
+                                    DARK_BLUE,
+                                    'solid' )
+
+    elif GraphInstance.getMode( ) == 1:
+
+        GraphInstance.defineLine( COUNTER, 'Quasi-longitudial',
+                                    DARK_BLUE,
+                                    'solid' )
+
+    COUNTER += 1
+    # .................... c_L_thick graph .............................
+    # 'Longitudinal out-of-plane'
+    RangeX = [ MinCoordinateX, MaxCoordinateX ]
+    RangeY = [ GraphInstance.Containers[ "WaveVelocity" ][ "c_L_thick" ],
+                GraphInstance.Containers[ "WaveVelocity" ][ "c_L_thick" ] ]
+
+    GraphInstance.GraphData[ COUNTER ].data = dict( XData = RangeX,
+                                                YData = RangeY )
+
+    GraphInstance.defineLine( COUNTER, 'Longitudinal, out-of-plane',
+                                DARK_BLUE,
+                                'dashed' )
+
+    COUNTER += 1
+    # ............................ c_S graph ...................................
+    # 'Shear, in-plane'
+    RangeX = [ MinCoordinateX, MaxCoordinateX ]
+    RangeY = [ GraphInstance.Containers[ "WaveVelocity" ][ "c_S" ],
+                GraphInstance.Containers[ "WaveVelocity" ][ "c_S" ] ]
+
+    GraphInstance.GraphData[ COUNTER ].data = dict( XData = RangeX,
+                                                YData = RangeY )
+
+    if GraphInstance.getMode() == 0:
+
+        GraphInstance.defineLine( COUNTER, 'Shear, in-plane',
+                                    LIGHT_BLUE,
+                                    'solid' )
+
+    elif GraphInstance.getMode() == 1:
+
+        GraphInstance.defineLine( COUNTER, 'Shear',
+                                    LIGHT_BLUE,
+                                    'solid' )
+
+    COUNTER += 1
+
+    if GraphInstance.getMode( ) == 0:
+        # ................... c_S_outofplane_1 graph ...........................
+        # 'Shear out-of-plane prop. (G32)'
         RangeX = [ MinCoordinateX, MaxCoordinateX ]
-        RangeY = [ GraphInstance.Containers[ "WaveVelocity" ][ "c_L" ][ 0 ],
-                   GraphInstance.Containers[ "WaveVelocity" ][ "c_L" ][ 0 ] ]
+        RangeY = [ GraphInstance.Containers[ "WaveVelocity" ]["c_S_outofplane_1" ],
+                    GraphInstance.Containers[ "WaveVelocity" ]["c_S_outofplane_1" ] ]
 
         GraphInstance.GraphData[ COUNTER ].data = dict( XData = RangeX,
-                                                  YData = RangeY )
+                                                    YData = RangeY )
 
-        if GraphInstance.getMode( ) == 0:
-
-            GraphInstance.defineLine( COUNTER, 'Quasi-longitudial, in-plane',
-                                      DARK_BLUE,
-                                      'solid' )
-
-        elif GraphInstance.getMode( ) == 1:
-
-            GraphInstance.defineLine( COUNTER, 'Quasi-longitudial',
-                                      DARK_BLUE,
-                                      'solid' )
+        GraphInstance.defineLine( COUNTER,
+                                    'Shear, out-of-plane propagation (G31)',
+                                    LIGHT_BLUE,
+                                    'dashed' )
 
         COUNTER += 1
-        # .................... c_L_thick graph .............................
-        # 'Longitudinal out-of-plane'
+        # ................... c_S_outofplane_2 graph ............................
+        # 'Shear out-of-plane prop. (G31)'
         RangeX = [ MinCoordinateX, MaxCoordinateX ]
-        RangeY = [ GraphInstance.Containers[ "WaveVelocity" ][ "c_L_thick" ],
-                   GraphInstance.Containers[ "WaveVelocity" ][ "c_L_thick" ] ]
+        RangeY = [ GraphInstance.Containers[ "WaveVelocity" ]["c_S_outofplane_2" ],
+                    GraphInstance.Containers[ "WaveVelocity" ]["c_S_outofplane_2" ] ]
 
         GraphInstance.GraphData[ COUNTER ].data = dict( XData = RangeX,
-                                                  YData = RangeY )
+                                                    YData = RangeY )
 
-        GraphInstance.defineLine( COUNTER, 'Longitudinal, out-of-plane',
-                                  DARK_BLUE,
-                                  'dashed' )
-
-        COUNTER += 1
-        # ............................ c_S graph ...................................
-        # 'Shear, in-plane'
-        RangeX = [ MinCoordinateX, MaxCoordinateX ]
-        RangeY = [ GraphInstance.Containers[ "WaveVelocity" ][ "c_S" ],
-                   GraphInstance.Containers[ "WaveVelocity" ][ "c_S" ] ]
-
-        GraphInstance.GraphData[ COUNTER ].data = dict( XData = RangeX,
-                                                  YData = RangeY )
-
-        if GraphInstance.getMode() == 0:
-
-            GraphInstance.defineLine( COUNTER, 'Shear, in-plane',
-                                      LIGHT_BLUE,
-                                      'solid' )
-
-        elif GraphInstance.getMode() == 1:
-
-            GraphInstance.defineLine( COUNTER, 'Shear',
-                                      LIGHT_BLUE,
-                                      'solid' )
+        GraphInstance.defineLine( COUNTER,
+                                    'Shear, out-of-plane propagation (G32)',
+                                    LIGHT_BLUE,
+                                    'dashed' )
 
         COUNTER += 1
 
-        if GraphInstance.getMode( ) == 0:
-            # ................... c_S_outofplane_1 graph ...........................
-            # 'Shear out-of-plane prop. (G32)'
-            RangeX = [ MinCoordinateX, MaxCoordinateX ]
-            RangeY = [ GraphInstance.Containers[ "WaveVelocity" ]["c_S_outofplane_1" ],
-                       GraphInstance.Containers[ "WaveVelocity" ]["c_S_outofplane_1" ] ]
+    # ......................... c_B_shear graph ................................
+    # 'Shear (corrected), out-of-plane displ.'
+    RangeX = [ MinCoordinateX, MaxCoordinateX ]
+    RangeY = [ GraphInstance.Containers[ "WaveVelocity" ][ "c_B_shear" ],
+                GraphInstance.Containers[ "WaveVelocity" ][ "c_B_shear" ] ]
 
-            GraphInstance.GraphData[ COUNTER ].data = dict( XData = RangeX,
-                                                      YData = RangeY )
+    GraphInstance.GraphData[ COUNTER ].data = dict( XData = RangeX,
+                                                YData = RangeY )
 
-            GraphInstance.defineLine( COUNTER,
-                                      'Shear, out-of-plane propagation (G31)',
-                                      LIGHT_BLUE,
-                                      'dashed' )
+    GraphInstance.defineLine( COUNTER, 'Shear (corrected), out-of-plane displ.',
+                                LIGHT_BLUE,
+                                'dashdot' )
 
-            COUNTER += 1
-            # ................... c_S_outofplane_2 graph ............................
-            # 'Shear out-of-plane prop. (G31)'
-            RangeX = [ MinCoordinateX, MaxCoordinateX ]
-            RangeY = [ GraphInstance.Containers[ "WaveVelocity" ]["c_S_outofplane_2" ],
-                       GraphInstance.Containers[ "WaveVelocity" ]["c_S_outofplane_2" ] ]
+    COUNTER += 1
+    # ............................ c_B graph ...................................
+    # 'Pure bending (thin plate)'
+    GraphInstance.GraphData[ COUNTER ].data \
+        = dict( XData = GraphInstance.getRange(),
+                YData = GraphInstance.Containers[ "WaveVelocity" ][ "c_B" ] )
 
-            GraphInstance.GraphData[ COUNTER ].data = dict( XData = RangeX,
-                                                      YData = RangeY )
+    GraphInstance.defineLine( COUNTER, 'Pure bending (thin plate)',
+                                GREEN,
+                                'dashed' )
 
-            GraphInstance.defineLine( COUNTER,
-                                      'Shear, out-of-plane propagation (G32)',
-                                      LIGHT_BLUE,
-                                      'dashed' )
+    COUNTER += 1
+    # .......................... c_B_eff graph .................................
+    # 'Effective bending (thick plate)'
+    GraphInstance.GraphData[ COUNTER ].data\
+        = dict( XData = GraphInstance.getRange(),
+                YData = GraphInstance.Containers[ "WaveVelocity" ][ "c_B_eff" ] )
 
-            COUNTER += 1
+    GraphInstance.defineLine( COUNTER, 'Effective bending (thick plate)',
+                                GREEN,
+                                'solid' )
 
-        # ......................... c_B_shear graph ................................
-        # 'Shear (corrected), out-of-plane displ.'
-        RangeX = [ MinCoordinateX, MaxCoordinateX ]
-        RangeY = [ GraphInstance.Containers[ "WaveVelocity" ][ "c_B_shear" ],
-                   GraphInstance.Containers[ "WaveVelocity" ][ "c_B_shear" ] ]
+    COUNTER += 1
+    # ............................ c_g graph ...................................
+    # 'Group (bending)'
+    GraphInstance.GraphData[ COUNTER ].data \
+        = dict( XData = GraphInstance.getRange(),
+                YData = GraphInstance.Containers[ "WaveVelocity" ][ "c_g" ] )
 
-        GraphInstance.GraphData[ COUNTER ].data = dict( XData = RangeX,
-                                                  YData = RangeY )
+    GraphInstance.defineLine( COUNTER, 'Group (bending)',
+                                ORANGE,
+                                'dashed' )
 
-        GraphInstance.defineLine( COUNTER, 'Shear (corrected), out-of-plane displ.',
-                                  LIGHT_BLUE,
-                                  'dashdot' )
+    COUNTER += 1
+    # .......................... c_g_eff graph .................................
+    # 'Group (effective bending)'
+    GraphInstance.GraphData[ COUNTER ].data \
+        = dict( XData = GraphInstance.getRange(),
+                YData = GraphInstance.Containers[ "WaveVelocity" ][ "c_g_eff" ] )
 
-        COUNTER += 1
-        # ............................ c_B graph ...................................
-        # 'Pure bending (thin plate)'
-        GraphInstance.GraphData[ COUNTER ].data \
-            = dict( XData = GraphInstance.getRange(),
-                    YData = GraphInstance.Containers[ "WaveVelocity" ][ "c_B" ] )
+    GraphInstance.defineLine( COUNTER, 'Group (effective bending)',
+                                ORANGE,
+                                'solid' )
 
-        GraphInstance.defineLine( COUNTER, 'Pure bending (thin plate)',
-                                  GREEN,
-                                  'dashed' )
-
-        COUNTER += 1
-        # .......................... c_B_eff graph .................................
-        # 'Effective bending (thick plate)'
-        GraphInstance.GraphData[ COUNTER ].data\
-            = dict( XData = GraphInstance.getRange(),
-                    YData = GraphInstance.Containers[ "WaveVelocity" ][ "c_B_eff" ] )
-
-        GraphInstance.defineLine( COUNTER, 'Effective bending (thick plate)',
-                                  GREEN,
-                                  'solid' )
-
-        COUNTER += 1
-        # ............................ c_g graph ...................................
-        # 'Group (bending)'
-        GraphInstance.GraphData[ COUNTER ].data \
-            = dict( XData = GraphInstance.getRange(),
-                    YData = GraphInstance.Containers[ "WaveVelocity" ][ "c_g" ] )
-
-        GraphInstance.defineLine( COUNTER, 'Group (bending)',
-                                  ORANGE,
-                                  'dashed' )
-
-        COUNTER += 1
-        # .......................... c_g_eff graph .................................
-        # 'Group (effective bending)'
-        GraphInstance.GraphData[ COUNTER ].data \
-            = dict( XData = GraphInstance.getRange(),
-                    YData = GraphInstance.Containers[ "WaveVelocity" ][ "c_g_eff" ] )
-
-        GraphInstance.defineLine( COUNTER, 'Group (effective bending)',
-                                  ORANGE,
-                                  'solid' )
-
-        COUNTER += 1
 
 def plotModesInBand( GraphInstance ):
     """
@@ -468,6 +468,7 @@ def plotModesInBand( GraphInstance ):
     """
 
     GraphInstance.cleanGraph( )
+    GraphInstance.cleanLabels( 3 )
     GraphInstance.Graph.yaxis.axis_label = "Number of Modes per one-third octave band"
     GraphInstance.Graph.xaxis.axis_label = "Frequency in Hz"
 
@@ -526,7 +527,7 @@ def plotModesInBand( GraphInstance ):
         = dict( XData = GraphInstance.Containers[ "ModesInBand" ][ "freq_T" ],
                 YData = GraphInstance.Containers[ "ModesInBand" ][ "compressional" ] )
 
-    GraphInstance.defineLine( 2, 'Quasi-longitudial, in plane',
+    GraphInstance.defineLine( 2, 'Quasi-longitudinal, in plane',
                               DARK_BLUE,
                               'solid' )
 
@@ -546,8 +547,6 @@ def plotModesInBand( GraphInstance ):
     GraphInstance.Circles[ 2 ].glyph.fill_color = DARK_BLUE
 
 
-
-
 def plotModalDensity( GraphInstance ):
 
     """
@@ -561,17 +560,18 @@ def plotModalDensity( GraphInstance ):
     """
 
     GraphInstance.cleanGraph( )
+    GraphInstance.cleanLabels( 3 )
     GraphInstance.Graph.yaxis.axis_label = "Modal Density in s/rad"
     GraphInstance.Graph.xaxis.axis_label = "Frequency in Hz"
 
     # ............................ bending_np graph ............................
-    # 'Quasi-longitudinal, in-plane'
-    GraphInstance.GraphData[ 2 ].data \
+    # 'Effective bending (thick plate)'
+    GraphInstance.GraphData[ 0 ].data \
         = dict( XData = GraphInstance.getRange( ),
-                YData = GraphInstance.Containers[ "ModalDensity" ][ "compressional" ] )
+                YData = GraphInstance.Containers[ "ModalDensity" ][ "bending" ] )
 
-    GraphInstance.defineLine( 2, 'Quasi-longitudinal, in-plane',
-                              DARK_BLUE,
+    GraphInstance.defineLine( 0, 'Effective bending (thick plate)',
+                              GREEN,
                               'solid' )
 
     # ............................ bending_np graph ............................
@@ -585,13 +585,13 @@ def plotModalDensity( GraphInstance ):
                               'solid' )
 
     # ............................ bending_np graph ............................
-    # 'Effective bending (thick plate)'
-    GraphInstance.GraphData[ 0 ].data \
+    # 'Quasi-longitudinal, in-plane'
+    GraphInstance.GraphData[ 2 ].data \
         = dict( XData = GraphInstance.getRange( ),
-                YData = GraphInstance.Containers[ "ModalDensity" ][ "bending" ] )
+                YData = GraphInstance.Containers[ "ModalDensity" ][ "compressional" ] )
 
-    GraphInstance.defineLine( 0, 'Effective bending (thick plate)',
-                              GREEN,
+    GraphInstance.defineLine( 2, 'Quasi-longitudinal, in-plane',
+                              DARK_BLUE,
                               'solid' )
 
 
@@ -607,17 +607,18 @@ def plotModalOverlapFactor( GraphInstance ):
     """
 
     GraphInstance.cleanGraph( )
+    GraphInstance.cleanLabels( 3 )
     GraphInstance.Graph.yaxis.axis_label = "Half Power Bandwith Modal Overlap Factor"
     GraphInstance.Graph.xaxis.axis_label = "Frequency in Hz"
 
-    # ...................... Mhp_QuasiLongitudinal graph .......................
-    # 'Quasi-longitudinal, in-plane'
-    GraphInstance.GraphData[ 2 ].data \
+    # ........................ Mhp_Effective graph .............................
+    # 'Effective bending (thick plate)'
+    GraphInstance.GraphData[ 0 ].data \
         = dict( XData = GraphInstance.getRange( ),
-                YData = GraphInstance.Containers[ "ModalOverlapFactor" ][ "QuasiLongitudinal" ] )
+                YData = GraphInstance.Containers[ "ModalOverlapFactor" ][ "Bending" ] )
 
-    GraphInstance.defineLine( 2, 'Quasi-longitudinal, in-plane',
-                              DARK_BLUE,
+    GraphInstance.defineLine( 0, 'Effective bending (thick plate)',
+                              GREEN,
                               'solid' )
 
     # ......................... Mhp_Shear graph ................................
@@ -630,16 +631,16 @@ def plotModalOverlapFactor( GraphInstance ):
                               LIGHT_BLUE,
                               'solid' )
 
-    # ........................ Mhp_Effective graph .............................
-    # 'Effective bending (thick plate)'
-    GraphInstance.GraphData[ 0 ].data \
+    # ...................... Mhp_QuasiLongitudinal graph .......................
+    # 'Quasi-longitudinal, in-plane'
+    GraphInstance.GraphData[ 2 ].data \
         = dict( XData = GraphInstance.getRange( ),
-                YData = GraphInstance.Containers[ "ModalOverlapFactor" ][ "Bending" ] )
+                YData = GraphInstance.Containers[ "ModalOverlapFactor" ][ "QuasiLongitudinal" ] )
 
-    GraphInstance.defineLine( 0, 'Effective bending (thick plate)',
-                              GREEN,
+    GraphInstance.defineLine( 2, 'Quasi-longitudinal, in-plane',
+                              DARK_BLUE,
                               'solid' )
-
+    
 
 def plotMaximumElementSize( GraphInstance ):
     """
@@ -653,6 +654,7 @@ def plotMaximumElementSize( GraphInstance ):
     """
 
     GraphInstance.cleanGraph( )
+    GraphInstance.cleanLabels( 3 )
     GraphInstance.Graph.yaxis.axis_label = "Wave length / Max. Element Size in m"
     GraphInstance.Graph.xaxis.axis_label = "Frequency in Hz"
 
@@ -702,19 +704,4 @@ def plotEigenfrequenciesPlate( GraphInstance ):
 
 
     GraphInstance.TextWidget.printMessage( Text )
-
-
-import numpy as np
-from bokeh.plotting import figure, show
-from bokeh.models.glyphs import ImageURL
-from bokeh.models import ColumnDataSource
-def plotScheme( GraphInstance ):
-    """
-     At the beginning the function cleans the GraphInstance from the previous plot. Then
-    it adjusts and plots the scheme of the composite material
-    :param GraphInstance: an instance of GraphObject class
-    :return:
-    """
-    #print "hello"
-    pass
 
