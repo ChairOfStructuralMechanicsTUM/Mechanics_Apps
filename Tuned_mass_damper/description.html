@@ -1,0 +1,79 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+<h1>Tuned Mass Damper</h1>
+
+<p>
+Tuned Mass Damper is a dynamical system that consists of two masses, of which one has a bigger mass content and is fixed to the ground by a 
+spring and the other has a smaller mass content and attached to the bigger mass by a spring and a damper. The bigger mass is referred to as the main mass, whereas the 
+smaller mass is referred to as the top mass. The name Tuned Mass Damper was chosen because this application is 
+meant to demonstrate how the adjustment of the top mass' mass amount, spring stiffness, and damping ratio can affect
+the vibration pattern of the main mass.  
+</p>
+<p>
+In this application, a time-varying force is acting directly upon the main mass. As a result, the displacement of the main mass
+is plotted in the Displacement-Time Plot. Furthermore, the *Amplification Factor againts the *Frequency Ratio and the *Phase Angle againts the 
+Frequency Fatio is plotted in the corresponding diagrams. 
+</p>
+*Amplification Factor: ratio between maximum displacement achieved by the main mass at a specific force frequency and the static displacement, which is simply the force amplitude divided by the main mass' spring stiffness
+<p>
+*Frequency Ratio: ratio between natural frequency of the main mass to the force frequency
+</p>
+<p>
+*Phase Angle: describes by how much the response of the system lags the excitation. That is, for a zero phase angle,
+the system's response is in phase with the excitation.
+</p>
+
+<p>
+In this application, the following interactivities have been modelled:
+</p>
+
+<p>
+----- In the Dynamical System diagram, both top and main masses can be seen along with the corresponding springs and damper.
+In addition, the force vector that is acting on the main mass is implemented along with its value
+</p>
+<p>
+----- In the Displacement-Time Plot, displacement of both main and top masses is plotted againts time
+</p>
+<p>
+----- The value of mass in top mass is controlled by a slider located under System Parameters. Under System Parameters as well, there are 
+two other sliders to control the value  stiffness and damping ratio of the spring and damper attached to the top mass
+</p>
+<p>
+----- The angular frequency of the applied force can be modified by the slider found under External Force Parameters
+</p>
+<p>
+----- The system can start moving by pressing the Play button, and it will pause by hitting the Stop button. the Clear Displacement-Time Plot button
+clears the the corresponding plot area and returns the time count to 0 without affecting the current displacement of the Tuned Mass Damper System. 
+The Reset button returns the Tuned Mass Damper system along with all the plots to the initial state
+</p>
+

@@ -82,7 +82,7 @@ displacementTime_plot = figure(
                                 plot_height= 600,
                                 x_range  = time_range,
                                 y_range  = displacement_range,
-                                title = 'Displacement-Time Diagram',
+                                title = 'Displacement-Time Plot',
                                 #tools=''
                               )
 displacementTime_plot.title.text_font_size = "20px"
@@ -93,6 +93,15 @@ displacementTime_plot.yaxis.axis_label="Displacement [meter]"
 
 displacementTime_plot.line(x='x',y='y', source = mainMass_displacementTime_source, color='#0033FF', legend='Main mass')
 displacementTime_plot.line(x='x',y='y', source = topMass_displacementTime_source, color='#330011', legend='Top mass')
+
+'''
+###############################################################################
+Add application describtion
+###############################################################################
+'''
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 '''
 ###############################################################################
@@ -115,7 +124,7 @@ Amplification_Frequency_plot = figure(
                                 plot_height= 600,
                                 x_range  = Frequency_range,
                                 y_range  = Amplificaiton_range,
-                                title = 'Amplification Factor vs. Frequency Ratio Diagram',
+                                title = 'Amplification Factor vs. Frequency Ratio Plot',
                                 tools=''
                               )
 Amplification_Frequency_plot.title.text_font_size = "20px"
@@ -129,7 +138,7 @@ PhaseAngle_Frequency_plot = figure(
                                 plot_height= 600,
                                 x_range  = Frequency_range,
                                 y_range  = PhaseAngle_range,
-                                title = 'Phase Angle vs. Frequency Ratio Diagram',
+                                title = 'Phase Angle vs. Frequency Ratio Plot',
                                 tools=''
                               )
 PhaseAngle_Frequency_plot.title.text_font_size = "20px"
@@ -305,8 +314,9 @@ def omegaScanStep():
 title_box = Div(text="""<h2 style="text-align:center;">Schwingungstilger (Tuned mass damper)</h2>""",width=1000)
 
 ## create simulation drawing
-fig = figure(title="", tools = "pan,wheel_zoom,box_zoom", x_range=(-7,7), y_range=(0,20),width=350,height=500)
-fig.title.text_font_size="20pt"
+fig = figure(title="Dynamical System", tools = "pan,wheel_zoom,box_zoom", x_range=(-7,7), y_range=(0,20),width=350,height=500)
+fig.title.text_font_size = "20px"
+fig.title.align = "center"
 fig.axis.visible = False
 fig.grid.visible = False
 fig.outline_line_color = None
@@ -454,7 +464,7 @@ def reset():
     lam_input.value=3.7
     omega_input.value=1.0
     # if simulation is running, then stop it
-    stop()
+    PlayStop()
     # reset objects
     spring.compressTo(Coord(-4,x2),Coord(-4,x2-h))
     # (done twice to implement 0 velocity)
@@ -476,11 +486,10 @@ def reset():
     # Clear the displacement-time diagram related data structures
     mainMass_displacementTime_source.data=dict(x=[0],y=[0]) # Default values
     topMass_displacementTime_source.data=dict(x=[0],y=[0]) # Default values
-    time_source.data=dict(x=[0],y=[0])
     
-    displacement_range.start = 0
-    displacement_range.end   = 0
-    time_range.end   = 0
+    displacement_range.start = -2
+    displacement_range.end   = 2
+    time_range.end   = 10
     time_range.start = 0
     
     t = 0
@@ -525,7 +534,7 @@ reset_button.on_click(reset)
 omega_scan_button = Button(label=u"\u03C9 scan", button_type="success",width=100)
 omega_scan_button.on_click(omega_scan)
 
-ClearResetTimeHistory_button = Button(label="Clear Displacement-Time plot", button_type="success",width=100)
+ClearResetTimeHistory_button = Button(label="Clear Displacement-Time Plot", button_type="success",width=100)
 ClearResetTimeHistory_button.on_click(ClearAndReset_DisplacementTime_History)
 
 def Update_system():    
@@ -560,7 +569,7 @@ Update_current_state()
 ## Send to window
 curdoc().add_root(
                     column(
-                           title_box,
+                           description,
                            row(
                                Spacer(width=10),
                                fig,
