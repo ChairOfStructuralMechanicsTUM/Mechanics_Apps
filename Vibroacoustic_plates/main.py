@@ -86,7 +86,6 @@ def main( ):
     ElasticModulus.addBuffer( BufferName = "GeneralOrthotropic",
                               BufferData = OrthotropicData )
 
-
     ElasticModulus.addBuffer( BufferName = "Input",
                               BufferData = OrthotropicData )
 
@@ -129,9 +128,13 @@ def main( ):
     PoissonRatios.setTitels( [ [ POISSON_RATIO_XY,
                                  POISSON_RATIO_XZ,
                                  POISSON_RATIO_YZ ],
-                               [ POISSON_RATIO_YX + "\t( auto )",
-                                 POISSON_RATIO_ZX + "\t( auto )",
-                                 POISSON_RATIO_ZY + "\t( auto )" ] ] )
+                               [ POISSON_RATIO_YX + "\t(auto)",
+                                 POISSON_RATIO_ZX + "\t(auto)",
+                                 POISSON_RATIO_ZY + "\t(auto)" ] ] )
+
+    PoissonRatios.setDisabled(1, 0, True)
+    PoissonRatios.setDisabled(1, 1, True)
+    PoissonRatios.setDisabled(1, 2, True)
 
     DataIsotropic = [ [ "0.42", "0.42", "0.42" ],
                       [ "0.42", "0.42", "0.42" ] ]
@@ -450,7 +453,7 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
         GeometryPropertiesData = Tables [ "GeometryProperties" ].getData( )
 
 
-    #################### CALL USER-SPECIFIC FAUNCTION ##########################
+    #################### CALL USER-SPECIFIC FUNCTION ##########################
 
         testInputData( Graph.getMode(), PoissonRatiosData )
 

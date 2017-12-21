@@ -247,11 +247,11 @@ class InteractiveTable:
 
 
 
-    def setValue( self, aRow, aColumn, Value, Titel = "\t( auto )" ):
+    def setValue( self, aRow, aColumn, Value, Titel = "\t(auto)" ):
         """
-        The function sets up and updates a cprresponding entry of the table
+        The function sets up and updates a corresponding entry of the table
         that is specified by the user. Whenever the user calls the function it
-        updates both entry and its title. The current title is expanded with
+        updates entry, title, and status. The current title is expanded with
         a suffix specified by the user.
         :param aRow: int
         :param aColumn: int
@@ -264,6 +264,7 @@ class InteractiveTable:
             #self.__ValueBuffer[aRow][aColumn] = self.__Widgets[aRow][aColumn].value
             self.__TitelBuffer[aRow][aColumn] = self.__Widgets[aRow][aColumn].title
             self.__Widgets[aRow][aColumn].title += "{}".format( Titel )
+            self.__Widgets[aRow][aColumn].disabled = True
 
         self.__Widgets[ aRow ][ aColumn ].value = Value
         self.__ModeCounter[ aRow ][ aColumn ] += 1
@@ -271,7 +272,8 @@ class InteractiveTable:
 
     def restoreValue( self, aRow, aColumn ):
         """
-        The function restores the title of a particular entry of the table
+        The function restores the title and the disabled status of a particular 
+        entry of the table
 
         IMPORTANT: change the name of the function
         :param aRow: int
@@ -282,6 +284,7 @@ class InteractiveTable:
             #self.__Widgets[aRow][aColumn].value = self.__ValueBuffer[aRow][aColumn]
             self.__Widgets[aRow][aColumn].title = self.__TitelBuffer[aRow][aColumn]
             self.__ModeCounter[ aRow ][ aColumn ] = 0
+            self.__Widgets[aRow][aColumn].disabled = False
 
 
     def assignValue(self, aRow, aColumn, Value ):
@@ -351,6 +354,16 @@ class InteractiveTable:
     #        for j in range( self.__nColumns ):
     #            self.__Widgets[ i ][ j ].value = self.__DefaultValues[ i ][ j ]
 
+    def setDisabled(self, aRow, aColumn, disabled):
+        """
+        The function sets the status of a table entry.
+        :param aRow: int
+        :param aColumn: int
+        :param disabled: boolean
+        :return:
+        """
+
+        self.__Widgets[ aRow ][ aColumn ].disabled = disabled
 
 
     def getData( self ):
