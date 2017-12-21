@@ -271,16 +271,15 @@ def main( ):
                 height = 30 )
 
 
-    Scheme = Div( text = "<p><b><center><font size=4> Layout scheme </font></center></b></p>"
-                         "<img src='/Vibroacoustic_plates/static/images/scheme.png' width=300 height=300>",
+    Scheme = Div( text = "<img src='/Vibroacoustic_plates/static/images/scheme.png' width=300 height=300>",
                 width = 300,
                 height = 300 )
 
-    Description = Div( text = "The application Vibroacoustics of Plates can be classified in two steps: <br><br>"
+    Description = Div( text = "The application \"Vibroacoustics of Plates\" can be classified in two steps: <br><br>"
                 "<b>1.</b> Insert the physical properties of a homogenous plate or of a single layer"
                 "&nbsp;in the case of a layered plate (default values are given) on the left and press <i>'Apply'</i>. <br><br>"
                 "<b>Notice</b> that in the case of a layered plate, a symmetric cross section"
-                "&nbsp;with an odd number of layers and a crosswise layup is assumed (cf. Scheme)."
+                "&nbsp;with an odd number of layers and a crosswise layup is assumed (cf. scheme)."
                 "&nbsp;Therefore, the thicknesses of the top to the center layer have to be inserted."
                 "&nbsp;The material properties are homogenized through the thickness."
                 "&nbsp;Thus, the input data of the single layer"
@@ -308,8 +307,7 @@ def main( ):
                         Spacer( width = 50 ),
                         SetDefaultButton ) )
 
-    Headline = column( Title,
-                       row( Description, Spacer( width = 50 ), Scheme ) )
+    Headline = row( column( Title, Description ), Spacer( width = 50 ), Scheme )
 
     LeftSide = column( ModeRadioButtons,
                         ELASTIC_MODULUS_TITEL,
@@ -325,7 +323,6 @@ def main( ):
                         LayersInfo.Widget,
                         Info,
                         Spacer( height = 20 ) )
-                        #Scheme)
 
 
     RightSide = column( Graph.Widget , Buttons,WarningMessage.Widget,
