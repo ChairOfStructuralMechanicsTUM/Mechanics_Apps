@@ -89,6 +89,7 @@ class MouseTouch():
         self.rotatingObject = rotatingObject
         self.currentNode    = -1
         self.angles          = list()
+        self.oldAngle = 0
         
     def inNode (self, click_position):
         
