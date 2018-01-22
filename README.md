@@ -78,9 +78,9 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - [ ] 8) Combined moment of inertia/Zusammenges. Flaechentraegheitmoments ()
 - [ ] 9) Combined center of mass moment/Zusammenges. Schwerpunktsmoment ()
 - [ ] 10) Maypole/Maibaum ()
-- [x] 11) Vector addition (rem, cfm)
-- [ ] 12) Couple-moment (rem, cfm)
-- [ ] 13) Moment is a free vector (rem, cfm)
+- [x] 11) Vector addition (rem)
+- [x] 12) Couple-moment (rem)
+- [ ] 13) Moment is a free vector (rem)
 
 #### Supplementary course/Ergaenzungskurs Technical mechanics (ft, qa):
 - [x] 1) Damped oscillator/Federpendel (eb, qa, ft)
@@ -89,8 +89,8 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - [ ] 4) Tuned mass damper/Schwingungstilger (eb, rd)
 - [ ] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter) (ak, vu)
 - [ ] 6) Coriolis force/Drehscheibe-Corioliskraft (eb)
-- [x] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma,ag)
-- [x] 8) Collision/Stoss (ma,ag)
+- [x] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma)
+- [ ] 8) Collision/Stoss (ma)
 - [x] 9) Rollercoaster (eb)
 - [x] 10) Stopping distances (eb)
 - [x] 11) Projectiles/Wurfgeschoss (eb)
@@ -99,12 +99,12 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - [ ] 14) Instant centre of rotation of the cupoler/Momentanpol der Koppel ()
 - [ ] 15) Drop tube/Fallturm ()
 - [ ] 16) Low-pressure area/Tiefdruck (ma)
-- [ ] 17) Angular momentum/Drallerhaltung2 (ma, cfm)
+- [ ] 17) Angular momentum/Drallerhaltung2 ()
 
 
 #### Structural dynamics (cs):
 - [ ] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
-- [ ] 2) 2D cantilever beam (ma, cfm)
+- [ ] 2) 2D cantilever beam (ma)
 - [x] 3) Seismic example (ma)
 
 #### Technical Acoustics II (ag, cw):
@@ -138,4 +138,3 @@ Please comply with the [DevelopmentGuideline](DevelopmentGuideline.pdf)
 - Ravil Dorozhinskii, rd
 - Razieh Rezaei, rr
 - Vyshakh Unnikrishnan, vu
-- Carmen Font Mata, cfm 

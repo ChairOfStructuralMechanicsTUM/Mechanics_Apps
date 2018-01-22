@@ -47,13 +47,13 @@ def initialise():
     ForcegraphBottom.data      = dict(x =[40],y =[-10] )
 
 
-plot = figure(title="", x_range=(0-2,40+2), y_range=(-50,50))
+plot = figure(title="Couple_moment", x_range=(0-2,40+2), y_range=(-50,50))
 plot.axis.axis_label_text_font_style="normal"
 plot.axis.axis_label_text_font_size="14pt"
 plot.xaxis.axis_label="Distance [m]"
 plot.yaxis.axis_label="Force [N]"
 
-my_line=plot.line(x='x', y='y', source=plot_source, color='#3070B3',line_width=20)
+my_line=plot.line(x='x', y='y', source=plot_source, color='#0065BD',line_width=20)
 plot.triangle(x='x', y='y', size = 'size', source= triangle_source,color="#E37222", line_width=2)
 
 #plotting Vectors as arrows
@@ -61,10 +61,10 @@ P1_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10)
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=P1_arrow_source,line_color="#A2AD00")
 P2_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=P2_arrow_source,line_color="#A2AD00")
-F1_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=F1_arrow_source,line_color="#E37222")
-F2_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=F2_arrow_source,line_color="#E37222")
+F1_arrow_glyph = Arrow(end=OpenHead(line_color="#F4A582",line_width= 4, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=F1_arrow_source,line_color="#F4A582")
+F2_arrow_glyph = Arrow(end=OpenHead(line_color="#F4A582",line_width= 4, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=F2_arrow_source,line_color="#F4A582")
 P1_label_glyph=LabelSet(x='x', y='y',text='P1',text_font_size="15pt",level='glyph',source=P1_label_source)
 P2_label_glyph=LabelSet(x='x', y='y',text='P2',text_font_size="15pt",level='glyph',source=P2_label_source)
 F1_label_glyph=LabelSet(x='x', y='y',text='F1',text_font_size="15pt",level='glyph',source=F1_label_source)
@@ -77,8 +77,8 @@ plot.add_layout(P1_label_glyph)
 plot.add_layout(P2_label_glyph)
 plot.add_layout(F1_label_glyph)
 plot.add_layout(F2_label_glyph)
-plot.line(x='x',y='y', source=ForcegraphTop,line_width=3,line_color="#E37222",legend=" Force amplitude", line_dash='dotted')
-plot.line(x='x',y='y', source=ForcegraphBottom,line_width=3,line_color="#E37222",legend=" Force amplitude",line_dash='dotted' )
+plot.line(x='x',y='y', source=ForcegraphTop,line_width=3,line_color='red',legend=" Force amplitude", line_dash='dotted')
+plot.line(x='x',y='y', source=ForcegraphBottom,line_width=3,line_color='red',legend=" Force amplitude",line_dash='dotted' )
 
 
 initialise()
@@ -129,7 +129,7 @@ def changeF1F2(attr,old,new):
      ForcegraphBottom.stream(new_dataB)
      
 #creating  slider to change location of Forces F1 and F2
-F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082",value= 0,start = 0, end = 19, step = 1)
+F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082 together",value= 0,start = 0, end = 19, step = 1)
 F1F2Location_slider.on_change('value',changeF1F2)
 
 #adding description from HTML file

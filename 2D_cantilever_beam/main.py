@@ -443,8 +443,8 @@ sourceFyLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fy']
 sourceFzLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fz'] ))
 
 # Construct the force sliders
-Yforce_slider = Slider(title="Y-direction of the force", value=0.0, start=-5000.0, end=5000.0, step=100.0)
-Zforce_slider = Slider(title="Z-direction of the force", value=0.0, start=-5000.0, end=5000.0, step=100.0)
+Yforce_slider = Slider(title="Y-direction Force", value=0.0, start=-5000.0, end=5000.0, step=100.0)
+Zforce_slider = Slider(title="Z-direction Force", value=0.0, start=-5000.0, end=5000.0, step=100.0)
 
 # Construct the figures which will visulize the beams
 #plotUndefXY = Figure(    
@@ -473,7 +473,7 @@ plotDefXY = Figure(
                        plot_height=500   ,
                        x_range = ( 0,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Deformation in X-Y plane',
+                       title = 'Defromed Cofiguration in XY plane',
                        tools = ''
                   )
 plotDefXY.xaxis.major_tick_line_color=None
@@ -515,7 +515,7 @@ plotDefXZ = Figure(
                        plot_height=500   ,
                        x_range = ( 0,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Deformation in X-Z plane',
+                       title = 'Defromed Cofiguration in XZ plane',
                        tools = ''
                   )
 plotDefXZ.xaxis.major_tick_line_color=None
@@ -633,7 +633,7 @@ area_image = Div(text="""
 <img src="/2D_cantilever_beam/static/images/picture.jpg" width=600>
 </p>
 <p>
-3D scheme of the Cantilever Beam with the Corresponding Geometry and Material Parameters
+3D Schematic of the Cantilever Beam with the Corresponding Geometry and Material Parameters
 </p>
 <p>
 **For visualization purposes, there is a magnification factor of 100 that exaggerates the deformation""", render_as_text=False, width=600)

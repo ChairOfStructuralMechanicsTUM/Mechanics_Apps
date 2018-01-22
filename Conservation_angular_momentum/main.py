@@ -52,7 +52,7 @@ barsFig = BC.BarChart(
                       "Whole system"],
                       [15,15,15],
                       [-15,-15,-15],
-                      ["#3070b3","#a2ad00","#e37222"],
+                      ["#33FF33","#FF3333","#460BF8"],
                       [1,1,1]
                      )
 barsFig.Width(300)
@@ -80,7 +80,7 @@ rotatingObject = RotatingObject()
 rotatingObject.construct_circle_source( 
                                        [[0.0,0.0], [0.0,0.0]],
                                        [4.0, 3.0],
-                                       ["#3070b3","#FFFFFF"]
+                                       ["#33FF33","#FFFFFF"]
                                       )
 rotatingObject.construct_cross_source()
 
@@ -228,10 +228,10 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 
 area_image = Div(text="""
 <p>
-<img src="/Conservation_angular_momentum/static/images/pictureTUM.jpg" width=500>
+<img src="/Conservation_angular_momentum/static/images/picture.jpg" width=500>
 </p>
 <p>
-Angular moment of inertia of the rotating bodies
+Angular Moment of Inertia pf the rotating bodies
 </p>""", render_as_text=False, width=350)
 
 playGround.rect(
@@ -241,7 +241,7 @@ playGround.rect(
                 width ='width',
                 height='height',
                 source=rotatingObject.baseSource,
-                color = "#a2ad00",
+                color = "#F22633",
                 height_units = 'data'
                )
 
@@ -260,7 +260,7 @@ playGround.rect(
                   source = rotatingObject.crossSource,
                   width = 1,
                   height = 6,
-                  color="#3070b3",
+                  color="#33FF33",
                   height_units="data"
                )
 
