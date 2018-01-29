@@ -274,9 +274,9 @@ def main( ):
                 height = 30 )
 
 
-    Scheme = Div( text = "<img src='/Vibroacoustic_plates/static/images/scheme.png' width=300 height=300>",
-                width = 300,
-                height = 300 )
+    Scheme = Div( text = "<img src='/Vibroacoustic_plates/static/images/scheme.png' width=464 height=220>",
+                width = 464,
+                height = 220 )
 
     Description = Div( text = "The application \"Vibroacoustics of Plates\" can be classified in two steps: <br><br>"
                 "<b>1.</b> Insert the physical properties of a homogenous plate or of a single layer"
@@ -311,7 +311,7 @@ def main( ):
                         SetDefaultButton ) )
 
     Headline = row( column( Title, Description ), Spacer( width = 50 ), Scheme )
-
+	
     LeftSide = column( ModeRadioButtons,
                         ELASTIC_MODULUS_TITEL,
                         ElasticModulus.Table,

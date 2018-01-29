@@ -443,8 +443,13 @@ sourceFyLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fy']
 sourceFzLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fz'] ))
 
 # Construct the force sliders
+<<<<<<< HEAD
 Yforce_slider = Slider(title="Y-direction of the force (N)", value=0.0, start=-5000.0, end=5000.0, step=100.0)
 Zforce_slider = Slider(title="Z-direction of the force (N)", value=0.0, start=-5000.0, end=5000.0, step=100.0)
+=======
+Yforce_slider = Slider(title="Y-direction Force", value=0.0, start=-5000.0, end=5000.0, step=100.0)
+Zforce_slider = Slider(title="Z-direction Force", value=0.0, start=-5000.0, end=5000.0, step=100.0)
+>>>>>>> 9dddc7eaea3933523b2764bbe1dcced1ab812314
 
 # Construct the figures which will visulize the beams
 #plotUndefXY = Figure(    

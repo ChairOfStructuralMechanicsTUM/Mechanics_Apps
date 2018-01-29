@@ -79,7 +79,7 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - [ ] 9) Combined center of mass moment/Zusammenges. Schwerpunktsmoment ()
 - [ ] 10) Maypole/Maibaum ()
 - [x] 11) Vector addition (rem, cfm)
-- [ ] 12) Couple-moment (rem, cfm)
+- [x] 12) Couple-moment (rem, cfm)
 - [ ] 13) Moment is a free vector (rem, cfm)
 
 #### Supplementary course/Ergaenzungskurs Technical mechanics (ft, qa):
