@@ -129,7 +129,7 @@ def changeF1F2(attr,old,new):
      ForcegraphBottom.stream(new_dataB)
      
 #creating  slider to change location of Forces F1 and F2
-F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082",value= 0,start = 0, end = 19, step = 1)
+F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082 (m)",value= 0,start = 0, end = 19, step = 1)
 F1F2Location_slider.on_change('value',changeF1F2)
 
 #adding description from HTML file

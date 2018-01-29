@@ -68,7 +68,7 @@ class BarChart(object):
         self.fig.x_range=Range1d(-1,x)
         self.fig.y_range=Range1d(Min,Max)
         self.fig.grid.visible=False
-        self.fig.xaxis.major_label_text_font_size="14pt"
+        self.fig.xaxis.major_label_text_font_size="11pt"
         self.fig.xaxis.major_tick_line_color=None
         self.fig.xaxis.major_label_orientation=pi/2
         # only give x ticks at bars

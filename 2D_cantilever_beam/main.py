@@ -3,7 +3,7 @@ from bokeh.io import curdoc
 from bokeh.plotting import Figure, ColumnDataSource
 from bokeh.layouts import row, column
 from bokeh.models import Slider, LabelSet, Div
-from bokeh.models import Arrow, NormalHead, OpenHead
+from bokeh.models import Arrow, NormalHead, OpenHead, VeeHead
 from os.path import dirname, join, split
 from bokeh.models.layouts import Spacer
 
@@ -443,8 +443,8 @@ sourceFyLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fy']
 sourceFzLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fz'] ))
 
 # Construct the force sliders
-Yforce_slider = Slider(title="Y-direction of the force", value=0.0, start=-5000.0, end=5000.0, step=100.0)
-Zforce_slider = Slider(title="Z-direction of the force", value=0.0, start=-5000.0, end=5000.0, step=100.0)
+Yforce_slider = Slider(title="Y-direction of the force (N)", value=0.0, start=-5000.0, end=5000.0, step=100.0)
+Zforce_slider = Slider(title="Z-direction of the force (N)", value=0.0, start=-5000.0, end=5000.0, step=100.0)
 
 # Construct the figures which will visulize the beams
 #plotUndefXY = Figure(    
@@ -469,9 +469,9 @@ Zforce_slider = Slider(title="Z-direction of the force", value=0.0, start=-5000.
 #plotUndefXY.yaxis.axis_label="y"
 
 plotDefXY = Figure(    
-                       plot_width=500    , 
-                       plot_height=500   ,
-                       x_range = ( 0,6 ) ,
+                       plot_width=400    , 
+                       plot_height=400   ,
+                       x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
                        title = 'Deformation in X-Y plane',
                        tools = ''
@@ -479,15 +479,44 @@ plotDefXY = Figure(
 plotDefXY.xaxis.major_tick_line_color=None
 plotDefXY.xaxis.major_label_text_color=None
 plotDefXY.xaxis.minor_tick_line_color=None
+plotDefXY.xaxis.axis_line_color=None
 plotDefXY.yaxis.major_tick_line_color=None
 plotDefXY.yaxis.major_label_text_color=None
 plotDefXY.yaxis.minor_tick_line_color=None
+plotDefXY.yaxis.axis_line_color=None
 plotDefXY.grid.visible = False
 plotDefXY.title.text_font_size="12.5pt"
-plotDefXY.xaxis.axis_label_text_font_size="14pt"
-plotDefXY.yaxis.axis_label_text_font_size="14pt"
-plotDefXY.xaxis.axis_label="x"
-plotDefXY.yaxis.axis_label="y"
+#plotDefXY.xaxis.axis_label_text_font_size="12pt"
+#plotDefXY.yaxis.axis_label_text_font_size="12pt"
+#plotDefXY.xaxis.axis_label="x"
+#plotDefXY.yaxis.axis_label="y"
+labelXY = ColumnDataSource(data=dict(x=[-.3,5.8],
+                                     y=[2.7,-.3],
+                                     text=['y','x']))
+plotDefXY.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_start=0, 
+                           y_start=-3, 
+                           x_end=0, 
+                           y_end=2.9, 
+                           ))
+
+plotDefXY.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_start=-.5, 
+                           y_start=0, 
+                           x_end=5.9, 
+                           y_end=0, 
+                           ))
+plotDefXY.add_layout(
+                      LabelSet(
+                                  x='x', y='y',
+                                  text='text',
+                                  text_color='black',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=labelXY
+                                )
+                    )
 
 #plotUndefXZ = Figure(    
 #                         plot_width=350    , 
@@ -511,9 +540,9 @@ plotDefXY.yaxis.axis_label="y"
 #plotUndefXZ.yaxis.axis_label="z"
 
 plotDefXZ = Figure(    
-                       plot_width=500    , 
-                       plot_height=500   ,
-                       x_range = ( 0,6 ) ,
+                       plot_width=400    , 
+                       plot_height=400   ,
+                       x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
                        title = 'Deformation in X-Z plane',
                        tools = ''
@@ -521,21 +550,50 @@ plotDefXZ = Figure(
 plotDefXZ.xaxis.major_tick_line_color=None
 plotDefXZ.xaxis.major_label_text_color=None
 plotDefXZ.xaxis.minor_tick_line_color=None
+plotDefXZ.xaxis.axis_line_color=None
 plotDefXZ.yaxis.major_tick_line_color=None
 plotDefXZ.yaxis.major_label_text_color=None
 plotDefXZ.yaxis.minor_tick_line_color=None
+plotDefXZ.yaxis.axis_line_color=None
 plotDefXZ.grid.visible = False
 plotDefXZ.title.text_font_size="12.5pt"
-plotDefXZ.xaxis.axis_label_text_font_size="14pt"
-plotDefXZ.yaxis.axis_label_text_font_size="14pt"
-plotDefXZ.xaxis.axis_label="x"
-plotDefXZ.yaxis.axis_label="z"
+#plotDefXZ.xaxis.axis_label_text_font_size="12pt"
+#plotDefXZ.yaxis.axis_label_text_font_size="12pt"
+#plotDefXZ.xaxis.axis_label="x"
+#plotDefXZ.yaxis.axis_label="z"
+labelXZ = ColumnDataSource(data=dict(x=[-.3,5.8],
+                                     y=[-2.7,-.3],
+                                     text=['z','x']))
+plotDefXZ.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_start=0, 
+                           y_start=3, 
+                           x_end=0, 
+                           y_end=-2.9, 
+                           ))
+
+plotDefXZ.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_start=-.5, 
+                           y_start=0, 
+                           x_end=5.9, 
+                           y_end=0, 
+                           ))
+plotDefXZ.add_layout(
+                      LabelSet(
+                                  x='x', y='y',
+                                  text='text',
+                                  text_color='black',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=labelXZ
+                                )
+                    )
 
 # Construct the color-bar figure
 colorBar = Figure(
                       title = '',
                       title_location="below",
-                      plot_width=1000   ,
+                      plot_width=800   ,
                       plot_height=75,
                       x_range=(0,5),
                       y_range=(-0.5,0.5),   
@@ -543,7 +601,7 @@ colorBar = Figure(
                  )
 colorBar.xaxis.visible = False
 colorBar.yaxis.visible = False
-colorBar.title.text_font_size="16pt"
+colorBar.title.text_font_size="12pt"
 
 # create colorBar patches
 colorBarXCoords = list()
@@ -570,7 +628,7 @@ for i in range(50):
     colorBarAlphaList.append( 1 )
 
 def update_colorBar_extremas(smallesValue, biggestValue):
-    colorBar.title.text = str(smallesValue)+" Pa" + " "*120 + str(biggestValue)+" Pa"
+    colorBar.title.text = str(smallesValue)+" Pa" + " "*50 + "normal stress" + " "*50 + str(biggestValue)+" Pa"
 
 # Construct the source file for the color bar
 colorBarSource = ColumnDataSource(data=dict( x=colorBarXCoords, y=colorBarYCoords, c =colorBarColorList, a=colorBarAlphaList ))
@@ -600,12 +658,14 @@ plotDefXZ.add_layout(
                            source = sourceArrowXZ)
                     )
 
+
+
 # Construct the force labels
 plotDefXY.add_layout(
                       LabelSet(
                                   x='x', y='y',
                                   text='f',
-                                  text_color='black',text_font_size="15pt",
+                                  text_color='black',text_font_size="12pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                                   source=sourceFyLabel
                               )
@@ -615,12 +675,16 @@ plotDefXZ.add_layout(
                       LabelSet(
                                   x='x', y='y',
                                   text='f',
-                                  text_color='black',text_font_size="15pt",
+                                  text_color='black',text_font_size="12pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                                   source=sourceFzLabel
                               )
                     )
-                     
+
+# x Axis                     
+#plotDefXY.line([0, 6], [0, 0], line_width=1, line_color="black")
+#plotDefXZ.line([0, 6], [0, 0], line_width=1, line_color="black", line_dash='dotted')
+                        
 # Notify the corresponding functions to carry out the changes characterized by
 # the sliders
 Yforce_slider.on_change('value',fun_change_Py)
@@ -630,13 +694,13 @@ init_data()
 
 area_image = Div(text="""
 <p>
-<img src="/2D_cantilever_beam/static/images/picture.jpg" width=600>
+<img src="/2D_cantilever_beam/static/images/picture.jpg" width=400>
 </p>
 <p>
 3D scheme of the Cantilever Beam with the Corresponding Geometry and Material Parameters
 </p>
 <p>
-**For visualization purposes, there is a magnification factor of 100 that exaggerates the deformation""", render_as_text=False, width=600)
+**For visualization purposes, there is a magnification factor of 100 that exaggerates the deformation""", render_as_text=False, width=400)
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")

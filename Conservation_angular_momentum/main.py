@@ -27,12 +27,12 @@ from bokeh.events import Pan, PanEnd
 '''
 ######################## Define the plotting space ############################
 '''
-xMin, xMax = -10, 10
-yMin, yMax = -10, 10
+xMin, xMax = -7.5, 7.5
+yMin, yMax = -7.5, 7.5
 
 playGround = Figure(
-                        plot_width = 600,
-                        plot_height= 800,
+                        plot_width = 450,
+                        plot_height= 600,
                         x_range  =(xMin, xMax),
                         y_range  =(yMin, yMax),
                         #title = 'Conservation of Angular Momentum',
@@ -56,7 +56,7 @@ barsFig = BC.BarChart(
                       [1,1,1]
                      )
 barsFig.Width(300)
-barsFig.Height(650)
+barsFig.Height(500)
 
 rotation_speed_wheel = get_velocity('circle') # rad/sec
 rotation_speed_base  = get_velocity('base') # rad/sec
@@ -228,7 +228,7 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 
 area_image = Div(text="""
 <p>
-<img src="/Conservation_angular_momentum/static/images/pictureTUM.jpg" width=500>
+<img src="/Conservation_angular_momentum/static/images/pictureTUM2.jpg" width=500>
 </p>
 <p>
 Angular moment of inertia of the rotating bodies
