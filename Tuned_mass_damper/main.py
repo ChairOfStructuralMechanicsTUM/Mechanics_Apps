@@ -78,8 +78,8 @@ displacement_range = Range1d(-2,2)
 time_range = Range1d(0,10)
 
 displacementTime_plot = figure(
-                                plot_width = 600,
-                                plot_height= 600,
+                                plot_width = 1100,
+                                plot_height= 800,
                                 x_range  = time_range,
                                 y_range  = displacement_range,
                                 title = 'Displacement-Time Plot',
@@ -101,7 +101,7 @@ Add application describtion
 '''
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1920)
 
 '''
 ###############################################################################
@@ -120,8 +120,8 @@ PhaseAngle_range = Range1d(0,0)
 Frequency_range = Range1d(0,0)
 
 Amplification_Frequency_plot = figure(
-                                plot_width = 600,
-                                plot_height= 600,
+                                plot_width = 500,
+                                plot_height= 400,
                                 x_range  = Frequency_range,
                                 y_range  = Amplificaiton_range,
                                 title = 'Amplification Factor vs. Frequency Ratio Plot',
@@ -134,8 +134,8 @@ Amplification_Frequency_plot.xaxis.axis_label="Frequency Ratio"
 Amplification_Frequency_plot.yaxis.axis_label="Amplification Factor"
 
 PhaseAngle_Frequency_plot = figure(
-                                plot_width = 600,
-                                plot_height= 600,
+                                plot_width = 500,
+                                plot_height= 400,
                                 x_range  = Frequency_range,
                                 y_range  = PhaseAngle_range,
                                 title = 'Phase Angle vs. Frequency Ratio Plot',
@@ -314,7 +314,7 @@ def omegaScanStep():
 title_box = Div(text="""<h2 style="text-align:center;">Schwingungstilger (Tuned mass damper)</h2>""",width=1000)
 
 ## create simulation drawing
-fig = figure(title="Dynamical System", tools = "pan,wheel_zoom,box_zoom", x_range=(-7,7), y_range=(0,20),width=350,height=500)
+fig = figure(title="Dynamical System", tools = "pan,wheel_zoom,box_zoom", x_range=(-7,7), y_range=(0,40),width=350,height=800)
 fig.title.text_font_size = "20px"
 fig.title.align = "center"
 fig.axis.visible = False
@@ -419,7 +419,7 @@ def change_lam(attr,old,new):
     elif (new!=dashpot.lam):
         lam_input.value=dashpot.lam
 ## Create slider to choose damper coefficient
-lam_input = Slider(title=u"Top Mass' Damper Coefficient [N*s/m]", value=c2, start=0.0, end=15, step=0.1,width=400)
+lam_input = Slider(title=u"Top Mass' Damper Coefficient [N*s/m]", value=c2, start=0.1, end=15, step=0.1,width=400)
 lam_input.on_change('value',change_lam)
 
 def change_Omega(attr,old,new):
@@ -439,7 +439,7 @@ def change_Omega(attr,old,new):
     elif (new!=omega):
         omega_input.value=omega
 ## Create slider to choose damper coefficient
-omega_input = Slider(title=u"\u03C9 [s\u207B\u00B9]", value=1.0, start=0.1, end=20.0, step=0.1,width=400)
+omega_input = Slider(title=u"\u03C9 [s\u207B\u00B9]", value=1.0, start=0.1, end=14.0, step=0.1,width=400)
 omega_input.on_change('value',change_Omega)
 
 ## create functions for buttons which control simulation
@@ -571,35 +571,36 @@ curdoc().add_root(
                     column(
                            description,
                            row(
-                               Spacer(width=10),
                                fig,
+                               column(
+                                      Amplification_Frequency_plot,
+                                      PhaseAngle_Frequency_plot
+                                     ),
                                displacementTime_plot,
-                               #p,
-                               Amplification_Frequency_plot,
-                               PhaseAngle_Frequency_plot
-                              ),
+                               ),
                            row(
                                column(
-                                  #Spacer(height=100),
-                                  Simulation_Controls_text,
-                                  PlayStop_button,
-                                  ClearResetTimeHistory_button,
-                                  reset_button,
-                                  #omega_scan_button
-                                 ),
+                                      Simulation_Controls_text,
+                                      PlayStop_button,
+                                      ClearResetTimeHistory_button,
+                                      reset_button,
+                                     ),
+                               Spacer(width=50),
                                column(
-                                   System_Parameters_text,
-                                   mass_input,
-                                   kappa_input,
-                                   lam_input
-                                 ),
+                                      System_Parameters_text,
+                                      mass_input,
+                                      kappa_input,
+                                      lam_input,     
+                                     ),                                     
+                               Spacer(width=50),
                                column(
                                       ExternalForce_Parameter_text,
                                       omega_input
                                      )
                               )
                            )
-                 )
+                  )
+                              
 #curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,stop_button,reset_button),Spacer(width=10),fig,test_fig),
     
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
