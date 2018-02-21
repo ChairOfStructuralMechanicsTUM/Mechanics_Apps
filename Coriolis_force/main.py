@@ -1,7 +1,7 @@
 from __future__ import division
 from bokeh.plotting import figure
 from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, Slider, Button, Toggle, Arrow, OpenHead, RadioGroup
+from bokeh.models import ColumnDataSource, Slider, Button, Toggle, Arrow, OpenHead, RadioGroup, Div
 from bokeh.io import curdoc
 from math import pi, sin, cos, radians, sqrt, atan2
 from os.path import dirname, join, split
@@ -280,13 +280,13 @@ play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
 
 ## Create choice of referential button
-Referential_button = RadioGroup(labels=["Bezugssystem des Raum(Room reference frame)",
-    "Bezugssystem der Scheibe(Disk reference frame)"], active=0)
+Referential_button = RadioGroup(labels=["Reference frame: Room",
+    "Reference frame: Disk"], active=0)
 Referential_button.on_change('active',chooseRef)
 
 ## create drawing
-p=figure(title="Drehscheibe-Corioliskraft (Coriolis Force)", tools="", x_range=(-12,12), y_range=(-12,12))
-p.title.text_font_size="20pt"
+p=figure(title="Rotating disk with non accelerated particle", tools="", x_range=(-12,12), y_range=(-12,12))
+p.title.text_font_size="25px"
 p.axis.visible = False
 p.grid.visible = False
 p.outline_line_color = None
@@ -305,6 +305,14 @@ arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=2),
     x_start='xStart', y_start='yStart', x_end='xEnd', y_end='yEnd',source=v0_source)
 p.add_layout(arrow_glyph)
 
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+
+description = Div(text=open(description_filename).read(), render_as_text=False, width=900)
+
 ## Send to window
-curdoc().add_root(row(p,column(Omega_input,v0_input_x,v0_input_y,play_button,pause_button,reset_button,reinit_button,Referential_button)))
+curdoc().add_root(column(description,
+                         row(p,column(Omega_input,v0_input_x,v0_input_y,play_button,pause_button,reset_button,reinit_button,Referential_button))
+                         )
+                  )
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
