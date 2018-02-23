@@ -1,11 +1,11 @@
 from __future__ import division
 from bokeh.plotting import figure
-from bokeh.models import Slider, Arrow, OpenHead, Select, Button, ColumnDataSource
+from bokeh.models import Slider, Arrow, OpenHead, Select, Button, ColumnDataSource, Div
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
 from drawingFuncs import monkeyLetGo, monkeyGrab
 from math import radians, cos, sin
-from os.path import dirname, split
+from os.path import dirname, join, split
 from drawable import Drawable
 
 # initialise variables
@@ -14,10 +14,10 @@ hill_source = ColumnDataSource(data=dict(x=[],y=[]))
 theta = radians(30)
 speed = 50
 g = 9.81
-PlanetGravity = dict(Weltraum = 0.0, Mercur = 3.61, Venus = 8.83, Erde = 9.81, Mars = 3.75, Ceres = 0.27,
-    Jupiter = 26.0, Saturn = 11.2, Uranus = 10.5, Neptun = 13.3, Pluto = 0.61)
-PlanetHue = dict(Weltraum = "#696A8C", Mercur = "#EDD9FC", Venus = "#FCDDBB", Erde = "#D1F4FF", Mars = "#FF9E9E", Ceres = "#C4C4C4",
-    Jupiter = "#FFE1AD", Saturn = "#F3FFC9", Uranus = "#46FAB2", Neptun = "#AFC0DB", Pluto = "#DBD0D0")
+PlanetGravity = dict(Space = 0.0, Mercury = 3.61, Venus = 8.83, Earth = 9.81, Mars = 3.75, Ceres = 0.27,
+    Jupiter = 26.0, Saturn = 11.2, Uranus = 10.5, Neptune = 13.3, Pluto = 0.61)
+PlanetHue = dict(Space = "#696A8C", Mercury = "#EDD9FC", Venus = "#FCDDBB", Earth = "#D1F4FF", Mars = "#FF9E9E", Ceres = "#C4C4C4",
+    Jupiter = "#FFE1AD", Saturn = "#F3FFC9", Uranus = "#46FAB2", Neptune = "#AFC0DB", Pluto = "#DBD0D0")
 x_0 = 5.0
 y_0 = 7.5
 direction_arrow = ColumnDataSource(data=dict(xS=[],yS=[],xE=[],yE=[]))
@@ -97,7 +97,7 @@ def evolve():
         Active = False
         Done = True
     # else if nothing is falling and the banana has exited the screen
-    elif grav_select.value == "Weltraum" and yB > 105:
+    elif grav_select.value == "Space" and yB > 105:
         curdoc().remove_periodic_callback(evolve)
         Active = False
         Done = True
@@ -129,7 +129,7 @@ cannon.draw_at(x=2.8, y=3.0, h=10, w=10, pad_fraction=.25)
 base = Drawable(p, "Images/base.png")
 base.draw_at(x=0, y=0, w=10, h=10)
 
-p.background_fill_color = PlanetHue["Erde"]
+p.background_fill_color = PlanetHue["Earth"]
 p.grid.visible=False
 
 init()
@@ -165,7 +165,7 @@ def changeTheta(attr,old,new):
 
 
 # angle increment is large to prevent lag
-angle_slider = Slider(title=u"\u0398 (\u00B0)",value=30,start=0,end=65,step=5)
+angle_slider = Slider(title=u"Angle \u0398 (\u00B0)",value=30,start=0,end=65,step=5)
 angle_slider.on_change('value',changeTheta)
 
 
@@ -181,7 +181,7 @@ def changeSpeed(attr,old,new):
         updateTargetArrow()
 
 
-speed_slider = Slider(title="Geschwindigkeit (m/s)", value=50, start=0, end=120, step=5)
+speed_slider = Slider(title="Velocity (m/s)", value=50, start=0, end=120, step=5)
 speed_slider.on_change('value', changeSpeed)
 
 
@@ -194,7 +194,7 @@ def massCheck(attr, old, new):
         mass=new
 
 
-mass_slider = Slider(title="Masse (kg)",value=mass,start=0,end=2,step=0.1)
+mass_slider = Slider(title="Mass (kg)",value=mass,start=0,end=2,step=0.1)
 mass_slider.on_change('value',massCheck)
 
 
@@ -202,10 +202,11 @@ def changeHeight(attr,old,new):
     global y_0, height
     # if it has been modified during the simulation
     # move back == deactivated (does not exist in bokeh)
-    if (Active or Done) and height != new:
+    if Active and height != new:
         height_slider.value = old
     else:
         # else change height and update drawings
+        Reset()
         height = new
         base.move_to((None, height))
         cannon.move_to((None, height + 0.5))
@@ -215,7 +216,7 @@ def changeHeight(attr,old,new):
         hill_source.data = dict(x=[0, 30, 30],y=[height, height, 0])
 
 
-height_slider = Slider(title=u"H\u00F6he (m)",value=0.0,start=0,end=60,step=5)
+height_slider = Slider(title="Height of base (m)",value=0.0,start=0,end=60,step=5)
 height_slider.on_change('value',changeHeight)
 
 
@@ -232,8 +233,8 @@ def changeGrav(attr,old,new):
         Reset()
 
 
-grav_select = Select(title="Planet:", value="Erde",
-    options=["Weltraum", "Mercur", "Venus", "Erde", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptun","Pluto"])
+grav_select = Select(title="Planet:", value="Earth",
+    options=["Space", "Mercury", "Venus", "Earth", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"])
 grav_select.on_change('value',changeGrav)
 
 
@@ -244,28 +245,30 @@ def Fire():
             Reset()
         # if simulation is not already started
         # release branch and start simulation
-        monkeyLetGo(monkey, grav_select.value!="Erde")
+        monkeyLetGo(monkey, grav_select.value!="Earth")
         curdoc().add_periodic_callback(evolve, 50)
         Active = True
 
 
-fire_button = Button(label="Feuer",button_type="success")
+fire_button = Button(label="Fire!",button_type="success")
 fire_button.on_click(Fire)
 
 
 def Reset():
     global Active, Done, t
     # if simulation is in progress, stop simulation
-    if Active or Done:
+    if Active:
         curdoc().remove_periodic_callback(evolve)
         Active = False
+    elif Done:
         Done = False
     # return banana, monkey and cannon to original positions
-    banana.move_to(banana_init_pos)
+    banana_current_position = (banana_init_pos[0],banana_init_pos[1]+height_slider.value)
+    banana.move_to(banana_current_position)
     monkey.move_to(monkey_init_pos)
 
     # make monkey grab branch again (also resets helmet)
-    monkeyGrab(monkey, grav_select.value != "Erde")
+    monkeyGrab(monkey, grav_select.value != "Earth")
     # reset time
     t=0
 
@@ -273,6 +276,13 @@ def Reset():
 reset_button = Button(label="Reset",button_type="success")
 reset_button.on_click(Reset)
 
+# add app description
+description_filename = join(dirname(__file__), "description.html")
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1000)
+
 ## Send to window
-curdoc().add_root(row(p,column(angle_slider,speed_slider,mass_slider,height_slider,grav_select,fire_button,reset_button)))
+curdoc().add_root(column(description,
+                         row(p,column(angle_slider,speed_slider,mass_slider,height_slider,grav_select,fire_button,reset_button))
+                        )
+                 )
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
