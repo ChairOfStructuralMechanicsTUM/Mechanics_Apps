@@ -13,6 +13,7 @@ from bokeh.plotting import figure
 from bokeh.layouts import column, row
 from bokeh.models import ColumnDataSource,Slider,Div,Arrow,OpenHead,NormalHead,LabelSet
 from bokeh.models.markers import Square,Circle
+from bokeh.models.glyphs import Ellipse
 from bokeh.io import curdoc
 from os.path import dirname, join
 from math import pi,sqrt,pow,sin,cos
@@ -51,11 +52,11 @@ OriginalPlane_line_source = ColumnDataSource(data=dict(x=[],y=[]))
 Newplane_line_source = ColumnDataSource(data=dict(x=[],y=[]))
 
 #labels
-Figure1Perm_Label_source = ColumnDataSource(data=dict(x=[18,-3],
-                                    y=[12, 24],names=['x', 'y']))
+Figure1Perm_Label_source = ColumnDataSource(data=dict(x=[21,-3.5],
+                                    y=[11.5, 26],names=['x', 'y']))
 
-Figure2Perm_Label_source = ColumnDataSource(data=dict(x=[23,-3],
-                                    y=[-3, 23],names=['x', 'y']))
+Figure2Perm_Label_source = ColumnDataSource(data=dict(x=[26,-3.5],
+                                    y=[-3.5, 26],names=['x', 'y']))
 Figure2Moving_Label_source = ColumnDataSource(data=dict(x=[],
                                     y=[],names=[]))
 
@@ -88,8 +89,9 @@ def init():
     OriginalPlane_line_source.data = dict(x=[Ny,Ny,Nx,Nx], y=[0,-Nxy,Nxy,0])
     Newplane_line_source.data = dict(x=[Neta,Neta,Nzeta,Nzeta], y=[0,-Nzetaeta,Nzetaeta,0])
     
-    Figure2Moving_Label_source.data = dict(x=[Nx,Ny,Nzeta,Neta],y=[-2,-2,-2,-2],
-                                           names=[u"\u03C3"u"x", u"\u03C3"u"y",u"\u03C3"u"\u03B6",u"\u03C3"u"\u03B7"])
+    Figure2Moving_Label_source.data = dict(x=[Nx,Ny,Nzeta,Neta],y=[0,0,-3,-3],
+                                           names=[u"\u03C3"u"x", u"\u03C3"u"y",u"\u03C3"u"\u03B6",u"\u03C3"u"\u03B7"],
+                                           colors=['#A2AD00','#A2AD00','#E37222','#E37222'])
     
 def NormalForceX(attr,old,new):
     global Nx
@@ -160,8 +162,9 @@ def ChangeMohrCircle():
     
     Newplane_line_source.data = dict(x=[Neta,Neta,Nzeta,Nzeta], y=[0,-Nzetaeta,Nzetaeta,0])
     
-    Figure2Moving_Label_source.data = dict(x=[Nx,Ny,Nzeta,Neta],y=[-2,-2,-2,-2],
-                                           names =[u"\u03C3"u"\u2093", u"\u03C3"u"y",u"\u03C3"u"\u03B6",u"\u03C3"u"\u03B7"])
+    Figure2Moving_Label_source.data = dict(x=[Nx,Ny,Nzeta,Neta],y=[1,1,-3,-3],
+                                           names =[u"\u03C3"u"\u2093", u"\u03C3"u"y",u"\u03C3"u"\u03B6",u"\u03C3"u"\u03B7"],
+                                           colors=['#A2AD00','#A2AD00','#E37222','#E37222'])
 
 def ChangeRotatingPlane_Forces():
     
@@ -196,60 +199,60 @@ def ChangeRotatingPlane_Forces():
         Nzetaeta4_arrow_source.data = dict(xS=[5*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], xE=[5*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], yS=[(-15-5*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], yE=[(-15-5*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], lW = [5])
    
 #plotting Vectors as arrows on the squares
-NxP_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NxP_arrow_source,line_color="#A2AD00")
+NxP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NxP_arrow_source,line_color="#E37222")
 
-NxN_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NxN_arrow_source,line_color="#A2AD00")
+NxN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NxN_arrow_source,line_color="#E37222")
 
-NyP_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NyP_arrow_source,line_color="#A2AD00")
+NyP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NyP_arrow_source,line_color="#E37222")
 
-NyN_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NyN_arrow_source,line_color="#A2AD00")
+NyN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NyN_arrow_source,line_color="#E37222")
 
-Nxy1_arrow_glyph = Arrow(end=OpenHead(line_color="#d53e4f",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nxy1_arrow_source,line_color="#d53e4f")
+Nxy1_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nxy1_arrow_source,line_color="#0065BD")
 
-Nxy2_arrow_glyph = Arrow(end=OpenHead(line_color="#d53e4f",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nxy2_arrow_source,line_color="#d53e4f")
+Nxy2_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nxy2_arrow_source,line_color="#0065BD")
 
-Nxy3_arrow_glyph = Arrow(end=OpenHead(line_color="#d53e4f",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nxy3_arrow_source,line_color="#d53e4f")
+Nxy3_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nxy3_arrow_source,line_color="#0065BD")
 
-Nxy4_arrow_glyph = Arrow(end=OpenHead(line_color="#d53e4f",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nxy4_arrow_source,line_color="#d53e4f")
+Nxy4_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nxy4_arrow_source,line_color="#0065BD")
 
 #Figure 1 rotating Plane
-Rotating_Plane_glyph = Square(x='x',y='y',angle='angle',size='size')
-NzetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NzetaP_arrow_source,line_color="#A2AD00")
-NzetaN_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NzetaN_arrow_source,line_color="#A2AD00")
-NetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NetaP_arrow_source,line_color="#A2AD00")
-NetaN_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NetaN_arrow_source,line_color="#A2AD00")
-Nzetaeta1_arrow_glyph= Arrow(end=OpenHead(line_color="#d53e4f",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta1_arrow_source,line_color="#d53e4f")
-Nzetaeta2_arrow_glyph=Arrow(end=OpenHead(line_color="#d53e4f",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta2_arrow_source,line_color="#d53e4f")
-Nzetaeta3_arrow_glyph= Arrow(end=OpenHead(line_color="#d53e4f",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta3_arrow_source,line_color="#d53e4f")
-Nzetaeta4_arrow_glyph=Arrow(end=OpenHead(line_color="#d53e4f",line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta4_arrow_source,line_color="#d53e4f")
+Rotating_Plane_glyph = Square(x='x',y='y',angle='angle',size='size', fill_color = '#c3c3c3')
+NzetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NzetaP_arrow_source,line_color="#E37222")
+NzetaN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NzetaN_arrow_source,line_color="#E37222")
+NetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NetaP_arrow_source,line_color="#E37222")
+NetaN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NetaN_arrow_source,line_color="#E37222")
+Nzetaeta1_arrow_glyph= Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta1_arrow_source,line_color="#0065BD")
+Nzetaeta2_arrow_glyph=Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta2_arrow_source,line_color="#0065BD")
+Nzetaeta3_arrow_glyph= Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta3_arrow_source,line_color="#0065BD")
+Nzetaeta4_arrow_glyph=Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta4_arrow_source,line_color="#0065BD")
 
 #Figure 2 Mohr Circle 
-Mohr_Circle_glyph = Circle(x='x',y='y',radius='radius')
+Mohr_Circle_glyph = Circle(x='x',y='y',radius='radius', radius_dimension='y', fill_color='#c3c3c3', fill_alpha=0.5)
 
-figure1 = figure(title="", tools="", x_range=(-30,30), y_range=(-30,30),width=500,height=500)
+figure1 = figure(title="", tools="", x_range=(-30,30), y_range=(-30,30),width=530,height=500)
 
 #figure1.square([0], [-15], size=75, color="red", alpha=0.5,angle = pi/4)
-figure1.square([0], [15], size=75, color="yellow", alpha=0.5)
+figure1.square([0], [15], size=75, color='#c3c3c3', alpha=0.5)
 
-figure1.add_layout(Arrow(end=NormalHead(fill_color="orange"),
+figure1.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=15, x_end=25, y_end=15))
-figure1.add_layout(Arrow(end=NormalHead(fill_color="orange"),
+figure1.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=15, x_end=0, y_end=30))
 figure1.add_layout(NxP_arrow_glyph)
 figure1.add_layout(NxN_arrow_glyph)
@@ -276,40 +279,60 @@ figure1_labels = LabelSet(x='x', y='y', text='names', level='glyph',
 figure1.add_layout(figure1_labels)
 
 
-figure2 = figure(title="", tools="", x_range=(-30,30), y_range=(-30,30),width=500,height=500)
+figure2 = figure(title="", tools="", x_range=(-30,30), y_range=(-30,30),width=530,height=500)
 
-figure2.add_layout(Arrow(end=NormalHead(fill_color="orange"),
-                   x_start=0, y_start=0, x_end=30, y_end=0))
-figure2.add_layout(Arrow(end=NormalHead(fill_color="orange"),
-                   x_start=0, y_start=0, x_end=0, y_end=30))
+figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
+                   x_start=-30, y_start=0, x_end=30, y_end=0))
+figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
+                   x_start=0, y_start=-30, x_end=0, y_end=30))
 figure2.add_glyph(Mohr_Circle_source,Mohr_Circle_glyph)
 
 
-figure2.line(x='x',y='y',source= OriginalPlane_line_source, color="red")
-figure2.line(x='x',y='y',source= Newplane_line_source, color="blue")
+figure2.line(x='x',y='y',source= OriginalPlane_line_source, color="#A2AD00", line_width=3, line_join = 'bevel')
+figure2.x(x='x',y='y',source= OriginalPlane_line_source, size=8, color="black")
+figure2.line(x='x',y='y',source= Newplane_line_source, color="#E37222", line_width=3, line_join = 'bevel')
+figure2.x(x='x',y='y',source= Newplane_line_source, size=8, color="black")
 
 
 figure2_labels1 = LabelSet(x='x', y='y', text='names', level='glyph',
               x_offset=5, y_offset=5, source=Figure2Perm_Label_source, render_mode='canvas')
-figure2_labels2 = LabelSet(x='x', y='y', text='names', level='glyph', x_offset=5, y_offset=5, source=Figure2Moving_Label_source, render_mode='canvas')
+figure2_labels2 = LabelSet(x='x', y='y', text='names', level='glyph', x_offset=5, y_offset=5,
+                           source=Figure2Moving_Label_source, render_mode='canvas',
+                           text_color = 'black', background_fill_color='colors')
 figure2.add_layout(figure2_labels1)
 figure2.add_layout(figure2_labels2)
 
+figure1.xaxis.major_tick_line_color=None
+figure1.xaxis.major_label_text_color=None
+figure1.xaxis.minor_tick_line_color=None
+figure1.xaxis.axis_line_color=None
+figure1.yaxis.major_tick_line_color=None
+figure1.yaxis.major_label_text_color=None
+figure1.yaxis.minor_tick_line_color=None
+figure1.yaxis.axis_line_color=None
 
+figure2.xaxis.major_tick_line_color=None
+figure2.xaxis.major_label_text_color=None
+figure2.xaxis.minor_tick_line_color=None
+figure2.xaxis.axis_line_color=None
+figure2.yaxis.major_tick_line_color=None
+figure2.yaxis.major_label_text_color=None
+figure2.yaxis.minor_tick_line_color=None
+figure2.yaxis.axis_line_color=None
 #initialising all column data for th initial plot
 init()
 
 #creating  sliders to change Normal and Tangential Forces
-Normal_X_slider= Slider(title="Change Normal in X direction",value= 10,start = -10, end = 10, step = 1)
+Normal_X_slider= Slider(title="Normal force in X direction (N)",value= 10,start = -10, end = 10, step = 1)
 Normal_X_slider.on_change('value',NormalForceX)
 
-Normal_Y_slider= Slider(title="Change Normal in Y direction",value= 10,start = -10, end = 10, step = 1)
+Normal_Y_slider= Slider(title="Normal force in Y direction (N)",value= 10,start = -10, end = 10, step = 1)
 Normal_Y_slider.on_change('value',NormalForceY)
 
-Tangential_XY_slider= Slider(title="Change Shear Force",value= 10,start = -10, end = 10, step = 1)
+Tangential_XY_slider= Slider(title="Shear force (N)",value= 10,start = -10, end = 10, step = 1)
 Tangential_XY_slider.on_change('value',TangentialXY)
 
-Plane_Angle_slider= Slider(title="Change Angle of Cross seection",value= 45,start = 0, end = 90, step = 5)
+Plane_Angle_slider= Slider(title="Angle of cross section (º)",value= 45,start = 0, end = 90, step = 5)
 Plane_Angle_slider.on_change('value',changePlaneAngle)
 
 
@@ -317,6 +340,6 @@ Plane_Angle_slider.on_change('value',changePlaneAngle)
 description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
-curdoc().add_root(column(description,row(figure1,figure2),row(Normal_X_slider,Normal_Y_slider),row(Tangential_XY_slider,Plane_Angle_slider)))
+curdoc().add_root(column(description,row(figure1,figure2, column(Normal_X_slider,Normal_Y_slider, Tangential_XY_slider,Plane_Angle_slider))))
 curdoc().title = "Mohr Circle"
 
