@@ -414,7 +414,7 @@ pendulum_type_input.on_change('active',swapPendulumType)
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1000)
 
 ## Send to window
 hspace = 20

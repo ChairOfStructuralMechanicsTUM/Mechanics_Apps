@@ -16,7 +16,7 @@ from os.path import dirname, join, split
 initial_mass_value = 8
 initial_kappa_value = 50
 initial_lambda_value = 2
-initial_velocity_value = -5
+initial_velocity_value = 0
 s=0
 t=0
 dt=0.03
@@ -31,7 +31,6 @@ Bottom_Line = ColumnDataSource(data = dict(x=[-2,2],y=[11,11]))
 Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[11,9]))
 Position = ColumnDataSource(data = dict(t=[0],s=[0]))
 
-initial_velocity_value=-5.0
 Active=False
 
 def evolve():
@@ -97,7 +96,7 @@ def change_lam(attr,old,new):
     dashpot.changeDamperCoeff(new)
 
 ## Create slider to choose damper coefficient
-lam_input = Slider(title="Damping coefficient [Ns/m]", value=initial_lambda_value, start=0.0, end=10, step=0.1,width=400)
+lam_input = Slider(title="Damping coefficient [Ns/m]", value=initial_lambda_value, start=0.0, end=60, step=1,width=400)
 lam_input.on_change('value',change_lam)
 
 def change_initV(attr,old,new):
@@ -105,7 +104,7 @@ def change_initV(attr,old,new):
     if (not Active):
         mass.changeInitV(new)
 
-## Create slider to choose damper coefficient
+## Create slider to choose initial velocity
 initV_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
 
@@ -142,7 +141,7 @@ def reset():
     kappa_input.value = initial_kappa_value
     lam_input.value = initial_lambda_value
     initV_input.value = initial_velocity_value
-    mass.changeInitV(initV_input.value)
+    mass.changeInitV(initial_velocity_value)
 
     #this could reset also the plot, but needs the selenium package:
     #reset_button = selenium.find_element_by_class_name('bk-tool-icon-reset')
@@ -164,5 +163,5 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 ## Send to window
 curdoc().add_root(column(description, \
     row(column(Spacer(height=100),play_button,pause_button,stop_button,reset_button),Spacer(width=10),fig,p), \
-    row(mass_input,kappa_input),row(lam_input,initV_input)))
+    row(mass_input,Spacer(width=10),kappa_input),row(lam_input,Spacer(width=10),initV_input)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

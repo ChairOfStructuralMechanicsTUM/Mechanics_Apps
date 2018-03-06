@@ -5,4 +5,5 @@ Prototype of a WebApp demonstrating trajectories via Bokeh for the lectures at t
 The app can be run using the command "bokeh serve --show Projectiles/" from the parent directory.
 
 ## To Do
-- [ ] translate reset
+- [x] translate reset (is not working properly)
+- [x] add description
