@@ -176,11 +176,11 @@ def plot_current_ratio():
 
 compute_amp_and_phase_angle()
 p_af = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=300, height=300)
-p_af.line(x='beta', y='V', source=amplification_function)
+p_af.line(x='beta', y='V', source=amplification_function, color="#a2ad00")
 p_af.circle(x='beta', y='V', size=10, color="#e37222", source=current_ratio)
 p_af.yaxis.axis_label="Amplification"
 p_pa = figure(title="", tools="", x_range=(0,3.0), y_range=(0,180), width=300, height=300)
-p_pa.line(x='beta', y='phi', source=phase_angle)
+p_pa.line(x='beta', y='phi', source=phase_angle, color="#a2ad00")
 p_pa.circle(x='beta', y='phi', size=10, color="#e37222", source=current_ratio)
 p_pa.xaxis.axis_label="Frequency ratio"
 p_pa.yaxis.axis_label="Phase angle"
