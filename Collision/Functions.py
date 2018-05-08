@@ -1,6 +1,4 @@
-import matplotlib.pyplot as plt
 from bokeh.models import ColumnDataSource
-from MoveNodeTool import *
 import numpy as np
 
 

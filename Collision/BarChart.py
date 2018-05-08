@@ -7,8 +7,8 @@ from math import pi, floor
 
 class BarChart(object):
     def __init__(self, xVals, yVals, colours = None, width=None):
-        Max = 0;
-        Min=0;
+        Max = 0
+        Min=0
         N=len(xVals)
         # create list of colours
         if (colours==None):
@@ -24,11 +24,11 @@ class BarChart(object):
         if (width==None):
             width=[]
             for i in range(0,N):
-                width.append(1);
+                width.append(1)
         # initialise values for loop
         self.fig=figure(tools="")
         self.barSources=[]
-        x=0;
+        x=0
         places=[]
         label_places=[]
         index={}

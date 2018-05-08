@@ -6,7 +6,8 @@ from bokeh.layouts import column, row, widgetbox
 from bokeh.models import Button, Toggle, Slider
 from bokeh.models import Arrow, OpenHead, Div
 from bokeh.models.layouts import Spacer
-from Functions import *
+import Functions
+import MoveNodeTool
 from os.path import dirname, join, split
 from bokeh.events import Pan
 
@@ -88,8 +89,8 @@ velocityTolerance = 0.05
 Active = False
 
 # Construct particles
-particleOne = Particle(m1, r1, c1, np.array([x1,y1]), velocityVectorOne)
-particleTwo = Particle(m2, r2, c2, np.array([x2,y2]), velocityVectorTwo)
+particleOne = Functions.Particle(m1, r1, c1, np.array([x1,y1]), velocityVectorOne)
+particleTwo = Functions.Particle(m2, r2, c2, np.array([x2,y2]), velocityVectorTwo)
 
 # Construct source files
 particleOne.update_position_source()
@@ -131,7 +132,7 @@ playGround.add_layout(
                            ) 
                      )
                             
-system = CollidingSystem([[xMin,xMax],[yMin,yMax]], [particleOne, particleTwo])
+system = Functions.CollidingSystem([[xMin,xMax],[yMin,yMax]], [particleOne, particleTwo])
 
 '''
 ##  Define the energy bar
@@ -541,7 +542,7 @@ Cr_Slider = Slider(
 Cr_Slider.on_change('value',update_Cr_value)
 
 #################### Moving the balls through the mouse #######################
-playGround.add_tools(MoveNodeTool())
+playGround.add_tools(MoveNodeTool.MoveNodeTool())
 
 def on_mouse_move(event):
     if Active == False:
