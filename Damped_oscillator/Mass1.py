@@ -1,5 +1,5 @@
 from bokeh.models import ColumnDataSource
-from Coord import *
+from Coord1 import *
 from copy import deepcopy
 from abc import ABCMeta, abstractmethod
 
@@ -70,7 +70,7 @@ class Mass(object):
         # reinitialise Force monitoring vectors to collect new influences
         self.nextStepForces=[]
         self.nextStepObjForces=[]
-    
+
     ## carry out 1 time step
     def evolve(self,dt):
         # find the total force:
