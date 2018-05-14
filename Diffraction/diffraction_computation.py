@@ -1,7 +1,6 @@
 import numpy as np
-from numpy import sqrt, pi, cos, sin, exp
+from numpy import sqrt, pi, cos, exp
 from scipy.special import fresnel
-
 
 def cart2pol(x, y):
     """

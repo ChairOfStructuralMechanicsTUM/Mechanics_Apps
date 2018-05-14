@@ -1,17 +1,10 @@
 from __future__ import division
-import bokeh
-from sympy import sympify, lambdify, diff
+
 import numpy as np
 from bokeh.models import ColumnDataSource
-import matplotlib as mpl
-from tables.description import Col
-from warnings import warn
 import vtk
 from vtk.util import numpy_support
 
-mpl.use('Agg')
-import matplotlib.pyplot as plt
-from scipy.optimize import minimize
 
 class Contour:
     """
@@ -75,52 +68,52 @@ class Contour:
             # update contour labels
             self._text_label.data_source.data = data_contour_label
 
-    def __get_contour_data_mpl(self, x_grid, y_grid, z_grid, isovalue=None):
-        """
-        wrapper for matplotlib function. Extracting contour information into bokeh compatible data type.
-        :param x_grid: grid of x values
-        :param y_grid: grid of y values
-        :param z_grid: function evaluation matching to x,y grid
-        :param isovalue: isovalues to be extracted from contour plot, if no isovalue is provided default matplotlib
-        settings are applied
-        :return: two dicts, one holding contour information, one holding labelling information
-        """
-        if isovalue is None:
-            cs = plt.contour(x_grid, y_grid, z_grid)
-        else:
-            cs = plt.contour(x_grid, y_grid, z_grid, isovalue)
+    # def __get_contour_data_mpl(self, x_grid, y_grid, z_grid, isovalue=None):
+    #     """
+    #     wrapper for matplotlib function. Extracting contour information into bokeh compatible data type.
+    #     :param x_grid: grid of x values
+    #     :param y_grid: grid of y values
+    #     :param z_grid: function evaluation matching to x,y grid
+    #     :param isovalue: isovalues to be extracted from contour plot, if no isovalue is provided default matplotlib
+    #     settings are applied
+    #     :return: two dicts, one holding contour information, one holding labelling information
+    #     """
+    #     if isovalue is None:
+    #         cs = plt.contour(x_grid, y_grid, z_grid)
+    #     else:
+    #         cs = plt.contour(x_grid, y_grid, z_grid, isovalue)
 
-        xs = []
-        ys = []
-        xt = []
-        yt = []
-        col = []
-        text = []
-        isolevelid = 0
-        for isolevel in cs.collections:
-            isocol = isolevel.get_color()[0]
-            thecol = 3 * [None]
-            theiso = str(cs.get_array()[isolevelid])
-            isolevelid += 1
-            for i in range(3):
-                thecol[i] = int(255 * isocol[i])
-            thecol = '#%02x%02x%02x' % (thecol[0], thecol[1], thecol[2])
+    #     xs = []
+    #     ys = []
+    #     xt = []
+    #     yt = []
+    #     col = []
+    #     text = []
+    #     isolevelid = 0
+    #     for isolevel in cs.collections:
+    #         isocol = isolevel.get_color()[0]
+    #         thecol = 3 * [None]
+    #         theiso = str(cs.get_array()[isolevelid])
+    #         isolevelid += 1
+    #         for i in range(3):
+    #             thecol[i] = int(255 * isocol[i])
+    #         thecol = '#%02x%02x%02x' % (thecol[0], thecol[1], thecol[2])
 
-            for path in isolevel.get_paths():
-                v = path.vertices
-                if v.shape[0] > self._path_filter: # we only consider paths with more than path_filter vertices
-                    x = v[:, 0]
-                    y = v[:, 1]
-                    xs.append(x)
-                    ys.append(y)
-                    xt.append(x[int(len(x) / 2)])
-                    yt.append(y[int(len(y) / 2)])
-                    text.append(theiso)
-                    col.append(thecol)
+    #         for path in isolevel.get_paths():
+    #             v = path.vertices
+    #             if v.shape[0] > self._path_filter: # we only consider paths with more than path_filter vertices
+    #                 x = v[:, 0]
+    #                 y = v[:, 1]
+    #                 xs.append(x)
+    #                 ys.append(y)
+    #                 xt.append(x[int(len(x) / 2)])
+    #                 yt.append(y[int(len(y) / 2)])
+    #                 text.append(theiso)
+    #                 col.append(thecol)
 
-        data_contour = {'xs': xs, 'ys': ys, 'line_color': col}
-        data_contour_label = {'xt': xt, 'yt': yt, 'text': text}
-        return data_contour, data_contour_label
+    #     data_contour = {'xs': xs, 'ys': ys, 'line_color': col}
+    #     data_contour_label = {'xt': xt, 'yt': yt, 'text': text}
+    #     return data_contour, data_contour_label
 
     def __get_contour_data_vtk(self, x_grid, y_grid, z_grid, isovalue=[0]):
 
@@ -142,7 +135,7 @@ class Contour:
 
         hx = (xmax - xmin) / (nx - 1)
         hy = (ymax - ymin) / (ny - 1)
-
+        
         image = vtk.vtkImageData()
         image.SetDimensions(nx, ny, 1)
         image.SetOrigin(xmin, ymin, 0)

@@ -6,7 +6,6 @@ import numpy as np
 from numpy import pi, cos, sin, sqrt, log10
 import time
 
-from bokeh.driving import count
 from bokeh.io import curdoc
 from bokeh.models import ColumnDataSource, Div
 from bokeh.layouts import widgetbox, row, column
@@ -69,11 +68,11 @@ wavelength_slider = Slider(title=u"Dimensionless wavelength w.r.t. height of bar
 # textbox for displaying dB value at proble location
 textbox = TextInput(title="Noise probe (in contour plot)", name='noise probe', placeholder="pick a location for probe")
 
-# Generate a figure container for the field
+# Generate a Figure container for the field
 plot = Figure(plot_height=550,
               plot_width=580,
-              x_range=[x_min,x_max],
-              y_range=[y_min,y_max],
+              x_range=(x_min,x_max),
+              y_range=(y_min,y_max),
               x_axis_label='x',
               y_axis_label='y',
               tools=["crosshair, save, tap"])
@@ -143,6 +142,7 @@ def on_click_change(attr,old,new):
     :param new:
     :return:
     """
+    # pass
     x, y = interactor.clicked_point()  # clicked point location
     if x is not None:
         source_value_plotter.data = dict(x=[x], y=[y])  # update visualization of clicked point
@@ -241,12 +241,14 @@ def update():
     ######## computation kernel
 
     update_wave_amplitude_on_grids(t)
-
-    x, y = interactor.clicked_point()
-    if x is not None:  # valid position has been clicked
-        update_wave_amplitude_at_probe(x,y,t)
-    else:
+    
+    try:
+        x, y = interactor.clicked_point()
+    except TypeError:
         textbox.value = "pick a location to probe"
+    else:
+        if x is not None and y is not None:  # valid position has been clicked
+            update_wave_amplitude_at_probe(x,y,t)
 
     ########
 
@@ -271,7 +273,7 @@ wavelength_slider.on_change('value',set_slider_has_changed)
 interactor.on_click(on_click_change)
 
 # create plots
-surface = Surface3d(x="x", y="y", z="z", color="color", data_source=source_surf)  # wave surface
+surface = Surface3d(x="x", y="y", z="z", color="color", data_source=source_surf, width=500,height=100)  # wave surface
 # contour plots of wave
 contour_zero = Contour(plot, line_width=2,line_color='black', path_filter = 10)  # zero level
 contour_pos = Contour(plot, line_width=1, line_color='red', path_filter = 10)  # some other levels
@@ -296,18 +298,18 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 # add area image
 area_image = Div(text="""
 <p>
-<img src=/Diffraction/static/images/Diffraction_areas.jpg width=500>
+<img src=/Diffraction/static/images/Diffraction_areas.jpg width=300>
 </p>
 <p>
 Characteristic regions and wave parameters
-</p>""" , render_as_text=False, width=350)
+</p>""" , render_as_text=False, width=580)
 
 # create layout
-controls = widgetbox([phi0_slider,wavelength_slider,textbox],width=550)  # all controls
+controls = widgetbox([phi0_slider,wavelength_slider,textbox],width=580)  # all controls
 curdoc().add_root(column(description,
-                         row(row(Spacer(width=50),surface,Spacer(width=550)),plot),
-                         row(Spacer(width=50),controls,Spacer(width=45),area_image)
-                         )
-                  )  # add plots and controls to root
+                        row(plot,Spacer(width=50),column(surface,sizing_mode='stretch_both')),
+                        row(controls,Spacer(width=150),area_image)
+                        )
+                )  # add plots and controls to root
 curdoc().add_periodic_callback(update, target_frame_time)  # update function
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
