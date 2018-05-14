@@ -20,8 +20,8 @@ from math import pi,sqrt,pow,sin,cos
 
 radius = 10
 centreX = 10
-Nx =10
-Ny =10
+Nx =20
+Ny =0
 Nxy =10
 P_Angle = 45*(pi/180)
 Neta =0 
@@ -51,7 +51,7 @@ Nzetaeta4_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], 
 OriginalPlane_line_source = ColumnDataSource(data=dict(x=[],y=[]))
 Newplane_line_source = ColumnDataSource(data=dict(x=[],y=[]))
 
-#labels
+#Labels x and y
 Figure1Perm_Label_source = ColumnDataSource(data=dict(x=[21,-3.5],
                                     y=[11.5, 26],names=['x', 'y']))
 
@@ -67,21 +67,28 @@ def init():
     
     P_Angle = 45*(pi/180)
     #Calculations
+    #Grey circle in intertial situation (radius and position on x axis)
     radius = float(sqrt(pow(((Nx-Ny)/2),2)+pow(Nxy,2)))
     centreX = float((Nx+Ny)/2)
+    #Forces in the rotated element
     Nzeta = float(((Nx+Ny)/2)+(((Nx-Ny)/2)*cos(2*P_Angle))+Nxy*sin(2*P_Angle))
     Neta  = float(((Nx+Ny)/2)-(((Nx-Ny)/2)*cos(2*P_Angle))-Nxy*sin(2*P_Angle))
     Nzetaeta =float((-(((Nx-Ny)/2)*sin(2*P_Angle)))+Nxy*cos(2*P_Angle))
-    #Figure 1
+    #Figure 1 xS=xStart, xE=xEnd, lW=linewidth
+
+    #Normalforces
     NxP_arrow_source.data  = dict(xS=[5], xE=[15], yS=[15], yE=[15], lW = [5])
     NxN_arrow_source.data  = dict(xS=[-5], xE=[-15], yS=[15], yE=[15], lW = [5])
     NyP_arrow_source.data  = dict(xS=[0], xE=[0], yS=[20], yE=[30], lW = [5])
     NyN_arrow_source.data  = dict(xS=[0], xE=[0], yS=[10], yE=[0], lW = [5])
+    
+    #Shearforces
     Nxy1_arrow_source.data = dict(xS=[5], xE=[5], yS=[10], yE=[20], lW = [5])
     Nxy2_arrow_source.data = dict(xS=[-5], xE=[5], yS=[20], yE=[20], lW = [5])
     Nxy3_arrow_source.data = dict(xS=[-5], xE=[-5], yS=[20], yE=[10], lW = [5])
     Nxy4_arrow_source.data = dict(xS=[5], xE=[-5], yS=[10], yE=[10], lW = [5])
-     #Figure 1 Rotating Plane
+     
+    #Figure 1 Rotating Plane
     Rotating_Plane_source.data = dict(x=[0], y=[-15],angle =[45*(pi/180)],size = [80])
     
     #Figure 2 

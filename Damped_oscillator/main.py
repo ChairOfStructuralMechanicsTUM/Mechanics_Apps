@@ -134,7 +134,9 @@ def stop():
     mass.resetLinks(spring,(-2,11))
     mass.resetLinks(dashpot,(2,11))
     mass.changeInitV(initV_input.value)
-
+    mass.nextStepForces=[]
+    mass.nextStepObjForces=[]
+    
 def reset():
     stop()
     mass_input.value = initial_mass_value
