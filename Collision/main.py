@@ -1,13 +1,11 @@
 import numpy as np
 from bokeh.io import curdoc
-from bokeh.plotting import Figure, ColumnDataSource
+from bokeh.plotting import Figure
 import BarChart as BC
 from bokeh.layouts import column, row, widgetbox
-from bokeh.models import Button, Toggle, Slider
-from bokeh.models import Arrow, OpenHead, Div
+from bokeh.models import Button, Slider, Arrow, OpenHead, Div
 from bokeh.models.layouts import Spacer
 import Functions
-import MoveNodeTool
 from os.path import dirname, join, split
 from bokeh.events import Pan
 
@@ -179,7 +177,7 @@ through time
 ###############################################################################
 '''
 # Calculate the new location of the two balls
-def compute_tranjectory():
+def compute_trajectory():
     # Compute the new position of the circles' center
     particleOne.position[0] += particleOne.velocity[0]*dt
     particleOne.position[1] += particleOne.velocity[1]*dt
@@ -317,21 +315,11 @@ Add the interactive functionalities
 ###############################################################################
 '''
 ########################### Creating reset button #############################
-periodicCallback = 0
 def Reset():
-    global Active, periodicCallback
-
-    # The preiodic callback has been removed here because when the pause
-    # button is set to False, this reactivates the periodic callback
-    if periodicCallback == 0 and Active == True:
-        curdoc().remove_periodic_callback(compute_tranjectory)
-        periodicCallback += 1
-
-    else:
-        pass
-
-    Active = False
-
+    if curdoc().session_callbacks:
+        for c in curdoc().session_callbacks:
+            curdoc().remove_periodic_callback(c)
+    
     # Return the solider to their default values
     ballOneVelocityDirSlider.value = dirOne
     ballTwoVelocityDirSlider.value = dirTwo
@@ -357,7 +345,6 @@ def Reset():
 
     # Update the height of the bars accordingly
     update_bars()
-
     
 
 
@@ -369,7 +356,7 @@ reset_button.on_click(Reset)
 #     global Active
 #     # When active pause animation
 #     if Active == True:
-#         curdoc().remove_periodic_callback(compute_tranjectory)
+#         curdoc().remove_periodic_callback(compute_trajectory)
 #         Active=False
 #     else:
 #         pass
@@ -382,7 +369,7 @@ reset_button.on_click(Reset)
 #     global Active, periodicCallback
 #
 #     if Active == False:
-#         curdoc().add_periodic_callback(compute_tranjectory, 10)
+#         curdoc().add_periodic_callback(compute_trajectory, 10)
 #         Active=True
 #         periodicCallback = 0
 #     else:
@@ -394,44 +381,35 @@ reset_button.on_click(Reset)
 
 ########################### Creating play-pause button ##############################
 def playpause():
-    global Active, periodicCallback
-
-    if Active == False:
-        curdoc().add_periodic_callback(compute_tranjectory, 10)
-        Active = True
+    if playpause_button.label == "Play":
+        curdoc().add_periodic_callback(compute_trajectory, 10)
         playpause_button.label = "Pause"
-        periodicCallback = 0
     else:
-        curdoc().remove_periodic_callback(compute_tranjectory)
-        Active = False
+        for c in curdoc().session_callbacks:
+            curdoc().remove_periodic_callback(c)
         playpause_button.label = "Play"
 
 
 playpause_button = Button(label="Play", button_type="success")
 playpause_button.on_click(playpause)
-    
+
 ##################### Creating velocity direction slider ######################
 def update_ballOne_VelocityDir(attr,old,new):
-    global velocityVectorOne
-    if Active == False:
-        angle = new
-        velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity) )
-        
-        if velocityMagnitude == 0:
-            # Create some default velocity vector
-            velocityVectorOne = np.array([1.0,0.0])
-            # Update respective Magnitude slider
-            ballOneVelocityMagSlider.value = 1
-        else:
-            velocityVectorOne = velocityMagnitude * np.array([
-                                                              np.cos(np.deg2rad(angle)),
-                                                              np.sin(np.deg2rad(angle))
-                                                            ])
-            
-        particleOne.update_velocity(velocityVectorOne[0], velocityVectorOne[1])
-
+    angle = new
+    velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity) )
+    
+    if velocityMagnitude == 0:
+        # Create some default velocity vector
+        newVelocityVectorOne = np.array([1.0,0.0])
+        # Update respective Magnitude slider
+        ballOneVelocityMagSlider.value = 1
     else:
-        pass
+        newVelocityVectorOne = velocityMagnitude * np.array([
+                                                            np.cos(np.deg2rad(angle)),
+                                                            np.sin(np.deg2rad(angle))
+                                                        ])
+        
+    particleOne.update_velocity(newVelocityVectorOne[0], newVelocityVectorOne[1])
     
 ballOneVelocityDirSlider = Slider(
                                   title=u" Green Ball Velocity Direction (deg) ",
@@ -441,28 +419,26 @@ ballOneVelocityDirSlider.on_change('value',update_ballOne_VelocityDir)
 
 ##################### Creating velocity magnitude slider ######################
 def update_ballOne_VelocityMag(attr,old,new):
-    global velocityVectorOne
-    if Active == False:
-        magnitude = new
-        velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity))
-        if velocityMagnitude == 0.0:
-            # Create some default velocity vector
-            velocityVectorOne = np.array([1.0,0.0])
-        else:
-            velocityVectorOne *= 1/velocityMagnitude                        
-            velocityVectorOne *= magnitude
-            
-        particleOne.update_velocity(velocityVectorOne[0],velocityVectorOne[1])
+    magnitude = new
+    velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity))
+    if velocityMagnitude == 0.0:
+        # Create some default velocity vector
+        newVelocityVectorOne = np.array([1.0,0.0])
+    else:
+        vx, vy = particleOne.get_velocity()
+        newVelocityVectorOne = np.array([vx,vy])
+        newVelocityVectorOne *= 1/velocityMagnitude                        
+        newVelocityVectorOne *= magnitude
+        
+    particleOne.update_velocity(newVelocityVectorOne[0],newVelocityVectorOne[1])
 
-        #Reset respective direction Slider if magnitude == 0
-        if magnitude == 0.0:
-            ballOneVelocityDirSlider.value = 0
-        else:
-            pass
-
-        update_bars()
+    #Reset respective direction Slider if magnitude == 0
+    if magnitude == 0.0:
+        ballOneVelocityDirSlider.value = 0
     else:
         pass
+
+    update_bars()
    
 ballOneVelocityMagSlider = Slider(
                                   title=u" Green Ball Velocity Magnitude (m/s) ",
@@ -472,26 +448,21 @@ ballOneVelocityMagSlider.on_change('value',update_ballOne_VelocityMag)
 
 ##################### Creating velocity direction slider ######################
 def update_ballTwo_VelocityDir(attr,old,new):
-    global velocityVectorTwo
-    if Active == False:
-        angle = new
-        velocityMagnitude = np.sqrt( np.dot(particleTwo.velocity, particleTwo.velocity) )
-        
-        if velocityMagnitude == 0:
-            # Create some default velocity vector
-            velocityVectorTwo = np.array([1.0,0.0])
-            # Update respective Magnitude slider
-            ballTwoVelocityMagSlider.value = 1
-        else:
-            velocityVectorTwo = velocityMagnitude * np.array([
-                                                              np.cos(np.deg2rad(angle)),
-                                                              np.sin(np.deg2rad(angle))
-                                                            ]) 
-            
-        particleTwo.update_velocity(velocityVectorTwo[0],velocityVectorTwo[1])
-        
+    angle = new
+    velocityMagnitude = np.sqrt( np.dot(particleTwo.velocity, particleTwo.velocity) )
+    
+    if velocityMagnitude == 0:
+        # Create some default velocity vector
+        newVelocityVectorTwo = np.array([1.0,0.0])
+        # Update respective Magnitude slider
+        ballTwoVelocityMagSlider.value = 1
     else:
-        pass
+        newVelocityVectorTwo = velocityMagnitude * np.array([
+                                                            np.cos(np.deg2rad(angle)),
+                                                            np.sin(np.deg2rad(angle))
+                                                        ]) 
+        
+    particleTwo.update_velocity(newVelocityVectorTwo[0],newVelocityVectorTwo[1])
     
 ballTwoVelocityDirSlider = Slider(  
                                   title=u" Orange Ball Velocity Direction (deg) ",
@@ -501,28 +472,26 @@ ballTwoVelocityDirSlider.on_change('value',update_ballTwo_VelocityDir)
 
 ##################### Creating velocity magnitude slider ######################
 def update_ballTwo_VelocityMag(attr,old,new):
-    global velocityVectorTwo
-    if Active == False:
-        magnitude = new
-        velocityMagnitude = np.sqrt( np.dot(particleTwo.velocity, particleTwo.velocity))
-        if velocityMagnitude == 0:
-            # Create some default velocity vector
-            velocityVectorTwo = np.array([1.0,0.0])
-        else:
-            velocityVectorTwo *= 1/velocityMagnitude                      
-            velocityVectorTwo *= magnitude
-            
-        particleTwo.update_velocity(velocityVectorTwo[0],velocityVectorTwo[1])
+    magnitude = new
+    velocityMagnitude = np.sqrt( np.dot(particleTwo.velocity, particleTwo.velocity))
+    if velocityMagnitude == 0:
+        # Create some default velocity vector
+        newVelocityVectorTwo = np.array([1.0,0.0])
+    else:
+        vx, vy = particleTwo.get_velocity()
+        newVelocityVectorTwo = np.array([vx,vy])
+        newVelocityVectorTwo *= 1/velocityMagnitude                      
+        newVelocityVectorTwo *= magnitude
+        
+    particleTwo.update_velocity(newVelocityVectorTwo[0],newVelocityVectorTwo[1])
 
-        # Reset respective direction Slider if magnitude == 0
-        if magnitude == 0.0:
-            ballTwoVelocityDirSlider.value = 0
-        else:
-            pass
-
-        update_bars()
+    # Reset respective direction Slider if magnitude == 0
+    if magnitude == 0.0:
+        ballTwoVelocityDirSlider.value = 0
     else:
         pass
+
+    update_bars()
     
 ballTwoVelocityMagSlider = Slider(
                                   title=u" Orange Ball Velocity Magnitude (m/s) ",
@@ -542,7 +511,6 @@ Cr_Slider = Slider(
 Cr_Slider.on_change('value',update_Cr_value)
 
 #################### Moving the balls through the mouse #######################
-playGround.add_tools(MoveNodeTool.MoveNodeTool())
 
 def on_mouse_move(event):
     if Active == False:

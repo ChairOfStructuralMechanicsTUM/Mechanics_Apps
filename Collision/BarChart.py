@@ -1,6 +1,5 @@
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, Range1d, FuncTickFormatter, FixedTicker
-from bokeh.core.properties import Dict
 from math import pi, floor
 
 #ColourOptions = ["red","blue","green","black","yellow","purple"]
@@ -103,4 +102,3 @@ class BarChart(object):
     def Width(self,width):
         self.fig.width=width
 
-#eFig = BarChart(['A','B'],[10,20])
