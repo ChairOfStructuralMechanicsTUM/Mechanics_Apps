@@ -78,7 +78,7 @@ velocityVectorOne = np.array([v_x1,v_y1])
 velocityVectorTwo = np.array([v_x2,v_y2])
 
 # Collision Parameters
-Cr = 1.0
+glCollisionCr = 1.0
 
 # Define the dynamic simulation parameters
 dt = 0.01
@@ -267,12 +267,12 @@ def compute_trajectory():
         # Calculate the new normal velocity component of each ball according to
         # the law of collision
         v1NormalAfter = (
-                             Cr*m2*(v2Normal-v1Normal) 
+                             glCollisionCr*m2*(v2Normal-v1Normal) 
                            + m1*v1Normal + m2*v2Normal
                         ) / (m1 + m2)
         
         v2NormalAfter = (
-                             Cr*m1*(v1Normal-v2Normal) 
+                             glCollisionCr*m1*(v1Normal-v2Normal) 
                            + m1*v1Normal + m2*v2Normal
                         ) / (m1 + m2)
         
@@ -350,34 +350,6 @@ def Reset():
 
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)
-
-########################### Creating pause button #############################
-# def pause():
-#     global Active
-#     # When active pause animation
-#     if Active == True:
-#         curdoc().remove_periodic_callback(compute_trajectory)
-#         Active=False
-#     else:
-#         pass
-#
-# pause_button = Button(label="Pause", button_type="success")
-# pause_button.on_click(pause)
-
-########################### Creating play button ##############################
-# def play():
-#     global Active, periodicCallback
-#
-#     if Active == False:
-#         curdoc().add_periodic_callback(compute_trajectory, 10)
-#         Active=True
-#         periodicCallback = 0
-#     else:
-#         pass
-#
-# play_button = Button(label="Play", button_type="success")
-# play_button.on_click(play)
-
 
 ########################### Creating play-pause button ##############################
 def playpause():
@@ -501,8 +473,8 @@ ballTwoVelocityMagSlider.on_change('value',update_ballTwo_VelocityMag)
 
 ################# Creating coefficient of restitution slider ##################
 def update_Cr_value(attr,old,new):
-    global Cr
-    Cr = new
+    global glCollisionCr
+    glCollisionCr = new
 
 Cr_Slider = Slider(
                    title=u" Coefficient of Restitution ",
