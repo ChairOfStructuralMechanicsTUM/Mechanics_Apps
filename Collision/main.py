@@ -346,7 +346,7 @@ def playpause():
         ballOneVelocityMagSlider.disabled = True
         ballTwoVelocityDirSlider.disabled = True
         ballTwoVelocityMagSlider.disabled = True
-        crSlider.disabled = True
+       # crSlider.disabled = True  # We can leave the Cr Slider enabled while the app is running, changing Cr on the fly is anice feature and has no impact on performance
     else:
         for c in curdoc().session_callbacks:
             curdoc().remove_periodic_callback(c)
@@ -362,7 +362,7 @@ def playpause():
         ballOneVelocityMagSlider.disabled = False
         ballTwoVelocityDirSlider.disabled = False
         ballTwoVelocityMagSlider.disabled = False
-        crSlider.disabled = False
+       # crSlider.disabled = False # The slider has not to be enabled again, if it did not get disabled in line 349
 
 
 playpause_button = Button(label="Play", button_type="success")
