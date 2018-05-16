@@ -80,7 +80,6 @@ glCollisionCr = 1.0
 dt = 0.01
 tolerance = 0.1
 velocityTolerance = 0.05
-Active = False
 
 # Construct particles
 particleOne = Functions.Particle(m1, r1, c1, np.array([x1,y1]), velocityVectorOne)
@@ -372,7 +371,6 @@ playpause_button.on_click(playpause)
 ##################### Creating velocity direction slider ######################
 def update_ballOne_VelocityDir(attr,old,new):
     angle = new
-    # velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity) )
     velocityMagnitude = particleOne.get_velocity_magnitude()
     
     if velocityMagnitude == 0:
@@ -397,7 +395,6 @@ ballOneVelocityDirSlider.on_change('value',update_ballOne_VelocityDir)
 ##################### Creating velocity magnitude slider ######################
 def update_ballOne_VelocityMag(attr,old,new):
     magnitude = new
-    # velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity))
     velocityMagnitude = particleOne.get_velocity_magnitude()
     if velocityMagnitude == 0.0:
         # Create some default velocity vector
@@ -451,7 +448,6 @@ ballTwoVelocityDirSlider.on_change('value',update_ballTwo_VelocityDir)
 def update_ballTwo_VelocityMag(attr,old,new):
     magnitude = new
     velocityMagnitude = particleTwo.get_velocity_magnitude()
-    # velocityMagnitude = np.sqrt( np.dot(particleTwo.velocity, particleTwo.velocity))
     if velocityMagnitude == 0:
         # Create some default velocity vector
         newVelocityVectorTwo = np.array([0.1,0.0])
@@ -490,12 +486,8 @@ crSlider.on_change('value',update_Cr_value)
 #################### Moving the balls through the mouse #######################
 
 def on_mouse_move(event):
-    if Active == False:
-        if (system.modify_location(event)==1):
-            # if the path is changed then update the drawing
-            pass
-    else:
-        pass
+    if playpause_button.label == "Play":
+        system.modify_location(event)
 
 playGround.on_event(Pan, on_mouse_move)
 
