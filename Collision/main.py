@@ -328,25 +328,16 @@ def Reset():
 
     # Update the source data file to the very initial data
     particleOne.update_position(x1,y1)
-    #particleOne.update_position_source() #- > not necessary anymore - already implied in particle.update_position()
-    
     particleTwo.update_position(x2,y2)
-    #particleTwo.update_position_source() #- > not necessary anymore - already implied in particle.update_position()
     
     # Update the velocity vectors
     particleOne.update_velocity(v_x1, v_y1)
     particleTwo.update_velocity(v_x2, v_y2)
 
-    # Update the velocity arrows' source file - > not necessary anymore - already implied in particle.update_velocity()
-    #particleOne.update_velocity_source()
-    #particleTwo.update_velocity_source()
-
     playpause_button.label = "Play"
 
     # Update the height of the bars accordingly
     update_bars()
-    
-
 
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)
@@ -356,10 +347,20 @@ def playpause():
     if playpause_button.label == "Play":
         curdoc().add_periodic_callback(compute_trajectory, 10)
         playpause_button.label = "Pause"
+        ballOneVelocityDirSlider.disabled = True
+        ballOneVelocityMagSlider.disabled = True
+        ballTwoVelocityDirSlider.disabled = True
+        ballTwoVelocityMagSlider.disabled = True
+        crSlider.disabled = True
     else:
         for c in curdoc().session_callbacks:
             curdoc().remove_periodic_callback(c)
         playpause_button.label = "Play"
+        ballOneVelocityDirSlider.disabled = False
+        ballOneVelocityMagSlider.disabled = False
+        ballTwoVelocityDirSlider.disabled = False
+        ballTwoVelocityMagSlider.disabled = False
+        crSlider.disabled = False
 
 
 playpause_button = Button(label="Play", button_type="success")
@@ -476,11 +477,11 @@ def update_Cr_value(attr,old,new):
     global glCollisionCr
     glCollisionCr = new
 
-Cr_Slider = Slider(
+crSlider = Slider(
                    title=u" Coefficient of Restitution ",
                    value=1, start=0, end=1, step=0.1,width=530
                   )
-Cr_Slider.on_change('value',update_Cr_value)
+crSlider.on_change('value',update_Cr_value)
 
 #################### Moving the balls through the mouse #######################
 
@@ -541,7 +542,7 @@ curdoc().add_root(
                                         Spacer(width=10),
                                         ballTwoVelocityMagSlider
                                         ),
-                                    Cr_Slider,
+                                    crSlider,
                              )
 
                         )
