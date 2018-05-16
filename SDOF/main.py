@@ -349,7 +349,7 @@ columns = [
     TableColumn(field="names2", title="Parameter"),
     TableColumn(field="values2", title="Value")
 ]
-parameter_table = DataTable(source=parameters, columns=columns, reorderable=False, sortable=False, selectable=False, row_headers=False, width=300, height=100)
+parameter_table = DataTable(source=parameters, columns=columns, reorderable=False, sortable=False, selectable=False, index_position=None, width=300, height=100)
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")

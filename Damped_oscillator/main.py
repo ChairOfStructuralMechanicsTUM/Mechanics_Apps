@@ -1,6 +1,7 @@
 from Spring1 import *
 from Dashpot1 import *
 from Mass1 import *
+from Coord1 import *
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc

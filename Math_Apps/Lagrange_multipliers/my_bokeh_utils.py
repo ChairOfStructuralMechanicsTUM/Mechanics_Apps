@@ -410,8 +410,8 @@ class Contour:
                 y = v[:, 1]
                 xs.append(x.tolist())
                 ys.append(y.tolist())
-                xt.append(x[len(x) / 2])
-                yt.append(y[len(y) / 2])
+                xt.append(x[int(len(x) / 2)])
+                yt.append(y[int(len(y) / 2)])
                 text.append(theiso)
                 col.append(thecol)
 

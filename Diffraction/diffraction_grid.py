@@ -1,6 +1,4 @@
 import numpy as np
-from numpy import pi, sqrt, cos, sin, exp
-from scipy.special import fresnel
 
 from diffraction_computation import compute_wave_amplitude, compute_fresnel_at_polar, cart2pol
 
