@@ -60,13 +60,9 @@ dirTwo = np.arctan2(v_y2,v_x2)/np.pi*180
 
 if dirOne < 0:
     dirOne += 360
-else:
-    pass
 
 if dirTwo < 0:
     dirTwo += 360
-else:
-    pass
 
 # initial magnitude of velocity vector
 magOne = np.sqrt( v_x1 ** 2 + v_y1 ** 2 )
@@ -356,6 +352,13 @@ def playpause():
         for c in curdoc().session_callbacks:
             curdoc().remove_periodic_callback(c)
         playpause_button.label = "Play"
+
+        #update sliders
+        ballOneVelocityDirSlider.value = particleOne.get_direction()
+        ballTwoVelocityDirSlider.value = particleTwo.get_direction()
+        ballOneVelocityMagSlider.value = particleOne.get_velocity_magnitude()
+        ballTwoVelocityMagSlider.value = particleTwo.get_velocity_magnitude()
+
         ballOneVelocityDirSlider.disabled = False
         ballOneVelocityMagSlider.disabled = False
         ballTwoVelocityDirSlider.disabled = False
@@ -369,13 +372,14 @@ playpause_button.on_click(playpause)
 ##################### Creating velocity direction slider ######################
 def update_ballOne_VelocityDir(attr,old,new):
     angle = new
-    velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity) )
+    # velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity) )
+    velocityMagnitude = particleOne.get_velocity_magnitude()
     
     if velocityMagnitude == 0:
         # Create some default velocity vector
-        newVelocityVectorOne = np.array([1.0,0.0])
+        newVelocityVectorOne = np.array([0.1,0.0])
         # Update respective Magnitude slider
-        ballOneVelocityMagSlider.value = 1
+        ballOneVelocityMagSlider.value = 0.1
     else:
         newVelocityVectorOne = velocityMagnitude * np.array([
                                                             np.cos(np.deg2rad(angle)),
@@ -393,13 +397,13 @@ ballOneVelocityDirSlider.on_change('value',update_ballOne_VelocityDir)
 ##################### Creating velocity magnitude slider ######################
 def update_ballOne_VelocityMag(attr,old,new):
     magnitude = new
-    velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity))
+    # velocityMagnitude = np.sqrt( np.dot(particleOne.velocity, particleOne.velocity))
+    velocityMagnitude = particleOne.get_velocity_magnitude()
     if velocityMagnitude == 0.0:
         # Create some default velocity vector
-        newVelocityVectorOne = np.array([1.0,0.0])
+        newVelocityVectorOne = np.array([0.1,0.0])
     else:
-        vx, vy = particleOne.get_velocity()
-        newVelocityVectorOne = np.array([vx,vy])
+        newVelocityVectorOne = particleOne.velocity
         newVelocityVectorOne *= 1/velocityMagnitude                        
         newVelocityVectorOne *= magnitude
         
@@ -422,13 +426,13 @@ ballOneVelocityMagSlider.on_change('value',update_ballOne_VelocityMag)
 ##################### Creating velocity direction slider ######################
 def update_ballTwo_VelocityDir(attr,old,new):
     angle = new
-    velocityMagnitude = np.sqrt( np.dot(particleTwo.velocity, particleTwo.velocity) )
+    velocityMagnitude = particleTwo.get_velocity_magnitude()
     
     if velocityMagnitude == 0:
         # Create some default velocity vector
-        newVelocityVectorTwo = np.array([1.0,0.0])
+        newVelocityVectorTwo = np.array([0.1,0.0])
         # Update respective Magnitude slider
-        ballTwoVelocityMagSlider.value = 1
+        ballTwoVelocityMagSlider.value = 0.1
     else:
         newVelocityVectorTwo = velocityMagnitude * np.array([
                                                             np.cos(np.deg2rad(angle)),
@@ -446,13 +450,13 @@ ballTwoVelocityDirSlider.on_change('value',update_ballTwo_VelocityDir)
 ##################### Creating velocity magnitude slider ######################
 def update_ballTwo_VelocityMag(attr,old,new):
     magnitude = new
-    velocityMagnitude = np.sqrt( np.dot(particleTwo.velocity, particleTwo.velocity))
+    velocityMagnitude = particleTwo.get_velocity_magnitude()
+    # velocityMagnitude = np.sqrt( np.dot(particleTwo.velocity, particleTwo.velocity))
     if velocityMagnitude == 0:
         # Create some default velocity vector
-        newVelocityVectorTwo = np.array([1.0,0.0])
+        newVelocityVectorTwo = np.array([0.1,0.0])
     else:
-        vx, vy = particleTwo.get_velocity()
-        newVelocityVectorTwo = np.array([vx,vy])
+        newVelocityVectorTwo = particleTwo.velocity
         newVelocityVectorTwo *= 1/velocityMagnitude                      
         newVelocityVectorTwo *= magnitude
         

@@ -1,4 +1,5 @@
 from bokeh.models import ColumnDataSource
+from math import floor
 import numpy as np
 
 
@@ -62,8 +63,15 @@ class Particle():
         self.velocity[1] = vy
         self.update_velocity_source()
 
-    def get_velocity(self):
-        return[self.velocity[0], self.velocity[1]]
+    def get_direction(self):
+        direction = floor(np.arctan2(self.velocity[1],self.velocity[0])/np.pi*180)
+        if direction < 0:
+            direction += 360
+        return direction
+
+    def get_velocity_magnitude(self):
+        velocityMagnitude = np.sqrt( np.dot(self.velocity, self.velocity))
+        return round(velocityMagnitude,1)
 
     def get_position_source(self):
         return self.positionInPlot
