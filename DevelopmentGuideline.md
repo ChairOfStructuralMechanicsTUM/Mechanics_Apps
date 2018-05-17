@@ -35,7 +35,7 @@ sys.path.insert(0,parentdir)
 from latex_div import LatexDiv
 ```
 
-Now, indstead of `Div`, use `LatexDiv`, if the document contains Latex code. The identifiers are `$ \alpha $` for inline mode and `\[ \alpha \]` for display mode. See Maxwell's reciprocity or the SDOF app, they have already been updated.
+Now, indstead of `Div`, use `LatexDiv`, if the document contains Latex code. The identifiers are `$ \alpha $` or `\( \alpha \)` for inline mode and `$$ \alpha $$` or `\[ \alpha \]` for display mode.
 
 # Francesca Final Acceptance and Publication
 
