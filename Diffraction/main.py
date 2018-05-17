@@ -1,6 +1,11 @@
 from __future__ import division
 
-from os.path import dirname, join, split
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_div import LatexDiv
 
 import numpy as np
 from numpy import pi, cos, sin, sqrt, log10
@@ -293,7 +298,7 @@ initialize()
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 # add area image
 area_image = Div(text="""

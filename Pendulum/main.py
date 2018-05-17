@@ -6,7 +6,12 @@ from bokeh.models import ColumnDataSource, Slider, Button, RadioButtonGroup, Arr
 from bokeh.events import Pan
 from math import sin, cos, pi, atan2, sqrt, acos
 from mpmath import csc
-from os.path import dirname, join, split
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_div import LatexDiv
 
 # create column data sources
 Mass = ColumnDataSource(data = dict(x=[],y=[]))
@@ -414,7 +419,7 @@ pendulum_type_input.on_change('active',swapPendulumType)
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1000)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1000)
 
 ## Send to window
 hspace = 20
