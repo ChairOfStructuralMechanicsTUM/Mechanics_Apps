@@ -16,7 +16,7 @@ The following points are important for all developers.
 
 ## Developer Hints
 
-* Try to avoid global variables! Otherwise the app might behave strangely.
+* Try to avoid global variables! Otherwise the app might behave strangely. If there is no way to avoid them, please use the following naming convention: `gl[APPNAME][VARNAME]`, so to define the velocity in the Collision app for example, use `glCollisionVelocity`.
 * For static resources use the static folder in the directory of the app. See Diffraction app for a use case (Diffraction/main.py:294-304, commit 188f76b15959222aa0a8bf3f55d476a52abbf221).
 * For complex behaviour try to introduce objects, that bundle the functionality and the data (e.g. https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/blob/master/Rollercoaster/DraggablePath.py)
 * Try to avoid very long scripts. It is usually not a good idea to have more than 500 lines of code in one script, no one can understand this.
