@@ -23,6 +23,20 @@ The following points are important for all developers.
 * Try to avoid very long and complex functions. It might be helpful to subdivide a function into several functions that partially solve a certain task.
 * Don't use ```from ... import *```. It is hard to understand the origin of a function or variable if it is not imported explicitly. Better use ```from ... import foo, bar```.
 
+## LaTeX support in app descriptions
+Latex support is made available via the KaTeX library (https://khan.github.io/KaTeX/). A class `LatexDiv` is available, which works the same way as the normal `Div` but parses also Latex input. As it will be used by many apps, it can be found in an extra folder. The class can be imported using:
+
+```python
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_div import LatexDiv
+```
+
+Now, indstead of `Div`, use `LatexDiv`, if the document contains Latex code. The identifiers are `$ \alpha $` for inline mode and `\[ \alpha \]` for display mode. See Maxwell's reciprocity or the SDOF app, they have already been updated.
+
 # Francesca Final Acceptance and Publication
 
 The following points are executed by Francesca only.
