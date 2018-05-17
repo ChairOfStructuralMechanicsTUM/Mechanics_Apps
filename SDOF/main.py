@@ -10,7 +10,12 @@ from bokeh.models.tickers import FixedTicker
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.widgets import DataTable, TableColumn
 
-from os.path import dirname, join, split
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_div import LatexDiv
 from math import sqrt, exp, pow, sin , cos, ceil, pi, atan2, sinh, cosh
 
 ## initial values
@@ -353,7 +358,7 @@ parameter_table = DataTable(source=parameters, columns=columns, reorderable=Fals
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 ## Send to window
 hspace = 20
