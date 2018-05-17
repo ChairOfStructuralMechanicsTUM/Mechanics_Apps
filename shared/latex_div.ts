@@ -16,9 +16,11 @@ export class LatexDivView extends MarkupView {
     }
     this.markupEl.appendChild(content)
   }
-
+  
   myrender(content): void {
     // taken from http://sixthform.info/katex/guide.html
+    // first, replace all $$ 
+    content.innerHTML = content.innerHTML.replace(/(\$\$){1}([\s\S]+?)(\$\$){1}/g, '<div class=\"maths\">$2</div>');
     // replace text dollar signs by %​% temporarily then
     // replace $...$ by <span class="maths">...</span>
     // regular expression \$([\s\S]+?)\$/g consists of all whitespace \s 
@@ -34,11 +36,10 @@ export class LatexDivView extends MarkupView {
     // put back eg \\[1ex]
     content.innerHTML = content.innerHTML.replace(/%​%​%/g, '\\\\\]');
     // replace \( ...\) by <span class="maths"> ... </span>
-    content.innerHTML = content.innerHTML.replace(/\(/g, '<span class=\"maths\">');
-    content.innerHTML = content.innerHTML.replace(/\)/g, '</span>');
+    content.innerHTML = content.innerHTML.replace(/\\\(/g, '<span class=\"maths\">');
+    content.innerHTML = content.innerHTML.replace(/\\\)/g, '</span>');
     // put back text dollar signs
     content.innerHTML = content.innerHTML.replace(/\%\%/g, '\$');
-    console.log(content.innerHTML)
 
     // Get all <div or span or p class ="maths"> elements in the document
     var x = content.getElementsByClassName('maths');

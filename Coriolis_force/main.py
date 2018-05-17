@@ -4,7 +4,12 @@ from bokeh.layouts import column, row
 from bokeh.models import ColumnDataSource, Slider, Button, Toggle, Arrow, OpenHead, RadioGroup, Div
 from bokeh.io import curdoc
 from math import pi, sin, cos, radians, sqrt, atan2
-from os.path import dirname, join, split
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_div import LatexDiv
 
 ## Create all required variables
 circle_axis_phi=[]
@@ -308,7 +313,7 @@ p.add_layout(arrow_glyph)
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
-description = Div(text=open(description_filename).read(), render_as_text=False, width=900)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=900)
 
 ## Send to window
 curdoc().add_root(column(description,
