@@ -1,6 +1,6 @@
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, Arrow, OpenHead, LabelSet
-from Shape import *
+from Shape import Shape
 
 # class that handles the drawing of the car and house
 

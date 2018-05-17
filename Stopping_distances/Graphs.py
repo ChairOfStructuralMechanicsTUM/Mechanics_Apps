@@ -1,6 +1,6 @@
 from bokeh.plotting import figure
 from bokeh.layouts import gridplot
-from bokeh.models import ColumnDataSource, Range1d
+from bokeh.models import ColumnDataSource
 from math import sqrt
 from numpy import linspace
 
