@@ -1,11 +1,17 @@
-from Problem import *
+from Problem import Problem
+from Graphs import Graphs
+from Visualisation import Visualisation
+
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_div import LatexDiv
-from bokeh.models.widgets import Div
+
+from bokeh.io import curdoc
+from bokeh.layouts import column, row
+
 
 # create each part of the window
 Visual=Visualisation()
