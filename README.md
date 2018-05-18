@@ -129,6 +129,7 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 
 Please comply with the [DevelopmentGuideline](DevelopmentGuideline.md)!
 - Sascha Kubisch, [@ga96wec](https://github.com/ga96wec)
+- Matthias Ebert, [@m3bert](https://github.com/m3bert)
 
 ### Former developers
 
