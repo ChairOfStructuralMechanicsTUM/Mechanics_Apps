@@ -98,7 +98,7 @@ def init():
     Nxy4_arrow_source.data = dict(xS=[0], xE=[0], yS=[-5], yE=[-5], lW = [5])
      
     ## Figure 3: Rotating plane
-    Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[0*(pi/180)],size = [80])
+    Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[0*(pi/180)],size = [75])
 
     ## Figure 2 
     Mohr_Circle_source.data = dict(x=[centreX], y=[0], radius=[radius])
@@ -161,7 +161,7 @@ def changePlaneAngle(attr,old,new):
      global P_Angle
      #P_Angle = new*(pi/180)
      P_Angle = -new*(pi/180)
-     Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[P_Angle],size = [80])
+     Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[-P_Angle],size = [75])
      ChangeMohrCircle()
      ChangeRotatingPlane_Forces()
         
@@ -175,7 +175,7 @@ def ChangeMohrCircle():
     #OriginalPlane_line_source.data = dict(x=[Ny,Ny,Nx,Nx], y=[0,-Nxy,Nxy,0])
     OriginalPlane_line_source.data = dict(x=[rleft_x,Ny,Ny], y=[rleft_y,Nxy,0])
   
-    ### For second plane
+    ## Calculate forces in rotated element
     Nzeta = float(((Nx+Ny)/2)+(((Nx-Ny)/2)*cos(2*P_Angle))+Nxy*sin(2*P_Angle))
     Neta  = float(((Nx+Ny)/2)-(((Nx-Ny)/2)*cos(2*P_Angle))-Nxy*sin(2*P_Angle))
     Nzetaeta = float((-(((Nx-Ny)/2)*sin(2*P_Angle)))+Nxy*cos(2*P_Angle))
@@ -191,8 +191,8 @@ def ChangeMohrCircle():
     #Newplane_line_source.data = dict(x=[Neta,Neta,Nzeta,Nzeta], y=[0,-Nzetaeta,Nzetaeta,0])
     Newplane_line_source.data = dict(x=[rleft_x,Neta,Neta], y=[rleft_y,Nzetaeta,0])
     
-    Figure2Moving_Label_source.data = dict(x=[Nx,Ny,0],y=[-3,-3,Nxy],
-                                           names =[u"\u03C3"u"\u2093", u"\u03C3"u"y","Tau_x_z"],
+    Figure2Moving_Label_source.data = dict(x=[Nx,Ny,0],y=[-4,-4,Nxy],
+                                           names =[u"\u03C3"u"\u2093", u"\u03C3"u"y","t"],
                                            colors=['#E37222','#E37222','#A2AD00'])
 
 def ChangeRotatingPlane_Forces():
@@ -202,31 +202,38 @@ def ChangeRotatingPlane_Forces():
     Neta  = float(float((Nx+Ny)/2)-(float((Nx-Ny)/2)*cos(2*P_Angle))-float(Nxy*sin(2*P_Angle)))
     Nzetaeta = float((-(((Nx-Ny)/2)*sin(2*P_Angle)))+Nxy*cos(2*P_Angle))
     
+    global P_Angle
+    P_Angle=-P_Angle
+
     if Nzeta>0:
-        NzetaP_arrow_source.data = dict(xS=[5*cos(P_Angle)], xE=[(5+Nzeta)*cos(P_Angle)], yS=[-15+(5*sin(P_Angle))], yE=[-15+((5+Nzeta)*sin(P_Angle))], lW = [5])
-        NzetaN_arrow_source.data = dict(xS=[-5*cos(P_Angle)], xE=[(-5-Nzeta)*cos(P_Angle)], yS=[-15-(5*sin(P_Angle))], yE=[(-15-((5+Nzeta)*sin(P_Angle)))], lW = [5])
+        NzetaP_arrow_source.data = dict(xS=[5*cos(P_Angle)], xE=[(5+Nzeta)*cos(P_Angle)], yS=[0+(5*sin(P_Angle))], yE=[0+((5+Nzeta)*sin(P_Angle))], lW = [5])
+        NzetaN_arrow_source.data = dict(xS=[-5*cos(P_Angle)], xE=[(-5-Nzeta)*cos(P_Angle)], yS=[0-(5*sin(P_Angle))], yE=[(0-((5+Nzeta)*sin(P_Angle)))], lW = [5])
     else:
-        NzetaP_arrow_source.data = dict(xS=[(5-Nzeta)*cos(P_Angle)], xE=[5*cos(P_Angle)], yS=[-15+((5-Nzeta)*sin(P_Angle))], yE=[-15+(5*sin(P_Angle))], lW = [5])
-        NzetaN_arrow_source.data = dict(xS=[(-5+Nzeta)*cos(P_Angle)], xE=[-5*cos(P_Angle)], yS=[(-15-((5-Nzeta)*sin(P_Angle)))], yE=[-15-(5*sin(P_Angle))], lW = [5])
+        NzetaP_arrow_source.data = dict(xS=[(5-Nzeta)*cos(P_Angle)], xE=[5*cos(P_Angle)], yS=[0+((5-Nzeta)*sin(P_Angle))], yE=[0+(5*sin(P_Angle))], lW = [5])
+        NzetaN_arrow_source.data = dict(xS=[(-5+Nzeta)*cos(P_Angle)], xE=[-5*cos(P_Angle)], yS=[(0-((5-Nzeta)*sin(P_Angle)))], yE=[0-(5*sin(P_Angle))], lW = [5])
     
     if Neta>0:
-        NetaP_arrow_source.data = dict(xS=[5*cos((pi/2)+P_Angle)], xE=[(5+Neta)*cos((pi/2)+P_Angle)], yS=[-15+(5*sin((pi/2)+P_Angle))], yE=[-15+((5+Neta)*sin((pi/2)+P_Angle))], lW = [5])
-        NetaN_arrow_source.data =  dict(xS=[5*cos((3*pi/2)+P_Angle)], xE=[(5+Neta)*cos((3*pi/2)+P_Angle)], yS=[-15+(5*sin((3*pi/2)+P_Angle))], yE=[-15+((5+Neta)*sin((3*pi/2)+P_Angle))], lW = [5])      
+        NetaP_arrow_source.data = dict(xS=[5*cos((pi/2)+P_Angle)], xE=[(5+Neta)*cos((pi/2)+P_Angle)], yS=[0+(5*sin((pi/2)+P_Angle))], yE=[0+((5+Neta)*sin((pi/2)+P_Angle))], lW = [5])
+        NetaN_arrow_source.data =  dict(xS=[5*cos((3*pi/2)+P_Angle)], xE=[(5+Neta)*cos((3*pi/2)+P_Angle)], yS=[0+(5*sin((3*pi/2)+P_Angle))], yE=[0+((5+Neta)*sin((3*pi/2)+P_Angle))], lW = [5])      
     else:
-        NetaP_arrow_source.data = dict(xS=[(5-Neta)*cos((pi/2)+P_Angle)],xE=[5*cos((pi/2)+P_Angle)],yS=[-15+((5-Neta)*sin((pi/2)+P_Angle))], yE=[-15+(5*sin((pi/2)+P_Angle))],  lW = [5])
-        NetaN_arrow_source.data = dict(xS=[(5-Neta)*cos((3*pi/2)+P_Angle)],xE=[5*cos((3*pi/2)+P_Angle)], yS=[-15+((5-Neta)*sin((3*pi/2)+P_Angle))],yE=[-15+(5*sin((3*pi/2)+P_Angle))], lW = [5])      
+        NetaP_arrow_source.data = dict(xS=[(5-Neta)*cos((pi/2)+P_Angle)],xE=[5*cos((pi/2)+P_Angle)],yS=[0+((5-Neta)*sin((pi/2)+P_Angle))], yE=[0+(5*sin((pi/2)+P_Angle))],  lW = [5])
+        NetaN_arrow_source.data = dict(xS=[(5-Neta)*cos((3*pi/2)+P_Angle)],xE=[5*cos((3*pi/2)+P_Angle)], yS=[0+((5-Neta)*sin((3*pi/2)+P_Angle))],yE=[0+(5*sin((3*pi/2)+P_Angle))], lW = [5])      
   
     if Nzetaeta>0:
-        Nzetaeta1_arrow_source.data = dict(xS=[5*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], xE=[5*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], yS=[(-15+5*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], yE=[(-15+5*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], lW = [5])
-        Nzetaeta2_arrow_source.data = dict(xS=[-5*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], xE=[-5*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], yS=[(-15+5*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], yE=[(-15+5*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], lW = [5])
-        Nzetaeta3_arrow_source.data = dict(xS=[-5*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], xE=[-5*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], yS=[(-15-5*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], yE=[(-15-5*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], lW = [5])
-        Nzetaeta4_arrow_source.data = dict(xS=[5*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], xE=[5*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], yS=[(-15-5*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], yE=[(-15-5*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], lW = [5])
+        Nzetaeta1_arrow_source.data = dict(xS=[5*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], xE=[5*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], yS=[(0+5*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], yE=[(0+5*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], lW = [5])
+        Nzetaeta2_arrow_source.data = dict(xS=[-5*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], xE=[-5*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], yS=[(0+5*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], yE=[(0+5*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], lW = [5])
+        Nzetaeta3_arrow_source.data = dict(xS=[-5*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], xE=[-5*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], yS=[(0-5*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], yE=[(0-5*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], lW = [5])
+        Nzetaeta4_arrow_source.data = dict(xS=[5*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], xE=[5*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], yS=[(0-5*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], yE=[(0-5*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], lW = [5])
     else:
-        Nzetaeta1_arrow_source.data = dict(xS=[5*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], xE=[5*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], yS=[(-15+5*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], yE=[(-15+5*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], lW = [5])
-        Nzetaeta2_arrow_source.data = dict(xS=[-5*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], xE=[-5*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], yS=[(-15+5*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], yE=[(-15+5*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], lW = [5])
-        Nzetaeta3_arrow_source.data = dict(xS=[-5*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], xE=[-5*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], yS=[(-15-5*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], yE=[(-15-5*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], lW = [5])
-        Nzetaeta4_arrow_source.data = dict(xS=[5*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], xE=[5*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], yS=[(-15-5*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], yE=[(-15-5*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], lW = [5])
+        Nzetaeta1_arrow_source.data = dict(xS=[5*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], xE=[5*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], yS=[(0+5*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], yE=[(0+5*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], lW = [5])
+        Nzetaeta2_arrow_source.data = dict(xS=[-5*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], xE=[-5*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], yS=[(0+5*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], yE=[(0+5*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], lW = [5])
+        Nzetaeta3_arrow_source.data = dict(xS=[-5*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], xE=[-5*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], yS=[(0-5*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], yE=[(0-5*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], lW = [5])
+        Nzetaeta4_arrow_source.data = dict(xS=[5*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], xE=[5*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], yS=[(0-5*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], yE=[(0-5*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], lW = [5])
+        P_Angle=-P_Angle
+
+
    
+
 ### Figure 1: Plotting Arrows
 NxP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NxP_arrow_source,line_color="#E37222")
@@ -292,12 +299,15 @@ figure1.add_layout(Nxy1_arrow_glyph)
 figure1.add_layout(Nxy2_arrow_glyph)
 figure1.add_layout(Nxy3_arrow_glyph)
 figure1.add_layout(Nxy4_arrow_glyph)
-
+figure1_labels = LabelSet(x='x', y='y', text='names', level='glyph',
+              x_offset=5, y_offset=5, source=Figure1Perm_Label_source, render_mode='canvas')
+figure1.add_layout(figure1_labels)
 
 ### Figure 3: Define dimensions
 figure3 = figure(title="Stress State B", tools="", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
 
 ### Figure 3: Add geometry
+figure3.square([0], [0], size=75, color='#c3c3c3', alpha=0.5)
 figure3.add_layout(NzetaP_arrow_glyph)
 figure3.add_layout(NzetaN_arrow_glyph)
 figure3.add_layout(NetaP_arrow_glyph)
@@ -309,9 +319,7 @@ figure3.add_layout(Nzetaeta4_arrow_glyph)
 figure3.add_glyph(Rotating_Plane_source,Rotating_Plane_glyph)
 
 
-figure1_labels = LabelSet(x='x', y='y', text='names', level='glyph',
-              x_offset=5, y_offset=5, source=Figure1Perm_Label_source, render_mode='canvas')
-figure1.add_layout(figure1_labels)
+
 
 
 
@@ -346,7 +354,7 @@ figure2.add_layout(figure2_labels1)
 figure2.add_layout(figure2_labels2)
 
 
-### WTF?
+### 
 figure1.xaxis.major_tick_line_color=None
 figure1.xaxis.major_label_text_color=None
 figure1.xaxis.minor_tick_line_color=None
@@ -365,27 +373,37 @@ figure2.yaxis.major_label_text_color=None
 figure2.yaxis.minor_tick_line_color=None
 figure2.yaxis.axis_line_color=None
 
+figure3.xaxis.major_tick_line_color=None
+figure3.xaxis.major_label_text_color=None
+figure3.xaxis.minor_tick_line_color=None
+figure3.xaxis.axis_line_color=None
+figure3.yaxis.major_tick_line_color=None
+figure3.yaxis.major_label_text_color=None
+figure3.yaxis.minor_tick_line_color=None
+figure3.yaxis.axis_line_color=None
+
+
 ### Initialising all column data for th initial plot
 init()
 
 ### Creating  sliders to change Normal and Tangential Forces
-Normal_X_slider= Slider(title="Normal force in X direction (N)",value= 0,start = -10, end = 10, step = 1)
+Normal_X_slider= Slider(title="Normal force in X direction (N)",value= 0,start = -10, end = 10, step = 0.1)
 Normal_X_slider.on_change('value',NormalForceX)
 
-Normal_Y_slider= Slider(title="Normal force in Y direction (N)",value= 0,start = -10, end = 10, step = 1)
+Normal_Y_slider= Slider(title="Normal force in Y direction (N)",value= 0,start = -10, end = 10, step = 0.1)
 Normal_Y_slider.on_change('value',NormalForceY)
 
-Tangential_XY_slider= Slider(title="Shear force (N)",value= 0,start = 0, end = 10, step = 1)
+Tangential_XY_slider= Slider(title="Shear force (N)",value= 0,start = 0, end = 10, step = 0.1)
 Tangential_XY_slider.on_change('value',TangentialXY)
 
-Plane_Angle_slider= Slider(title="Angle of cross section (º)",value= 0,start = 0, end = 90, step = 5)
+Plane_Angle_slider= Slider(title="Angle of cross section (º)",value= 0,start = 0, end = 90, step = 0.1)
 Plane_Angle_slider.on_change('value',changePlaneAngle)
 
 
-#adding description from HTML file
+### Adding description from HTML file
 description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
-curdoc().add_root(column(description,row(figure1,figure2, column(Normal_X_slider,Normal_Y_slider, Tangential_XY_slider,Plane_Angle_slider))))
+curdoc().add_root(column(description,row(column(figure1,Normal_X_slider,Normal_Y_slider, Tangential_XY_slider),figure2,column(figure3, Plane_Angle_slider))))
 curdoc().title = "Mohr Circle"
 
