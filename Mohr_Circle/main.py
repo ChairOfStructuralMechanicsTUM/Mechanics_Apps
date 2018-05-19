@@ -18,23 +18,24 @@ from bokeh.io import curdoc
 from os.path import dirname, join
 from math import pi,sqrt,pow,sin,cos
 
+
+### Initial Values
 radius = 10
 centreX = 10
-Nx =5
-Ny =-5
-Nxy =5
+Nx =0
+Ny =0
+Nxy =0
 P_Angle = 0*(pi/180)
 Neta =0 
 Nzeta =0 
-Nzetaeta =0 
-global r1left_y 
-global r1left_x 
-r1left_x=centreX-radius
-r1left_y=0
+Nzetaeta =0  
+rleft_x=centreX-radius
+rleft_y=0
 
 
+### Initializing variables
 
-#Data sources for 1st figure, ie The planes and the forces
+## Figure 1: 
 NxP_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 NyP_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 NxN_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
@@ -44,13 +45,11 @@ Nxy2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = 
 Nxy3_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 Nxy4_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 
-#Figure 2 Mohr Circle
+##Figure 2: Mohr Circle
 OriginalPlane_line_source = ColumnDataSource(data=dict(x=[],y=[]))
 Newplane_line_source = ColumnDataSource(data=dict(x=[],y=[]))
 
-
-
-#Figure 3 Rotating plane 
+##Figure 3: Rotating plane 
 Rotating_Plane_source = ColumnDataSource(data=dict(x=[], y=[],angle = [],size =[]))
 NzetaP_arrow_source    = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 NzetaN_arrow_source    = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
@@ -62,37 +61,33 @@ Nzetaeta3_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], 
 Nzetaeta4_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 
 
-
-
-
-
-
-#labels
+### Labels
 Figure1Perm_Label_source = ColumnDataSource(data=dict(x=[21,-3.5],
                                     y=[11.5, -3],names=['x', 'z']))
-
 Figure2Perm_Label_source = ColumnDataSource(data=dict(x=[26,-3.5],
                                     y=[-3.5, 26],names=['sigma', 'tau']))
 Figure2Moving_Label_source = ColumnDataSource(data=dict(x=[],
                                     y=[],names=[]))
 
-#Data structures for the second figure ie the Mohr ciircel and lines 
+
+### Data structures for Figure 2 ie the Mohr circle and lines 
 Mohr_Circle_source = ColumnDataSource(data=dict(x=[], y=[], radius=[]))
 
+
+###Initial Calculations and Value settings
 def init():
     
     P_Angle = 0*(pi/180)
     
     
-    #Calculations
+    ## Calculations
     radius = float(sqrt(pow(((Nx-Ny)/2),2)+pow(Nxy,2)))
-    #radius = 20
     centreX = float((Nx+Ny)/2)
-    #centreX = 0
     Nzeta = float(((Nx+Ny)/2)+(((Nx-Ny)/2)*cos(2*P_Angle))+Nxy*sin(2*P_Angle))
     Neta  = float(((Nx+Ny)/2)-(((Nx-Ny)/2)*cos(2*P_Angle))-Nxy*sin(2*P_Angle))
     Nzetaeta =float((-(((Nx-Ny)/2)*sin(2*P_Angle)))+Nxy*cos(2*P_Angle))
-    #Figure 1
+
+    ## Figure 1: Set values for arrows
     NxP_arrow_source.data  = dict(xS=[5], xE=[10], yS=[15], yE=[15], lW = [5])
     NxN_arrow_source.data  = dict(xS=[-5], xE=[-15], yS=[15], yE=[15], lW = [5])
     NyP_arrow_source.data  = dict(xS=[0], xE=[0], yS=[20], yE=[30], lW = [5])
@@ -103,12 +98,12 @@ def init():
     Nxy4_arrow_source.data = dict(xS=[5], xE=[-5], yS=[10], yE=[10], lW = [5])
      
     
-    #Figure 1 Rotating Plane
-    # Move to Figure 3
+    ## Figure 3: Rotating plane
     Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[0*(pi/180)],size = [80])
     rleft_y=0
     rleft_x=centreX-radius
-    #Figure 2 
+
+    ### Figure 2 
     Mohr_Circle_source.data = dict(x=[centreX], y=[0], radius=[radius])
     #OriginalPlane_line_source.data = dict(x=[Ny,Ny,Nx,Nx], y=[0,-Nxy,Nxy,0])
     OriginalPlane_line_source.data = dict(x=[rleft_x,Ny,Ny], y=[rleft_y,Nxy,0])
@@ -116,10 +111,7 @@ def init():
     Newplane_line_source.data = dict(x=[rleft_x,Neta,Neta], y=[rleft_y,Nzetaeta,0])
     #Newplane_line_source.data = dict(x=[rleft_x,Ny,Ny], y=[rleft_y,Nxy,0])    
     
-    
-    #Figure2Moving_Label_source.data = dict(x=[Nx,Ny,Nzeta,Neta],y=[0,0,-3,-3],
-     #                                      names=[u"\u03C3"u"x", u"\u03C3"u"y","tau_x_z","tau_x_z"],
-      #                                     colors=['#A2AD00','#A2AD00','#E37222','#E37222'])
+
     Figure2Moving_Label_source.data = dict(x=[Nx,Ny,0],y=[-3,-3,Nxy],
                                            names =[u"\u03C3"u"\u2093", u"\u03C3"u"y","Tau_x_z"],
                                            colors=['#E37222','#E37222','#A2AD00'])
@@ -234,7 +226,7 @@ def ChangeRotatingPlane_Forces():
         Nzetaeta3_arrow_source.data = dict(xS=[-5*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], xE=[-5*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], yS=[(-15-5*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], yE=[(-15-5*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], lW = [5])
         Nzetaeta4_arrow_source.data = dict(xS=[5*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], xE=[5*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], yS=[(-15-5*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], yE=[(-15-5*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], lW = [5])
    
-#plotting Vectors as arrows on the squares
+### Figure 1: Plotting Arrows
 NxP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NxP_arrow_source,line_color="#E37222")
 
@@ -259,7 +251,7 @@ Nxy3_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=1
 Nxy4_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nxy4_arrow_source,line_color="#0065BD")
 
-#Figure 1 rotating Plane
+### Figure 3: Plotting Arrows
 Rotating_Plane_glyph = Square(x='x',y='y',angle='angle',size='size', fill_color = '#c3c3c3')
 NzetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NzetaP_arrow_source,line_color="#E37222")
@@ -278,18 +270,19 @@ Nzetaeta3_arrow_glyph= Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, si
 Nzetaeta4_arrow_glyph=Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta4_arrow_source,line_color="#0065BD")
 
-#Figure 2 Mohr Circle 
+### Figure 2: Plotting Mohr Circle 
 Mohr_Circle_glyph = Circle(x='x',y='y',radius='radius', radius_dimension='y', fill_color='#c3c3c3', fill_alpha=0.5)
 
+### Figure 1: Define dimensions
 figure1 = figure(title="Stress State A", tools="", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
 
-#figure1.square([0], [-15], size=75, color="red", alpha=0.5,angle = pi/4)
-figure1.square([0], [15], size=75, color='#c3c3c3', alpha=0.5)
+### Figure 1: Add geometry
+figure1.square([0], [0], size=75, color='#c3c3c3', alpha=0.5)
 
 figure1.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
-                   x_start=0, y_start=15, x_end=25, y_end=15))
+                   x_start=0, y_start=0, x_end=25, y_end=0))
 figure1.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
-                   x_start=0, y_start=15, x_end=0, y_end=0))
+                   x_start=0, y_start=0, x_end=0, y_end=-20))
 figure1.add_layout(NxP_arrow_glyph)
 figure1.add_layout(NxN_arrow_glyph)
 figure1.add_layout(NyP_arrow_glyph)
@@ -299,8 +292,11 @@ figure1.add_layout(Nxy2_arrow_glyph)
 figure1.add_layout(Nxy3_arrow_glyph)
 figure1.add_layout(Nxy4_arrow_glyph)
 
+
+### Figure 3: Define dimensions
 figure3 = figure(title="Stress State B", tools="", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
-#Figure 3 rotating plane
+
+### Figure 3: Add geometry
 figure3.add_layout(NzetaP_arrow_glyph)
 figure3.add_layout(NzetaN_arrow_glyph)
 figure3.add_layout(NetaP_arrow_glyph)
@@ -318,7 +314,7 @@ figure1.add_layout(figure1_labels)
 
 
 
-
+### Figure 2: Define dimensions
 figure2 = figure(title="", tools="", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
 
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
@@ -363,20 +359,21 @@ figure2.yaxis.major_tick_line_color=None
 figure2.yaxis.major_label_text_color=None
 figure2.yaxis.minor_tick_line_color=None
 figure2.yaxis.axis_line_color=None
-#initialising all column data for th initial plot
+
+### Initialising all column data for th initial plot
 init()
 
-#creating  sliders to change Normal and Tangential Forces
-Normal_X_slider= Slider(title="Normal force in X direction (N)",value= 10,start = -10, end = 10, step = 1)
+### Creating  sliders to change Normal and Tangential Forces
+Normal_X_slider= Slider(title="Normal force in X direction (N)",value= 0,start = -10, end = 10, step = 1)
 Normal_X_slider.on_change('value',NormalForceX)
 
-Normal_Y_slider= Slider(title="Normal force in Y direction (N)",value= 10,start = -10, end = 10, step = 1)
+Normal_Y_slider= Slider(title="Normal force in Y direction (N)",value= 0,start = -10, end = 10, step = 1)
 Normal_Y_slider.on_change('value',NormalForceY)
 
-Tangential_XY_slider= Slider(title="Shear force (N)",value= 10,start = -10, end = 10, step = 1)
+Tangential_XY_slider= Slider(title="Shear force (N)",value= 0,start = 0, end = 10, step = 1)
 Tangential_XY_slider.on_change('value',TangentialXY)
 
-Plane_Angle_slider= Slider(title="Angle of cross section (º)",value= 45,start = 0, end = 90, step = 5)
+Plane_Angle_slider= Slider(title="Angle of cross section (º)",value= 0,start = 0, end = 90, step = 5)
 Plane_Angle_slider.on_change('value',changePlaneAngle)
 
 
