@@ -62,15 +62,15 @@ Nzetaeta4_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], 
 
 
 ### Labels
-Figure1Perm_Label_source = ColumnDataSource(data=dict(x=[21,-3.5],
-                                    y=[11.5, -3],names=['x', 'z']))
+Figure1Perm_Label_source = ColumnDataSource(data=dict(x=[22,1],
+                                    y=[-5, -22],names=['x', 'z']))
 Figure2Perm_Label_source = ColumnDataSource(data=dict(x=[26,-3.5],
                                     y=[-3.5, 26],names=['sigma', 'tau']))
 Figure2Moving_Label_source = ColumnDataSource(data=dict(x=[],
                                     y=[],names=[]))
 
 
-### Data structures for Figure 2 ie the Mohr circle and lines 
+### Figure 2: Data structures
 Mohr_Circle_source = ColumnDataSource(data=dict(x=[], y=[], radius=[]))
 
 
@@ -88,43 +88,43 @@ def init():
     Nzetaeta =float((-(((Nx-Ny)/2)*sin(2*P_Angle)))+Nxy*cos(2*P_Angle))
 
     ## Figure 1: Set values for arrows
-    NxP_arrow_source.data  = dict(xS=[5], xE=[10], yS=[15], yE=[15], lW = [5])
-    NxN_arrow_source.data  = dict(xS=[-5], xE=[-15], yS=[15], yE=[15], lW = [5])
-    NyP_arrow_source.data  = dict(xS=[0], xE=[0], yS=[20], yE=[30], lW = [5])
-    NyN_arrow_source.data  = dict(xS=[0], xE=[0], yS=[10], yE=[0], lW = [5])
-    Nxy1_arrow_source.data = dict(xS=[5], xE=[5], yS=[10], yE=[20], lW = [5])
-    Nxy2_arrow_source.data = dict(xS=[-5], xE=[5], yS=[20], yE=[20], lW = [5])
-    Nxy3_arrow_source.data = dict(xS=[-5], xE=[-5], yS=[20], yE=[10], lW = [5])
-    Nxy4_arrow_source.data = dict(xS=[5], xE=[-5], yS=[10], yE=[10], lW = [5])
+    NxP_arrow_source.data  = dict(xS=[5], xE=[5], yS=[0], yE=[0], lW = [1])
+    NxN_arrow_source.data  = dict(xS=[-5], xE=[-5], yS=[0], yE=[0], lW = [1])
+    NyP_arrow_source.data  = dict(xS=[0], xE=[0], yS=[5], yE=[5], lW = [1])
+    NyN_arrow_source.data  = dict(xS=[0], xE=[0], yS=[-5], yE=[-5], lW = [1])
+    Nxy1_arrow_source.data = dict(xS=[5], xE=[5], yS=[0], yE=[0], lW = [5])
+    Nxy2_arrow_source.data = dict(xS=[0], xE=[0], yS=[5], yE=[5], lW = [5])
+    Nxy3_arrow_source.data = dict(xS=[-5], xE=[-5], yS=[0], yE=[0], lW = [5])
+    Nxy4_arrow_source.data = dict(xS=[0], xE=[0], yS=[-5], yE=[-5], lW = [5])
      
-    
     ## Figure 3: Rotating plane
     Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[0*(pi/180)],size = [80])
-    rleft_y=0
-    rleft_x=centreX-radius
 
-    ### Figure 2 
+    ## Figure 2 
     Mohr_Circle_source.data = dict(x=[centreX], y=[0], radius=[radius])
+
     #OriginalPlane_line_source.data = dict(x=[Ny,Ny,Nx,Nx], y=[0,-Nxy,Nxy,0])
     OriginalPlane_line_source.data = dict(x=[rleft_x,Ny,Ny], y=[rleft_y,Nxy,0])
+
     #Newplane_line_source.data = dict(x=[Neta,Neta,Nzeta,Nzeta], y=[0,-Nzetaeta,Nzetaeta,0])
     Newplane_line_source.data = dict(x=[rleft_x,Neta,Neta], y=[rleft_y,Nzetaeta,0])
-    #Newplane_line_source.data = dict(x=[rleft_x,Ny,Ny], y=[rleft_y,Nxy,0])    
     
-
     Figure2Moving_Label_source.data = dict(x=[Nx,Ny,0],y=[-3,-3,Nxy],
-                                           names =[u"\u03C3"u"\u2093", u"\u03C3"u"y","Tau_x_z"],
+                                           names =[u"\u03C3"u"\u2093", u"\u03C3"u"y","t"],
                                            colors=['#E37222','#E37222','#A2AD00'])
+
+ 
+
 
 def NormalForceX(attr,old,new):
     global Nx
     Nx = new  
     if(new<0):
-        NxP_arrow_source.data  = dict(xS=[5-new], xE=[5], yS=[15], yE=[15], lW = [5])
-        NxN_arrow_source.data  = dict(xS=[-5+new], xE=[-5], yS=[15], yE=[15], lW = [5])  
+        NxP_arrow_source.data  = dict(xS=[5-new], xE=[5], yS=[0], yE=[0], lW = [1])
+        NxN_arrow_source.data  = dict(xS=[-5+new], xE=[-5], yS=[0], yE=[0], lW = [1])  
     else:
-        NxP_arrow_source.data  = dict(xS=[5], xE=[5+new], yS=[15], yE=[15], lW = [5])
-        NxN_arrow_source.data  = dict(xS=[-5], xE=[-5-new], yS=[15], yE=[15], lW = [5])
+        NxP_arrow_source.data  = dict(xS=[5], xE=[5+new], yS=[0], yE=[0], lW = [1])
+        NxN_arrow_source.data  = dict(xS=[-5], xE=[-5-new], yS=[0], yE=[0], lW = [1])
         
     ChangeMohrCircle()
     ChangeRotatingPlane_Forces()
@@ -132,11 +132,11 @@ def NormalForceX(attr,old,new):
 def NormalForceY(attr,old,new):
     global Ny   
     if(new<0):
-        NyP_arrow_source.data  = dict(xS=[0], xE=[0], yS=[20-new], yE=[20], lW = [5])
-        NyN_arrow_source.data  = dict(xS=[0], xE=[0], yS=[10+new], yE=[10], lW = [5])
+        NyP_arrow_source.data  = dict(xS=[0], xE=[0], yS=[5-new], yE=[5], lW = [1])
+        NyN_arrow_source.data  = dict(xS=[0], xE=[0], yS=[-5+new], yE=[-5], lW = [1])
     else:
-        NyP_arrow_source.data  = dict(xS=[0], xE=[0], yS=[20], yE=[20+new], lW = [5])
-        NyN_arrow_source.data  = dict(xS=[0], xE=[0], yS=[10], yE=[10-new], lW = [5])
+        NyP_arrow_source.data  = dict(xS=[0], xE=[0], yS=[5], yE=[5+new], lW = [1])
+        NyN_arrow_source.data  = dict(xS=[0], xE=[0], yS=[-5], yE=[-5-new], lW = [1])
     Ny = new
     ChangeMohrCircle()
     ChangeRotatingPlane_Forces()
@@ -144,23 +144,24 @@ def NormalForceY(attr,old,new):
 def TangentialXY(attr,old,new):
     global Nxy     
     if(new<0):
-         Nxy1_arrow_source.data = dict(xS=[5], xE=[5], yS=[15-(new/2)], yE=[15+(new/2)], lW = [5])
-         Nxy2_arrow_source.data = dict(xS=[-5], xE=[-5], yS=[15+(new/2)], yE=[15-(new/2)], lW = [5])
-         Nxy3_arrow_source.data = dict(xS=[-new/2], xE=[new/2], yS=[20], yE=[20], lW = [5])
-         Nxy4_arrow_source.data = dict(xS=[(new/2)], xE=[(-new/2)], yS=[10], yE=[10], lW = [5])
+         Nxy1_arrow_source.data = dict(xS=[5], xE=[5], yS=[0-(new/2)], yE=[0+(new/2)], lW = [5])
+         Nxy2_arrow_source.data = dict(xS=[-5], xE=[-5], yS=[0+(new/2)], yE=[0-(new/2)], lW = [5])
+         Nxy3_arrow_source.data = dict(xS=[-new/2], xE=[new/2], yS=[5], yE=[5], lW = [5])
+         Nxy4_arrow_source.data = dict(xS=[(new/2)], xE=[(-new/2)], yS=[-5], yE=[-5], lW = [5])
     else:     
-         Nxy1_arrow_source.data = dict(xS=[5], xE=[5], yS=[15-(new/2)], yE=[15+(new/2)], lW = [5])
-         Nxy2_arrow_source.data = dict(xS=[-5], xE=[-5], yS=[15+(new/2)], yE=[15-(new/2)], lW = [5])
-         Nxy3_arrow_source.data = dict(xS=[-new/2], xE=[new/2], yS=[20], yE=[20], lW = [5])
-         Nxy4_arrow_source.data = dict(xS=[(new/2)], xE=[-(new/2)], yS=[10], yE=[10], lW = [5])   
+         Nxy1_arrow_source.data = dict(xS=[5], xE=[5], yS=[0-(new/2)], yE=[0+(new/2)], lW = [5])
+         Nxy2_arrow_source.data = dict(xS=[-5], xE=[-5], yS=[0+(new/2)], yE=[0-(new/2)], lW = [5])
+         Nxy3_arrow_source.data = dict(xS=[-new/2], xE=[new/2], yS=[5], yE=[5], lW = [5])
+         Nxy4_arrow_source.data = dict(xS=[(new/2)], xE=[-(new/2)], yS=[-5], yE=[-5], lW = [5])   
     Nxy = new
     ChangeMohrCircle()
     ChangeRotatingPlane_Forces()
         
 def changePlaneAngle(attr,old,new):
      global P_Angle
-     P_Angle = new*(pi/180)
-     Rotating_Plane_source.data = dict(x=[0], y=[-15],angle =[P_Angle],size = [80])
+     #P_Angle = new*(pi/180)
+     P_Angle = -new*(pi/180)
+     Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[P_Angle],size = [80])
      ChangeMohrCircle()
      ChangeRotatingPlane_Forces()
         
@@ -174,7 +175,7 @@ def ChangeMohrCircle():
     #OriginalPlane_line_source.data = dict(x=[Ny,Ny,Nx,Nx], y=[0,-Nxy,Nxy,0])
     OriginalPlane_line_source.data = dict(x=[rleft_x,Ny,Ny], y=[rleft_y,Nxy,0])
   
-    #for second plane
+    ### For second plane
     Nzeta = float(((Nx+Ny)/2)+(((Nx-Ny)/2)*cos(2*P_Angle))+Nxy*sin(2*P_Angle))
     Neta  = float(((Nx+Ny)/2)-(((Nx-Ny)/2)*cos(2*P_Angle))-Nxy*sin(2*P_Angle))
     Nzetaeta = float((-(((Nx-Ny)/2)*sin(2*P_Angle)))+Nxy*cos(2*P_Angle))
@@ -317,6 +318,8 @@ figure1.add_layout(figure1_labels)
 ### Figure 2: Define dimensions
 figure2 = figure(title="", tools="", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
 
+
+### Figure 2: Add geometry
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=-30, y_start=0, x_end=30, y_end=0))
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
@@ -342,6 +345,8 @@ figure2_labels2 = LabelSet(x='x', y='y', text='names', level='glyph', x_offset=5
 figure2.add_layout(figure2_labels1)
 figure2.add_layout(figure2_labels2)
 
+
+### WTF?
 figure1.xaxis.major_tick_line_color=None
 figure1.xaxis.major_label_text_color=None
 figure1.xaxis.minor_tick_line_color=None
