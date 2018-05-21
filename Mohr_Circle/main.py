@@ -33,6 +33,7 @@ rleft_x=centreX-radius
 rleft_z=0
 
 
+
 ### Initializing variables
 
 ## Figure 1: 
@@ -47,8 +48,9 @@ Nxz3_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = 
 Nxz4_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 
 ##Figure 2: Mohr Circle
-OriginalPlane_line_source = ColumnDataSource(data=dict(x=[],y=[]))
+
 Newplane_line_source = ColumnDataSource(data=dict(x=[],y=[]))
+OriginalPlane_line_source = ColumnDataSource(data=dict(x=[],y=[]))
 
 ##Figure 3: Rotating plane 
 Rotating_Plane_source = ColumnDataSource(data=dict(x=[], y=[],angle = [],size =[]))
@@ -66,8 +68,8 @@ Nzetaeta4_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], 
 ### Labels
 Figure1Perm_Label_source = ColumnDataSource(data=dict(x=[22,1],
                                     y=[-5, -27],names=['x', 'z']))
-Figure2Perm_Label_source = ColumnDataSource(data=dict(x=[27.5,-3.5],
-                                    y=[-5, 26],names=[u"\u03C3", u"\u03C4"]))
+Figure2Perm_Label_source = ColumnDataSource(data=dict(x=[20.5,-3.5],
+                                    y=[-3, 18],names=[u"\u03C3", u"\u03C4"]))
 Figure2Moving_Label_source = ColumnDataSource(data=dict(x=[],
                                     y=[],names=[]))
 
@@ -78,6 +80,8 @@ Mohr_Circle_source = ColumnDataSource(data=dict(x=[], y=[], radius=[]))
 
 ###Initial Calculations and Value settings
 def init():
+
+
     
     P_Angle = 0*(pi/180)
     radius = 10
@@ -98,6 +102,13 @@ def init():
     Neta  = float(((Nx+Nz)/2)-(((Nx-Nz)/2)*cos(2*P_Angle))-Nxz*sin(2*P_Angle))
     Nzetaeta =float((-(((Nx-Nz)/2)*sin(2*P_Angle)))+Nxz*cos(2*P_Angle))
 
+    Normal_X_slider.value=0
+    Normal_Z_slider.value=0
+    Tangential_XZ_slider.value=0
+    Plane_Angle_slider.value=0
+
+
+
     ## Figure 1: Set values for arrows
 
     NxP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -113,7 +124,72 @@ def init():
 
 
     ## Figure 3: Rotating plane
-    Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[0*(pi/180)],size = [75])
+    #Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[0*(pi/180)],size = [75])
+    #NzetaP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    #NzetaN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    #NetaP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    #NetaN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    #Nzetaeta1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    #Nzetaeta2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    #Nzetaeta3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    #Nzetaeta4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+
+
+    ## Figure 2 
+    #Mohr_Circle_source.data = dict(x=[centreX], y=[0], radius=[radius])
+
+
+    #OriginalPlane_line_source.data = dict(x=[rleft_x,Nz,Nz], y=[rleft_z,Nxz,0])
+    #Newplane_line_source.data = dict(x=[rleft_x,Neta,Neta], y=[rleft_z,Nzetaeta,0])
+    
+
+    #Figure2Moving_Label_source.data = dict(x=[Nx,Nz,1,Nx-0.7,Nz-0.7,-0.5,Nz,Neta+1.5],y=[-4,-4,Nxz-1.4,-1.4,-1.4,Nxz-1.2,Nxz,Nzetaeta],
+                                          # names =[u"\u03C3"u"\u0078",u"\u03C3"u"\u007A",u"\u03C4"u"\u0078"u"\u007A","x","x","-","A","B"])
+
+def reset():
+    
+    P_Angle = 0*(pi/180)
+    radius = 10
+    centreX = 10
+    Nx =0
+    Nz =0
+    Nxz =0
+    Neta =0 
+    Nzeta =0 
+    Nzetaeta =0  
+    rleft_x=centreX-radius
+    rleft_z=0
+    
+    ## Calculations
+    radius = float(sqrt(pow(((Nx-Nz)/2),2)+pow(Nxz,2)))
+    centreX = float((Nx+Nz)/2)
+    Nzeta = float(((Nx+Nz)/2)+(((Nx-Nz)/2)*cos(2*P_Angle))+Nxz*sin(2*P_Angle))
+    Neta  = float(((Nx+Nz)/2)-(((Nx-Nz)/2)*cos(2*P_Angle))-Nxz*sin(2*P_Angle))
+    Nzetaeta =float((-(((Nx-Nz)/2)*sin(2*P_Angle)))+Nxz*cos(2*P_Angle))
+
+    Normal_X_slider.value=0
+    Normal_Z_slider.value=0
+    Tangential_XZ_slider.value=0
+    Plane_Angle_slider.value=0
+
+
+
+    ## Figure 1: Set values for arrows
+
+    NxP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    NxN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    NzP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    NzN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    Nxz1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    Nxz2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    Nxz3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    Nxz4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    
+    
+
+
+    ## Figure 3: Rotating plane
+    Rotating_Plane_source.data = dict(x=[], y=[],angle =[],size = [])
     NzetaP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NzetaN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NetaP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -128,17 +204,61 @@ def init():
     Mohr_Circle_source.data = dict(x=[centreX], y=[0], radius=[radius])
 
 
-    OriginalPlane_line_source.data = dict(x=[rleft_x,Nz,Nz], y=[rleft_z,Nxz,0])
-    Newplane_line_source.data = dict(x=[rleft_x,Neta,Neta], y=[rleft_z,Nzetaeta,0])
+    
+    Newplane_line_source.data = dict(x=[], y=[])
+    OriginalPlane_line_source.data = dict(x=[], y=[])
+
+    Figure2Moving_Label_source.data = dict(x=[],y=[],names =[])
+
+
+def draw():
     
 
-    Figure2Moving_Label_source.data = dict(x=[Nx,Nz,1,Nx-0.7,Nz-0.7,-0.5,Nz,Neta+1.5],y=[-4,-4,Nxz-1.4,-1.4,-1.4,Nxz-1.2,Nxz,Nzetaeta],
+
+    #Plane_Angle_slider= Slider(title="Angle of cross section (º)",value= 0,start = 0, end = 90, step = 0.5)
+    #Plane_Angle_slider.on_change('value',changePlaneAngle)
+    
+    ## Calculations
+    radius = float(sqrt(pow(((Nx-Nz)/2),2)+pow(Nxz,2)))
+    centreX = float((Nx+Nz)/2)
+    Nzeta = float(((Nx+Nz)/2)+(((Nx-Nz)/2)*cos(2*P_Angle))+Nxz*sin(2*P_Angle))
+    Neta  = float(((Nx+Nz)/2)-(((Nx-Nz)/2)*cos(2*P_Angle))-Nxz*sin(2*P_Angle))
+    Nzetaeta =float((-(((Nx-Nz)/2)*sin(2*P_Angle)))+Nxz*cos(2*P_Angle))
+
+
+
+    ## Figure 3: Rotating plane
+    Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[0*(pi/180)],size = [75])
+
+    NzetaP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    NzetaN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    NetaP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    NetaN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    Nzetaeta1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    Nzetaeta2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    Nzetaeta3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    Nzetaeta4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    ChangeRotatingPlane_Forces()
+
+    ## Figure 2 
+    Mohr_Circle_source.data = dict(x=[centreX], y=[0], radius=[radius])
+
+
+    
+    Newplane_line_source.data = dict(x=[rleft_x,Neta,Neta], y=[rleft_z,Nzetaeta,0])
+    OriginalPlane_line_source.data = dict(x=[rleft_x,Nz,Nz], y=[rleft_z,Nxz,0])
+    
+    Figure2Moving_Label_source.data = dict(x=[Nx,Nz,1,Nx-0.7,Nz-0.7,-0.5,Nz,Neta+1.5],y=[-3,-3,Nxz-1.4,-1.1,-1.1,Nxz-1.2,Nxz,Nzetaeta],
                                            names =[u"\u03C3"u"\u0078",u"\u03C3"u"\u007A",u"\u03C4"u"\u0078"u"\u007A","x","x","-","A","B"])
+    ChangeMohrCircle()
 
- 
+    
 
 
-def NormalForceX(attr,old,new):
+
+
+
+def NormalForceX_init(attr,old,new):
     global Nx
     Nx = new  
     if(new<0):
@@ -148,10 +268,10 @@ def NormalForceX(attr,old,new):
         NxP_arrow_source.data  = dict(xS=[10], xE=[10+new], yS=[0], yE=[0], lW = [3])
         NxN_arrow_source.data  = dict(xS=[-10], xE=[-10-new], yS=[0], yE=[0], lW = [3])
         
-    ChangeMohrCircle()
-    ChangeRotatingPlane_Forces()
+    #ChangeMohrCircle()
+    #ChangeRotatingPlane_Forces()
     
-def NormalForceZ(attr,old,new):
+def NormalForceZ_init(attr,old,new):
     global Nz   
     if(new<0):
         NzP_arrow_source.data  = dict(xS=[0], xE=[0], yS=[10-new], yE=[10], lW = [3])
@@ -161,10 +281,10 @@ def NormalForceZ(attr,old,new):
         NzN_arrow_source.data  = dict(xS=[0], xE=[0], yS=[-10], yE=[-10-new], lW = [3])
         
     Nz = new
-    ChangeMohrCircle()
-    ChangeRotatingPlane_Forces()
+    #ChangeMohrCircle()
+    #ChangeRotatingPlane_Forces()
     
-def TangentialXZ(attr,old,new):
+def TangentialXZ_init(attr,old,new):
     global Nxz     
     if(new<0):
          Nxz1_arrow_source.data = dict(xS=[8], xE=[8], yS=[0-(new/2)], yE=[0+(new/2)], lW = [5])
@@ -177,8 +297,8 @@ def TangentialXZ(attr,old,new):
          Nxz3_arrow_source.data = dict(xS=[-new/2], xE=[new/2], yS=[8], yE=[8], lW = [5])
          Nxz4_arrow_source.data = dict(xS=[(new/2)], xE=[-(new/2)], yS=[-8], yE=[-8], lW = [5])   
     Nxz = new
-    ChangeMohrCircle()
-    ChangeRotatingPlane_Forces()
+    #ChangeMohrCircle()
+    #ChangeRotatingPlane_Forces()
         
 def changePlaneAngle(attr,old,new):
      global P_Angle
@@ -194,7 +314,6 @@ def ChangeMohrCircle():
     rleft_z=0
     rleft_x=centreX-radius
     Mohr_Circle_source.data = dict(x=[centreX], y=[0], radius=[radius])   
-    #OriginalPlane_line_source.data = dict(x=[Nz,Nz,Nx,Nx], y=[0,-Nxz,Nxz,0])
     OriginalPlane_line_source.data = dict(x=[rleft_x,Nz,Nz], y=[rleft_z,Nxz,0])
   
     ## Calculate forces in rotated element
@@ -212,7 +331,7 @@ def ChangeMohrCircle():
 
     Newplane_line_source.data = dict(x=[rleft_x,Neta], y=[rleft_z,Nzetaeta])
 
-    Figure2Moving_Label_source.data = dict(x=[Nx,Nz,1,Nx-0.7,Nz-0.7,-0.5,Nz,Neta+1.5],y=[-4,-4,Nxz-1.4,-1.4,-1.4,Nxz-1.2,Nxz,Nzetaeta],
+    Figure2Moving_Label_source.data = dict(x=[Nx,Nz,1,Nx-0.7,Nz-0.7,-0.5,Nz,Neta+1.5],y=[-3,-3,Nxz-1.4,-1.1,-1.1,Nxz-1.2,Nxz,Nzetaeta],
                                            names =[u"\u03C3"u"\u0078",u"\u03C3"u"\u007A",u"\u03C4"u"\u0078"u"\u007A","x","x","-","A","B"])
 
 
@@ -340,19 +459,17 @@ figure3.add_glyph(Rotating_Plane_source,Rotating_Plane_glyph)
 
 
 ### Figure 2: Define dimensions
-figure2 = figure(title="", tools="", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
+figure2 = figure(title="", tools="", x_range=(-25,25), y_range=(-25,25),width=400,height=400)
 
 
 ### Figure 2: Add geometry
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
-                   x_start=-30, y_start=0, x_end=30, y_end=0))
+                   x_start=-20, y_start=0, x_end=20, y_end=0))
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
-                   x_start=0, y_start=-30, x_end=0, y_end=30))
+                   x_start=0, y_start=-20, x_end=0, y_end=20))
 figure2.add_glyph(Mohr_Circle_source,Mohr_Circle_glyph)
 
-#Originallinie
-figure2.line(x='x',y='y',source= OriginalPlane_line_source, color="black", alpha=0.5, line_width=3, line_join = 'bevel')
-figure2.circle(x='x',y='y',source= OriginalPlane_line_source, size=4, color="black", alpha=0.4)
+
 
 #Gedrehte Linie
 figure2.line(x='x',y='y',source= Newplane_line_source, color="#A2AD00", line_width=3, line_join = 'bevel')
@@ -365,6 +482,9 @@ figure2_labels2 = LabelSet(x='x', y='y', text='names', source=Figure2Moving_Labe
 figure2.add_layout(figure2_labels1)
 figure2.add_layout(figure2_labels2)
 
+#Originallinie
+figure2.line(x='x',y='y',source= OriginalPlane_line_source, color="black", alpha=0.5, line_width=3, line_join = 'bevel')
+figure2.circle(x='x',y='y',source= OriginalPlane_line_source, size=4, color="black", alpha=0.4)
 
 ### 
 figure1.xaxis.major_tick_line_color=None
@@ -375,6 +495,8 @@ figure1.yaxis.major_tick_line_color=None
 figure1.yaxis.major_label_text_color=None
 figure1.yaxis.minor_tick_line_color=None
 figure1.yaxis.axis_line_color=None
+figure1.xgrid.visible = False
+figure1.ygrid.visible = False
 
 figure2.xaxis.major_tick_line_color=None
 figure2.xaxis.major_label_text_color=None
@@ -384,6 +506,8 @@ figure2.yaxis.major_tick_line_color=None
 figure2.yaxis.major_label_text_color=None
 figure2.yaxis.minor_tick_line_color=None
 figure2.yaxis.axis_line_color=None
+figure2.xgrid.visible = False
+figure2.ygrid.visible = False
 
 figure3.xaxis.major_tick_line_color=None
 figure3.xaxis.major_label_text_color=None
@@ -393,36 +517,53 @@ figure3.yaxis.major_tick_line_color=None
 figure3.yaxis.major_label_text_color=None
 figure3.yaxis.minor_tick_line_color=None
 figure3.yaxis.axis_line_color=None
+figure3.xgrid.visible = False
+figure3.ygrid.visible = False
 
 
-
-### Initialising all column data for th initial plot
-init()
 
 ### Creating  sliders to change Normal and Tangential Forces
 Normal_X_slider= Slider(title="Normal force in X direction (N)",value= 0,start = -10, end = 10, step = 0.5)
-Normal_X_slider.on_change('value',NormalForceX)
-
+#if locked==0:
+Normal_X_slider.on_change('value',NormalForceX_init)
+    
+    
 Normal_Z_slider= Slider(title="Normal force in Z direction (N)",value= 0,start = -10, end = 10, step = 0.5)
-Normal_Z_slider.on_change('value',NormalForceZ)
+#if locked==0:
+Normal_Z_slider.on_change('value',NormalForceZ_init)
+    
 
 Tangential_XZ_slider= Slider(title="Shear force (N)",value= 0,start = 0, end = 10, step = 0.5)
-Tangential_XZ_slider.on_change('value',TangentialXZ)
+#if locked==0:
+Tangential_XZ_slider.on_change('value',TangentialXZ_init)
+    
 
 Plane_Angle_slider= Slider(title="Angle of cross section (º)",value= 0,start = 0, end = 90, step = 0.5)
 Plane_Angle_slider.on_change('value',changePlaneAngle)
 
 ###Create Reset Button:
-button = Button(label="Reset", button_type="success")
+reset_button = Button(label="Reset", button_type="success")
 
 ###Let program know what functions button calls when clicked:
+reset_button.on_click(reset)
 
-button.on_click(init)
+
+###Create Draw Button:
+draw_button = Button(label="Draw", button_type="success")
+
+###Let program know what functions button calls when clicked:
+draw_button.on_click(draw)
+
+
+
+
+### Initialising all column data for the initial plot
+init()
 
 ### Adding description from HTML file
 description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
-curdoc().add_root(column(description,row(column(figure1,Normal_X_slider,Normal_Z_slider, row(Tangential_XZ_slider,button)),figure2,column(figure3, Plane_Angle_slider))))
+curdoc().add_root(column(description,row(column(figure1,Normal_X_slider,Normal_Z_slider,Tangential_XZ_slider),column(figure2,draw_button,reset_button),column(figure3, Plane_Angle_slider))))
 curdoc().title = "Mohr Circle"
 
