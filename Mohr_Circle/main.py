@@ -54,6 +54,7 @@ OriginalPlane_line_source = ColumnDataSource(data=dict(x=[],y=[]))
 
 ##Figure 3: Rotating plane 
 Rotating_Plane_source = ColumnDataSource(data=dict(x=[], y=[],angle = [],size =[]))
+Rotating_Plane_red_source = ColumnDataSource(data=dict(x=[], y=[],angle = [],size =[]))
 
 NzetaP_arrow_source    = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 NzetaN_arrow_source    = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
@@ -80,7 +81,6 @@ Figure3Perm_Label_source = ColumnDataSource(data=dict(x=[22,1],
 
 ### Figure 2: Data structures
 Mohr_Circle_source = ColumnDataSource(data=dict(x=[], y=[], radius=[]))
-####
 Wedge_source = ColumnDataSource(data=dict(x=[], y=[],radius=[], sA=[], eA=[]))
 
 ###Initial Calculations and Value settings
@@ -164,19 +164,17 @@ def reset():
     
     ### Figure 2 Reset Circle
     Mohr_Circle_source.data = dict(x=[centreX], y=[0], radius=[radius])
-
     Newplane_line_source.data = dict(x=[], y=[])
     OriginalPlane_line_source.data = dict(x=[], y=[])
-
     Figure2Moving_Label_source.data = dict(x=[],y=[],names =[])
     Figure2Show_Label_source.data = dict(x=[],y=[],names =[])
-
-    ####
     Wedge_source.data = dict(x=[], y=[],radius=[], sA=[], eA=[])
 
 
     ## Figure 3: Reset rotating plane
     Rotating_Plane_source.data = dict(x=[], y=[],angle =[],size = [])
+    Rotating_Plane_red_source.data = dict(x=[], y=[],angle =[],size = [])
+
     NzetaP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NzetaN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NetaP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -257,19 +255,12 @@ def show():
         Neta  = Nx
         Nzetaeta =-Nxz
 
-    #Newplane_line_source.data = dict(x=[rleft_x,Neta], y=[rleft_z,Nzetaeta])
-
-
-  
-
     ## Print Labels for principal stress and direction
-    ####
     alpha=180*atan(Nxz/(Nz+(-rleft_x)))/(pi)
     alpha=int(alpha+0.5)
     Figure2Show_Label_source.data = dict(x=[rleft_x-3,rright_x+0.5,rleft_x-0.7,rright_x-0.5,-22,-19,centreX+0.5,centreX-0.5],y=[0,0,-1.1,-1.1,15,15,0,-1.1], names =[u"\u03C3"u"\u2082",u"\u03C3"u"\u2081","x","x",u"\u03B1"u"\u2080","=" + str(alpha) + "°",u"\u03C3"u"\u2098","x"])
     Wedge_source.data=dict(x=[rleft_x], y=[0],radius=[radius/2], sA=[atan(Nxz/(Nz+(-rleft_x)))], eA=[0])
     Wedge_glyph = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
-    #figure2.add_glyph(Wedge_source, Wedge_glyph)
 
 
 
@@ -319,8 +310,26 @@ def TangentialXZ_init(attr,old,new):
         
 def changePlaneAngle(attr,old,new):
      global P_Angle
+     alpha= new
      P_Angle = -new*(pi/180)
-     Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[-P_Angle],size = [75])
+
+
+     ## Paint Rotating Plane red if angle=alpha_0
+     radius = float(sqrt(pow(((Nx-Nz)/2),2)+pow(Nxz,2)))
+     centreX = float((Nx+Nz)/2)
+     rleft_z=0
+     rleft_x=centreX-radius
+     rright_x=centreX+radius
+     alpha_0=180*atan(Nxz/(Nz+(-rleft_x+0.00001)))/(pi)
+     alpha_0=int(alpha_0+0.5)
+     if alpha == alpha_0:
+        Rotating_Plane_red_source.data = dict(x=[0], y=[0],angle =[-P_Angle],size = [75])
+        Rotating_Plane_source.data = dict(x=[], y=[],angle =[],size = [])
+     else:
+        Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[-P_Angle],size = [75])
+        Rotating_Plane_red_source.data = dict(x=[], y=[],angle =[],size = [])
+
+
      ChangeMohrCircle()
      ChangeRotatingPlane_Forces()
         
@@ -421,6 +430,7 @@ Wedge_glyph = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="
 
 ### Figure 3: Define Geometry
 Rotating_Plane_glyph = Square(x='x',y='y',angle='angle',size='size', fill_color = '#A2AD00', fill_alpha=0.5)
+Rotating_Plane_red_glyph = Square(x='x',y='y',angle='angle',size='size', fill_color = 'firebrick', fill_alpha=0.5)
 
 NzetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NzetaP_arrow_source,line_color="#E37222")
@@ -504,7 +514,7 @@ figure3.add_layout(Nzetaeta2_arrow_glyph)
 figure3.add_layout(Nzetaeta3_arrow_glyph)
 figure3.add_layout(Nzetaeta4_arrow_glyph)
 figure3.add_glyph(Rotating_Plane_source,Rotating_Plane_glyph)
-
+figure3.add_glyph(Rotating_Plane_red_source,Rotating_Plane_red_glyph)
 
 
 ### Turn off visuals
