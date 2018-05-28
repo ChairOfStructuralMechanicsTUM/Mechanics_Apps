@@ -152,7 +152,6 @@ def reset():
 
 
     ### Figure 1: Reset values for arrows
-
     NxP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NxN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NzP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -199,8 +198,7 @@ def draw():
     Neta  = float(((Nx+Nz)/2)-(((Nx-Nz)/2)*cos(2*P_Angle))-Nxz*sin(2*P_Angle))
     Nzetaeta =float((-(((Nx-Nz)/2)*sin(2*P_Angle)))+Nxz*cos(2*P_Angle))
 
-
-
+  
     ## Figure 3: Rotating plane
     Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[-P_Angle],size = [75])
 
@@ -272,6 +270,9 @@ def NormalForceX_init(attr,old,new):
     if(new<0):
         NxP_arrow_source.data  = dict(xS=[10-new], xE=[10], yS=[0], yE=[0], lW = [3])
         NxN_arrow_source.data  = dict(xS=[-10+new], xE=[-10], yS=[0], yE=[0], lW = [3]) 
+    elif(new==0):
+        NxP_arrow_source.data=dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        NxN_arrow_source.data=dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     else:
         NxP_arrow_source.data  = dict(xS=[10], xE=[10+new], yS=[0], yE=[0], lW = [3])
         NxN_arrow_source.data  = dict(xS=[-10], xE=[-10-new], yS=[0], yE=[0], lW = [3])
@@ -281,30 +282,40 @@ def NormalForceX_init(attr,old,new):
     
 def NormalForceZ_init(attr,old,new):
     global Nz   
+    Nz = new
     if(new<0):
         NzP_arrow_source.data  = dict(xS=[0], xE=[0], yS=[10-new], yE=[10], lW = [3])
         NzN_arrow_source.data  = dict(xS=[0], xE=[0], yS=[-10+new], yE=[-10], lW = [3])
+    elif (new==0):
+        NzP_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        NzN_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     else:
         NzP_arrow_source.data  = dict(xS=[0], xE=[0], yS=[10], yE=[10+new], lW = [3])
         NzN_arrow_source.data  = dict(xS=[0], xE=[0], yS=[-10], yE=[-10-new], lW = [3])
         
-    Nz = new
+    
     #ChangeMohrCircle()
     #ChangeRotatingPlane_Forces()
     
 def TangentialXZ_init(attr,old,new):
     global Nxz     
+    Nxz = new
     if(new<0):
          Nxz1_arrow_source.data = dict(xS=[8], xE=[8], yS=[0-(new/2)], yE=[0+(new/2)], lW = [5])
          Nxz2_arrow_source.data = dict(xS=[-8], xE=[-8], yS=[0+(new/2)], yE=[0-(new/2)], lW = [5])
          Nxz3_arrow_source.data = dict(xS=[-new/2], xE=[new/2], yS=[8], yE=[8], lW = [5])
          Nxz4_arrow_source.data = dict(xS=[(new/2)], xE=[(-new/2)], yS=[-8], yE=[-8], lW = [5])
+    elif(new==0):
+         Nxz1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+         Nxz2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+         Nxz3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+         Nxz4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])         
     else:     
          Nxz1_arrow_source.data = dict(xS=[8], xE=[8], yS=[0-(new/2)], yE=[0+(new/2)], lW = [5])
          Nxz2_arrow_source.data = dict(xS=[-8], xE=[-8], yS=[0+(new/2)], yE=[0-(new/2)], lW = [5])
          Nxz3_arrow_source.data = dict(xS=[-new/2], xE=[new/2], yS=[8], yE=[8], lW = [5])
          Nxz4_arrow_source.data = dict(xS=[(new/2)], xE=[-(new/2)], yS=[-8], yE=[-8], lW = [5])   
-    Nxz = new
+    
     #ChangeMohrCircle()
     #ChangeRotatingPlane_Forces()
         
