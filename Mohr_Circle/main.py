@@ -74,14 +74,14 @@ Nzetaeta2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], 
 Nzetaeta3_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 Nzetaeta4_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 ##Figure 3, Rectangles:
-#NzetaP_rect_source    = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[]))
-#NzetaN_rect_source    = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[]))
-#NetaP_rect_source     = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[]))
-#NetaN_rect_source     = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[]))
-#Nzetaeta1_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[]))
-#Nzetaeta2_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[]))
-#Nzetaeta3_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[]))
-#Nzetaeta4_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[]))
+NzetaP_rect_source    = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+NzetaN_rect_source    = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+NetaP_rect_source     = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+NetaN_rect_source     = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+Nzetaeta1_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+Nzetaeta2_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+Nzetaeta3_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+Nzetaeta4_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
 
 
 
@@ -224,14 +224,14 @@ def reset():
     Nzetaeta3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     Nzetaeta4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     ## Figure 3, Reset Rectangles:
-    #NzetaP_rect_source.data    = dict(x=[], y=[], w=[], h=[])
-    #NzetaN_rect_source.data    = dict(x=[], y=[], w=[], h=[])
-    #NetaP_rect_source.data     = dict(x=[], y=[], w=[], h=[])
-    #NetaN_rect_source.data     = dict(x=[], y=[], w=[], h=[])
-    #Nzetaeta1_rect_source.data = dict(x=[], y=[], w=[], h=[])
-    #Nzetaeta2_rect_source.data = dict(x=[], y=[], w=[], h=[])
-    #Nzetaeta3_rect_source.data = dict(x=[], y=[], w=[], h=[])
-    #Nzetaeta4_rect_source.data = dict(x=[], y=[], w=[], h=[])
+    NzetaP_rect_source.data    = dict(x=[], y=[], w=[], h=[], angle=[])
+    NzetaN_rect_source.data    = dict(x=[], y=[], w=[], h=[], angle=[])
+    NetaP_rect_source.data     = dict(x=[], y=[], w=[], h=[], angle=[])
+    NetaN_rect_source.data     = dict(x=[], y=[], w=[], h=[], angle=[])
+    Nzetaeta1_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
+    Nzetaeta2_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
+    Nzetaeta3_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
+    Nzetaeta4_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
 
 
 
@@ -305,7 +305,7 @@ def show():
         Nzetaeta =-Nxz
 
     ## Print Labels for principal stress and direction
-    alpha=180*atan(Nxz/(Nz+(-rleft_x)))/(pi)
+    alpha=180*atan(Nxz/(Nz+(-rleft_x+0.00001)))/(pi)
     alpha=int(alpha+0.5)
     Figure2Show_Label_source.data = dict(x=[rleft_x-3,rright_x+0.5,rleft_x-0.7,rright_x-0.5,-22,-19,centreX+0.5,centreX-0.5],y=[0,0,-1.1,-1.1,15,15,0,-1.1], names =[u"\u03C3"u"\u2082",u"\u03C3"u"\u2081","x","x",u"\u03B1"u"\u2080","=" + str(alpha) + "°",u"\u03C3"u"\u2098","x"])
     Wedge_source.data=dict(x=[rleft_x], y=[0],radius=[radius/2], sA=[atan(Nxz/(Nz+(-rleft_x)))], eA=[0])
@@ -437,6 +437,7 @@ def ChangeMohrCircle():
     Nzeta = float(((Nx+Nz)/2)+(((Nx-Nz)/2)*cos(2*P_Angle))+Nxz*sin(2*P_Angle))
     Neta  = float(((Nx+Nz)/2)-(((Nx-Nz)/2)*cos(2*P_Angle))-Nxz*sin(2*P_Angle))
     Nzetaeta = float((-(((Nx-Nz)/2)*sin(2*P_Angle)))+Nxz*cos(2*P_Angle))
+
     if P_Angle == 0:
         Nzeta = Nx
         Neta  = Nz
@@ -462,34 +463,109 @@ def ChangeRotatingPlane_Forces():
     Nzeta = float(float((Nx+Nz)/2)+(float((Nx-Nz)/2)*cos(2*P_Angle))+float(Nxz*sin(2*P_Angle)))
     Neta  = float(float((Nx+Nz)/2)-(float((Nx-Nz)/2)*cos(2*P_Angle))-float(Nxz*sin(2*P_Angle)))
     Nzetaeta = float((-(((Nx-Nz)/2)*sin(2*P_Angle)))+Nxz*cos(2*P_Angle))
+    ####
+    #Nzetaeta = int(Nzetaeta+0.05)    
     
     global P_Angle
     P_Angle=-P_Angle
+    ####
+    alpha=180*P_Angle/pi
 
-    if Nzeta>0:
-        NzetaP_arrow_source.data = dict(xS=[10*cos(P_Angle)], xE=[(10+Nzeta)*cos(P_Angle)], yS=[(10*sin(P_Angle))], yE=[(((10+Nzeta)*sin(P_Angle)))], lW = [3])
-        NzetaN_arrow_source.data = dict(xS=[-10*cos(P_Angle)], xE=[(-10-Nzeta)*cos(P_Angle)], yS=[0-(10*sin(P_Angle))], yE=[(0-((10+Nzeta)*sin(P_Angle)))], lW = [3])
-    else:
-        NzetaP_arrow_source.data = dict(xS=[(10-Nzeta)*cos(P_Angle)], xE=[10*cos(P_Angle)], yS=[0+((10-Nzeta)*sin(P_Angle))], yE=[0+(10*sin(P_Angle))], lW = [3])
-        NzetaN_arrow_source.data = dict(xS=[(-10+Nzeta)*cos(P_Angle)], xE=[-10 *cos(P_Angle)], yS=[(0-((10-Nzeta)*sin(P_Angle)))], yE=[0-(10*sin(P_Angle))], lW = [3])
-
-    if Neta>0:
-        NetaP_arrow_source.data = dict(xS=[10*cos((pi/2)+P_Angle)], xE=[(10+Neta)*cos((pi/2)+P_Angle)], yS=[(10*sin((pi/2)+P_Angle))], yE=[((10+Neta)*sin((pi/2)+P_Angle))], lW = [3])
-        NetaN_arrow_source.data =  dict(xS=[10*sin(P_Angle)], xE=[(10+Neta)*sin(P_Angle)], yS=[-(10*cos(P_Angle))], yE=[-((10+Neta)*cos(P_Angle))], lW = [3])      
-    else:
-        NetaP_arrow_source.data = dict(xS=[(10-Neta)*cos((pi/2)+P_Angle)],xE=[10*cos((pi/2)+P_Angle)],yS=[((10-Neta)*sin((pi/2)+P_Angle))], yE=[0+(10*sin((pi/2)+P_Angle))],  lW = [3])
-        NetaN_arrow_source.data = dict(xS=[(10-Neta)*sin(P_Angle)],xE=[10*sin(P_Angle)], yS=[-(10-Neta)*cos(P_Angle)],yE=[-10*cos(P_Angle)], lW = [3])      
+    radius = float(sqrt(pow(((Nx-Nz)/2),2)+pow(Nxz,2)))
+    centreX = float((Nx+Nz)/2)
+    rleft_z=0
+    rleft_x=centreX-radius
+    rright_x=centreX+radius
+    alpha_0=180*atan(Nxz/(Nz+(-rleft_x+0.00001)))/(pi)
+    alpha_0=int(alpha_0+0.5)
+    print(alpha_0)
+    print(alpha)
+    if alpha == alpha_0:
+        Nzetaeta=0
+    
         
-    if Nzetaeta>0:
-        Nzetaeta1_arrow_source.data = dict(xS=[8*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], xE=[8*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], yS=[(0+8*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], yE=[(0+8*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], lW = [5])
-        Nzetaeta2_arrow_source.data = dict(xS=[-8*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], xE=[-8*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], yS=[(0+8*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], yE=[(0+8*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], lW = [5])
-        Nzetaeta3_arrow_source.data = dict(xS=[-8*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], xE=[-8*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], yS=[(0-8*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], yE=[(0-8*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], lW = [5])
-        Nzetaeta4_arrow_source.data = dict(xS=[8*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], xE=[8*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], yS=[(0-8*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], yE=[(0-8*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], lW = [5])
+    Nzeta = 0.75*Nzeta
+    if Nzeta>0:
+        NzetaP_arrow_source.data = dict(xS=[12.5*cos(P_Angle)], xE=[(12.5+Nzeta)*cos(P_Angle)], yS=[(12.5*sin(P_Angle))], yE=[(((12.5+Nzeta)*sin(P_Angle)))], lW = [2])
+        NzetaN_arrow_source.data = dict(xS=[-12.5*cos(P_Angle)], xE=[(-12.5-Nzeta)*cos(P_Angle)], yS=[0-(12.5*sin(P_Angle))], yE=[(0-((12.5+Nzeta)*sin(P_Angle)))], lW = [2])
+        
+        
+        NzetaP_rect_source.data  = dict(x=[(12.5*cos(P_Angle)+(12.5+Nzeta)*cos(P_Angle))/2], y=[((12.5*sin(P_Angle))+(((12.5+Nzeta)*sin(P_Angle))))/2], w=[Nzeta+1.5], h = [13], angle=[P_Angle])
+        NzetaN_rect_source.data  = dict(x=[(-12.5*cos(P_Angle)+(-12.5-Nzeta)*cos(P_Angle))/2], y=[((-12.5*sin(P_Angle))+(-((12.5+Nzeta)*sin(P_Angle))))/2], w=[Nzeta+1.5], h = [13], angle=[P_Angle])
+
+    elif Nzeta==0:
+        NzetaP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        NzetaN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        
+        NzetaP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
+        NzetaN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
+
     else:
-        Nzetaeta1_arrow_source.data = dict(xS=[8*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], xE=[8*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], yS=[(0+8*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], yE=[(0+8*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], lW = [5])
-        Nzetaeta2_arrow_source.data = dict(xS=[-8*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], xE=[-8*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], yS=[(0+8*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], yE=[(0+8*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], lW = [5])
-        Nzetaeta3_arrow_source.data = dict(xS=[-8*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], xE=[-8*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], yS=[(0-8*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], yE=[(0-8*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], lW = [5])
-        Nzetaeta4_arrow_source.data = dict(xS=[8*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], xE=[8*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], yS=[(0-8*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], yE=[(0-8*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], lW = [5])
+        NzetaP_arrow_source.data = dict(xS=[(12.5-Nzeta)*cos(P_Angle)], xE=[12.5*cos(P_Angle)], yS=[0+((12.5-Nzeta)*sin(P_Angle))], yE=[0+(12.5*sin(P_Angle))], lW = [2])
+        NzetaN_arrow_source.data = dict(xS=[(-12.5+Nzeta)*cos(P_Angle)], xE=[-12.5 *cos(P_Angle)], yS=[(0-((12.5-Nzeta)*sin(P_Angle)))], yE=[0-(12.5*sin(P_Angle))], lW = [2])
+        
+        NzetaP_rect_source.data  = dict(x=[(12.5*cos(P_Angle)+(12.5-Nzeta)*cos(P_Angle))/2], y=[((12.5*sin(P_Angle))+(((12.5-Nzeta)*sin(P_Angle))))/2], w=[Nzeta-1.5], h = [13], angle=[P_Angle])
+        NzetaN_rect_source.data  = dict(x=[(-12.5*cos(P_Angle)+(-12.5+Nzeta)*cos(P_Angle))/2], y=[((-12.5*sin(P_Angle))+(-((12.5-Nzeta)*sin(P_Angle))))/2], w=[Nzeta-1.5], h = [13], angle=[P_Angle])
+
+    Neta = 0.75*Neta
+    if Neta>0:
+        NetaP_arrow_source.data = dict(xS=[12.5*cos((pi/2)+P_Angle)], xE=[(12.5+Neta)*cos((pi/2)+P_Angle)], yS=[(12.5*sin((pi/2)+P_Angle))], yE=[((12.5+Neta)*sin((pi/2)+P_Angle))], lW = [2])
+        NetaN_arrow_source.data =  dict(xS=[12.5*sin(P_Angle)], xE=[(12.5+Neta)*sin(P_Angle)], yS=[-(12.5*cos(P_Angle))], yE=[-((12.5+Neta)*cos(P_Angle))], lW = [2]) 
+        
+        NetaP_rect_source.data  = dict(x=[(12.5*cos((pi/2)+P_Angle)+(12.5+Neta)*cos((pi/2)+P_Angle))/2], y=[((12.5*sin((pi/2)+P_Angle))+((12.5+Neta)*sin((pi/2)+P_Angle)))/2], h=[Neta+1.5], w = [13], angle=[P_Angle])
+        NetaN_rect_source.data  = dict(x=[(12.5*sin(P_Angle)+(12.5+Neta)*sin(P_Angle))/2], y=[(-(12.5*cos(P_Angle))+-((12.5+Neta)*cos(P_Angle)))/2], h=[Neta+1.5], w = [13], angle=[P_Angle])
+
+    elif Neta==0:
+        NetaP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        NetaN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        
+        NetaP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
+        NetaN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
+
+    else:
+        NetaP_arrow_source.data = dict(xS=[(12.5-Neta)*cos((pi/2)+P_Angle)],xE=[12.5*cos((pi/2)+P_Angle)],yS=[((12.5-Neta)*sin((pi/2)+P_Angle))], yE=[0+(12.5*sin((pi/2)+P_Angle))],  lW = [2])
+        NetaN_arrow_source.data = dict(xS=[(12.5-Neta)*sin(P_Angle)],xE=[12.5*sin(P_Angle)], yS=[-(12.5-Neta)*cos(P_Angle)],yE=[-12.5*cos(P_Angle)], lW = [2])      
+        
+        NetaP_rect_source.data  = dict(x=[((12.5-Neta)*cos((pi/2)+P_Angle)+12.5*cos((pi/2)+P_Angle))/2], y=[(((12.5-Neta)*sin((pi/2)+P_Angle))+0+(12.5*sin((pi/2)+P_Angle)))/2], h=[Neta-1.5], w = [13], angle=[P_Angle])
+        NetaN_rect_source.data  = dict(x=[((12.5-Neta)*sin(P_Angle)+12.5*sin(P_Angle))/2], y=[(-(12.5-Neta)*cos(P_Angle)+-12.5*cos(P_Angle))/2], h=[Neta-1.5], w = [13], angle=[P_Angle])
+
+
+    Nzetaeta=0.75*Nzetaeta
+    if Nzetaeta>0:
+        Nzetaeta1_arrow_source.data = dict(xS=[9*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], xE=[9*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], yS=[(0+9*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], yE=[(0+9*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], lW = [2])
+        Nzetaeta2_arrow_source.data = dict(xS=[-9*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], xE=[-9*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], yS=[(0+9*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], yE=[(0+9*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], lW = [2])
+        Nzetaeta3_arrow_source.data = dict(xS=[-9*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], xE=[-9*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], yS=[(0-9*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], yE=[(0-9*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], lW = [2])
+        Nzetaeta4_arrow_source.data = dict(xS=[9*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], xE=[9*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], yS=[(0-9*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], yE=[(0-9*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], lW = [2])
+        
+        
+        Nzetaeta1_rect_source.data  = dict(x=[(9*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))+9*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle)))/2], y=[((0+9*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))+(0+9*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle)))/2], w=[0.3*Nzetaeta+.5], h = [13], angle=[P_Angle])
+        Nzetaeta2_rect_source.data  = dict(x=[(-9*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))+-9*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle)))/2], y=[((0+9*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))+(0+9*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle)))/2], h=[0.3*Nzetaeta+.5], w = [13], angle=[P_Angle])
+        Nzetaeta3_rect_source.data  = dict(x=[(-9*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))-9*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle)))/2], y=[((0-9*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))+(0-9*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle)))/2], w=[0.3*Nzetaeta+.5], h = [13], angle=[P_Angle])
+        Nzetaeta4_rect_source.data  = dict(x=[(9*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))+9*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle)))/2], y=[((0-9*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))+(0-9*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle)))/2], h=[0.3*Nzetaeta+.5], w = [13], angle=[P_Angle])
+
+    elif Nzetaeta==0:
+        Nzetaeta1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        Nzetaeta2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        Nzetaeta3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        Nzetaeta4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+       
+        Nzetaeta1_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
+        Nzetaeta2_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
+        Nzetaeta3_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
+        Nzetaeta4_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
+       
+
+    else:
+        Nzetaeta1_arrow_source.data = dict(xS=[9*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], xE=[9*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], yS=[(0+9*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], yE=[(0+9*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], lW = [2])
+        Nzetaeta2_arrow_source.data = dict(xS=[-9*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], xE=[-9*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], yS=[(0+9*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], yE=[(0+9*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], lW = [2])
+        Nzetaeta3_arrow_source.data = dict(xS=[-9*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))], xE=[-9*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))], yS=[(0-9*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))], yE=[(0-9*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))], lW = [2])
+        Nzetaeta4_arrow_source.data = dict(xS=[9*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))], xE=[9*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))], yS=[(0-9*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))], yE=[(0-9*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))], lW = [2])
+
+        Nzetaeta1_rect_source.data  = dict(x=[(9*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle))+9*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle)))/2], y=[((0+9*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle))+(0+9*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle)))/2], w=[0.3*Nzetaeta-.5], h = [13], angle=[P_Angle])
+        Nzetaeta2_rect_source.data  = dict(x=[(-9*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle))+-9*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle)))/2], y=[((0+9*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle))+(0+9*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle)))/2], h=[0.3*Nzetaeta-.5], w = [13], angle=[P_Angle])
+        Nzetaeta3_rect_source.data  = dict(x=[(-9*cos(P_Angle)-((Nzetaeta/2)*sin(P_Angle))-9*cos(P_Angle)+((Nzetaeta/2)*sin(P_Angle)))/2], y=[((0-9*sin(P_Angle))+((Nzetaeta/2)*cos(P_Angle))+(0-9*sin(P_Angle))-((Nzetaeta/2)*cos(P_Angle)))/2], w=[0.3*Nzetaeta-.5], h = [13], angle=[P_Angle])
+        Nzetaeta4_rect_source.data  = dict(x=[(9*sin(P_Angle)+((Nzetaeta/2)*cos(P_Angle))+9*sin(P_Angle)-((Nzetaeta/2)*cos(P_Angle)))/2], y=[((0-9*cos(P_Angle))+((Nzetaeta/2)*sin(P_Angle))+(0-9*cos(P_Angle))-((Nzetaeta/2)*sin(P_Angle)))/2], h=[0.3*Nzetaeta-.5], w = [13], angle=[P_Angle])
+
     P_Angle=-P_Angle
 
 
@@ -532,24 +608,32 @@ Wedge_glyph = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="
 Rotating_Plane_glyph = Square(x='x',y='y',angle='angle',size='size', fill_color = '#A2AD00', fill_alpha=0.5)
 Rotating_Plane_red_glyph = Square(x='x',y='y',angle='angle',size='size', fill_color = 'firebrick', fill_alpha=0.5)
 
-NzetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
+NzetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NzetaP_arrow_source,line_color="#E37222")
-NzetaN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
+NzetaN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NzetaN_arrow_source,line_color="#E37222")
-NetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
+NetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NetaP_arrow_source,line_color="#E37222")
-NetaN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3, size=10),
+NetaN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NetaN_arrow_source,line_color="#E37222")
-Nzetaeta1_arrow_glyph= Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
+Nzetaeta1_arrow_glyph= Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta1_arrow_source,line_color="#0065BD")
-Nzetaeta2_arrow_glyph=Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
+Nzetaeta2_arrow_glyph=Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta2_arrow_source,line_color="#0065BD")
-Nzetaeta3_arrow_glyph= Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
+Nzetaeta3_arrow_glyph= Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta3_arrow_source,line_color="#0065BD")
-Nzetaeta4_arrow_glyph=Arrow(end=OpenHead(line_color="#0065BD",line_width= 3, size=10),
+Nzetaeta4_arrow_glyph=Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta4_arrow_source,line_color="#0065BD")
 
-
+## Figure 1, Rectangle glyphs:
+NzetaP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+NzetaN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+NetaP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+NetaN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+Nzetaeta1_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+Nzetaeta2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+Nzetaeta3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+Nzetaeta4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 
 ### Figure 1: Define Figure and add Geometry
 figure1 = figure(title="Stress State A", tools="", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
@@ -625,6 +709,14 @@ figure3.add_layout(Nzetaeta4_arrow_glyph)
 figure3.add_glyph(Rotating_Plane_source,Rotating_Plane_glyph)
 figure3.add_glyph(Rotating_Plane_red_source,Rotating_Plane_red_glyph)
 
+figure3.add_glyph(NzetaP_rect_source,NzetaP_rect_glyph)
+figure3.add_glyph(NzetaN_rect_source,NzetaN_rect_glyph)
+figure3.add_glyph(NetaP_rect_source,NetaP_rect_glyph)
+figure3.add_glyph(NetaN_rect_source,NetaN_rect_glyph)
+figure3.add_glyph(Nzetaeta1_rect_source,Nzetaeta1_rect_glyph)
+figure3.add_glyph(Nzetaeta2_rect_source,Nzetaeta2_rect_glyph)
+figure3.add_glyph(Nzetaeta3_rect_source,Nzetaeta3_rect_glyph)
+figure3.add_glyph(Nzetaeta4_rect_source,Nzetaeta4_rect_glyph)
 
 ### Turn off visuals
 figure1.xaxis.major_tick_line_color=None
@@ -672,7 +764,7 @@ Normal_Z_slider.on_change('value',NormalForceZ_init)
 Tangential_XZ_slider= Slider(title=u"\u03C4"u"\u0078"u"\u007A",value= 0,start = 0, end = 10, step = 0.5)
 Tangential_XZ_slider.on_change('value',TangentialXZ_init)
     
-Plane_Angle_slider= Slider(title= u"\u03B1",value= 0,start = 0, end = 90, step = 0.5)
+Plane_Angle_slider= Slider(title= u"\u03B1",value= 0,start = 0, end = 90, step = 1)
 Plane_Angle_slider.on_change('value',changePlaneAngle)
 
 
