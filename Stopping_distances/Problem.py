@@ -263,6 +263,7 @@ class Problem:
 
     def plot_attempt(self):
         s1=isEquation(self.UserTs.value,'s')
+        #print(s1)
         # if s1 is a string
         if (s1!=False):
             self.Plotter.test_equation(s1,'s')
