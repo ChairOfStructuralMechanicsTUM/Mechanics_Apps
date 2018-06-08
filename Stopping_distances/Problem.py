@@ -99,6 +99,7 @@ class Problem:
     
     def test(self):
         # start the simulation
+        print(self.v)
         if (self.t!=0):
             # if it is not already at the beginning then reset the setup
             self.Reset()
@@ -292,6 +293,7 @@ class Problem:
             # enable viewer to see s(t) and v(t)
             self.eqVis.disabled=False
             # rename acceleration input
+            self.UserAcceleration.disabled = False
             self.UserAcceleration.title="Acceleration :"
         elif (new=="Distance-dependent Velocity"):
             # if new problem type is where user provides v(s)
@@ -314,3 +316,4 @@ class Problem:
             # (disabled does not work, nor does visible)
             self.UserAcceleration.value=""
             self.UserAcceleration.title=""
+            self.UserAcceleration.disabled = True
