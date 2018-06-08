@@ -1,8 +1,9 @@
 from bokeh.plotting import figure
 from bokeh.layouts import gridplot
 from bokeh.models import ColumnDataSource
-from math import sqrt
+from math import sqrt, isnan
 from numpy import linspace
+
 
 class Graphs:
     def __init__(self):
@@ -167,14 +168,11 @@ class Graphs:
         X=[]
         Y=[]
 
-        scale=linspace(0,xmax,100.0)
+        scale=linspace(0,xmax,100)
 
-        #avoid division by zero
-        try:
-            s=0
-            eval(Str)
-        except:
-            scale = linspace(0.01, xmax, 99.0)
+        nan = float('nan')
+
+
 
         try:
             # plot 100 points between 0 and xmax
@@ -183,13 +181,21 @@ class Graphs:
                 X.append(s)
                 # Str contains an equation as a function of s
                 # evaluating it therefore gives the y co-ordinate
-                Y.append(eval(Str))
-            #print(eval(Str))
+
+                try:
+                    Y.append(eval(Str))
+                except ZeroDivisionError:# avoid division by zero
+                    Y.append(nan)
+
             # add final point
             X.append(xmax)
             # create s=final_x_point so that s exists when it is called by Str in eval
             s=xmax
-            Y.append(eval(Str))
+            try:
+                Y.append(eval(Str))
+            except ZeroDivisionError:  # avoid division by zero
+                Y.append(nan)
+
         except ValueError:
             # if value is not valid in equation
             # (i.e s has become large enough that we are doing sqrt(negative) )
@@ -198,6 +204,12 @@ class Graphs:
             # fix this
             X.pop()
             #print('excerption')
+
+        #remove 'nan' form X and Y lists:
+        X=[v for i,v in enumerate(X) if not isnan(Y[i])]
+        Y=[v for i,v in enumerate(Y) if not isnan(Y[i])]
+
+
         # add new data to appropriate figure
         if (sv=='s'):
             self.UserStSource.data = dict(s=X,t=Y)

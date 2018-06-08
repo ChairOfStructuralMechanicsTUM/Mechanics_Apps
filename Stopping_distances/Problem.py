@@ -47,12 +47,12 @@ class Problem:
         # user input for t(s) to be tested against simulation
         self.UserTs = TextInput(value="", title="t(s) = ",width=200)
         # button to allow sqrt to be used in t(s)
-        self.TsSqrt = Button(label=u"\u221A",button_type="success",width=100)
+        self.TsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
         self.TsSqrt.on_click(self.addSqrtTs)
         # user input for v(s) (or a(s)) to be tested against simulation
         self.UserVs = TextInput(value="", title="v(s) = ",width=200)
         # button to allow sqrt to be used in v(s)/a(s)
-        self.VsSqrt = Button(label=u"\u221A",button_type="success",width=100)
+        self.VsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
         self.VsSqrt.on_click(self.addSqrtVs)
         # button to plot t(s) and v(s)/a(s) over simulation data
         self.TestEqs = Button(label="Check equations",button_type="success",width=100)
