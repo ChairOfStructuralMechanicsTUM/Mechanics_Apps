@@ -33,20 +33,25 @@ rleft_x = centreX-radius
 rleft_z=0
 
 global changeNx
-changeNx    = 1 
+changeNx    =  1 
 
 global changeNz
-changeNz    = 1
+changeNz    =  1
 
 global changeNxz
-changeNxz   = 1
+changeNxz   =  1
 
 global changeAngle
-changeAngle = 0
+changeAngle =  0
 
 global changeShow
-changeShow  = 0
+changeShow  = -1
 
+global NzetaI0
+NzetaI0     =  0
+
+global NetaI0
+NetaI0      =  0
 
 ### Initializing variables
 
@@ -78,6 +83,11 @@ OriginalPlane_line_source = ColumnDataSource(data=dict(x=[],y=[]))
 ##Figure 3, Rotating plane: 
 Rotating_Plane_source     = ColumnDataSource(data=dict(x=[], y=[],angle = [],size =[]))
 Rotating_Plane_red_source = ColumnDataSource(data=dict(x=[], y=[],angle = [],size =[]))
+
+###Figure 3, Rotating Coordinate-System:
+####
+Rotating_Axis_X_source = ColumnDataSource(data=dict(xS=[], yS=[], xE=[], yE=[]))
+Rotating_Axis_Y_source = ColumnDataSource(data=dict(xS=[], yS=[], xE=[], yE=[]))
 ##Figure 3, Arrows:
 NzetaP_arrow_source    = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 NzetaN_arrow_source    = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
@@ -106,6 +116,7 @@ Figure2Perm_Label_source   = ColumnDataSource(data=dict(x=[20.5,-3.5], y=[-3, 18
 Figure2Moving_Label_source = ColumnDataSource(data=dict(x=[], y=[], names=[]))
 Figure2Show_Label_source   = ColumnDataSource(data=dict(x=[], y=[], names=[]))
 Figure3Perm_Label_source   = ColumnDataSource(data=dict(x=[22,1], y=[-5, -27], names=['x', 'z']))
+Figure3Moving_Label_source = ColumnDataSource(data=dict(x=[], y=[], names =[]))
 
 
 ### Figure 2: Data structures
@@ -166,19 +177,25 @@ def init():
 def reset():
 
     global changeNx
-    changeNx    = 1
+    changeNx    =  1
 
     global changeNz
-    changeNz    = 1
+    changeNz    =  1
 
     global changeNxz
-    changeNxz   = 1
+    changeNxz   =  1
 
     global changeAngle
-    changeAngle = 0
+    changeAngle =  0
 
     global changeShow
-    changeShow  = 0
+    changeShow  = -1
+   
+    global NzetaI0
+    NzetaI0     =  0
+
+    global NetaI0
+    NetaI0      =  0
 
     
     P_Angle = 0*(pi/180)
@@ -239,7 +256,7 @@ def reset():
     ## Figure 3, Reset rotating plane:
     Rotating_Plane_source.data     = dict(x=[], y=[],angle =[],size = [])
     Rotating_Plane_red_source.data = dict(x=[], y=[],angle =[],size = [])
-    ## Figure 3, Reset Arrows:
+    ## Figure 3, Reset arrows:
     NzetaP_arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NzetaN_arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NetaP_arrow_source.data     = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -248,7 +265,7 @@ def reset():
     Nzetaeta2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     Nzetaeta3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     Nzetaeta4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    ## Figure 3, Reset Rectangles:
+    ## Figure 3, Reset rectangles:
     NzetaP_rect_source.data    = dict(x=[], y=[], w=[], h=[], angle=[])
     NzetaN_rect_source.data    = dict(x=[], y=[], w=[], h=[], angle=[])
     NetaP_rect_source.data     = dict(x=[], y=[], w=[], h=[], angle=[])
@@ -257,6 +274,9 @@ def reset():
     Nzetaeta2_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
     Nzetaeta3_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
     Nzetaeta4_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
+    ## Figure 3, Reset rotating axis:
+    Rotating_Axis_X_source.data=dict(xS=[], yS=[], xE=[], yE=[])
+    Rotating_Axis_Y_source.data=dict(xS=[], yS=[], xE=[], yE=[])
 
 
 
@@ -294,6 +314,18 @@ def show():
         Figure2Show_Label_source.data = dict(x=[rleft_x-3,rright_x+0.5,rleft_x-0.7,rright_x-0.5,-22,-19,centreX+0.5,centreX-0.5],y=[0,0,-1.1,-1.1,15,15,0,-1.1], names =[u"\u03C3"u"\u2082",u"\u03C3"u"\u2081","x","x",u"\u03B1"u"\u2080","=" + str(alpha) + "°",u"\u03C3"u"\u2098","x"])
         Wedge_source.data=dict(x=[rleft_x], y=[0],radius=[radius/2], sA=[atan(Nxz/(Nz+(-rleft_x)))], eA=[0])
         Wedge_glyph = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
+
+        global changeShow
+        changeShow = changeShow*-1
+
+    elif changeShow == -1:
+        
+        Wedge_source.data                = dict(x=[], y=[],radius=[], sA=[], eA=[])
+        Figure2Show_Label_source.data    = dict(x=[], y=[], names =[])
+        
+        global changeShow
+        changeShow = changeShow*-1
+
 
 
 
@@ -344,6 +376,9 @@ def draw():
     ## Figure 3, Rotating plane:
     Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[-P_Angle],size = [75])
     
+
+    ####
+    #Rotating_Axis_X_source.data
     NzetaP_arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NzetaN_arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NetaP_arrow_source.data     = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -459,7 +494,7 @@ def NormalForceX_init(attr,old,new):
             NxP_rect_source.data   = dict(x=[(25+new)/2],  y=[0], w=[new+1.5], h = [13], angle=[0])        
             NxN_rect_source.data   = dict(x=[(-25-new)/2], y=[0], w=[new+1.5], h = [13], angle=[0]) 
 
-    ## Freeze the Value of the Slider once the Draw-Button was hit:
+    ## Freeze the value of the slider once draw() has been called:
     if changeNx == 0:
         Normal_X_slider.value = Nxfix
          
@@ -470,7 +505,7 @@ def NormalForceX_init(attr,old,new):
     
 def NormalForceZ_init(attr,old,new):
 
-    ## Figure 1, Present the Normal Forces while Draw-Button wasn't yet activated:
+    ## Figure 1, Present the Normal Forces while draw() hasn't been called yet:
     if changeNz == 1:
 
         ## Global change of Nz
@@ -496,7 +531,7 @@ def NormalForceZ_init(attr,old,new):
             NzP_rect_source.data  = dict(x=[0], y=[(25+new)/2],  w=[13], h = [new+1.5], angle=[0])
             NzN_rect_source.data  = dict(x=[0], y=[(-25-new)/2], w=[13], h = [new+1.5], angle=[0])   
 
-    ## Freeze the Value of the Slider once the Draw-Button was hit:
+    ## Freeze the value of the slider once draw() has been called:
     if changeNz == 0:
         Normal_Z_slider.value = Nzfix
 
@@ -506,7 +541,7 @@ def NormalForceZ_init(attr,old,new):
     
 def TangentialXZ_init(attr,old,new):
 
-    ## Figure 1, Present the Shear Forces while Draw-Button wasn't yet activated:
+    ## Figure 1, Present the Shear Forces while draw() hasn't yet been called:
     if changeNxz == 1:
 
         ## global change of Nxz    
@@ -536,7 +571,7 @@ def TangentialXZ_init(attr,old,new):
             Nxz3_rect_source.data  = dict(x=[0],  y=[9],  w=[13],          h=[0.3*new+0.5], angle=[0])
             Nxz4_rect_source.data  = dict(x=[0],  y=[-9], w=[13],          h=[0.3*new+0.5], angle=[0])
 
-    ## Freeze the Value of the Slider once the Draw-Button was hit:
+    ## Freeze the value of the slider once draw() has been called:
     if changeNxz == 0:
         Tangential_XZ_slider.value = Nxzfix
 
@@ -561,14 +596,23 @@ def changePlaneAngle(attr,old,new):
         rright_x=centreX+radius
         alpha_0=180*atan(Nxz/(Nz+(-rleft_x+0.00001)))/(pi)
         alpha_0=int(alpha_0+0.5)
-        if alpha == alpha_0:
-            Rotating_Plane_red_source.data = dict(x=[0], y=[0], angle =[-P_Angle], size = [75])
-            Rotating_Plane_source.data     = dict(x=[],  y=[],  angle =[],         size = []  )
+        
+        alpharepetitions = [-90, -180, 0, 90, 180]
+        for n in alpharepetitions:
+            if alpha == alpha_0+n:
+                Rotating_Plane_red_source.data = dict(x=[0], y=[0], angle =[-P_Angle], size = [75])
+                Rotating_Plane_source.data     = dict(x=[],  y=[],  angle =[],         size = []  )
+                break
         else:
             Rotating_Plane_source.data     = dict(x=[0], y=[0], angle =[-P_Angle], size = [75])
             Rotating_Plane_red_source.data = dict(x=[],  y=[],  angle =[],         size = []  )
 
-
+        #### Figure 3, Rotate Axis:  
+        P_Angle = -P_Angle
+        Rotating_Axis_X_source.data = dict(xS=[0], yS=[0], xE=[25*cos(P_Angle)], yE=[25*sin(P_Angle)])
+        Rotating_Axis_Y_source.data = dict(xS=[0], yS=[0], xE=[-25*sin(-P_Angle)],  yE=[-25*cos(-P_Angle)])
+        
+        P_Angle = -P_Angle
         ChangeMohrCircle()
         ChangeRotatingPlane_Forces()
 
@@ -603,8 +647,19 @@ def ChangeMohrCircle():
 
     Newplane_line_source.data       = dict(x=[rleft_x,Neta], y=[rleft_z,Nzetaeta])
 
+
+    
     Figure2Moving_Label_source.data = dict(x=[Nx,Nz,-4,Nx-0.5,Nz-0.5,-0.5,Nz,Neta+1.5],y=[-3,-3,Nxz-1,-1.1,-1.1,Nxz-1.2,Nxz,Nzetaeta],
                                            names =[u"\u03C3"u"\u0078",u"\u03C3"u"\u007A",u"\u03C4"u"\u0078"u"\u007A","x","x","-","A","B"])
+
+    Figure3Moving_Label_source.data = dict(x=[(25)*cos(P_Angle),(-25)*sin(-P_Angle)],y=[(25)*sin(P_Angle),(-25)*cos(-P_Angle)], names =["X","Y"])
+
+
+
+
+    
+
+
  
 
 
@@ -632,9 +687,25 @@ def ChangeRotatingPlane_Forces():
     alpha_0 = int(alpha_0+0.5)
     
     if alpha == alpha_0:
-        Nzetaeta=0
-
+        Nzetaeta=0    
         
+    ## Set Nzeta = 0 if sign change
+    global NzetaI0
+    global NzetaI1
+    NzetaI1 = Nzeta
+    if NzetaI0*NzetaI1 <0:
+        Nzeta = 0
+    NzetaI0 = NzetaI1
+
+    ## Set Neta = 0 if sign change
+    global NetaI0
+    global NetaI1
+    NetaI1 = Neta
+    if NetaI0*NetaI1 <0:
+        Neta = 0
+    NetaI0 = NetaI1
+     
+
     Nzeta = 0.75*Nzeta
     if Nzeta>0:
         NzetaP_arrow_source.data = dict(xS=[12.5*cos(P_Angle)],  xE=[(12.5+Nzeta)*cos(P_Angle)],  yS=[(12.5*sin(P_Angle))],   yE=[(((12.5+Nzeta)*sin(P_Angle)))],   lW = [2])
@@ -813,6 +884,9 @@ figure2.circle(x='x',y='y',source= OriginalPlane_line_source, size=4, color="bla
 Rotating_Plane_glyph = Square(x='x',y='y',angle='angle',size='size', fill_color = '#A2AD00', fill_alpha=0.5)
 Rotating_Plane_red_glyph = Square(x='x',y='y',angle='angle',size='size', fill_color = 'firebrick', fill_alpha=0.5)
 
+Rotating_Axis_X_glyph = Arrow(end=NormalHead(fill_color='#A2AD00', size=15), x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=Rotating_Axis_X_source )
+Rotating_Axis_Y_glyph = Arrow(end=NormalHead(fill_color='#A2AD00', size=15), x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=Rotating_Axis_Y_source )
+
 NzetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=NzetaP_arrow_source,line_color="#E37222")
 NzetaN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
@@ -846,6 +920,7 @@ figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=0, y_end=-25))
 figure3_labels = LabelSet(x='x', y='y', text='names', level='glyph',
               x_offset=5, y_offset=5, source=Figure1Perm_Label_source, render_mode='canvas')
+figure3_labels2 = LabelSet(x='x', y='y', text='names', source=Figure3Moving_Label_source, text_color = 'black')
 figure3.add_layout(figure3_labels)
 figure3.add_layout(NzetaP_arrow_glyph)
 figure3.add_layout(NzetaN_arrow_glyph)
@@ -865,6 +940,9 @@ figure3.add_glyph(Nzetaeta1_rect_source,Nzetaeta1_rect_glyph)
 figure3.add_glyph(Nzetaeta2_rect_source,Nzetaeta2_rect_glyph)
 figure3.add_glyph(Nzetaeta3_rect_source,Nzetaeta3_rect_glyph)
 figure3.add_glyph(Nzetaeta4_rect_source,Nzetaeta4_rect_glyph)
+
+figure3.add_layout(Rotating_Axis_X_glyph)
+figure3.add_layout(Rotating_Axis_Y_glyph)
 
 
 ### Turn off grid
@@ -913,7 +991,7 @@ Normal_Z_slider.on_change('value',NormalForceZ_init)
 Tangential_XZ_slider= Slider(title=u"\u03C4"u"\u0078"u"\u007A",value= 0,start = 0, end = 10, step = 0.5)
 Tangential_XZ_slider.on_change('value',TangentialXZ_init)
     
-Plane_Angle_slider= Slider(title= u"\u03B1",value= 0,start = 0, end = 90, step = 1)
+Plane_Angle_slider= Slider(title= u"\u03B1",value= 0,start = -180, end = 180, step = 1)
 Plane_Angle_slider.on_change('value',changePlaneAngle)
 
 
@@ -927,7 +1005,7 @@ draw_button = Button(label="Draw", button_type="success")
 draw_button.on_click(draw)
 
 ###Create Show Button:
-show_button = Button(label="Show principal stress + direction", button_type="success")
+show_button = Button(label="Show/Hide principal stress + direction", button_type="success")
 show_button.on_click(show)
 
 
