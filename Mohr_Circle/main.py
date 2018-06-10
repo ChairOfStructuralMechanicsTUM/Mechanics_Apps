@@ -53,6 +53,9 @@ NzetaI0     =  0
 global NetaI0
 NetaI0      =  0
 
+global alpha
+alpha = 0
+
 ### Initializing variables
 
 ## Figure 1, Arrows: 
@@ -85,7 +88,7 @@ Rotating_Plane_source     = ColumnDataSource(data=dict(x=[], y=[],angle = [],siz
 Rotating_Plane_red_source = ColumnDataSource(data=dict(x=[], y=[],angle = [],size =[]))
 
 ###Figure 3, Rotating Coordinate-System:
-####
+
 Rotating_Axis_X_source = ColumnDataSource(data=dict(xS=[], yS=[], xE=[], yE=[]))
 Rotating_Axis_Y_source = ColumnDataSource(data=dict(xS=[], yS=[], xE=[], yE=[]))
 ##Figure 3, Arrows:
@@ -197,7 +200,9 @@ def reset():
     global NetaI0
     NetaI0      =  0
 
-    
+    global alpha
+    global P_Angle
+    alpha = 0
     P_Angle = 0*(pi/180)
     radius = 10
     centreX = 10
@@ -277,6 +282,9 @@ def reset():
     ## Figure 3, Reset rotating axis:
     Rotating_Axis_X_source.data=dict(xS=[], yS=[], xE=[], yE=[])
     Rotating_Axis_Y_source.data=dict(xS=[], yS=[], xE=[], yE=[])
+    Figure3Moving_Label_source.data=dict(x=[], y=[], names =[])
+    
+
 
 
 
@@ -375,10 +383,8 @@ def draw():
   
     ## Figure 3, Rotating plane:
     Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[-P_Angle],size = [75])
-    
+  
 
-    ####
-    #Rotating_Axis_X_source.data
     NzetaP_arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NzetaN_arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NetaP_arrow_source.data     = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -460,16 +466,16 @@ def draw():
         Nxz4_rect_source.data  = dict(x=[0],  y=[-9], w=[13],          h=[0.3*new+0.5], angle=[0])
 
 
-
-    
     ChangeRotatingPlane_Forces()
     ChangeMohrCircle()
 
 
+
 def NormalForceX_init(attr,old,new):
 
-    ## Figure 1, Present the Normal Forces while Draw-Button wasn't yet activated:  
-    if changeNx == 1:
+   ## Figure 1, Present the Normal Forces while Draw-Button wasn't yet activated:  
+   
+   if changeNx == 1:
         ## Global change of Nx
         global Nx
         Nx = new 
@@ -495,7 +501,7 @@ def NormalForceX_init(attr,old,new):
             NxN_rect_source.data   = dict(x=[(-25-new)/2], y=[0], w=[new+1.5], h = [13], angle=[0]) 
 
     ## Freeze the value of the slider once draw() has been called:
-    if changeNx == 0:
+   if changeNx == 0:
         Normal_X_slider.value = Nxfix
          
         
@@ -584,6 +590,8 @@ def changePlaneAngle(attr,old,new):
      if changeAngle == 1:
 
         global P_Angle
+        global alpha
+
         alpha= new
         P_Angle = -new*(pi/180)
 
@@ -607,7 +615,7 @@ def changePlaneAngle(attr,old,new):
             Rotating_Plane_source.data     = dict(x=[0], y=[0], angle =[-P_Angle], size = [75])
             Rotating_Plane_red_source.data = dict(x=[],  y=[],  angle =[],         size = []  )
 
-        #### Figure 3, Rotate Axis:  
+        # Figure 3, Rotate Axis:  
         P_Angle = -P_Angle
         Rotating_Axis_X_source.data = dict(xS=[0], yS=[0], xE=[25*cos(P_Angle)], yE=[25*sin(P_Angle)])
         Rotating_Axis_Y_source.data = dict(xS=[0], yS=[0], xE=[-25*sin(-P_Angle)],  yE=[-25*cos(-P_Angle)])
@@ -647,14 +655,11 @@ def ChangeMohrCircle():
 
     Newplane_line_source.data       = dict(x=[rleft_x,Neta], y=[rleft_z,Nzetaeta])
 
-
+    Figure2Moving_Label_source.data = dict(x=[Nx,Nz,-4,Nx-0.5,Nz-0.5,-0.5,Nz,Neta+1.5,Nzeta,Neta,Nzeta-0.5,Neta-0.5],y=[-3,-3,Nxz-1,-1.1,-1.1,Nxz-1.2,Nxz,Nzetaeta,-3,-3,-1.1,-1.1],
+                                           names =[u"\u03C3"u"\u0078",u"\u03C3"u"\u007A",u"\u03C4"u"\u0078"u"\u007A","x","x","-","A","B", u"\u03C3"u"\u0078"u"\u0305" ,u"\u03C3"u"\u007A"u"\u0305","x","x"])
     
-    Figure2Moving_Label_source.data = dict(x=[Nx,Nz,-4,Nx-0.5,Nz-0.5,-0.5,Nz,Neta+1.5],y=[-3,-3,Nxz-1,-1.1,-1.1,Nxz-1.2,Nxz,Nzetaeta],
-                                           names =[u"\u03C3"u"\u0078",u"\u03C3"u"\u007A",u"\u03C4"u"\u0078"u"\u007A","x","x","-","A","B"])
-
-    Figure3Moving_Label_source.data = dict(x=[(25)*cos(P_Angle),(-25)*sin(-P_Angle)],y=[(25)*sin(P_Angle),(-25)*cos(-P_Angle)], names =["X","Y"])
-
-
+    Figure3Moving_Label_source.data = dict(x=[(25+2.5)*cos(-P_Angle)-1,(-25-2.5)*sin(P_Angle)-1],y=[(25+2.5)*sin(-P_Angle)-1,(-25-2.5)*cos(P_Angle)-1], 
+                                           names =[u"\u0078"u"\u0305",u"\u007A"u"\u0305"])
 
 
     
@@ -676,8 +681,7 @@ def ChangeRotatingPlane_Forces():
     P_Angle = -P_Angle
 
     ## Set Nzetaeta=0 if angle-slider is set to principal direction
-    alpha   = 180*P_Angle/pi
-    alpha   = int(alpha+0.5)
+
 
     radius  = float(sqrt(pow(((Nx-Nz)/2),2)+pow(Nxz,2)))
     centreX = float((Nx+Nz)/2)
@@ -685,9 +689,16 @@ def ChangeRotatingPlane_Forces():
 
     alpha_0 = 180*atan(Nxz/(Nz+(-rleft_x+0.00001)))/(pi)
     alpha_0 = int(alpha_0+0.5)
+
+
+    alpharepetitions = [-90, -180, 0, 90, 180]
+    for n in alpharepetitions:
+        if alpha == alpha_0+n:
+            Nzetaeta=0         
+            break
+
     
-    if alpha == alpha_0:
-        Nzetaeta=0    
+   
         
     ## Set Nzeta = 0 if sign change
     global NzetaI0
@@ -921,7 +932,10 @@ figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
 figure3_labels = LabelSet(x='x', y='y', text='names', level='glyph',
               x_offset=5, y_offset=5, source=Figure1Perm_Label_source, render_mode='canvas')
 figure3_labels2 = LabelSet(x='x', y='y', text='names', source=Figure3Moving_Label_source, text_color = 'black')
+
+
 figure3.add_layout(figure3_labels)
+figure3.add_layout(figure3_labels2)
 figure3.add_layout(NzetaP_arrow_glyph)
 figure3.add_layout(NzetaN_arrow_glyph)
 figure3.add_layout(NetaP_arrow_glyph)
