@@ -20,6 +20,8 @@ from math import pi,sqrt,pow,sin,cos,atan
 
 
 ### Initial Values
+
+
 radius = 10
 centreX = 10
 Nx =0
@@ -32,18 +34,6 @@ Nzetaeta =0
 rleft_x = centreX-radius
 rleft_z=0
 
-global changeNx
-changeNx    =  1 
-
-global changeNz
-changeNz    =  1
-
-global changeNxz
-changeNxz   =  1
-
-global changeAngle
-changeAngle =  0
-
 global changeShow
 changeShow  = -1
 
@@ -55,6 +45,7 @@ NetaI0      =  0
 
 global alpha
 alpha = 0
+
 
 ### Initializing variables
 
@@ -179,17 +170,10 @@ def init():
 
 def reset():
 
-    global changeNx
-    changeNx    =  1
-
-    global changeNz
-    changeNz    =  1
-
-    global changeNxz
-    changeNxz   =  1
-
-    global changeAngle
-    changeAngle =  0
+    Normal_X_slider.disabled      = False
+    Normal_Z_slider.disabled      = False
+    Tangential_XZ_slider.disabled = False
+    Plane_Angle_slider.disabled   = True
 
     global changeShow
     changeShow  = -1
@@ -339,26 +323,10 @@ def show():
 
 def draw():
 
-    global changeNx
-    changeNx = 0
-
-    global Nxfix
-    Nxfix = Nx
-
-    global changeNz
-    changeNz = 0
-
-    global Nzfix
-    Nzfix = Nz
-
-    global changeNxz
-    changeNxz = 0
-
-    global Nxzfix
-    Nxzfix = Nxz
-
-    global changeAngle
-    changeAngle = 1
+    Normal_X_slider.disabled      = True
+    Normal_Z_slider.disabled      = True
+    Tangential_XZ_slider.disabled = True
+    Plane_Angle_slider.disabled   = False
 
     global changeShow
     changeShow  = 1
@@ -383,7 +351,6 @@ def draw():
   
     ## Figure 3, Rotating plane:
     Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[-P_Angle],size = [75])
-  
 
     NzetaP_arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     NzetaN_arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -475,8 +442,6 @@ def NormalForceX_init(attr,old,new):
 
    ## Figure 1, Present the Normal Forces while Draw-Button wasn't yet activated:  
    
-   if changeNx == 1:
-        ## Global change of Nx
         global Nx
         Nx = new 
         new = new*0.75
@@ -500,19 +465,12 @@ def NormalForceX_init(attr,old,new):
             NxP_rect_source.data   = dict(x=[(25+new)/2],  y=[0], w=[new+1.5], h = [13], angle=[0])        
             NxN_rect_source.data   = dict(x=[(-25-new)/2], y=[0], w=[new+1.5], h = [13], angle=[0]) 
 
-    ## Freeze the value of the slider once draw() has been called:
-   if changeNx == 0:
-        Normal_X_slider.value = Nxfix
-         
-        
-           
-    #ChangeMohrCircle()
-    #ChangeRotatingPlane_Forces()
+
     
 def NormalForceZ_init(attr,old,new):
 
     ## Figure 1, Present the Normal Forces while draw() hasn't been called yet:
-    if changeNz == 1:
+
 
         ## Global change of Nz
         global Nz   
@@ -537,18 +495,11 @@ def NormalForceZ_init(attr,old,new):
             NzP_rect_source.data  = dict(x=[0], y=[(25+new)/2],  w=[13], h = [new+1.5], angle=[0])
             NzN_rect_source.data  = dict(x=[0], y=[(-25-new)/2], w=[13], h = [new+1.5], angle=[0])   
 
-    ## Freeze the value of the slider once draw() has been called:
-    if changeNz == 0:
-        Normal_Z_slider.value = Nzfix
 
-    
-    #ChangeMohrCircle()
-    #ChangeRotatingPlane_Forces()
     
 def TangentialXZ_init(attr,old,new):
 
     ## Figure 1, Present the Shear Forces while draw() hasn't yet been called:
-    if changeNxz == 1:
 
         ## global change of Nxz    
         global Nxz     
@@ -577,17 +528,9 @@ def TangentialXZ_init(attr,old,new):
             Nxz3_rect_source.data  = dict(x=[0],  y=[9],  w=[13],          h=[0.3*new+0.5], angle=[0])
             Nxz4_rect_source.data  = dict(x=[0],  y=[-9], w=[13],          h=[0.3*new+0.5], angle=[0])
 
-    ## Freeze the value of the slider once draw() has been called:
-    if changeNxz == 0:
-        Tangential_XZ_slider.value = Nxzfix
 
-    
-    #ChangeMohrCircle()
-    #ChangeRotatingPlane_Forces()
         
 def changePlaneAngle(attr,old,new):
-
-     if changeAngle == 1:
 
         global P_Angle
         global alpha
@@ -624,8 +567,9 @@ def changePlaneAngle(attr,old,new):
         ChangeMohrCircle()
         ChangeRotatingPlane_Forces()
 
-     if changeAngle == 0:
-         Plane_Angle_slider.value = 0
+
+         
+         
         
 def ChangeMohrCircle():
     global P_Angle
@@ -681,7 +625,6 @@ def ChangeRotatingPlane_Forces():
     P_Angle = -P_Angle
 
     ## Set Nzetaeta=0 if angle-slider is set to principal direction
-
 
     radius  = float(sqrt(pow(((Nx-Nz)/2),2)+pow(Nxz,2)))
     centreX = float((Nx+Nz)/2)
@@ -998,6 +941,7 @@ figure3.ygrid.visible = False
 ### Creating  sliders to change Normal and Tangential Forces
 Normal_X_slider= Slider(title=u"\u03C3"u"\u0078",value= 0,start = -10, end = 10, step = 0.5)
 Normal_X_slider.on_change('value',NormalForceX_init)
+
     
 Normal_Z_slider= Slider(title=u"\u03C3"u"\u007A",value= 0,start = -10, end = 10, step = 0.5)
 Normal_Z_slider.on_change('value',NormalForceZ_init)
@@ -1007,6 +951,7 @@ Tangential_XZ_slider.on_change('value',TangentialXZ_init)
     
 Plane_Angle_slider= Slider(title= u"\u03B1",value= 0,start = -180, end = 180, step = 1)
 Plane_Angle_slider.on_change('value',changePlaneAngle)
+Plane_Angle_slider.disabled = True
 
 
 ###Create Reset Button:
