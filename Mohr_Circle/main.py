@@ -43,7 +43,7 @@ global NetaI0
 NetaI0      =  0
 
 global alpha
-alpha = 0
+alpha       = 0
 
 
 ### Initializing variables
