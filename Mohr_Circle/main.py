@@ -17,8 +17,7 @@ from bokeh.models.glyphs import Ellipse,Wedge,Rect
 from bokeh.models.layouts import Spacer
 from bokeh.io import curdoc
 from os.path import dirname, join
-from math import pi,sqrt,pow,sin,cos,atan
-
+from math import pi,sqrt,pow,sin,cos,atan 
 
 
 ### Initial Values
@@ -101,7 +100,7 @@ Nzetaeta4_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle
 
 ### Labels
 Figure1Perm_Label_source   = ColumnDataSource(data=dict(x=[22,1], y=[-5, -27], names=['x', 'z']))
-Figure2Perm_Label_source   = ColumnDataSource(data=dict(x=[20.5,-3.5], y=[-3, 18], names=[u"\u03C3", u"\u03C4"]))
+Figure2Perm_Label_source   = ColumnDataSource(data=dict(x=[16,1.5], y=[-2.5, 15.5], names=[u"\u03C3", u"\u03C4"]))
 Figure2Moving_Label_source = ColumnDataSource(data=dict(x=[], y=[], names=[]))
 Figure2Show_Label_source   = ColumnDataSource(data=dict(x=[], y=[], names=[]))
 Figure3Perm_Label_source   = ColumnDataSource(data=dict(x=[22,1], y=[-5, -27], names=['x', 'z']))
@@ -321,17 +320,47 @@ def draw():
     Neta      = float(((Nx+Nz)/2)-(((Nx-Nz)/2)*cos(2*P_Angle))-Nxz*sin(2*P_Angle))
     Nzetaeta  = float((-(((Nx-Nz)/2)*sin(2*P_Angle)))+Nxz*cos(2*P_Angle))
 
-    ##Figure 1, Draw Nx and keep it until reset() ist called:
-    new = Nx
-    new = new*0.75
-    if(new<0):
-        NxP_arrow_source.data = dict(xS=[12.5-new],  xE=[12.5],  yS=[0], yE=[0], lW = [2])
-        NxN_arrow_source.data = dict(xS=[-12.5+new], xE=[-12.5], yS=[0], yE=[0], lW = [2]) 
+    ## Calculate Angle for which Nzeta or Neta will be zero (sign-change-method):
+    global NZETA_ZERO_ANGLES
+    global NETA_ZERO_ANGLES
 
-        NxP_rect_source.data  = dict(x=[(25-new)/2],  y=[0], w=[new-1.5], h = [13], angle=[0])
-        NxN_rect_source.data  = dict(x=[(-25+new)/2], y=[0], w=[new-1.5], h = [13], angle=[0])
+    NZeta_List0 = [181]*360
+    NZeta_List1 = [181]*360
+    NZETA_ZERO_ANGLES = [181]*360
+    Neta_List0 = [181]*360
+    Neta_List1 = [181]*360
+    NETA_ZERO_ANGLES = [181]*360
+
+    ## Nzeta:
+    for n in range(-180,180):
+        NZeta_List0[n+180] = float(((Nx+Nz)/2)+(((Nx-Nz)/2)*cos(2*-n*pi/180))+Nxz*sin(2*-n*pi/180))
+        NZeta_List1[n+180] = n
+    count = 0
+    for m in range(-180,179):
+        if NZeta_List0[m+180]*NZeta_List0[m+181]<0:
+            NZETA_ZERO_ANGLES[count]=NZeta_List1[m+180]
+            count = count+1
+    ## Neta:
+    for n in range(-180,180):
+        Neta_List0[n+180] = float(((Nx+Nz)/2)-(((Nx-Nz)/2)*cos(2*-n*pi/180))-Nxz*sin(2*-n*pi/180))
+        Neta_List1[n+180] = n
+    count = 0
+    for m in range(-180,179):
+        if Neta_List0[m+180]*Neta_List0[m+181]<0:
+            NETA_ZERO_ANGLES[count]=Neta_List1[m+180]
+            count = count+1
+
+
+    ##Figure 1, Draw Nx and keep it until reset() ist called:
+    
+    if(Nx*0.75<0):
+        NxP_arrow_source.data = dict(xS=[12.5-Nx*0.75],  xE=[12.5],  yS=[0], yE=[0], lW = [2])
+        NxN_arrow_source.data = dict(xS=[-12.5+Nx*0.75], xE=[-12.5], yS=[0], yE=[0], lW = [2]) 
+
+        NxP_rect_source.data  = dict(x=[(25-Nx*0.75)/2],  y=[0], w=[Nx*0.75-1.5], h = [13], angle=[0])
+        NxN_rect_source.data  = dict(x=[(-25+Nx*0.75)/2], y=[0], w=[Nx*0.75-1.5], h = [13], angle=[0])
         
-    elif(new==0):
+    elif(Nx*0.75==0):
         NxP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
         NxN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
 
@@ -339,11 +368,11 @@ def draw():
         NxN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
 
     else:
-        NxP_arrow_source.data  = dict(xS=[12.5],  xE=[12.5+new],  yS=[0], yE=[0], lW = [2])
-        NxN_arrow_source.data  = dict(xS=[-12.5], xE=[-12.5-new], yS=[0], yE=[0], lW = [2])
+        NxP_arrow_source.data  = dict(xS=[12.5],  xE=[12.5+Nx*0.75],  yS=[0], yE=[0], lW = [2])
+        NxN_arrow_source.data  = dict(xS=[-12.5], xE=[-12.5-Nx*0.75], yS=[0], yE=[0], lW = [2])
 
-        NxP_rect_source.data   = dict(x=[(25+new)/2],  y=[0], w=[new+1.5], h = [13], angle=[0])        
-        NxN_rect_source.data   = dict(x=[(-25-new)/2], y=[0], w=[new+1.5], h = [13], angle=[0])  
+        NxP_rect_source.data   = dict(x=[(25+Nx*0.75)/2],  y=[0], w=[Nx*0.75+1.5], h = [13], angle=[0])        
+        NxN_rect_source.data   = dict(x=[(-25-Nx*0.75)/2], y=[0], w=[Nx*0.75+1.5], h = [13], angle=[0])  
     
 
     ##Figure 1, Draw Nz and keep it until reset() ist called:
@@ -541,9 +570,7 @@ def changePlaneAngle(attr,old,new):
         ChangeRotatingPlane_Forces()
 
 
-         
-         
-        
+                 
 def ChangeMohrCircle():
     global P_Angle
     
@@ -580,13 +607,6 @@ def ChangeMohrCircle():
 
 
     
-
-
- 
-
-
-
-
 def ChangeRotatingPlane_Forces():
     
     global Nx,Nz,Nxz
@@ -605,29 +625,22 @@ def ChangeRotatingPlane_Forces():
     alpha_0 = 180*atan(Nxz/(Nz+(-rleft_x+0.00001)))/(pi)
     alpha_0 = int(alpha_0+0.5)
 
-
     alpharepetitions = [-90, -180, 0, 90, 180]
     for n in alpharepetitions:
         if alpha == alpha_0+n:
             Nzetaeta=0         
             break
+    ## Set Nzeta = 0 if alpha equals value in list NZETA_ZERO_ANGLES
+    for m in NZETA_ZERO_ANGLES: 
+        if alpha == m:
+            Nzeta = 0
+            break
+    ## Set Neta = 0 if alpha equals value in list NETA_ZERO_ANGLES
+    for m in NETA_ZERO_ANGLES: 
+        if alpha == m:
+            Neta = 0
+            break
 
-    ## Set Nzeta = 0 if sign change
-    global NzetaI0
-    global NzetaI1
-    NzetaI1 = Nzeta
-    if NzetaI0*NzetaI1 <0:
-        Nzeta = 0
-    NzetaI0 = NzetaI1
-
-    ## Set Neta = 0 if sign change
-    global NetaI0
-    global NetaI1
-    NetaI1 = Neta
-    if NetaI0*NetaI1 <0:
-        Neta = 0
-    NetaI0 = NetaI1
-     
 
     Nzeta = 0.75*Nzeta
     if Nzeta>0:
@@ -774,11 +787,11 @@ figure1.add_glyph(Nxz4_rect_source,Nxz1_rect_glyph)
 Mohr_Circle_glyph = Circle(x='x',y='y',radius='radius', radius_dimension='y', fill_color='#c3c3c3', fill_alpha=0.5)
 Wedge_glyph = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
 ### Figure 2: Define Figure and add Geometry
-figure2 = figure(title="", tools="", x_range=(-25,25), y_range=(-25,25),width=400,height=400, logo=None)
+figure2 = figure(title="", tools="", x_range=(-18.5,18.5), y_range=(-18.5,18.5),width=400,height=400, logo=None)
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
-                   x_start=-20, y_start=0, x_end=20, y_end=0))
+                   x_start=-17, y_start=0, x_end=17, y_end=0))
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
-                   x_start=0, y_start=-20, x_end=0, y_end=20))
+                   x_start=0, y_start=-17, x_end=0, y_end=17))
 figure2.add_glyph(Mohr_Circle_source,Mohr_Circle_glyph)
 figure2.add_glyph(Wedge_source,Wedge_glyph)
 # Modified line
