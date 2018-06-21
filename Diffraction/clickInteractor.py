@@ -56,10 +56,11 @@ class ClickInteractor:
         returns the currently clicked on point in the local coordinate system of self._plot
         :return:
         """
-        if len(self._pseudo_square.data_source.selected['1d']['indices']) > 0:
-            id = self._pseudo_square.data_source.selected['1d']['indices'][0]
-            x_coor = self._pseudo_square.data_source.data['x'][id]
-            y_coor = self._pseudo_square.data_source.data['y'][id]
-            return x_coor, y_coor
+        if self._pseudo_square.data_source.selected is not None:
+            if len(self._pseudo_square.data_source.selected['1d']['indices']) > 0:
+                id = self._pseudo_square.data_source.selected['1d']['indices'][0]
+                x_coor = self._pseudo_square.data_source.data['x'][id]
+                y_coor = self._pseudo_square.data_source.data['y'][id]
+                return x_coor, y_coor
         else:
-            return None, None
+            return None, 0

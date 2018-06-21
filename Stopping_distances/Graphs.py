@@ -1,8 +1,9 @@
 from bokeh.plotting import figure
 from bokeh.layouts import gridplot
-from bokeh.models import ColumnDataSource, Range1d
-from math import sqrt
+from bokeh.models import ColumnDataSource
+from math import sqrt, isnan
 from numpy import linspace
+
 
 class Graphs:
     def __init__(self):
@@ -163,23 +164,38 @@ class Graphs:
         elif (sv=='a'):
             xmax=self.at.x_range.end
         
-        #create lists in which to store co-ordinates
+        #create lists in which to store coordinates
         X=[]
         Y=[]
+
+        scale=linspace(0,xmax,100)
+
+        nan = float('nan')
+
+
+
         try:
             # plot 100 points between 0 and xmax
-            for s in linspace(0,xmax,100.0):
+            for s in scale:
                 # add x point
                 X.append(s)
                 # Str contains an equation as a function of s
                 # evaluating it therefore gives the y co-ordinate
-                Y.append(eval(Str))
-            
+
+                try:
+                    Y.append(eval(Str))
+                except ZeroDivisionError:# avoid division by zero
+                    Y.append(nan)
+
             # add final point
             X.append(xmax)
             # create s=final_x_point so that s exists when it is called by Str in eval
             s=xmax
-            Y.append(eval(Str))
+            try:
+                Y.append(eval(Str))
+            except ZeroDivisionError:  # avoid division by zero
+                Y.append(nan)
+
         except ValueError:
             # if value is not valid in equation
             # (i.e s has become large enough that we are doing sqrt(negative) )
@@ -187,7 +203,13 @@ class Graphs:
             # as a result X is longer than Y
             # fix this
             X.pop()
-        
+            #print('excerption')
+
+        #remove 'nan' form X and Y lists:
+        X=[v for i,v in enumerate(X) if not isnan(Y[i])]
+        Y=[v for i,v in enumerate(Y) if not isnan(Y[i])]
+
+
         # add new data to appropriate figure
         if (sv=='s'):
             self.UserStSource.data = dict(s=X,t=Y)

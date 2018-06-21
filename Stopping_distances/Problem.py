@@ -1,6 +1,8 @@
-from Visualisation import *
-from Graphs import *
-from TestSolutions import *
+from string import replace
+
+from Visualisation import Visualisation
+from Graphs import Graphs
+from TestSolutions import isEquation
 from random import seed, randrange
 from bokeh.layouts import column, row
 from bokeh.models.widgets import TextInput, Button, Paragraph, CheckboxGroup, Slider, Select, Div
@@ -45,12 +47,12 @@ class Problem:
         # user input for t(s) to be tested against simulation
         self.UserTs = TextInput(value="", title="t(s) = ",width=200)
         # button to allow sqrt to be used in t(s)
-        self.TsSqrt = Button(label=u"\u221A",button_type="success",width=100)
+        self.TsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
         self.TsSqrt.on_click(self.addSqrtTs)
         # user input for v(s) (or a(s)) to be tested against simulation
         self.UserVs = TextInput(value="", title="v(s) = ",width=200)
         # button to allow sqrt to be used in v(s)/a(s)
-        self.VsSqrt = Button(label=u"\u221A",button_type="success",width=100)
+        self.VsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
         self.VsSqrt.on_click(self.addSqrtVs)
         # button to plot t(s) and v(s)/a(s) over simulation data
         self.TestEqs = Button(label="Check equations",button_type="success",width=100)
@@ -97,6 +99,7 @@ class Problem:
     
     def test(self):
         # start the simulation
+        print(self.v)
         if (self.t!=0):
             # if it is not already at the beginning then reset the setup
             self.Reset()
@@ -261,6 +264,7 @@ class Problem:
 
     def plot_attempt(self):
         s1=isEquation(self.UserTs.value,'s')
+        #print(s1)
         # if s1 is a string
         if (s1!=False):
             self.Plotter.test_equation(s1,'s')
@@ -289,6 +293,7 @@ class Problem:
             # enable viewer to see s(t) and v(t)
             self.eqVis.disabled=False
             # rename acceleration input
+            self.UserAcceleration.disabled = False
             self.UserAcceleration.title="Acceleration :"
         elif (new=="Distance-dependent Velocity"):
             # if new problem type is where user provides v(s)
@@ -311,3 +316,4 @@ class Problem:
             # (disabled does not work, nor does visible)
             self.UserAcceleration.value=""
             self.UserAcceleration.title=""
+            self.UserAcceleration.disabled = True

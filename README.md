@@ -3,9 +3,9 @@ This repository contains the python codes for webbased-visualization for mechani
 It contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Müller, TUM (Technical University of Munich).
 
 ## Overview
-The use of this repository is only suggested for developers. If you are only interested in using the completed apps, please visit the following website:
-http://www.bm.bgu.tum.de/lehre/interactive-apps/
-We use two different bokeh servers for different groups of apps, in order to avoid conflicts: the simplest apps run on one server, the most complex ones run on a second server.
+The use of this repository is only suggested for developers. If you are only interested in using the completed apps, please visit the following website: http://www.bm.bgu.tum.de/lehre/interactive-apps/.
+
+Before starting developing, please take a look at our [DevelopmentGuideline](DevelopmentGuideline.md). We use two different bokeh servers for different groups of apps, in order to avoid conflicts: the simplest apps run on one server, the most complex ones run on a second server.
 
 This repository contains one folder for each App, with a main file and subfunction-files. The following files are important for the installation of the Bokeh framework:
 
@@ -109,15 +109,15 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 
 #### Technical Acoustics II (ag, cw):
 - [x] 1) Diffraction (br)
-- [ ] 2) Vibroacoustic plates (rd)
+- [x] 2) Vibroacoustic plates (rd)
 
 #### Integral transform method (fm, he):
 - [x] 1) Sampling (br)
 
 ### Supervisors
-- Francesca Taddei (ft)
-- Axel Greim (ag)
-- Quirin Aumann (qa)
+- Francesca Taddei (ft),[@FrancescaTaddei](https://github.com/FrancescaTaddei)
+- Axel Greim (ag), [@axelgreim](https://github.com/axelgreim)
+- Quirin Aumann (qa), [@qaumann](https://github.com/qaumann)
 - Moritz Becker (mb)
 - Julian Freisinger (jf)
 - Franziska Mittermeier (fm)
@@ -127,7 +127,11 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 
 ### Developers
 
-Please comply with the [DevelopmentGuideline](DevelopmentGuideline.pdf)
+Please comply with the [DevelopmentGuideline](DevelopmentGuideline.md)!
+- Sascha Kubisch, [@ga96wec](https://github.com/ga96wec)
+- Matthias Ebert, [@m3bert](https://github.com/m3bert)
+
+### Former developers
 
 - Emily Bourne, eb
 - Moustafa Alsayed Ahmad, ma

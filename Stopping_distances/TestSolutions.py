@@ -7,19 +7,25 @@ numbers=u"1234567890."
 def isEquation(equation,x):
     global acceptable_characters, numbers
     # change , to . so 0,5 becomes 0.5, thus rendering European notation readable by python
-    replace(equation,',','.')
+    equation=replace(equation,',','.')
+    #print (equation)
     # check there are as many opening brackets as closing brackets
     if (count(equation,'(')!=count(equation,')')):
         return False
+    #print("Brakets in Balance")
     # set up while loop (for loop breaks at sqrt)
     n=len(equation)
     if (n==0):
+        #print("Input empty")
         return False
+    #print("Input not empty")
     i=0
     while (i<n):
         # if the input contains a non valid character return false
         if (find(acceptable_characters,equation[i])==-1 and equation[i]!=x):
+            #print("invalid character used")
             return False
+        #print("character valid")
         # if user has written 2(3+1) instead of 2*(3+1)
         # or 2sqrt(3) instead of 2*sqrt(3)
         # or 2s instead of 2*s
@@ -38,6 +44,8 @@ def isEquation(equation,x):
             i+=4
             # increase n so that the whole string is still checked
             n+=3
+            #print("sqrt detected:")
+            #print(equation)
         elif (equation[i]=='^'):
             sTemp=equation[i+1:]
             equation=equation[:i]+"**"+sTemp
@@ -46,10 +54,11 @@ def isEquation(equation,x):
             # increase n so that the whole string is still checked
             n+=1
         i+=1
+
     # if false has not yet been returned then the equation should be valid and can be used in eval function
     try:
         # create a variable with the appropriate name and test function
-        exec(x+"=0")
+        exec(x+"=1")
         eval(equation)
         # return it if everything works
         return equation

@@ -1,8 +1,6 @@
 from bokeh.models import ColumnDataSource
 import numpy as np
-from numpy import linalg as LA
 from scipy import linalg
-from bokeh.models.ranges import Range1d
 from bokeh.models.widgets import Div
 
 class Structure:
@@ -266,7 +264,7 @@ class Mode( Structure ):
             
         return self.modeShape / maxAmplitude
         
-class SiesmicParameters():
+class SeismicParameters():
     
     def __init__(self,a,gamma,S,eta,beta,undergroundParamter):
         self.a = a

@@ -16,8 +16,8 @@ import {LayoutDOM, LayoutDOMView} from "models/layouts/layout_dom"
 # See: http://visjs.org/graph3d_examples.html for more details. This
 # JS object should match the Python default value.
 OPTIONS =
-  width:  '600px'
-  height: '600px'
+  width:  '500px'
+  height: '500px'
   style: 'surface'
   showPerspective: true
   showGrid: false

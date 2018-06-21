@@ -16,12 +16,26 @@ The following points are important for all developers.
 
 ## Developer Hints
 
-* Try to avoid global variables! Otherwise the app might behave strangely.
+* Try to avoid global variables! Otherwise the app might behave strangely. If there is no way to avoid them, please use the following naming convention: `gl[APPNAME][VARNAME]`, so to define the velocity in the Collision app for example, use `glCollisionVelocity`.
 * For static resources use the static folder in the directory of the app. See Diffraction app for a use case (Diffraction/main.py:294-304, commit 188f76b15959222aa0a8bf3f55d476a52abbf221).
 * For complex behaviour try to introduce objects, that bundle the functionality and the data (e.g. https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/blob/master/Rollercoaster/DraggablePath.py)
 * Try to avoid very long scripts. It is usually not a good idea to have more than 500 lines of code in one script, no one can understand this.
 * Try to avoid very long and complex functions. It might be helpful to subdivide a function into several functions that partially solve a certain task.
 * Don't use ```from ... import *```. It is hard to understand the origin of a function or variable if it is not imported explicitly. Better use ```from ... import foo, bar```.
+
+## LaTeX support in app descriptions
+Latex support is made available via the KaTeX library (https://khan.github.io/KaTeX/). A class `LatexDiv` is available, which works the same way as the normal `Div` but parses also Latex input. As it will be used by many apps, it can be found in an extra folder. The class can be imported using:
+
+```python
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_div import LatexDiv
+```
+
+Now, indstead of `Div`, use `LatexDiv`, if the document contains Latex code. The identifiers are `$ \alpha $` or `\( \alpha \)` for inline mode and `$$ \alpha $$` or `\[ \alpha \]` for display mode.
 
 # Francesca Final Acceptance and Publication
 

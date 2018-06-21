@@ -1,6 +1,7 @@
 from Spring1 import *
 from Dashpot1 import *
 from Mass1 import *
+from Coord1 import *
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
@@ -134,7 +135,9 @@ def stop():
     mass.resetLinks(spring,(-2,11))
     mass.resetLinks(dashpot,(2,11))
     mass.changeInitV(initV_input.value)
-
+    mass.nextStepForces=[]
+    mass.nextStepObjForces=[]
+    
 def reset():
     stop()
     mass_input.value = initial_mass_value

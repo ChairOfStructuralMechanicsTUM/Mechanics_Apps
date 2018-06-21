@@ -4,16 +4,14 @@ Imports
 ###############################################################################
 '''
 import numpy as np
-from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 from bokeh.io import curdoc
-from Functions import *
-from bokeh.models import Arrow, OpenHead, Button, Slider, Toggle, LabelSet
-from bokeh.layouts import column, row, widgetbox
-from bokeh.models.widgets import TextInput, RadioGroup, Div, DataTable,TableColumn,DateFormatter
+from Functions import Mode, Structure, SeismicParameters
+import Functions as fc
+from bokeh.models import Button, Toggle, LabelSet
+from bokeh.layouts import column, row
+from bokeh.models.widgets import TextInput, RadioGroup, Div, DataTable, TableColumn
 from os.path import dirname, join, split
-from Functions import *
-from bokeh.models.ranges import Range1d
 from bokeh.models.layouts import Spacer
 
 '''
@@ -157,7 +155,7 @@ structure_color  = '#85929E'
 mass = 10000.0
 
 # Data structure which contains the coordinates of the masses and mass supports
-masses, massSupports = construct_masses_and_supports(length = 3.0)
+masses, massSupports = fc.construct_masses_and_supports(length = 3.0)
 
 # Radius of the circles that represent the masses
 radius = 0.5
@@ -168,7 +166,7 @@ trussLength = 3.0 # meters
 # Starting amount of bendingStiffness in N*m^2
 bendingStiffness = 1000000
 
-trussSources = construct_truss_sources(masses[0], masses[1], masses[2], trussLength)
+trussSources = fc.construct_truss_sources(masses[0], masses[1], masses[2], trussLength)
 
 ################################# (3) base ####################################
 base =dict(
@@ -182,10 +180,10 @@ structure = Structure(masses, massSupports, trussSources, trussLength, base)
 structure.update_system([0,0,0])
 
 # Construct the mass and stiffness matric, in addition to the lebels to be defined later
-construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRatio, trussLength)
+fc.construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRatio, trussLength)
 
 ############################## Plot structure #################################
-plot( time_plot, structure, radius, structure_color )
+fc.plot( time_plot, structure, radius, structure_color )
 
 # label that indicates the mass 
 time_plot.add_layout(
@@ -252,12 +250,12 @@ for i in range(0,3):
     modes.append( Mode(i, masses, massSupports, trussSources, trussLength, base, frequency=0, modeShape=np.zeros(3)) )
 
 # Get the modal parameters
-eigenvalues, eigenvectors = solve_modal_analysis(structure)
+eigenvalues, eigenvectors = fc.solve_modal_analysis(structure)
 
 # update the modes with the new values
 counter = 0
 for mode in modes:
-    construct_system(mode, mass, massRatio, bendingStiffness, stiffnessRatio, trussLength)
+    fc.construct_system(mode, mass, massRatio, bendingStiffness, stiffnessRatio, trussLength)
     mode.frequency = np.sqrt(eigenvalues[counter].real)
     mode.modeShape = eigenvectors[:,counter].real
     mode.normalize_mode_shape()
@@ -269,9 +267,9 @@ for mode in modes:
 ########################## Output the results #################################
 mode_colors = ['#0000FF','#00FF00','#D4AC0D']
 
-plot( mode_one  , modes[2], radius, mode_colors[2])
-plot( mode_two  , modes[1], radius, mode_colors[1])
-plot( mode_three, modes[0], radius, mode_colors[0])
+fc.plot( mode_one  , modes[2], radius, mode_colors[2])
+fc.plot( mode_two  , modes[1], radius, mode_colors[1])
+fc.plot( mode_three, modes[0], radius, mode_colors[0])
 '''
 ###############################################################################
 Construct the Elastic Response Spectrum
@@ -279,11 +277,11 @@ Construct the Elastic Response Spectrum
 '''
 # Construct the siesmic parametes for the building
 # INITIALIZE WITH DEFAULT VALUES
-siesmicParameters = SiesmicParameters(a=0.4,gamma=1.0,S=1.0,eta=1.0,beta=2.5,undergroundParamter = 'A-R')
+siesmicParameters = SeismicParameters(a=0.4,gamma=1.0,S=1.0,eta=1.0,beta=2.5,undergroundParamter = 'A-R')
 #GetMaximumDisplacement(modes,siesmicParameters)
 
 # To construct the ERS plot data source
-update_ERS_plot_data( siesmicParameters )
+fc.update_ERS_plot_data( siesmicParameters )
 
 # plot the line drawn by the ERS data source
 ERSplot.line(x='x',y='y',source=siesmicParameters.ERSdata)
@@ -319,15 +317,15 @@ def solve_system():
     elif int(stiffness_input.value) < 1e3 or int(stiffness_input.value) > 1e9:
         stiffness_input.value = "Stiffness is either too small or too big, adjust it!"
     else:
-        construct_system(structure, int(mass_input.value), massRatio, int(stiffness_input.value), stiffnessRatio, trussLength)
+        fc.construct_system(structure, int(mass_input.value), massRatio, int(stiffness_input.value), stiffnessRatio, trussLength)
     # Re-solve the eigenvalue problem
-    eigenvalues, eigenvectors = solve_modal_analysis(structure)
+    eigenvalues, eigenvectors = fc.solve_modal_analysis(structure)
 
     # update the modes with the new values
     counter = 0
     for mode in modes: 
         # Re-construct the mode matrices (mass and stiffness matrices)
-        construct_system(mode, int(mass_input.value), massRatio, int(stiffness_input.value), stiffnessRatio, trussLength)
+        fc.construct_system(mode, int(mass_input.value), massRatio, int(stiffness_input.value), stiffnessRatio, trussLength)
         
         # Update the natural frequency and mode shape
         mode.frequency = np.sqrt(eigenvalues[counter].real)
@@ -420,7 +418,7 @@ def calculate_ERS():
     siesmicParameters.determine_periods_and_S()
     
     # Plot the updated Elastic Response Spectrum
-    update_ERS_plot_data( siesmicParameters )
+    fc.update_ERS_plot_data( siesmicParameters )
     
     for mode in modes:
         mode.modify_location_in_ERS(siesmicParameters)

@@ -8,6 +8,8 @@ echo "installing flexx..."
 conda install -c bokeh flexx
 echo "installing vtk..."
 conda install vtk
-echo "installing tornado 4.4.2...."
+echo "installing tornado"
 conda install tornado
+echo "installing pscript..."
+conda install -c conda-forge pscript
 

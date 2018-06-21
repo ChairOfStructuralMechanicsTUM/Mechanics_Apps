@@ -11,7 +11,12 @@ from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow, No
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
 import numpy as np
-from os.path import dirname, join, split
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_div import LatexDiv
 
 #Global constant numbers:
 punktezahl      = 30
@@ -448,10 +453,10 @@ init()
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 description1_filename = join(dirname(__file__), "description1.html")
-description1 = Div(text=open(description1_filename).read(), render_as_text=False, width=1200)
+description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=False, width=1200)
 
 
 
