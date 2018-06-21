@@ -16,9 +16,15 @@ from bokeh.models.markers import Square,Circle
 from bokeh.models.glyphs import Ellipse,Wedge,Rect
 from bokeh.models.layouts import Spacer
 from bokeh.io import curdoc
-from os.path import dirname, join
+
 from math import pi,sqrt,pow,sin,cos,atan 
 
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_div import LatexDiv
 
 ### Initial Values
 radius = 10
@@ -944,10 +950,13 @@ init()
 
 ### Add description from HTML file
 description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1140)
 
 ### Arrange layout
-doc_layout = layout(children=[column(row(Spacer(height=200,width=18),description),row(column(figure1,row(Spacer(height=10,width=50),column(Normal_X_slider,Normal_Z_slider,Tangential_XZ_slider))),column(figure2,row(Spacer(height=10,width=50),column(draw_button,show_button,reset_button))),column(figure3, row(Spacer(height=10,width=50),Plane_Angle_slider))))])
+doc_layout = layout(children=[column(
+    row(Spacer(height=200,width=18),description),
+    row(Spacer(height=30)),
+    row(column(figure1,row(Spacer(height=10,width=50),column(Normal_X_slider,Normal_Z_slider,Tangential_XZ_slider))),column(figure2,row(Spacer(height=10,width=50),column(draw_button,show_button,reset_button))),column(figure3, row(Spacer(height=10,width=50),Plane_Angle_slider))))])
 curdoc().add_root(doc_layout)
 curdoc().title = "Mohr Circle"
 
