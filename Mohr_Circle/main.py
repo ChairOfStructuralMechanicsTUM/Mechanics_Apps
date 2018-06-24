@@ -291,7 +291,7 @@ def show():
         ## Print Labels for principal stress and direction
         alpha=180*atan(Nxz/(Nz+(-rleft_x+0.00001)))/(pi)
         alpha=int(alpha+0.5)
-        Figure2Show_Label_source.data = dict(x=[rleft_x-3,rright_x+0.5,rleft_x-0.7,rright_x-0.5,-22,-19,centreX+0.5,centreX-0.5],y=[0,0,-1.1,-1.1,15,15,0,-1.1], names =[u"\u03C3"u"\u2082",u"\u03C3"u"\u2081","x","x",u"\u03B1"u"\u2080","=" + str(alpha) + "°",u"\u03C3"u"\u2098","x"])
+        Figure2Show_Label_source.data = dict(x=[rleft_x-3,rright_x+0.5,rleft_x-0.5,rright_x-0.3,-16,-14,centreX+0.5,centreX-0.4],y=[0,0,-0.8,-0.8,15,15,0,-0.8], names =[u"\u03C3"u"\u2082",u"\u03C3"u"\u2081","x","x",u"\u03B1"u"\u2080","=" + str(alpha) + "°",u"\u03C3"u"\u2098","x"])
         Wedge_source.data=dict(x=[rleft_x], y=[0],radius=[radius/2], sA=[atan(Nxz/(Nz+(-rleft_x)))], eA=[0])
         Wedge_glyph = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
 
@@ -434,8 +434,6 @@ def draw():
 
     Newplane_line_source.data       = dict(x=[rleft_x,Neta,Neta], y=[rleft_z,Nzetaeta,0])
     OriginalPlane_line_source.data  = dict(x=[rleft_x,Nz,Nz], y=[rleft_z,Nxz,0])
-    Figure2Moving_Label_source.data = dict(x=[Nx,Nz,-4,Nx-0.5,Nz-0.5,-0.5,Nz,Neta+1.5],y=[-3,-3,Nxz-1,-1.1,-1.1,Nxz-1.2,Nxz,Nzetaeta],
-                                           names =[u"\u03C3"u"\u0078",u"\u03C3"u"\u007A",u"\u03C4"u"\u0078"u"\u007A","x","x","-","A","B"])
     Figure2Show_Label_source.data   = dict(x=[],y=[], names =[])
   
     ## Figure 3, initializing:
@@ -512,6 +510,11 @@ def TangentialXZ_init(attr,old,new):
         ## global change of Nxz    
         global Nxz     
         Nxz = new
+
+        # Check if Nxz is zero to prevent division by zero:
+        if Nxz == 0:
+            Nxz = 0.00001
+        
         new=new*0.75
             
         if(new==0):
@@ -605,7 +608,8 @@ def ChangeMohrCircle():
 
     Newplane_line_source.data       = dict(x=[rleft_x,Neta], y=[rleft_z,Nzetaeta])
 
-    Figure2Moving_Label_source.data = dict(x=[Nx,Nz,-4,Nx-0.5,Nz-0.5,-0.5,Nz,Neta+1.5,Nzeta,Neta,Nzeta-0.5,Neta-0.5],y=[-3,-3,Nxz-1,-1.1,-1.1,Nxz-1.2,Nxz,Nzetaeta,-3,-3,-1.1,-1.1],
+
+    Figure2Moving_Label_source.data = dict(x=[Nx,Nz,-4,Nx-0.5,Nz-0.5,-0.5,Nz,Neta+1.5,Nzeta,Neta,Nzeta-0.5,Neta-0.5],y=[-3,-3,Nxz-1,-0.8,-0.8,Nxz-1.2,Nxz,Nzetaeta,-3,-3,-0.8,-0.8],
                                            names =[u"\u03C3"u"\u0078",u"\u03C3"u"\u007A",u"\u03C4"u"\u0078"u"\u007A","x","x","-","A","B", u"\u03C3"u"\u0078"u"\u0305" ,u"\u03C3"u"\u007A"u"\u0305","x","x"])
     
     Figure3Moving_Label_source.data = dict(x=[(25+2.5)*cos(-P_Angle)-1,(-25-2.5)*sin(P_Angle)-1],y=[(25+2.5)*sin(-P_Angle)-1,(-25-2.5)*cos(P_Angle)-1], 
