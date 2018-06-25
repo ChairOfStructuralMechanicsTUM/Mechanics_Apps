@@ -23,7 +23,7 @@ from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
-sys.path.insert(0,parentdir) 
+sys.path.insert(0,parentdir)
 from latex_div import LatexDiv
 
 ### Initial Values
@@ -252,7 +252,9 @@ def show():
         ## Print Labels for principal stress and direction
         alpha=180*atan(glMohrNxz/(glMohrNz+(-rleft_x+0.00001)))/(pi)
         alpha=int(alpha+0.5)
-        Figure2Show_Label_source.data = dict(x=[rleft_x-3,rright_x+0.5,rleft_x-0.5,rright_x-0.3,-16,-14,centreX+0.5,centreX-0.4],y=[0,0,-0.8,-0.8,15,15,0,-0.8], names =[u"\u03C3"u"\u2082",u"\u03C3"u"\u2081","x","x",u"\u03B1"u"\u2080","=" + str(alpha) + "°",u"\u03C3"u"\u2098","x"])
+        Figure2Show_Label_source.data = dict(x=[rleft_x,rright_x,-16,-14,centreX],
+                                                y=[0,0,15,15,0],
+                                                names =[u"\u03C3"u"\u2082",u"\u03C3"u"\u2081",u"\u03B1"u"\u2080","=" + str(alpha) + "°",u"\u03C3"u"\u2098"])
         Wedge_source.data=dict(x=[rleft_x], y=[0],radius=[radius/2], sA=[atan(glMohrNxz/(glMohrNz+(-rleft_x)))], eA=[0])
 
         glMohrChangeShow = glMohrChangeShow*-1
@@ -565,8 +567,15 @@ def ChangeMohrCircle():
     Newplane_line_source.data       = dict(x=[rleft_x,Neta], y=[rleft_z,Nzetaeta])
 
 
-    Figure2Moving_Label_source.data = dict(x=[glMohrNx,glMohrNz,-4,glMohrNx-0.5,glMohrNz-0.5,-0.5,glMohrNz,Neta+1.5,Nzeta,Neta,Nzeta-0.5,Neta-0.5],y=[-3,-3,glMohrNxz-1,-0.8,-0.8,glMohrNxz-1.2,glMohrNxz,Nzetaeta,-3,-3,-0.8,-0.8],
-                                           names =[u"\u03C3"u"\u0078",u"\u03C3"u"\u007A",u"\u03C4"u"\u0078"u"\u007A","x","x","-","A","B", u"\u03C3"u"\u0078"u"\u0305" ,u"\u03C3"u"\u007A"u"\u0305","x","x"])
+    Figure2Moving_Label_source.data = dict(x=[glMohrNx,glMohrNz,0.0, 0.0, Neta,Nzeta,glMohrNz,Neta],
+                                            y=[0.0,0.0,glMohrNxz, Nzetaeta,0.0,0.0,glMohrNxz,Nzetaeta],
+                                            names =[u"\u03C3"u"\u0078",
+                                                u"\u03C3"u"\u007A",
+                                                u"\u03C4"u"\u0078"u"\u007A",
+                                                u"\u03C4"u"\u0078"u"\u0305"u"\u007A"u"\u0305", 
+                                                u"\u03C3"u"\u007A"u"\u0305",
+                                                u"\u03C3"u"\u0078"u"\u0305",
+                                                "A","B"])
     
     Figure3Moving_Label_source.data = dict(x=[(25+2.5)*cos(-glMohrP_Angle)-1,(-25-2.5)*sin(glMohrP_Angle)-1],y=[(25+2.5)*sin(-glMohrP_Angle)-1,(-25-2.5)*cos(glMohrP_Angle)-1], 
                                            names =[u"\u0078"u"\u0305",u"\u007A"u"\u0305"])
@@ -722,7 +731,7 @@ Nxz2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_
 Nxz3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 Nxz4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 ### Figure 1, Define Figure and add Geometry:
-figure1 = figure(title="Stress State A", tools="", x_range=(-30,30), y_range=(-30,30),width=400,height=400, logo=None)
+figure1 = figure(title="Stress State A", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400, logo=None)
 figure1.square([0], [0], size=75, color="black", alpha=0.5)
 figure1.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=25, y_end=0))
@@ -753,7 +762,7 @@ figure1.add_glyph(Nxz4_rect_source,Nxz1_rect_glyph)
 Mohr_Circle_glyph = Circle(x='x',y='y',radius='radius', radius_dimension='y', fill_color='#c3c3c3', fill_alpha=0.5)
 Wedge_glyph = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
 ### Figure 2: Define Figure and add Geometry
-figure2 = figure(title="", tools="", x_range=(-18.5,18.5), y_range=(-18.5,18.5),width=400,height=400, logo=None)
+figure2 = figure(title="Mohr's Circle", tools="pan,save,wheel_zoom,reset", x_range=(-18.5,18.5), y_range=(-18.5,18.5),width=400,height=400, logo=None, toolbar_location="right")
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=-17, y_start=0, x_end=17, y_end=0))
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
@@ -763,10 +772,12 @@ figure2.add_glyph(Wedge_source,Wedge_glyph)
 # Modified line
 figure2.line(x='x',y='y',source= Newplane_line_source, color="#A2AD00", line_width=3, line_join = 'bevel')
 figure2.circle(x='x',y='y',source= Newplane_line_source, size=4, color="black", alpha=0.4)
+figure2.circle(x='x', y='y', source=Figure2Moving_Label_source, size=5, color="black")
+figure2.circle(x='x', y='y', source=Figure2Show_Label_source, size=5, color="firebrick")
 figure2_labels1 = LabelSet(x='x', y='y', text='names', level='glyph',
               x_offset=0, y_offset=0, source=Figure2Perm_Label_source, render_mode='canvas')
-figure2_labels2 = LabelSet(x='x', y='y', text='names', source=Figure2Moving_Label_source, text_color = 'black')
-figure2_labels3 = LabelSet(x='x', y='y', text='names', source=Figure2Show_Label_source, text_color = 'firebrick')
+figure2_labels2 = LabelSet(x='x', y='y', text='names', source=Figure2Moving_Label_source, text_color = 'black', level='glyph', x_offset=3, y_offset=3)
+figure2_labels3 = LabelSet(x='x', y='y', text='names', source=Figure2Show_Label_source, text_color = 'firebrick', level='glyph', x_offset=3, y_offset=3)
 figure2.add_layout(figure2_labels1)
 figure2.add_layout(figure2_labels2)
 figure2.add_layout(figure2_labels3)
@@ -808,7 +819,7 @@ Nzetaeta2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", 
 Nzetaeta3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 Nzetaeta4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 ### Figure 3, Define Figure and add Geometry:
-figure3 = figure(title="Stress State B", tools="", x_range=(-30,30), y_range=(-30,30),width=400,height=400, logo=None)
+figure3 = figure(title="Stress State B", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400, logo=None)
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=25, y_end=0))
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
