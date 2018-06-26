@@ -25,6 +25,8 @@ currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_div import LatexDiv
+from latex_label import LatexLabel
+from latex_label_set import LatexLabelSet
 
 ### Initial Values
 radius = 10
@@ -106,7 +108,7 @@ Nzetaeta4_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle
 
 ### Labels
 Figure1Perm_Label_source   = ColumnDataSource(data=dict(x=[22,1], y=[-5, -27], names=['x', 'z']))
-Figure2Perm_Label_source   = ColumnDataSource(data=dict(x=[16,1.5], y=[-2.5, 15.5], names=[u"\u03C3", u"\u03C4"]))
+Figure2Perm_Label_source   = ColumnDataSource(data=dict(x=[16,1.5], y=[-2.5, 15.5], names=["\\sigma", "\\tau"]))
 Figure2Moving_Label_source = ColumnDataSource(data=dict(x=[], y=[], names=[]))
 Figure2Show_Label_source   = ColumnDataSource(data=dict(x=[], y=[], names=[]))
 Figure3Perm_Label_source   = ColumnDataSource(data=dict(x=[22,1], y=[-5, -27], names=['x', 'z']))
@@ -252,9 +254,9 @@ def show():
         ## Print Labels for principal stress and direction
         alpha=180*atan(glMohrNxz/(glMohrNz+(-rleft_x+0.00001)))/(pi)
         alpha=int(alpha+0.5)
-        Figure2Show_Label_source.data = dict(x=[rleft_x,rright_x,-16,-14,centreX],
-                                                y=[0,0,15,15,0],
-                                                names =[u"\u03C3"u"\u2082",u"\u03C3"u"\u2081",u"\u03B1"u"\u2080","=" + str(alpha) + "°",u"\u03C3"u"\u2098"])
+        Figure2Show_Label_source.data = dict(x=[rleft_x,rright_x,centreX],
+                                                y=[0,0,0],
+                                                names=['\\sigma_{II}','\\sigma_{I}','\\sigma_{M}'])
         Wedge_source.data=dict(x=[rleft_x], y=[0],radius=[radius/2], sA=[atan(glMohrNxz/(glMohrNz+(-rleft_x)))], eA=[0])
 
         glMohrChangeShow = glMohrChangeShow*-1
@@ -395,7 +397,7 @@ def draw():
     Newplane_line_source.data       = dict(x=[rleft_x,Neta,Neta], y=[rleft_z,Nzetaeta,0])
     OriginalPlane_line_source.data  = dict(x=[rleft_x,glMohrNz,glMohrNz], y=[rleft_z,glMohrNxz,0])
     Figure2Show_Label_source.data   = dict(x=[],y=[], names =[])
-  
+
     ## Figure 3, initializing:
     Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[-glMohrP_Angle],size = [75])
 
@@ -566,19 +568,12 @@ def ChangeMohrCircle():
 
     Newplane_line_source.data       = dict(x=[rleft_x,Neta], y=[rleft_z,Nzetaeta])
 
-
     Figure2Moving_Label_source.data = dict(x=[glMohrNx,glMohrNz,0.0, 0.0, Neta,Nzeta,glMohrNz,Neta],
                                             y=[0.0,0.0,glMohrNxz, Nzetaeta,0.0,0.0,glMohrNxz,Nzetaeta],
-                                            names =[u"\u03C3"u"\u0078",
-                                                u"\u03C3"u"\u007A",
-                                                u"\u03C4"u"\u0078"u"\u007A",
-                                                u"\u03C4"u"\u0078"u"\u0305"u"\u007A"u"\u0305", 
-                                                u"\u03C3"u"\u007A"u"\u0305",
-                                                u"\u03C3"u"\u0078"u"\u0305",
-                                                "A","B"])
+                                            names=['\\sigma_x','\\sigma_z','\\tau_{xz}','\\tau_{\\overline{xz}}','\\sigma_{\\overline{z}}','\\sigma_{\\overline{x}}',"A","B"])
     
     Figure3Moving_Label_source.data = dict(x=[(25+2.5)*cos(-glMohrP_Angle)-1,(-25-2.5)*sin(glMohrP_Angle)-1],y=[(25+2.5)*sin(-glMohrP_Angle)-1,(-25-2.5)*cos(glMohrP_Angle)-1], 
-                                           names =[u"\u0078"u"\u0305",u"\u007A"u"\u0305"])
+                                        names = ['\\overline{x}', '\\overline{z}'])
 
 
     
@@ -745,8 +740,10 @@ figure1.add_layout(Nxz1_arrow_glyph)
 figure1.add_layout(Nxz2_arrow_glyph)
 figure1.add_layout(Nxz3_arrow_glyph)
 figure1.add_layout(Nxz4_arrow_glyph)
-figure1_labels = LabelSet(x='x', y='y', text='names', level='glyph',
-              x_offset=5, y_offset=5, source=Figure1Perm_Label_source, render_mode='canvas')
+
+figure1_labels = LatexLabelSet(x='x', y='y', text='names', level='glyph',
+                                x_offset=0, y_offset=0, source=Figure1Perm_Label_source)
+
 figure1.add_layout(figure1_labels)
 figure1.add_glyph(NxP_rect_source,NxP_rect_glyph)
 figure1.add_glyph(NxN_rect_source,NxN_rect_glyph)
@@ -774,17 +771,19 @@ figure2.line(x='x',y='y',source= Newplane_line_source, color="#A2AD00", line_wid
 figure2.circle(x='x',y='y',source= Newplane_line_source, size=4, color="black", alpha=0.4)
 figure2.circle(x='x', y='y', source=Figure2Moving_Label_source, size=5, color="black")
 figure2.circle(x='x', y='y', source=Figure2Show_Label_source, size=5, color="firebrick")
-figure2_labels1 = LabelSet(x='x', y='y', text='names', level='glyph',
-              x_offset=0, y_offset=0, source=Figure2Perm_Label_source, render_mode='canvas')
-figure2_labels2 = LabelSet(x='x', y='y', text='names', source=Figure2Moving_Label_source, text_color = 'black', level='glyph', x_offset=3, y_offset=3)
-figure2_labels3 = LabelSet(x='x', y='y', text='names', source=Figure2Show_Label_source, text_color = 'firebrick', level='glyph', x_offset=3, y_offset=3)
+figure2_labels1 = LatexLabelSet(x='x', y='y', text='names', level='glyph',
+              x_offset=0, y_offset=0, source=Figure2Perm_Label_source)
+figure2_labels2 = LatexLabelSet(x='x', y='y', text='names', source=Figure2Moving_Label_source, text_color = 'black', level='glyph', x_offset=3, y_offset=3)
+figure2_labels3 = LatexLabelSet(x='x', y='y', text='names', source=Figure2Show_Label_source, text_color = 'firebrick', level='glyph', x_offset=3, y_offset=-10)
 figure2.add_layout(figure2_labels1)
 figure2.add_layout(figure2_labels2)
 figure2.add_layout(figure2_labels3)
 # Original line
 figure2.line(x='x',y='y',source= OriginalPlane_line_source, color="black", alpha=0.5, line_width=3, line_join = 'bevel')
 figure2.circle(x='x',y='y',source= OriginalPlane_line_source, size=4, color="black", alpha=0.4)
-
+# latex = LatexLabel(text="\\alpha_0=12",x=-1,y=-1,render_mode='css',text_font_size='16pt')
+# figure2_angle_lable = LatexLabel(x='x', y='y', text='names', source=Figure2Latex_Label_source, text_color='firebrick', render_mode='css', text_font_size='11pt', x_units='screen', y_units='screen')
+# figure2.add_layout(figure2_angle_lable)
 
 ### Figure 3: Define Geometry
 Rotating_Plane_glyph = Square(x='x',y='y',angle='angle',size='size', fill_color = '#A2AD00', fill_alpha=0.5)
@@ -819,14 +818,15 @@ Nzetaeta2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", 
 Nzetaeta3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 Nzetaeta4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 ### Figure 3, Define Figure and add Geometry:
-figure3 = figure(title="Stress State B", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400, logo=None)
+figure3 = figure(title="Stress State B", tools="save,hover", x_range=(-30,30), y_range=(-30,30),width=400,height=400, logo=None)
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=25, y_end=0))
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=0, y_end=-25))
-figure3_labels = LabelSet(x='x', y='y', text='names', level='glyph',
-              x_offset=5, y_offset=5, source=Figure1Perm_Label_source, render_mode='canvas')
-figure3_labels2 = LabelSet(x='x', y='y', text='names', source=Figure3Moving_Label_source, text_color = 'black')
+figure3_labels = LatexLabelSet(x='x', y='y', text='names', level='glyph',
+              x_offset=5, y_offset=5, source=Figure1Perm_Label_source)
+figure3_labels2 = LatexLabelSet(x='x', y='y', text='names', source=Figure3Moving_Label_source, text_color = 'black')
+
 figure3.add_layout(figure3_labels)
 figure3.add_layout(figure3_labels2)
 figure3.add_layout(NzetaP_arrow_glyph)
