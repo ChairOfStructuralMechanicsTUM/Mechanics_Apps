@@ -74,10 +74,22 @@ export class LatexLabelSetView extends TextAnnotationView {
   }
 
   render(): void {
+    
+    if (this.el.children.length < this._text.length) {
+      for (let i = this.el.children.length, end = this._text.length; i < end; i++) {
+        const el = div({class: 'bk-annotation-child', style: {display: "none"}})
+        this.el.appendChild(el)
+      }
+    } else if (this.el.children.length > this._text.length) {
+      for (let i = this._text.length, end = this.el.children.length; i < end; i++) {
+        this.el.removeChild(this.el.lastChild)
+      }
+    }
+
     if (!this.model.visible) {
       hide(this.el)
     }
-
+    
     const draw = this._v_css_text.bind(this)
     const {ctx} = this.plot_view.canvas_view
 
@@ -111,7 +123,11 @@ export class LatexLabelSetView extends TextAnnotationView {
   protected _v_css_text(ctx: Context2d, i: number, text: string, sx: number, sy: number, angle: number): void {
     const el = this.el.children[i] as HTMLElement
     el.textContent = text
-    katex.render(el.textContent, el, { displayMode: this.model.display_mode })
+    try {
+      katex.render(el.textContent, el, { displayMode: this.model.display_mode })
+    } catch (err) {
+      el.textContent = err
+    }
 
     this.visuals.text.set_vectorize(ctx, i)
     const bbox_dims = this._calculate_bounding_box_dimensions(ctx, el.textContent)
