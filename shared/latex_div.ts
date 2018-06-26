@@ -44,7 +44,6 @@ export class LatexDivView extends MarkupView {
     // Get all <div or span or p class ="maths"> elements in the document
     var x = content.getElementsByClassName('maths');
     for (var i = 0; i < x.length; i++) {
-      console.log('jajaja')
       // t= katex.render(x[i].textContent,x[i],{ displayMode: true }); 
       // console.log(t)
       try {
