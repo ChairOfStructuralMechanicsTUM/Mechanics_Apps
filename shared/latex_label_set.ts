@@ -121,6 +121,8 @@ export class LatexLabelSetView extends TextAnnotationView {
   }
 
   protected _v_css_text(ctx: Context2d, i: number, text: string, sx: number, sy: number, angle: number): void {
+    /** TODO: the css text appears on top of other elements in the bokeh app. perhaps it is possible to make
+    katex compatible to the render_mode='canvas' option */
     const el = this.el.children[i] as HTMLElement
     el.textContent = text
     try {
@@ -128,7 +130,7 @@ export class LatexLabelSetView extends TextAnnotationView {
     } catch (err) {
       el.textContent = err
     }
-
+    
     this.visuals.text.set_vectorize(ctx, i)
     const bbox_dims = this._calculate_bounding_box_dimensions(ctx, el.textContent)
     
