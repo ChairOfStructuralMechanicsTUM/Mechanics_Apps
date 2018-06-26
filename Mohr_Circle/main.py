@@ -726,6 +726,7 @@ Nxz1_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_
 Nxz2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 Nxz3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 Nxz4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+
 ### Figure 1, Define Figure and add Geometry:
 figure1 = figure(title="Stress State A", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400, logo=None)
 figure1.square([0], [0], size=75, color="black", alpha=0.5)
@@ -754,6 +755,11 @@ figure1.add_glyph(Nxz1_rect_source,Nxz1_rect_glyph)
 figure1.add_glyph(Nxz2_rect_source,Nxz1_rect_glyph)
 figure1.add_glyph(Nxz3_rect_source,Nxz1_rect_glyph)
 figure1.add_glyph(Nxz4_rect_source,Nxz1_rect_glyph)
+
+# dummy glyphs for the legend entries
+figure1.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5,legend="Normal Stresses")
+figure1.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5,legend="Shear Stresses")
+figure1.legend.location = 'top_left'
 
 
 ### Figure 2: Define Geometry
@@ -850,6 +856,9 @@ figure3.add_glyph(Nzetaeta4_rect_source,Nzetaeta4_rect_glyph)
 figure3.add_layout(Rotating_Axis_X_glyph)
 figure3.add_layout(Rotating_Axis_Y_glyph)
 
+figure3.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5,legend="Normal Stresses")
+figure3.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5,legend="Shear Stresses")
+figure3.legend.location = 'top_left'
 
 ### All figures, Turn off grids: 
 figure1.xaxis.major_tick_line_color=None
