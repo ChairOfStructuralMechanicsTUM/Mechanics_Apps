@@ -108,7 +108,7 @@ Nzetaeta4_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle
 
 ### Labels
 Figure1Perm_Label_source   = ColumnDataSource(data=dict(x=[22,1], y=[-5, -27], names=['x', 'z']))
-Figure2Perm_Label_source   = ColumnDataSource(data=dict(x=[16,1.5], y=[-2.5, 15.5], names=["\\sigma", "\\tau"]))
+Figure2Perm_Label_source   = ColumnDataSource(data=dict(x=[23.5,1.5], y=[-2.5, 23], names=["\\sigma", "\\tau"]))
 Figure2Moving_Label_source = ColumnDataSource(data=dict(x=[], y=[], names=[]))
 Figure2Show_Label_source   = ColumnDataSource(data=dict(x=[], y=[], names=[]))
 Figure3Perm_Label_source   = ColumnDataSource(data=dict(x=[22,1], y=[-5, -27], names=['x', 'z']))
@@ -766,11 +766,11 @@ figure1.legend.location = 'top_left'
 Mohr_Circle_glyph = Circle(x='x',y='y',radius='radius', radius_dimension='y', fill_color='#c3c3c3', fill_alpha=0.5)
 Wedge_glyph = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
 ### Figure 2: Define Figure and add Geometry
-figure2 = figure(title="Mohr's Circle", tools="pan,save,wheel_zoom,reset", x_range=(-18.5,18.5), y_range=(-18.5,18.5),width=400,height=400, logo=None, toolbar_location="right")
+figure2 = figure(title="Mohr's Circle", tools="pan,save,wheel_zoom,reset", x_range=(-25.5,25.5), y_range=(-25.5,25.5),width=400,height=400, logo=None, toolbar_location="right")
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
-                   x_start=-17, y_start=0, x_end=17, y_end=0))
+                   x_start=-23, y_start=0, x_end=23, y_end=0))
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
-                   x_start=0, y_start=-17, x_end=0, y_end=17))
+                   x_start=0, y_start=-23, x_end=0, y_end=23))
 figure2.add_glyph(Mohr_Circle_source,Mohr_Circle_glyph)
 figure2.add_glyph(Wedge_source,Wedge_glyph)
 # Modified line
@@ -778,8 +778,7 @@ figure2.line(x='x',y='y',source= Newplane_line_source, color="#A2AD00", line_wid
 figure2.circle(x='x',y='y',source= Newplane_line_source, size=4, color="black", alpha=0.4)
 figure2.circle(x='x', y='y', source=Figure2Moving_Label_source, size=5, color="black")
 figure2.circle(x='x', y='y', source=Figure2Show_Label_source, size=5, color="firebrick")
-figure2_labels1 = LatexLabelSet(x='x', y='y', text='names', level='glyph',
-              x_offset=0, y_offset=0, source=Figure2Perm_Label_source)
+figure2_labels1 = LatexLabelSet(x='x', y='y', text='names', level='glyph', x_offset=0, y_offset=0, source=Figure2Perm_Label_source)
 figure2_labels2 = LatexLabelSet(x='x', y='y', text='names', source=Figure2Moving_Label_source, text_color = 'black', level='glyph', x_offset=3, y_offset=3)
 figure2_labels3 = LatexLabelSet(x='x', y='y', text='names', source=Figure2Show_Label_source, text_color = 'firebrick', level='glyph', x_offset=3, y_offset=-15)
 figure2.add_layout(figure2_labels1)
