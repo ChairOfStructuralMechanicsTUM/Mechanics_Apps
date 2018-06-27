@@ -24,9 +24,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
-from latex_div import LatexDiv
-from latex_label import LatexLabel
-from latex_label_set import LatexLabelSet
+from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider
 
 ### Initial Values
 radius = 10
@@ -895,17 +893,17 @@ figure3.ygrid.visible = False
 
 
 ### Create  sliders to change Normal and Tangential Forces
-Normal_X_slider= Slider(title=u"\u03C3"u"\u0078",value= 0,start = -10, end = 10, step = 0.5)
+Normal_X_slider= LatexSlider(title="\\sigma_x=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value= 0,start = -10, end = 10, step = 0.5)
 Normal_X_slider.on_change('value',NormalForceX_init)
 
     
-Normal_Z_slider= Slider(title=u"\u03C3"u"\u007A",value= 0,start = -10, end = 10, step = 0.5)
+Normal_Z_slider= LatexSlider(title="\\sigma_z=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value= 0,start = -10, end = 10, step = 0.5)
 Normal_Z_slider.on_change('value',NormalForceZ_init)
    
-Tangential_XZ_slider= Slider(title=u"\u03C4"u"\u0078"u"\u007A",value= 0,start = 0, end = 10, step = 0.5)
+Tangential_XZ_slider= LatexSlider(title="\\tau_{xz}=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value= 0,start = 0, end = 10, step = 0.5)
 Tangential_XZ_slider.on_change('value',TangentialXZ_init)
     
-Plane_Angle_slider= Slider(title= u"\u03B1",value= 0,start = -180, end = 180, step = 1)
+Plane_Angle_slider= LatexSlider(title= "\\alpha=",value_unit='^{\\circ}',value= 0,start = -180, end = 180, step = 1)
 Plane_Angle_slider.on_change('value',changePlaneAngle)
 Plane_Angle_slider.disabled = True
 
