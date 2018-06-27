@@ -23,8 +23,8 @@ The following points are important for all developers.
 * Try to avoid very long and complex functions. It might be helpful to subdivide a function into several functions that partially solve a certain task.
 * Don't use ```from ... import *```. It is hard to understand the origin of a function or variable if it is not imported explicitly. Better use ```from ... import foo, bar```.
 
-## LaTeX support in app descriptions
-Latex support is made available via the KaTeX library (https://khan.github.io/KaTeX/). A class `LatexDiv` is available, which works the same way as the normal `Div` but parses also Latex input. As it will be used by many apps, it can be found in an extra folder. The class can be imported using:
+## LaTeX support
+Latex support is made available via the KaTeX library (https://khan.github.io/KaTeX/). All widgets, annotations, etc. which provide LaTeX support can be found in the folder `shared` and can be imported using:
 
 ```python
 from os.path import dirname, join, split, abspath
@@ -34,8 +34,21 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_div import LatexDiv
 ```
+Following, the available classes will be described. 
 
-Now, indstead of `Div`, use `LatexDiv`, if the document contains Latex code. The identifiers are `$ \alpha $` or `\( \alpha \)` for inline mode and `$$ \alpha $$` or `\[ \alpha \]` for display mode.
+### App descriptions: `LatexDiv`
+A class `LatexDiv` is available, which works the same way as the normal `Div` but parses also Latex input. Indstead of `Div`, use `LatexDiv`, if the document contains Latex code. The identifiers are `$ \alpha $` or `\( \alpha \)` for inline mode and `$$ \alpha $$` or `\[ \alpha \]` for display mode.
+
+### Labels: `LatexLabel` and `LatexLabelSet`
+`LatexLabel` works the same way as `Label`, but it parses everything provided with the `text` attribute as LaTeX math mode code. To escape the backslash use `\\` as in 
+```python
+llabel = LatexLabel(text='\\alpha',x=20,y=20)
+```
+`LatexLabelSet` also parses all text as LaTeX math mode, but it can also be specified, if the display mode (i.e. $$\alpha$$) should be used:
+```python
+llabel = LatexLabelSet(text='\\alpha',x='x',y='y',display_mode=True)
+```
+The default is `False`. All other attributes can be used in the same way as for the classes without LaTeX support.
 
 # Francesca Final Acceptance and Publication
 
