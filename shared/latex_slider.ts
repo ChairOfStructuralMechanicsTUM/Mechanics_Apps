@@ -142,7 +142,7 @@ export class LatexSliderView extends SliderView {
 
             if (this.model.value_unit.length != 0) {
                 this.unitEl = div({ class: "bk-slider-unit" }, this.model.value_unit)
-                this._render_katex(this.model.value_unit, this.unitEl)
+                this._render_katex(this.model.value_unit.replace(/^/,'\\,'), this.unitEl)
                 this.unitEl.style = "float:left"
                 this.el.insertBefore(this.unitEl, this.sliderEl)
             }
