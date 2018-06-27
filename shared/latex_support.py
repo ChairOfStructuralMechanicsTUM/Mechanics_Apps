@@ -1,6 +1,6 @@
 from bokeh.models.widgets import Div, Slider
 from bokeh.models import Label, LabelSet
-from bokeh.core.properties import Bool
+from bokeh.core.properties import Bool, String
 
 LATEX_LABEL_JS_CODE = """
 import {Label, LabelView} from "models/annotations/label"
@@ -53,6 +53,8 @@ class LatexSlider(Slider):
         "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
     __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
     __implementation__ = "latex_slider.ts"
+
+    value_unit = String(default='')
 
 class LatexLabelSet(LabelSet):
     __javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]

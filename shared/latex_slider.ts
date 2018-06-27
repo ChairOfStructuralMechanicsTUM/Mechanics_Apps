@@ -3,10 +3,14 @@ import { logger } from "core/logging"
 import { repeat } from "core/util/array"
 import { throttle } from "core/util/callback"
 
+import * as p from "core/properties"
+
 import { Slider, SliderView } from "models/widgets/slider"
 
 export class LatexSliderView extends SliderView {
     model: LatexSlider
+
+    protected unitEl: HTMLElement
 
     render(): void {
         //copied from abstract_slider.ts
@@ -117,11 +121,13 @@ export class LatexSliderView extends SliderView {
             this.el.removeChild(this.titleEl)
         if (this.valueEl != null)
             this.el.removeChild(this.valueEl)
+        if (this.unitEl != null)
+            this.el.removeChild(this.unitEl)
 
         if (this.model.title != null) {
             if (this.model.title.length != 0) {
                 this.titleEl = div({ class: "bk-slider-title" }, this.model.title)
-                katex.render(this.model.title, this.titleEl)
+                this._render_katex(this.model.title, this.titleEl)
                 this.titleEl.style = "float:left"
                 this.el.insertBefore(this.titleEl, this.sliderEl)
             }
@@ -129,9 +135,16 @@ export class LatexSliderView extends SliderView {
             if (this.model.show_value) {
                 const pretty = value.map((v) => this.model.pretty(v)).join(" .. ")
                 this.valueEl = div({ class: "bk-slider-value" }, pretty)
-                katex.render(pretty, this.valueEl)
+                this._render_katex(pretty, this.valueEl)
                 this.valueEl.style = "float:left; margin-left: 6px"
                 this.el.insertBefore(this.valueEl, this.sliderEl)
+            }
+
+            if (this.model.value_unit.length != 0) {
+                this.unitEl = div({ class: "bk-slider-unit" }, this.model.value_unit)
+                this._render_katex(this.model.value_unit, this.unitEl)
+                this.unitEl.style = "float:left"
+                this.el.insertBefore(this.unitEl, this.sliderEl)
             }
         }
 
@@ -147,6 +160,14 @@ export class LatexSliderView extends SliderView {
             this.sliderEl.removeAttribute('disabled')
 
         this.sliderEl.style = "float:left"
+    }
+
+    protected _render_katex(text: String, el: HTMLElement): void {
+        try {
+            katex.render(text, el)
+        } catch (err) {
+            el.textContent = err
+        }
     }
 
 }
@@ -169,6 +190,10 @@ export class LatexSlider extends Slider {
     static initClass(): void {
         this.prototype.type = "LatexSlider"
         this.prototype.default_view = LatexSliderView
+
+        this.define({
+            value_unit: [ p.String, ''],
+        })
 
         this.override({
             format: "0[.]00"
