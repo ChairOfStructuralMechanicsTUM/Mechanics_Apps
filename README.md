@@ -10,7 +10,7 @@ Before starting developing, please take a look at our [DevelopmentGuideline](Dev
 This repository contains one folder for each App, with a main file and subfunction-files. The following files are important for the installation of the Bokeh framework:
 
 ### Files
-(.cmd is used for windows and .sh is udes for Linux. From a .sh file you can create the .exe file with http://www.f2ko.de/en/b2e.php)
+(.cmd is used for windows and .sh is used for Linux. From a .sh file you can create the .exe file with http://www.f2ko.de/en/b2e.php)
 
 * ```installer.cmd/sh``` for installation of the current bokeh version and the necessary python packages
 * ```server_autorun.cmd/sh``` calls the files for running the bokeh servers (bokehrunner.sh and bokehrunner_testing.sh)
