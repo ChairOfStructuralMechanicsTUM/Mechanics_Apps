@@ -131,11 +131,12 @@ def beam_fixed_ends(ev_num=1, N=200):
     x2=np.linspace(0,1,N)
     ev = ev_fixed_beam[ev_num-1]
     #print("fixed_val: ", ev)
-    y2=-(1/2*(np.cosh(ev*x2/l)-np.cos(ev*x2/l))-((1/2*(np.cosh(ev)-np.cos(ev)))/(1/2*(np.sinh(ev)-np.sin(ev))))*1/2*(np.sinh(ev*x2/l)-np.sin(ev*x2/l)))
+    # y2=-(1/2*(np.cosh(ev*x2/l)-np.cos(ev*x2/l))-((1/2*(np.cosh(ev)-np.cos(ev)))/(1/2*(np.sinh(ev)-np.sin(ev))))*1/2*(np.sinh(ev*x2/l)-np.sin(ev*x2/l)))
     y2cosh=-(1/2*(np.cosh(ev*x2/l)))
-    y2sinh=+((1/2*(np.cosh(ev)-np.cos(ev)))/(1/2*(np.sinh(ev)-np.sin(ev))))*1/2*(np.sinh(ev*x2/l))
-    y2cos=-(1/2*(np.cos(ev*x2/l)))
+    y2sinh=((1/2*(np.cosh(ev)-np.cos(ev)))/(1/2*(np.sinh(ev)-np.sin(ev))))*1/2*(np.sinh(ev*x2/l))
+    y2cos=(1/2*(np.cos(ev*x2/l)))
     y2sin=-((1/2*(np.cosh(ev)-np.cos(ev)))/(1/2*(np.sinh(ev)-np.sin(ev))))*1/2*(np.sin(ev*x2/l))
+    y2 = y2cos+y2cosh+y2sin+y2sinh
     source2.data=dict(x=x2,y=y2)
     source2cosh.data=dict(x=x2,y=y2cosh)
     source2sinh.data=dict(x=x2,y=y2sinh)
@@ -147,12 +148,13 @@ def beam_cantilever(ev_num=1, N=200):
     x3=np.linspace(0,1,N)
     ev = ev_cant_beam[ev_num-1]
     #print("cant_val: ", ev)
-    y3=-(1/2*(np.cosh(ev*x3/l)-np.cos(ev*x3/l))-((1/2*(np.cosh(ev)+np.cos(ev)))/(1/2*(np.sinh(ev)+np.sin(ev))))*1/2*(np.sinh(ev*x3/l)-
-                np.sin(ev*x3/l)))
+    # y3=-(1/2*(np.cosh(ev*x3/l)-np.cos(ev*x3/l))-((1/2*(np.cosh(ev)+np.cos(ev)))/(1/2*(np.sinh(ev)+np.sin(ev))))*1/2*(np.sinh(ev*x3/l)-
+    #             np.sin(ev*x3/l)))
     y3cosh=-(1/2*(np.cosh(ev*x3/l)))
     y3sinh=+((1/2*(np.cosh(ev)+np.cos(ev)))/(1/2*(np.sinh(ev)+np.sin(ev))))*1/2*(np.sinh(ev*x3/l))
-    y3cos=-(1/2*(np.cos(ev*x3/l)))
+    y3cos=+(1/2*(np.cos(ev*x3/l)))
     y3sin=-((1/2*(np.cosh(ev)+np.cos(ev)))/(1/2*(np.sinh(ev)+np.sin(ev))))*1/2*(np.sin(ev*x3/l))
+    y3 = y3cos+y3cosh+y3sin+y3sinh
     source3.data=dict(x=x3,y=y3)
     source3cosh.data=dict(x=x3,y=y3cosh)
     source3sinh.data=dict(x=x3,y=y3sinh)
@@ -215,10 +217,10 @@ fixed_support_right=p2.line(x='x', y='y', source=fixed_right,line_width=2,line_c
 
 legend2 = Legend(items=[
     ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)-1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - c("u"\u03BB"u"\u1D62) / s("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam2]),
-    ("Solution part: "u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cosh]),
-    ("Solution part: -"u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sinh]),
-    ("Solution part: -"u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cos]),
-    ("Solution part: "u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sin]),
+    ("Solution part: -"u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cosh]),
+    ("Solution part: "u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sinh]),
+    ("Solution part: "u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cos]),
+    ("Solution part: -"u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sin]),
 ], location=(0, 5))
 
 p2.add_layout(legend2, 'above')
@@ -249,10 +251,10 @@ eigenmodes_beam3sin=p3.line(x='x', y='y', source=source3sin,
 #eigenmodes_beam3.visible= False
 legend3 = Legend(items=[
     ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)+1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - C("u"\u03BB"u"\u1D62) / S("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam3]),
-    ("Solution part: "u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cosh]),
-    ("Solution part: -"u"\u00BD  "u"\u00B7 C("u"\u03BB)/S("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sinh]),
-    ("Solution part: -"u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cos]),
-    ("Solution part: "u"\u00BD "u"\u00B7 C("u"\u03BB)/S("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sin]),
+    ("Solution part: -"u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cosh]),
+    ("Solution part: "u"\u00BD  "u"\u00B7 C("u"\u03BB)/S("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sinh]),
+    ("Solution part: "u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cos]),
+    ("Solution part: -"u"\u00BD "u"\u00B7 C("u"\u03BB)/S("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sin]),
 ], location=(0, 5))
 
 p3.add_layout(legend3, 'above')
