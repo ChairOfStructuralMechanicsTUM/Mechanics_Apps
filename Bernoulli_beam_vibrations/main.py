@@ -23,7 +23,7 @@ from latex_div import LatexDiv
 l=1
 
 # first ev eigenvalues for each beam
-ev_total = 4
+ev_total = 6
 
 #beam 1-->simply supported
 beam1 = ColumnDataSource(data=dict(x=[0,1], y=[0,0]))
@@ -37,8 +37,31 @@ support_rightb= ColumnDataSource(data=dict(x=[0.95,1.05,1.025,1.05,1.025,1,1.025
 #beam 2-->fixed at both ends
 beam2 = ColumnDataSource(data=dict(x=[0,1], y=[0,0]))
 #create the boundary conditions for the beam fixed at both ends
-fixed_left=ColumnDataSource(data=dict(x=[0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03],y=[2*0.25,-2*0.25,-2*0.3,-2*0.25,-2*0.125,-2*0.175,-2*0.125,0,-2*0.05,-0,+2*0.125,
-                                        +2*0.075,+2*0.125,2*0.25,2*0.2]))
+#fixed_left=ColumnDataSource(data=dict(x=[0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03],y=[2*0.25,-2*0.25,-2*0.3,-2*0.25,-2*0.125,-2*0.175,-2*0.125,0,-2*0.05,-0,+2*0.125,
+#                                        +2*0.075,+2*0.125,2*0.25,2*0.2]))
+
+### test ###
+# for semi-automated drawing of the symbols
+t_l = 1.5 # length of the bound
+al = 0.075 # difference in y-coordinate between left and right end
+dl = 0.2 # distance between two parallel lines
+s = -0.5*(t_l//dl * dl + al) # start y-coordinate
+num_lines = int(3*t_l//dl +1) #number of lines to draw
+
+r = -0.03
+x_coords = [0.5*r*(x%3)**2 - 1.5*r*(x%3) + r for x in range(num_lines)] # produces [-0.03, 0, 0, -0.03,...]
+
+y_coords = np.zeros(num_lines)
+tt = [al,dl,-al]
+for i in range(num_lines):
+    y_coords[i] = s
+    s += tt[i%3]
+
+print(num_lines)    
+print(x_coords)
+print(y_coords)
+    
+fixed_left=ColumnDataSource(data=dict(x=x_coords,y=y_coords))
 fixed_right=ColumnDataSource(data=dict(x=[1,1,1.03,1,1,1.03,1,1,1.03,1,1,1.03,1,1,1.03],y=[2*0.25,-2*0.25,-2*0.3,-2*0.25,-2*0.125,-2*0.175,-2*0.125,0,-2*0.05,-0,+2*0.125,
                                         +2*0.075,+2*0.125,2*0.25,2*0.2]))
 
@@ -148,12 +171,13 @@ beam_cantilever()
 p1 = figure(plot_height=250, plot_width=900,title="Simply supported beam", tools="", x_range=(-0.075,1.075), y_range=(-2.5,2.5))
 p1.axis.visible = False
 #p1.grid.visible = False
-p1.outline_line_color = None
+p1.outline_line_width = 2
+p1.outline_line_color = "black"
 p1.title.text_font_size="13pt"
 
 beam1=p1.line(x='x', y='y', source=beam1,line_width=5,line_color='black') 
 eigenmodes_beam1=p1.line(x='x', y='y', source=source1,
-                         line_width=3,line_color='#0065BD')
+                         line_width=3,line_color='#3070b3') # TUM color pantone 300
 eigenmodes_beam1.visible=True
 support_left_beam1=p1.line(x='x', y='y', source=support_left,line_width=2,line_color='black')
 support_righta_beam1=p1.line(x='x', y='y', source=support_righta,line_width=2,line_color='black')
@@ -161,60 +185,67 @@ support_rightb_beam1=p1.line(x='x', y='y', source=support_rightb,line_width=2,li
 
 legend1 = Legend(items=[
     ("Eigenvalue Problem: sin("u"\u03BB)=0 "u"\u279CSolution: w"u"\u1D62("u"\u03BE)=sin(i"u"\u00B7"u"\u03C0"u"\u00B7"u"\u03BE)"   , [eigenmodes_beam1]),
-], location=(0, 0))
+], location=(0, 5))
 
 p1.add_layout(legend1, 'above')
 p1.legend.click_policy="hide"
+p1.toolbar.logo = None
 
 #Plot 2
 p2 = figure(plot_height=400, plot_width=900,title="Beam fixed at both ends", tools="", x_range=(-0.075,1.075), y_range=(-3,3))
 p2.axis.visible = False
 #p2.grid.visible = False
-p2.outline_line_color = None
+p2.outline_line_width = 2
+p2.outline_line_color = "black"
 p2.title.text_font_size="13pt"
 
 beam2=p2.line(x='x', y='y', source=beam2,line_width=5,line_color='black') 
 eigenmodes_beam2=p2.line(x='x', y='y', source=source2,
-                         line_width=3,line_color='#A2AD00')# pantone 383
+                         line_width=3,line_color='#3070b3') # TUM color pantone 300
 eigenmodes_beam2cosh=p2.line(x='x', y='y', source=source2cosh,
-                         line_width=1, color='#c6f808')#greeny wellow
+                         line_width=1, color='#005293') # TUM color pantone 301
 eigenmodes_beam2sinh=p2.line(x='x', y='y', source=source2sinh,
-                         line_width=1,line_color='#9bb53c')#booger
+                         line_width=1,line_color='#003359') # TUM color pantone 540
 eigenmodes_beam2cos=p2.line(x='x', y='y', source=source2cos,
-                         line_width=1,line_color='#677a04')#olive green
+                         line_width=1,line_color='#64A0C8') # TUM color pantone 542 
 eigenmodes_beam2sin=p2.line(x='x', y='y', source=source2sin,
-                         line_width=1,line_color='#ffda03')#sunflower yellow
+                         line_width=1,line_color='#98C6EA') # TUM color pantone 283
 fixed_support_left=p2.line(x='x', y='y', source=fixed_left,line_width=2,line_color='black')
 fixed_support_right=p2.line(x='x', y='y', source=fixed_right,line_width=2,line_color='black')
+
 legend2 = Legend(items=[
     ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)-1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - c("u"\u03BB"u"\u1D62) / s("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam2]),
     ("Solution part: "u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cosh]),
     ("Solution part: -"u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sinh]),
     ("Solution part: -"u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cos]),
     ("Solution part: "u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sin]),
-], location=(0, 0))
+], location=(0, 5))
 
 p2.add_layout(legend2, 'above')
 p2.legend.click_policy="hide"
+p2.toolbar.logo = None
+
 
 #Plot 3
 p3 = figure(plot_height=400, plot_width=900,title="Cantilever beam", tools="", x_range=(-0.075,1.075), y_range=(-3,3))
 p3.axis.visible = False
 #p3.grid.visible = False
-p3.outline_line_color = None
+p3.outline_line_width = 2
+p3.outline_line_color = "black"
 p3.title.text_font_size="13pt"
 
 beam3=p3.line(x='x', y='y', source=beam3,line_width=5,line_color='black') 
 fixed_cantilever=p3.line(x='x', y='y', source=fixed_cantil,line_width=2,line_color='black')
-eigenmodes_beam3=p3.line(x='x', y='y', source=source3,line_width=3,line_color='#E37222')
+eigenmodes_beam3=p3.line(x='x', y='y', source=source3,
+                         line_width=3,line_color='#3070b3') # TUM color pantone 300
 eigenmodes_beam3cosh=p3.line(x='x', y='y', source=source3cosh,
-                         line_width=1, color='#fd8d49')#orangeish
+                         line_width=1, color='#005293') # TUM color pantone 301
 eigenmodes_beam3sinh=p3.line(x='x', y='y', source=source3sinh,
-                         line_width=1,line_color='#c45508')#rust orange
+                         line_width=1,line_color='#003359') # TUM color pantone 540
 eigenmodes_beam3cos=p3.line(x='x', y='y', source=source3cos,
-                         line_width=1,line_color='#fe4b03')#blood orange
+                         line_width=1,line_color='#64A0C8') # TUM color pantone 542 
 eigenmodes_beam3sin=p3.line(x='x', y='y', source=source3sin,
-                         line_width=1,line_color='#fdaa48')#ligth orange
+                         line_width=1,line_color='#98C6EA') # TUM color pantone 283
 #eigenmodes_beam3.visible= False
 legend3 = Legend(items=[
     ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)+1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - C("u"\u03BB"u"\u1D62) / S("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam3]),
@@ -222,26 +253,12 @@ legend3 = Legend(items=[
     ("Solution part: -"u"\u00BD  "u"\u00B7 C("u"\u03BB)/S("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sinh]),
     ("Solution part: -"u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cos]),
     ("Solution part: "u"\u00BD "u"\u00B7 C("u"\u03BB)/S("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sin]),
-], location=(0, 0))
+], location=(0, 5))
 
 p3.add_layout(legend3, 'above')
 p3.legend.click_policy="hide"
+p3.toolbar.logo = None
 
-#Description paragraph as label of an empy plot
-
-p4 = figure(plot_height=200, plot_width=300,title="Definitions", tools="", x_range=(0,0), y_range=(0,0))
-definitions1=p4.line(x=[0],y=[0],line_width=1,line_color='white',legend="C("u"\u03BB)="u"\u00BD [cosh("u"\u03BB) + cos("u"\u03BB)]")
-definitions2=p4.line(x=[0],y=[0],line_width=1,line_color='white',legend="S("u"\u03BB)="u"\u00BD [sinh("u"\u03BB) + sin("u"\u03BB)]")
-definitions3=p4.line(x=[0],y=[0],line_width=1,line_color='white',legend="c("u"\u03BB)="u"\u00BD [cosh("u"\u03BB) - cos("u"\u03BB)]")
-definitions4=p4.line(x=[0],y=[0],line_width=1,line_color='white',legend="s("u"\u03BB)="u"\u00BD [sinh("u"\u03BB) - sin("u"\u03BB)]")
-definitions5=p4.line(x=[0],y=[0],line_width=1,line_color='white',legend=""u"\u03BE=x/l")
-definitions6=p4.line(x=[0],y=[0],line_width=1,line_color='white',legend=""u"\u03BB=l"u"\u221C("u"\u03BC "u"\u03C9"u"\u00B2/ (EI) )")
-
-p4.axis.visible = False
-p4.grid.visible = False
-p4.outline_line_color = None
-p4.legend.location = "bottom_left"
-p4.legend.border_line_color = "white"
 
 #Toggle not necessary
 # coffeescript to link toggle with visible property
@@ -263,28 +280,30 @@ callback3 = CustomJS.from_coffeescript(code=code, args={})
 toggle3 = Toggle(label="Cantilever beam", button_type="success",callback=callback3)
 callback3.args = {'toggle': toggle3, 'object':eigenmodes_beam3 }
 
-## Create slider widget to choose eigenvalue 1-4
-Eigenvalue_input = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1)
+## Create slider widgets to choose eigenvalue from 1 to ev_total
+ev_input1 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1)
+ev_input2 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1)
+ev_input3 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1)
 
-
-def update_data(attrname, old, new):
-    global radio_button_group
-    
+# functions to update plots when using the specific sliders
+def update_simple_beam(attrname, old, new):
     beam_simple_supp(ev_num=new)
+
+def update_fixed_beam(attrname, old, new):
     beam_fixed_ends(ev_num=new)
+
+def update_cantilever_beam(attrname, old, new):
     beam_cantilever(ev_num=new)
     
-    
-Eigenvalue_input.on_change('value',update_data)
+ev_input1.on_change('value',update_simple_beam)
+ev_input2.on_change('value',update_fixed_beam)
+ev_input3.on_change('value',update_cantilever_beam)
 
 
 # app description
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
-#curdoc().add_root(row(column(p1,p2,p3),column(Eigenvalue_input,p4)))
-def_scroll = column(Eigenvalue_input, css_classes=['scrollable']) # also defined in index.html file
-curdoc().add_root(column(description, row(column(p1,p2,p3),def_scroll)))
-#curdoc().add_root(column(description, row(column(p1,p2,p3),column(Eigenvalue_input,p4))))
+curdoc().add_root(column(description, row(p1,ev_input1), row(p2,ev_input2), row(p3,ev_input3)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 
