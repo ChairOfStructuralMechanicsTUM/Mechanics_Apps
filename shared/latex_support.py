@@ -1,6 +1,6 @@
 from bokeh.models.widgets import Div, Slider
 from bokeh.models import Label, LabelSet, Legend
-from bokeh.core.properties import Bool, String
+from bokeh.core.properties import Bool, String, Float
 
 LATEX_LABEL_JS_CODE = """
 import {Label, LabelView} from "models/annotations/label"
@@ -85,3 +85,5 @@ class LatexLegend(Legend):
     __javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
     __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
     __implementation__ = "latex_legend.ts"
+
+    max_label_width = Float(default=0)
