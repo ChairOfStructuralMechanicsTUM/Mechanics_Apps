@@ -9,6 +9,7 @@ from scipy.optimize import brentq # fast numerical solver for roots
 from bokeh.io import curdoc
 from bokeh.layouts import row,column, gridplot
 from bokeh.models import ColumnDataSource,CustomJS, Label,Legend
+from bokeh.models.glyphs import ImageURL
 from bokeh.models.widgets import Slider,Toggle, Paragraph
 from bokeh.plotting import figure
 from os.path import dirname, join, split, abspath
@@ -27,50 +28,18 @@ ev_total = 6
 
 #beam 1-->simply supported
 beam1 = ColumnDataSource(data=dict(x=[0,1], y=[0,0]))
-#create the boundary conditions for simply supported beam
-support_left=ColumnDataSource(data=dict(x=[0,-0.05,0.05,0.025,0.05,0.025,0,0.025,0,-0.025,0,-0.025,-0.05,-0.025,-0.05,-0.075,-0.05,0.05,0], y=[0,-0.5,-0.5,
-                                        -0.7,-0.5,-0.5,-0.7,-0.5,-0.5,-0.7,-0.5,-0.5,-0.7,-0.5,-0.5,-0.7,-0.5,-0.5,0]))
-support_righta=ColumnDataSource(data=dict(x=[1,0.95,1.05,1],y=[0,-0.5,-0.5,0]))
-support_rightb= ColumnDataSource(data=dict(x=[0.95,1.05,1.025,1.05,1.025,1,1.025,1,0.975,1,0.975,0.95,0.975,0.95],y=[-0.7,-0.7,-0.9,-0.7,-0.7,-0.9,-0.7,-0.7,
-                                           -0.9,-0.7,-0.7,-0.9,-0.7,-0.7]))
 
 #beam 2-->fixed at both ends
 beam2 = ColumnDataSource(data=dict(x=[0,1], y=[0,0]))
-#create the boundary conditions for the beam fixed at both ends
-#fixed_left=ColumnDataSource(data=dict(x=[0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03],y=[2*0.25,-2*0.25,-2*0.3,-2*0.25,-2*0.125,-2*0.175,-2*0.125,0,-2*0.05,-0,+2*0.125,
-#                                        +2*0.075,+2*0.125,2*0.25,2*0.2]))
-
-### test ###
-# for semi-automated drawing of the symbols
-t_l = 1.5 # length of the bound
-al = 0.075 # difference in y-coordinate between left and right end
-dl = 0.2 # distance between two parallel lines
-s = -0.5*(t_l//dl * dl + al) # start y-coordinate
-num_lines = int(3*t_l//dl +1) #number of lines to draw
-
-r = -0.03
-x_coords = [0.5*r*(x%3)**2 - 1.5*r*(x%3) + r for x in range(num_lines)] # produces [-0.03, 0, 0, -0.03,...]
-
-y_coords = np.zeros(num_lines)
-tt = [al,dl,-al]
-for i in range(num_lines):
-    y_coords[i] = s
-    s += tt[i%3]
-
-print(num_lines)    
-print(x_coords)
-print(y_coords)
-    
-fixed_left=ColumnDataSource(data=dict(x=x_coords,y=y_coords))
-fixed_right=ColumnDataSource(data=dict(x=[1,1,1.03,1,1,1.03,1,1,1.03,1,1,1.03,1,1,1.03],y=[2*0.25,-2*0.25,-2*0.3,-2*0.25,-2*0.125,-2*0.175,-2*0.125,0,-2*0.05,-0,+2*0.125,
-                                        +2*0.075,+2*0.125,2*0.25,2*0.2]))
 
 #beam 3-->cantilever beam
 beam3=ColumnDataSource(data=dict(x=[0,1], y=[0,0]))
-#create the left fixed support for the cantilever beam
-fixed_cantil=ColumnDataSource(data=dict(x=[0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03],y=[2*0.25,-2*0.25,-2*0.3,-2*0.25,-2*0.125,-2*0.175,-2*0.125,0,-2*0.05,-0,+2*0.125,
-                                        +2*0.075,+2*0.125,2*0.25,2*0.2]))
 
+# load support symbols
+support1 = "Bernoulli_beam_vibrations/static/images/auflager01.svg"
+support2 = "Bernoulli_beam_vibrations/static/images/auflager02.svg"
+support3 = "Bernoulli_beam_vibrations/static/images/auflager03.svg"
+support_src = ColumnDataSource(dict(sp1=[support1], sp2=[support2], sp3=[support3]))
 
 ## pre-compute the eigenvalues for all beams
 def eq_fixed_beam(x):
@@ -168,7 +137,6 @@ beam_fixed_ends()
 beam_cantilever()
 
 
-
 #Plot 1
 p1 = figure(plot_height=250, plot_width=900,title="Simply supported beam", tools="", x_range=(-0.075,1.075), y_range=(-2.5,2.5))
 p1.axis.visible = False
@@ -181,9 +149,8 @@ beam1=p1.line(x='x', y='y', source=beam1,line_width=5,line_color='black')
 eigenmodes_beam1=p1.line(x='x', y='y', source=source1,
                          line_width=3,line_color='#3070b3') # TUM color pantone 300
 eigenmodes_beam1.visible=True
-support_left_beam1=p1.line(x='x', y='y', source=support_left,line_width=2,line_color='black')
-support_righta_beam1=p1.line(x='x', y='y', source=support_righta,line_width=2,line_color='black')
-support_rightb_beam1=p1.line(x='x', y='y', source=support_rightb,line_width=2,line_color='black')
+p1.add_glyph(support_src,ImageURL(url="sp2", x=0.075, y=2.47, w=8, h=8, anchor="top_center"))
+p1.add_glyph(support_src,ImageURL(url="sp1", x=1.075, y=2.47, w=8, h=8, anchor="top_center"))
 
 legend1 = Legend(items=[
     ("Eigenvalue Problem: sin("u"\u03BB)=0 "u"\u279CSolution: w"u"\u1D62("u"\u03BE)=sin(i"u"\u00B7"u"\u03C0"u"\u00B7"u"\u03BE)"   , [eigenmodes_beam1]),
@@ -212,8 +179,8 @@ eigenmodes_beam2cos=p2.line(x='x', y='y', source=source2cos,
                          line_width=1,line_color='#64A0C8') # TUM color pantone 542 
 eigenmodes_beam2sin=p2.line(x='x', y='y', source=source2sin,
                          line_width=1,line_color='#98C6EA') # TUM color pantone 283
-fixed_support_left=p2.line(x='x', y='y', source=fixed_left,line_width=2,line_color='black')
-fixed_support_right=p2.line(x='x', y='y', source=fixed_right,line_width=2,line_color='black')
+p2.add_glyph(support_src,ImageURL(url="sp3", x=0.087, y=2.8, w=8, h=8, anchor="top_center"))
+p2.add_glyph(support_src,ImageURL(url="sp3", x=0.087, y=2.8, w=8, h=8, anchor="top_center", angle=np.pi))
 
 legend2 = Legend(items=[
     ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)-1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - c("u"\u03BB"u"\u1D62) / s("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam2]),
@@ -237,7 +204,7 @@ p3.outline_line_color = "black"
 p3.title.text_font_size="13pt"
 
 beam3=p3.line(x='x', y='y', source=beam3,line_width=5,line_color='black') 
-fixed_cantilever=p3.line(x='x', y='y', source=fixed_cantil,line_width=2,line_color='black')
+p3.add_glyph(support_src,ImageURL(url="sp3", x=0.087, y=2.8, w=8, h=8, anchor="top_center"))
 eigenmodes_beam3=p3.line(x='x', y='y', source=source3,
                          line_width=3,line_color='#3070b3') # TUM color pantone 300
 eigenmodes_beam3cosh=p3.line(x='x', y='y', source=source3cosh,
@@ -283,9 +250,9 @@ toggle3 = Toggle(label="Cantilever beam", button_type="success",callback=callbac
 callback3.args = {'toggle': toggle3, 'object':eigenmodes_beam3 }
 
 ## Create slider widgets to choose eigenvalue from 1 to ev_total
-ev_input1 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1)
-ev_input2 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1)
-ev_input3 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1)
+ev_input1 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1, width=862)
+ev_input2 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1, width=862)
+ev_input3 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1, width=862)
 
 # functions to update plots when using the specific sliders
 def update_simple_beam(attrname, old, new):
@@ -306,6 +273,6 @@ ev_input3.on_change('value',update_cantilever_beam)
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
-curdoc().add_root(column(description, row(p1,ev_input1), row(p2,ev_input2), row(p3,ev_input3)))
+curdoc().add_root(column(description, p1,ev_input1, p2,ev_input2, p3,ev_input3))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 
