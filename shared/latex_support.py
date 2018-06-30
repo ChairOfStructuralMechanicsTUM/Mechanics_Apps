@@ -82,8 +82,17 @@ class LatexLabel(Label):
     __implementation__ = LATEX_LABEL_JS_CODE
 
 class LatexLegend(Legend):
+    """
+    A subclass of the built-in `Legend` that supports rendering
+    LaTeX using the KaTeX typesetting library.
+
+    Only vertical legends are supported, the `orientation` keyword
+    is overwritten.
+    """
     __javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
     __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
     __implementation__ = "latex_legend.ts"
 
-    max_label_width = Float(default=0)
+    max_label_width = Float(default=0, help="""
+        Maximum width of the legend box. Automatic calculation of the width is not supported yet.
+        """)
