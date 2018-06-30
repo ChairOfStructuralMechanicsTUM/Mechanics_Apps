@@ -258,10 +258,7 @@ export class LatexLegendView extends LegendView {
                 el.style.font = `${this.visuals.label_text.font_value()}`
                 el.style.lineHeight = "normal"
                 // el.style = "float:bottom"
-                show(el)
-                // }
-                const xx = el.offsetWidth;
-                yy = el.offsetHeight;
+                
 
                 // yy = el.offsetHeight;
                 // console.log('yy:',yy)
@@ -293,7 +290,13 @@ export class LatexLegendView extends LegendView {
                     ctx.rect(x1, y1, w, h)
                     this.visuals.inactive_fill.set_value(ctx)
                     ctx.fill()
+                    // el.style.color = "white"
+                    el.style.opacity = "0.3"
                 }
+                show(el)
+                // }
+                const xx = el.offsetWidth;
+                yy = el.offsetHeight;
             }
             index++
         }
