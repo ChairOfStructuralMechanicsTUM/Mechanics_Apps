@@ -24,7 +24,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
-from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider
+from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
 ### Initial Values
 radius = 10
@@ -755,9 +755,14 @@ figure1.add_glyph(Nxz3_rect_source,Nxz1_rect_glyph)
 figure1.add_glyph(Nxz4_rect_source,Nxz1_rect_glyph)
 
 # dummy glyphs for the legend entries
-figure1.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5,legend="Normal Stresses")
-figure1.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5,legend="Shear Stresses")
-figure1.legend.location = 'top_left'
+dummy_normal_1 = figure1.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5)
+dummy_shear_1 = figure1.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5)
+
+legend1 = LatexLegend(items=[
+    ("\\text{Normal Stresses}\\ \\sigma_x, \\sigma_z", [dummy_normal_1]),
+    ("\\text{Shear Stresses}\\ \\tau_{xz}", [dummy_shear_1]),
+], location='top_left', max_label_width = 220)
+figure1.add_layout(legend1)
 
 
 ### Figure 2: Define Geometry
@@ -853,9 +858,15 @@ figure3.add_glyph(Nzetaeta4_rect_source,Nzetaeta4_rect_glyph)
 figure3.add_layout(Rotating_Axis_X_glyph)
 figure3.add_layout(Rotating_Axis_Y_glyph)
 
-figure3.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5,legend="Normal Stresses")
-figure3.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5,legend="Shear Stresses")
-figure3.legend.location = 'top_left'
+# dummy glyphs for the legend entries
+dummy_normal_3 = figure3.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5)
+dummy_shear_3 = figure3.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5)
+
+legend3 = LatexLegend(items=[
+    ("\\text{Normal Stresses}\\ \\sigma_x, \\sigma_z", [dummy_normal_3]),
+    ("\\text{Shear Stresses}\\ \\tau_{xz}", [dummy_shear_3]),
+], location='top_left', max_label_width = 220)
+figure3.add_layout(legend3)
 
 ### All figures, Turn off grids: 
 figure1.xaxis.major_tick_line_color=None
