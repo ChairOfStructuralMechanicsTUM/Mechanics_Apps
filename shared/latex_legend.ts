@@ -82,7 +82,7 @@ export class LatexLegendView extends LegendView {
                 this.visuals.label_text.set_value(ctx)
 
                 el.style.position = 'absolute'
-                el.style.left = `${x1 + x2}px`
+                el.style.left = `${x2 + xoffset}px`
                 el.style.top = `${y1}px`
                 el.style.color = `${this.visuals.label_text.text_color.value()}`
                 el.style.opacity = `${this.visuals.label_text.text_alpha.value()}`
