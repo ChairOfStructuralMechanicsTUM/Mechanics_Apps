@@ -32,23 +32,40 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_div import LatexDiv
+from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 ```
-Following, the available classes will be described. 
+Following, the available classes will be described. Except in `LatexDiv`, the backslash has to be escaped with `\\`, as in:
+```python
+llabel = LatexLabel(text='\\alpha',x=20,y=20)
+```
 
 ### App descriptions: `LatexDiv`
 A class `LatexDiv` is available, which works the same way as the normal `Div` but parses also Latex input. Indstead of `Div`, use `LatexDiv`, if the document contains Latex code. The identifiers are `$ \alpha $` or `\( \alpha \)` for inline mode and `$$ \alpha $$` or `\[ \alpha \]` for display mode.
 
 ### Labels: `LatexLabel` and `LatexLabelSet`
-`LatexLabel` works the same way as `Label`, but it parses everything provided with the `text` attribute as LaTeX math mode code. To escape the backslash use `\\` as in 
-```python
-llabel = LatexLabel(text='\\alpha',x=20,y=20)
-```
+`LatexLabel` works the same way as `Label`, but it parses everything provided with the `text` attribute as LaTeX math mode code.
+
 `LatexLabelSet` also parses all text as LaTeX math mode, but it can also be specified, if the display mode (i.e. $$\alpha$$) should be used:
 ```python
 llabel = LatexLabelSet(text='\\alpha',x='x',y='y',display_mode=True)
 ```
 The default is `False`. All other attributes can be used in the same way as for the classes without LaTeX support.
+
+### Slider: `LatexSlider`
+The `LatexSlider` renders everything provided with the `title` attribute as LaTeX math mode code. The new attribute `value_unit` is LaTeX code that will be displayed after the value of the slider. Example:
+```python
+slider= LatexSlider(title="\\sigma_x=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value= 0,start = -10, end = 10, step = 0.5)
+```
+
+### Legend: `LatexLegend`
+`LatexSlider` renders everything provided in the `items` attribute as LaTeX math mode code. Use `max_label_width` to specify the width of the legend box, as the automatic calculation is not yet implementd. Example:
+```python
+legend = LatexLegend(items=[
+    ("\\text{Solution part: }\\frac{1}{2}\\cosh(\\lambda\\xi)", [data1]),
+    ("\\text{Solution part: }-\\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\sinh(\\lambda\\xi)", [data2]),
+], location=(0, 0), spacing=10, max_label_width=870)
+plot.add_layout(legend,'above')
+```
 
 # Francesca Final Acceptance and Publication
 

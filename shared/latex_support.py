@@ -1,6 +1,8 @@
-from bokeh.models import Label
+from bokeh.models.widgets import Div, Slider
+from bokeh.models import Label, LabelSet, Legend
+from bokeh.core.properties import Bool, String, Float
 
-JS_CODE = """
+LATEX_LABEL_JS_CODE = """
 import {Label, LabelView} from "models/annotations/label"
 
 export class LatexLabelView extends LabelView
@@ -39,6 +41,32 @@ export class LatexLabel extends Label
   default_view: LatexLabelView
 """
 
+
+class LatexDiv(Div):
+    __javascript__ = [
+        "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
+    __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
+    __implementation__ = "latex_div.ts"
+
+class LatexSlider(Slider):
+    __javascript__ = [
+        "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
+    __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
+    __implementation__ = "latex_slider.ts"
+
+    value_unit = String(default='', help="""
+    The unit in LaTeX math mode code to be displayed behind the slider value.
+    """)
+
+class LatexLabelSet(LabelSet):
+    __javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
+    __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
+    __implementation__ = "latex_label_set.ts"
+
+    display_mode = Bool(default=False, help="""
+        Whether to use display mode for the LaTeX labels.
+        """)
+
 class LatexLabel(Label):
     """A subclass of the Bokeh built-in `Label` that supports rendering
     LaTex using the KaTex typesetting library.
@@ -51,4 +79,20 @@ class LatexLabel(Label):
     """
     __javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
     __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
-    __implementation__ = JS_CODE
+    __implementation__ = LATEX_LABEL_JS_CODE
+
+class LatexLegend(Legend):
+    """
+    A subclass of the built-in `Legend` that supports rendering
+    LaTeX using the KaTeX typesetting library.
+
+    Only vertical legends are supported, the `orientation` keyword
+    is overwritten.
+    """
+    __javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
+    __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
+    __implementation__ = "latex_legend.ts"
+
+    max_label_width = Float(default=0, help="""
+        Maximum width of the legend box. Automatic calculation of the width is not supported yet.
+        """)
