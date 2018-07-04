@@ -88,14 +88,14 @@ plot_original = Figure(x_axis_label='t',
 
 # Generate a figure container for the real part of the transformed function
 plot_transform_real= Figure(x_axis_label='f',
-                            y_axis_label='Re[X(f)]',
+                            y_axis_label='Re [X(f)]',
                             tools=toolset,
                             active_scroll="wheel_zoom",
                             title="Fourier transform of function - Real part")
 
 # Generate a figure container for the imaginary part of the transformed function
 plot_transform_imag= Figure(x_axis_label='f',
-                            y_axis_label='Re[X(f)]',
+                            y_axis_label='Im [X(f)]',
                             x_range=plot_transform_real.x_range, y_range=plot_transform_real.y_range,  # this line links the displayed region in the imaginary and the real part.
                             tools=toolset,
                             active_scroll="wheel_zoom",
