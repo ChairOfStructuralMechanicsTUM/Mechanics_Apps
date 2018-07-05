@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import brentq # fast numerical solver for roots
 from bokeh.io import curdoc
-from bokeh.layouts import row,column, gridplot
+from bokeh.layouts import row,column, gridplot, Spacer
 from bokeh.models import ColumnDataSource,CustomJS, Label,Legend
 from bokeh.models.glyphs import ImageURL
 from bokeh.models.widgets import Slider,Toggle, Paragraph
@@ -18,7 +18,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_div import LatexDiv
+from latex_support import LatexDiv, LatexLegend
 
 # beam length
 l=1
@@ -39,7 +39,8 @@ beam3=ColumnDataSource(data=dict(x=[0,1], y=[0,0]))
 support1 = "Bernoulli_beam_vibrations/static/images/auflager01.svg"
 support2 = "Bernoulli_beam_vibrations/static/images/auflager02.svg"
 support3 = "Bernoulli_beam_vibrations/static/images/auflager03.svg"
-support_src = ColumnDataSource(dict(sp1=[support1], sp2=[support2], sp3=[support3]))
+support4 = "Bernoulli_beam_vibrations/static/images/auflager04.svg"
+support_src = ColumnDataSource(dict(sp1=[support1], sp2=[support2], sp3=[support3], sp4=[support4]))
 
 ## pre-compute the eigenvalues for all beams
 def eq_fixed_beam(x):
@@ -149,11 +150,15 @@ beam1=p1.line(x='x', y='y', source=beam1,line_width=5,line_color='black')
 eigenmodes_beam1=p1.line(x='x', y='y', source=source1,
                          line_width=3,line_color='#3070b3') # TUM color pantone 300
 eigenmodes_beam1.visible=True
-p1.add_glyph(support_src,ImageURL(url="sp2", x=0.075, y=2.47, w=8, h=8, anchor="top_center"))
-p1.add_glyph(support_src,ImageURL(url="sp1", x=1.075, y=2.47, w=8, h=8, anchor="top_center"))
+p1.add_glyph(support_src,ImageURL(url="sp2", x=0.0, y=0.35, w=2, h=2, anchor="top_center"))
+p1.add_glyph(support_src,ImageURL(url="sp1", x=1.0, y=0.35, w=1.8, h=1.8, anchor="top_center"))
 
-legend1 = Legend(items=[
-    ("Eigenvalue Problem: sin("u"\u03BB)=0 "u"\u279CSolution: w"u"\u1D62("u"\u03BE)=sin(i"u"\u00B7"u"\u03C0"u"\u00B7"u"\u03BE)"   , [eigenmodes_beam1]),
+#legend1 = Legend(items=[
+#    ("Eigenvalue Problem: sin("u"\u03BB)=0 "u"\u279CSolution: w"u"\u1D62("u"\u03BE)=sin(i"u"\u00B7"u"\u03C0"u"\u00B7"u"\u03BE)"   , [eigenmodes_beam1]),
+#], location=(0, 5))
+    
+legend1 = LatexLegend(items=[
+    ("\\text{Eigenvalue Problem: } \\sin(\\lambda) = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = \\sin(i \\cdot \\pi \\xi)"   , [eigenmodes_beam1]),
 ], location=(0, 5))
 
 p1.add_layout(legend1, 'above')
@@ -179,15 +184,23 @@ eigenmodes_beam2cos=p2.line(x='x', y='y', source=source2cos,
                          line_width=1,line_color='#64A0C8') # TUM color pantone 542 
 eigenmodes_beam2sin=p2.line(x='x', y='y', source=source2sin,
                          line_width=1,line_color='#98C6EA') # TUM color pantone 283
-p2.add_glyph(support_src,ImageURL(url="sp3", x=0.087, y=2.8, w=8, h=8, anchor="top_center"))
-p2.add_glyph(support_src,ImageURL(url="sp3", x=0.087, y=2.8, w=8, h=8, anchor="top_center", angle=np.pi))
+p2.add_glyph(support_src,ImageURL(url="sp3", x=-0.0105, y=0.0, w=2, h=2, anchor="center"))
+p2.add_glyph(support_src,ImageURL(url="sp4", x=1.0105, y=0.0, w=2, h=2, anchor="center"))
 
-legend2 = Legend(items=[
-    ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)-1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - c("u"\u03BB"u"\u1D62) / s("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam2]),
-    ("Solution part: -"u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cosh]),
-    ("Solution part: "u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sinh]),
-    ("Solution part: "u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cos]),
-    ("Solution part: -"u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sin]),
+#legend2 = Legend(items=[
+#    ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)-1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - c("u"\u03BB"u"\u1D62) / s("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam2]),
+#    ("Solution part: -"u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cosh]),
+#    ("Solution part: "u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sinh]),
+#    ("Solution part: "u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cos]),
+#    ("Solution part: -"u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sin]),
+#], location=(0, 5))
+
+legend2 = LatexLegend(items=[
+    ("\\text{Eigenvalue Problem: } \cosh(\\lambda) \cdot \cos(\\lambda) -1 = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = c(\\lambda_i \\xi) - \\frac{c(\\lambda_i)}{s(\\lambda_i)} \\cdot s(\\lambda_i \\xi)", [eigenmodes_beam2]),
+    ("\\text{Solution part: } - \\frac{1}{2} \\cosh(\\lambda \\cdot \\xi)", [eigenmodes_beam2cosh]),
+    ("\\text{Solution part: } \\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\cdot \\sinh(\\lambda \\xi)", [eigenmodes_beam2sinh]),
+    ("\\text{Solution part: } \\frac{1}{2} \\cos(\\lambda \\cdot \\xi)", [eigenmodes_beam2cos]),
+    ("\\text{Solution part: } - \\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\cdot \\sin(\\lambda \\xi)", [eigenmodes_beam2sin]),
 ], location=(0, 5))
 
 p2.add_layout(legend2, 'above')
@@ -204,7 +217,7 @@ p3.outline_line_color = "black"
 p3.title.text_font_size="13pt"
 
 beam3=p3.line(x='x', y='y', source=beam3,line_width=5,line_color='black') 
-p3.add_glyph(support_src,ImageURL(url="sp3", x=0.087, y=2.8, w=8, h=8, anchor="top_center"))
+p3.add_glyph(support_src,ImageURL(url="sp3", x=-0.0105, y=0.0, w=2, h=2, anchor="center"))
 eigenmodes_beam3=p3.line(x='x', y='y', source=source3,
                          line_width=3,line_color='#3070b3') # TUM color pantone 300
 eigenmodes_beam3cosh=p3.line(x='x', y='y', source=source3cosh,
@@ -216,12 +229,21 @@ eigenmodes_beam3cos=p3.line(x='x', y='y', source=source3cos,
 eigenmodes_beam3sin=p3.line(x='x', y='y', source=source3sin,
                          line_width=1,line_color='#98C6EA') # TUM color pantone 283
 #eigenmodes_beam3.visible= False
-legend3 = Legend(items=[
-    ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)+1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - C("u"\u03BB"u"\u1D62) / S("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam3]),
-    ("Solution part: -"u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cosh]),
-    ("Solution part: "u"\u00BD  "u"\u00B7 C("u"\u03BB)/S("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sinh]),
-    ("Solution part: "u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cos]),
-    ("Solution part: -"u"\u00BD "u"\u00B7 C("u"\u03BB)/S("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sin]),
+#legend3 = Legend(items=[
+#    ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)+1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - C("u"\u03BB"u"\u1D62) / S("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam3]),
+#    ("Solution part: -"u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cosh]),
+#    ("Solution part: "u"\u00BD  "u"\u00B7 C("u"\u03BB)/S("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sinh]),
+#    ("Solution part: "u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cos]),
+#    ("Solution part: -"u"\u00BD "u"\u00B7 C("u"\u03BB)/S("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sin]),
+#], location=(0, 5))
+
+
+legend3 = LatexLegend(items=[
+    ("\\text{Eigenvalue Problem: } \cosh(\\lambda) \cdot \cos(\\lambda) +1 = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = c(\\lambda_i \\xi) - \\frac{C(\\lambda_i)}{S(\\lambda_i)} \\cdot s(\\lambda_i \\xi)", [eigenmodes_beam3]),
+    ("\\text{Solution part: } - \\frac{1}{2} \\cosh(\\lambda \\cdot \\xi)", [eigenmodes_beam3cosh]),
+    ("\\text{Solution part: } \\frac{1}{2} \\frac{C(\\lambda)}{S(\\lambda)} \\cdot \\sinh(\\lambda \\xi)", [eigenmodes_beam3sinh]),
+    ("\\text{Solution part: } \\frac{1}{2} \\cos(\\lambda \\cdot \\xi)", [eigenmodes_beam3cos]),
+    ("\\text{Solution part: } - \\frac{1}{2} \\frac{C(\\lambda)}{S(\\lambda)} \\cdot \\sin(\\lambda \\xi)", [eigenmodes_beam3sin]),
 ], location=(0, 5))
 
 p3.add_layout(legend3, 'above')
@@ -273,6 +295,9 @@ ev_input3.on_change('value',update_cantilever_beam)
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
-curdoc().add_root(column(description, p1,ev_input1, p2,ev_input2, p3,ev_input3))
+curdoc().add_root(column(description, Spacer(height=50), \
+                  p1,ev_input1, Spacer(height=100), \
+                  p2,ev_input2, Spacer(height=100), \
+                  p3,ev_input3))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 

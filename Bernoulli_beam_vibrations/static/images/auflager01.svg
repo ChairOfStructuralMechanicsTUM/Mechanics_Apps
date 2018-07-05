@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="120"
-   height="80"
-   viewBox="0 0 120 80"
+   width="19.84198"
+   height="17.657001"
+   viewBox="0 0 19.84198 17.657001"
    id="svg10739"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
-   sodipodi:docname="tm_geo_aufgabe_002_01.svg">
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="auflager01.svg">
   <defs
      id="defs10741">
     <marker
@@ -27,9 +27,9 @@
        orient="auto"
        inkscape:stockid="TriangleOutM">
       <path
-         transform="scale(0.4,0.4)"
-         style="fill:#ff0000;fill-opacity:1;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt;stroke-opacity:1"
-         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         transform="scale(0.4)"
+         style="fill:#ff0000;fill-opacity:1;fill-rule:evenodd;stroke:#ff0000;stroke-width:1.00000003pt;stroke-opacity:1"
+         d="M 5.77,0 -2.88,5 V -5 Z"
          id="path11559"
          inkscape:connector-curvature="0" />
     </marker>
@@ -42,9 +42,9 @@
        orient="auto"
        inkscape:stockid="TriangleOutM">
       <path
-         transform="scale(0.4,0.4)"
-         style="fill:#ff0000;fill-opacity:1;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt;stroke-opacity:1"
-         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         transform="scale(0.4)"
+         style="fill:#ff0000;fill-opacity:1;fill-rule:evenodd;stroke:#ff0000;stroke-width:1.00000003pt;stroke-opacity:1"
+         d="M 5.77,0 -2.88,5 V -5 Z"
          id="path11513"
          inkscape:connector-curvature="0" />
     </marker>
@@ -56,9 +56,9 @@
        orient="auto"
        inkscape:stockid="TriangleOutM">
       <path
-         transform="scale(0.4,0.4)"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
-         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         transform="scale(0.4)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
+         d="M 5.77,0 -2.88,5 V -5 Z"
          id="path9442"
          inkscape:connector-curvature="0" />
     </marker>
@@ -70,9 +70,9 @@
        orient="auto"
        inkscape:stockid="TriangleOutM">
       <path
-         transform="scale(0.4,0.4)"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
-         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         transform="scale(0.4)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
+         d="M 5.77,0 -2.88,5 V -5 Z"
          id="path11350"
          inkscape:connector-curvature="0" />
     </marker>
@@ -84,9 +84,9 @@
        orient="auto"
        inkscape:stockid="TriangleOutM">
       <path
-         transform="scale(0.4,0.4)"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
-         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         transform="scale(0.4)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
+         d="M 5.77,0 -2.88,5 V -5 Z"
          id="path9442-4-5"
          inkscape:connector-curvature="0" />
     </marker>
@@ -98,9 +98,9 @@
        orient="auto"
        inkscape:stockid="TriangleOutM">
       <path
-         transform="scale(0.4,0.4)"
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
-         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         transform="scale(0.4)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
+         d="M 5.77,0 -2.88,5 V -5 Z"
          id="path9442-4"
          inkscape:connector-curvature="0" />
     </marker>
@@ -114,9 +114,9 @@
       <path
          inkscape:connector-curvature="0"
          id="path4960"
-         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
-         style="fill:#00a51a;fill-rule:evenodd;stroke:#00a51a;stroke-width:1pt;marker-start:none"
-         transform="scale(-0.4,-0.4)" />
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#00a51a;fill-rule:evenodd;stroke:#00a51a;stroke-width:1.00000003pt;marker-start:none"
+         transform="scale(-0.4)" />
     </marker>
     <marker
        inkscape:stockid="TriangleInMZ"
@@ -128,9 +128,9 @@
       <path
          inkscape:connector-curvature="0"
          id="path4960-4"
-         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
-         style="fill:#00a51a;fill-rule:evenodd;stroke:#00a51a;stroke-width:1pt;marker-start:none"
-         transform="scale(-0.4,-0.4)" />
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#00a51a;fill-rule:evenodd;stroke:#00a51a;stroke-width:1.00000003pt;marker-start:none"
+         transform="scale(-0.4)" />
     </marker>
     <marker
        inkscape:stockid="TriangleOutMZ"
@@ -141,9 +141,9 @@
        style="overflow:visible">
       <path
          id="path5915"
-         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
-         style="fill:#00a51a;fill-rule:evenodd;stroke:#00a51a;stroke-width:1pt;marker-start:none"
-         transform="scale(0.4,0.4)"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#00a51a;fill-rule:evenodd;stroke:#00a51a;stroke-width:1.00000003pt;marker-start:none"
+         transform="scale(0.4)"
          inkscape:connector-curvature="0" />
     </marker>
     <inkscape:path-effect
@@ -159,8 +159,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.6"
-     inkscape:cx="104.39526"
-     inkscape:cy="51.629289"
+     inkscape:cx="104.31615"
+     inkscape:cy="-17.769476"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -171,19 +171,25 @@
      inkscape:object-nodes="true"
      inkscape:snap-smooth-nodes="true"
      units="px"
-     inkscape:window-width="2560"
-     inkscape:window-height="1377"
-     inkscape:window-x="2552"
+     inkscape:window-width="1366"
+     inkscape:window-height="706"
+     inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:snap-global="true">
+     inkscape:snap-global="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0">
     <inkscape:grid
        type="xygrid"
        id="grid11287"
        empspacing="5"
        visible="true"
        enabled="true"
-       snapvisiblegridlinesonly="true" />
+       snapvisiblegridlinesonly="true"
+       originx="-0.079105859"
+       originy="-62.255907" />
   </sodipodi:namedview>
   <metadata
      id="metadata10744">
@@ -201,9 +207,9 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-972.36221)">
+     transform="translate(-0.07910586,-972.4493)">
     <g
-       transform="translate(-415.953,961.44521)"
+       transform="translate(-446.9519,935.8663)"
        id="g3730">
       <polygon
          style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
@@ -224,12 +230,7 @@
          cx="456.953"
          cy="39.917"
          r="2.8340001"
-         id="circle303"
-         d="m 459.787,39.917 c 0,1.565175 -1.26882,2.834 -2.834,2.834 -1.56517,0 -2.834,-1.268825 -2.834,-2.834 0,-1.565175 1.26883,-2.834 2.834,-2.834 1.56518,0 2.834,1.268825 2.834,2.834 z"
-         sodipodi:cx="456.953"
-         sodipodi:cy="39.917"
-         sodipodi:rx="2.8340001"
-         sodipodi:ry="2.8340001" />
+         id="circle303" />
     </g>
   </g>
 </svg>
