@@ -5,7 +5,7 @@ It contains different prototypes for WebApps for the visualization of mechanics 
 ## Overview
 The use of this repository is only suggested for developers. If you are only interested in using the completed apps, please visit the following website: http://www.bm.bgu.tum.de/lehre/interactive-apps/.
 
-Before starting developing, please take a look at our [DevelopmentGuideline](DevelopmentGuideline.md). We use two different bokeh servers for different groups of apps, in order to avoid conflicts: the simplest apps run on one server, the most complex ones run on a second server.
+Before starting developing, please take a look at our [Development Guideline](DevelopmentGuideline.md). We use two different bokeh servers for different groups of apps, in order to avoid conflicts: the simplest apps run on one server, the most complex ones run on a second server.
 
 This repository contains one folder for each App, with a main file and subfunction-files. The following files are important for the installation of the Bokeh framework:
 
@@ -38,32 +38,32 @@ The server can be run in two modes:
 
 If you are using a Linux system, please execute the ```.sh``` scripts, under Windows use the ```.cmd``` scripts if available.
 
-1. install Anaconda with python **version 2.7**: https://www.continuum.io/downloads !!Choose installation for all users if possible!!
+1. install Anaconda with python **version 2.7**: https://www.continuum.io/downloads
 2. install Git
     * Linux: see https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
     * Windows: see https://git-for-windows.github.io/
 	* For windows we also suggest a desktop version of github: see https://desktop.github.com/ 
-3. clone **this** repository (*Linux:* from command line, *Windows:* by opening git bash) ```git clone https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps.git```)
-4. install additional python packages (bokeh, nodejs, flexx, twisted) by running ```$ ./installer.sh```, ```$ ./installer.cmd```. *Windows:* Right click on script >> Run as administrator.
+3. clone **this** repository 
+    * Windows with GitHub Desktop: File -> Clone Repository
+    * Linux from command line: ```git clone https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps.git```
+    * Windows with git bash: ```git clone https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps.git```
+4. install additional python packages (bokeh, nodejs, flexx, twisted) by running ```$ ./installer.sh```, ```$ ./installer.cmd```. *Windows:* If you chose to install Anaconda for all users, right click on script >> Run as administrator.
 5. configure the server with ```server.conf``` to your own server settings. If you want to run the server locally, just use the existing configuration. If you want to run the server online, insert the global ip address and make sure that the server port is open to the world wide web. 
 6. In ```appnames.conf``` write the folder names of the apps you want to run on the server.
 
 ### Running the Server
 
-* **Local running** 
-	- If you just want to run a single app locally:
-		- open a command window and enter:  ```bokeh serve --show Directory_name```
-		
-		- For example: 	```bokeh serve --show Diffraction```
-		
-	- The browser should open automatically, showing the app. You can also directly access *localhost:Port* (For example *localhost:5006/Diffraction*) if your browser does not open automatically.
+* **Local running** (If you just want to run a single app locally)
+	- open a command window and navigate to the repository folder (where e.g. `installer.cmd` is located)
+	- enter  ```bokeh serve --show Directory_name```
+	- for example: 	```bokeh serve --show Diffraction```
+	- the browser should open automatically and show the app. You can also directly access *localhost:Port* (For example *localhost:5006/Diffraction*) if your browser does not open automatically.
 	
-* **Web running** 
-	- If you want to publish to the web, 
-		- add the app to the file ```appnames.conf```
-		- run server_autorun.exe. 
-		- Navigate to *Global_IP:Port* in your browser (or the corresponding IP address set in ```server.conf```). For example: *127.0.0.1:5006*
-		- In our case, we use a proxy name for the *IP:Port*, which is *apps.bm.bgu.tum.de:5006* in order to display a more approrpate website name.
+* **Web running** (If you want to publish several apps to the web)
+	- add the app to the file ```appnames.conf```
+	- run `server_autorun.exe` 
+	- Navigate to *Global_IP:Port* in your browser (or the corresponding IP address set in ```server.conf```). For example: *127.0.0.1:5006*
+	- In our case, we use a proxy name for the *IP:Port*, which is *apps.bm.bgu.tum.de:5006* in order to display a more approrpate website name.
 
 ### Apps 
 
@@ -127,7 +127,7 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 
 ### Developers
 
-Please comply with the [DevelopmentGuideline](DevelopmentGuideline.md)!
+Please comply with the [Development Guideline](DevelopmentGuideline.md)
 - Sascha Kubisch, [@ga96wec](https://github.com/ga96wec)
 - Matthias Ebert, [@m3bert](https://github.com/m3bert)
 
