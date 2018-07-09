@@ -4,15 +4,16 @@
 """
 from __future__ import division
 import numpy as np
-import pandas as pd
+
 from scipy.optimize import brentq # fast numerical solver for roots
 from bokeh.io import curdoc
-from bokeh.layouts import row,column, gridplot, Spacer
-from bokeh.models import ColumnDataSource,CustomJS, Label,Legend
+from bokeh.layouts import column, Spacer
+from bokeh.models import ColumnDataSource
 from bokeh.models.glyphs import ImageURL
-from bokeh.models.widgets import Slider,Toggle, Paragraph
+from bokeh.models.widgets import Slider
 from bokeh.plotting import figure
 from os.path import dirname, join, split, abspath
+
 # for LaTeX support
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
@@ -152,23 +153,18 @@ eigenmodes_beam1=p1.line(x='x', y='y', source=source1,
 eigenmodes_beam1.visible=True
 p1.add_glyph(support_src,ImageURL(url="sp2", x=0.0, y=0.35, w=2, h=2, anchor="top_center"))
 p1.add_glyph(support_src,ImageURL(url="sp1", x=1.0, y=0.35, w=1.8, h=1.8, anchor="top_center"))
-
-#legend1 = Legend(items=[
-#    ("Eigenvalue Problem: sin("u"\u03BB)=0 "u"\u279CSolution: w"u"\u1D62("u"\u03BE)=sin(i"u"\u00B7"u"\u03C0"u"\u00B7"u"\u03BE)"   , [eigenmodes_beam1]),
-#], location=(0, 5))
     
 legend1 = LatexLegend(items=[
     ("\\text{Eigenvalue Problem: } \\sin(\\lambda) = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = \\sin(i \\cdot \\pi \\xi)"   , [eigenmodes_beam1]),
-], location=(0, 5))
+], location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
 
 p1.add_layout(legend1, 'above')
 p1.legend.click_policy="hide"
 p1.toolbar.logo = None
 
 #Plot 2
-p2 = figure(plot_height=400, plot_width=900,title="Beam fixed at both ends", tools="", x_range=(-0.075,1.075), y_range=(-3,3))
+p2 = figure(plot_height=500, plot_width=900,title="Beam fixed at both ends", tools="", x_range=(-0.075,1.075), y_range=(-3,3))
 p2.axis.visible = False
-#p2.grid.visible = False
 p2.outline_line_width = 2
 p2.outline_line_color = "black"
 p2.title.text_font_size="13pt"
@@ -187,21 +183,13 @@ eigenmodes_beam2sin=p2.line(x='x', y='y', source=source2sin,
 p2.add_glyph(support_src,ImageURL(url="sp3", x=-0.0105, y=0.0, w=2, h=2, anchor="center"))
 p2.add_glyph(support_src,ImageURL(url="sp4", x=1.0105, y=0.0, w=2, h=2, anchor="center"))
 
-#legend2 = Legend(items=[
-#    ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)-1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - c("u"\u03BB"u"\u1D62) / s("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam2]),
-#    ("Solution part: -"u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cosh]),
-#    ("Solution part: "u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sinh]),
-#    ("Solution part: "u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cos]),
-#    ("Solution part: -"u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sin]),
-#], location=(0, 5))
-
 legend2 = LatexLegend(items=[
     ("\\text{Eigenvalue Problem: } \cosh(\\lambda) \cdot \cos(\\lambda) -1 = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = c(\\lambda_i \\xi) - \\frac{c(\\lambda_i)}{s(\\lambda_i)} \\cdot s(\\lambda_i \\xi)", [eigenmodes_beam2]),
     ("\\text{Solution part: } - \\frac{1}{2} \\cosh(\\lambda \\cdot \\xi)", [eigenmodes_beam2cosh]),
     ("\\text{Solution part: } \\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\cdot \\sinh(\\lambda \\xi)", [eigenmodes_beam2sinh]),
     ("\\text{Solution part: } \\frac{1}{2} \\cos(\\lambda \\cdot \\xi)", [eigenmodes_beam2cos]),
     ("\\text{Solution part: } - \\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\cdot \\sin(\\lambda \\xi)", [eigenmodes_beam2sin]),
-], location=(0, 5))
+], location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
 
 p2.add_layout(legend2, 'above')
 p2.legend.click_policy="hide"
@@ -209,7 +197,7 @@ p2.toolbar.logo = None
 
 
 #Plot 3
-p3 = figure(plot_height=400, plot_width=900,title="Cantilever beam", tools="", x_range=(-0.075,1.075), y_range=(-3,3))
+p3 = figure(plot_height=500, plot_width=900,title="Cantilever beam", tools="", x_range=(-0.075,1.075), y_range=(-3,3))
 p3.axis.visible = False
 #p3.grid.visible = False
 p3.outline_line_width = 2
@@ -228,15 +216,6 @@ eigenmodes_beam3cos=p3.line(x='x', y='y', source=source3cos,
                          line_width=1,line_color='#64A0C8') # TUM color pantone 542 
 eigenmodes_beam3sin=p3.line(x='x', y='y', source=source3sin,
                          line_width=1,line_color='#98C6EA') # TUM color pantone 283
-#eigenmodes_beam3.visible= False
-#legend3 = Legend(items=[
-#    ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)+1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - C("u"\u03BB"u"\u1D62) / S("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam3]),
-#    ("Solution part: -"u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cosh]),
-#    ("Solution part: "u"\u00BD  "u"\u00B7 C("u"\u03BB)/S("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sinh]),
-#    ("Solution part: "u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cos]),
-#    ("Solution part: -"u"\u00BD "u"\u00B7 C("u"\u03BB)/S("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sin]),
-#], location=(0, 5))
-
 
 legend3 = LatexLegend(items=[
     ("\\text{Eigenvalue Problem: } \cosh(\\lambda) \cdot \cos(\\lambda) +1 = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = c(\\lambda_i \\xi) - \\frac{C(\\lambda_i)}{S(\\lambda_i)} \\cdot s(\\lambda_i \\xi)", [eigenmodes_beam3]),
@@ -244,32 +223,11 @@ legend3 = LatexLegend(items=[
     ("\\text{Solution part: } \\frac{1}{2} \\frac{C(\\lambda)}{S(\\lambda)} \\cdot \\sinh(\\lambda \\xi)", [eigenmodes_beam3sinh]),
     ("\\text{Solution part: } \\frac{1}{2} \\cos(\\lambda \\cdot \\xi)", [eigenmodes_beam3cos]),
     ("\\text{Solution part: } - \\frac{1}{2} \\frac{C(\\lambda)}{S(\\lambda)} \\cdot \\sin(\\lambda \\xi)", [eigenmodes_beam3sin]),
-], location=(0, 5))
+], location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
 
 p3.add_layout(legend3, 'above')
 p3.legend.click_policy="hide"
 p3.toolbar.logo = None
-
-
-#Toggle not necessary
-# coffeescript to link toggle with visible property
-code = '''\
-object.visible = Toggle.active
-'''
-#I created 3 callbacks with CustomJS so that when the student presses the button he sees the eigenmodes for the beam he chose.
-#My only problem is that the first time one has to press the button twice in order to get the line. Then it works properly. Dont know why??
-#[Matthias]: I could not reproduce the problem, works fine for me.
-callback1 = CustomJS.from_coffeescript(code=code, args={})
-toggle1 = Toggle(label="Simply supported beam", button_type="success",callback=callback1)
-callback1.args = {'toggle': toggle1, 'object':eigenmodes_beam1 }
-
-callback2 = CustomJS.from_coffeescript(code=code, args={})
-toggle2 = Toggle(label="Beam fixed at both ends", button_type="success",callback=callback2)
-callback2.args = {'toggle': toggle2, 'object':eigenmodes_beam2 }
-
-callback3 = CustomJS.from_coffeescript(code=code, args={})
-toggle3 = Toggle(label="Cantilever beam", button_type="success",callback=callback3)
-callback3.args = {'toggle': toggle3, 'object':eigenmodes_beam3 }
 
 ## Create slider widgets to choose eigenvalue from 1 to ev_total
 ev_input1 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1, width=862)
