@@ -19,15 +19,16 @@ sys.path.insert(0,parentdir)
 from latex_div import LatexDiv
 
 #Global constant numbers:
-punktezahl      = 30
+score           = 30
 factor          = 1.2
 xf              = 0.0
-fenster         = 16
-xstart          = 0.02 * fenster
-zstart          = 0.1 * fenster
+window          = 16
+xstart          = 0.02 * window
+zstart          = 0.1 * window
 zbifi           = (0.46368*2)
 step            = 0.01
-f_end           = 1.5
+f_end           = 1.0 #1.5
+w_end           = 0.15
 old_slide_val   = 0
 #label_length    = dict(x=[],y=[],name=[])
 
@@ -75,6 +76,7 @@ class Column(object):
         self.labels.data    = dict(x = x, y = y, name = name)
 
 weight_slide = Slider(title="Force Ratio (F/Fcrit)", value=0, start=0, end=f_end, step=step)    #slider created to change weight on columns
+displ_slide  = Slider(title="w", value=0, start=0, end=w_end, step=step)    #slider created to change displacement oF columns
 
 def drange(start,stop,step):
     '''Function created to provide float range'''
@@ -92,7 +94,7 @@ def fun_onewayslider(a,b):
 
 col1 = Column("Free-Fixed",3,1.0)                                               #beam: "Free-Fixed" Column
 col2 = Column("Pinned-Pinned",2.0*col1.h,1.0*col1.fcrit)                        #beam: "Pinned-Pinned" Column
-col3 = Column("Pinned-Fixed",3.0*col1.h,1.0*col2.fcrit)                        #beam: "Pinned-Fixed" Column
+col3 = Column("Pinned-Fixed",3.0*col1.h,1.0*col2.fcrit)                         #beam: "Pinned-Fixed" Column
 col4 = Column("Fixed-Fixed",4.0*col1.h,1.0*col2.fcrit)                          #beam: "Fixed-Fixed" Column
 
 zbifi = zbifi / col1.h
@@ -139,6 +141,7 @@ y = [ [zstart+col4.hi+1,zstart+col4.hi-1] , [zstart+col4.hi+1,zstart+col4.hi-1] 
 posplot     = ColumnDataSource(data=dict(x=[] , y=[]))
 negplot     = ColumnDataSource(data=dict(x=[] , y=[]))
 conplot     = ColumnDataSource(data=dict(x=[] , y=[]))
+#wplot       = ColumnDataSource(data=dict(x=[] , y=[]))
 
 #create the arrays for the graph
 #bk = 0.95
@@ -146,6 +149,7 @@ conplot     = ColumnDataSource(data=dict(x=[] , y=[]))
 bk = 1.0
 y2 = []
 xbifi = []
+#w_ybifi = []
 bx = 0.01
 bk = bk + bx
 #step = 0.1*step
@@ -159,13 +163,16 @@ for i in xrange(0,int(f_end/step) ):
 y1 = [0] * int((col3.fcrit/step))
 ybifi  = y1 + y2
 negybifi = [ -x for x in ybifi]
+#for i in xrange(0, int(w_end/step)):
+#    w_ybifi.append(i*step) 
+    
 
 
 def fun_col1(paramFloat1,paramFloat2):
     '''Function: Calculates deflection in column 1'''
     x = []
     y = []
-    d3 = col1.h/ punktezahl
+    d3 = col1.h/ score
     d1 = paramFloat1
     d2 = paramFloat2
     x0 = [d1]
@@ -182,7 +189,7 @@ def fun_col2(paramFloat1,paramFloat2):
     '''Function: Calculates deflection in column 2'''
     x  = []
     y  = []
-    d3 = col2.h/ punktezahl
+    d3 = col2.h/ score
     d1 = paramFloat1
     d2 = paramFloat2
     x0 = [d1]
@@ -199,10 +206,10 @@ def fun_col2(paramFloat1,paramFloat2):
 
 def fun_col3(paramFloat1,paramFloat2):
     '''Function: Calculates deflection in column 3'''
-    global Druckkraft
+    global thrust
     x  = []
     y  = []
-    d3 = col3.h / punktezahl
+    d3 = col3.h / score
     d4 = 4.4 / col3.h
     d1 = paramFloat1
     d2 = paramFloat2
@@ -210,7 +217,7 @@ def fun_col3(paramFloat1,paramFloat2):
     y0 = [d2]
     i0 = drange(0,col3.h+(d3/2.0),d3)
 
-    if (Druckkraft > 0.0):
+    if (thrust > 0.0):
         for d5 in i0:
             d2 = d5
             d1 = col3.deflection * (np.cos(d4*d2) - ( np.sin(d4*d2)/(d4*col3.h) ) + (d2/col3.h) - 1 )
@@ -221,10 +228,10 @@ def fun_col3(paramFloat1,paramFloat2):
 
 def fun_col4(paramFloat1,paramFloat2):
     '''Function: Calculates deflection in column 4'''
-    global Druckkraft
+    global thrust
     x  = []
     y  = []
-    d3 = (col4.h / (punktezahl-1))
+    d3 = (col4.h / (score-1))
     d4 = (col4.h / 4)
     d5 = (2.0 * d4)
     d6 =( 3.0 * d4 )
@@ -237,7 +244,7 @@ def fun_col4(paramFloat1,paramFloat2):
     i0 = drange(0,d4,d3)
     i1 = drange(d4,d6,d3)
     i2 = drange(d6,col4.h,d3)
-    if ( Druckkraft > 0.0):
+    if ( thrust > 0.0):
         for d7 in i0:
             d2 = d7
             d1 = col4.deflection * (1.0 - np.cos(np.pi * (d2/d5) ) )
@@ -262,6 +269,7 @@ def fun_bifurkation():
     posplot.data     = dict(x=xbifi[0:end ] , y=ybifi[0:end])
     negplot.data     = dict(x=xbifi[0:end]  , y= negybifi[0:end] )
     conplot.data     = dict(x=xbifi[0:end]  , y=[0] * end )
+    #wplot.data       = dict(x=[0]*end, y=w_ybifi[0:end])
 
 def fun_figures():
     '''Function: moves the figures in plot when columns buckle'''
@@ -274,10 +282,13 @@ def fun_figures():
 def init():
     '''Initializes plot. When Reset button is clicked, this is the function that is called'''
     global old_slide_val
-    old_slide_val       = 0
-    col1.harrow.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    col1.wlabel.data    = dict(x = [], y = [], name =[])
-    weight_slide.value  = 0
+    old_slide_val         = 0
+    col1.harrow.data      = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    col1.wlabel.data      = dict(x = [], y = [], name =[])
+    weight_slide.value    = 0
+    displ_slide.value     = 0
+    weight_slide.disabled = False
+    displ_slide.disabled  = True
     col1.reset()
     col2.reset()
     col3.reset()
@@ -298,31 +309,37 @@ def fun_check1(attr,old,new):
 
 def fun_update(attr,old,new):
     '''Function: Updates the plot when the weight slider is used'''
-    global Druckkraft
+    global thrust
     global old_slide_val
+    
+    # disable displacement slider if force did not reach f_crit
+    if(new<1.0):
+        displ_slide.disabled = True
+    else:
+        displ_slide.disabled = False
 
     #weight_slide.value = fun_onewayslider(old_slide_val,weight_slide.value)
-    Druckkraft = weight_slide.value
+    thrust = weight_slide.value
     col1.h -= 5.0E-4
     col2.h -= 5.0E-4
     col3.h -= 5.0E-4
     col4.h -= 5.0E-4
 
-    if(Druckkraft > col1.fcrit):
-        col1.deflection  = ( factor * np.sqrt(np.sqrt(Druckkraft/col1.fcrit)-1) )
+    if(thrust > col1.fcrit):
+        col1.deflection  = ( factor * np.sqrt(np.sqrt(thrust/col1.fcrit)-1) )
         col1.h          -= 0.005
         col1.harrow.data = dict(xS=[col1.pts.data['x'][0]], xE=[col1.pts.data['x'][-1]+0.1],
         yS=[col1.pts.data['y'][-1]], yE=[col1.pts.data['y'][-1]], lW = [weight_slide.value*2])
         col1.wlabel.data = dict(x = [col1.pts.data['x'][-1]+0.1] , y = [col1.pts.data['y'][-1]], name = ['w'] )
 
-    if(Druckkraft > col2.fcrit):
-        col2.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col2.fcrit)-1) )
+    if(thrust > col2.fcrit):
+        col2.deflection = ( factor * np.sqrt(np.sqrt(thrust/col2.fcrit)-1) )
         col2.h         -= 0.005
-    if(Druckkraft > col3.fcrit):
-        col3.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col3.fcrit)-1) )
+    if(thrust > col3.fcrit):
+        col3.deflection = ( factor * np.sqrt(np.sqrt(thrust/col3.fcrit)-1) )
         col3.h         -= 0.005
-    if(Druckkraft > col4.fcrit):
-        col4.deflection = ( factor * np.sqrt(np.sqrt(Druckkraft/col4.fcrit)-1) )
+    if(thrust > col4.fcrit):
+        col4.deflection = ( factor * np.sqrt(np.sqrt(thrust/col4.fcrit)-1) )
         col4.h         -= 0.005
 
     fun_col1(col1.xstart,zstart)
@@ -340,6 +357,19 @@ def fun_update(attr,old,new):
     fun_figures()
     fun_bifurkation()
     old_slide_val = weight_slide.value
+    
+def fun_update_displ(attr,old,new):
+    '''Function: Updates the plot when the displacement slider is used'''
+    
+    # disable weight slider if some discplacement is set
+    if(new>0.0):
+        weight_slide.disabled = True
+    else:
+        weight_slide.disabled = False
+
+    #fun_bifurkation()        
+    #TODO:
+    ### some calculations ###
 
 ################################################################################
 ####Plotting section:
@@ -347,7 +377,7 @@ def fun_update(attr,old,new):
 
 
 #Main plot:
-plot = Figure(tools = "", x_range=(-2,fenster), y_range=(-.5,fenster+2))
+plot = Figure(tools = "", x_range=(-2,window), y_range=(-.5,window+2))
 plot.line(x='x', y='y', source = col1.pts, color='#003359',line_width=5)        #Column 1
 plot.line(x='x', y='y', source = col2.pts, color='#003359',line_width=5)        #Column 2
 plot.line(x='x', y='y', source = col3.pts, color='#003359',line_width=5)        #Column 3
@@ -373,6 +403,7 @@ plot.square(x='x', y='y', source = col4.square, color='black',size = 20)
 #Main plot properties:
 plot.axis.visible = False
 plot.grid.visible = False
+plot.toolbar.logo = None
 plot.outline_line_width = 1
 plot.outline_line_alpha = 0.5
 plot.outline_line_color = "Black"
@@ -423,14 +454,16 @@ plot.add_layout(labels_L)
 plot.add_layout(labels_w)
 
 #Bifurcation plot (Plot1):
-plot1 = Figure(tools = "",title="Buckling Displacement", x_range=(0.05,f_end), y_range=(-ybifi[-1],ybifi[-1]), width = 400, height = 200)
+plot1 = Figure(tools = "",title="Buckling Displacement", x_range=(0.05,f_end+0.2), y_range=(-ybifi[-1],ybifi[-1]), width = 400, height = 200)
 plot1.line(x='x', y='y', source = posplot, color='blue',line_width=3)
 plot1.line(x='x', y='y', source = negplot, color='red',line_width=3)
 plot1.line(x='x', y='y', source = conplot, color='red',line_width=3)
+#plot1.line(x='x', y='y', source = wplot, color='blue',line_width=3)
 plot1.line(x=[1,1], y = [-10,10], color = 'Black', line_width = 2, line_dash = 'dashed', line_alpha = 0.3 )
 plot1.xaxis[0].visible = True
 plot1.yaxis[0].visible = True
 plot1.grid.visible = False
+plot1.toolbar.logo = None
 plot1.outline_line_width = 1
 plot1.outline_line_alpha = 0.5
 plot1.outline_line_color = "Black"
@@ -446,6 +479,7 @@ button = Button(label="Reset", button_type="success")
 
 #Let program know what functions button calls when clicked:
 weight_slide.on_change('value', fun_check1)
+displ_slide.on_change('value', fun_update_displ)
 button.on_click(init)
 
 #Initialization at the beginning:
@@ -466,7 +500,7 @@ description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=
 #Output to the browser:
 curdoc().add_root(column(description1,
                     row(
-                        column(plot1,weight_slide,button),
+                        column(plot1,weight_slide,displ_slide,button),
                         plot), description )  )
 
 
