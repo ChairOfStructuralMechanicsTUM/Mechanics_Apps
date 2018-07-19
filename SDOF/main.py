@@ -75,14 +75,16 @@ def evolve():
             s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
                 * ( ( 1-pow(frequency_ratio_value,2) ) * sin(excitation_frequency_value*t) - 2*D*frequency_ratio_value*cos(excitation_frequency_value*t) )
             # homogeneous (transient) part
-            if D==1:
-                s_h = exp(-ef*t) * initial_displacement_value \
-                    + force_value * exp(-ef*t) / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*frequency_ratio_value,2)) ) \
-                    * ( 2*frequency_ratio_value )
-            else:    
+            if D<1: 
                 s_h = exp(-D*ef*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) ) \
                     + force_value * exp(-D*ef*t) / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
                     * ( 2*D*frequency_ratio_value*cos(damped_ef*t) + ef/damped_ef * ( 2*frequency_ratio_value*pow(D,2) - frequency_ratio_value * (1-pow(frequency_ratio_value,2)) ) * sin(damped_ef*t) )
+            else:
+                print("how did we get there?") # even if this place is reached, there should be no bug
+                s_h = 0
+                play_button.disabled = True
+                pause()
+                
 
     else:
         if D < 1:
@@ -272,10 +274,12 @@ frequency_ratio_input.on_change('value',change_frequency_ratio)
 ## Create slider to choose the frequency ratio
 def change_force_value(attr,old,new):
     global Active, force_value, arrow_line
-    if (not Active):
+    #if (not Active): #change for force slider does not respond during play
+    if (True):
         force_value = new
         current_y1 = arrow_line.data["y1"][0]
         current_y2 = arrow_line.data["y2"][0]
+        updateParameters()
         if new == 1:
             arrow_line.data=dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20])
         else:
@@ -341,6 +345,12 @@ def updateParameters():
         damped_ef = ef * sqrt(pow(D,2)-1)
     excitation_frequency_value = frequency_ratio_value * ef
     parameters.data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)])
+    # deactivate play button if there exists no solution for these configurations
+    if force_value > 0 and D>=1:
+        play_button.disabled = True
+        pause()
+    else:
+        play_button.disabled = False
 
 play_button = Button(label="Play", button_type="success",width=100)
 play_button.on_click(play)
