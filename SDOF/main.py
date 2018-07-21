@@ -82,7 +82,7 @@ def evolve():
             else:
                 print("how did we get there?") # even if this place is reached, there should be no bug
                 s_h = 0
-                play_button.disabled = True
+                play_pause_button.disabled = True
                 pause()
                 
 
@@ -129,6 +129,7 @@ damper.plot(fig,width=2)
 mass.plot(fig)
 arrow = fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red", line_width=2,
     x_start='x1', y_start='y1', x_end='x2', y_end='y2', source=arrow_line))
+fig.toolbar.logo = None #removes bokeh logo
 
 # time plot
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
@@ -144,6 +145,7 @@ p.xaxis.axis_label="Time [s]"
 p.yaxis.axis_label="Displacement [u/(F/k)]"
 p.legend.location="top_right"
 p.legend.click_policy="mute"
+p.toolbar.logo = None #removes bokeh logo
 
 # amplification function plot
 def compute_amp_and_phase_angle():
@@ -191,12 +193,14 @@ p_af = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=300, hei
 p_af.line(x='beta', y='V', source=amplification_function, color="#a2ad00")
 p_af.circle(x='beta', y='V', size=10, color="#e37222", source=current_ratio)
 p_af.yaxis.axis_label="Amplification"
+p_af.toolbar.logo = None #removes bokeh logo
 p_pa = figure(title="", tools="", x_range=(0,3.0), y_range=(0,180), width=300, height=300)
 p_pa.line(x='beta', y='phi', source=phase_angle, color="#a2ad00")
 p_pa.circle(x='beta', y='phi', size=10, color="#e37222", source=current_ratio)
 p_pa.xaxis.axis_label="Frequency ratio"
 p_pa.yaxis.axis_label="Phase angle"
 p_pa.yaxis.ticker = FixedTicker(ticks=[0,90,180])
+p_pa.toolbar.logo = None #removes bokeh logo
 
 def move_system(disp):
     global mass, spring, damper, Bottom_Line, Linking_Line, force_value
@@ -288,20 +292,41 @@ def change_force_value(attr,old,new):
 force_value_input = Slider(title="Force", value=force_value, start=0, end=1.0, step=1,width=400)
 force_value_input.on_change('value',change_force_value)
 
+#steer activity of sliders
+def disable_all_sliders(d=True):
+    mass_input.disabled                 = d
+    spring_constant_input.disabled      = d
+    damping_coefficient_input.disabled  = d
+    initial_displacement_input.disabled = d
+    initial_velocity_input.disabled     = d
+    frequency_ratio_input.disabled      = d
+    force_value_input.disabled          = d
+
+def play_pause():
+    # keep separate play and pause function since they are also called from other functions
+    if play_pause_button.label == "Play":
+        play()
+    else:
+        pause()
+        
 def pause():
     global Active
+    play_pause_button.label = "Play"
     if (Active):
         curdoc().remove_periodic_callback(evolve)
         Active=False
 
 def play():
     global Active
+    disable_all_sliders(True) # disable sliders if graph is being plotted
+    play_pause_button.label = "Pause"
     if (not Active):
         curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
         Active=True
 
 def stop():
     global displacement, t, s, Bottom_Line, Linking_Line, spring, mass, damper, initial_displacement_value, force_value
+    disable_all_sliders(False) #enable all sliders for new settings
     pause()
     t=0
     s=0
@@ -347,15 +372,14 @@ def updateParameters():
     parameters.data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)])
     # deactivate play button if there exists no solution for these configurations
     if force_value > 0 and D>=1:
-        play_button.disabled = True
+        play_pause_button.disabled = True
         pause()
     else:
-        play_button.disabled = False
+        play_pause_button.disabled = False
 
-play_button = Button(label="Play", button_type="success",width=100)
-play_button.on_click(play)
-pause_button = Button(label="Pause", button_type="success",width=100)
-pause_button.on_click(pause)
+play_pause_button = Button(label="Play", button_type="success",width=100)
+play_pause_button.on_click(play_pause)
+    
 stop_button = Button(label="Stop", button_type="success", width=100)
 stop_button.on_click(stop)
 # reset_button = Button(label="Reset", button_type="success",width=100)
@@ -375,10 +399,13 @@ parameter_table = DataTable(source=parameters, columns=columns, reorderable=Fals
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
+# grid plot of phase angle and amplification
+gp = gridplot([p_af,p_pa],ncols=1,plot_width=250,plot_height=250,merge_tools=True,toolbar_location="below",toolbar_options=dict(logo=None))  # for gridpot we need to disable logo again
+
 ## Send to window
 hspace = 20
 curdoc().add_root(column(description,\
-    row(column(row(column(Spacer(height=200),play_button,pause_button,stop_button),Spacer(width=10),fig),Spacer(height=hspace),row(Spacer(width=100),parameter_table)),p,Spacer(width=10),gridplot([p_af,p_pa],ncols=1,plot_width=250,plot_height=250,merge_tools=True,toolbar_location="below")), \
+    row(column(row(column(Spacer(height=200),play_pause_button,stop_button),Spacer(width=10),fig),Spacer(height=hspace),row(Spacer(width=100),parameter_table)),p,Spacer(width=10),gp), \
     row(mass_input,Spacer(width=hspace),spring_constant_input,Spacer(width=hspace),damping_coefficient_input), \
     row(initial_displacement_input,Spacer(width=hspace),initial_velocity_input), \
     row(frequency_ratio_input,Spacer(width=hspace),force_value_input) ))
