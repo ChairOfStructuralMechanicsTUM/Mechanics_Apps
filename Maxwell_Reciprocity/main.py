@@ -506,9 +506,16 @@ def create_shift(f):
         paramInt1 = f.get_param()
         localDouble1 = compute_shift(paramInt1,paramInt1, f.get_mag())
         if (f.name == "F"u"\u2081"):
-            names = "(w"u"\u1d62"u"\u2c7c)n"u"\u2081"
+
+        #### Names
+        #    names = "(w"u"\u0031"u"\u0031)n"u"\u2081"
+        #elif (f.name == "F"u"\u2082"):
+        #    names = "(w"u"\u0032"u"\u0032)n"u"\u2082"
+        
+            names = "(w"u"\u2081"u"\u2081)"
         elif (f.name == "F"u"\u2082"):
-            names = "(w"u"\u2c7c"u"\u1d62)n"u"\u2082"
+            names = "(w"u"\u2082"u"\u2082)"
+        
         d2 = 0
         d1 = 0
         sclr = 10
