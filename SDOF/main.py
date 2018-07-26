@@ -210,7 +210,9 @@ def move_system(disp):
     Bottom_Line.data=dict(x=[-2,2],y=[8+disp, 8+disp])
     Linking_Line.data=dict(x=[0,0],y=[8+disp, 10+disp])
     if force_value > 0:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[15+disp],y2=[12+disp])
+        t = displacement.data["t"][-1]
+        F_length = force_value*sin(excitation_frequency_value*t)
+        arrow_line.data=dict(x1=[0],x2=[0],y1=[15],y2=[15-F_length*3])
     else:
         arrow_line.data=dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp])
 
@@ -310,18 +312,18 @@ def play_pause():
         pause()
         
 def pause():
-    global Active
+    global Active, callback_id
     play_pause_button.label = "Play"
     if (Active):
-        curdoc().remove_periodic_callback(evolve)
+        curdoc().remove_periodic_callback(callback_id)
         Active=False
 
 def play():
-    global Active
+    global Active, callback_id 
     disable_all_sliders(True) # disable sliders if graph is being plotted
     play_pause_button.label = "Pause"
     if (not Active):
-        curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
+        callback_id = curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
         Active=True
 
 def stop():
