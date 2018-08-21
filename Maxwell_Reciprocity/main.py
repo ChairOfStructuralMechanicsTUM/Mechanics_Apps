@@ -608,14 +608,7 @@ def create_wdline(f):
         f.wdline.data = dict(x1 = [ f.w1.data['xS'][0], f.w1.data['xS'][0] ]  , x2 = [  f.w2.data['xS'][0], f.w2.data['xS'][0] ] ,
         y1 = [ f.w1.data['yS'][0] , f.e_s.data['yS'][0] ] , y2 = [ f.w2.data['yS'][0], f.e_s.data['yS'][0] ] )
     
-        #EDIT
-        #if (f.name == "F"u"\u2081"):
-        #    f.wdline12.data = dict(x1 = [ f.w1.data['xS'][0], f.w1.data['xS'][0] ]  , x2 = [  f.w2.data['xS'][0], f.w2.data['xS'][0] ] ,
-        #    y1 = [ f.w1.data['yS'][0] , f.e_s.data['yS'][0] ] , y2 = [ f.w2.data['yS'][0], f.e_s.data['yS'][0] ] )
-            
-        #if (f.name == "F"u"\u2082"):
-        #    f.wdline21.data = dict(x1 = [ f.w21_1.data['xS'][0], f.w21_1.data['xS'][0] ]  , x2 = [  f.w21_2.data['xS'][0], f.w21_2.data['xS'][0] ] ,
-        #    y1 = [ f.w21_1.data['yS'][0] , f.e_s21.data['yS'][0] ] , y2 = [ f.w21_2.data['yS'][0], f.e_s21.data['yS'][0] ] )
+       
 
 #EDIT            
 def calc_betty_displacements12(f):
@@ -631,9 +624,6 @@ def calc_betty_displacements12(f):
         if ParamInt < 8:
             dx = ParamInt
             x_betty12 = (f1.pts.data["x"][0]) + (dx/7.0)*((f1.pts.data["x"][1])-(f1.pts.data["x"][0]))
-            #print f1.pts.data
-            #print ParamInt
-            #print x_betty21
             f.w12.data = dict(xS= [x], xE= [x],
                 yS= [y], yE=[y], name = [names12] )
             f.w12_11.data = dict(xS= [x], xE= [x_betty12],
@@ -677,12 +667,8 @@ def calc_betty_displacements12(f):
             y1 = [y_l ,ParamInt / 30.0 * 0.5 + 0.1] , y2 = [ y_l, ParamInt / 30.0 * 0.5 + 0.1 ] )
     
     elif ((30 <= ParamInt) & (ParamInt <= 70)):
-        #if ParamInt >29 and ParamInt <=37:
-        #    dx = ParamInt-37
-    
-        #    y_betty12 = (f1.pts.data["y"][4]) + (dx/7.0)*((f1.pts.data["y"][5])-(f1.pts.data["y"][4]))
             f.w12.data = dict(xS= [], xE= [],
-                yS= [], yE=[], name = [names12] )
+                yS= [], yE=[], name = [] )
             f.w12_12.data = dict(xS= [], xE= [],
                 yS= [], yE=[] )
             f.w12_11.data = dict(xS= [], xE= [],
@@ -756,9 +742,6 @@ def calc_betty_displacements21(f):
         if ParamInt < 8:
             dx = ParamInt
             x_betty21 = (f2.pts.data["x"][0]) + (dx/7.0)*((f2.pts.data["x"][1])-(f2.pts.data["x"][0]))
-            #print f1.pts.data
-            #print ParamInt
-            #print x_betty21
             f.w21.data = dict(xS= [x], xE= [x],
                 yS= [y], yE=[y], name = [names21] )
             f.w21_11.data = dict(xS= [x], xE= [x_betty21],
@@ -791,7 +774,7 @@ def calc_betty_displacements21(f):
             y1 = [y_l ,ParamInt / 30.0 * 0.5 + 0.1] , y2 = [ y_l, ParamInt / 30.0 * 0.5 + 0.1 ] )
         if ParamInt >21:
             dx = ParamInt-22
-            x_betty12 = (f2.pts.data["x"][3]) + (dx/8.0)*((f2.pts.data["x"][4])-(f2.pts.data["x"][3]))
+            x_betty21 = (f2.pts.data["x"][3]) + (dx/8.0)*((f2.pts.data["x"][4])-(f2.pts.data["x"][3]))
             f.w21.data = dict(xS= [x], xE= [x],
                 yS= [y], yE=[y], name = [names21] )
             f.w21_11.data = dict(xS= [x], xE= [x_betty21],
@@ -802,12 +785,9 @@ def calc_betty_displacements21(f):
             y1 = [y_l ,ParamInt / 30.0 * 0.5 + 0.1] , y2 = [ y_l, ParamInt / 30.0 * 0.5 + 0.1 ] )
     
     elif ((30 <= ParamInt) & (ParamInt <= 70)):
-        #if ParamInt >29 and ParamInt <=37:
-        #    dx = ParamInt-37
-    
-        #    y_betty12 = (f1.pts.data["y"][4]) + (dx/7.0)*((f1.pts.data["y"][5])-(f1.pts.data["y"][4]))
+  
             f.w21.data = dict(xS= [], xE= [],
-                yS= [], yE=[], name = [names21] )
+                yS= [], yE=[], name = [] )
             f.w21_12.data = dict(xS= [], xE= [],
                 yS= [], yE=[] )
             f.w21_11.data = dict(xS= [], xE= [],
@@ -1031,10 +1011,12 @@ plot.line(x='x', y='y', source=f2.pts, color=f2color,line_width=5)              
 plot.line(x='x', y='y', source=t_line, color="Black",line_width=5)              #Black line under frame righthandside
 
 ###Dashed Lines:
-plot.line(x='x', y='y', source=f1.dline, color="Black",
-        line_width=2,line_dash = 'dashed',line_alpha = 0.3)                     #Dashed lines that follow load arrow
-plot.line(x='x', y='y', source=f2.dline, color="Black",
-        line_width=2,line_dash = 'dashed',line_alpha = 0.3)
+
+#EDIT
+#plot.line(x='x', y='y', source=f1.dline, color="Black",
+        #line_width=2,line_dash = 'dashed',line_alpha = 0.3)                     #Dashed lines that follow load arrow
+#plot.line(x='x', y='y', source=f2.dline, color="Black",
+        #line_width=2,line_dash = 'dashed',line_alpha = 0.3)
 
 #dashed line that follows the deformations:
 plot.line(x = 'x1' , y = 'y1',source = f1.wdline, color="Black",
@@ -1172,8 +1154,8 @@ plot.add_layout(w22_12_arrow_glyph)
 plot.add_glyph(absource,abtext_glyph)
 plot.add_layout(labels1)
 plot.add_layout(labels2)
-plot.add_layout(labelsn1)
-plot.add_layout(labelsn2)
+#plot.add_layout(labelsn1)
+#plot.add_layout(labelsn2)
 plot.add_layout(labelsw1)
 plot.add_layout(labelsw2)
 #EDIT
