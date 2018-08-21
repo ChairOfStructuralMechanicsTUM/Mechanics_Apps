@@ -1047,7 +1047,7 @@ plot.multi_line( [ [xb,xb],[xb-abshift,xb+abshift],[xb-abshift,xb+abshift] ],
         [ [orig.y0,orig.yf], [orig.y0,orig.y0], [orig.yf,orig.yf] ],
         color=["black", "black","black"], line_width=1)
 
-#Frame bases:
+#Frame bases
 plot.triangle(x='x', y='y', size = 'size', source= default,color="grey", line_width=2)
 plot.triangle(x='x', y='y', size = 'size', source= f1.tri,color=f1color, line_width=2)
 plot.triangle(x='x', y='y', size = 'size', source= f2.tri,color=f2color, line_width=2)
