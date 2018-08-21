@@ -610,7 +610,7 @@ def create_wdline(f):
     
        
 
-#EDIT            
+#EDIT             
 def calc_betty_displacements12(f):
     ParamInt = f.get_param()
     i = f.get_mag()
