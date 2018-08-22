@@ -56,12 +56,41 @@ for beta in range(1,75):
     phase_angle.stream(dict(beta=[beta/25.0],phi=[1]))
 current_ratio = ColumnDataSource(data = dict(beta=[0],V=[1],phi=[0]))
 parameters = ColumnDataSource(data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)]))
-Active=False
+
+## global variables
+glob_t = ColumnDataSource(data = dict(t = [t]))
+glob_s = ColumnDataSource(data = dict(s = [s]))
+glob_D = ColumnDataSource(data = dict(D = [D]))
+glob_ef = ColumnDataSource(data = dict(ef = [ef]))
+glob_damped_ef = ColumnDataSource(data = dict(damped_ef = [damped_ef]))
+
+glob_mass = ColumnDataSource(data = dict(mass = [mass]))
+glob_spring = ColumnDataSource(data = dict(spring = [spring]))
+glob_damper = ColumnDataSource(data = dict(damper = [damper]))
+
+glob_initial_displacement_value = ColumnDataSource(data = dict(initial_displacement_value = [initial_displacement_value]))
+glob_initial_velocity_value = ColumnDataSource(data = dict(initial_velocity_value = [initial_velocity_value]))
+
+glob_force_value = ColumnDataSource(data = dict(force_value = [force_value]))
+glob_frequency_ratio_value = ColumnDataSource(data = dict(frequency_ratio_value = [frequency_ratio_value]))
+glob_excitation_frequency_value = ColumnDataSource(data = dict(excitation_frequency_value = [excitation_frequency_value]))
+
+glob_callback_id = ColumnDataSource(data = dict(callback_id = [None]))
 
 def evolve():
-    global Bottom_Line, Linking_Line, t, s
-    global mass, spring, damper, initial_velocity_value, initial_displacement_value, frequency_ratio_value, force_value
-    global ef, damped_ef, D, excitation_frequency_value
+    # extract global variables
+    [t] = glob_t.data["t"] # input/output
+    [s] = glob_s.data["s"] #      /output
+    [D] = glob_D.data["D"] # input/
+    [ef] = glob_ef.data["ef"] # input/
+    [damped_ef] = glob_damped_ef.data["damped_ef"] # input/
+    [spring] = glob_spring.data["spring"] # input/
+    
+    [initial_displacement_value] = glob_initial_displacement_value.data["initial_displacement_value"] # input/
+    [initial_velocity_value] = glob_initial_velocity_value.data["initial_velocity_value"] # input/
+    [frequency_ratio_value] = glob_frequency_ratio_value.data["frequency_ratio_value"] # input/
+    [force_value] = glob_force_value.data["force_value"] # input/
+    [excitation_frequency_value] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/
     
     #########
     k = spring.getSpringConstant
@@ -85,7 +114,6 @@ def evolve():
                 play_pause_button.disabled = True
                 pause()
                 
-
     else:
         if D < 1:
             s_h = exp(-ef*D*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) )
@@ -107,6 +135,11 @@ def evolve():
     displacement_particular.stream(dict(t=[t],s=[s_p]))
     displacement_homogeneous.stream(dict(t=[t],s=[s_h]))
     t+=dt
+    
+    # save updated global variables
+    glob_t.data = dict(t = [t])
+    glob_s.data = dict(s = [s])
+    
 
 title_box = Div(text="""<h2 style="text-align:center;">Single degree-of-freedom system</h2>""",width=1000)
 
@@ -149,7 +182,9 @@ p.toolbar.logo = None #removes bokeh logo
 
 # amplification function plot
 def compute_amp_and_phase_angle():
-    global amplification_function, phase_angle, D, frequency_ratio_value, current_ratio
+    # extract global variables
+    [D] = glob_D.data["D"] # input/
+    
     # beta scaled with 25!
     for beta in range(0,75):
         if D == 0 and beta == 25:
@@ -167,11 +202,14 @@ def compute_amp_and_phase_angle():
             phi = atan2( 2*D*beta/25.0, 1-pow(beta/25.0,2) ) * 180.0 / pi
         amplification_function.patch({ 'V':[(beta,V)] })
         phase_angle.patch({ 'phi':[(beta,phi)] })
-
+    
     plot_current_ratio()
 
 def plot_current_ratio():
-    global amplification_function, frequency_ratio_value, current_ratio
+    # extract global variables
+    [frequency_ratio_value] = glob_frequency_ratio_value.data["frequency_ratio_value"] # input/
+    
+    
     if D == 0 and frequency_ratio_value == 1:
         V = 1000
     else:
@@ -187,7 +225,8 @@ def plot_current_ratio():
         phi = atan2( 2*D*frequency_ratio_value, 1-pow(frequency_ratio_value,2) ) * 180 / pi
 
     current_ratio.data=dict(beta=[frequency_ratio_value],V=[V],phi=[phi])
-
+    
+    
 compute_amp_and_phase_angle()
 p_af = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=300, height=300)
 p_af.line(x='beta', y='V', source=amplification_function, color="#a2ad00")
@@ -203,7 +242,13 @@ p_pa.yaxis.ticker = FixedTicker(ticks=[0,90,180])
 p_pa.toolbar.logo = None #removes bokeh logo
 
 def move_system(disp):
-    global mass, spring, damper, Bottom_Line, Linking_Line, force_value
+    # extract global variables
+    [mass] = glob_mass.data["mass"] # input/ouput -> class
+    [spring] = glob_spring.data["spring"] # input/ouput -> class
+    [damper] = glob_damper.data["damper"] # input/ouput -> class
+    [force_value] = glob_force_value.data["force_value"] # input/
+    [excitation_frequency_value] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/
+    
     mass.moveTo((0,10+disp))
     spring.draw(Coord(-2,.75),Coord(-2,8+disp))
     damper.draw(Coord(2,.75),Coord(2,8+disp))
@@ -218,7 +263,7 @@ def move_system(disp):
 
 ## Create slider to choose mass
 def change_mass(attr,old,new):
-    global mass
+    [mass] = glob_mass.data["mass"] #input/ouput -> class
     mass.changeMass(new)
     updateParameters()
     compute_amp_and_phase_angle()
@@ -228,7 +273,7 @@ mass_input.on_change('value',change_mass)
 
 ## Create slider to choose spring constant
 def change_spring_constant(attr,old,new):
-    global spring
+    [spring] = glob_spring.data["spring"] # input/ouput -> class
     spring.changeSpringConst(float(new))
     updateParameters()
 
@@ -237,7 +282,7 @@ spring_constant_input.on_change('value',change_spring_constant)
 
 ## Create slider to choose damping coefficient
 def change_damping_coefficient(attr,old,new):
-    global damper
+    [damper] = glob_damper.data["damper"] # input/ouput -> class
     damper.changeDamperCoeff(float(new))
     updateParameters()
     compute_amp_and_phase_angle()
@@ -247,50 +292,59 @@ damping_coefficient_input.on_change('value',change_damping_coefficient)
 
 ## Create slider to choose initial velocity
 def change_initV(attr,old,new):
-    global Active, initial_velocity_value, spring
-    if (not Active):
-        initial_velocity_value = float(new) / spring.getSpringConstant
+    # extract global variables
+    [initial_velocity_value] = glob_initial_velocity_value.data["initial_velocity_value"] # input/output
+    [spring] = glob_spring.data["spring"] # input/ouput -> class
+    
+    initial_velocity_value = float(new) / spring.getSpringConstant
+    glob_initial_velocity_value.data = dict(initial_velocity_value = [initial_velocity_value])
+
 
 initial_velocity_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initial_velocity_input.on_change('value',change_initV)
 
 ## Create slider to choose initial displacement
 def change_initial_displacement(attr,old,new):
-    global Active, initial_displacement_value, spring
-    if (not Active):
-        initial_displacement_value = float(new) / spring.getSpringConstant
-        move_system(-new)
-        updateParameters()
+    # extract global variables
+    [initial_displacement_value] = glob_initial_displacement_value.data["initial_displacement_value"] # input/output
+    [spring] = glob_spring.data["spring"] # input/ouput -> class
+    
+    initial_displacement_value = float(new) / spring.getSpringConstant
+    glob_initial_displacement_value.data = dict(initial_displacement_value = [initial_displacement_value])
+    move_system(-new)
+    updateParameters()
 
 initial_displacement_input = Slider(title="Initial displacement [m]", value=initial_displacement_value, start=-2.0, end=2.0, step=0.5,width=400)
 initial_displacement_input.on_change('value',change_initial_displacement)
 
 ## Create slider to choose the frequency ratio
 def change_frequency_ratio(attr,old,new):
-    global Active, frequency_ratio_value
-    if (not Active):
-        frequency_ratio_value = new
-        updateParameters()
-        plot_current_ratio()
-        
+    # extract global variables
+    [frequency_ratio_value] = glob_frequency_ratio_value.data["frequency_ratio_value"] # input/output
+    
+    frequency_ratio_value = new
+    glob_frequency_ratio_value.data = dict(frequency_ratio_value = [frequency_ratio_value])
+    updateParameters()
+    plot_current_ratio()
 
 frequency_ratio_input = Slider(title="Frequency ratio", value=frequency_ratio_value, start=0.1, end=3.0, step=0.1,width=400)
 frequency_ratio_input.on_change('value',change_frequency_ratio)
 
 ## Create slider to choose the frequency ratio
 def change_force_value(attr,old,new):
-    global Active, force_value, arrow_line
-    #if (not Active): #change for force slider does not respond during play
-    if (True):
-        force_value = new
-        current_y1 = arrow_line.data["y1"][0]
-        current_y2 = arrow_line.data["y2"][0]
-        updateParameters()
-        if new == 1:
-            arrow_line.data=dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20])
-        else:
-            arrow_line.data=dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
-
+    # extract global variables
+    [force_value] = glob_force_value.data["force_value"] # input/output
+    
+    force_value = new
+    glob_force_value.data = dict(force_value = [force_value])
+    current_y1 = arrow_line.data["y1"][0]
+    current_y2 = arrow_line.data["y2"][0]
+    updateParameters()
+    if new == 1:
+        arrow_line.data=dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20])
+    else:
+        arrow_line.data=dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
+    
 force_value_input = Slider(title="Force", value=force_value, start=0, end=1.0, step=1,width=400)
 force_value_input.on_change('value',change_force_value)
 
@@ -312,26 +366,35 @@ def play_pause():
         pause()
         
 def pause():
-    global Active, callback_id
+    [callback_id] = glob_callback_id.data["callback_id"] # input/
     play_pause_button.label = "Play"
-    if (Active):
+    try:
         curdoc().remove_periodic_callback(callback_id)
-        Active=False
-
+    except ValueError:
+        print("WARNING: callback_id was already removed - this can happen if stop was pressed after pause, usually no serious problem; if stop was not called this part should be changed")
+    except:
+        print("This error is not covered: ", sys.exc_info()[0])
+        raise
+    
 def play():
-    global Active, callback_id 
+    [callback_id] = glob_callback_id.data["callback_id"] # input/output    
     disable_all_sliders(True) # disable sliders if graph is being plotted
     play_pause_button.label = "Pause"
-    if (not Active):
-        callback_id = curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
-        Active=True
-
+    callback_id = curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
+    glob_callback_id.data = dict(callback_id = [callback_id])
+    
 def stop():
-    global displacement, t, s, Bottom_Line, Linking_Line, spring, mass, damper, initial_displacement_value, force_value
+    # extract global variables
+    [t] = glob_t.data["t"] # input/output
+    [s] = glob_s.data["s"] # input/output
+    [spring] = glob_spring.data["spring"] # input/
+    [initial_displacement_value] = glob_initial_displacement_value.data["initial_displacement_value"] # input/
+    [force_value] = glob_force_value.data["force_value"] # input/
+    
     disable_all_sliders(False) #enable all sliders for new settings
     pause()
-    t=0
-    s=0
+    glob_t.data = dict(t = [0]) # t=0
+    glob_s.data = dict(s = [0]) # s=0
     
     displacement.data=dict(t=[0],s=[initial_displacement_value])
     displacement_particular.data=dict(t=[0],s=[0])
@@ -351,16 +414,25 @@ def reset():
     damping_coefficient_input.value = initial_damping_coefficient_value
     initial_velocity_input.value = initial_velocity_value
     initial_displacement_input.value = initial_displacement_value
+    frequency_ratio_input.value = frequency_ratio_value
+    force_value_input.value = force_value
 
-    #this could reset also the plot, but needs the selenium package:
-    #reset_button = selenium.find_element_by_class_name('bk-tool-icon-reset')
-    #click_element_at_position(selenium, reset_button, 10, 10)
 
 def updateParameters():
-    #input
-    global mass, spring, damper, initial_velocity_value, initial_displacement_value, frequency_ratio_value, force_value
+    # extract global variables
+    # input
+    [mass] = glob_mass.data["mass"] # input/
+    [spring] = glob_spring.data["spring"] # input/
+    [damper] = glob_damper.data["damper"] # input/
+    [frequency_ratio_value] = glob_frequency_ratio_value.data["frequency_ratio_value"] # input/
+    [force_value] = glob_force_value.data["force_value"] # input/
+    
     #output
-    global ef, damped_ef, D, excitation_frequency_value, displacement, amplification_function, parameters
+    [D] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/output
+    [ef] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/output
+    [damped_ef] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/output
+    [excitation_frequency_value] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/output
+    
     m = mass.getMass
     k = spring.getSpringConstant
     c = damper.getDampingCoefficient
@@ -372,20 +444,26 @@ def updateParameters():
         damped_ef = ef * sqrt(pow(D,2)-1)
     excitation_frequency_value = frequency_ratio_value * ef
     parameters.data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)])
+    glob_D.data = dict(D = [D])
+    glob_ef.data = dict(ef = [ef])
+    glob_damped_ef.data = dict(damped_ef = [damped_ef])
+    glob_excitation_frequency_value.data = dict(excitation_frequency_value = [excitation_frequency_value])
     # deactivate play button if there exists no solution for these configurations
     if force_value > 0 and D>=1:
         play_pause_button.disabled = True
         pause()
     else:
         play_pause_button.disabled = False
+        
 
 play_pause_button = Button(label="Play", button_type="success",width=100)
 play_pause_button.on_click(play_pause)
     
 stop_button = Button(label="Stop", button_type="success", width=100)
 stop_button.on_click(stop)
-# reset_button = Button(label="Reset", button_type="success",width=100)
-# reset_button.on_click(reset)
+
+reset_button = Button(label="Reset", button_type="success",width=100)
+reset_button.on_click(reset)
 
 # add parameter output
 columns = [
@@ -407,7 +485,7 @@ gp = gridplot([p_af,p_pa],ncols=1,plot_width=250,plot_height=250,merge_tools=Tru
 ## Send to window
 hspace = 20
 curdoc().add_root(column(description,\
-    row(column(row(column(Spacer(height=200),play_pause_button,stop_button),Spacer(width=10),fig),Spacer(height=hspace),row(Spacer(width=100),parameter_table)),p,Spacer(width=10),gp), \
+    row(column(row(column(Spacer(height=200),play_pause_button,stop_button,reset_button),Spacer(width=10),fig),Spacer(height=hspace),row(Spacer(width=100),parameter_table)),p,Spacer(width=10),gp), \
     row(mass_input,Spacer(width=hspace),spring_constant_input,Spacer(width=hspace),damping_coefficient_input), \
     row(initial_displacement_input,Spacer(width=hspace),initial_velocity_input), \
     row(frequency_ratio_input,Spacer(width=hspace),force_value_input) ))
