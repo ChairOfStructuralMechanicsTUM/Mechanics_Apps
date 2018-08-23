@@ -49,6 +49,7 @@ displacement_particular = ColumnDataSource(data = dict(t=[0],s=[0]))
 displacement_homogeneous = ColumnDataSource(data = dict(t=[0],s=[0]))
 
 arrow_line = ColumnDataSource(data = dict(x1=[0],y1=[15],x2=[0],y2=[12]))
+arrow_offset = ColumnDataSource(data = dict(x1=[0],y1=[12],x2=[0],y2=[11.9]))
 amplification_function = ColumnDataSource(data = dict(beta=[0],V=[1]))
 phase_angle = ColumnDataSource(data = dict(beta=[0],phi=[0]))
 for beta in range(1,75):
@@ -160,8 +161,10 @@ fig.line(x='x',y='y',source=Linking_Line,color="black",line_width=3)
 spring.plot(fig,width=2)
 damper.plot(fig,width=2)
 mass.plot(fig)
-arrow = fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red", line_width=2,
+fig.add_layout(Arrow(end=None, line_color="red", line_width=2,
     x_start='x1', y_start='y1', x_end='x2', y_end='y2', source=arrow_line))
+fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red", line_width=2,
+    x_start='x1', y_start='y1', x_end='x2', y_end='y2', source=arrow_offset))
 fig.toolbar.logo = None #removes bokeh logo
 
 # time plot
@@ -258,6 +261,7 @@ def move_system(disp):
         t = displacement.data["t"][-1]
         F_length = force_value*sin(excitation_frequency_value*t)
         arrow_line.data=dict(x1=[0],x2=[0],y1=[15],y2=[15-F_length*3])
+        arrow_offset.data=dict(x1=[0],x2=[0],y1=[15-F_length*3],y2=[15-F_length*3 - (2*(F_length>0)-1)*1.0])
     else:
         arrow_line.data=dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp])
 
@@ -404,6 +408,7 @@ def stop():
     move_system(drawing_displacement)
     if force_value > 0:
         arrow_line.data=dict(x1=[0],x2=[0],y1=[15+drawing_displacement],y2=[12+drawing_displacement])
+        arrow_offset.data=dict(x1=[0],x2=[0],y1=[12+drawing_displacement],y2=[12+(drawing_displacement-0.1)*1.1])
     else:
         arrow_line.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
 
