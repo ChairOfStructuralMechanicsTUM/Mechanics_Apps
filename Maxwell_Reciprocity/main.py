@@ -40,7 +40,7 @@ class Frame(object):
         self.arrow_source   = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
         self.e_s            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 
-        #EDIT
+        #EDIT Start
         self.e_s12          = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
         self.e_s21          = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 
@@ -52,7 +52,7 @@ class Frame(object):
         self.dlabel         = ColumnDataSource(data=dict(x=[] , y=[], name = []))
         self.w1             = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], name = []))
         
-        #EDIT
+        
         self.w12            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], name = []))
         self.w12_11            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
         self.w12_12            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
@@ -63,10 +63,10 @@ class Frame(object):
         self.w2             = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
         self.wdline         = ColumnDataSource(data=dict(x1=[], x2 =[], y1 = [], y2=[]))
         
-        #EDIT
+        
         self.wdline12       = ColumnDataSource(data=dict(x1=[], x2 =[], y1 = [], y2=[]))
         self.wdline21       = ColumnDataSource(data=dict(x1=[], x2 =[], y1 = [], y2=[]))
-        
+        #EDIT End
 
     def set_mag(self, a):
         '''Sets the magnitude of the load on frame (p_mag) equal to a'''
@@ -418,16 +418,7 @@ def side3(f,paramInt,i):
 
         #output:
     x = [0.1] + x1 + x2 + x3
-    
-    #EDIT 
-    #print x     #x ist array mit 13 stellen
-
     y = [0.1] + y1 + y2 + y3
-
-    #EDIT
-    #print x1    #x1-x3 sind arrays mit 4 stellen
-
-
     f.pts.data = dict(x = x, y = y )
 
     
@@ -566,8 +557,8 @@ def create_shift(f):
                 x1 = 0
                 x2 = 0
             elif (f.name ==  "F"u"\u2082"):
-                x1 = 0.8
-                x2 = 0.8
+                x1 = 0.85
+                x2 = 0.85
             y1 = d2 + localDouble1[1]
             y2 = d2
 
@@ -610,13 +601,23 @@ def create_wdline(f):
     
        
 
-#EDIT             
+#EDIT Start          
 def calc_betty_displacements12(f):
     ParamInt = f.get_param()
     i = f.get_mag()
+    j = f1.get_param()
     names12 = " w"u"\u2081"u"\u2082" 
-    
-    if ParamInt < 30:
+    if i == 0:
+        f.w12.data = dict(xS= [], xE= [],
+        yS= [], yE=[], name = [] )
+        f.w12_11.data = dict(xS= [], xE= [],
+        yS= [], yE=[] )    
+        f.w12_12.data = dict(xS= [], xE= [],
+        yS= [], yE= [])
+        f.wdline12.data = dict(x1 = [], x2 = [],
+        y1 = [] , y2 = [] )
+       
+    elif (ParamInt < 30):
         x=0.1
         y=0.85
         x_l=0.1
@@ -666,24 +667,90 @@ def calc_betty_displacements12(f):
             f.wdline12.data = dict(x1 = [ x_betty12, x_betty12 ]  , x2 = [ x_l, x_l ] ,
             y1 = [y_l ,ParamInt / 30.0 * 0.5 + 0.1] , y2 = [ y_l, ParamInt / 30.0 * 0.5 + 0.1 ] )
     
-    elif ((30 <= ParamInt) & (ParamInt <= 70)):
-            f.w12.data = dict(xS= [], xE= [],
-                yS= [], yE=[], name = [] )
-            f.w12_12.data = dict(xS= [], xE= [],
-                yS= [], yE=[] )
-            f.w12_11.data = dict(xS= [], xE= [],
-                yS= [], yE=[] )
-            f.wdline12.data = dict(x1 = []  , x2 = [] ,
-            y1 = [] , y2 = [] )
-      
-    elif ParamInt > 70:
+    elif (30<=ParamInt & ParamInt<=70):
+        x=0.9
+        y=0.6
+        x_l=0.9
+        y_l=0.6
+        if j <30:
+            pts1=5
+            pts2=6
+            pts3=7
+            pts4=8
+        else:
+            pts1=4
+            pts2=5
+            pts3=6
+            pts4=7
+
+        if ParamInt >= 30 and ParamInt <=39:
+            dx = ParamInt-30
+            y_betty12 = (f1.pts.data["y"][pts1]) + (dx/10.0)*((f1.pts.data["y"][pts1+1])-(f1.pts.data["y"][pts1]))
+            f.w12.data = dict(xS= [x], xE= [x],
+                yS= [y], yE=[y], name = [names12] )
+            f.w12_11.data = dict(xS= [x], xE= [x],
+                yS= [y_l], yE=[y_betty12] )    
+            f.w12_12.data = dict(xS= [x], xE= [x],
+                yS= [y_betty12], yE=[y_l] )
+            f.wdline12.data = dict(x1 = [ x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1 ]  , x2 = [x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1] ,
+            y1 = [y_betty12,y_betty12] , y2 = [ y_l, y_l ] )
+       
+        if ParamInt >= 40 and ParamInt <=49:
+            dx = ParamInt-40
+            y_betty12 = (f1.pts.data["y"][pts2]) + (dx/10.0)*((f1.pts.data["y"][pts2+1])-(f1.pts.data["y"][pts2]))
+            f.w12.data = dict(xS= [x], xE= [x],
+                yS= [y], yE=[y], name = [names12] )
+            f.w12_11.data = dict(xS= [x], xE= [x],
+                yS= [y_l], yE=[y_betty12] )    
+            f.w12_12.data = dict(xS= [x], xE= [x],
+                yS= [y_betty12], yE=[y_l] )
+            f.wdline12.data = dict(x1 = [ x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1 ]  , x2 = [x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1] ,
+            y1 = [y_betty12,y_betty12] , y2 = [ y_l, y_l ] )
+
+        if ParamInt >= 50 and ParamInt <=59:
+            dx = ParamInt-50
+            y_betty12 = (f1.pts.data["y"][pts3]) + (dx/10.0)*((f1.pts.data["y"][pts3+1])-(f1.pts.data["y"][pts3]))
+            f.w12.data = dict(xS= [x], xE= [x],
+                yS= [y], yE=[y], name = [names12] )
+            f.w12_11.data = dict(xS= [x], xE= [x],
+                yS= [y_l], yE=[y_betty12] )    
+            f.w12_12.data = dict(xS= [x], xE= [x],
+                yS= [y_betty12], yE=[y_l] )
+            f.wdline12.data = dict(x1 = [ x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1 ]  , x2 = [x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1] ,
+            y1 = [y_betty12,y_betty12] , y2 = [ y_l, y_l ] )
+
+        if ParamInt >= 60 and ParamInt <=70:
+            dx = ParamInt-60
+            y_betty12 = (f1.pts.data["y"][pts4]) + (dx/11.0)*((f1.pts.data["y"][pts4+1])-(f1.pts.data["y"][pts4]))
+            f.w12.data = dict(xS= [x], xE= [x],
+                yS= [y], yE=[y], name = [names12] )
+            f.w12_11.data = dict(xS= [x], xE= [x],
+                yS= [y_l], yE=[y_betty12] )    
+            f.w12_12.data = dict(xS= [x], xE= [x],
+                yS= [y_betty12], yE=[y_l] )
+            f.wdline12.data = dict(x1 = [ x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1 ]  , x2 = [x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1] ,
+            y1 = [y_betty12,y_betty12] , y2 = [ y_l, y_l ] )
+ 
+    elif (ParamInt > 70):
         x=0.8
         y=0.85
         x_l=0.8
         y_l=0.8
+        if j < 30:
+            pts1=10
+            pts2=11
+            pts3=12
+            pts4=13
+        else:
+            pts1=8
+            pts2=9
+            pts3=10
+            pts4=11
+
         if ParamInt >70 and ParamInt <79:
             dx = ParamInt-71
-            x_betty12 = (f1.pts.data["x"][8]) + (dx/7.0)*((f1.pts.data["x"][9])-(f1.pts.data["x"][8]))
+            x_betty12 = (f1.pts.data["x"][pts1]) + (dx/8.0)*((f1.pts.data["x"][pts1+1])-(f1.pts.data["x"][pts1]))
+
             f.w12.data = dict(xS= [x], xE= [x],
                 yS= [y], yE=[y], name = [names12] )
             f.w12_11.data = dict(xS= [x], xE= [x_betty12],
@@ -694,7 +761,7 @@ def calc_betty_displacements12(f):
             y1 = [ y_l , 0.6 - (ParamInt - 70) / 30.0 * 0.5 ] , y2 = [ y_l, 0.6 - (ParamInt - 70) / 30.0 * 0.5 ] )
         if ParamInt >78 and ParamInt <86:
             dx = ParamInt-79
-            x_betty12 = (f1.pts.data["x"][9]) + (dx/6.0)*((f1.pts.data["x"][10])-(f1.pts.data["x"][9]))
+            x_betty12 = (f1.pts.data["x"][pts2]) + (dx/6.0)*((f1.pts.data["x"][pts2+1])-(f1.pts.data["x"][pts2]))
             f.w12.data = dict(xS= [x], xE= [x],
                 yS= [y], yE=[y], name = [names12] )
             f.w12_11.data = dict(xS= [x], xE= [x_betty12],
@@ -705,7 +772,7 @@ def calc_betty_displacements12(f):
             y1 = [ y_l , 0.6 - (ParamInt - 70) / 30.0 * 0.5 ] , y2 = [ y_l, 0.6 - (ParamInt - 70) / 30.0 * 0.5 ] )
         if ParamInt >85 and ParamInt <93:
             dx = ParamInt-86
-            x_betty12 = (f1.pts.data["x"][10]) + (dx/6.0)*((f1.pts.data["x"][11])-(f1.pts.data["x"][10]))
+            x_betty12 = (f1.pts.data["x"][pts3]) + (dx/6.0)*((f1.pts.data["x"][pts3+1])-(f1.pts.data["x"][pts3]))
             f.w12.data = dict(xS= [x], xE= [x],
                 yS= [y], yE=[y], name = [names12] )
             f.w12_11.data = dict(xS= [x], xE= [x_betty12],
@@ -716,7 +783,7 @@ def calc_betty_displacements12(f):
             y1 = [ y_l , 0.6 - (ParamInt - 70) / 30.0 * 0.5 ] , y2 = [ y_l, 0.6 - (ParamInt - 70) / 30.0 * 0.5 ] )
         if ParamInt >92:
             dx = ParamInt-93
-            x_betty12 = (f1.pts.data["x"][11]) + dx/8.0*((f1.pts.data["x"][12])-(f1.pts.data["x"][11]))
+            x_betty12 = (f1.pts.data["x"][pts4]) + dx/8.0*((f1.pts.data["x"][pts4+1])-(f1.pts.data["x"][pts4]))
             f.w12.data = dict(xS= [x], xE= [x],
                 yS= [y], yE=[y], name = [names12] )
             f.w12_11.data = dict(xS= [x], xE= [x_betty12],
@@ -725,9 +792,9 @@ def calc_betty_displacements12(f):
                 yS= [y_l], yE=[y_l] )
             f.wdline12.data = dict(x1 = [ x_betty12, x_betty12 ]  , x2 = [ x_l, x_l ] ,
             y1 = [ y_l , 0.6 - (ParamInt - 70) / 30.0 * 0.5 ] , y2 = [ y_l, 0.6 - (ParamInt - 70) / 30.0 * 0.5 ] )         
+#EDIT End
 
-
-#EDIT            
+#EDIT Start          
 def calc_betty_displacements21(f):
     ParamInt = f1.get_param()
     #print ParamInt
@@ -783,26 +850,67 @@ def calc_betty_displacements21(f):
                 yS= [y_l], yE=[y_l] )
             f.wdline21.data = dict(x1 = [ x_betty21, x_betty21 ]  , x2 = [ x_l, x_l ] ,
             y1 = [y_l ,ParamInt / 30.0 * 0.5 + 0.1] , y2 = [ y_l, ParamInt / 30.0 * 0.5 + 0.1 ] )
-    
     elif ((30 <= ParamInt) & (ParamInt <= 70)):
-  
-            f.w21.data = dict(xS= [], xE= [],
-                yS= [], yE=[], name = [] )
-            f.w21_12.data = dict(xS= [], xE= [],
-                yS= [], yE=[] )
-            f.w21_11.data = dict(xS= [], xE= [],
-                yS= [], yE=[] )
-            f.wdline21.data = dict(x1 = []  , x2 = [] ,
-            y1 = [] , y2 = [] )
-      
-    elif ParamInt > 70:
+        x=-0.1
+        y=0.6
+        x_l=-0.1
+        y_l=0.6
+        if ParamInt >= 30 and ParamInt <=39:
+            dx = ParamInt-30
+            y_betty21 = (f2.pts.data["y"][4]) + (dx/10.0)*((f2.pts.data["y"][5])-(f2.pts.data["y"][4]))
+            f.w21.data = dict(xS= [x], xE= [x],
+                yS= [y], yE=[y], name = [names21] )
+            f.w21_11.data = dict(xS= [x], xE= [x],
+                yS= [y_l], yE=[y_betty21] )    
+            f.w21_12.data = dict(xS= [x], xE= [x],
+                yS= [y_betty21], yE=[y_l] )
+            f.wdline21.data = dict(x1 = [ x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1 ]  , x2 = [x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1] ,
+            y1 = [y_betty21,y_betty21] , y2 = [ y_l, y_l ] )
+       
+        if ParamInt >= 40 and ParamInt <=49:
+            dx = ParamInt-40
+            y_betty21 = (f2.pts.data["y"][5]) + (dx/10.0)*((f2.pts.data["y"][6])-(f2.pts.data["y"][5]))
+            f.w21.data = dict(xS= [x], xE= [x],
+                yS= [y], yE=[y], name = [names21] )
+            f.w21_11.data = dict(xS= [x], xE= [x],
+                yS= [y_l], yE=[y_betty21] )    
+            f.w21_12.data = dict(xS= [x], xE= [x],
+                yS= [y_betty21], yE=[y_l] )
+            f.wdline21.data = dict(x1 = [ x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1 ]  , x2 = [x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1] ,
+            y1 = [y_betty21,y_betty21] , y2 = [ y_l, y_l ] )
+
+        if ParamInt >= 50 and ParamInt <=59:
+            dx = ParamInt-50
+            y_betty21 = (f2.pts.data["y"][6]) + (dx/10.0)*((f2.pts.data["y"][7])-(f2.pts.data["y"][6]))
+            f.w21.data = dict(xS= [x], xE= [x],
+                yS= [y], yE=[y], name = [names21] )
+            f.w21_11.data = dict(xS= [x], xE= [x],
+                yS= [y_l], yE=[y_betty21] )    
+            f.w21_12.data = dict(xS= [x], xE= [x],
+                yS= [y_betty21], yE=[y_l] )
+            f.wdline21.data = dict(x1 = [ x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1 ]  , x2 = [x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1] ,
+            y1 = [y_betty21,y_betty21] , y2 = [ y_l, y_l ] )
+
+        if ParamInt >= 60 and ParamInt <=70:
+            dx = ParamInt-60
+            y_betty21 = (f2.pts.data["y"][7]) + (dx/11.0)*((f2.pts.data["y"][8])-(f2.pts.data["y"][7]))
+            f.w21.data = dict(xS= [x], xE= [x],
+                yS= [y], yE=[y], name = [names21] )
+            f.w21_11.data = dict(xS= [x], xE= [x],
+                yS= [y_l], yE=[y_betty21] )    
+            f.w21_12.data = dict(xS= [x], xE= [x],
+                yS= [y_betty21], yE=[y_l] )
+            f.wdline21.data = dict(x1 = [ x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1 ]  , x2 = [x_l,(ParamInt - 30) / 40.0 * 0.7 + 0.1] ,
+            y1 = [y_betty21,y_betty21] , y2 = [ y_l, y_l ] )
+
+    elif (ParamInt > 70):
         x=0.8
         y=-0.16
         x_l=0.8
         y_l=-0.15
         if ParamInt >70 and ParamInt <79:
             dx = ParamInt-71
-            x_betty21 = (f2.pts.data["x"][8]) + (dx/7.0)*((f2.pts.data["x"][9])-(f2.pts.data["x"][8]))
+            x_betty21 = (f2.pts.data["x"][8]) + (dx/8.0)*((f2.pts.data["x"][9]) - (f2.pts.data["x"][8]))
             f.w21.data = dict(xS= [x], xE= [x],
                 yS= [y], yE=[y], name = [names21] )
             f.w21_11.data = dict(xS= [x], xE= [x_betty21],
@@ -844,7 +952,7 @@ def calc_betty_displacements21(f):
                 yS= [y_l], yE=[y_l] )
             f.wdline21.data = dict(x1 = [ x_betty21, x_betty21 ]  , x2 = [ x_l, x_l ] ,
             y1 = [ y_l , 0.6 - (ParamInt - 70) / 30.0 * 0.5 ] , y2 = [ y_l, 0.6 - (ParamInt - 70) / 30.0 * 0.5 ] )         
-
+#EDIT End
 
 
 
@@ -864,7 +972,8 @@ def update_fun(attr,old,new):
         f1.set_mag(mag_slider.value)
         create_prof(f1)
         create_shift(f1)
-        f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
+        #f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
+        f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,0.1], size = [tri_size,tri_size])
         create_wdline(f1)
 
     elif changer != 0:
@@ -873,19 +982,15 @@ def update_fun(attr,old,new):
         create_prof(f2)
         create_shift(f2)
 
-        #EDIT
+        #EDIT Start
         calc_betty_displacements12(f2)
         calc_betty_displacements21(f2)
-        
-        #EDIT: IDEE: FIXIERE Y VON AUFLAGER
-        f2.tri.data = dict(x = [0.1,f2.pts.data["x"][-1]], y = [0.1,f2.pts.data["y"][-1]], size = [tri_size,tri_size])
-
-        #EDIT
-        #print f2.pts.data["x"][4]
-
+        #f2.tri.data = dict(x = [0.1,f2.pts.data["x"][-1]], y = [0.1,f2.pts.data["y"][-1]], size = [tri_size,tri_size])
+        f2.tri.data = dict(x = [0.1,f2.pts.data["x"][-1]], y = [0.1,0.1], size = [tri_size,tri_size])
         create_wdline(f2)
-        f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
-
+        #f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
+        f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,0.1], size = [tri_size,tri_size])
+        #EDIT End
 
 def button_fun():
     '''Function called when the 'save deformed frame' function is clicked.
@@ -950,20 +1055,17 @@ def clearf2():
     f2.w1.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
     f2.w2.data              = dict(xS=[], xE=[], yS=[], yE=[])
     
-    #EDIT
+    #EDIT Start
     f2.w12.data             = dict(xS=[], xE=[], yS=[], yE=[], name = [])
     f2.w12_11.data             = dict(xS=[], xE=[], yS=[], yE=[])
     f2.w12_12.data           = dict(xS=[], xE=[], yS=[], yE=[])
     f2.w21.data           = dict(xS=[], xE=[], yS=[], yE=[], name = [])
     f2.w21_11.data           = dict(xS=[], xE=[], yS=[], yE=[])
     f2.w21_12.data           = dict(xS=[], xE=[], yS=[], yE=[])
-    
     f2.wdline.data          = dict(x1=[], x2 =[], y1 = [], y2=[])
-    
-    #EDIT
     f2.wdline12.data          = dict(x1=[], x2 =[], y1 = [], y2=[])   
     f2.wdline21.data          = dict(x1=[], x2 =[], y1 = [], y2=[]) 
-
+    #EDIT End
 
 button.on_click(button_fun)
 rbutton.on_click(initial)
@@ -1028,16 +1130,16 @@ plot.line(x = 'x1' , y = 'y1',source = f2.wdline, color="Black",
 plot.line(x = 'x2' , y = 'y2',source = f2.wdline, color="Black",
         line_width=2,line_dash = 'dashed',line_alpha = 0.3)
 
-#EDIT
-plot.line(x = 'x1' , y = 'y1',source = f2.wdline12, color="Blue",
+#EDIT Start
+plot.line(x = 'x1' , y = 'y1',source = f2.wdline12, color=f1color,
         line_width=2,line_dash = 'dashed',line_alpha = 0.5)
-plot.line(x = 'x2' , y = 'y2',source = f2.wdline12, color="Blue",
+plot.line(x = 'x2' , y = 'y2',source = f2.wdline12, color=f1color,
         line_width=2,line_dash = 'dashed',line_alpha = 0.5)
-plot.line(x = 'x1' , y = 'y1',source = f2.wdline21, color="Red",
+plot.line(x = 'x1' , y = 'y1',source = f2.wdline21, color=f2color,
         line_width=2,line_dash = 'dashed',line_alpha = 0.3)
-plot.line(x = 'x2' , y = 'y2',source = f2.wdline21, color="Red",
+plot.line(x = 'x2' , y = 'y2',source = f2.wdline21, color=f2color,
         line_width=2,line_dash = 'dashed',line_alpha = 0.3)      
-    
+ #EDIT End   
 
 #creation of the a and b scale reference things:
 plot.multi_line( [ [orig.x0, orig.xf],[orig.x0,orig.x0],[orig.xf,orig.xf] ],
@@ -1074,13 +1176,15 @@ labelsw1 = LabelSet(x='xS', y = 'yS', text='name', level='glyph',
 labelsw2 = LabelSet(x='xE', y = 'yS', text='name', level='glyph',
                 x_offset=0, y_offset=10,source = f2.w1, text_color=f2color,
                 text_font_size = '12pt', render_mode='canvas')
-#EDIT
+
+#EDIT Start
 labelsw12 = LabelSet(x='xS', y = 'yS', text='name', level='glyph',
                 x_offset=0, y_offset=-20,source = f2.w12, text_color=f1color,
                 text_font_size = '12pt', render_mode='canvas')
 labelsw21 = LabelSet(x='xS', y = 'yS', text='name', level='glyph',
                 x_offset=0, y_offset=-20,source = f2.w21, text_color=f2color,
                 text_font_size = '12pt', render_mode='canvas')                
+#EDIT End
 
 absource = ColumnDataSource(dict(x=[ (orig.x0+orig.xf)/2,
         (0-0.05)], y=[ (0-0.05), (orig.y0+orig.yf)/2 ], text=['a','b']))
@@ -1111,12 +1215,13 @@ w11_arrow_glyph = Arrow(end=OpenHead(line_color=f1color,line_width= 3, size=6,li
 w12_arrow_glyph = Arrow(end=OpenHead(line_color=f1color,line_width= 3, size=6,line_alpha = 0.3),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f1.w2,line_color=f1color,line_alpha = 0.3)
 
-#EDIT
+#EDIT Start
 #F1 w12 arrow
 w12_11_arrow_glyph = Arrow(end=OpenHead(line_color=f1color,line_width= 3, size=6,line_alpha = 0.5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.w12_11,line_color=f1color,line_alpha = 0.5)
 w12_12_arrow_glyph = Arrow(end=OpenHead(line_color=f1color,line_width= 3, size=6,line_alpha = 0.5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.w12_12,line_color=f1color,line_alpha = 0.5)
+#EDIT End
 
 #F2 w22 arrow
 w21_arrow_glyph = Arrow(end=OpenHead(line_color=f2color,line_width= 3, size=6,line_alpha = 0.3),
@@ -1124,13 +1229,13 @@ w21_arrow_glyph = Arrow(end=OpenHead(line_color=f2color,line_width= 3, size=6,li
 w22_arrow_glyph = Arrow(end=OpenHead(line_color=f2color,line_width= 3, size=6,line_alpha = 0.3),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.w2,line_color=f2color,line_alpha = 0.3)
 
-#EDIT
+#EDIT Start
 #F2 w21 arrow
 w21_11_arrow_glyph = Arrow(end=OpenHead(line_color=f2color,line_width= 3, size=6,line_alpha = 0.5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.w21_11,line_color=f2color,line_alpha = 0.5)
 w22_12_arrow_glyph = Arrow(end=OpenHead(line_color=f2color,line_width= 3, size=6,line_alpha = 0.5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=f2.w21_12,line_color=f2color,line_alpha = 0.5)
-
+#EDIT End
 ########
 
 
@@ -1145,11 +1250,12 @@ plot.add_layout(w12_arrow_glyph)
 plot.add_layout(w21_arrow_glyph)
 plot.add_layout(w22_arrow_glyph)
 
-#EDIT
+#EDIT Start
 plot.add_layout(w12_11_arrow_glyph)
 plot.add_layout(w12_12_arrow_glyph)
 plot.add_layout(w21_11_arrow_glyph)
 plot.add_layout(w22_12_arrow_glyph)
+#EDIT End
 
 plot.add_glyph(absource,abtext_glyph)
 plot.add_layout(labels1)
@@ -1158,9 +1264,12 @@ plot.add_layout(labels2)
 #plot.add_layout(labelsn2)
 plot.add_layout(labelsw1)
 plot.add_layout(labelsw2)
-#EDIT
+
+#EDIT Start
 plot.add_layout(labelsw12)
 plot.add_layout(labelsw21)
+#EDIT End
+
 #########
 
 
