@@ -1,12 +1,12 @@
 from bokeh.models import ColumnDataSource
 from math import floor
-from Coord import *
+from SDOF_Coord import SDOF_Coord
 
-class Spring(object):
+class SDOF_Spring(object):
     ## create spring
     def __init__(self,start,end,x0,spring_constant=50.0,spacing = 1.0):
-        start=Coord(start[0],start[1])
-        end=Coord(end[0],end[1])
+        start=SDOF_Coord(start[0],start[1])
+        end=SDOF_Coord(end[0],end[1])
         # define spring constant
         self.spring_constant=spring_constant
         # define rest length
@@ -27,12 +27,12 @@ class Spring(object):
         direction = end-start
         # find normalising constant (=length)
         length = direction.norm()
-        self.direction = Coord(direction.x/length,direction.y/length)
+        self.direction = SDOF_Coord(direction.x/length,direction.y/length)
         # define (normalised) perpendicular vector for spike directions
-        perpVect = Coord(direction.y/length,-direction.x/length)
+        perpVect = SDOF_Coord(direction.y/length,-direction.x/length)
         # create values to help with loop
         Pos=dict(x=[],y=[])
-        Zero=Coord(0,0)
+        Zero=SDOF_Coord(0,0)
         wiggle=[Zero,perpVect,Zero,-perpVect]
         
         # add first points

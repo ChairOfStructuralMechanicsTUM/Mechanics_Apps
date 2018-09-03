@@ -1,13 +1,13 @@
-from Spring import *
-from Dashpot import *
-from Mass import *
+from SDOF_Coord import SDOF_Coord
+from SDOF_Spring import SDOF_Spring
+from SDOF_Dashpot import SDOF_Dashpot
+from SDOF_Mass import CircularMass
 
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer, gridplot
 from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div, HoverTool, Range1d, Div, Arrow, NormalHead, CDSView, IndexFilter
+from bokeh.models import Slider, Button, Div, HoverTool, Range1d, Arrow, NormalHead, ColumnDataSource
 from bokeh.models.tickers import FixedTicker
-from bokeh.models.callbacks import CustomJS
 from bokeh.models.widgets import DataTable, TableColumn
 
 from os.path import dirname, join, split, abspath
@@ -16,7 +16,7 @@ currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_div import LatexDiv
-from math import sqrt, exp, pow, sin , cos, ceil, pi, atan2, sinh, cosh
+from math import sqrt, exp, pow, sin , cos, pi, atan2, sinh, cosh
 
 ## initial values
 initial_mass_value = 8.
@@ -38,8 +38,8 @@ t=0
 dt=0.03
 
 mass = CircularMass(initial_mass_value,0,10,2,2)
-spring = Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
-damper = Dashpot((2,.75),(2,8),initial_damping_coefficient_value)
+spring = SDOF_Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
+damper = SDOF_Dashpot((2,.75),(2,8),initial_damping_coefficient_value)
 
 Bottom_Line = ColumnDataSource(data = dict(x=[-2,2],y=[8,8]))
 Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[8,10]))
@@ -123,7 +123,6 @@ def evolve():
         elif D > 1:
             s_h = exp(-ef*D*t) * ( initial_displacement_value * cosh(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sinh(damped_ef*t) )
         s_p = 0
-
     #########
 
     # scale with 1/stiffness
@@ -253,8 +252,8 @@ def move_system(disp):
     [excitation_frequency_value] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/
     
     mass.moveTo((0,10+disp))
-    spring.draw(Coord(-2,.75),Coord(-2,8+disp))
-    damper.draw(Coord(2,.75),Coord(2,8+disp))
+    spring.draw(SDOF_Coord(-2,.75),SDOF_Coord(-2,8+disp))
+    damper.draw(SDOF_Coord(2,.75),SDOF_Coord(2,8+disp))
     Bottom_Line.data=dict(x=[-2,2],y=[8+disp, 8+disp])
     Linking_Line.data=dict(x=[0,0],y=[8+disp, 10+disp])
     if force_value > 0:
@@ -346,8 +345,10 @@ def change_force_value(attr,old,new):
     updateParameters()
     if new == 1:
         arrow_line.data=dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20])
+        arrow_offset.data = dict(x1=[0],y1=[current_y1-23],x2=[0],y2=[current_y2-20.1])
     else:
         arrow_line.data=dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
+        arrow_offset.data=dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
     
 force_value_input = Slider(title="Force", value=force_value, start=0, end=1.0, step=1,width=400)
 force_value_input.on_change('value',change_force_value)
@@ -376,6 +377,7 @@ def pause():
         curdoc().remove_periodic_callback(callback_id)
     except ValueError:
         print("WARNING: callback_id was already removed - this can happen if stop was pressed after pause, usually no serious problem; if stop was not called this part should be changed")
+        # callback_id is not set to None or similar, the object hex-code stays -> no if == None possible -> use try/except
     except:
         print("This error is not covered: ", sys.exc_info()[0])
         raise
@@ -411,6 +413,7 @@ def stop():
         arrow_offset.data=dict(x1=[0],x2=[0],y1=[12+drawing_displacement],y2=[12+(drawing_displacement-0.1)*1.1])
     else:
         arrow_line.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
+        arrow_offset.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
 
 def reset():
     stop()
