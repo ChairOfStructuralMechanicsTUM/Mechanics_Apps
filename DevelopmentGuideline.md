@@ -16,7 +16,7 @@ The following points are important for all developers.
 
 ## Developer Hints
 
-* Try to avoid global variables! Otherwise the app might behave strangely. In most cases, global variables can be replaced by `ColumnDataSource` objects (see [ColumnDataSource objects](columndatasource-objects)). If there is no way to avoid them, please use the following naming convention: `gl[APPNAME][VARNAME]`, so to define the velocity in the Collision app for example, use `glCollisionVelocity`.
+* Try to avoid global variables! Otherwise the app might behave strangely. In most cases, global variables can be replaced by `ColumnDataSource` objects (see [ColumnDataSource objects](#columndatasource-objects)). If there is no way to avoid them, please use the following naming convention: `gl[APPNAME][VARNAME]`, so to define the velocity in the Collision app for example, use `glCollisionVelocity`.
 * Name classes and corresponding files by the app name. For example in Mechanic_Apps/SDOF use the name `SDOF_Spring` for the spring class to avoid strange behaviour by unwanted imports.
 * For static resources use the static folder in the directory of the app. See Diffraction app for a use case (Diffraction/main.py:294-304, commit 188f76b15959222aa0a8bf3f55d476a52abbf221).
 * For complex behaviour try to introduce objects, that bundle the functionality and the data (e.g. https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/blob/master/Rollercoaster/DraggablePath.py)
