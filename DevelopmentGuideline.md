@@ -16,7 +16,7 @@ The following points are important for all developers.
 
 ## Developer Hints
 
-* Try to avoid global variables! Otherwise the app might behave strangely. In most cases, global variables can be replaced by `ColumnDataSource` objects (see -insert link-). If there is no way to avoid them, please use the following naming convention: `gl[APPNAME][VARNAME]`, so to define the velocity in the Collision app for example, use `glCollisionVelocity`.
+* Try to avoid global variables! Otherwise the app might behave strangely. In most cases, global variables can be replaced by `ColumnDataSource` objects (see [ColumnDataSource objects](columnDataSource-objects)). If there is no way to avoid them, please use the following naming convention: `gl[APPNAME][VARNAME]`, so to define the velocity in the Collision app for example, use `glCollisionVelocity`.
 * Name classes and corresponding files by the app name. For example in Mechanic_Apps/SDOF use the name `SDOF_Spring` for the spring class to avoid strange behaviour by unwanted imports.
 * For static resources use the static folder in the directory of the app. See Diffraction app for a use case (Diffraction/main.py:294-304, commit 188f76b15959222aa0a8bf3f55d476a52abbf221).
 * For complex behaviour try to introduce objects, that bundle the functionality and the data (e.g. https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/blob/master/Rollercoaster/DraggablePath.py)
@@ -141,7 +141,7 @@ foo()
 ```
 
 * ColumnDataSources can hold any number of variables using a directory and lists.
-* Updating single variables of a ColumnDataSource is not possible. Always update the whole dict, otherwise variables will get lost.
+* Updating single variables of a ColumnDataSource is **not** possible. Always update the whole dict, otherwise variables will get lost.
 * All "global" variables need to be loaded in the specific function. If in-place-operations were used, the saving step is optional.
 
 
