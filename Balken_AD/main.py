@@ -2,6 +2,7 @@
 
 from bokeh.plotting import Figure, output_file , show
 from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
+from bokeh.models.glyphs import ImageURL
 from bokeh.layouts import column, row, widgetbox
 from bokeh.io import curdoc
 from bokeh.models.widgets import Button, CheckboxGroup
@@ -34,8 +35,13 @@ f2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []
 f1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 #label_source:
 labels_source = ColumnDataSource(data=dict(x=[] , y=[],name = []))
+#Support Source:
+support1 = "Balken_AD/static/images/auflager02.svg"
+support2 = "Balken_AD/static/images/auflager01.svg"
+support_source1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
+support_source2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 #Triangle source:
-triangle_source = ColumnDataSource(data=dict(x= [], y= [], size = []))
+#triangle_source = ColumnDataSource(data=dict(x= [], y= [], size = []))
 #Cantilever rectangle source:
 quad_source = ColumnDataSource(data=dict(top= [], bottom= [],left = [], right =[]))
 segment_source = ColumnDataSource(data=dict(x0= [], y0= [],x1 = [], y1 =[]))
@@ -114,7 +120,7 @@ def Fun_WithShear():
 #FUNCTION: Cantilever function:
 #When position 2 is 0, this function is called:
 def Fun_Cantilever():
-    triangle_source.data = dict(x = [], y = [], size = [])
+    #triangle_source.data = dict(x = [], y = [], size = [])
     f1_arrow_source.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [])
     f2_arrow_source.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [])
     top = 2
@@ -197,8 +203,8 @@ def Fun_Update(attrname, old, new):
 
         #print plot_source.data['y']
 
-        move_tri = -0.25
-        triangle_source.data = dict(x = [0.0,f2_loc_slide.value], y = [0+move_tri, 0+move_tri], size = [20,20])
+        move_tri = -0.4
+        #triangle_source.data = dict(x = [0.0,f2_loc_slide.value], y = [0+move_tri, 0+move_tri], size = [20,20])
 
         #moment and shear:
         m_max = Fun_Moment(p_mag_slide.value,a,b,l)
@@ -212,11 +218,13 @@ def Fun_Update(attrname, old, new):
         #p_arrow and labels:
         if (p_mag<0):
             p_arrow_source.data = dict(xS= [p_coord], xE= [p_coord], yS= [1-(p_mag/200.0)], yE=[1], lW = [2] )
-            labels_source.data = dict(x = [p_coord,0,f2_coord] , y = [1,move_tri,move_tri],name = ['F','A','B'])
+            labels_source.data = dict(x = [p_coord,0,f2_coord-0.2] , y = [1,move_tri,move_tri],name = ['F','A','B'])
+            support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
 
         else:
             p_arrow_source.data = dict(xS= [p_coord], xE= [p_coord], yS= [-1-(p_mag/200.0)], yE=[-1], lW = [2] )
-            labels_source.data = dict(x = [p_coord,0,f2_coord] , y = [-1,move_tri,move_tri],name = ['F','A','B'])
+            labels_source.data = dict(x = [p_coord,-0.2,f2_coord-0.2] , y = [-1,move_tri,move_tri],name = ['F','A','B'])
+            support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
 
         #f1_arrow:
         #if (f1_mag==0):
@@ -250,13 +258,16 @@ def initial():
     lth_slide.value = 2
     checkbox.active = []
     Fun_Update(None,None,None)
+    support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
 
 ##########Plotting##########
 
 ###Main Plot:
 plot = Figure(title="Double-Supported Beam and Single Load", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5), height = 400)
 my_line=plot.line(x='x', y='y', source=plot_source, color='#0065BD',line_width=20)
-plot.triangle(x='x', y='y', size = 'size', source= triangle_source,color="#E37222", line_width=2)
+plot.add_glyph(support_source1,ImageURL(url="sp1", x=-0.325, y=-0.1, w=0.66, h=0.4))
+plot.add_glyph(support_source2,ImageURL(url="sp2", x='x', y='y', w=0.66, h=0.4))
+#plot.triangle(x='x', y='y', size = 'size', source= triangle_source,color="#E37222", line_width=2)
 plot.quad(top='top', bottom='bottom', left='left',
     right='right', source = quad_source, color="#808080", fill_alpha = 0.5)
 plot.segment(x0='x0', y0='y0', x1='x1',
