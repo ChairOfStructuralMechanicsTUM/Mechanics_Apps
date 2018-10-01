@@ -3,6 +3,7 @@
 from bokeh.plotting import Figure, output_file , show
 from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
 from bokeh.models.glyphs import ImageURL
+from bokeh.models.layouts import Spacer
 from bokeh.layouts import column, row, widgetbox
 from bokeh.io import curdoc
 from bokeh.models.widgets import Button, CheckboxGroup
@@ -263,7 +264,7 @@ def initial():
 ##########Plotting##########
 
 ###Main Plot:
-plot = Figure(title="Double-Supported Beam and Single Load", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5), height = 400)
+plot = Figure(title="Double-Supported Beam and Single Load", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5), height = 400, logo=None)
 my_line=plot.line(x='x', y='y', source=plot_source, color='#0065BD',line_width=20)
 plot.add_glyph(support_source1,ImageURL(url="sp1", x=-0.325, y=-0.1, w=0.66, h=0.4))
 plot.add_glyph(support_source2,ImageURL(url="sp2", x='x', y='y', w=0.66, h=0.4))
@@ -273,20 +274,31 @@ plot.quad(top='top', bottom='bottom', left='left',
 plot.segment(x0='x0', y0='y0', x1='x1',
           y1='y1', source = segment_source, color="#F4A582", line_width=2)
 plot.axis.visible = False
-plot.outline_line_width = 7
-plot.outline_line_alpha = 0.3
+plot.outline_line_width = 2
+#plot.outline_line_alpha = 0.3
 plot.outline_line_color = "Black"
+plot.title.text_font_size="13pt"
 labels = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=5, y_offset=-30, source=labels_source, render_mode='canvas')
+
+
 ###Plot with moment and shear:
 y_range0 = -600
 y_range1 = -y_range0
-plot1 = Figure(title="Bending Moment, Shear Force", x_range=(x0-.5,xf+.5), y_range=(y_range0,y_range1), height = 200)
+plot1 = Figure(title="Bending Moment, Shear Force", x_range=(x0-.5,xf+.5), y_range=(y_range0,y_range1), height = 200, logo=None)
 plot1.line(x='x', y='y', source=mom_source, color='blue',line_width=5)
 plot1.line(x='x', y='y', source=shear_source, color='red',line_width=5)
 plot1.line(x= [x0-1,xf+1], y = [0, 0 ], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot1.line(x= [xf/2,xf/2], y = [y_range0,y_range1], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot1.axis.visible = False
+plot1.outline_line_width = 2
+#plot.outline_line_alpha = 0.3
+plot1.outline_line_color = "Black"
+plot1.title.text_font_size="13pt"
+# dummy glyphs for the legend entries
+plot1.square([0.0],[0.0],size=0,fill_color='blue',fill_alpha=0.5,legend="Bending Moment")
+plot1.square([0.0],[0.0],size=0,fill_color='red',fill_alpha=0.5,legend="Shear Force")
+plot1.legend.location = 'top_right'
 ###arrow plotting:
 #P arrow:
 p_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
@@ -323,5 +335,5 @@ button.on_click(initial)
 #main:
 initial()
 
-curdoc().add_root( row( column(p_loc_slide,p_mag_slide,f2_loc_slide,widgetbox(button)),  column(plot,plot1 ) ) )
+curdoc().add_root( row( column(Spacer(height=200,width=50), p_loc_slide, p_mag_slide, f2_loc_slide, widgetbox(button)),  column(plot,plot1 ) ) )
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
