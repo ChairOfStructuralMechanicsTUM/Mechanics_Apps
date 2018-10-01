@@ -286,8 +286,13 @@ labels = LabelSet(x='x', y='y', text='name', level='glyph',
 y_range0 = -600
 y_range1 = -y_range0
 plot1 = Figure(title="Bending Moment, Shear Force", x_range=(x0-.5,xf+.5), y_range=(y_range0,y_range1), height = 200, logo=None)
+
+#Insert TUM-COLOUR
 plot1.line(x='x', y='y', source=mom_source, color='blue',line_width=5)
+
+#Insert TUM-COLOUR
 plot1.line(x='x', y='y', source=shear_source, color='red',line_width=5)
+
 plot1.line(x= [x0-1,xf+1], y = [0, 0 ], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot1.line(x= [xf/2,xf/2], y = [y_range0,y_range1], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot1.axis.visible = False
@@ -296,8 +301,13 @@ plot1.outline_line_width = 2
 plot1.outline_line_color = "Black"
 plot1.title.text_font_size="13pt"
 # dummy glyphs for the legend entries
+
+#Insert TUM-COLOUR
 plot1.square([0.0],[0.0],size=0,fill_color='blue',fill_alpha=0.5,legend="Bending Moment")
+
+#Insert TUM-COLOUR
 plot1.square([0.0],[0.0],size=0,fill_color='red',fill_alpha=0.5,legend="Shear Force")
+
 plot1.legend.location = 'top_right'
 ###arrow plotting:
 #P arrow:
