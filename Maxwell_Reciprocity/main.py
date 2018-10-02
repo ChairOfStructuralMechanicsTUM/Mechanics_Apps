@@ -970,6 +970,7 @@ def update_fun(attr,old,new):
     if changer == 0:
         f1.set_param(loc_slider.value)
         f1.set_mag(mag_slider.value)
+        f2.p_mag = f1.p_mag 
         create_prof(f1)
         create_shift(f1)
         #f1.tri.data = dict(x = [0.1,f1.pts.data["x"][-1]], y = [0.1,f1.pts.data["y"][-1]], size = [tri_size,tri_size])
@@ -978,9 +979,10 @@ def update_fun(attr,old,new):
 
     elif changer != 0:
         f2.set_param(loc_slider.value)
-        f2.set_mag(mag_slider.value)
+        #f2.set_mag(mag_slider.value)
         create_prof(f2)
         create_shift(f2)
+        f2.p_mag = f1.p_mag 
 
         #EDIT Start
         calc_betty_displacements12(f2)
@@ -1004,17 +1006,19 @@ def button_fun():
     create_prof(f1)
     create_shift(f1)
     create_wdline(f1)
-    mag_slider.value        = mag_val
+    # mag_slider.value        = mag_val
     loc_slider.value        = loc_val
-    f2.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    f2.w1.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
-    f2.w2.data              = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    f2.w12.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
-    f2.w12_11.data              = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    f2.w12_12.data              = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    f2.p_mag = f1.p_mag
+    # f2.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    # f2.w1.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
+    # f2.w2.data              = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    # f2.w12.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
+    # f2.w12_11.data              = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    # f2.w12_12.data              = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    # f2.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    mag_slider.disabled = True
+    button.disabled = True
     
-    f2.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-
 
 def initial():
     '''Function that initializes everything'''
@@ -1024,6 +1028,8 @@ def initial():
     loc_slider.value        = loc_val
     clearf1()
     clearf2()
+    mag_slider.disabled = False
+    button.disabled = False
 
 def clearf1():
     '''Clears the f1 frame'''
