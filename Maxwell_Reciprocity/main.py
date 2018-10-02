@@ -538,7 +538,7 @@ def create_shift(f):
         if (paramInt1 < 30):
             d2 = paramInt1 / 30.0 * 0.5 + 0.1
             d1 = 0.1
-            f.e_s.data = dict(xS= [ d1 ], xE= [d1 + localDouble1[0]],
+            f.e_s.data = dict(xS= [ d1 ], xE= [d1 + 1.35*localDouble1[0]],
             yS= [d2], yE=[d2], lW = [abs(localDouble1[0]*sclr) ] )
 
             if (f.name ==  "F"u"\u2081"):
@@ -547,7 +547,7 @@ def create_shift(f):
             elif (f.name ==  "F"u"\u2082"):
                 y1 = 0.7
                 y2 = 0.7
-            x1 = d1 + localDouble1[0]
+            x1 = d1 + 1.39*localDouble1[0]
             x2 = d1
         elif ((30 <= paramInt1) & (paramInt1 <= 70)):
             d1 = (paramInt1 - 30) / 40.0 * 0.7 + 0.1
