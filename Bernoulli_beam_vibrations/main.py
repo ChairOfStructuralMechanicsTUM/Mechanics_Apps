@@ -251,7 +251,7 @@ ev_input3.on_change('value',update_cantilever_beam)
 
 # app description
 description_filename = join(dirname(__file__), "description.html")
-description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=862)
 
 curdoc().add_root(column(description, Spacer(height=50), \
                   p1,ev_input1, Spacer(height=100), \
