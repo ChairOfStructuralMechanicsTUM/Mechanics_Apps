@@ -1,6 +1,8 @@
+from __future__ import division
 from Spring import *
 from Dashpot import *
 from Mass import *
+
 
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer, gridplot
@@ -17,25 +19,32 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv
 from math import sqrt, exp, pow, sin , cos, ceil, pi, atan2, sinh, cosh
+from numpy import convolve 
+import numpy 
 
 ## initial values
-initial_mass_value = 1.
 initial_spring_constant_value = 1.
-initial_damping_coefficient_value = 0
-initial_velocity_value = 0.
-initial_displacement_value = 0.
-frequency_ratio_value = 0.5
+initial_damping_coefficient_value = 0.5
+initial_displacement_value = 0
+TimePeriodRatio = 5
 force_value = 1.
+Force_duration = 1
+ForceInput = ""
+h = []
+FI =[]
+final = []
 
 ## input parameters for the analytic solution
-ef = sqrt(initial_spring_constant_value/initial_mass_value)
-D = initial_damping_coefficient_value / (2.0*initial_mass_value*ef)
-damped_ef = ef * sqrt(1-pow(D,2))
-excitation_frequency_value = frequency_ratio_value * ef
+Te = Force_duration/TimePeriodRatio   
+
+W = 2*pi/Te
+initial_mass_value = initial_spring_constant_value /pow(W,2)
+D = initial_damping_coefficient_value
+WD = W * sqrt(1-pow(D,2))
 
 s=0
 t=0
-dt=0.03
+dt=0.02
 
 mass = CircularMass(initial_mass_value,0,10,2,2)
 spring = Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
@@ -45,62 +54,60 @@ Bottom_Line = ColumnDataSource(data = dict(x=[-2,2],y=[8,8]))
 Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[8,10]))
 
 displacement = ColumnDataSource(data = dict(t=[0],s=[initial_displacement_value]))
-displacement_particular = ColumnDataSource(data = dict(t=[0],s=[0]))
-displacement_homogeneous = ColumnDataSource(data = dict(t=[0],s=[0]))
 
 arrow_line = ColumnDataSource(data = dict(x1=[0],y1=[15],x2=[0],y2=[12]))
-amplification_function = ColumnDataSource(data = dict(beta=[0],V=[1]))
-phase_angle = ColumnDataSource(data = dict(beta=[0],phi=[0]))
 omega_max = ColumnDataSource(data = dict(beta=[0],phi=[0]))
 t_max = ColumnDataSource(data = dict(beta=[0],phi=[0]))
 Force_input = ColumnDataSource(data = dict(beta=[0],phi=[0]))
 
-Force_input.stream(dict(beta=[0],phi=[0]))
+Force_input.stream(dict(beta=[0],phi=[1]))
 Force_input.stream(dict(beta=[1],phi=[1]))
 Force_input.stream(dict(beta=[1.0001],phi=[0]))
 Force_input.stream(dict(beta=[2],phi=[0]))
-#for time in range(0,1000):
-    #Force_input.stream(dict(beta=[time/1000],phi=[time/1000]))
 
-for beta in range(1,75):
-    amplification_function.stream(dict(beta=[beta/25.0],V=[1]))
-    phase_angle.stream(dict(beta=[beta/25.0],phi=[1]))
-current_ratio = ColumnDataSource(data = dict(beta=[0],V=[1],phi=[0]))
-parameters = ColumnDataSource(data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)]))
+parameters = ColumnDataSource(data = dict(names1=[u'\u03c9',"Te"],names2=["D",u'\u03c9*'],values1=[round(W,4),round(Te,4)],values2=[round(D,4),round(WD,4)]))
 Active=False
 
+def InputForce(t):
+    if (ForceInput == "Rectangular"):
+        return rect(t)
+    elif (ForceInput == "Triangular"):
+        return Triangular(t)
+def rect(t):
+    return where(t<=1, 1, 0)
+def Triangular(t):
+    return where(t<=1, t, 0)
+
 def evolve():
-    global Bottom_Line, Linking_Line, t, s
-    global mass, spring, damper, initial_velocity_value, initial_displacement_value, frequency_ratio_value, force_value
-    global ef, damped_ef, D, excitation_frequency_value
+    global Bottom_Line, Linking_Line, t 
+    global mass, spring, damper, initial_displacement_value, TimePeriodRatio, force_value
+    global W, WD, D, Te
+    global ForceInput, h, FI, final
     
     #########
     k = spring.getSpringConstant
-
+    print("Values used in plot")
+    print(k)
+    print(W)
+    print(WD)
+    print(D)
     
-    if D == 0 and frequency_ratio_value == 1:
-        # code for duhamel 
-        s_p = 0.5 * (initial_displacement_value * cos(ef*t) + initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * (sin(ef*t) - ef*t*cos(ef*t)))
-        s_h = s_p
-    else:
-        # code for duhamel 
-        # particular (steady-state) part
-        s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
-            * ( ( 1-pow(frequency_ratio_value,2) ) * sin(excitation_frequency_value*t) - 2*D*frequency_ratio_value*cos(excitation_frequency_value*t) )
-        # homogeneous (transient) part
-        s_h = exp(-D*ef*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) ) \
-            + force_value * exp(-D*ef*t) / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
-            * ( 2*D*frequency_ratio_value*cos(damped_ef*t) + ef/damped_ef * ( 2*frequency_ratio_value*pow(D,2) - frequency_ratio_value * (1-pow(frequency_ratio_value,2)) ) * sin(damped_ef*t) )
+    if(t==0):
+        for i in range(0,1000,1): # making rectangular function 
+            T= i*0.02
+            if (T<=1):
+                FI.append(1) 
+            else:
+                FI.append(0)
 
-    # scale with 1/stiffness
-    s_p = s_p * k
-    s_h = s_h * k
-    s = s_p + s_h
+            x=(1/(float(mass.Getmass())*WD))*exp(-D*W*T)*sin(WD*T) 
+            h.append(x)
+        final = convolve(FI,h,mode='full')
+        print("convolution done")
     
-    move_system(-s)
-    displacement.stream(dict(t=[t],s=[s]))
-    displacement_particular.stream(dict(t=[t],s=[s_p]))
-    displacement_homogeneous.stream(dict(t=[t],s=[s_h]))
+    Tiii =int(t/0.02)
+    move_system(-final[Tiii])
+    displacement.stream(dict(t=[t],s=[final[Tiii]]))
     t+=dt
 
 title_box = Div(text="""<h2 style="text-align:center;">Shock response spectra </h2>""",width=1000)
@@ -127,11 +134,9 @@ arrow = fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red",
 
 # time plot
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
-p = figure(title="", y_range=(2,-2), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
+p = figure(title="", y_range=(20,-20), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
     toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
 p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
-#p.line(x='t',y='s',source=displacement_particular,color="#a2ad00",legend="Particular Solution",muted_color="#98c6ea",muted_alpha=0.2)
-#p.line(x='t',y='s',source=displacement_homogeneous,color="#64a0c8",legend="Homogeneous Solution",muted_color="#64a0c8",muted_alpha=0.2)
 p.axis.major_label_text_font_size="12pt"
 p.axis.axis_label_text_font_style="normal"
 p.axis.axis_label_text_font_size="14pt"
@@ -140,48 +145,7 @@ p.yaxis.axis_label="Displacement [u/(F/k)]"
 p.legend.location="top_right"
 p.legend.click_policy="mute"
 
-# amplification function plot
-def compute_amp_and_phase_angle():
-    global amplification_function, phase_angle, D, frequency_ratio_value, current_ratio
-    # beta scaled with 25!
-    for beta in range(0,75):
-        if D == 0 and beta == 25:
-            V = 1000
-        else:
-            V = 1 / sqrt( pow(1-pow(beta/25.0,2),2) + pow(2*D*beta/25.0,2) )
 
-        if D == 0 and beta < 25:
-            phi = 0
-        elif D == 0 and beta > 25:
-            phi = 180
-        elif beta == 25:
-            phi = 90
-        else:
-            phi = atan2( 2*D*beta/25.0, 1-pow(beta/25.0,2) ) * 180.0 / pi
-        amplification_function.patch({ 'V':[(beta,V)] })
-        phase_angle.patch({ 'phi':[(beta,phi)] })
-
-    plot_current_ratio()
-
-def plot_current_ratio():
-    global amplification_function, frequency_ratio_value, current_ratio
-    if D == 0 and frequency_ratio_value == 1:
-        V = 1000
-    else:
-        V = 1 / sqrt( pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2) )
-
-    if D == 0 and frequency_ratio_value < 1:
-        phi = 0
-    elif frequency_ratio_value == 1:
-        phi = 90
-    elif D == 0 and frequency_ratio_value > 1:
-        phi = 180
-    else:
-        phi = atan2( 2*D*frequency_ratio_value, 1-pow(frequency_ratio_value,2) ) * 180 / pi
-
-    current_ratio.data=dict(beta=[frequency_ratio_value],V=[V],phi=[phi])
-
-compute_amp_and_phase_angle()
 p_af = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=300, height=300)
 p_af.line(x='beta', y='phi', source=omega_max, color="#a2ad00")
 p_af.yaxis.axis_label="w_max"
@@ -193,7 +157,6 @@ p_pa.yaxis.ticker = FixedTicker(ticks=[0,90,180])
 
 InputForce = figure(title="", tools="", x_range=(0,3.0), y_range=(0,2), width=300, height=150)
 InputForce.line(x='beta', y='phi', source=Force_input, color="#a2ad00")
-#InputForce.circle(x='beta', y='phi', size=10, color="#e37222", source=current_ratio)
 InputForce.xaxis.axis_label="Time(s)"
 InputForce.yaxis.axis_label="Force(N)"
 InputForce.yaxis.ticker = FixedTicker(ticks=[0,90,180])
@@ -216,21 +179,19 @@ def change_damping_coefficient(attr,old,new):
     global damper
     damper.changeDamperCoeff(float(new))
     updateParameters()
-    compute_amp_and_phase_angle()
 
-damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=initial_damping_coefficient_value, callback_policy="mouseup", start=0.0, end=10, step=0.5,width=400)
+damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=initial_damping_coefficient_value, callback_policy="mouseup", start=0.0, end=1, step=0.05,width=400)
 damping_coefficient_input.on_change('value',change_damping_coefficient)
 
 ## Create slider to choose the frequency ratio
 def change_frequency_ratio(attr,old,new):
-    global Active, frequency_ratio_value
+    global Active, TimePeriodRatio
     if (not Active):
-        frequency_ratio_value = new
+        TimePeriodRatio = new
         updateParameters()
-        plot_current_ratio()
         
 
-frequency_ratio_input = Slider(title="Impulse duration to natural period ratio", value=frequency_ratio_value, start=0.1, end=3.0, step=0.1,width=400)
+frequency_ratio_input = Slider(title="Impulse duration to natural period ratio", value=TimePeriodRatio, start=0.1, end=3.0, step=0.1,width=400)
 frequency_ratio_input.on_change('value',change_frequency_ratio)
 
 def pause():
@@ -252,9 +213,6 @@ def stop():
     s=0
     
     displacement.data=dict(t=[0],s=[initial_displacement_value])
-    displacement_particular.data=dict(t=[0],s=[0])
-    displacement_homogeneous.data=dict(t=[0],s=[0])
-    
     drawing_displacement = -initial_displacement_value * spring.getSpringConstant
     move_system(drawing_displacement)
     if force_value > 0:
@@ -267,8 +225,9 @@ def reset():
     mass_input.value = initial_mass_value
     spring_constant_input.value = initial_spring_constant_value
     damping_coefficient_input.value = initial_damping_coefficient_value
-    initial_velocity_input.value = initial_velocity_value
     initial_displacement_input.value = initial_displacement_value
+    t=0
+    s=0
 
     #this could reset also the plot, but needs the selenium package:
     #reset_button = selenium.find_element_by_class_name('bk-tool-icon-reset')
@@ -276,20 +235,31 @@ def reset():
 
 def updateParameters():
     #input
-    global mass, spring, damper, initial_velocity_value, initial_displacement_value, frequency_ratio_value, force_value
+    global mass, spring, damper, initial_displacement_value, TimePeriodRatio, force_value,initial_spring_constant_value,Force_duration
     #output
-    global ef, damped_ef, D, excitation_frequency_value, displacement, amplification_function, parameters
-    m = mass.getMass
-    k = spring.getSpringConstant
-    c = damper.getDampingCoefficient
-    ef = sqrt(k/m)
-    D = c / (2*m*ef)
-    if D < 1:
-        damped_ef = ef * sqrt(1-pow(D,2))
-    else:
-        damped_ef = ef * sqrt(pow(D,2)-1)
-    excitation_frequency_value = frequency_ratio_value * ef
-    parameters.data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)])
+    global W, WD, D, Te, displacement, amplification_function, parameters, FI, final, h
+    
+    Te = Force_duration/TimePeriodRatio   
+    W = 2*pi/Te
+    mass.changeMass(initial_spring_constant_value /pow(W,2))
+    D = float(damper.getDampingCoefficient)
+    WD = W * sqrt(1-pow(D,2))  
+    print("new WD",WD)   
+    FI *= 0
+    final *= 0
+    h *= 0
+    for i in range(0,1000,1): # making rectangular function 
+        T= i*0.02
+        if (T<=1):
+            FI.append(1) 
+        else:
+            FI.append(0)
+
+        x=(1/(mass.Getmass()*WD))*exp(-D*W*T)*sin(WD*T) 
+        h.append(x)
+    final = convolve(FI,h,mode='full')
+
+    parameters.data = dict(names1=[u'\u03c9',"Te"],names2=["D",u'\u03c9*'],values1=[round(W,4),round(Te,4)],values2=[round(D,4),round(WD,4)])
 
 play_button = Button(label="Play", button_type="success",width=100)
 play_button.on_click(play)
@@ -302,22 +272,21 @@ stop_button.on_click(stop)
 
 def ChangeForce(forcetype):
     if forcetype == "Triangular":
+        ForceInput = "Triangular"
         Force_input.data=dict(beta=[0],phi=[0])
         Force_input.stream(dict(beta=[0],phi=[0]))
         Force_input.stream(dict(beta=[1],phi=[1]))
         Force_input.stream(dict(beta=[1.0001],phi=[0]))
         Force_input.stream(dict(beta=[2],phi=[0]))
-        #for time in range(0,1000):
-         #   Force_input.stream(dict(beta=[time/10000],phi=[1]))
     elif forcetype == "Rectangular":
+        ForceInput = "Rectangular"
         Force_input.data=dict(beta=[0],phi=[0])
         Force_input.stream(dict(beta=[0],phi=[1]))
         Force_input.stream(dict(beta=[1],phi=[1]))
         Force_input.stream(dict(beta=[1.0001],phi=[0]))
         Force_input.stream(dict(beta=[2],phi=[0]))
-        #for time in range(0,1000):
-         #   Force_input.stream(dict(beta=[time/10000],phi=[1]))
     else:
+        ForceInput = "Sinusoidal" 
         print("Sinusoidal")
 
 def ForceSelection(attr,old,new):   

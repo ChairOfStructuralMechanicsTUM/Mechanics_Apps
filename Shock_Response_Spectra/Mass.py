@@ -65,3 +65,5 @@ class CircularMass(DiscreteMass):
         temp=dict(x=[point[0]], y=[point[1]], w=[self.shape.data['w'][0]], h=[self.shape.data['h'][0]])
         # update ColumnDataSource
         self.shape.data=temp
+    def Getmass(self):
+        return self.mass
