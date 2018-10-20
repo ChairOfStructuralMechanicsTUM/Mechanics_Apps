@@ -24,9 +24,9 @@ import numpy
 
 ## defining global variables required
 initial_spring_constant_value = 1.
-initial_damping_ratio = 0.5
+initial_damping_ratio = 0.1
 initial_displacement_value = 0
-TimePeriodRatio = 5
+TimePeriodRatio = 1
 force_value = 1.
 Force_duration = 1
 ForceInput = ""
@@ -53,9 +53,9 @@ def Initialise():
     global s, t, dt, mass, FI, final, h
     
     initial_spring_constant_value = 1.
-    initial_damping_ratio = 0.5
+    initial_damping_ratio = 0.1
     initial_displacement_value = 0
-    TimePeriodRatio = 5
+    TimePeriodRatio = 1
     force_value = 1.
     Force_duration = 1## input parameters for the analytic solution
     Te = Force_duration/TimePeriodRatio   
@@ -92,8 +92,8 @@ Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[8,10]))
 displacement = ColumnDataSource(data = dict(t=[0],s=[initial_displacement_value]))
 
 arrow_line = ColumnDataSource(data = dict(x1=[0],y1=[15],x2=[0],y2=[12]))
-omega_max = ColumnDataSource(data = dict(beta=[0],phi=[0]))
-t_max = ColumnDataSource(data = dict(beta=[0],phi=[0]))
+omega_max = ColumnDataSource(data = dict(time=[0],omega=[0]))
+t_max = ColumnDataSource(data = dict(time=[0],tmax=[0]))
 Force_input = ColumnDataSource(data = dict(beta=[0],phi=[0]))
 
 Force_input.stream(dict(beta=[0],phi=[1]))
@@ -109,6 +109,7 @@ def evolve():
     global mass, spring, damper, initial_displacement_value, TimePeriodRatio, force_value
     global W, WD, D, Te
     global ForceInput, h, FI, final
+    global omega_max
     
     #########
     k = spring.getSpringConstant
@@ -124,9 +125,9 @@ def evolve():
     
     maximum = amax(final)
     maximumat = dt*argmax(final)
-    print("maximum value",maximum)
-    print("maximum value at",maximumat)
-    print("shape",final.shape)
+
+    omega_max.stream(dict(time=[TimePeriodRatio],omega=[maximum]))
+    t_max.stream(dict(time=[TimePeriodRatio],tmax=[maximumat]))
     
     time =int(t/dt)
     move_system(-final[time])
@@ -169,14 +170,15 @@ p.legend.location="top_right"
 p.legend.click_policy="mute"
 
 
-p_af = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=300, height=300)
-p_af.line(x='beta', y='phi', source=omega_max, color="#a2ad00")
-p_af.yaxis.axis_label="w_max"
-p_pa = figure(title="", tools="", x_range=(0,3.0), y_range=(0,180), width=300, height=300)
-p_pa.line(x='beta', y='phi', source=t_max, color="#a2ad00")
+p_af = figure(title="", tools="", x_range=(0,3.0), y_range=(0,4), width=300, height=300)
+p_af.circle(x='time', y='omega', source=omega_max, color="#a2ad00")
+p_af.xaxis.axis_label="To/Te"
+p_af.yaxis.axis_label="w_max/(F/k)"
+
+p_pa = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=300, height=300)
+p_pa.circle(x='time', y='tmax', source=t_max, color="#a2ad00")
 p_pa.xaxis.axis_label="Tmax to T0 ratio"
 p_pa.yaxis.axis_label="t_max"
-p_pa.yaxis.ticker = FixedTicker(ticks=[0,90,180])
 
 InputForce = figure(title="", tools="", x_range=(0,3.0), y_range=(0,2), width=300, height=150)
 InputForce.line(x='beta', y='phi', source=Force_input, color="#a2ad00")
@@ -200,8 +202,6 @@ def move_system(disp): # for moving the spring damper mass image according to th
 ## Create slider to choose damping coefficient
 def change_damping_coefficient(attr,old,new):
     global damper,initial_spring_constant_value,initial_mass_value
-    print("new value",new)
-
     damper.changeDamperCoeff(float(new*2*sqrt(initial_spring_constant_value*initial_mass_value)))
     updateParameters()
 damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=initial_damping_ratio, callback_policy="mouseup", start=0.0, end=1, step=0.05,width=400)
@@ -244,8 +244,6 @@ def reset(): # resets values to initial cofiguration
 
     #Initialise() 
     updateParameters()
-    damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=initial_damping_ratio, callback_policy="mouseup", start=0.0, end=1, step=0.05,width=400)
-    damping_coefficient_input.on_change('value',change_damping_coefficient)
 
 def updateParameters():
     #input
@@ -257,9 +255,9 @@ def updateParameters():
     W = 2*pi/Te
     initial_mass_value = initial_spring_constant_value /pow(W,2)
     mass.changeMass(initial_mass_value)
-    
     D = (float(damper.getDampingCoefficient))/(2*sqrt(initial_spring_constant_value*initial_mass_value))
-    WD = W * sqrt(1-pow(D,2))    
+    WD = W * sqrt(1-pow(D,2))  
+ 
     final *= 0
     for i in range(0,1000,1): # making rectangular function 
         T= i*0.02
