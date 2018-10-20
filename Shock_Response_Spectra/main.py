@@ -24,7 +24,7 @@ import numpy
 
 ## defining global variables required
 initial_spring_constant_value = 1.
-initial_damping_ratio = 0.5
+initial_damping_ratio = 0
 initial_displacement_value = 0
 TimePeriodRatio = 5
 force_value = 1.
@@ -41,6 +41,7 @@ WD = 0
 s=0
 t=0
 dt=0
+damping_coeffcient = 0
 
 mass = CircularMass(initial_mass_value,0,10,2,2)
 spring = Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
@@ -49,13 +50,13 @@ damper = Dashpot((2,.75),(2,8),damping_coeffcient)
 
 def Initialise():
     global initial_spring_constant_value,initial_damping_ratio,initial_displacement_value,TimePeriodRatio
-    global force_value,Force_duration,Te,W,initial_mass_value,D,initial_damping_ratio,WD,W
+    global force_value,Force_duration,Te,W,initial_mass_value,D,initial_damping_ratio,WD,W,damping_coeffcient
     global s, t, dt, mass, FI, final, h
     
     initial_spring_constant_value = 1.
-    initial_damping_ratio = 0.5
+    initial_damping_ratio = 0
     initial_displacement_value = 0
-    TimePeriodRatio = 5
+    TimePeriodRatio = 1
     force_value = 1.
     Force_duration = 1## input parameters for the analytic solution
     Te = Force_duration/TimePeriodRatio   
@@ -199,13 +200,11 @@ def move_system(disp): # for moving the spring damper mass image according to th
 
 ## Create slider to choose damping coefficient
 def change_damping_coefficient(attr,old,new):
-    global damper,initial_spring_constant_value,initial_mass_value
-    print("new value",new)
-    print("damping coefficient",float(new*2*sqrt(initial_spring_constant_value*initial_mass_value)))
-
-    damper.changeDamperCoeff(float(new*2*sqrt(initial_spring_constant_value*initial_mass_value)))
+    print(new)
+    global damper
+    damper.changeDamperCoeff(new)
     updateParameters()
-damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=initial_damping_ratio, callback_policy="mouseup", start=0.0, end=1, step=0.05,width=400)
+damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=damping_coeffcient, callback_policy="mouseup", start=0.0, end=10, step=0.5,width=400)
 damping_coefficient_input.on_change('value',change_damping_coefficient)
 
 ## Create slider to choose the frequency ratio
@@ -242,11 +241,8 @@ def reset(): # resets values to initial cofiguration
         arrow_line.data=dict(x1=[0],x2=[0],y1=[15+drawing_displacement],y2=[12+drawing_displacement])
     else:
         arrow_line.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
-
-    #Initialise() 
+    
     updateParameters()
-    damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=initial_damping_ratio, callback_policy="mouseup", start=0.0, end=1, step=0.05,width=400)
-    damping_coefficient_input.on_change('value',change_damping_coefficient)
 
 def updateParameters():
     #input
@@ -258,7 +254,6 @@ def updateParameters():
     W = 2*pi/Te
     initial_mass_value = initial_spring_constant_value /pow(W,2)
     mass.changeMass(initial_mass_value)
-    print("damping coefficient",damper.getDampingCoefficient)
     D = (float(damper.getDampingCoefficient))/(2*sqrt(initial_spring_constant_value*initial_mass_value))
     WD = W * sqrt(1-pow(D,2))    
     final *= 0
