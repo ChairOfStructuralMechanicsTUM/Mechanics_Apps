@@ -60,7 +60,7 @@ segment_source = ColumnDataSource(data=dict(x0= [], y0= [],x1 = [], y1 =[]))
 
 #Sliders:
 p_loc_slide= Slider(title="Load Position",value= p_loci,start = x0, end = xf, step = 1)
-p_mag_slide = Slider(title="Load Amplitude", value=p_mag, start=-2*p_mag, end=2*p_mag, step=.1)
+p_mag_slide = Slider(title="Load Amplitude", value = p_magi, start=-2*p_magi, end=2*p_magi, step=.1)
 f2_loc_slide = Slider(title="Support Position",value=f2_loci,start = x0, end = xf, step = 1)
 lth_slide = Slider(title="Beam-Height",value=lthi ,start = 2, end = 20, step = 1)
 
@@ -69,8 +69,14 @@ radio_button_group = RadioButtonGroup(
 
 #FUNCTION: Calculate Force at Support 1
 def Fun_F(p_mag,b,l):
-    f1_mag = -1.0 * (p_mag *b) / l
-    return f1_mag
+    if radio_button_group.active == 0:
+        f1_mag = -1.0 * (p_mag *b) / l
+        return f1_mag
+    # if radio_button_group.active == 1:
+    #     f_res=b
+    #     f1_mag = p_mag*10/l*f_res
+    #     return f1_mag
+
 
 
 #FUNCTION: Calculation of Max MOMENT
@@ -357,21 +363,21 @@ def Fun_Update(attrname, old, new):
 
     if radio_button_group.active == 1:
 
-        p_loc_slide.value = 10 
-        p_loc_slide.disabled = True
+        # p_loc_slide.value = 10 
+        # p_loc_slide.disabled = True
+        p_loc_slide.disabled = False
         my_line.glyph.line_width = 15
         
-        ###EDIT
-        a = p_loc_slide.value
-        f2_coord = f2_loc_slide.value
-        b = f2_coord - a
-        
         #EDIT
-        p_coord = p_loc_slide.value
-        
         p_mag = p_mag_slide.value
-        l = f2_coord
+        a = p_loc_slide.value
+        l = f2_loc_slide.value
+        f2_coord = f2_loc_slide.value
+        p_coord = p_loc_slide.value
+        b = l - a
         x1 = xf - l
+        # f_res=l-5
+
 
         if f2_coord == 0:
             xcan = x0
@@ -384,10 +390,9 @@ def Fun_Update(attrname, old, new):
             else:
                 p_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(p_mag/1.0)], yE=[-1], lW = [2] )
                 labels_source.data = dict(x = [0] , y = [-1],name = ['p'])
-
             #cantilever moment calculation:
             #max moment at fixed end x0. Moment max = P*l
-            
+
             #EDIT:
             #m_max = (p_mag * a)/6
             m_max = (p_mag * a)
@@ -406,8 +411,9 @@ def Fun_Update(attrname, old, new):
             quad_source.data = dict(top = [], bottom = [], left = [] , right = [])
             segment_source.data = dict(x0= [], y0= [],x1 = [], y1 =[])
 
-            f1_mag = Fun_F(p_mag_slide.value,b,l)
-            f2_mag = Fun_F(p_mag_slide.value,a,l)
+            # f1_mag = Fun_F(p_mag_slide.value,b,l)
+            # f2_mag = Fun_F(p_mag_slide.value,a,l)
+
             ynew = Fun_Deflection(a,b,l,p_mag,plot_source.data['x'])
             plot_source.data = dict(x = np.linspace(x0,xf,resol), y = ynew)
 
@@ -415,14 +421,44 @@ def Fun_Update(attrname, old, new):
             #triangle_source.data = dict(x = [0.0,f2_loc_slide.value], y = [0+move_tri, 0+move_tri], size = [20,20])
 
             #moment and shear:
-            m_max = Fun_Moment(p_mag_slide.value,a,b,l)
+            y_mom = []
+            y_shear = []
+
             if (l >= a):
-                #mom_source.data = dict(x=[] , y=[], x0=[0], cx=[5], x1=[10], y0=[2], cy=[1], y1=[0])
-                mom_source.data = dict(x=[], y=[])
-                shear_source.data = dict(x=[], y=[])
-            else:
-                mom_source.data = dict(x=[] , y=[])
-                shear_source.data = dict(x=[], y=[])
+                f1_mag = -1.0* p_mag*a/l*(l - a + a/2.0)
+                f2_mag = -1.0* ( p_mag* a**2.0 ) / 2.0 / l
+                for i in range(0,resol_plo):
+                    if x_length[i]<a:
+                        y_shear.append(f1_mag + p_mag*x_length[i])
+                        y_mom.append(f1_mag*x_length[i] + p_mag*x_length[i]**2/2.0)
+                    if x_length[i]>=a and x_length[i]<l:
+                        y_shear.append(f1_mag + p_mag* a)
+                        y_mom.append(f1_mag*a + (p_mag*a**2.0)/2.0 + (f1_mag + p_mag*a)*(x_length[i]-a))
+                    if x_length[i]>=l:
+                        y_shear.append( f1_mag + p_mag*a + f2_mag )
+                        y_mom.append( f1_mag*a + (p_mag*a**2.0)/2.0 + (f1_mag + p_mag*a)*(l-a) + ( f1_mag + p_mag*a + f2_mag) * (x_length[i]-l) ) 
+                mom_source.data = dict(x=x_length, y=y_mom)
+                shear_source.data = dict(x=x_length, y=y_shear)
+                # mom_source.data = dict(x=[], y=[])
+                # shear_source.data = dict(x=[], y=[])
+
+            else: #if l<a
+                f1_mag = -1.0*p_mag*a/l*(l-a/2.0)
+                f2_mag = -1.0*p_mag* a**2.0/2.0/l
+                for i in range(0,resol_plo):
+                    if x_length[i]<l:
+                        y_shear.append(f1_mag + p_mag*x_length[i])
+                        y_mom.append(f1_mag*x_length[i] + p_mag*x_length[i]**2.0/2.0)
+                    if x_length[i]>=l and x_length[i]<a:
+                        y_shear.append(f1_mag + p_mag *l + f2_mag + p_mag*(x_length[i]-l))
+                        y_mom.append(f1_mag*l + p_mag*l**2.0/2.0 + (f1_mag + p_mag*l+f2_mag)*(x_length[i]-l) + p_mag*(x_length[i]-l)**2.0/2.0)
+                    if x_length[i]>=a:
+                        y_shear.append(f1_mag + p_mag *l + f2_mag + p_mag*(a-l))
+                        y_mom.append(f1_mag*l + p_mag*l**2.0/2.0 + (f1_mag + p_mag*l+f2_mag)*(a-l) + p_mag*(a-l)**2.0/2.0 + (f1_mag + p_mag *l + f2_mag + p_mag*(a-l))* (x_length[i]-a))
+                mom_source.data = dict(x=x_length, y=y_mom)
+                shear_source.data = dict(x=x_length, y=y_shear)
+                # mom_source.data = dict(x=[] , y=[])
+                # shear_source.data = dict(x=[], y=[])
 
             #p_arrow and labels:
             if (p_mag<0):
