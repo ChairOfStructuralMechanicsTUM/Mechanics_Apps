@@ -30,7 +30,7 @@ TimePeriodRatio = 1
 force_value = 1.
 Force_duration = 1
 ForceInput = ""
-h = []
+h = [] 
 FI =[]
 final = []
 Te = Force_duration/TimePeriodRatio   
@@ -116,8 +116,8 @@ def evolve():
     maximum = 0
     maximumat = 0
     if(t==0):
-        final*=0
-        for i in range(0,1000,1): # making rectangular function 
+        final*=0 # reset the list 
+        for i in range(0,1000,1): # finding unit response function and store
             T= i*dt
             x=(1/(float(mass.Getmass())*WD))*exp(-D*W*T)*sin(WD*T) 
             h[i] = x
@@ -267,7 +267,6 @@ def updateParameters():
 
     parameters.data = dict(names1=[u'\u03c9',"Te"],names2=["D",u'\u03c9*'],values1=[round(W,4),round(Te,4)],values2=[round(D,4),round(WD,4)])
 
-
 play_button = Button(label="Play", button_type="success",width=100)
 play_button.on_click(play)
 pause_button = Button(label="Pause", button_type="success",width=100)
@@ -285,7 +284,7 @@ def ChangeForce(forcetype):
         Force_input.stream(dict(beta=[2],phi=[0]))
         final *= 0
         FI *= 0
-        for i in range(0,1000,1): # making rectangular function 
+        for i in range(0,1000,1): # making triangular function 
             T= i*0.02
             if (T<=1):
                 FI.append(T) 
@@ -306,7 +305,17 @@ def ChangeForce(forcetype):
             else:
                 FI.append(0)
     else:
-        print("Sinusoidal not yet implemented")
+        Force_input.data=dict(beta=[0],phi=[0])
+        for i in range(0,100,1):
+            Force_input.stream(dict(beta=[0.01*i],phi=[sin(0.01*i*pi)]))
+        final *= 0
+        FI *= 0
+        for i in range(0,1000,1): # making sinusoidal functions
+            T= i*0.02
+            if (T<=1):
+                FI.append(sin(T*pi)) 
+            else:
+                FI.append(0)
 
 def ForceSelection(attr,old,new):   
     ChangeForce(new)
