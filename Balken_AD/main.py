@@ -498,10 +498,140 @@ def Fun_Update(attrname, old, new):
     
     
     if radio_button_group.active == 2:
-        p_loc_slide.value = 0
-        p_loc_slide.disabled = True
-        print 2
-    
+
+        # p_loc_slide.value = 10 
+        # p_loc_slide.disabled = True
+        p_loc_slide.disabled = False
+        my_line.glyph.line_width = 15
+        
+        #EDIT
+        p_mag = p_mag_slide.value
+        a = p_loc_slide.value
+        l = f2_loc_slide.value
+        f2_coord = f2_loc_slide.value
+        p_coord = p_loc_slide.value
+        b = l - a
+        x1 = xf - l
+        # f_res=l-5
+
+
+        if f2_coord == 0:
+            xcan = x0
+            Fun_Cantilever()
+
+            if (p_mag<0):
+                #EDIT: Spannungsrechteck einsetzen!
+                p_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(p_mag/1.0)], yE=[1], lW = [2] )
+                labels_source.data = dict(x = [0] , y = [1],name = ['p'])
+            else:
+                p_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(p_mag/1.0)], yE=[-1], lW = [2] )
+                labels_source.data = dict(x = [0] , y = [-1],name = ['p'])
+            #cantilever moment calculation:
+            #max moment at fixed end x0. Moment max = P*l
+
+            #EDIT:
+            #m_max = (p_mag * a)/6
+            m_max = (p_mag * a)
+           
+            mom_source.data = dict(x=[], y=[])
+            shear_source.data = dict(x=[], y=[])
+
+            #if checkbox.active == [0]:
+            ynew = Fun_C_Deflection(p_mag,a,plot_source.data['x'])
+            plot_source.data = dict(x = np.linspace(x0,xf,resol), y = ynew)
+
+
+#####################
+        else: ##this else is what determines whether or not the figure is in cantilever mode
+#####################
+            quad_source.data = dict(top = [], bottom = [], left = [] , right = [])
+            segment_source.data = dict(x0= [], y0= [],x1 = [], y1 =[])
+
+            # f1_mag = Fun_F(p_mag_slide.value,b,l)
+            # f2_mag = Fun_F(p_mag_slide.value,a,l)
+
+            ynew = Fun_Deflection(a,b,l,p_mag,plot_source.data['x'])
+            plot_source.data = dict(x = np.linspace(x0,xf,resol), y = ynew)
+
+            move_tri = -0.4
+            #triangle_source.data = dict(x = [0.0,f2_loc_slide.value], y = [0+move_tri, 0+move_tri], size = [20,20])
+
+            #moment and shear:
+            y_mom = []
+            y_shear = []
+
+            if (l >= a):
+                f1_mag = -1.0*p_mag*a/2.0/l*(l-a+a/3.0)
+                f2_mag = -1.0*p_mag*a**2.0/l/3.0
+                for i in range(0,resol_plo):
+                    if x_length[i]<a:
+                        y_shear.append(f1_mag + p_mag*x_length[i]**2.0/2.0/a)
+                        y_mom.append( f1_mag*x_length[i] + x_length[i]**3.0*p_mag/6.0/a)
+                    if x_length[i]>=a and x_length[i]<l:
+                        y_shear.append( f1_mag + p_mag*a/2.0 )
+                        y_mom.append(f1_mag*a + a**2.0*p_mag/6.0 + (f1_mag + p_mag*a/2.0)*(x_length[i]-a) )
+                    if x_length[i]>=l:
+                        y_shear.append( f1_mag + p_mag*a/2.0 - p_mag*a**2.0/3.0/l)
+                        y_mom.append( f1_mag*a + a**2.0*p_mag/6.0 + (f1_mag + p_mag*a/2.0)*(l-a) ) 
+                mom_source.data = dict(x=x_length, y=y_mom)
+                shear_source.data = dict(x=x_length, y=y_shear)
+                # mom_source.data = dict(x=[], y=[])
+                # shear_source.data = dict(x=[], y=[])
+
+            else: #if l<a
+                f1_mag = -1.0* (p_mag*a/2.0 - p_mag*a**2.0/3.0/l)
+                f2_mag = -1.0* (p_mag*a**2.0/3.0/l)
+                for i in range(0,resol_plo):
+                    if x_length[i]<l:
+                        y_shear.append(f1_mag + p_mag*x_length[i]**2.0/2.0/a)
+                        y_mom.append( f1_mag*x_length[i] + x_length[i]**3.0*p_mag/6.0/a)
+                    if x_length[i]>=l and x_length[i]<a:
+                        y_shear.append(f1_mag + p_mag*l**2.0/2.0/a + f2_mag  + (p_mag*(x_length[i]-l) * (l/a+(l+x_length[i]-l)/a)/2.0 ))
+                        y_mom.append(f1_mag*l + l**3.0*p_mag/6.0/a + (f1_mag + p_mag*l**2.0/2.0/a + f2_mag)*(x_length[i]-l) + p_mag*l*(x_length[i]-l)**2.0/a/6.0 + p_mag*(x_length[i])/2.0/a * x_length[i]**2.0*2.0/3.0 )
+                    if x_length[i]>=a:
+                        y_shear.append( f1_mag + p_mag*l**2.0/2.0/a + f2_mag  + (p_mag*(a-l) * (l/a+(l+a-l)/a)/2.0 ))
+                        y_mom.append( 0 ) 
+                mom_source.data = dict(x=x_length, y=y_mom)
+                shear_source.data = dict(x=x_length, y=y_shear)
+                # mom_source.data = dict(x=[] , y=[])
+                # shear_source.data = dict(x=[], y=[])
+
+            #p_arrow and labels:
+            if (p_mag<0):
+                p_arrow_source.data = dict(xS= [p_coord], xE= [p_coord], yS= [1-(p_mag/1.0)], yE=[1], lW = [2] )
+                labels_source.data = dict(x = [0,0,f2_coord-0.2] , y = [1,move_tri,move_tri],name = ['p','A','B'])
+                support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
+                support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
+            else:
+                p_arrow_source.data = dict(xS= [p_coord], xE= [p_coord], yS= [-1-(p_mag/1.0)], yE=[-1], lW = [2] )
+                labels_source.data = dict(x = [0,-0.2,f2_coord-0.2] , y = [-1,move_tri,move_tri],name = ['p','A','B'])
+                support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
+                support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
+            #f1_arrow:
+            #if (f1_mag==0):
+                #f1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+            if (f1_mag<=-p_magi):
+                f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(f1_mag/1)], yE=[0.8], lW = [2])
+            elif ( f1_mag>-p_magi ) & ( f1_mag<=0 ):
+                f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(f1_mag/1)], yE=[0.8], lW = [2])
+            elif (f1_mag > 0) & ( f1_mag < p_magi ):
+                f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(f1_mag/1)], yE=[-0.8], lW = [2] )
+            else:
+                f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(f1_mag/1)], yE=[-0.8], lW = [2] )
+
+            #f2_arrow:
+            #if (f2_mag==0):
+            #    f2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[])
+            if (f2_mag<=-p_magi):
+                f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [1-(f2_mag/1)], yE=[0.8], lW = [2])
+            elif (f2_mag > -p_magi) & (f2_mag <= 0.0):
+                f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [1-(f2_mag/1)], yE=[0.8], lW = [2])
+            elif (f2_mag > 0) & ( f2_mag < p_magi ):
+                f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(f2_mag/1)], yE=[-0.8], lW = [2])
+            else:
+                f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(f2_mag/1)], yE=[-0.8], lW =[2])
+
+
 #initial function:
 def initial():
     p_loc_slide.value = p_loci
