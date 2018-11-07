@@ -14,17 +14,17 @@ from os.path import dirname, join, split
 #Global Beam Properties:
 resol = 100             # resolution of deflection visualization
 resol_plo = 1000        # resolution of forces plot
-x0 = 0                  #starting value of beam
-xf = 10                 #ending value of beam
+x0 = 0.0                  #starting value of beam
+xf = 10.0                 #ending value of beam
 E  = 5.0e1              #modulus of elasticity
-I  = 30                 #moment of inertia
+I  = 30.0                 #moment of inertia
 length  = xf-x0         #length of beam
 p_mag = 0.5             #initialize the p force
 p_magi = 0.5
 p_loci = xf/2
 f2_loci = xf
-lthi = 2
-plotwidth = 20
+lthi = 2.0
+plotwidth = 20.0
 loadoptionsi = 0
 
 #EDIT:
@@ -59,10 +59,10 @@ quad_source = ColumnDataSource(data=dict(top= [], bottom= [],left = [], right =[
 segment_source = ColumnDataSource(data=dict(x0= [], y0= [],x1 = [], y1 =[]))
 
 #Sliders:
-p_loc_slide= Slider(title="Load Position",value= p_loci,start = x0, end = xf, step = 1)
+p_loc_slide= Slider(title="Load Position",value= p_loci,start = x0, end = xf, step = 1.0)
 p_mag_slide = Slider(title="Load Amplitude", value = p_magi, start=-2*p_magi, end=2*p_magi, step=.1)
-f2_loc_slide = Slider(title="Support Position",value=f2_loci,start = x0, end = xf, step = 1)
-lth_slide = Slider(title="Beam-Height",value=lthi ,start = 2, end = 20, step = 1)
+f2_loc_slide = Slider(title="Support Position",value=f2_loci,start = x0, end = xf, step = 1.0)
+lth_slide = Slider(title="Beam-Height",value=lthi ,start = 2.0, end = 20.0, step = 1.0)
 
 radio_button_group = RadioButtonGroup(
         labels=["Point Load", "Constant Load", "Triangular Load"], active=loadoptionsi, width = 600)
@@ -395,15 +395,21 @@ def Fun_Update(attrname, old, new):
 
             #EDIT:
             #m_max = (p_mag * a)/6
-            m_max = (p_mag * a)
-           
-            mom_source.data = dict(x=[], y=[])
-            shear_source.data = dict(x=[], y=[])
+            # m_max = (p_mag * a)
+            y_mom=[]
+            y_shear=[]
+            for i in range(0,resol_plo):
+                if x_length[i]<a :
+                    y_shear.append(p_mag*a - p_mag*x_length[i])
+                    y_mom.append(p_mag*a**2.0/2.0-p_mag*x_length[i]**2.0/2.0 )
+                if x_length[i]>=a :
+                    y_shear.append(0)
+                    y_mom.append(0)
+            mom_source.data = dict(x=x_length, y=y_mom)
+            shear_source.data = dict(x=x_length, y=y_shear)
 
-            #if checkbox.active == [0]:
             ynew = Fun_C_Deflection(p_mag,a,plot_source.data['x'])
             plot_source.data = dict(x = np.linspace(x0,xf,resol), y = ynew)
-
 
 #####################
         else: ##this else is what determines whether or not the figure is in cantilever mode
@@ -530,13 +536,18 @@ def Fun_Update(attrname, old, new):
             #max moment at fixed end x0. Moment max = P*l
 
             #EDIT:
-            #m_max = (p_mag * a)/6
-            m_max = (p_mag * a)
-           
-            mom_source.data = dict(x=[], y=[])
-            shear_source.data = dict(x=[], y=[])
+            y_mom=[]
+            y_shear=[]
+            for i in range(0,resol_plo):
+                if x_length[i]<a :
+                    y_shear.append(p_mag*a/2.0-p_mag*x_length[i]/2.0)
+                    y_mom.append( p_mag*a**2.0/3.0-p_mag*a/2.0*x_length[i] + p_mag/6.0/a*x_length[i]**3.0  )
+                if x_length[i]>=a :
+                    y_shear.append(0)
+                    y_mom.append(0)
+            mom_source.data = dict(x=x_length, y=y_mom)
+            shear_source.data = dict(x=x_length, y=y_shear)
 
-            #if checkbox.active == [0]:
             ynew = Fun_C_Deflection(p_mag,a,plot_source.data['x'])
             plot_source.data = dict(x = np.linspace(x0,xf,resol), y = ynew)
 
@@ -580,14 +591,16 @@ def Fun_Update(attrname, old, new):
 
             else: #if l<a
                 f1_mag = -1.0* (p_mag*a/2.0 - p_mag*a**2.0/3.0/l)
-                f2_mag = -1.0* (p_mag*a**2.0/3.0/l)
+                # f1_mag = -1.0* ( p_mag*l**2.0 /a/6.0 - (p_mag /6.0/a + a*p_mag /3.0/l) * (a-l)**2.0 )
+                f2_mag = -1.0* ( p_mag*a**2.0 /3.0/l )
                 for i in range(0,resol_plo):
                     if x_length[i]<l:
                         y_shear.append(f1_mag + p_mag*x_length[i]**2.0/2.0/a)
                         y_mom.append( f1_mag*x_length[i] + x_length[i]**3.0*p_mag/6.0/a)
                     if x_length[i]>=l and x_length[i]<a:
-                        y_shear.append(f1_mag + p_mag*l**2.0/2.0/a + f2_mag  + (p_mag*(x_length[i]-l) * (l/a+(l+x_length[i]-l)/a)/2.0 ))
-                        y_mom.append(f1_mag*l + l**3.0*p_mag/6.0/a + (f1_mag + p_mag*l**2.0/2.0/a + f2_mag)*(x_length[i]-l) + p_mag*l*(x_length[i]-l)**2.0/a/6.0 + p_mag*(x_length[i])/2.0/a * x_length[i]**2.0*2.0/3.0 )
+                        # y_shear.append(f1_mag + p_mag*l**2.0 /2.0/a + f2_mag  + (p_mag*(x_length[i]-l) * (l/a + (l+(x_length[i]-l)) /a) /2.0 ) )
+                        y_shear.append(f1_mag + p_mag*l**2.0 /2.0/a + f2_mag  + ( l*p_mag*(x_length[i]-l) /a + (((x_length[i]-l)-l)*p_mag*(x_length[i]-l) /a/2.0) ))
+                        y_mom.append(f1_mag*l + l**3.0*p_mag/6.0/a + (f1_mag + p_mag*l**2.0/2.0/a + f2_mag)*(x_length[i]-l) + p_mag*l*(x_length[i]-l)**2.0/a/6.0 + p_mag*(x_length[i])/2.0/a * (x_length[i]-l)**2.0*2.0/3.0 )
                     if x_length[i]>=a:
                         y_shear.append( f1_mag + p_mag*l**2.0/2.0/a + f2_mag  + (p_mag*(a-l) * (l/a+(l+a-l)/a)/2.0 ))
                         y_mom.append( 0 ) 
