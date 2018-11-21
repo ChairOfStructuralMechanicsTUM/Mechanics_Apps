@@ -126,7 +126,7 @@ def Fun_C_Deflection(p,b,x):
     if radio_button_group.active == 0:
         ynew = []
         a = xf - b;     #The a for cantilever is the distance between
-                    #the free end and the concentrated load.
+                        #the free end and the concentrated load.
         for i in range(0,resol):
             if x[i] < a:
                 #dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
@@ -554,12 +554,12 @@ def Fun_Update(attrname, old, new):
         p_loc_slide.disabled = False
         my_line.glyph.line_width = 15
         
-        #EDIT
-        p_mag = p_mag_slide.value
-        a = p_loc_slide.value
-        l = f2_loc_slide.value
-        f2_coord = f2_loc_slide.value
-        p_coord = p_loc_slide.value
+        #EDIT set float-type right at the input of data
+        p_mag = float(p_mag_slide.value)
+        a = float(p_loc_slide.value)
+        l = float(f2_loc_slide.value)
+        f2_coord = float(f2_loc_slide.value)
+        p_coord = float(p_loc_slide.value)
         b = l - a
         x1 = xf - l
         # f_res=l-5
@@ -570,7 +570,6 @@ def Fun_Update(attrname, old, new):
             Fun_Cantilever()
 
             if (p_mag<0) and (p_coord!=0):
-                #EDIT: Spannungsrechteck einsetzen!
                 p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1+p_mag/2.3-p_mag/10.0], yE=[1+p_mag/2.3], lW = [2] )
                 p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1+p_mag/2.3-p_mag/2.6], yE=[1+(p_mag/2.3)], lW = [2] )
                 p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1-(p_mag/2.3/1.9)], yE=[1+(p_mag/2.3)], lW = [2] )
@@ -670,20 +669,32 @@ def Fun_Update(attrname, old, new):
                 # shear_source.data = dict(x=[], y=[])
 
             else: #if l<a
-                f1_mag = -1.0* (p_mag*a/2.0 - p_mag*a**2.0/3.0/l)
+                # f1_mag = -1.0* (p_mag*a/2.0 - p_mag*a**2.0/3.0/l)
                 # f1_mag = -1.0* ( p_mag*l**2.0 /a/6.0 - (p_mag /6.0/a + a*p_mag /3.0/l) * (a-l)**2.0 )
+                
+                f1_mag_1 = -1.0*p_mag*a/2.0/l*(l-a+a/3.0)
                 f2_mag = -1.0* ( p_mag*a**2.0 /3.0/l )
+                f1_mag = -1.0*(p_mag*a/2.0 + f2_mag)
+
+
                 for i in range(0,resol_plo):
+                    # if x_length[i]<l:
+                    #     y_shear.append(f1_mag + p_mag*x_length[i]**2.0/2.0/a)
+                    #     y_mom.append( f1_mag*x_length[i] + x_length[i]**3.0*p_mag/6.0/a)
                     if x_length[i]<l:
                         y_shear.append(f1_mag + p_mag*x_length[i]**2.0/2.0/a)
                         y_mom.append( f1_mag*x_length[i] + x_length[i]**3.0*p_mag/6.0/a)
                     if x_length[i]>=l and x_length[i]<a:
                         # y_shear.append(f1_mag + p_mag*l**2.0 /2.0/a + f2_mag  + (p_mag*(x_length[i]-l) * (l/a + (l+(x_length[i]-l)) /a) /2.0 ) )
-                        y_shear.append(f1_mag + p_mag*l**2.0 /2.0/a + f2_mag  + ( l*p_mag*(x_length[i]-l) /a + (((x_length[i]-l)-l)*p_mag*(x_length[i]-l) /a/2.0) ))
-                        y_mom.append(f1_mag*l + l**3.0*p_mag/6.0/a + (f1_mag + p_mag*l**2.0/2.0/a + f2_mag)*(x_length[i]-l) + p_mag*l*(x_length[i]-l)**2.0/a/6.0 + p_mag*(x_length[i])/2.0/a * (x_length[i]-l)**2.0*2.0/3.0 )
+                        # y_shear.append(f1_mag + p_mag*l**2.0 /2.0/a + f2_mag  + ( l*p_mag*(x_length[i]-l) /a + (((x_length[i]-l)-l)*p_mag*(x_length[i]-l) /a/2.0) ))
+                        y_shear.append(f1_mag + p_mag*l**2.0 /2.0/a + f2_mag  + (l/a*p_mag*(x_length[i]-l) + (x_length[i]/a-l/a)*p_mag*(x_length[i]-l)/2.0) ) 
+                        y_mom.append((f1_mag*l + p_mag*l**3.0 /6.0/a) + f2_mag*(x_length[i]-l)  + (f1_mag + p_mag*l**2.0/2.0/a)*(x_length[i]-l) + (l/a*p_mag*(x_length[i]-l))*(1.0/2.0)*(x_length[i]-l) + ((x_length[i]/a-l/a)*p_mag*(x_length[i]-l)/2.0)*(1.0/3.0)*(x_length[i]-l) )
+                        # y_mom.append(f1_mag*l + l**3.0*p_mag/6.0/a + (f1_mag + p_mag*l**2.0/2.0/a + f2_mag)*(x_length[i]-l) + p_mag*l*(x_length[i]-l)**2.0/a/6.0 + p_mag*(x_length[i])/2.0/a * (x_length[i]-l)**2.0*2.0/3.0 )
                     if x_length[i]>=a:
-                        y_shear.append( f1_mag + p_mag*l**2.0/2.0/a + f2_mag  + (p_mag*(a-l) * (l/a+(l+a-l)/a)/2.0 ))
+                        y_shear.append( 0 )
                         y_mom.append( 0 ) 
+                    
+
                 mom_source.data = dict(x=x_length, y=y_mom)
                 shear_source.data = dict(x=x_length, y=y_shear)
                 # mom_source.data = dict(x=[] , y=[])
@@ -691,7 +702,6 @@ def Fun_Update(attrname, old, new):
 
             #p_arrow and labels:
             if (p_mag<0) and (p_coord!=0):
-                #EDIT: Spannungsrechteck einsetzen!
                 p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1+p_mag/2.3-p_mag/10.0], yE=[1+p_mag/2.3], lW = [2] )
                 p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1+p_mag/2.3-p_mag/2.6], yE=[1+(p_mag/2.3)], lW = [2] )
                 p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1-(p_mag/2.3/1.9)], yE=[1+(p_mag/2.3)], lW = [2] )
