@@ -3,6 +3,8 @@ This repository contains the python codes for webbased-visualization for mechani
 It contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Müller, TUM (Technical University of Munich).
 
 ## Overview
+[![bokeh version](https://img.shields.io/badge/bokeh%20version-0.12.16-blue.svg?style=flat)](https://github.com/bokeh/bokeh)
+
 The use of this repository is only suggested for developers. If you are only interested in using the completed apps, please visit the following website: http://www.bm.bgu.tum.de/lehre/interactive-apps/.
 
 Before starting developing, please take a look at our [Development Guideline](DevelopmentGuideline.md). We use two different bokeh servers for different groups of apps, in order to avoid conflicts: the simplest apps run on one server, the most complex ones run on a second server.
