@@ -23,6 +23,22 @@ The following points are important for all developers.
 * Try to avoid very long and complex functions. It might be helpful to subdivide a function into several functions that partially solve a certain task.
 * Don't use ```from ... import *```. It is hard to understand the origin of a function or variable if it is not imported explicitly. Better use ```from ... import foo, bar```.
 
+## Debugging with Visual Studio Code
+It is possible to debug the bokeh apps using a custom launch configuration in Visual Studio Code. It is pssoble to add breakpoints and monitor your variables in VS Code. You have to add the following code to your `launch.json`:
+
+```json
+{   
+    "name": "Bokeh App", 
+    "type": "python", 
+    "request": "launch", 
+    "stopOnEntry": false,
+    "module": "bokeh", 
+    "args": [ "serve", "--show", "${fileDirname}" ], 
+    "console": "integratedTerminal",
+}
+```
+More information on launch configurations: https://code.visualstudio.com/docs/editor/debugging.
+
 ## LaTeX support
 Latex support is made available via the KaTeX library (https://khan.github.io/KaTeX/). All widgets, annotations, etc. which provide LaTeX support can be found in the folder `shared` and can be imported using:
 
