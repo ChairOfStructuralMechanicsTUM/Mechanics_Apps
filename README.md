@@ -137,11 +137,9 @@ Please comply with the [Development Guideline](DevelopmentGuideline.md)
 
 - Emily Bourne, eb
 - Moustafa Alsayed Ahmad, ma
-- Antonios Kamariotis, ak
 - Abraham Duplaa, ad
 - Benjamin Rueth, br
 - Rishith Ellath Meethal, rem
 - Ravil Dorozhinskii, rd
-- Razieh Rezaei, rr
 - Vyshakh Unnikrishnan, vu
 - Carmen Font Mata, cfm 
