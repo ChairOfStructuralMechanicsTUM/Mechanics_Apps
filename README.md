@@ -3,6 +3,8 @@ This repository contains the python codes for webbased-visualization for mechani
 It contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Müller, TUM (Technical University of Munich).
 
 ## Overview
+[![bokeh version](https://img.shields.io/badge/mechanic%20apps%7Cbokeh-0.12.16-blue.svg?style=flat)](https://github.com/bokeh/bokeh)  [![Conda fastai version](https://img.shields.io/conda/v/bokeh/bokeh.svg)](https://anaconda.org/bokeh/bokeh)
+
 The use of this repository is only suggested for developers. If you are only interested in using the completed apps, please visit the following website: http://www.bm.bgu.tum.de/lehre/interactive-apps/.
 
 Before starting developing, please take a look at our [Development Guideline](DevelopmentGuideline.md). We use two different bokeh servers for different groups of apps, in order to avoid conflicts: the simplest apps run on one server, the most complex ones run on a second server.
@@ -10,7 +12,7 @@ Before starting developing, please take a look at our [Development Guideline](De
 This repository contains one folder for each App, with a main file and subfunction-files. The following files are important for the installation of the Bokeh framework:
 
 ### Files
-(.cmd is used for windows and .sh is udes for Linux. From a .sh file you can create the .exe file with http://www.f2ko.de/en/b2e.php)
+(.cmd is used for windows and .sh is used for Linux. From a .sh file you can create the .exe file with http://www.f2ko.de/en/b2e.php)
 
 * ```installer.cmd/sh``` for installation of the current bokeh version and the necessary python packages
 * ```server_autorun.cmd/sh``` calls the files for running the bokeh servers (bokehrunner.sh and bokehrunner_testing.sh)
@@ -135,11 +137,9 @@ Please comply with the [Development Guideline](DevelopmentGuideline.md)
 
 - Emily Bourne, eb
 - Moustafa Alsayed Ahmad, ma
-- Antonios Kamariotis, ak
 - Abraham Duplaa, ad
 - Benjamin Rueth, br
 - Rishith Ellath Meethal, rem
 - Ravil Dorozhinskii, rd
-- Razieh Rezaei, rr
 - Vyshakh Unnikrishnan, vu
 - Carmen Font Mata, cfm 
