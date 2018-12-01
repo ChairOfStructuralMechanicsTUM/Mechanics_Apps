@@ -239,15 +239,26 @@ def reset(): # resets values to initial cofiguration
         arrow_line.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
     updateParameters()
 
-def reset_sideplots():
-    global omega_max,t_max,Dis_max
-    t_max.data=dict(t=[0],s=[0])
-    omega_max.data=dict(t=[0],s=[0])
+def reset_OmegaMax_plot():
+    global omega_max,time,omega
+    pause()
+    time = 0
+    omega = 0
+    omega_max.data=dict(time=[0],omega=[0])
+    updateParameters()
+
+def reset_Tmax_plot():
+    global t_max,time,tmax
+    pause()
+    time = 0
+    tmax =0
+    t_max.data=dict(time=[0],tmax=[0])
+    updateParameters()
 
 reset_button_p_af = Button(label="Reset", button_type="success", width=50)
-reset_button_p_af.on_click(reset_sideplots)
+reset_button_p_af.on_click(reset_OmegaMax_plot)
 reset_button_p_pa = Button(label="Reset", button_type="success", width=50)
-reset_button_p_pa.on_click(reset_sideplots)
+reset_button_p_pa.on_click(reset_Tmax_plot)
 
 def updateParameters():
     #input
