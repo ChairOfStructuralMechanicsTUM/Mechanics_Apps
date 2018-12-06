@@ -140,7 +140,7 @@ def foo():
 foo()
 ```
 
-* ColumnDataSources can hold any number of variables using a directory and lists.
+* ColumnDataSources can hold any number of variables using a dictionary and lists.
 * Updating single variables of a ColumnDataSource is **not** possible. Always update the whole dict, otherwise variables will get lost.
 * All "global" variables need to be loaded in the specific function. If in-place-operations were used, the saving step is optional.
 
