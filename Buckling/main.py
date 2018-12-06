@@ -1,13 +1,13 @@
 #Knickung (buckling) animation:
 #This animation creates 4 columns.
-#   Each column is a different height
-#   Each column has different boundary conditions
+#   All columns are of the same height
 #   All columns have the same material properties
-#   All columns buckle at the same F-ratio value
+#   Each column has different boundary conditions
+#   Each columns buckle at a different F-ratio value
 
 #Import libraries:
-from bokeh.plotting import Figure, output_file , show
-from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow, NormalHead, Button, Div
+from bokeh.plotting import Figure
+from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, NormalHead, Button
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
 import numpy as np
@@ -25,19 +25,15 @@ xf              = 0.0
 window          = 18
 xstart          = 0.02 * window
 zstart          = 0.1 * window  #height of floor
-#zbifi           = (0.46368*2)
 step            = 0.01
 f_end           = 5.0 #1.5
 w_end           = 0.15
-#old_slide_val   = 0
 
-
-L = 10.0
-fcrit_2 = 1.0
+L               = 10.0
+fcrit_2         = 1.0  # reference for critical force is second column
 
 # replaces global var
 global_old_slide_val = ColumnDataSource(data=dict(val=[0]))
-
 
 
 #Class created for the columns:
@@ -54,17 +50,19 @@ class Column(object):
         self.floor      = dict(x = [] , y = [])                                 #coordinates for floor of column
         self.arrow      = ColumnDataSource(data=dict(xS=[], xE=[],              #Force arrow of column
         yS=[], yE=[], lW = []))
-        self.labels     = ColumnDataSource(data=dict(x=[] , y=[],name = []))    #Force arrows labels
-        self.sk         = ColumnDataSource(data=dict(x=[] , y=[]))              #buckling length
+        self.labels     = ColumnDataSource(data=dict(x=[] , y=[], name = []))   #Force arrows labels
+        self.sk         = ColumnDataSource(data=dict(x=[] , y=[]))              #buckling length (visual)
+        self.sk_labels  = ColumnDataSource(data=dict(x=[] , y=[], name = []))   #buckling length (visual)
 
     def reset(self):
         '''Member function made to reset the column to orginal position'''
-        self.h            = self.hi
-        self.deflection   = self.defi
-        self.arrow.data   = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        self.labels.data  = dict(x=[], y=[], name = [])
-        self.pts.data     = dict(x=[self.xstart, self.xstart], y=[zstart, zstart+self.hi])
-        self.sk.data      = dict(x=[], y=[])
+        self.h              = self.hi
+        self.deflection     = self.defi
+        self.arrow.data     = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        self.labels.data    = dict(x=[], y=[], name = [])
+        self.pts.data       = dict(x=[self.xstart, self.xstart], y=[zstart, zstart+self.hi])
+        self.sk.data        = dict(x=[], y=[])
+        self.sk_labels.data = dict(x=[], y=[], name = [])
 
     def fun_floor(self):
         '''Member function: creates the floor line for the column'''
@@ -74,9 +72,16 @@ class Column(object):
         '''Member function: Creates Force arrow'''
         # stop adding force if critial force is reached
         if weight_slide.value < self.fcrit:
-            arrow_length = weight_slide.value
+            arrow_length = weight_slide.value * fcrit_2
         else:
             arrow_length = self.fcrit
+            
+        #arrow_length *= 2.0 # scale arrow length  # could also be scaled with fcrit_2
+        arrow_length += 0.42 # offset so that the arrow head glyph does not cover a small vector
+        
+        # add a bit for the starting case so that the glyphs point to the right direction (downwards)
+        if np.isclose(arrow_length,0):
+            arrow_length = 0.001
         
         xS = [self.pts.data['x'][-1]] # starting point x-coordinate
         xE = [self.pts.data['x'][-1]] # end point x-coordinate
@@ -102,10 +107,10 @@ def drange(start,stop,step):
         r += step
 
 
-col1 = Column("Free-Fixed",L,0.25*fcrit_2)                                               #beam: "Free-Fixed" Column
-col2 = Column("Pinned-Pinned",L,fcrit_2)                        #beam: "Pinned-Pinned" Column
-col3 = Column("Pinned-Fixed",L,2.0*fcrit_2)                         #beam: "Pinned-Fixed" Column
-col4 = Column("Fixed-Fixed",L,4.0*fcrit_2)                          #beam: "Fixed-Fixed" Column
+col1 = Column("Free-Fixed",L,0.25*fcrit_2)                                      #beam: "Free-Fixed" Column
+col2 = Column("Pinned-Pinned",L,fcrit_2)                                        #beam: "Pinned-Pinned" Column
+col3 = Column("Pinned-Fixed",L,2.0*fcrit_2)                                     #beam: "Pinned-Fixed" Column
+col4 = Column("Fixed-Fixed",L,4.0*fcrit_2)                                      #beam: "Fixed-Fixed" Column
 
 
 #where the columns start on the graph:
@@ -151,15 +156,16 @@ def fun_col1(x0,y0):
     y = np.linspace(0,col1.h,30)
     x = np.cos(np.pi/(2*col1.h)*y)-1
     col1.pts.data = dict(x = x0 + x, y = y0 + y) 
-    #col1.sk.data = dict(x=[col1.xstart+1.5, col1.xstart+1.5], y=[zstart, zstart+col1.h])
     col1.sk.data = dict(x=[col1.xstart+1.2, col1.xstart+1.8, col1.xstart+1.5, col1.xstart+1.5, col1.xstart+1.2, col1.xstart+1.8], y=[zstart, zstart, zstart, zstart+col1.h, zstart+col1.h, zstart+col1.h])
+    col1.sk_labels.data = dict(x=[col1.xstart+1.7], y=[zstart+0.5*col1.h], name=["sk/2 = L"])
 
 def fun_col2(x0,y0):
     '''Function: Calculates deflection in column 2'''
     y = np.linspace(0,col2.h,30)
     x = np.sin(np.pi/col2.h*y)
     col2.pts.data = dict(x = x0 + x, y = y0 + y)
-    col2.sk.data = dict(x=[col2.xstart+1.5, col2.xstart+1.5], y=[zstart, zstart+col2.h])
+    col2.sk.data = dict(x=[col2.xstart+1.2, col2.xstart+1.8, col2.xstart+1.5, col2.xstart+1.5, col2.xstart+1.2, col2.xstart+1.8], y=[zstart, zstart, zstart, zstart+col2.h, zstart+col2.h, zstart+col2.h])
+    col2.sk_labels.data = dict(x=[col2.xstart+1.7], y=[zstart+0.5*col2.h], name=["sk = L"])
 
 def fun_col3(x0,y0):
     '''Function: Calculates deflection in column 3'''
@@ -167,14 +173,16 @@ def fun_col3(x0,y0):
     y = np.linspace(0,col3.h,30)
     x = np.cos(alph*y)-np.sin(alph*y)/(alph*col3.h) + y/col3.h -1
     col3.pts.data = dict(x = x0 + x, y = y0 + y)
-    col3.sk.data = dict(x=[col3.xstart+1.5, col3.xstart+1.5], y=[zstart+col3.h, zstart+0.3*col3.h])
+    col3.sk.data = dict(x=[col3.xstart+1.2, col3.xstart+1.8, col3.xstart+1.5, col3.xstart+1.5, col3.xstart+1.2, col3.xstart+1.8], y=[zstart+0.3*col3.h, zstart+0.3*col3.h, zstart+0.3*col3.h, zstart+col3.h, zstart+col3.h, zstart+col3.h])
+    col3.sk_labels.data = dict(x=[col3.xstart+1.7], y=[zstart+0.5*col3.h], name=["sk = 0.7"u"\u00B7L"])
 
 def fun_col4(x0,y0):
     '''Function: Calculates deflection in column 4'''
     y = np.linspace(0,col4.h,30)
     x = np.cos(2*np.pi/col4.h*y)-1
     col4.pts.data = dict(x = x0 + x, y = y0 + y)
-    col4.sk.data = dict(x=[col4.xstart+1.5, col4.xstart+1.5], y=[zstart+0.25*col4.h, zstart+0.75*col4.h])
+    col4.sk.data = dict(x=[col4.xstart+1.2, col4.xstart+1.8, col4.xstart+1.5, col4.xstart+1.5, col4.xstart+1.2, col4.xstart+1.8], y=[zstart+0.25*col4.h, zstart+0.25*col4.h, zstart+0.25*col4.h, zstart+0.75*col4.h, zstart+0.75*col4.h, zstart+0.75*col4.h])
+    col4.sk_labels.data = dict(x=[col4.xstart+1.7], y=[zstart+0.5*col4.h], name=["sk = 0.5"u"\u00B7L"])
 
 def fun_figures():
     '''Function: moves the figures in plot when columns buckle'''
@@ -186,7 +194,6 @@ def fun_figures():
 
 def init():
     '''Initializes plot. When Reset button is clicked, this is the function that is called'''
-    #global old_slide_val
     global_old_slide_val.data = dict(val=[0])
     weight_slide.value    = 0
     col1.reset()
@@ -198,7 +205,6 @@ def init():
 def fun_check1(attr,old,new):
     '''fun_check1 checks whether slider value is less than previous slider value. If
     so, then the slider is kept at older value.'''
-    #global old_slide_val
     [old_slide_val] = global_old_slide_val.data["val"]
     if weight_slide.value <= old_slide_val:
         weight_slide.value = old_slide_val
@@ -208,14 +214,12 @@ def fun_check1(attr,old,new):
         print "does not work"
     
 
-
 def fun_update(attr,old,new):
     '''Function: Updates the plot when the weight slider is used'''
-    #global old_slide_val
     
     #'abs(value -fcrit)<5*step' to avoid unnecessary function calls is still too fine
     # compare with '<' only
-    print(weight_slide.value)
+    #print(weight_slide.value)
     if weight_slide.value > col1.fcrit:
         fun_col1(col1.xstart,zstart)
     if weight_slide.value > col2.fcrit:
@@ -225,10 +229,6 @@ def fun_update(attr,old,new):
     if weight_slide.value > col4.fcrit:
         fun_col4(col4.xstart,zstart)
     
-    #fun_col1(col1.xstart,zstart)
-    #fun_col2(col2.xstart,zstart)
-    #fun_col3(col3.xstart,zstart)
-    #fun_col4(col4.xstart,zstart)
     col1.fun_arrow()
     col2.fun_arrow()
     col3.fun_arrow()
@@ -248,7 +248,13 @@ def fun_update(attr,old,new):
 
 
 #Main plot:
-plot = Figure(tools = "", x_range=(-2,window), y_range=(-.5,window+2))
+plot = Figure(tools = "", x_range=(-2,window), y_range=(-.5,window))
+# original position
+plot.line(x=[col1.xstart,col1.xstart], y=[zstart,zstart+col1.h], color='gray',line_width=5, line_dash="6 4 2 4")
+plot.line(x=[col2.xstart,col2.xstart], y=[zstart,zstart+col2.h], color='gray',line_width=5, line_dash="6 4 2 4")
+plot.line(x=[col3.xstart,col3.xstart], y=[zstart,zstart+col3.h], color='gray',line_width=5, line_dash="6 4 2 4")
+plot.line(x=[col4.xstart,col4.xstart], y=[zstart,zstart+col4.h], color='gray',line_width=5, line_dash="6 4 2 4")
+# current column form
 plot.line(x='x', y='y', source = col1.pts, color='#003359',line_width=5)        #Column 1
 plot.line(x='x', y='y', source = col2.pts, color='#003359',line_width=5)        #Column 2
 plot.line(x='x', y='y', source = col3.pts, color='#003359',line_width=5)        #Column 3
@@ -276,6 +282,7 @@ plot.line(x='x', y='y', source = col1.sk, color='orange',line_width=2)
 plot.line(x='x', y='y', source = col2.sk, color='orange',line_width=2)
 plot.line(x='x', y='y', source = col3.sk, color='orange',line_width=2)
 plot.line(x='x', y='y', source = col4.sk, color='orange',line_width=2)
+
 #Main plot properties:
 plot.axis.visible = False
 plot.grid.visible = False
@@ -297,14 +304,25 @@ col4_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
 x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col4.arrow,line_color="#A2AD00")
 
 #Labels section:
+# F and column name
 labels1 = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-20, y_offset=0, source=col1.labels, render_mode='canvas')
 labels2 = LabelSet(x='x', y='y', text='name', level='glyph',
-              x_offset=-30, y_offset=0, source=col2.labels, render_mode='canvas')
+              x_offset=-20, y_offset=0, source=col2.labels, render_mode='canvas')
 labels3 = LabelSet(x='x', y='y', text='name', level='glyph',
-              x_offset=-30, y_offset=0, source=col3.labels, render_mode='canvas')
+              x_offset=-20, y_offset=0, source=col3.labels, render_mode='canvas')
 labels4 = LabelSet(x='x', y='y', text='name', level='glyph',
-              x_offset=-30, y_offset=0, source=col4.labels, render_mode='canvas')
+              x_offset=-20, y_offset=0, source=col4.labels, render_mode='canvas')
+
+# buckling length
+sk_l1 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+              x_offset=-10, y_offset=0,    source=col1.sk_labels, render_mode='canvas')
+sk_l2 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+              x_offset=+11, y_offset=0,    source=col2.sk_labels, render_mode='canvas')
+sk_l3 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+              x_offset=-10, y_offset=0,    source=col3.sk_labels, render_mode='canvas')
+sk_l4 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+              x_offset=-10, y_offset=0,    source=col4.sk_labels, render_mode='canvas')
 
 #label properties
 labels1.text_font_size = '10pt'
@@ -312,17 +330,26 @@ labels2.text_font_size = '10pt'
 labels3.text_font_size = '10pt'
 labels4.text_font_size = '10pt'
 
+sk_l1.text_font_size = '10pt'
+sk_l2.text_font_size = '10pt'
+sk_l3.text_font_size = '10pt'
+sk_l4.text_font_size = '10pt'
+
 #Add layouts of arrows and labels in to plot:
 plot.add_layout(col1_a)
 plot.add_layout(col2_a)
 plot.add_layout(col3_a)
 plot.add_layout(col4_a)
+
 plot.add_layout(labels1)
 plot.add_layout(labels2)
 plot.add_layout(labels3)
 plot.add_layout(labels4)
 
-
+plot.add_layout(sk_l1)
+plot.add_layout(sk_l2)
+plot.add_layout(sk_l3)
+plot.add_layout(sk_l4)
 
 
 ################################################################################
@@ -344,13 +371,10 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 description1_filename = join(dirname(__file__), "description1.html")
 description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=False, width=1200)
 
-
-
 ################################################################################
 ####Output section
 ################################################################################
 #Output to the browser:
 curdoc().add_root(column(description1, plot, row(weight_slide, Spacer(width=50), button), description))
-
 
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
