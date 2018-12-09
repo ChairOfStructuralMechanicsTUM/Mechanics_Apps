@@ -10,17 +10,19 @@ from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
 import numpy as np
 import math
 from os.path import dirname, join, split
+# from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
 
 #Global Beam Properties:
 resol = 100             # resolution of deflection visualization
 resol_plo = 1000        # resolution of forces plot
 x0 = 0.0                  #starting value of beam
-xf = 10.0                 #ending value of beam
-E  = 5.0e1              #modulus of elasticity
+xf = 10.0
+# E  = 5.0e1                 #ending value of beam
+E  = 2.0e1              #modulus of elasticity
 I  = 30.0                 #moment of inertia
 length  = xf-x0         #length of beam
-p_mag = 0.5             #initialize the p force
+p_mag = []             #initialize the p force
 p_magi = 1.0
 p_loci = xf/2
 f2_loci = xf
@@ -35,9 +37,11 @@ y_shear = []
 #Sources:
 #Plot source:
 plot_source = ColumnDataSource(data=dict(x = np.linspace(x0,xf,resol), y = np.ones(resol) * 0 ))
+#Plot label Source:
+plot1_label_source   = ColumnDataSource(data=dict(x=[], y=[], names=[]))
+plot2_label_source   = ColumnDataSource(data=dict(x=[], y=[], names=[]))
 #Moment Source:
 mom_source = ColumnDataSource(data=dict(x=[], y=[]))
-
 #Shear Source:
 shear_source = ColumnDataSource(data=dict(x=[] , y=[]))
 #Arrow Sources:
@@ -49,8 +53,7 @@ f1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []
 #Load Shapes Sources:
 constant_load_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
 triangular_load_source  = ColumnDataSource(data=dict(x=[], y=[]))
-
-#label_source:
+#Label Source:
 labels_source = ColumnDataSource(data=dict(x=[] , y=[],name = []))
 #Support Source:
 support1 = "Balken_AD/static/images/auflager02.svg"
@@ -73,94 +76,156 @@ radio_button_group = RadioButtonGroup(
 
 
 #FUNCTION: Calculation of deflection:
-def Fun_Deflection(a,b,l,p,x):
+def Fun_Deflection(a,b,l,p_mag,x):
     ynew = []
-    ynew1 = []
-    ynew2 = []
-    for i in range(0,int(l*(resol/10) ) ):
-        # if a > l:
-        #     dy = ( ( p * b * x[i]) / (6 * E * I * l) ) * ( (l**2) - (x[i]**2) )
-        # else:
-        #     if x[i] < a:
-        #         dy = ( ( p * b * x[i]) / (6 * E * I * l) ) * ( (l**2) - (b**2) - (x[i]**2) )
-        #     elif x[i] == a:
-        #         dy = ( p * (a**2) * (b**2) ) / (3 * E * I * l)
-        #     elif x[i] > a and x[i] <= l:
-        #         dy = ( (p * a * (l-x[i]) ) / (6 * E * I * l) ) * ( (2*l*x[i]) - (x[i]**2) - (a**2) )
+    for i in range(0,int(resol) ):
         dy = 0
-        ynew1.append(dy)
+        ynew.append(dy)
+    return ynew    
 
-    new_range = int(resol - l*10)
-    for i in range(0,new_range):
-        dy1 = 0
-        # dy1 = -1 *( ( (p * a * b * x[i]) / (6 * E * I * l) ) * (l + a) )
-        ynew2.append(dy1)
 
-    ynew = ynew1 + ynew2
-    return ynew
+    # if radio_button_group.active == 0:    
+    #     ynew = []
+    #     ynew1 = []
+    #     ynew2 = []
+    #     for i in range(0,int(l*(resol/10) ) ):
+    #         if a > l:
+    #             dy = ( ( p_mag * b * x[i]) / (6 * E * I * l) ) * ( (l**2) - (x[i]**2) )
+    #         else:
+    #             if x[i] < a:
+    #                 dy = ( ( p_mag * b * x[i]) / (6 * E * I * l) ) * ( (l**2) - (b**2) - (x[i]**2) )
+    #             elif x[i] == a:
+    #                 dy = ( p_mag * (a**2) * (b**2) ) / (3 * E * I * l)
+    #             elif x[i] > a and x[i] <= l:
+    #                 dy = ( (p_mag * a * (l-x[i]) ) / (6 * E * I * l) ) * ( (2*l*x[i]) - (x[i]**2) - (a**2) )
+    #         # dy = 0
+    #         ynew1.append(dy)
+    #     new_range = int(resol - l*10)
+    #     for i in range(0,new_range):
+    #         # dy1 = 0
+    #         dy1 = -1 *( ( (p_mag * a * b * x[i]) / (6 * E * I * l) ) * (l + a) )
+    #         ynew2.append(dy1)
+    #     ynew = ynew1 + ynew2
+    #     return ynew
+
+
+    # if radio_button_group.active == 1:
+    #     ynew = []
+    #     for i in range(0,int(resol) ):
+    #         if a > l:
+    #             f1_mag = 1.0*p_mag*a/l*(l-a/2.0)
+    #             f2_mag = p_mag*a-f1_mag
+    #             #calculate phi(x1=0) and phi(x2=0):
+    #             phi_x1_0 = 1.0/E/I*(f1_mag*l**2.0/6.0 - p_mag*l**3.0/24.0) 
+    #             phi_x2_0 = 1.0/E/I*(p_mag*l**3.0/6.0-f1_mag*l**2.0/2.0+ E*I*phi_x1_0)
+    #             phi_x3_0 = 1.0/E/I*(p_mag*a**3.0/6.0 - (f1_mag + f2_mag - p_mag *l)*a**2.0/2.0 - (f1_mag*l - p_mag*l**2.0/2.0)*a + E*I*phi_x2_0)
+    #             if x[i]<l:
+    #                 dy = 1.0/E/I * (p_mag*x[i]**4.0/24.0 - f1_mag*x[i]**3.0/6.0 + E*I*phi_x1_0*x[i])
+    #             if x[i]>=l and x[i]<a:
+    #                 dy= 1.0/E/I * (p_mag*(x[i]-l)**4.0/24.0 - (f1_mag + f2_mag - p_mag*l)*(x[i]-l)**3.0/6.0 - (f1_mag*l - p_mag*l**2.0/2.0)*(x[i]-l)**2.0/2.0 + E*I*(x[i]-l)*phi_x2_0 ) 
+        #         if x[i]>=a:
+        #             #approximate free end with simple linear funtion:
+        #             if x[i-1]<a:
+        #                 index=i
+        #             dy = ((ynew[index-2]-ynew[index-1])/(x[index-2]-x[index-1]))*(x[i]-a) + ynew[index-1]     
+        #   ### FIND SOLUTION BEGIN
+        #     else:  #l>=a
+        #         f1_mag = 1.0* p_mag*a/l*(l - a + a/2.0)
+        #         f2_mag = p_mag*a-f1_mag
+        #         #calculate phi(x1=0) and phi(x2=0):
+        #         phi_x1_0 = -1.0/E/I/(l+a)* (p_mag*l**4.0/24.0 - (f1_mag - p_mag*a)*l**3.0/6.0 - (f1_mag*a - p_mag*a**2.0/2.0)*l**2.0/2.0 + l*(p_mag*a**3.0/6.0 - f1_mag*a**2.0/2.0) + p_mag*a**4.0/24.0 - f1_mag*a**3.0/6.0 ) 
+        #         phi_x2_0 = 1.0/E/I * (p_mag*a**3.0/6.0 - f1_mag*a**2.0/2.0 + E*I*phi_x1_0)
+        #         if x[i]<a:
+        #             dy = 1.0/E/I * (p_mag*x[i]**4.0/24.0 - f1_mag*x[i]**3.0/6.0 + E*I*phi_x1_0*x[i])
+        #         if x[i]>=a and x[i]<l:
+        #             dy_x1_a= 1.0/E/I * (p_mag*a**4.0/24.0 - f1_mag*a**3.0/6.0 + E*I*phi_x1_0*a)
+        #             dy= 1.0/E/I*(p_mag*(x[i]-a)**4.0/24.0 - (f1_mag + p_mag* a)*(x[i]-a)**3.0/6.0 - (f1_mag*a + (p_mag*a**2.0)/2.0)*(x[i]-a)**2.0/2.0 + E*I*phi_x2_0 + E*I*dy_x1_a )
+        #         if x[i]>=l:
+        #             ##approximate free end with simple linear funtion:
+        #             if x[i-1]<l:
+        #                 index=i
+        #             dy = ((ynew[index-2]-ynew[index-1])/(x[index-2]-x[index-1]))*(x[i]-l) + ynew[index-1] 
+        #    ### FIND SOLUTION END
+        #     ynew.append(dy)
+        # return ynew
+
+    # if radio_button_group.active == 2:
+        # ynew = []
+        # print a
+        # for i in range(0,int(resol) ):
+            # dy = 0
+        #     ynew.append(dy)
+        # return ynew
 
 
 #FUNCTION: Cantilever Deflection function:
 def Fun_C_Deflection(p,b,x):
     '''Calculates the deflection of the beam when it is cantilever'''
-    #b is the distance from the wall to the concentrated load
-    if radio_button_group.active == 0:
-        ynew = []
-        a = xf - b;     #The a for cantilever is the distance between
-                        #the free end and the concentrated load.
-        for i in range(0,resol):
-            # if x[i] < a:
-            #     #dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
-            #     dy = (  ( p * (b**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - b )
-            # elif x[i] == a:
-            #     dy = ( p * (b**3) ) / (3 * E * I)
-            # elif x[i] > a:
-            #     #dy = (  ( p * (a**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - a )
-            #     dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
-            dy = 0 
-            ynew.append(dy)
 
-        return list(reversed(ynew))     #need to reverse because x is calculated in the opposite direction
+    ynew = []
+    for i in range(0,int(resol) ):
+        dy = 0
+        ynew.append(dy)
+    return ynew  
+    
+    # #b is the distance from the wall to the concentrated load
+    # if radio_button_group.active == 0:
+    #     ynew = []
+    #     a = xf - b;     #The a for cantilever is the distance between
+    #                     #the free end and the concentrated load.
+    #     for i in range(0,resol):
+    #         if x[i] < a:
+    #             #dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
+    #             dy = (  ( p * (b**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - b )
+    #         elif x[i] == a:
+    #             dy = ( p * (b**3) ) / (3 * E * I)
+    #         elif x[i] > a:
+    #             #dy = (  ( p * (a**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - a )
+    #             dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
+    #         dy = 0 
+    #         ynew.append(dy)
 
-    if radio_button_group.active == 1:   
-        ynew = []
-        a = xf - b;     #The a for cantilever is the distance between
-                    #the free end and the concentrated load.
-        for i in range(0,resol):
+    #     return list(reversed(ynew))     #need to reverse because x is calculated in the opposite direction
+
+    # if radio_button_group.active == 1:   
+    #     ynew = []
+    #     a = xf - b;     #The a for cantilever is the distance between
+    #                 #the free end and the concentrated load.
+    #     for i in range(0,resol):
             
-            #UNCOMMENT FOR DEFLECTION
-            # if x[i] < a:
-            #     #dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
-            #     dy = (  ( p * (b**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - b )
-            # elif x[i] == a:
-            #     dy = ( p * (b**3) ) / (3 * E * I)
-            # elif x[i] > a:
-            #     #dy = (  ( p * (a**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - a )
-            #     dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
+    #         #UNCOMMENT FOR DEFLECTION
+    #         # if x[i] < a:
+    #         #     #dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
+    #         #     dy = (  ( p * (b**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - b )
+    #         # elif x[i] == a:
+    #         #     dy = ( p * (b**3) ) / (3 * E * I)
+    #         # elif x[i] > a:
+    #         #     #dy = (  ( p * (a**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - a )
+    #         #     dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
 
-            dy = 0
-            ynew.append(dy)
+    #         dy = 0
+    #         ynew.append(dy)
 
-        return list(reversed(ynew))     #need to reverse because x is calculated in the opposite direction
+    #     return list(reversed(ynew))     #need to reverse because x is calculated in the opposite direction
  
-    if radio_button_group.active == 2:   
-        ynew = []
-        a = xf - b;     #The a for cantilever is the distance between
-                    #the free end and the concentrated load.
-        for i in range(0,resol):
-            # if x[i] < a:
-            #     #dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
-            #     dy = (  ( p * (b**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - b )
-            # elif x[i] == a:
-            #     dy = ( p * (b**3) ) / (3 * E * I)
-            # elif x[i] > a:
-            #     #dy = (  ( p * (a**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - a )
-            #     dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
+    # if radio_button_group.active == 2:   
+    #     ynew = []
+    #     a = xf - b;     #The a for cantilever is the distance between
+    #                 #the free end and the concentrated load.
+    #     for i in range(0,resol):
+    #         # if x[i] < a:
+    #         #     #dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
+    #         #     dy = (  ( p * (b**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - b )
+    #         # elif x[i] == a:
+    #         #     dy = ( p * (b**3) ) / (3 * E * I)
+    #         # elif x[i] > a:
+    #         #     #dy = (  ( p * (a**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - a )
+    #         #     dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
 
-            dy = 0
-            ynew.append(dy)
+    #         dy = 0
+    #         ynew.append(dy)
 
-        return list(reversed(ynew))     #need to reverse because x is calculated in the opposite direction
+    #     return list(reversed(ynew))     #need to reverse because x is calculated in the opposite direction
 
 
 
@@ -220,13 +285,16 @@ def Fun_Cantilever():
 
 #FUNCTION: Update:
 def Fun_Update(attrname, old, new):
-
+     
+    plot1_label_source.data = dict(x=[], y=[], names=[])    
+    plot2_label_source.data = dict(x=[], y=[], names=[])
 
 # IF POINT LOAD SELECTED ###########################################################################################################
     if radio_button_group.active == 0:   
         
         p_loc_slide.disabled = False
         my_line.glyph.line_width = 15
+
         a = p_loc_slide.value
         f2_coord = f2_loc_slide.value
         b = f2_coord - a
@@ -240,15 +308,15 @@ def Fun_Update(attrname, old, new):
 #####################         
             xcan = x0
             Fun_Cantilever()
-            if (p_mag<0):
-                p_arrow_source1.data = dict(xS= [p_coord], xE= [p_coord], yS= [1-(p_mag/2.3)], yE=[1+(p_mag/2.3)], lW = [2] )
+            if (p_mag>0):
+                p_arrow_source1.data = dict(xS= [p_coord], xE= [p_coord], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
                 p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
                 p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
                 labels_source.data = dict(x = [p_coord] , y = [1],name = ['F'])
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
                 triangular_load_source.data  = dict(x=[], y=[])                
             else:
-                p_arrow_source1.data = dict(xS= [p_coord], xE= [p_coord], yS= [-1.1-(p_mag/2.3)], yE=[-1.1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source1.data = dict(xS= [p_coord], xE= [p_coord], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
                 p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
                 p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
                 labels_source.data = dict(x = [p_coord] , y = [-1.1],name = ['F'])
@@ -258,12 +326,12 @@ def Fun_Update(attrname, old, new):
             y_mom=[]
             y_shear=[]
             for i in range(0,resol_plo):
-                if x_length[i]<a :
+                if x_length[i]<=a :
                     y_shear.append(p_mag)
                     y_mom.append(p_mag *a*(1-x_length[i]/a))
-                if x_length[i]>=a :
+                if x_length[i]>a :
                     y_shear.append(0)
-                    y_mom.append(0)
+                    y_mom.append(0)   
             mom_source.data = dict(x=x_length, y=y_mom)
             shear_source.data = dict(x=x_length, y=y_shear)
 
@@ -284,39 +352,49 @@ def Fun_Update(attrname, old, new):
 
             y_mom = []
             y_shear = []
-            if (l >= a):
+            if (l >= a and p_coord!=10 and p_coord!=0):
                 for i in range(0,resol_plo):
                     if x_length[i]<a:
-                        y_shear.append(f1_mag)
+                        y_shear.append(-1.0*f1_mag)
                         y_mom.append(f1_mag*x_length[i])
-                    if x_length[i]>=a and x_length[i]<l:
-                        y_shear.append(f1_mag+p_mag)
+                    if x_length[i]>=a and x_length[i]<=l:
+                        y_shear.append(-1.0*(f1_mag+p_mag))
                         y_mom.append(f1_mag*a+(f1_mag+p_mag)*(x_length[i]-a))
-                    if x_length[i]>=l:
-                        y_shear.append(f1_mag+p_mag+f2_mag)
+                    if x_length[i]>l:
+                        y_shear.append(-1.0*(f1_mag+p_mag+f2_mag))
                         y_mom.append(f1_mag*a+(f1_mag+p_mag)*(l-a))
-
                 mom_source.data = dict(x=x_length, y=y_mom)
                 shear_source.data = dict(x=x_length, y=y_shear)
-            
-            else:
+            elif  (l < a and p_coord!=10 and p_coord!=0):
                 for i in range(0,resol_plo):
                     if x_length[i]<l:
-                        y_shear.append(f1_mag)
+                        y_shear.append(-1.0*f1_mag)
                         y_mom.append(f1_mag*x_length[i])
-                    if x_length[i]>=l and x_length[i]<a:
-                        y_shear.append(f1_mag+f2_mag)
+                    if x_length[i]>=l and x_length[i]<=a:
+                        y_shear.append(-1.0*(f1_mag+f2_mag))
                         y_mom.append(f1_mag*l+(f1_mag+f2_mag)*(x_length[i]-l))
-                    if x_length[i]>=a:
-                        y_shear.append(f1_mag+p_mag+f2_mag)
+                    if x_length[i]>a:
+                        y_shear.append(-1.0*(f1_mag+p_mag+f2_mag))
                         y_mom.append(f1_mag*l+(f1_mag+f2_mag)*(a-l))
-
+            else:
+                for i in range(0,resol_plo):
+                        y_shear.append(0)
+                        y_mom.append(0)
                 mom_source.data = dict(x=x_length, y=y_mom)
                 shear_source.data = dict(x=x_length, y=y_shear)
 
+            # Show max Values:    
+            if (p_coord==5 and f2_coord==10 ):
+                if p_mag>0:
+                    plot1_label_source.data = dict(x=[5.25,4.1,4.87,4.87], y=[0.6,-0.4,-0.38,0.62], names=["F/2","-F/2","x","x"])
+                    plot2_label_source.data = dict(x=[5,4.87], y=[-3.5,-2.0], names=["F*L/4","x"])
+                else:
+                    plot1_label_source.data = dict(x=[4.1,5.25,4.87,4.87], y=[0.6,-0.4,-0.38,0.62], names=["-F/2","F/2","x","x"])
+                    plot2_label_source.data = dict(x=[5,4.87], y=[4,3.0], names=["F*L/4","x"])
+
             #p_arrow and labels:
-            if (p_mag<0):
-                p_arrow_source1.data = dict(xS= [p_coord], xE= [p_coord], yS= [1-(p_mag/2.3)], yE=[1+(p_mag/2.3)], lW = [2] )
+            if (p_mag>0):
+                p_arrow_source1.data = dict(xS= [p_coord], xE= [p_coord], yS= [1+(p_mag/2.3)], yE=[1-(p_mag/2.3)], lW = [2] )
                 p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
                 p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
@@ -325,7 +403,7 @@ def Fun_Update(attrname, old, new):
                 support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
             else:
-                p_arrow_source1.data = dict(xS= [p_coord], xE= [p_coord], yS= [-1.1-(p_mag/2.3)], yE=[-1.1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source1.data = dict(xS= [p_coord], xE= [p_coord], yS= [-1.1+(p_mag/2.3)], yE=[-1.1-(p_mag/2.3)], lW = [2] )
                 p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
                 p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
@@ -335,39 +413,47 @@ def Fun_Update(attrname, old, new):
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
 
             #f1_arrow:
-            if (p_mag>0):
-                if (f1_mag>0):
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [0.8], yE=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
-                else:
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(math.atan(f1_mag)/1.1)], yE=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+            if (p_mag<0):
+                if (f1_mag>0 and p_coord!=10):
+                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
+                elif (f1_mag<0 and p_coord!=10):
+                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [1-(math.atan(f1_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+                else:                    
+                    f1_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
             else:
-                if (f1_mag>0):
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(math.atan(f1_mag)/1.1)], yE=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
-                else:
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-0.8], yE=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+                if (f1_mag>0 and p_coord!=10):
+                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-1-(math.atan(f1_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
+                elif (f1_mag<0 and p_coord!=10):
+                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+                else:                    
+                    f1_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])            
             #f2_arrow:
-            if (p_mag>0):
-                if (f2_mag>0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [0.8], yE=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
-                else:
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [1-(math.atan(f2_mag)/1.1)], yE=[0.8], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+            if (p_mag<0):
+                if (f2_mag>0 and p_coord!=0):
+                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [0.8], yS=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
+                elif (f2_mag<0 and p_coord!=0):
+                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [1-(math.atan(f2_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                else:                    
+                    f2_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
             else:
-                if (f2_mag>0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(math.atan(f2_mag)/1.1)], yE=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
-                else:
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-0.8], yE=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                if (f2_mag>0 and p_coord!=0):
+                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-1-(math.atan(f2_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
+                elif (f2_mag<0 and p_coord!=0):
+                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                else:                    
+                    f2_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
 
 # IF CONSTANT LOAD SELECTED ###########################################################################################################
     if radio_button_group.active == 1: 
 
         p_loc_slide.disabled = False
         my_line.glyph.line_width = 15
-        
-        p_mag = p_mag_slide.value
-        a = p_loc_slide.value
-        l = f2_loc_slide.value
-        f2_coord = f2_loc_slide.value
-        p_coord = p_loc_slide.value
+
+        p_mag = float(p_mag_slide.value)
+        a = float(p_loc_slide.value)
+        l = float(f2_loc_slide.value)
+        f2_coord = float(f2_loc_slide.value)
+        p_coord = float(p_loc_slide.value)
         b = l - a
         x1 = xf - l
 #####################
@@ -376,24 +462,24 @@ def Fun_Update(attrname, old, new):
             xcan = x0
             Fun_Cantilever()
 
-            if (p_mag<0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1-(p_mag/2.3)], yE=[1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1-(p_mag/2.3)], yE=[1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1-(p_mag/2.3)], yE=[1+(p_mag/2.3)], lW = [2] )
+            if (p_mag>0) and (p_coord!=0):
+                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
                 constant_load_source.data  = dict(x=[p_coord/2.0], y=[1], w=[p_coord], h=[p_mag], angle=[0])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [p_coord] , y = [1],name = ['p'])            
-            elif (p_mag>0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [-1.1-(p_mag/2.3)], yE=[-1.1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [-1.1-(p_mag/2.3)], yE=[-1.1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [-1.1-(p_mag/2.3)], yE=[-1.1+(p_mag/2.3)], lW = [2] )
+            elif (p_mag<0) and (p_coord!=0):
+                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
                 constant_load_source.data  = dict(x=[p_coord/2.0], y=[-1.1], w=[p_coord], h=[p_mag], angle=[0])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [p_coord] , y = [-1.1],name = ['p']) 
             else: 
                 p_arrow_source1.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
                 p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
-                p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
+                p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )   
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [] , y = [],name = [])                        
@@ -401,21 +487,24 @@ def Fun_Update(attrname, old, new):
             #cantilever forces calculation:
             y_mom=[]
             y_shear=[]
+            fac_m=0.25
+            fac_s=0.15
             for i in range(0,resol_plo):
                 if x_length[i]<a :
-                    y_shear.append(p_mag*a - p_mag*x_length[i])
-                    y_mom.append(p_mag*a**2.0/2.0-p_mag*x_length[i]**2.0/2.0 )
+                    y_shear.append(fac_s*(p_mag*a - p_mag*x_length[i]))
+                    y_mom.append(fac_m*(p_mag*a**2.0/2.0-p_mag*x_length[i]**2.0/2.0) )
                 if x_length[i]>=a :
                     y_shear.append(0)
                     y_mom.append(0)
             mom_source.data = dict(x=x_length, y=y_mom)
             shear_source.data = dict(x=x_length, y=y_shear)
 
+
             ynew = Fun_C_Deflection(p_mag,a,plot_source.data['x'])
             plot_source.data = dict(x = np.linspace(x0,xf,resol), y = ynew)
 
 #####################
-        else: 
+        else: # Double Supported Beam Mode
 #####################
             quad_source.data = dict(top = [], bottom = [], left = [] , right = [])
             segment_source.data = dict(x0= [], y0= [],x1 = [], y1 =[])
@@ -427,20 +516,21 @@ def Fun_Update(attrname, old, new):
             #moment and shear:
             y_mom = []
             y_shear = []
-
+            fac_m=0.25
+            fac_s=0.15
             if (l >= a):
                 f1_mag = -1.0* p_mag*a/l*(l - a + a/2.0)
                 f2_mag = -1.0* ( p_mag* a**2.0 ) / 2.0 / l
                 for i in range(0,resol_plo):
                     if x_length[i]<a:
-                        y_shear.append(f1_mag + p_mag*x_length[i])
-                        y_mom.append(f1_mag*x_length[i] + p_mag*x_length[i]**2/2.0)
-                    if x_length[i]>=a and x_length[i]<l:
-                        y_shear.append(f1_mag + p_mag* a)
-                        y_mom.append(f1_mag*a + (p_mag*a**2.0)/2.0 + (f1_mag + p_mag*a)*(x_length[i]-a))
-                    if x_length[i]>=l:
-                        y_shear.append( f1_mag + p_mag*a + f2_mag )
-                        y_mom.append( f1_mag*a + (p_mag*a**2.0)/2.0 + (f1_mag + p_mag*a)*(l-a) + ( f1_mag + p_mag*a + f2_mag) * (x_length[i]-l) ) 
+                        y_shear.append(-fac_s*(f1_mag + p_mag*x_length[i]))
+                        y_mom.append(fac_m*(f1_mag*x_length[i] + p_mag*x_length[i]**2/2.0))
+                    if x_length[i]>=a and x_length[i]<=l:
+                        y_shear.append(-fac_s*(f1_mag + p_mag* a))
+                        y_mom.append(fac_m*(f1_mag*a + (p_mag*a**2.0)/2.0 + (f1_mag + p_mag*a)*(x_length[i]-a)))
+                    if x_length[i]>l:
+                        y_shear.append(-fac_s*(f1_mag + p_mag*a + f2_mag ))
+                        y_mom.append(fac_m*(f1_mag*a + (p_mag*a**2.0)/2.0 + (f1_mag + p_mag*a)*(l-a) + ( f1_mag + p_mag*a + f2_mag) * (x_length[i]-l) ) )
                 mom_source.data = dict(x=x_length, y=y_mom)
                 shear_source.data = dict(x=x_length, y=y_shear)
 
@@ -449,31 +539,50 @@ def Fun_Update(attrname, old, new):
                 f2_mag = -1.0*p_mag* a**2.0/2.0/l
                 for i in range(0,resol_plo):
                     if x_length[i]<l:
-                        y_shear.append(f1_mag + p_mag*x_length[i])
-                        y_mom.append(f1_mag*x_length[i] + p_mag*x_length[i]**2.0/2.0)
-                    if x_length[i]>=l and x_length[i]<a:
-                        y_shear.append(f1_mag + p_mag *l + f2_mag + p_mag*(x_length[i]-l))
-                        y_mom.append(f1_mag*l + p_mag*l**2.0/2.0 + (f1_mag + p_mag*l+f2_mag)*(x_length[i]-l) + p_mag*(x_length[i]-l)**2.0/2.0)
-                    if x_length[i]>=a:
-                        y_shear.append(f1_mag + p_mag *l + f2_mag + p_mag*(a-l))
-                        y_mom.append(f1_mag*l + p_mag*l**2.0/2.0 + (f1_mag + p_mag*l+f2_mag)*(a-l) + p_mag*(a-l)**2.0/2.0 + (f1_mag + p_mag *l + f2_mag + p_mag*(a-l))* (x_length[i]-a))
+                        y_shear.append(-fac_s*(f1_mag + p_mag*x_length[i]))
+                        y_mom.append(fac_m*(f1_mag*x_length[i] + p_mag*x_length[i]**2.0/2.0))
+                    if x_length[i]>=l and x_length[i]<=a:
+                        y_shear.append(-fac_s*(f1_mag + p_mag *l + f2_mag + p_mag*(x_length[i]-l)))
+                        y_mom.append(fac_m*(f1_mag*l + p_mag*l**2.0/2.0 + (f1_mag + p_mag*l+f2_mag)*(x_length[i]-l) + p_mag*(x_length[i]-l)**2.0/2.0))
+                    if x_length[i]>a:
+                        y_shear.append(-fac_s*(f1_mag + p_mag *l + f2_mag + p_mag*(a-l)))
+                        y_mom.append(fac_m*(f1_mag*l + p_mag*l**2.0/2.0 + (f1_mag + p_mag*l+f2_mag)*(a-l) + p_mag*(a-l)**2.0/2.0 + (f1_mag + p_mag *l + f2_mag + p_mag*(a-l))* (x_length[i]-a)))
                 mom_source.data = dict(x=x_length, y=y_mom)
                 shear_source.data = dict(x=x_length, y=y_shear)
 
+            #Show max values:
+            if (p_coord==10 and f2_coord==10 ):
+                if p_mag >0:
+                    plot1_label_source.data = dict(x=[0.1,9.1,-0.12,9.83], y=[1.1,-0.88,0.87,-0.617], names=["p*L/2","-p*L/2","x","x"])
+                    plot2_label_source.data = dict(x=[5,4.87], y=[-4,-2.6], names=["p*L^2/8","x"])
+                else:
+                    plot1_label_source.data = dict(x=[0.1,9.1,-0.12,9.83], y=[-0.88,1.1,-0.617,0.87], names=["p*L/2","-p*L/2","x","x"])
+                    plot2_label_source.data =dict(x=[5,4.87], y=[5,3.6], names=["p*L^2/8","x"])
+
+
+            # # Show max Values:    
+            # if (p_coord==5 and f2_coord==10 ):
+            #     if p_mag>0:
+            #         plot1_label_source.data = dict(x=[5.25,4.1,4.87,4.87], y=[0.6,-0.4,-0.38,0.62], names=["F/2","-F/2","x","x"])
+            #         plot2_label_source.data = dict(x=[5,4.87], y=[-3.5,-2.0], names=["F*L/4","x"])
+            #     else:
+            #         plot1_label_source.data = dict(x=[4.1,5.25,4.87,4.87], y=[0.6,-0.4,-0.38,0.62], names=["-F/2","F/2","x","x"])
+            #         plot2_label_source.data = dict(x=[5,4.87], y=[4,3.0], names=["F*L/4","x"])
+
             #p_arrow and labels:
-            if (p_mag<0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1-(p_mag/2.3)], yE=[1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1-(p_mag/2.3)], yE=[1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1-(p_mag/2.3)], yE=[1+(p_mag/2.3)], lW = [2] )
+            if (p_mag>0) and (p_coord!=0):
+                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
                 constant_load_source.data  = dict(x=[p_coord/2.0], y=[1], w=[p_coord], h=[p_mag], angle=[0])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [p_coord] , y = [1],name = ['p'])
                 support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])      
-            elif (p_mag>0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [-1.1-(p_mag/2.3)], yE=[-1.1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [-1.1-(p_mag/2.3)], yE=[-1.1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [-1.1-(p_mag/2.3)], yE=[-1.1+(p_mag/2.3)], lW = [2] )
+            elif (p_mag<0) and (p_coord!=0):
+                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
                 constant_load_source.data  = dict(x=[p_coord/2.0], y=[-1.1], w=[p_coord], h=[p_mag], angle=[0])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [p_coord] , y = [-1.1],name = ['p'])
@@ -490,31 +599,37 @@ def Fun_Update(attrname, old, new):
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1]) 
 
             #f1_arrow:
-            if (p_mag>0):
+            if (p_mag<0 and p_coord!=0):
                 if (f1_mag>0):
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [0.8], yE=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
                 else:
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(math.atan(f1_mag)/1.1)], yE=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
-            else:
+                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [1-(math.atan(f1_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+            elif (p_mag>0 and p_coord!=0):
                 if (f1_mag>0):
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(math.atan(f1_mag)/1.1)], yE=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-1-(math.atan(f1_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
                 else:
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-0.8], yE=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
-            #f2_arrow:
-            if (p_mag>0):
-                if (f2_mag>0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [0.8], yE=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
-                else:
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [1-(math.atan(f2_mag)/1.1)], yE=[0.8], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
             else:
+                 f1_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
+
+          #f2_arrow:
+            if (p_mag<0 and p_coord!=0):
                 if (f2_mag>0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(math.atan(f2_mag)/1.1)], yE=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [0.8], yS=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
                 else:
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-0.8], yE=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [1-(math.atan(f2_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+            elif (p_mag>0 and p_coord!=0):
+                if (f2_mag>0):
+                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-1-(math.atan(f2_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
+                else:
+                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+            else:
+                 f2_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
+
 
 # IF TRIANGULAR LOAD SELECTED ###########################################################################################################
     if radio_button_group.active == 2:
-
+        
         p_loc_slide.disabled = False
         my_line.glyph.line_width = 15
         
@@ -525,7 +640,6 @@ def Fun_Update(attrname, old, new):
         p_coord = float(p_loc_slide.value)
         b = l - a
         x1 = xf - l
-        # f_res=l-5
 
 #####################
         if f2_coord == 0: #CANTILEVER MODE
@@ -533,32 +647,33 @@ def Fun_Update(attrname, old, new):
             xcan = x0
             Fun_Cantilever()
 
-            if (p_mag<0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1+p_mag/2.3-p_mag/10.0], yE=[1+p_mag/2.3], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1+p_mag/2.3-p_mag/2.6], yE=[1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1-(p_mag/2.3/1.9)], yE=[1+(p_mag/2.3)], lW = [2] )
+            if (p_mag>0) and (p_coord!=0):
+                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1-p_mag/2.3+p_mag/10.0], yE=[1-p_mag/2.3], lW = [2] )
+                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1-p_mag/2.3+p_mag/2.6], yE=[1-(p_mag/2.3)], lW = [2] )
+                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1+(p_mag/2.3/1.9)], yE=[1-(p_mag/2.3)], lW = [2] )
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])     
-
+              
                 N = 30
                 x1 = np.linspace(0, p_coord, N)
                 x2 = x1[::-1]
-                y1 = 0.95 - x1/p_coord*p_mag + p_mag/2.3
-                y2 = np.ones(N)*(0.95 + p_mag/2.3)
+                y1 = 0.95 + x1/p_coord*p_mag - p_mag/2.3
+                y2 = np.ones(N)*(0.95 - p_mag/2.3)
                 x = np.hstack((x1, x2))
                 y = np.hstack((y1, y2))
                 triangular_load_source.data  = dict(x=x, y=y)
                 labels_source.data = dict(x = [p_coord] , y = [1],name = ['p'])
-            elif (p_mag>=0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [-1.1+p_mag/2.3-p_mag/10.0], yE=[-1.1+p_mag/2.3], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [-1.1+p_mag/2.3-p_mag/2.6], yE=[-1.1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [-1.1-(p_mag/2.3/1.9)], yE=[-1.1+(p_mag/2.3)], lW = [2] )
+
+            elif (p_mag<=0) and (p_coord!=0):
+                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [-1.1-p_mag/2.3+p_mag/10.0], yE=[-1.1-p_mag/2.3], lW = [2] )
+                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [-1.1-p_mag/2.3+p_mag/2.6], yE=[-1.1-(p_mag/2.3)], lW = [2] )
+                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [-1.1+(p_mag/2.3/1.9)], yE=[-1.1-(p_mag/2.3)], lW = [2] )
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])     
 
                 N = 30
                 x1 = np.linspace(0, p_coord, N)
                 x2 = x1[::-1]
-                y1 = -1.05 - x1/p_coord*p_mag + p_mag/2.3
-                y2 = np.ones(N)*(-1.05 + p_mag/2.3)
+                y1 = -1.05 + x1/p_coord*p_mag - p_mag/2.3
+                y2 = np.ones(N)*(-1.05 - p_mag/2.3)
                 x = np.hstack((x1, x2))
                 y = np.hstack((y1, y2))
                 triangular_load_source.data  = dict(x=x, y=y)                   
@@ -573,10 +688,12 @@ def Fun_Update(attrname, old, new):
 
             y_mom=[]
             y_shear=[]
+            fac_m=0.25
+            fac_s=0.15
             for i in range(0,resol_plo):
                 if x_length[i]<a :
-                    y_shear.append(p_mag*a/2.0-p_mag*x_length[i]/2.0)
-                    y_mom.append( p_mag*a**2.0/3.0-p_mag*a/2.0*x_length[i] + p_mag/6.0/a*x_length[i]**3.0  )
+                    y_shear.append(fac_s*(p_mag*a/2.0-p_mag*x_length[i]/2.0))
+                    y_mom.append( fac_m*(p_mag*a**2.0/3.0-p_mag*a/2.0*x_length[i] + p_mag/6.0/a*x_length[i]**3.0  ))
                 if x_length[i]>=a :
                     y_shear.append(0)
                     y_mom.append(0)
@@ -601,20 +718,21 @@ def Fun_Update(attrname, old, new):
             #moment and shear:
             y_mom = []
             y_shear = []
-
+            fac_m=0.25
+            fac_s=0.15
             if (l >= a):
                 f1_mag = -1.0*p_mag*a/2.0/l*(l-a+a/3.0)
                 f2_mag = -1.0*p_mag*a**2.0/l/3.0
                 for i in range(0,resol_plo):
                     if x_length[i]<a:
-                        y_shear.append(f1_mag + p_mag*x_length[i]**2.0/2.0/a)
-                        y_mom.append( f1_mag*x_length[i] + x_length[i]**3.0*p_mag/6.0/a)
-                    if x_length[i]>=a and x_length[i]<l:
-                        y_shear.append( f1_mag + p_mag*a/2.0 )
-                        y_mom.append(f1_mag*a + a**2.0*p_mag/6.0 + (f1_mag + p_mag*a/2.0)*(x_length[i]-a) )
-                    if x_length[i]>=l:
-                        y_shear.append( f1_mag + p_mag*a/2.0 - p_mag*a**2.0/3.0/l)
-                        y_mom.append( f1_mag*a + a**2.0*p_mag/6.0 + (f1_mag + p_mag*a/2.0)*(l-a) ) 
+                        y_shear.append(-fac_s*(f1_mag + p_mag*x_length[i]**2.0/2.0/a))
+                        y_mom.append(fac_m*( f1_mag*x_length[i] + x_length[i]**3.0*p_mag/6.0/a))
+                    if x_length[i]>=a and x_length[i]<=l:
+                        y_shear.append( -fac_s*(f1_mag + p_mag*a/2.0 ))
+                        y_mom.append(fac_m*(f1_mag*a + a**2.0*p_mag/6.0 + (f1_mag + p_mag*a/2.0)*(x_length[i]-a) ))
+                    if x_length[i]>l:
+                        y_shear.append( -fac_s*(f1_mag + p_mag*a/2.0 - p_mag*a**2.0/3.0/l))
+                        y_mom.append( fac_m*(f1_mag*a + a**2.0*p_mag/6.0 + (f1_mag + p_mag*a/2.0)*(l-a) ) )
                 mom_source.data = dict(x=x_length, y=y_mom)
                 shear_source.data = dict(x=x_length, y=y_shear)
 
@@ -625,30 +743,40 @@ def Fun_Update(attrname, old, new):
 
                 for i in range(0,resol_plo):
                     if x_length[i]<l:
-                        y_shear.append(f1_mag + p_mag*x_length[i]**2.0/2.0/a)
-                        y_mom.append( f1_mag*x_length[i] + x_length[i]**3.0*p_mag/6.0/a)
-                    if x_length[i]>=l and x_length[i]<a:
-                        y_shear.append(f1_mag + p_mag*l**2.0 /2.0/a + f2_mag  + (l/a*p_mag*(x_length[i]-l) + (x_length[i]/a-l/a)*p_mag*(x_length[i]-l)/2.0) ) 
-                        y_mom.append((f1_mag*l + p_mag*l**3.0 /6.0/a) + f2_mag*(x_length[i]-l)  + (f1_mag + p_mag*l**2.0/2.0/a)*(x_length[i]-l) + (l/a*p_mag*(x_length[i]-l))*(1.0/2.0)*(x_length[i]-l) + ((x_length[i]/a-l/a)*p_mag*(x_length[i]-l)/2.0)*(1.0/3.0)*(x_length[i]-l) )
-                    if x_length[i]>=a:
+                        y_shear.append(-fac_s*(f1_mag + p_mag*x_length[i]**2.0/2.0/a))
+                        y_mom.append( fac_m*(f1_mag*x_length[i] + x_length[i]**3.0*p_mag/6.0/a))
+                    if x_length[i]>=l and x_length[i]<=a:
+                        y_shear.append(-fac_s*(f1_mag + p_mag*l**2.0 /2.0/a + f2_mag  + (l/a*p_mag*(x_length[i]-l) + (x_length[i]/a-l/a)*p_mag*(x_length[i]-l)/2.0) ))
+                        y_mom.append(fac_m*((f1_mag*l + p_mag*l**3.0 /6.0/a) + f2_mag*(x_length[i]-l)  + (f1_mag + p_mag*l**2.0/2.0/a)*(x_length[i]-l) + (l/a*p_mag*(x_length[i]-l))*(1.0/2.0)*(x_length[i]-l) + ((x_length[i]/a-l/a)*p_mag*(x_length[i]-l)/2.0)*(1.0/3.0)*(x_length[i]-l) ))
+                    if x_length[i]>a:
                         y_shear.append( 0 )
                         y_mom.append( 0 ) 
                     
                 mom_source.data = dict(x=x_length, y=y_mom)
                 shear_source.data = dict(x=x_length, y=y_shear)
 
+
+            #Show max values:
+            if (p_coord==10 and f2_coord==10 ):
+                if p_mag >0:
+                    plot1_label_source.data = dict(x=[0.1,9.1,-0.12,9.83], y=[0.75,-0.7,0.375,-0.4], names=["p*L/6","-p*L/3","x","x"])
+                    plot2_label_source.data = dict(x=[5,4.87], y=[-2.5,-1.1], names=["p*L^2/(9*sqrt(3))","x"])
+                else:
+                    plot1_label_source.data = dict(x=[0.1,9.1,-0.12,9.83], y=[-0.4,0.90,-0.13,0.62], names=["p*L/6","-p*L/3","x","x"])
+                    plot2_label_source.data =dict(x=[5,4.87], y=[3.5,2.0], names=["p*L^2/(9*sqrt(3))","x"])
+
             #p_arrow and labels:
-            if (p_mag<0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1+p_mag/2.3-p_mag/10.0], yE=[1+p_mag/2.3], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1+p_mag/2.3-p_mag/2.6], yE=[1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1-(p_mag/2.3/1.9)], yE=[1+(p_mag/2.3)], lW = [2] )
+            if (p_mag>0) and (p_coord!=0):
+                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1-p_mag/2.3+p_mag/10.0], yE=[1-p_mag/2.3], lW = [2] )
+                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1-p_mag/2.3+p_mag/2.6], yE=[1-(p_mag/2.3)], lW = [2] )
+                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1+(p_mag/2.3/1.9)], yE=[1-(p_mag/2.3)], lW = [2] )
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])     
 
                 N = 30
                 x1 = np.linspace(0, p_coord, N)
                 x2 = x1[::-1]
-                y1 = 0.95 - x1/p_coord*p_mag + p_mag/2.3
-                y2 = np.ones(N)*(0.95 + p_mag/2.3)
+                y1 = 0.95 + x1/p_coord*p_mag - p_mag/2.3
+                y2 = np.ones(N)*(0.95 - p_mag/2.3)
                 x = np.hstack((x1, x2))
                 y = np.hstack((y1, y2))
                 triangular_load_source.data  = dict(x=x, y=y)
@@ -656,17 +784,17 @@ def Fun_Update(attrname, old, new):
                 labels_source.data = dict(x = [p_coord] , y = [1],name = ['p'])
                 support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
-            elif (p_mag>=0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [-1.1+p_mag/2.3-p_mag/10.0], yE=[-1.1+p_mag/2.3], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [-1.1+p_mag/2.3-p_mag/2.6], yE=[-1.1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [-1.1-(p_mag/2.3/1.9)], yE=[-1.1+(p_mag/2.3)], lW = [2] )
+            elif (p_mag<=0) and (p_coord!=0):
+                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [-1.1-p_mag/2.3+p_mag/10.0], yE=[-1.1-p_mag/2.3], lW = [2] )
+                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [-1.1-p_mag/2.3+p_mag/2.6], yE=[-1.1-(p_mag/2.3)], lW = [2] )
+                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [-1.1+(p_mag/2.3/1.9)], yE=[-1.1-(p_mag/2.3)], lW = [2] )
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])     
 
                 N = 30
                 x1 = np.linspace(0, p_coord, N)
                 x2 = x1[::-1]
-                y1 = -1.05 - x1/p_coord*p_mag + p_mag/2.3
-                y2 = np.ones(N)*(-1.05 + p_mag/2.3)
+                y1 = -1.05 + x1/p_coord*p_mag - p_mag/2.3
+                y2 = np.ones(N)*(-1.05 - p_mag/2.3)
                 x = np.hstack((x1, x2))
                 y = np.hstack((y1, y2))
                 triangular_load_source.data  = dict(x=x, y=y)                   
@@ -684,27 +812,27 @@ def Fun_Update(attrname, old, new):
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1]) 
 
             #f1_arrow:
-            if (p_mag>0):
+            if (p_mag<0):
                 if (f1_mag>0):
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [0.8], yE=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
                 else:
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [1-(math.atan(f1_mag)/1.1)], yE=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [1-(math.atan(f1_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
             else:
                 if (f1_mag>0):
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-1-(math.atan(f1_mag)/1.1)], yE=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-1-(math.atan(f1_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
                 else:
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yS= [-0.8], yE=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
             #f2_arrow:
-            if (p_mag>0):
+            if (p_mag<0):
                 if (f2_mag>0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [0.8], yE=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [0.8], yS=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
                 else:
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [1-(math.atan(f2_mag)/1.1)], yE=[0.8], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [1-(math.atan(f2_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
             else:
                 if (f2_mag>0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-1-(math.atan(f2_mag)/1.1)], yE=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-1-(math.atan(f2_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
                 else:
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yS= [-0.8], yE=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
 
 #initial function:
 def initial():
@@ -713,12 +841,13 @@ def initial():
     p_mag_slide.value = p_magi
     lth_slide.value = 2
     checkbox.active = []
+    # plot_label_source.data = dict(x=[], y=[], names=[])
     Fun_Update(None,None,None)
     support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
 
 ##########Plotting##########
 
-###Main Plot:
+#######Main Plot:
 plot = Figure(title="Beam with Supports and Load", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5), height = 400, logo=None)
 my_line=plot.line(x='x', y='y', source=plot_source, color='#0065BD',line_width=20)
 plot.add_glyph(support_source1,ImageURL(url="sp1", x=-0.325, y=-0.1, w=0.66, h=0.4))
@@ -734,41 +863,32 @@ plot.title.text_font_size="13pt"
 labels = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=5, y_offset=-30, source=labels_source, render_mode='canvas')
 
-###Plot1 with moment:
-y_range0 = -10
-y_range1 = -y_range0
-plot1 = Figure(title="Bending Moment", x_range=(x0-.5,xf+.5), y_range=(y_range0,y_range1), height = 200, logo=None)
-
-#Insert TUM-COLOUR
-plot1.line(x="x", y="y", source=mom_source, color='blue',line_width=2)
-plot1.line(x= [x0-1,xf+1], y = [0, 0], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
-plot1.line(x= [xf/2,xf/2], y = [y_range0,y_range1], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
+#######Plot1 with shear:
+plot1 = Figure(title="Shear Force", x_range=(x0-.5,xf+.5), y_range=(-1.5,1.5), height = 200, logo=None)
+plot1_labels1 = LabelSet(x='x', y='y', text='names', source=plot1_label_source, text_color = 'red', level='glyph', x_offset=3, y_offset=-15)
+plot1.add_layout(plot1_labels1)
+plot1.line(x='x', y='y', source=shear_source, color='red',line_width=2)
+plot1.line(x= [x0-1,xf+1], y = [0, 0 ], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
+plot1.line(x= [xf/2,xf/2], y = [-1.5,1.5], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot1.axis.visible = False
 plot1.outline_line_width = 2
 plot1.outline_line_color = "Black"
 plot1.title.text_font_size="13pt"
-
-#Insert TUM-COLOUR
-plot1.square([0.0],[0.0],size=0,fill_color='blue',fill_alpha=0.5,legend="Bending Moment")
+plot1.square([0.0],[0.0],size=0,fill_color='red',fill_alpha=0.5,legend="Shear Force")
 plot1.legend.location = 'top_right'
 
-###Plot2 with shear:
-y_range0 = -10
-y_range1 = -y_range0
-plot2 = Figure(title="Shear Force", x_range=(x0-.5,xf+.5), y_range=(y_range0,y_range1), height = 200, logo=None)
-
-#Insert TUM-COLOUR
-plot2.line(x='x', y='y', source=shear_source, color='red',line_width=2)
-
-plot2.line(x= [x0-1,xf+1], y = [0, 0 ], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
-plot2.line(x= [xf/2,xf/2], y = [y_range0,y_range1], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
+#######Plot2 with moment:
+plot2 = Figure(title="Bending Moment", x_range=(x0-.5,xf+.5), y_range=(-6,6), height = 200, logo=None)
+plot2_labels1 = LabelSet(x='x', y='y', text='names', source=plot2_label_source, text_color = 'blue', level='glyph', x_offset=3, y_offset=-15)
+plot2.add_layout(plot2_labels1)
+plot2.line(x="x", y="y", source=mom_source, color='blue',line_width=2)
+plot2.line(x= [x0-1,xf+1], y = [0, 0], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
+plot2.line(x= [xf/2,xf/2], y = [-6,6], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot2.axis.visible = False
 plot2.outline_line_width = 2
 plot2.outline_line_color = "Black"
 plot2.title.text_font_size="13pt"
-
-#Insert TUM-COLOUR
-plot2.square([0.0],[0.0],size=0,fill_color='red',fill_alpha=0.5,legend="Shear Force")
+plot2.square([0.0],[0.0],size=0,fill_color='blue',fill_alpha=0.5,legend="Bending Moment")
 plot2.legend.location = 'top_right'
 
 ###arrow plotting:
