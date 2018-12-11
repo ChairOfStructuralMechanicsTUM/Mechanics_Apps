@@ -16,7 +16,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_support import LatexDiv
+from latex_support import LatexDiv, LatexLabelSet
 
 #Global constant numbers:
 score           = 30
@@ -77,7 +77,7 @@ class Column(object):
             arrow_length = self.fcrit
             
         #arrow_length *= 2.0 # scale arrow length  # could also be scaled with fcrit_2
-        arrow_length += 0.42 # offset so that the arrow head glyph does not cover a small vector
+        arrow_length += 0.38 # offset so that the arrow head glyph does not cover a small vector
         
         # add a bit for the starting case so that the glyphs point to the right direction (downwards)
         if np.isclose(arrow_length,0):
@@ -157,7 +157,8 @@ def fun_col1(x0,y0):
     x = np.cos(np.pi/(2*col1.h)*y)-1
     col1.pts.data = dict(x = x0 + x, y = y0 + y) 
     col1.sk.data = dict(x=[col1.xstart+1.2, col1.xstart+1.8, col1.xstart+1.5, col1.xstart+1.5, col1.xstart+1.2, col1.xstart+1.8], y=[zstart, zstart, zstart, zstart+col1.h, zstart+col1.h, zstart+col1.h])
-    col1.sk_labels.data = dict(x=[col1.xstart+1.7], y=[zstart+0.5*col1.h], name=["sk/2 = L"])
+    #col1.sk_labels.data = dict(x=[col1.xstart+1.7], y=[zstart+0.5*col1.h], name=["sk/2 = L"])
+    col1.sk_labels.data = dict(x=[col1.xstart+1.7], y=[zstart+0.5*col1.h], name=["\\frac{s_k}{2} = L"])
 
 def fun_col2(x0,y0):
     '''Function: Calculates deflection in column 2'''
@@ -165,7 +166,7 @@ def fun_col2(x0,y0):
     x = np.sin(np.pi/col2.h*y)
     col2.pts.data = dict(x = x0 + x, y = y0 + y)
     col2.sk.data = dict(x=[col2.xstart+1.2, col2.xstart+1.8, col2.xstart+1.5, col2.xstart+1.5, col2.xstart+1.2, col2.xstart+1.8], y=[zstart, zstart, zstart, zstart+col2.h, zstart+col2.h, zstart+col2.h])
-    col2.sk_labels.data = dict(x=[col2.xstart+1.7], y=[zstart+0.5*col2.h], name=["sk = L"])
+    col2.sk_labels.data = dict(x=[col2.xstart+1.7], y=[zstart+0.5*col2.h], name=["s_k = L"])
 
 def fun_col3(x0,y0):
     '''Function: Calculates deflection in column 3'''
@@ -174,7 +175,8 @@ def fun_col3(x0,y0):
     x = np.cos(alph*y)-np.sin(alph*y)/(alph*col3.h) + y/col3.h -1
     col3.pts.data = dict(x = x0 + x, y = y0 + y)
     col3.sk.data = dict(x=[col3.xstart+1.2, col3.xstart+1.8, col3.xstart+1.5, col3.xstart+1.5, col3.xstart+1.2, col3.xstart+1.8], y=[zstart+0.3*col3.h, zstart+0.3*col3.h, zstart+0.3*col3.h, zstart+col3.h, zstart+col3.h, zstart+col3.h])
-    col3.sk_labels.data = dict(x=[col3.xstart+1.7], y=[zstart+0.5*col3.h], name=["sk = 0.7"u"\u00B7L"])
+    #col3.sk_labels.data = dict(x=[col3.xstart+1.7], y=[zstart+0.5*col3.h], name=["sk = 0.7"u"\u00B7L"])
+    col3.sk_labels.data = dict(x=[col3.xstart+1.7], y=[zstart+0.5*col3.h], name=["s_k = 0.7 \\cdot L"])
 
 def fun_col4(x0,y0):
     '''Function: Calculates deflection in column 4'''
@@ -182,7 +184,8 @@ def fun_col4(x0,y0):
     x = np.cos(2*np.pi/col4.h*y)-1
     col4.pts.data = dict(x = x0 + x, y = y0 + y)
     col4.sk.data = dict(x=[col4.xstart+1.2, col4.xstart+1.8, col4.xstart+1.5, col4.xstart+1.5, col4.xstart+1.2, col4.xstart+1.8], y=[zstart+0.25*col4.h, zstart+0.25*col4.h, zstart+0.25*col4.h, zstart+0.75*col4.h, zstart+0.75*col4.h, zstart+0.75*col4.h])
-    col4.sk_labels.data = dict(x=[col4.xstart+1.7], y=[zstart+0.5*col4.h], name=["sk = 0.5"u"\u00B7L"])
+    #col4.sk_labels.data = dict(x=[col4.xstart+1.7], y=[zstart+0.5*col4.h], name=["sk = 0.5"u"\u00B7L"])
+    col4.sk_labels.data = dict(x=[col4.xstart+1.7], y=[zstart+0.5*col4.h], name=["s_k = 0.5 \\cdot L"])
 
 def fun_figures():
     '''Function: moves the figures in plot when columns buckle'''
@@ -315,14 +318,22 @@ labels4 = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-20, y_offset=0, source=col4.labels, render_mode='canvas')
 
 # buckling length
-sk_l1 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
-              x_offset=-10, y_offset=0,    source=col1.sk_labels, render_mode='canvas')
-sk_l2 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
-              x_offset=+11, y_offset=0,    source=col2.sk_labels, render_mode='canvas')
-sk_l3 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
-              x_offset=-10, y_offset=0,    source=col3.sk_labels, render_mode='canvas')
-sk_l4 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
-              x_offset=-10, y_offset=0,    source=col4.sk_labels, render_mode='canvas')
+sk_l1 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+              x_offset=-12, y_offset=15,    source=col1.sk_labels, render_mode='canvas', display_mode=True)
+sk_l2 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+              x_offset=-12, y_offset=15,    source=col2.sk_labels, render_mode='canvas', display_mode=True)
+sk_l3 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+              x_offset=-28, y_offset=50,    source=col3.sk_labels, render_mode='canvas', display_mode=True)
+sk_l4 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+              x_offset=-28, y_offset=2,    source=col4.sk_labels, render_mode='canvas', display_mode=True)
+#sk_l1 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+#              x_offset=-10, y_offset=0,    source=col1.sk_labels, render_mode='canvas')
+#sk_l2 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+#              x_offset=+11, y_offset=0,    source=col2.sk_labels, render_mode='canvas')
+#sk_l3 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+#              x_offset=-10, y_offset=0,    source=col3.sk_labels, render_mode='canvas')
+#sk_l4 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+#              x_offset=-10, y_offset=0,    source=col4.sk_labels, render_mode='canvas')
 
 #label properties
 labels1.text_font_size = '10pt'

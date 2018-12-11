@@ -39,13 +39,13 @@ code {
 <h4> Euler Buckling Equation </h4>
 <p>
   Buckling can be modeled by a second order differential equation known as the Euler Buckling Equation:
-    $$ EI {d^2 w \over dx^2} + Pw = 0 $$
+    $$ EI {d^2 w \over dx^2} + Fw = 0 $$
 
 </p>
 
 <p>
   The solution of this differential equation can be represented in the form of sines and cosines:
-  $$ w = A \sin{\sqrt{ {P \over EI} x } } + B \cos{\sqrt{ {P \over EI} } x} + Cx + D $$
+  $$ w = A \sin{\sqrt{ {F \over EI} x } } + B \cos{\sqrt{ {F \over EI} } x} + Cx + D $$
 </p>
 
 <p>
@@ -54,10 +54,10 @@ code {
 
 
 In order to determine the maximum load a column can withstand before buckling, one can utilize the 'Euler' Formula at the critical load (the lowest value) and obtain:
-$$ P_{cr} = { c \pi^2 E I \over L^2 } $$
+$$ F_{crit} = { c \pi^2 E I \over L^2 } $$
 <p> Where: </p>
 <ul>
-<li> \(F\) is the calculated critical force where buckling will occur.</li>
+<li> \(F_{crit}\) is the calculated critical force where buckling will occur.</li>
 <li> \(E\) is the modulus of elasticity of the material.</li>
 <li> \(I\) is the moment of inertia of the cross section of the column. </li>
 <li> \(L\) is the length of the column.</li>
@@ -73,5 +73,8 @@ $$ P_{cr} = { c \pi^2 E I \over L^2 } $$
 <li> Pinned-Fixed:    \(c = 2\) </li>
 <li> Fixed-Fixed:     \(c = 4\) </li>
 </ul>
+
+<!-- bifurcation plot excluded - just adds a lot of confusion? - maybe think of another description
 <p>Buckling can be described mathematically as a bifurcation in the solution to the equations of static equilibrium (see bifurcation plot).
 The bifurcation plot shows the displacement \(w\) (normalized to \(L\)). </p>
+-->
