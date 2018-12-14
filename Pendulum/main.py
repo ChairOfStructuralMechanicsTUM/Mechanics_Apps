@@ -1,4 +1,4 @@
-from MoveMassTool import *
+from MoveMassTool import MoveMassTool
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
@@ -11,7 +11,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_div import LatexDiv
+from latex_support import LatexDiv
 
 # create column data sources
 Mass = ColumnDataSource(data = dict(x=[],y=[]))
@@ -215,7 +215,7 @@ def evolve():
     if (getTotEng()<1e-4):
         global Active
         Active=False
-        curdoc().remove_periodic_callback(evolve)
+        curdoc().remove_periodic_callback(callback_id)
 
 # function to move the mass by clicking it
 def on_mouse_move(event):
@@ -301,33 +301,35 @@ TotEng=getTotEng()
 plot()
 
 # add control buttons
+
 def play():
-    global Active
+    global Active,callback_id
     if (not Active):
         removePhiAngle()
-        curdoc().add_periodic_callback(evolve,100)
+        callback_id=curdoc().add_periodic_callback(evolve,100)
         Active=True
 Play_button = Button(label="Play",button_type="success",width=150)
 Play_button.on_click(play)
 
 def stop():
-    global Active, phi0_input, phi, dphi0_input, dPhi, dTheta
+    global Active, phi0_input, phi, dphi0_input, dPhi, dTheta,callback_id
     if (Active):
-        curdoc().remove_periodic_callback(evolve)
+        curdoc().remove_periodic_callback(callback_id)
         Active=False
         phi0_input.value=phi
         dphi0_input.value=dPhi
-    dTheta=0
-        
+        dTheta=0
+
 Stop_button = Button(label="Stop",button_type="success",width=150)
 Stop_button.on_click(stop)
+   
 
 def reset():
     global Active, phi0_input, phi, dphi0_input, dPhi, basicPhaseDiagram, dTheta
     phi=0.5
     dPhi=1
     if (Active):
-        curdoc().remove_periodic_callback(evolve)
+        curdoc().remove_periodic_callback(callback_id)
         Active=False
     mass_input.value=5.0
     lam_input.value=0.0
@@ -422,8 +424,10 @@ description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1000)
 
 ## Send to window
+
+callback_id=None
 hspace = 20
 curdoc().add_root(column(description, row(column(fig,row(Play_button,Spacer(width=hspace),Stop_button,Spacer(width=hspace),Reset_button),pendulum_type_input),phase_diagramm), \
     row(mass_input,Spacer(width=hspace),lam_input,Spacer(width=hspace),phi0_input,Spacer(width=hspace),dphi0_input)))
-curdoc().add_periodic_callback(evolve,100)
+callback_id=curdoc().add_periodic_callback(evolve,100)
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

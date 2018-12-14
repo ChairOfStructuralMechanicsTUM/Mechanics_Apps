@@ -16,7 +16,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_div import LatexDiv
+from latex_support import LatexDiv
 
 #Global constant numbers:
 punktezahl      = 30
@@ -149,11 +149,11 @@ xbifi = []
 bx = 0.01
 bk = bk + bx
 #step = 0.1*step
-for i in xrange(0, 1+int( (f_end-col3.fcrit)/(step))  ):
+for i in range(0, 1+int( (f_end-col3.fcrit)/(step))  ):
     yb  = zbifi * ( factor * np.sqrt( np.sqrt( bk/col3.fcrit)-1) )
     bk += step
     y2.append(yb)
-for i in xrange(0,int(f_end/step) ):
+for i in range(0,int(f_end/step) ):
     xbifi.append(bx)
     bx += step
 y1 = [0] * int((col3.fcrit/step))
@@ -293,7 +293,7 @@ def fun_check1(attr,old,new):
     elif weight_slide.value > old_slide_val:
         fun_update(attr,old,new)
     else:
-        print "does not work"
+        print ("does not work")
 
 
 def fun_update(attr,old,new):

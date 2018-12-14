@@ -1,11 +1,11 @@
-from Spring1 import *
-from Dashpot1 import *
-from Mass1 import *
-from Coord1 import *
+from Spring1 import Spring
+from Dashpot1 import Dashpot
+from Mass1 import Mass, RectangularMass,CircularMass
+from Coord1 import Coord
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div, HoverTool, Range1d, Div
+from bokeh.models import Slider, Button, Div, HoverTool, Range1d,ColumnDataSource
 from os.path import dirname, join, split
 
 # z = lam/(2*sqrt(k*m))
@@ -108,17 +108,17 @@ def change_initV(attr,old,new):
 ## Create slider to choose initial velocity
 initV_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
-
+callback_id=None
 def pause():
     global Active
     if (Active):
-        curdoc().remove_periodic_callback(evolve)
+        curdoc().remove_periodic_callback(callback_id)
         Active=False
 
 def play():
-    global Active
+    global Active,callback_id
     if (not Active):
-        curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
+        callback_id=curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
         Active=True
 
 def stop():

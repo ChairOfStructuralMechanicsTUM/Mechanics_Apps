@@ -726,7 +726,7 @@ Nxz3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_
 Nxz4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 
 ### Figure 1, Define Figure and add Geometry:
-figure1 = figure(title="Stress State A", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400, logo=None)
+figure1 = figure(title="Stress State A", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
 figure1.square([0], [0], size=75, color="black", alpha=0.5)
 figure1.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=25, y_end=0))
@@ -769,7 +769,7 @@ figure1.add_layout(legend1)
 Mohr_Circle_glyph = Circle(x='x',y='y',radius='radius', radius_dimension='y', fill_color='#c3c3c3', fill_alpha=0.5)
 Wedge_glyph = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
 ### Figure 2: Define Figure and add Geometry
-figure2 = figure(title="Mohr's Circle", tools="pan,save,wheel_zoom,reset", x_range=(-25.5,25.5), y_range=(-25.5,25.5),width=400,height=400, logo=None, toolbar_location="right")
+figure2 = figure(title="Mohr's Circle", tools="pan,save,wheel_zoom,reset", x_range=(-25.5,25.5), y_range=(-25.5,25.5),width=400,height=400, toolbar_location="right")
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=-23, y_start=0, x_end=23, y_end=0))
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
@@ -827,7 +827,7 @@ Nzetaeta2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", 
 Nzetaeta3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 Nzetaeta4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 ### Figure 3, Define Figure and add Geometry:
-figure3 = figure(title="Stress State B", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400, logo=None)
+figure3 = figure(title="Stress State B", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400,)
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=25, y_end=0))
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),

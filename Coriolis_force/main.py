@@ -9,7 +9,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_div import LatexDiv
+from latex_support import LatexDiv
 
 ## Create all required variables
 circle_axis_phi=[]
@@ -117,7 +117,7 @@ def move():
         spinRoom(mass_pos)
     else:
         spinTable(mass_pos)
-    
+callback_id = None   
 def spinTable(mass_pos):
     global Omega, mass_path_source, Active, circle_axis_phi
     # give appearance of rotating main disk by rotating axes
@@ -135,7 +135,7 @@ def spinTable(mass_pos):
     mass_path_source.data=dict(x=X,y=Y)
     # if ball has exited disk stop the animation
     if (mass_pos[0]>8):
-        curdoc().remove_periodic_callback(move)
+        curdoc().remove_periodic_callback(callback_id)
         Active=False
 
 def spinRoom (mass_pos):
@@ -165,7 +165,7 @@ def spinRoom (mass_pos):
             yStart=[start[1]],yEnd=[end[1]])
     # if ball has exited disk stop the animation
     if (mass_pos[0]>8):
-        curdoc().remove_periodic_callback(move)
+        curdoc().remove_periodic_callback(callback_id)
         Active=False
 
 ## Slider functions
@@ -198,12 +198,13 @@ def particle_speed_y (attrname,old,new):
         global v0_input_y
         v0_input_y.value=OSpeed[1]
 
-## Button functions
+## Button function
+
 def reset_situation ():
     global pause_button, Active
     # only stop callback if there is a callback
     if (Active):
-        curdoc().remove_periodic_callback(move)
+        curdoc().remove_periodic_callback(callback_id)
         Active=False
     # put everything back to initial position
     initialise()
@@ -212,7 +213,7 @@ def BackToInitial ():
     global pause_button, Active
     # only stop callback if there is a callback
     if (Active):
-        curdoc().remove_periodic_callback(move)
+        curdoc().remove_periodic_callback(callback_id)
         Active=False
     # put speed back to original value
     v0_input_x.value=2.0
@@ -222,18 +223,18 @@ def BackToInitial ():
     initialise()
 
 def pause (toggled):
-    global Active
+    global Active,callback_id
     # When active pause animation
     if (toggled):
-        curdoc().remove_periodic_callback(move)
+        curdoc().remove_periodic_callback(callback_id)
         Active=False
     # only restart if still on table
     elif(mass_pos[0]<=8):
-        curdoc().add_periodic_callback(move, 100)
+        callback_id=curdoc().add_periodic_callback(move, 100)
         Active=True
 
 def play ():
-    global Active, AtStart
+    global Active, AtStart,callback_id
     # if inactive, reactivate animation
     if (pause_button.active==True):
         # deactivating pause button reactivates animation
@@ -241,7 +242,7 @@ def play ():
         pause_button.active=False
     # only restart if still on table
     elif (not Active and mass_pos[0]<=8):
-        curdoc().add_periodic_callback(move, 100)
+        callback_id=curdoc().add_periodic_callback(move, 100)
         Active=True
         AtStart=False
 
