@@ -1,4 +1,4 @@
-#main file:
+# Main file:
 
 from bokeh.plotting import Figure, output_file , show
 from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
@@ -10,19 +10,18 @@ from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
 import numpy as np
 import math
 from os.path import dirname, join, split
-# from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
 
-#Global Beam Properties:
+# Global Beam Properties:
 resol = 100             # resolution of deflection visualization
 resol_plo = 1000        # resolution of forces plot
-x0 = 0.0                  #starting value of beam
+x0 = 0.0                  # starting value of beam
 xf = 10.0
-# E  = 5.0e1                 #ending value of beam
-E  = 2.0e1              #modulus of elasticity
-I  = 30.0                 #moment of inertia
-length  = xf-x0         #length of beam
-p_mag = []             #initialize the p force
+# E  = 5.0e1                 # ending value of beam
+E  = 2.0e1              # modulus of elasticity
+I  = 30.0                 # moment of inertia
+length  = xf-x0         # length of beam
+p_mag = []             # initialize the p force
 p_magi = 1.0
 p_loci = xf/2
 f2_loci = xf
@@ -30,43 +29,42 @@ lthi = 2.0
 plotwidth = 20.0
 loadoptionsi = 0
 
-x_length = np.linspace(x0,xf,resol_plo)     #Initialize Arrays for Forces Plot
+x_length = np.linspace(x0,xf,resol_plo)     # nitialize Arrays for Forces Plot
 y_mom = []
 y_shear = []                           
 
-#Sources:
-#Plot source:
+# Sources:
+# Plot source:
 plot_source = ColumnDataSource(data=dict(x = np.linspace(x0,xf,resol), y = np.ones(resol) * 0 ))
-#Plot label Source:
+# Plot label Source:
 plot1_label_source   = ColumnDataSource(data=dict(x=[], y=[], names=[]))
 plot2_label_source   = ColumnDataSource(data=dict(x=[], y=[], names=[]))
-#Moment Source:
+# Moment Source:
 mom_source = ColumnDataSource(data=dict(x=[], y=[]))
-#Shear Source:
+# Shear Source:
 shear_source = ColumnDataSource(data=dict(x=[] , y=[]))
-#Arrow Sources:
+# Arrow Sources:
 p_arrow_source1 = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 p_arrow_source2 = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 p_arrow_source3 = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 f2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 f1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
-#Load Shapes Sources:
+# Load Shapes Sources:
 constant_load_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
 triangular_load_source  = ColumnDataSource(data=dict(x=[], y=[]))
-#Label Source:
+# Label Source:
 labels_source = ColumnDataSource(data=dict(x=[] , y=[],name = []))
-#Support Source:
+# Support Source:
 support1 = "Balken_AD/static/images/auflager02.svg"
 support2 = "Balken_AD/static/images/auflager01.svg"
 support_source1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 support_source2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
-#Cantilever rectangle source:
+# Cantilever rectangle source:
 quad_source = ColumnDataSource(data=dict(top= [], bottom= [],left = [], right =[]))
 segment_source = ColumnDataSource(data=dict(x0= [], y0= [],x1 = [], y1 =[]))
 
-#Sliders:
+# Sliders:
 p_loc_slide= Slider(title="Load Position",value= p_loci,start = x0, end = xf, step = 1.0)
-# p_mag_slide = Slider(title="Load Amplitude", value = p_magi, start=-2*p_magi, end=2*p_magi, step=.1)
 p_mag_slide = Slider(title="Load Amplitude", value = 1.0, start=-1.0, end=1.0, step=2.0)
 f2_loc_slide = Slider(title="Support Position",value=f2_loci,start = x0, end = xf, step = 1.0)
 lth_slide = Slider(title="Beam-Height",value=lthi ,start = 2.0, end = 20.0, step = 1.0)
@@ -75,7 +73,7 @@ radio_button_group = RadioButtonGroup(
         labels=["Point Load", "Constant Load", "Triangular Load"], active=loadoptionsi, width = 600)
 
 
-#FUNCTION: Calculation of deflection:
+# FUNCTION: Calculation of deflection:
 def Fun_Deflection(a,b,l,p_mag,x):
     ynew = []
     for i in range(0,int(resol) ):
@@ -158,7 +156,7 @@ def Fun_Deflection(a,b,l,p_mag,x):
         # return ynew
 
 
-#FUNCTION: Cantilever Deflection function:
+# FUNCTION: Cantilever Deflection function:
 def Fun_C_Deflection(p,b,x):
     '''Calculates the deflection of the beam when it is cantilever'''
 
@@ -229,8 +227,8 @@ def Fun_C_Deflection(p,b,x):
 
 
 
-#FUNCTION: Cantilever function:
-#When position 2 is 0, this function is called:
+# FUNCTION: Cantilever function:
+# When position 2 is 0, this function is called:
 def Fun_Cantilever():
     if radio_button_group.active == 0:
         f1_arrow_source.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [])
@@ -323,6 +321,7 @@ def Fun_Update(attrname, old, new):
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
                 triangular_load_source.data  = dict(x=[], y=[])                
 
+            # Moment and shear calculation:
             y_mom=[]
             y_shear=[]
             for i in range(0,resol_plo):
@@ -350,49 +349,51 @@ def Fun_Update(attrname, old, new):
             plot_source.data = dict(x = np.linspace(x0,xf,resol), y = ynew)
             move_tri = -0.4
 
+            # Moment and shear calculation:
             y_mom = []
             y_shear = []
-            if (l >= a and p_coord!=10 and p_coord!=0):
-                for i in range(0,resol_plo):
-                    if x_length[i]<a:
-                        y_shear.append(-1.0*f1_mag)
-                        y_mom.append(f1_mag*x_length[i])
-                    if x_length[i]>=a and x_length[i]<=l:
-                        y_shear.append(-1.0*(f1_mag+p_mag))
-                        y_mom.append(f1_mag*a+(f1_mag+p_mag)*(x_length[i]-a))
-                    if x_length[i]>l:
-                        y_shear.append(-1.0*(f1_mag+p_mag+f2_mag))
-                        y_mom.append(f1_mag*a+(f1_mag+p_mag)*(l-a))
+            if (l >= a):
+                if (p_coord!=f2_coord):            
+                    for i in range(0,resol_plo):
+                        if x_length[i]<a:
+                            y_shear.append(-1.0*f1_mag)
+                            y_mom.append(f1_mag*x_length[i])
+                        if x_length[i]>=a and x_length[i]<=l:
+                            y_shear.append(-1.0*(f1_mag+p_mag))
+                            y_mom.append(f1_mag*a+(f1_mag+p_mag)*(x_length[i]-a))
+                        if x_length[i]>l:
+                            y_shear.append(-1.0*(f1_mag+p_mag+f2_mag))
+                            y_mom.append(f1_mag*a+(f1_mag+p_mag)*(l-a))
+                else:
+                    for i in range(0,resol_plo):
+                        y_shear.append(0)
+                        y_mom.append(0)
                 mom_source.data = dict(x=x_length, y=y_mom)
                 shear_source.data = dict(x=x_length, y=y_shear)
-            elif  (l < a and p_coord!=10 and p_coord!=0):
+            else:            
                 for i in range(0,resol_plo):
                     if x_length[i]<l:
                         y_shear.append(-1.0*f1_mag)
-                        y_mom.append(f1_mag*x_length[i])
+                        y_mom.append(f1_mag*x_length[i])                      
                     if x_length[i]>=l and x_length[i]<=a:
                         y_shear.append(-1.0*(f1_mag+f2_mag))
                         y_mom.append(f1_mag*l+(f1_mag+f2_mag)*(x_length[i]-l))
                     if x_length[i]>a:
                         y_shear.append(-1.0*(f1_mag+p_mag+f2_mag))
                         y_mom.append(f1_mag*l+(f1_mag+f2_mag)*(a-l))
-            else:
-                for i in range(0,resol_plo):
-                        y_shear.append(0)
-                        y_mom.append(0)
                 mom_source.data = dict(x=x_length, y=y_mom)
                 shear_source.data = dict(x=x_length, y=y_shear)
 
             # Show max Values:    
             if (p_coord==5 and f2_coord==10 ):
                 if p_mag>0:
-                    plot1_label_source.data = dict(x=[5.25,4.1,4.87,4.87], y=[0.6,-0.4,-0.38,0.62], names=["F/2","-F/2","x","x"])
-                    plot2_label_source.data = dict(x=[5,4.87], y=[-3.5,-2.0], names=["F*L/4","x"])
+                    plot1_label_source.data = dict(x=[5.25,5.25,5.25,4.4,4.5,4.5,4.87,4.87], y=[0.8,0.78,0.45,-0.2,-0.22,-0.55,-0.38,0.62], names=["F","_","2","-F","_","2","x","x"])
+                    plot2_label_source.data = dict(x=[4.8,4.8,4.85,4.87], y=[0.8,0.78,-0.55,-2.0], names=["FL","__","4","x"])
                 else:
-                    plot1_label_source.data = dict(x=[4.1,5.25,4.87,4.87], y=[0.6,-0.4,-0.38,0.62], names=["-F/2","F/2","x","x"])
-                    plot2_label_source.data = dict(x=[5,4.87], y=[4,3.0], names=["F*L/4","x"])
+                    plot1_label_source.data = dict(x=[4.4,4.5,4.5,5.25,5.25,5.25,4.87,4.87], y=[0.8,0.78,0.45,-0.2,-0.22,-0.55,-0.38,0.62], names=["-F","_","2","F","_","2","x","x"])
+                    plot2_label_source.data = dict(x=[4.8,4.8,4.85,4.87], y=[0.8,0.78,-0.55,3.0], names=["FL","__","4","x"])
 
-            #p_arrow and labels:
+            # p_arrow and labels:
             if (p_mag>0):
                 p_arrow_source1.data = dict(xS= [p_coord], xE= [p_coord], yS= [1+(p_mag/2.3)], yE=[1-(p_mag/2.3)], lW = [2] )
                 p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
@@ -412,7 +413,7 @@ def Fun_Update(attrname, old, new):
                 support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
 
-            #f1_arrow:
+            # f1_arrow:
             if (p_mag<0):
                 if (f1_mag>0 and p_coord!=10):
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
@@ -427,7 +428,7 @@ def Fun_Update(attrname, old, new):
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
                 else:                    
                     f1_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])            
-            #f2_arrow:
+            # f2_arrow:
             if (p_mag<0):
                 if (f2_mag>0 and p_coord!=0):
                     f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [0.8], yS=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
@@ -457,7 +458,7 @@ def Fun_Update(attrname, old, new):
         b = l - a
         x1 = xf - l
 #####################
-        if f2_coord == 0: #CANTILEVER MODE
+        if f2_coord == 0: # CANTILEVER MODE
 #####################            
             xcan = x0
             Fun_Cantilever()
@@ -484,7 +485,7 @@ def Fun_Update(attrname, old, new):
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [] , y = [],name = [])                        
 
-            #cantilever forces calculation:
+            # Moment and shear calculation:
             y_mom=[]
             y_shear=[]
             fac_m=0.25
@@ -513,7 +514,7 @@ def Fun_Update(attrname, old, new):
             plot_source.data = dict(x = np.linspace(x0,xf,resol), y = ynew)
             move_tri = -0.4
 
-            #moment and shear:
+            # Moment and shear calculation:
             y_mom = []
             y_shear = []
             fac_m=0.25
@@ -534,7 +535,7 @@ def Fun_Update(attrname, old, new):
                 mom_source.data = dict(x=x_length, y=y_mom)
                 shear_source.data = dict(x=x_length, y=y_shear)
 
-            else: #if l<a
+            else: # if l<a
                 f1_mag = -1.0*p_mag*a/l*(l-a/2.0)
                 f2_mag = -1.0*p_mag* a**2.0/2.0/l
                 for i in range(0,resol_plo):
@@ -550,26 +551,17 @@ def Fun_Update(attrname, old, new):
                 mom_source.data = dict(x=x_length, y=y_mom)
                 shear_source.data = dict(x=x_length, y=y_shear)
 
-            #Show max values:
+            # Show max values:
             if (p_coord==10 and f2_coord==10 ):
                 if p_mag >0:
-                    plot1_label_source.data = dict(x=[0.1,9.1,-0.12,9.83], y=[1.1,-0.88,0.87,-0.617], names=["p*L/2","-p*L/2","x","x"])
-                    plot2_label_source.data = dict(x=[5,4.87], y=[-4,-2.6], names=["p*L^2/8","x"])
+                    plot1_label_source.data = dict(x=[0.0,0.0,0.05,9.4,9.5,9.55,-0.12,9.83], y=[0.25,0.18,-0.15,0.25,0.18,-0.15,0.87,-0.617], names=["pL","__","2","-pL","__","2","x","x"])
+                    plot2_label_source.data = dict(x=[4.8,4.8,4.85,5.1,4.87], y=[0.90,0.78,-0.55,1.5,-2.6], names=["pL","__","8","2","x"])                    
+                    
                 else:
-                    plot1_label_source.data = dict(x=[0.1,9.1,-0.12,9.83], y=[-0.88,1.1,-0.617,0.87], names=["p*L/2","-p*L/2","x","x"])
-                    plot2_label_source.data =dict(x=[5,4.87], y=[5,3.6], names=["p*L^2/8","x"])
+                    plot1_label_source.data = dict(x=[0.0,0.0,0.05,9.4,9.5,9.55,-0.12,9.83], y=[0.25,0.18,-0.15,0.25,0.18,-0.15,-0.617,0.87], names=["pL","__","2","-pL","__","2","x","x"])
+                    plot2_label_source.data =dict(x=[4.8,4.8,4.85,5.1,4.87], y=[0.90,0.78,-0.55,1.5,3.6], names=["pL","__","8","2","x"])   
 
-
-            # # Show max Values:    
-            # if (p_coord==5 and f2_coord==10 ):
-            #     if p_mag>0:
-            #         plot1_label_source.data = dict(x=[5.25,4.1,4.87,4.87], y=[0.6,-0.4,-0.38,0.62], names=["F/2","-F/2","x","x"])
-            #         plot2_label_source.data = dict(x=[5,4.87], y=[-3.5,-2.0], names=["F*L/4","x"])
-            #     else:
-            #         plot1_label_source.data = dict(x=[4.1,5.25,4.87,4.87], y=[0.6,-0.4,-0.38,0.62], names=["-F/2","F/2","x","x"])
-            #         plot2_label_source.data = dict(x=[5,4.87], y=[4,3.0], names=["F*L/4","x"])
-
-            #p_arrow and labels:
+            # p_arrow and labels:
             if (p_mag>0) and (p_coord!=0):
                 p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
                 p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
@@ -598,7 +590,7 @@ def Fun_Update(attrname, old, new):
                 support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1]) 
 
-            #f1_arrow:
+            # f1_arrow:
             if (p_mag<0 and p_coord!=0):
                 if (f1_mag>0):
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
@@ -612,7 +604,7 @@ def Fun_Update(attrname, old, new):
             else:
                  f1_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
 
-          #f2_arrow:
+          # f2_arrow:
             if (p_mag<0 and p_coord!=0):
                 if (f2_mag>0):
                     f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [0.8], yS=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
@@ -686,6 +678,7 @@ def Fun_Update(attrname, old, new):
                 triangular_load_source.data  = dict(x=[], y=[])     
                 labels_source.data = dict(x = [] , y = [],name = [])
 
+            # Moment and shear calculation:
             y_mom=[]
             y_shear=[]
             fac_m=0.25
@@ -715,7 +708,7 @@ def Fun_Update(attrname, old, new):
 
             move_tri = -0.4
 
-            #moment and shear:
+            # Moment and shear calculation:
             y_mom = []
             y_shear = []
             fac_m=0.25
@@ -736,7 +729,7 @@ def Fun_Update(attrname, old, new):
                 mom_source.data = dict(x=x_length, y=y_mom)
                 shear_source.data = dict(x=x_length, y=y_shear)
 
-            else: #if l<a                
+            else: # if l<a                
                 f1_mag_1 = -1.0*p_mag*a/2.0/l*(l-a+a/3.0)
                 f2_mag = -1.0* ( p_mag*a**2.0 /3.0/l )
                 f1_mag = -1.0*(p_mag*a/2.0 + f2_mag)
@@ -756,16 +749,16 @@ def Fun_Update(attrname, old, new):
                 shear_source.data = dict(x=x_length, y=y_shear)
 
 
-            #Show max values:
+            # Show max values:
             if (p_coord==10 and f2_coord==10 ):
                 if p_mag >0:
-                    plot1_label_source.data = dict(x=[0.1,9.1,-0.12,9.83], y=[0.75,-0.7,0.375,-0.4], names=["p*L/6","-p*L/3","x","x"])
-                    plot2_label_source.data = dict(x=[5,4.87], y=[-2.5,-1.1], names=["p*L^2/(9*sqrt(3))","x"])
+                    plot1_label_source.data = dict(x=[0.0,0.0,0.05,9.4,9.5,9.55,-0.12,9.83], y=[0.15,0.08,-0.25,0.25,0.18,-0.15,0.375,-0.4], names=["pL","__","6","-pL","__","3","x","x"])  
+                    plot2_label_source.data = dict(x=[4.8,4.5,4.5,5.1,4.87], y=[1.5,1.38,0.05,2.1,-1.1], names=["pL","______","9*sqrt(3)","2","x"])
                 else:
-                    plot1_label_source.data = dict(x=[0.1,9.1,-0.12,9.83], y=[-0.4,0.90,-0.13,0.62], names=["p*L/6","-p*L/3","x","x"])
-                    plot2_label_source.data =dict(x=[5,4.87], y=[3.5,2.0], names=["p*L^2/(9*sqrt(3))","x"])
+                    plot1_label_source.data = dict(x=[0.0,0.0,0.05,9.4,9.5,9.55,-0.12,9.83], y=[0.45,0.38,0.05,0.25,0.18,-0.15,-0.13,0.62], names=["pL","__","6","-pL","__","3","x","x"])
+                    plot2_label_source.data =dict(x=[4.8,4.5,4.5,5.1,4.87], y=[0.3,0.18,-1.15,0.9,2.0], names=["pL","______","9*sqrt(3)","2","x"])
 
-            #p_arrow and labels:
+            # p_arrow and labels:
             if (p_mag>0) and (p_coord!=0):
                 p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1-p_mag/2.3+p_mag/10.0], yE=[1-p_mag/2.3], lW = [2] )
                 p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1-p_mag/2.3+p_mag/2.6], yE=[1-(p_mag/2.3)], lW = [2] )
@@ -811,7 +804,7 @@ def Fun_Update(attrname, old, new):
                 support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1]) 
 
-            #f1_arrow:
+            # f1_arrow:
             if (p_mag<0):
                 if (f1_mag>0):
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
@@ -822,7 +815,7 @@ def Fun_Update(attrname, old, new):
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-1-(math.atan(f1_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
                 else:
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
-            #f2_arrow:
+            # f2_arrow:
             if (p_mag<0):
                 if (f2_mag>0):
                     f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [0.8], yS=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
@@ -834,24 +827,24 @@ def Fun_Update(attrname, old, new):
                 else:
                     f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
 
-#initial function:
+# Initial function:
 def initial():
     p_loc_slide.value = p_loci
     f2_loc_slide.value = f2_loci
     p_mag_slide.value = p_magi
     lth_slide.value = 2
     checkbox.active = []
-    # plot_label_source.data = dict(x=[], y=[], names=[])
     Fun_Update(None,None,None)
     support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
 
 ##########Plotting##########
 
-#######Main Plot:
+####### Main Plot:
 plot = Figure(title="Beam with Supports and Load", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5), height = 400, logo=None)
 my_line=plot.line(x='x', y='y', source=plot_source, color='#0065BD',line_width=20)
 plot.add_glyph(support_source1,ImageURL(url="sp1", x=-0.325, y=-0.1, w=0.66, h=0.4))
 plot.add_glyph(support_source2,ImageURL(url="sp2", x='x', y='y', w=0.66, h=0.4))
+
 plot.quad(top='top', bottom='bottom', left='left',
     right='right', source = quad_source, color="#808080", fill_alpha = 0.5)
 plot.segment(x0='x0', y0='y0', x1='x1',
@@ -863,7 +856,7 @@ plot.title.text_font_size="13pt"
 labels = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=5, y_offset=-30, source=labels_source, render_mode='canvas')
 
-#######Plot1 with shear:
+####### Plot1 with shear:
 plot1 = Figure(title="Shear Force", x_range=(x0-.5,xf+.5), y_range=(-1.5,1.5), height = 200, logo=None)
 plot1_labels1 = LabelSet(x='x', y='y', text='names', source=plot1_label_source, text_color = 'red', level='glyph', x_offset=3, y_offset=-15)
 plot1.add_layout(plot1_labels1)
@@ -877,7 +870,7 @@ plot1.title.text_font_size="13pt"
 plot1.square([0.0],[0.0],size=0,fill_color='red',fill_alpha=0.5,legend="Shear Force")
 plot1.legend.location = 'top_right'
 
-#######Plot2 with moment:
+####### Plot2 with moment:
 plot2 = Figure(title="Bending Moment", x_range=(x0-.5,xf+.5), y_range=(-6,6), height = 200, logo=None)
 plot2_labels1 = LabelSet(x='x', y='y', text='names', source=plot2_label_source, text_color = 'blue', level='glyph', x_offset=3, y_offset=-15)
 plot2.add_layout(plot2_labels1)
@@ -891,26 +884,25 @@ plot2.title.text_font_size="13pt"
 plot2.square([0.0],[0.0],size=0,fill_color='blue',fill_alpha=0.5,legend="Bending Moment")
 plot2.legend.location = 'top_right'
 
-###arrow plotting:
-#P arrow:
+### Arrow plotting:
+# P arrow:
 p_arrow_glyph1 = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=p_arrow_source1,line_color="#0065BD")
 p_arrow_glyph2 = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=p_arrow_source2,line_color="#0065BD")
 p_arrow_glyph3 = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=p_arrow_source3,line_color="#0065BD")        
-#Position 2 arrow:
+# Position 2 arrow:
 f2_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3,size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width = "lW", source=f2_arrow_source,line_color="#E37222")
-#Position 1 arrow:
+# Position 1 arrow:
 f1_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3,size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width = "lW", source=f1_arrow_source,line_color="#E37222" )
-
-#load-shapes glyph
+# Load-shapes glyph
 constant_load_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 triangular_load_glyph = Patch(x="x", y="y", fill_color="#0065BD",  fill_alpha=0.5)
 
-###add layouts:
+### add layouts:
 plot.add_layout(labels)
 plot.add_layout(p_arrow_glyph1)
 plot.add_layout(p_arrow_glyph2)
@@ -919,23 +911,20 @@ plot.add_layout(f2_arrow_glyph)
 plot.add_layout(f1_arrow_glyph)
 plot.add_glyph(constant_load_source,constant_load_glyph)
 plot.add_glyph(triangular_load_source, triangular_load_glyph)
-
-###Reset Button
+### Reset Button
 button = Button(label="Reset", button_type="success")
-
-###CheckboxGroup
-#Biegelinie Checkbox
+### CheckboxGroup
+# Biegelinie Checkbox
 checkbox = CheckboxGroup(
         labels=["Bending Curve"], active=[])
-
-###on_change:
+### on_change:
 p_loc_slide.on_change('value', Fun_Update)
 p_mag_slide.on_change('value', Fun_Update)
 f2_loc_slide.on_change('value',Fun_Update)
 radio_button_group.on_change('active', Fun_Update)
 button.on_click(initial)
 
-#main:
+# main:
 initial()
 curdoc().add_root( row( column(Spacer(height=20,width=350), widgetbox(radio_button_group), p_loc_slide, p_mag_slide, f2_loc_slide, widgetbox(button)),  column(plot,plot2,plot1 ) ) )
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
