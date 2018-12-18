@@ -1,11 +1,11 @@
 from bokeh.models import ColumnDataSource
-from Coord import *
+from SDOF_Coord import SDOF_Coord
 from copy import deepcopy
 
-class Dashpot(object):
+class SDOF_Dashpot(object):
     def __init__(self,start,end,damping_constant=1.0):
-        start=Coord(start[0],start[1])
-        end=Coord(end[0],end[1])
+        start=SDOF_Coord(start[0],start[1])
+        end=SDOF_Coord(end[0],end[1])
         # define dashpot constant
         self.damping_constant=damping_constant
         # save points
