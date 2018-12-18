@@ -15,7 +15,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_div import LatexDiv
+from latex_support import LatexDiv
 from math import sqrt, exp, pow, sin , cos, pi, atan2, sinh, cosh
 
 ## initial values
