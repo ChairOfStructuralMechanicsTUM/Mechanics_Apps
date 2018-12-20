@@ -7,9 +7,10 @@ from numpy.fft import ifft, fft, fftshift
 
 from bokeh.io import curdoc
 from bokeh.models import ColumnDataSource, Div
-from bokeh.layouts import widgetbox, layout, column
+from bokeh.layouts import widgetbox, layout, column, row, Spacer
 from bokeh.plotting import Figure
 from bokeh.models.widgets import TextInput, Dropdown, CheckboxButtonGroup
+from bokeh.embed import components
 
 from sympy import sympify
 
@@ -33,10 +34,10 @@ sample_functions = {
 # General Settings #
 ####################
 
-color_interval = False  # here we can decide if we want to color the transformed interval
-show_analytical_solution = True  # here we can decide if we want to show the analytical solution for sample functions
-sample_function_id = "cos"  # here we set the sample function that initially activated
-sample_function_used = True  # global bool that states whether a sample function is currently used
+color_interval = False              # here we can decide if we want to color the transformed interval
+show_analytical_solution = True     # here we can decide if we want to show the analytical solution for sample functions
+sample_function_id = "cos"          # here we set the sample function that initially activated
+sample_function_used = True         # global bool that states whether a sample function is currently used
 
 
 ################
@@ -82,14 +83,14 @@ toolset=["crosshair, pan, wheel_zoom"]
 # Generate a figure container for the original function
 plot_original = Figure(x_axis_label='t',
                        y_axis_label='x(t)',
-                       tools=toolset,
+                       tools=toolset, logo=None,
                        active_scroll="wheel_zoom",
                        title="Function in Original Domain")
 
 # Generate a figure container for the real part of the transformed function
 plot_transform_real= Figure(x_axis_label='f',
                             y_axis_label='Re [X(f)]',
-                            tools=toolset,
+                            tools=toolset, logo=None,
                             active_scroll="wheel_zoom",
                             title="Fourier transform of function - Real part")
 
@@ -97,7 +98,7 @@ plot_transform_real= Figure(x_axis_label='f',
 plot_transform_imag= Figure(x_axis_label='f',
                             y_axis_label='Im [X(f)]',
                             x_range=plot_transform_real.x_range, y_range=plot_transform_real.y_range,  # this line links the displayed region in the imaginary and the real part.
-                            tools=toolset,
+                            tools=toolset, logo=None,
                             active_scroll="wheel_zoom",
                             title="Fourier transform of function - Imaginary part")
 
@@ -115,7 +116,7 @@ def extract_parameters():
         N_input.value = '10^5'
 
     h = T_0 / N
-    print f_input.value
+    #print f_input.value
     f_function, _ = string_to_function_parser(f_input.value, h, ['t'])  # function to be transformed
 
     return T_0, N, f_function
@@ -164,7 +165,7 @@ def sample_fourier_transform(T_0, N):
     sample_functions_transform = sample_functions[sample_function_id][1]
 
     N_samples = 1000
-    f_analytical, h = np.linspace(-(N/2) / T_0, (N/2 - 1) / T_0, N_samples, retstep=True)  # Grid in the Frequency Domain
+    f_analytical, h = np.linspace(-(N/2) / T_0, (N/2 - 1) / T_0, N_samples, retstep=True)       # Grid in the Frequency Domain
     X_function_analytical, _ = string_to_function_parser(sample_functions_transform, h, ['f'])  # function to be transformed
     X_analytical = X_function_analytical(f_analytical)
 
@@ -347,7 +348,40 @@ description = Div(text=open(description_filename).read(), render_as_text=False)
 # create layout
 controls = [f_input, sample_fun_input_f, t0_input, N_input, nyquist_button]
 controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
-curdoc().add_root(layout([[description],[plot_original, plot_transform_real],
-                          [controls_box, plot_transform_imag]],
-                         sizing_mode='stretch_both')) # add plots and controls to root
+#curdoc().add_root(column(description, row(column(plot_original, controls_box), column(plot_transform_real, plot_trans#form_imag)),sizing_mode='stretch_both'))  # plots ar too stretched
+
+#curdoc().add_root(column(description ,layout([[plot_original, plot_transform_real],
+#                          [controls_box, plot_transform_imag]],     
+#                          sizing_mode='stretch_both'))) # add plots and controls to root # text is overlapped by plots...
+
+
+#curdoc().add_root(layout([[plot_original, plot_transform_real],
+#                          [controls_box, plot_transform_imag]],     
+#                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
+
+#script, desc_div = components(description)
+#print(script)
+#print(desc_div)
+
+#curdoc().add_root(layout([description],sizing_mode='stretch_both'))
+#curdoc().add_root(layout([[plot_original, plot_transform_real],
+#                          [controls_box, plot_transform_imag]],     
+#                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
+
+
+#rest_layout =layout([[plot_original, plot_transform_real],
+#                               [controls_box, plot_transform_imag]], sizing_mode='stretch_both')
+#
+#curdoc().add_root(layout([[description],rest_layout]))
+
+
+### this block works, but only after zooming around in a plot...
+curdoc().add_root(layout([[description],[Spacer(height=500)],[plot_original, plot_transform_real],
+                          [controls_box, plot_transform_imag]],     
+                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
+
+
+#curdoc().add_root(layout([[description],[plot_original, plot_transform_real],
+#                          [controls_box, plot_transform_imag]],     
+#                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
