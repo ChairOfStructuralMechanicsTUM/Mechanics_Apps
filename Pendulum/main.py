@@ -215,7 +215,7 @@ def evolve():
     if (getTotEng()<1e-4):
         global Active
         Active=False
-        curdoc().remove_periodic_callback(callback_id)
+        curdoc().remove_periodic_callback(g1Pendulum)
 
 # function to move the mass by clicking it
 def on_mouse_move(event):
@@ -303,18 +303,18 @@ plot()
 # add control buttons
 
 def play():
-    global Active,callback_id
+    global Active,g1Pendulum
     if (not Active):
         removePhiAngle()
-        callback_id=curdoc().add_periodic_callback(evolve,100)
+        g1Pendulum=curdoc().add_periodic_callback(evolve,100)
         Active=True
 Play_button = Button(label="Play",button_type="success",width=150)
 Play_button.on_click(play)
 
 def stop():
-    global Active, phi0_input, phi, dphi0_input, dPhi, dTheta,callback_id
+    global Active, phi0_input, phi, dphi0_input, dPhi, dTheta,g1Pendulum
     if (Active):
-        curdoc().remove_periodic_callback(callback_id)
+        curdoc().remove_periodic_callback(g1Pendulum)
         Active=False
         phi0_input.value=phi
         dphi0_input.value=dPhi
@@ -329,7 +329,7 @@ def reset():
     phi=0.5
     dPhi=1
     if (Active):
-        curdoc().remove_periodic_callback(callback_id)
+        curdoc().remove_periodic_callback(g1Pendulum)
         Active=False
     mass_input.value=5.0
     lam_input.value=0.0
@@ -425,9 +425,9 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 
 ## Send to window
 
-callback_id=None
+g1Pendulum=None
 hspace = 20
 curdoc().add_root(column(description, row(column(fig,row(Play_button,Spacer(width=hspace),Stop_button,Spacer(width=hspace),Reset_button),pendulum_type_input),phase_diagramm), \
     row(mass_input,Spacer(width=hspace),lam_input,Spacer(width=hspace),phi0_input,Spacer(width=hspace),dphi0_input)))
-callback_id=curdoc().add_periodic_callback(evolve,100)
+g1Pendulum=curdoc().add_periodic_callback(evolve,100)
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

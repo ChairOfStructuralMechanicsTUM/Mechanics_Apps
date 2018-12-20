@@ -278,17 +278,17 @@ def change_force_value(attr,old,new):
 
 force_value_input = Slider(title="Force", value=force_value, start=0, end=1.0, step=1,width=400)
 force_value_input.on_change('value',change_force_value)
-callback_id=None
+g1SDOF=None
 def pause():
     global Active
     if (Active):
-        curdoc().remove_periodic_callback(callback_id)
+        curdoc().remove_periodic_callback(g1SDOF)
         Active=False
 
 def play():
-    global Active,callback_id
+    global Active,g1SDOF
     if (not Active):
-        callback_id=curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
+        g1SDOF=curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
         Active=True
 
 def stop():

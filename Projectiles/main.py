@@ -88,17 +88,17 @@ def evolve():
 
     # if monkey is hit with banana then stop
     if xM < xB < xM+20 and yM < yB < yM+20:
-        curdoc().remove_periodic_callback(callback_id)
+        curdoc().remove_periodic_callback(g1Projectiles)
         Active = False
         Done = True
     # else if the banana hit the floor then stop
     elif yB < 0 or yM < 0:
-        curdoc().remove_periodic_callback(callback_id)
+        curdoc().remove_periodic_callback(g1Projectiles)
         Active = False
         Done = True
     # else if nothing is falling and the banana has exited the screen
     elif grav_select.value == "Space" and yB > 105:
-        curdoc().remove_periodic_callback(callback_id)
+        curdoc().remove_periodic_callback(g1Projectiles)
         Active = False
         Done = True
 
@@ -237,16 +237,16 @@ grav_select = Select(title="Planet:", value="Earth",
     options=["Space", "Mercury", "Venus", "Earth", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"])
 grav_select.on_change('value',changeGrav)
 
-callback_id=None
+g1Projectiles=None
 def Fire():
-    global Active,callback_id
+    global Active,g1Projectiles
     if not Active:
         if t!=0:
             Reset()
         # if simulation is not already started
         # release branch and start simulation
         monkeyLetGo(monkey, grav_select.value!="Earth")
-        callback_id=curdoc().add_periodic_callback(evolve, 50)
+        g1Projectiles=curdoc().add_periodic_callback(evolve, 50)
         Active = True
 
 
@@ -258,7 +258,7 @@ def Reset():
     global Active, Done, t
     # if simulation is in progress, stop simulation
     if Active:
-        curdoc().remove_periodic_callback(callback_id)
+        curdoc().remove_periodic_callback(g1Projectiles)
         Active = False
     elif Done:
         Done = False

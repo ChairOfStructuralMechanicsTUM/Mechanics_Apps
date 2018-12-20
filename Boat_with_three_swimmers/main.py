@@ -282,16 +282,16 @@ numberPersonsSlider.on_change('value',updateNoPersons)
 #pause_button.on_click(pause)
 
 ########################### Creating play button ##############################
-callback_id = None
+g1Boatwiththreeswimmers = None
 def play ():
-    global Active,callback_id
+    global Active,g1Boatwiththreeswimmers
     # if inactive, reactivate animation
     if Active == True:
-        callback_id=curdoc().remove_periodic_callback(callback_id)
+        g1Boatwiththreeswimmers=curdoc().remove_periodic_callback(g1Boatwiththreeswimmers)
         Active=False
         play_button.label = "Play"
     else:
-        callback_id=curdoc().add_periodic_callback(move_boat, 50)
+        g1Boatwiththreeswimmers=curdoc().add_periodic_callback(move_boat, 50)
         Active=True
         play_button.label = "Pause"
     #update_bars()
@@ -311,7 +311,7 @@ def reset ():
     if Active == False:
         pass
     else:
-        curdoc().remove_periodic_callback(callback_id)
+        curdoc().remove_periodic_callback(g1Boatwiththreeswimmers)
         Active = False
 
     #Reset Play Button

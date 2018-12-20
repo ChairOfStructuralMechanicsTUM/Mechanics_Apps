@@ -108,17 +108,17 @@ def change_initV(attr,old,new):
 ## Create slider to choose initial velocity
 initV_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
-callback_id=None
+g1DampedOscilator=None
 def pause():
     global Active
     if (Active):
-        curdoc().remove_periodic_callback(callback_id)
+        curdoc().remove_periodic_callback(g1DampedOscilator)
         Active=False
 
 def play():
-    global Active,callback_id
+    global Active,g1DampedOscilator
     if (not Active):
-        callback_id=curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
+        g1DampedOscilator=curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
         Active=True
 
 def stop():
