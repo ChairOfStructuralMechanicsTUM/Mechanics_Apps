@@ -18,9 +18,9 @@ class Mass(object):
     ## Add an object that is affected by the movement of the mass
     def linkObj(self,obj,point):
         p=Coord(point[0],point[1])
-        # save the object and the point where it touches the object
+        # save the object and the current point where it is in contact with the mass
         self.affectedObjects.append([obj,p])
-        # tell the object that it is linked so it can also apply forces to the mass
+        # inform the object that it is linked to the mass, in order for it to apply forces on the mass
         obj.linkTo(self,p)
     
     ## reset linking point between mass and object
@@ -44,9 +44,9 @@ class Mass(object):
         n=len(self.nextStepForces)
         i=0
         while (i<n):
-            # check if object has already applied a force
+            # check if object has already applied a force in previous steps
             if (self.nextStepObjForces[i]==obj):
-                # if so update it to the new force
+                # if so update it with the new force
                 self.nextStepForces[i]=F
                 # and exit while loop
                 i=n+1
@@ -63,34 +63,44 @@ class Mass(object):
         # save forces
         self.thisStepForces=list(self.nextStepForces)
     
-    ## get Velocity and Acceleration at this timestep
-    def getVelAcc(self):
+    ## get Velocity and Acceleration at current timestep
+    def EvolveMass(self,dt):
         # find the total force:
-        # Start with gravitational force
+        # gravitational force should not be included (displacement referring to the static- equilibrium position)
         F=Coord(0,-self.mass*9.81)
         for i in range(0,len(self.thisStepForces)):
             # add all forces acting on mass (e.g. spring, dashpot)
-            F+=self.thisStepForces.pop()
+            F+=self.thisStepForces.pop()    # returns the last entry, adds it to the force, and eliminates it from the list
         # Find acceleration
         a=F/self.mass
-        return [self.v.copy(), a, self.currentPos['y'][0]]
+
+        #temp[0]*dt+0.5*dt*dt*temp[1]
+
+        # Use explicit Euler to find new velocity
+        self.v+=dt*a
+        # Use implicit Euler to find displacement vector
+        displacement=dt*self.v
+        # Displace mass
+        self.move(displacement)
+        return displacement
     
     # displace mass by disp
     def move(self,disp):
         for i in range(0,len(self.currentPos['x'])):
             # move x and y co-ordinates
-            self.currentPos['x'][i]+=disp.x
-            self.currentPos['y'][i]+=disp.y
+            self.currentPos['x'][i]+=disp.x # zero x disp
+            self.currentPos['y'][i]+=disp.y # update mass vertices
         # update ColumnDataSource
         self.shape.data=deepcopy(self.currentPos)
-        # This affects all the affectedObjects
+        
+        # This affects all affectedObjects
         for i in range(0,len(self.affectedObjects)):
-            # tell object that it has been affected and must move the end at
-            # point self.affectedObjects[i][1] by displacement
-            self.affectedObjects[i][0].movePoint(self.affectedObjects[i][1],disp)
-            # N.B. calling this function refills nextStepForces for next timestep
+            # an end of an object affected by mass displacement connected to the mass
+            # must be displaced by that displacement
+            # Note: calling this function finds nextStepForces for next timestep
+            self.affectedObjects[i][0].movePoint(self.affectedObjects[i][1],disp)   # movePoint(Spring or Dashpot current End in contact with mass,moveVect)
             
-            # change point so that it is accurate for next timestep
+            # update object's end in contact with the mass
             self.affectedObjects[i][1]+=disp
     
     def changeMass(self,mass):
@@ -101,12 +111,12 @@ class Mass(object):
 
 ### Types of Masses
 
-class RectangularMass(Mass):
+class RectangularMass(Mass):    # Subclass inheriting attributes and methods of Mass class
     def __init__ (self, mass, x, y, w, h):
         Mass.__init__(self,mass)
         # create ColumnDataSource
         self.shape = ColumnDataSource(data=dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y]))
-        self.currentPos = dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y])
+        self.currentPos = dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y]) # Rectangular Mass vertices CCW
     
     # add RectangularMass to figure
     def plot(self,fig,colour="#0065BD",width=1):
@@ -121,7 +131,7 @@ class RectangularMass(Mass):
     def getTop(self):
         return self.currentPos['y'][1]
 
-class CircularMass(Mass):
+class CircularMass(Mass):       # Subclass inheriting attributes and methods of Mass class
     def __init__ (self, mass, x, y, w, h):
         Mass.__init__(self,mass)
         # create ColumnDataSource
