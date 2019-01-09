@@ -91,7 +91,13 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
                                             end=OpenHead(
                                                          line_color=boatColors[i],
                                                          line_width=3,
-                                                         size=5
+                                                         size=8,
+#                                                         line_dash_offset=3,
+#                                                         line_dash=3,
+#                                                         line_cap='butt',
+                                                         
+                                                         
+                                                
                                                         ),
                                             x_start=['xs'][0],
                                             y_start=['ys'][0],
@@ -123,7 +129,7 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
                                             end=OpenHead(
                                                          line_color="#DAD7CB",
                                                          line_width=3,
-                                                         size=5
+                                                         size=8
                                                         ),
                                             x_start=['xs'][0],
                                             y_start=['ys'][0],
@@ -136,7 +142,7 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
                                             end=OpenHead(
                                                          line_color=colors[i],
                                                          line_width=3,
-                                                         size=5
+                                                         size=8
                                                         ),
                                             x_start=['xs'][0],
                                             y_start=['ys'][0],
@@ -150,7 +156,7 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
                                             end=OpenHead(
                                                          line_color="#000000",
                                                          line_width=3,
-                                                         size=5
+                                                         size=8
                                                         ),
                                             x_start=['xs'][0],
                                             y_start=['ys'][0],
