@@ -1,15 +1,22 @@
 # Main file:
-
 from bokeh.plotting import Figure, output_file , show
 from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
 from bokeh.models.glyphs import ImageURL, Quadratic, Rect, Patch
 from bokeh.models.layouts import Spacer
-from bokeh.layouts import column, row, widgetbox
+from bokeh.layouts import column, row, widgetbox, layout
 from bokeh.io import curdoc, output_file, show
 from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
 import numpy as np
 import math
-from os.path import dirname, join, split
+# from os.path import dirname, join, split
+
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir)
+from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
+
 
 
 # Global Beam Properties:
@@ -17,7 +24,6 @@ resol = 100             # resolution of deflection visualization
 resol_plo = 1000        # resolution of forces plot
 x0 = 0.0                  # starting value of beam
 xf = 10.0
-# E  = 5.0e1                 # ending value of beam
 E  = 2.0e1              # modulus of elasticity
 I  = 30.0                 # moment of inertia
 length  = xf-x0         # length of beam
@@ -29,7 +35,10 @@ lthi = 2.0
 plotwidth = 20.0
 loadoptionsi = 0
 
-x_length = np.linspace(x0,xf,resol_plo)     # nitialize Arrays for Forces Plot
+global showvar
+showvar = -1
+
+x_length = np.linspace(x0,xf,resol_plo)     # initialize Arrays for Forces Plot
 y_mom = []
 y_shear = []                           
 
@@ -43,7 +52,12 @@ plot2_label_source   = ColumnDataSource(data=dict(x=[], y=[], names=[]))
 mom_source = ColumnDataSource(data=dict(x=[], y=[]))
 # Shear Source:
 shear_source = ColumnDataSource(data=dict(x=[] , y=[]))
+# Support Forces Source:
+support_label_source = ColumnDataSource(data=dict(x=[] , y=[], names=[]))
+# Beam Measurement Label Source:
+beam_measure_label_source = ColumnDataSource(data=dict(x=[] , y=[], names=[]))
 # Arrow Sources:
+beam_doublearrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 p_arrow_source1 = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 p_arrow_source2 = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 p_arrow_source3 = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
@@ -53,7 +67,7 @@ f1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []
 constant_load_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
 triangular_load_source  = ColumnDataSource(data=dict(x=[], y=[]))
 # Label Source:
-labels_source = ColumnDataSource(data=dict(x=[] , y=[],name = []))
+labels_source = ColumnDataSource(data=dict(x=[] , y=[], name = []))
 # Support Source:
 support1 = "Balken_AD/static/images/auflager02.svg"
 support2 = "Balken_AD/static/images/auflager01.svg"
@@ -64,10 +78,9 @@ quad_source = ColumnDataSource(data=dict(top= [], bottom= [],left = [], right =[
 segment_source = ColumnDataSource(data=dict(x0= [], y0= [],x1 = [], y1 =[]))
 
 # Sliders:
-p_loc_slide= Slider(title="Load Position",value= p_loci,start = x0, end = xf, step = 1.0)
-p_mag_slide = Slider(title="Load Amplitude", value = 1.0, start=-1.0, end=1.0, step=2.0)
-f2_loc_slide = Slider(title="Support Position",value=f2_loci,start = x0, end = xf, step = 1.0)
-lth_slide = Slider(title="Beam-Height",value=lthi ,start = 2.0, end = 20.0, step = 1.0)
+p_loc_slide= LatexSlider(title="\\mathrm{Load \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value= p_loci,start = x0, end = xf, step = 1.0)
+p_mag_slide = LatexSlider(title="\\mathrm{Load \ Amplitude}", value = 1.0, start=-1.0, end=1.0, step=2.0)
+f2_loc_slide = LatexSlider(title="\\mathrm{Support \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=f2_loci,start = x0, end = xf, step = 1.0)
 
 radio_button_group = RadioButtonGroup(
         labels=["Point Load", "Constant Load", "Triangular Load"], active=loadoptionsi, width = 600)
@@ -81,81 +94,6 @@ def Fun_Deflection(a,b,l,p_mag,x):
         ynew.append(dy)
     return ynew    
 
-
-    # if radio_button_group.active == 0:    
-    #     ynew = []
-    #     ynew1 = []
-    #     ynew2 = []
-    #     for i in range(0,int(l*(resol/10) ) ):
-    #         if a > l:
-    #             dy = ( ( p_mag * b * x[i]) / (6 * E * I * l) ) * ( (l**2) - (x[i]**2) )
-    #         else:
-    #             if x[i] < a:
-    #                 dy = ( ( p_mag * b * x[i]) / (6 * E * I * l) ) * ( (l**2) - (b**2) - (x[i]**2) )
-    #             elif x[i] == a:
-    #                 dy = ( p_mag * (a**2) * (b**2) ) / (3 * E * I * l)
-    #             elif x[i] > a and x[i] <= l:
-    #                 dy = ( (p_mag * a * (l-x[i]) ) / (6 * E * I * l) ) * ( (2*l*x[i]) - (x[i]**2) - (a**2) )
-    #         # dy = 0
-    #         ynew1.append(dy)
-    #     new_range = int(resol - l*10)
-    #     for i in range(0,new_range):
-    #         # dy1 = 0
-    #         dy1 = -1 *( ( (p_mag * a * b * x[i]) / (6 * E * I * l) ) * (l + a) )
-    #         ynew2.append(dy1)
-    #     ynew = ynew1 + ynew2
-    #     return ynew
-
-
-    # if radio_button_group.active == 1:
-    #     ynew = []
-    #     for i in range(0,int(resol) ):
-    #         if a > l:
-    #             f1_mag = 1.0*p_mag*a/l*(l-a/2.0)
-    #             f2_mag = p_mag*a-f1_mag
-    #             #calculate phi(x1=0) and phi(x2=0):
-    #             phi_x1_0 = 1.0/E/I*(f1_mag*l**2.0/6.0 - p_mag*l**3.0/24.0) 
-    #             phi_x2_0 = 1.0/E/I*(p_mag*l**3.0/6.0-f1_mag*l**2.0/2.0+ E*I*phi_x1_0)
-    #             phi_x3_0 = 1.0/E/I*(p_mag*a**3.0/6.0 - (f1_mag + f2_mag - p_mag *l)*a**2.0/2.0 - (f1_mag*l - p_mag*l**2.0/2.0)*a + E*I*phi_x2_0)
-    #             if x[i]<l:
-    #                 dy = 1.0/E/I * (p_mag*x[i]**4.0/24.0 - f1_mag*x[i]**3.0/6.0 + E*I*phi_x1_0*x[i])
-    #             if x[i]>=l and x[i]<a:
-    #                 dy= 1.0/E/I * (p_mag*(x[i]-l)**4.0/24.0 - (f1_mag + f2_mag - p_mag*l)*(x[i]-l)**3.0/6.0 - (f1_mag*l - p_mag*l**2.0/2.0)*(x[i]-l)**2.0/2.0 + E*I*(x[i]-l)*phi_x2_0 ) 
-        #         if x[i]>=a:
-        #             #approximate free end with simple linear funtion:
-        #             if x[i-1]<a:
-        #                 index=i
-        #             dy = ((ynew[index-2]-ynew[index-1])/(x[index-2]-x[index-1]))*(x[i]-a) + ynew[index-1]     
-        #   ### FIND SOLUTION BEGIN
-        #     else:  #l>=a
-        #         f1_mag = 1.0* p_mag*a/l*(l - a + a/2.0)
-        #         f2_mag = p_mag*a-f1_mag
-        #         #calculate phi(x1=0) and phi(x2=0):
-        #         phi_x1_0 = -1.0/E/I/(l+a)* (p_mag*l**4.0/24.0 - (f1_mag - p_mag*a)*l**3.0/6.0 - (f1_mag*a - p_mag*a**2.0/2.0)*l**2.0/2.0 + l*(p_mag*a**3.0/6.0 - f1_mag*a**2.0/2.0) + p_mag*a**4.0/24.0 - f1_mag*a**3.0/6.0 ) 
-        #         phi_x2_0 = 1.0/E/I * (p_mag*a**3.0/6.0 - f1_mag*a**2.0/2.0 + E*I*phi_x1_0)
-        #         if x[i]<a:
-        #             dy = 1.0/E/I * (p_mag*x[i]**4.0/24.0 - f1_mag*x[i]**3.0/6.0 + E*I*phi_x1_0*x[i])
-        #         if x[i]>=a and x[i]<l:
-        #             dy_x1_a= 1.0/E/I * (p_mag*a**4.0/24.0 - f1_mag*a**3.0/6.0 + E*I*phi_x1_0*a)
-        #             dy= 1.0/E/I*(p_mag*(x[i]-a)**4.0/24.0 - (f1_mag + p_mag* a)*(x[i]-a)**3.0/6.0 - (f1_mag*a + (p_mag*a**2.0)/2.0)*(x[i]-a)**2.0/2.0 + E*I*phi_x2_0 + E*I*dy_x1_a )
-        #         if x[i]>=l:
-        #             ##approximate free end with simple linear funtion:
-        #             if x[i-1]<l:
-        #                 index=i
-        #             dy = ((ynew[index-2]-ynew[index-1])/(x[index-2]-x[index-1]))*(x[i]-l) + ynew[index-1] 
-        #    ### FIND SOLUTION END
-        #     ynew.append(dy)
-        # return ynew
-
-    # if radio_button_group.active == 2:
-        # ynew = []
-        # print a
-        # for i in range(0,int(resol) ):
-            # dy = 0
-        #     ynew.append(dy)
-        # return ynew
-
-
 # FUNCTION: Cantilever Deflection function:
 def Fun_C_Deflection(p,b,x):
     '''Calculates the deflection of the beam when it is cantilever'''
@@ -166,67 +104,6 @@ def Fun_C_Deflection(p,b,x):
         ynew.append(dy)
     return ynew  
     
-    # #b is the distance from the wall to the concentrated load
-    # if radio_button_group.active == 0:
-    #     ynew = []
-    #     a = xf - b;     #The a for cantilever is the distance between
-    #                     #the free end and the concentrated load.
-    #     for i in range(0,resol):
-    #         if x[i] < a:
-    #             #dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
-    #             dy = (  ( p * (b**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - b )
-    #         elif x[i] == a:
-    #             dy = ( p * (b**3) ) / (3 * E * I)
-    #         elif x[i] > a:
-    #             #dy = (  ( p * (a**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - a )
-    #             dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
-    #         dy = 0 
-    #         ynew.append(dy)
-
-    #     return list(reversed(ynew))     #need to reverse because x is calculated in the opposite direction
-
-    # if radio_button_group.active == 1:   
-    #     ynew = []
-    #     a = xf - b;     #The a for cantilever is the distance between
-    #                 #the free end and the concentrated load.
-    #     for i in range(0,resol):
-            
-    #         #UNCOMMENT FOR DEFLECTION
-    #         # if x[i] < a:
-    #         #     #dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
-    #         #     dy = (  ( p * (b**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - b )
-    #         # elif x[i] == a:
-    #         #     dy = ( p * (b**3) ) / (3 * E * I)
-    #         # elif x[i] > a:
-    #         #     #dy = (  ( p * (a**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - a )
-    #         #     dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
-
-    #         dy = 0
-    #         ynew.append(dy)
-
-    #     return list(reversed(ynew))     #need to reverse because x is calculated in the opposite direction
- 
-    # if radio_button_group.active == 2:   
-    #     ynew = []
-    #     a = xf - b;     #The a for cantilever is the distance between
-    #                 #the free end and the concentrated load.
-    #     for i in range(0,resol):
-    #         # if x[i] < a:
-    #         #     #dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
-    #         #     dy = (  ( p * (b**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - b )
-    #         # elif x[i] == a:
-    #         #     dy = ( p * (b**3) ) / (3 * E * I)
-    #         # elif x[i] > a:
-    #         #     #dy = (  ( p * (a**2) ) / (6 * E * I)  ) * ( (3*xf) - (3*x[i]) - a )
-    #         #     dy = (  ( p * ( ( xf - x[i])**2 ) ) / (6 * E * I) ) * ( (3*b) - xf + x[i] )
-
-    #         dy = 0
-    #         ynew.append(dy)
-
-    #     return list(reversed(ynew))     #need to reverse because x is calculated in the opposite direction
-
-
-
 # FUNCTION: Cantilever function:
 # When position 2 is 0, this function is called:
 def Fun_Cantilever():
@@ -286,6 +163,7 @@ def Fun_Update(attrname, old, new):
      
     plot1_label_source.data = dict(x=[], y=[], names=[])    
     plot2_label_source.data = dict(x=[], y=[], names=[])
+    support_label_source.data = dict(x=[], y=[], names=[])
 
 # IF POINT LOAD SELECTED ###########################################################################################################
     if radio_button_group.active == 0:   
@@ -443,6 +321,13 @@ def Fun_Update(attrname, old, new):
                     f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
                 else:                    
                     f2_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
+            
+            # Show Support Forces
+            if (showvar==1):
+                if (p_mag>0):
+                    support_label_source.data = dict(x=[0.1,0.6, f2_coord-1.0, f2_coord-0.5], y=[-1, -1, -1, -1], names=[abs(f1_mag), "F", abs(f2_mag), "F"])
+                else:
+                    support_label_source.data = dict(x=[0.1,0.6, f2_coord-1.0, f2_coord-0.5], y=[1.2, 1.2, 1.2, 1.2], names=[abs(f1_mag), "F", abs(f2_mag), "F"])
 
 # IF CONSTANT LOAD SELECTED ###########################################################################################################
     if radio_button_group.active == 1: 
@@ -617,6 +502,13 @@ def Fun_Update(attrname, old, new):
                     f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
             else:
                  f2_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
+                    
+            # Show Support Forces
+            if (showvar==1):
+                if (p_mag>0):
+                    support_label_source.data = dict(x=[0.1,0.8, f2_coord-1.3, f2_coord-0.6], y=[-1, -1, -1, -1], names=[round(abs(f1_mag)/10,2), "pL", round(abs(f2_mag)/10,2), "pL"])
+                else:
+                    support_label_source.data = dict(x=[0.1,0.8, f2_coord-1.3, f2_coord-0.6], y=[1.2, 1.2, 1.2, 1.2], names=[round(abs(f1_mag)/10,2), "pL", round(abs(f2_mag)/10,2), "pL"])
 
 
 # IF TRIANGULAR LOAD SELECTED ###########################################################################################################
@@ -826,65 +718,84 @@ def Fun_Update(attrname, old, new):
                     f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-1-(math.atan(f2_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
                 else:
                     f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                   
+            # Show Support Forces
+            if (showvar==1):
+                if (p_mag>0):
+                    support_label_source.data = dict(x=[0.1,0.8,0.8,0.85, f2_coord-1.3, f2_coord-0.6,f2_coord-0.6,f2_coord-0.55], y=[-1, -0.85,-0.9,-1.15, -1, -0.85,-0.9,-1.15], names=[round(abs(f1_mag)/10,2), "pL", "__", "2", round(abs(f2_mag)/10,2), "pL", "__", "2",])
+                else:
+                    support_label_source.data = dict(x=[0.1,0.8,0.8,0.85, f2_coord-1.3, f2_coord-0.6,f2_coord-0.6,f2_coord-0.55], y=[1.2, 1.35, 1.3, 0.95, 1.2, 1.35, 1.3, 0.95], names=[round(abs(f1_mag)/10,2), "pL", "__", "2", round(abs(f2_mag)/10,2), "pL", "__", "2",])
+
 
 # Initial function:
 def initial():
     p_loc_slide.value = p_loci
     f2_loc_slide.value = f2_loci
     p_mag_slide.value = p_magi
-    lth_slide.value = 2
-    checkbox.active = []
     Fun_Update(None,None,None)
     support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
+    beam_doublearrow_source.data = dict(xS= [0.5], xE= [9.5], yS= [-0.3], yE=[-0.3], lW = [5])
+    beam_measure_label_source.data = dict(x=[4.85], y=[-0.45], names=["L"])
+
+# Show function
+def show():
+    global showvar
+    showvar = showvar*-1
+    Fun_Update(None,None,None)
 
 ##########Plotting##########
 
 ####### Main Plot:
-plot = Figure(title="Beam with Supports and Load", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5), height = 400, logo=None)
+plot = Figure(title="Beam with Supports and Load", tools="", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5), height = 400, logo=None)
 my_line=plot.line(x='x', y='y', source=plot_source, color='#0065BD',line_width=20)
 plot.add_glyph(support_source1,ImageURL(url="sp1", x=-0.325, y=-0.1, w=0.66, h=0.4))
 plot.add_glyph(support_source2,ImageURL(url="sp2", x='x', y='y', w=0.66, h=0.4))
 
 plot.quad(top='top', bottom='bottom', left='left',
-    right='right', source = quad_source, color="#808080", fill_alpha = 0.5)
+    right='right', source = quad_source, color='black', fill_alpha = 0.5)
 plot.segment(x0='x0', y0='y0', x1='x1',
-          y1='y1', source = segment_source, color="#F4A582", line_width=2)
+          y1='y1', source = segment_source, color='black', line_width=2)
 plot.axis.visible = False
 plot.outline_line_width = 2
 plot.outline_line_color = "Black"
 plot.title.text_font_size="13pt"
 labels = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=5, y_offset=-30, source=labels_source, render_mode='canvas')
+support_label = LabelSet(x='x', y='y', text='names', source=support_label_source, text_color = "#A2AD00", level='glyph', x_offset=3, y_offset=-15)
+beam_measure_label= LabelSet(x='x', y='y', text='names', source=beam_measure_label_source, text_color = 'black', level='glyph', x_offset=3, y_offset=-15)
 
 ####### Plot1 with shear:
-plot1 = Figure(title="Shear Force", x_range=(x0-.5,xf+.5), y_range=(-1.5,1.5), height = 200, logo=None)
-plot1_labels1 = LabelSet(x='x', y='y', text='names', source=plot1_label_source, text_color = 'red', level='glyph', x_offset=3, y_offset=-15)
+plot1 = Figure(title="Shear Force", tools="", x_range=(x0-.5,xf+.5), y_range=(-1.5,1.5), height = 200, logo=None)
+plot1_labels1 = LabelSet(x='x', y='y', text='names', source=plot1_label_source, text_color = "#A2AD00", level='glyph', x_offset=3, y_offset=-15)
 plot1.add_layout(plot1_labels1)
-plot1.line(x='x', y='y', source=shear_source, color='red',line_width=2)
+plot1.line(x='x', y='y', source=shear_source, color="#A2AD00",line_width=2)
 plot1.line(x= [x0-1,xf+1], y = [0, 0 ], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot1.line(x= [xf/2,xf/2], y = [-1.5,1.5], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot1.axis.visible = False
 plot1.outline_line_width = 2
 plot1.outline_line_color = "Black"
 plot1.title.text_font_size="13pt"
-plot1.square([0.0],[0.0],size=0,fill_color='red',fill_alpha=0.5,legend="Shear Force")
+plot1.square([0.0],[0.0],size=0,fill_color="#A2AD00",fill_alpha=0.5,legend="Shear Force")
 plot1.legend.location = 'top_right'
 
 ####### Plot2 with moment:
-plot2 = Figure(title="Bending Moment", x_range=(x0-.5,xf+.5), y_range=(-6,6), height = 200, logo=None)
-plot2_labels1 = LabelSet(x='x', y='y', text='names', source=plot2_label_source, text_color = 'blue', level='glyph', x_offset=3, y_offset=-15)
+plot2 = Figure(title="Bending Moment", tools="", x_range=(x0-.5,xf+.5), y_range=(-6,6), height = 200, logo=None)
+plot2_labels1 = LabelSet(x='x', y='y', text='names', source=plot2_label_source, text_color ="#E37222", level='glyph', x_offset=3, y_offset=-15)
 plot2.add_layout(plot2_labels1)
-plot2.line(x="x", y="y", source=mom_source, color='blue',line_width=2)
+plot2.line(x="x", y="y", source=mom_source, color="#E37222",line_width=2)
 plot2.line(x= [x0-1,xf+1], y = [0, 0], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot2.line(x= [xf/2,xf/2], y = [-6,6], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot2.axis.visible = False
 plot2.outline_line_width = 2
 plot2.outline_line_color = "Black"
 plot2.title.text_font_size="13pt"
-plot2.square([0.0],[0.0],size=0,fill_color='blue',fill_alpha=0.5,legend="Bending Moment")
+plot2.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5,legend="Bending Moment")
 plot2.legend.location = 'top_right'
 
 ### Arrow plotting:
+# Beam measurements arrow:
+beam_doublearrow_glyph = Arrow(start=OpenHead(line_color='black',line_width= 2, size=8), end=OpenHead(line_color='black',line_width= 2, size=8),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=beam_doublearrow_source,line_color='black')
 # P arrow:
 p_arrow_glyph1 = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=p_arrow_source1,line_color="#0065BD")
@@ -893,11 +804,11 @@ p_arrow_glyph2 = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
 p_arrow_glyph3 = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=p_arrow_source3,line_color="#0065BD")        
 # Position 2 arrow:
-f2_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3,size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width = "lW", source=f2_arrow_source,line_color="#E37222")
+f2_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 3,size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width = "lW", source=f2_arrow_source,line_color="#0065BD")
 # Position 1 arrow:
-f1_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 3,size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width = "lW", source=f1_arrow_source,line_color="#E37222" )
+f1_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 3,size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width = "lW", source=f1_arrow_source,line_color="#0065BD" )
 # Load-shapes glyph
 constant_load_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 triangular_load_glyph = Patch(x="x", y="y", fill_color="#0065BD",  fill_alpha=0.5)
@@ -909,22 +820,30 @@ plot.add_layout(p_arrow_glyph2)
 plot.add_layout(p_arrow_glyph3)
 plot.add_layout(f2_arrow_glyph)
 plot.add_layout(f1_arrow_glyph)
+plot.add_layout(beam_doublearrow_glyph)
+plot.add_layout(support_label)
+plot.add_layout(beam_measure_label)
 plot.add_glyph(constant_load_source,constant_load_glyph)
 plot.add_glyph(triangular_load_source, triangular_load_glyph)
 ### Reset Button
 button = Button(label="Reset", button_type="success")
-### CheckboxGroup
-# Biegelinie Checkbox
-checkbox = CheckboxGroup(
-        labels=["Bending Curve"], active=[])
+### Show Button
+Showbutton = Button(label="Show/Hide Support Forces", button_type="success")
 ### on_change:
 p_loc_slide.on_change('value', Fun_Update)
 p_mag_slide.on_change('value', Fun_Update)
 f2_loc_slide.on_change('value',Fun_Update)
 radio_button_group.on_change('active', Fun_Update)
 button.on_click(initial)
+Showbutton.on_click(show)
 
-# main:
+### Add description from HTML file
+description_filename = join(dirname(__file__), "description.html")
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1140)
+
+### Initialising all column data for the initial plots
 initial()
-curdoc().add_root( row( column(Spacer(height=20,width=350), widgetbox(radio_button_group), p_loc_slide, p_mag_slide, f2_loc_slide, widgetbox(button)),  column(plot,plot2,plot1 ) ) )
+### Arrange layout
+doc_layout = layout(children=[column(description,row(column(Spacer(height=20,width=350),widgetbox(radio_button_group), p_loc_slide, p_mag_slide, f2_loc_slide, widgetbox(Showbutton), widgetbox(button)),  column(plot,plot1,plot2 ) ) ) ] )
+curdoc().add_root(doc_layout)
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
