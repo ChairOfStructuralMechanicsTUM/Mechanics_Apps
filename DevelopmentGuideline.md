@@ -16,7 +16,8 @@ The following points are important for all developers.
 
 ## Developer Hints
 
-* Try to avoid global variables! Otherwise the app might behave strangely. If there is no way to avoid them, please use the following naming convention: `gl[APPNAME][VARNAME]`, so to define the velocity in the Collision app for example, use `glCollisionVelocity`.
+* Try to avoid global variables! Otherwise the app might behave strangely. In most cases, global variables can be replaced by `ColumnDataSource` objects (see [ColumnDataSource objects](#columndatasource-objects)). If there is no way to avoid them, please use the following naming convention: `gl[APPNAME][VARNAME]`, so to define the velocity in the Collision app for example, use `glCollisionVelocity`.
+* Name classes and corresponding files by the app name. For example in Mechanic_Apps/SDOF use the name `SDOF_Spring` for the spring class to avoid strange behaviour by unwanted imports.
 * For static resources use the static folder in the directory of the app. See Diffraction app for a use case (Diffraction/main.py:294-304, commit 188f76b15959222aa0a8bf3f55d476a52abbf221).
 * For complex behaviour try to introduce objects, that bundle the functionality and the data (e.g. https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/blob/master/Rollercoaster/DraggablePath.py)
 * Try to avoid very long scripts. It is usually not a good idea to have more than 500 lines of code in one script, no one can understand this.
@@ -82,6 +83,83 @@ legend = LatexLegend(items=[
 ], location=(0, 0), spacing=10, max_label_width=870)
 plot.add_layout(legend,'above')
 ```
+
+## Deprecated Functions
+The following list provides some code snippets to help replacing deprecated Bokeh functions.
+ 
+### Periodic Callback
+old (deprecated in Bokeh 0.12.15):
+```python
+curdoc().add_periodic_callback(foo,100)
+curdoc().remove_periodic_callback(foo)
+```
+- foo: callback function to execute periodically
+- 100 milliseconds between each execution
+
+new:
+```python
+callback_id = curdoc().add_periodic_callback(foo,100)
+curdoc().remove_periodic_callback(callback_id)
+```
+- return callback ID to a new variable `callback_id`
+- call remove function using the callback ID instead of callback function foo
+
+
+## `ColumnDataSource` objects
+Instead of using global variables like in this code
+```python
+class m_class:
+    val = 1
+    def __init__(self, v):
+        self.val = v
+    def __str__(self):
+        return str(self.val)+"\n"
+    def addone(self):
+        self.val += 1
+
+x1 = 3.1
+x2 = 10
+y = [2.4, 1.0]
+m = m_class(4)
+
+def foo():
+    global x1, x2, y, m
+    x1 += 1
+    y.sort()
+    m.addone()
+
+foo()
+```
+one can avoid them by using Bokeh's `ColumnDataSource` objects.
+```python
+from bokeh.models import ColumnDataSource
+
+global_x = ColumnDataSource(data = dict(x1 = [3.1], x2 = [10]))
+global_y = ColumnDataSource(data = dict(y = [[2.4,1.0]]))  # store list in list for consistency, otherwise y = global_y.data["y"]
+global_m = ColumnDataSource(data = dict(m = [m_class(4)]))
+
+
+def foo():
+    # "load" global variables
+    [x1] = global_x.data["x1"]
+    [y] = global_y.data["y"]
+    [m] = global_m.data["m"]
+    
+    x1 += 1
+    y.sort()
+    m.addone()
+    
+    # save global variables
+    global_x.data = dict(x1 = [x1], x2 = [10]) # if x2 is dismissed, global_x only consists of x1
+    # y and m were changed by in-place-operations saved in the same object -> no save necessary
+
+foo()
+```
+
+* ColumnDataSources can hold any number of variables using a dictionary and lists.
+* Updating single variables of a ColumnDataSource is **not** possible. Always update the whole dict, otherwise variables will get lost.
+* All "global" variables need to be loaded in the specific function. If in-place-operations were used, the saving step is optional.
+
 
 # Francesca Final Acceptance and Publication
 

@@ -1,5 +1,5 @@
 from bokeh.models import ColumnDataSource
-from Coord import *
+from SDOF_Coord import SDOF_Coord
 from abc import ABCMeta, abstractmethod
 
 class DiscreteMass(object):
@@ -13,7 +13,7 @@ class DiscreteMass(object):
         self.nextStepForces=[]
         self.nextStepObjForces=[]
         # initialise velocity
-        self.v=Coord(0,0)
+        self.v=SDOF_Coord(0,0)
         #create the (empty) shape
         self.shape=ColumnDataSource
     

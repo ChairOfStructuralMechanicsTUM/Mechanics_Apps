@@ -69,12 +69,12 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 
 ### Apps 
 
-#### Technical mechanics (jf):
+#### Technical mechanics (he):
 - [ ] 1) Tensile testing/Zugversuch (eb,rr)
 - [ ] 2) Transverse strain/Querdehnung (eb,rr)
-- [ ] 3) Doble-supported beam with point load/Balken (ad)
+- [ ] 3) Double-supported beam with point load/Balken (ad)
 - [x] 4) Maxwell's reciprocity theorem/Reziprozitaetssatz von Maxwell (ad)
-- [x] 5) Buckling/Knickung (ad)
+- [x] 5) Buckling/Knickung (ad, me)
 - [ ] 6) Funicular/Seilbahn (br)
 - [ ] 7) Polar moment of inertia/Polares Flaechentraegheitmoments/ ()
 - [ ] 8) Combined moment of inertia/Zusammenges. Flaechentraegheitmoments ()
@@ -84,10 +84,10 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - [x] 12) Couple-moment (rem, cfm)
 - [ ] 13) Moment is a free vector (rem, cfm)
 
-#### Supplementary course/Ergaenzungskurs Technical mechanics (ft, qa):
+#### Supplementary course/Ergaenzungskurs Technical mechanics (ft, qa, cs):
 - [x] 1) Damped oscillator/Federpendel (eb, qa, ft)
 - [x] 2) Pendulum/Schwerependel (eb, ft)
-- [ ] 3) Base-excited oscillator/Fusspunkterregter Schwinger (eb)
+- [ ] 3) Base-excited oscillator/Fusspunkterregter Schwinger (eb, kb)
 - [ ] 4) Tuned mass damper/Schwingungstilger (eb, rd)
 - [ ] 5) Instant centre of rotation/Momentanpol der Leiter (Leiter) (ak, vu)
 - [x] 6) Coriolis force/Drehscheibe-Corioliskraft (eb,ag)
@@ -97,24 +97,24 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - [x] 10) Stopping distances (eb)
 - [x] 11) Projectiles/Wurfgeschoss (eb)
 - [ ] 12) Rolling Condition/Abrollbedingungen (eb)
-- [ ] 13) Rolling test/Rollversuch (eb)
+- [ ] 13) Rolling test/Rollversuch (eb, me)
 - [ ] 14) Instant centre of rotation of the cupoler/Momentanpol der Koppel ()
 - [ ] 15) Drop tube/Fallturm ()
 - [ ] 16) Low-pressure area/Tiefdruck (ma)
 - [ ] 17) Angular momentum/Drallerhaltung2 (ma, cfm)
 
 
-#### Structural dynamics (cs):
-- [ ] 1) Euler-Bernoulli Vibrations with analytical solutions (ak)
+#### Structural dynamics (mb):
+- [ ] 1) Euler-Bernoulli Vibrations with analytical solutions (me)
 - [ ] 2) 2D cantilever beam (ma, cfm)
 - [x] 3) Seismic example (ma)
 
-#### Technical Acoustics II (ag, cw):
+#### Technical Acoustics II (jf):
 - [x] 1) Diffraction (br)
 - [x] 2) Vibroacoustic plates (rd)
 
-#### Integral transform method (fm, he):
-- [x] 1) Sampling (br)
+#### Integral transform method (fm, mm):
+- [x] 1) Sampling (br, me)
 
 ### Supervisors
 - Francesca Taddei (ft),[@FrancescaTaddei](https://github.com/FrancescaTaddei)
@@ -122,6 +122,7 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - Quirin Aumann (qa), [@qaumann](https://github.com/qaumann)
 - Moritz Becker (mb)
 - Julian Freisinger (jf)
+- Matthias Miksch (mm)
 - Franziska Mittermeier (fm)
 - Hannes Englert (he)
 - Corinna Schmausser (cs)
@@ -130,18 +131,19 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 ### Developers
 
 Please comply with the [Development Guideline](DevelopmentGuideline.md)
-- Sascha Kubisch, [@ga96wec](https://github.com/ga96wec)
-- Matthias Ebert, [@m3bert](https://github.com/m3bert)
+- Khaled Boulbrachene, kb
+- Matthias Ebert, me, [@m3bert](https://github.com/m3bert)
+- Rishith Ellath Meethal, rem
+- Irfan Haider, ih
+- Sascha Kubisch, sk, [@ga96wec](https://github.com/ga96wec)
+
 
 ### Former developers
 
 - Emily Bourne, eb
 - Moustafa Alsayed Ahmad, ma
-- Antonios Kamariotis, ak
 - Abraham Duplaa, ad
 - Benjamin Rueth, br
-- Rishith Ellath Meethal, rem
 - Ravil Dorozhinskii, rd
-- Razieh Rezaei, rr
 - Vyshakh Unnikrishnan, vu
 - Carmen Font Mata, cfm 
