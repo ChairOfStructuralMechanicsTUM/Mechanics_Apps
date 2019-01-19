@@ -734,8 +734,8 @@ def initial():
     p_mag_slide.value = p_magi
     Fun_Update(None,None,None)
     support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
-    beam_doublearrow_source.data = dict(xS= [0.5], xE= [9.5], yS= [-0.3], yE=[-0.3], lW = [5])
-    beam_measure_label_source.data = dict(x=[4.85], y=[-0.45], names=["L"])
+    beam_doublearrow_source.data = dict(xS= [0.05], xE= [9.95], yS= [-0.6], yE=[-0.6], lW = [5])
+    beam_measure_label_source.data = dict(x=[4.85], y=[-0.8], names=["L"])
 
 # Show function
 def show():
