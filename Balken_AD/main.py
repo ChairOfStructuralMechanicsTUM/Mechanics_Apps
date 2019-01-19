@@ -290,16 +290,20 @@ def Fun_Update(attrname, old, new):
 
             # f1_arrow:
             if (p_mag<0):
-                if (f1_mag>0 and p_coord!=10):
+                # if (f1_mag>0 and p_coord!=10):
+                if (f1_mag>0):
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
-                elif (f1_mag<0 and p_coord!=10):
+                # elif (f1_mag<0 and p_coord!=10):
+                elif (f1_mag<0):                
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [1-(math.atan(f1_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
                 else:                    
                     f1_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
             else:
-                if (f1_mag>0 and p_coord!=10):
+                # if (f1_mag>0 and p_coord!=10):
+                if (f1_mag>0):                    
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-1-(math.atan(f1_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
-                elif (f1_mag<0 and p_coord!=10):
+                # elif (f1_mag<0 and p_coord!=10):
+                elif (f1_mag<0):                
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
                 else:                    
                     f1_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])            
@@ -322,10 +326,15 @@ def Fun_Update(attrname, old, new):
             # Show Support Forces
             if (showvar==1):
                 if (p_mag>0):
-                    support_label_source.data = dict(x=[0.1,0.7, f2_coord-1.0, f2_coord-0.4], y=[-1, -1, -1.4, -1.4], names=["%.2f" % round(abs(f1_mag),2), "F", "%.2f" % round(abs(f2_mag),2), "F"])
+                    if (f2_coord==10):
+                        support_label_source.data = dict(x=[0.1,0.6, f2_coord-0.9, f2_coord-0.4], y=[-1.3, -1.3, -1.3, -1.3], names=["%.2f" % round(abs(f1_mag),2), "F", "%.2f" % round(abs(f2_mag),2), "F"])
+                    else:
+                        support_label_source.data = dict(x=[0.1,0.6, f2_coord+0.1, f2_coord+0.6], y=[-1.3, -1.3, -1.3, -1.3], names=["%.2f" % round(abs(f1_mag),2), "F", "%.2f" % round(abs(f2_mag),2), "F"])
                 else:
-                    support_label_source.data = dict(x=[0.1,0.7, f2_coord-1.0, f2_coord-0.4], y=[1.3, 1.3, 0.9, 0.9], names=["%.2f" % round(abs(f1_mag),2), "F", "%.2f" % round(abs(f2_mag),2), "F"])
-
+                    if (f2_coord==10):                    
+                        support_label_source.data = dict(x=[0.1,0.6, f2_coord-0.9, f2_coord-0.4], y=[1.3, 1.3, 1.3, 1.3], names=["%.2f" % round(abs(f1_mag),2), "F", "%.2f" % round(abs(f2_mag),2), "F"])
+                    else:
+                        support_label_source.data = dict(x=[0.1,0.6, f2_coord+0.1, f2_coord+0.6], y=[1.3, 1.3, 1.3, 1.3], names=["%.2f" % round(abs(f1_mag),2), "F", "%.2f" % round(abs(f2_mag),2), "F"])
 # IF CONSTANT LOAD SELECTED ###########################################################################################################
     if radio_button_group.active == 1: 
 
@@ -503,10 +512,16 @@ def Fun_Update(attrname, old, new):
             # Show Support Forces
             if (showvar==1):
                 if (p_mag>0):
-                    support_label_source.data = dict(x=[0.1,0.8, f2_coord-1.3, f2_coord-0.6], y=[-1.0, -1.0, -1.4, -1.4], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
+                    if (f2_coord==10):
+                        support_label_source.data = dict(x=[0.1,0.60, f2_coord-1.0, f2_coord-0.5], y=[-1.3, -1.3, -1.3, -1.3], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
+                    else:
+                        support_label_source.data = dict(x=[0.1,0.60, f2_coord+0.1, f2_coord+0.6], y=[-1.3, -1.3, -1.3, -1.3], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])                               
+                
                 else:
-                    support_label_source.data = dict(x=[0.1,0.8, f2_coord-1.3, f2_coord-0.6], y=[1.3, 1.3, 0.9, 0.9], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
-
+                    if (f2_coord==10):
+                        support_label_source.data = dict(x=[0.1,0.6, f2_coord-1.0, f2_coord-0.5], y=[1.3, 1.3, 1.3, 1.3], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
+                    else:
+                        support_label_source.data = dict(x=[0.1,0.6, f2_coord+0.1, f2_coord+0.6], y=[1.3, 1.3, 1.3, 1.3], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
 
 # IF TRIANGULAR LOAD SELECTED ###########################################################################################################
     if radio_button_group.active == 2:
@@ -718,10 +733,15 @@ def Fun_Update(attrname, old, new):
             # Show Support Forces
             if (showvar==1):
                 if (p_mag>0):
-                    support_label_source.data = dict(x=[0.1,0.8,0.8,0.85, f2_coord-1.3, f2_coord-0.6,f2_coord-0.6,f2_coord-0.55], y=[-1.0, -0.85,-0.9,-1.15, -1.4, -1.25,-1.3,-1.55], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "__", "2", "%.2f" % round(abs(f2_mag)/10,2), "pL", "__", "2",])
+                    if (f2_coord==10):
+                        support_label_source.data = dict(x=[0.05,0.6,0.6,0.65, f2_coord-1.1, f2_coord-0.55,f2_coord-0.55,f2_coord-0.50], y=[-1.3, -1.15,-1.2,-1.45, -1.3, -1.15,-1.2,-1.45], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "__", "2", "%.2f" % round(abs(f2_mag)/10,2), "pL", "__", "2",])
+                    else:
+                        support_label_source.data = dict(x=[0.05,0.6,0.6,0.65, f2_coord+0.05, f2_coord+0.6,f2_coord+0.6,f2_coord+0.65], y=[-1.3, -1.15,-1.2,-1.45, -1.3, -1.15,-1.2,-1.45], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "__", "2", "%.2f" % round(abs(f2_mag)/10,2), "pL", "__", "2",])
                 else:
-                    support_label_source.data = dict(x=[0.1,0.8,0.8,0.85, f2_coord-1.3, f2_coord-0.6,f2_coord-0.6,f2_coord-0.55], y=[1.3, 1.45, 1.4, 1.15, 0.9, 1.05, 1.0, 0.75], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "__", "2", "%.2f" % round(abs(f2_mag)/10,2), "pL", "__", "2",])
-
+                    if (f2_coord==10):                    
+                        support_label_source.data = dict(x=[0.05,0.6,0.6,0.65, f2_coord-1.1, f2_coord-0.55,f2_coord-0.55,f2_coord-0.50], y=[1.3, 1.45, 1.4, 1.15, 1.3, 1.45, 1.4, 1.15], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "__", "2", "%.2f" % round(abs(f2_mag)/10,2), "pL", "__", "2",])
+                    else:
+                        support_label_source.data = dict(x=[0.05,0.6,0.6,0.65, f2_coord+0.05, f2_coord+0.6,f2_coord+0.6,f2_coord+0.65], y=[1.3, 1.45, 1.4, 1.15, 1.3, 1.45, 1.4, 1.15], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "__", "2", "%.2f" % round(abs(f2_mag)/10,2), "pL", "__", "2",])
 
 # Initial function:
 def initial():
@@ -757,7 +777,7 @@ plot.outline_line_color = "Black"
 plot.title.text_font_size="13pt"
 labels = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=5, y_offset=-30, source=labels_source, render_mode='canvas')
-support_label = LabelSet(x='x', y='y', text='names', source=support_label_source, text_color = "#A2AD00", level='glyph', x_offset=3, y_offset=-15)
+support_label = LabelSet(x='x', y='y', text='names', source=support_label_source, text_color = "#A2AD00", level='glyph', x_offset=3, y_offset=-15, text_font_size="10pt")
 beam_measure_label= LabelSet(x='x', y='y', text='names', source=beam_measure_label_source, text_color = 'black', level='glyph', x_offset=3, y_offset=-15)
 
 ####### Plot1 with shear:
