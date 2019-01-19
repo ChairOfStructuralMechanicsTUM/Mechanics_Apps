@@ -17,8 +17,6 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
-
-
 # Global Beam Properties:
 resol = 100             # resolution of deflection visualization
 resol_plo = 1000        # resolution of forces plot
@@ -29,18 +27,17 @@ I  = 30.0                 # moment of inertia
 length  = xf-x0         # length of beam
 p_mag = []             # initialize the p force
 p_magi = 1.0
-p_loci = xf/2
-f2_loci = xf
-lthi = 2.0
+p_loci = xf/2           # initial location of load
+f2_loci = xf            # initial location of second support             
 plotwidth = 20.0
 loadoptionsi = 0
 
-global showvar
-showvar = -1
+global showvar          # Declaration of global auxiliary variable to determine if support forces should be diplayed
+showvar = -1            # Initial value = -1 -> hide support forces
 
 x_length = np.linspace(x0,xf,resol_plo)     # initialize Arrays for Forces Plot
-y_mom = []
-y_shear = []                           
+y_mom = []                                  # Declaration of momentum plot vector
+y_shear = []                                # Declaration of shear forces plot vector
 
 # Sources:
 # Plot source:
@@ -105,7 +102,7 @@ def Fun_C_Deflection(p,b,x):
     return ynew  
     
 # FUNCTION: Cantilever function:
-# When position 2 is 0, this function is called:
+# If position of Support 2 is 0, this function is called:
 def Fun_Cantilever():
     if radio_button_group.active == 0:
         f1_arrow_source.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [])
@@ -221,8 +218,8 @@ def Fun_Update(attrname, old, new):
             quad_source.data = dict(top = [], bottom = [], left = [] , right = [])
             segment_source.data = dict(x0= [], y0= [],x1 = [], y1 =[])
 
-            f1_mag = -1.0 * (p_mag *b) / l
-            f2_mag = -1.0 * (p_mag *a) / l
+            f1_mag = float(-1.0 * (p_mag *b) / l)
+            f2_mag = float(-1.0 * (p_mag *a) / l)
             ynew = Fun_Deflection(a,b,l,p_mag,plot_source.data['x'])
             plot_source.data = dict(x = np.linspace(x0,xf,resol), y = ynew)
             move_tri = -0.4
@@ -325,9 +322,9 @@ def Fun_Update(attrname, old, new):
             # Show Support Forces
             if (showvar==1):
                 if (p_mag>0):
-                    support_label_source.data = dict(x=[0.1,0.6, f2_coord-1.0, f2_coord-0.5], y=[-1, -1, -1, -1], names=[abs(f1_mag), "F", abs(f2_mag), "F"])
+                    support_label_source.data = dict(x=[0.1,0.7, f2_coord-1.0, f2_coord-0.4], y=[-1, -1, -1.4, -1.4], names=["%.2f" % round(abs(f1_mag),2), "F", "%.2f" % round(abs(f2_mag),2), "F"])
                 else:
-                    support_label_source.data = dict(x=[0.1,0.6, f2_coord-1.0, f2_coord-0.5], y=[1.2, 1.2, 1.2, 1.2], names=[abs(f1_mag), "F", abs(f2_mag), "F"])
+                    support_label_source.data = dict(x=[0.1,0.7, f2_coord-1.0, f2_coord-0.4], y=[1.3, 1.3, 0.9, 0.9], names=["%.2f" % round(abs(f1_mag),2), "F", "%.2f" % round(abs(f2_mag),2), "F"])
 
 # IF CONSTANT LOAD SELECTED ###########################################################################################################
     if radio_button_group.active == 1: 
@@ -506,9 +503,9 @@ def Fun_Update(attrname, old, new):
             # Show Support Forces
             if (showvar==1):
                 if (p_mag>0):
-                    support_label_source.data = dict(x=[0.1,0.8, f2_coord-1.3, f2_coord-0.6], y=[-1, -1, -1, -1], names=[round(abs(f1_mag)/10,2), "pL", round(abs(f2_mag)/10,2), "pL"])
+                    support_label_source.data = dict(x=[0.1,0.8, f2_coord-1.3, f2_coord-0.6], y=[-1.0, -1.0, -1.4, -1.4], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
                 else:
-                    support_label_source.data = dict(x=[0.1,0.8, f2_coord-1.3, f2_coord-0.6], y=[1.2, 1.2, 1.2, 1.2], names=[round(abs(f1_mag)/10,2), "pL", round(abs(f2_mag)/10,2), "pL"])
+                    support_label_source.data = dict(x=[0.1,0.8, f2_coord-1.3, f2_coord-0.6], y=[1.3, 1.3, 0.9, 0.9], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
 
 
 # IF TRIANGULAR LOAD SELECTED ###########################################################################################################
@@ -516,7 +513,6 @@ def Fun_Update(attrname, old, new):
         
         p_loc_slide.disabled = False
         my_line.glyph.line_width = 15
-        
         p_mag = float(p_mag_slide.value)
         a = float(p_loc_slide.value)
         l = float(f2_loc_slide.value)
@@ -553,6 +549,7 @@ def Fun_Update(attrname, old, new):
                 p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [-1.1+(p_mag/2.3/1.9)], yE=[-1.1-(p_mag/2.3)], lW = [2] )
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])     
 
+                # Shape triangular load:
                 N = 30
                 x1 = np.linspace(0, p_coord, N)
                 x2 = x1[::-1]
@@ -594,10 +591,8 @@ def Fun_Update(attrname, old, new):
 #####################
             quad_source.data = dict(top = [], bottom = [], left = [] , right = [])
             segment_source.data = dict(x0= [], y0= [],x1 = [], y1 =[])
-
             ynew = Fun_Deflection(a,b,l,p_mag,plot_source.data['x'])
             plot_source.data = dict(x = np.linspace(x0,xf,resol), y = ynew)
-
             move_tri = -0.4
 
             # Moment and shear calculation:
@@ -657,6 +652,7 @@ def Fun_Update(attrname, old, new):
                 p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1+(p_mag/2.3/1.9)], yE=[1-(p_mag/2.3)], lW = [2] )
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])     
 
+                # Shape triangular load
                 N = 30
                 x1 = np.linspace(0, p_coord, N)
                 x2 = x1[::-1]
@@ -722,9 +718,9 @@ def Fun_Update(attrname, old, new):
             # Show Support Forces
             if (showvar==1):
                 if (p_mag>0):
-                    support_label_source.data = dict(x=[0.1,0.8,0.8,0.85, f2_coord-1.3, f2_coord-0.6,f2_coord-0.6,f2_coord-0.55], y=[-1, -0.85,-0.9,-1.15, -1, -0.85,-0.9,-1.15], names=[round(abs(f1_mag)/10,2), "pL", "__", "2", round(abs(f2_mag)/10,2), "pL", "__", "2",])
+                    support_label_source.data = dict(x=[0.1,0.8,0.8,0.85, f2_coord-1.3, f2_coord-0.6,f2_coord-0.6,f2_coord-0.55], y=[-1.0, -0.85,-0.9,-1.15, -1.4, -1.25,-1.3,-1.55], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "__", "2", "%.2f" % round(abs(f2_mag)/10,2), "pL", "__", "2",])
                 else:
-                    support_label_source.data = dict(x=[0.1,0.8,0.8,0.85, f2_coord-1.3, f2_coord-0.6,f2_coord-0.6,f2_coord-0.55], y=[1.2, 1.35, 1.3, 0.95, 1.2, 1.35, 1.3, 0.95], names=[round(abs(f1_mag)/10,2), "pL", "__", "2", round(abs(f2_mag)/10,2), "pL", "__", "2",])
+                    support_label_source.data = dict(x=[0.1,0.8,0.8,0.85, f2_coord-1.3, f2_coord-0.6,f2_coord-0.6,f2_coord-0.55], y=[1.3, 1.45, 1.4, 1.15, 0.9, 1.05, 1.0, 0.75], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "__", "2", "%.2f" % round(abs(f2_mag)/10,2), "pL", "__", "2",])
 
 
 # Initial function:
