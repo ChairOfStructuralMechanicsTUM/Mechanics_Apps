@@ -290,19 +290,15 @@ def Fun_Update(attrname, old, new):
 
             # f1_arrow:
             if (p_mag<0):
-                # if (f1_mag>0 and p_coord!=10):
                 if (f1_mag>0):
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
-                # elif (f1_mag<0 and p_coord!=10):
                 elif (f1_mag<0):                
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [1-(math.atan(f1_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
                 else:                    
                     f1_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
             else:
-                # if (f1_mag>0 and p_coord!=10):
                 if (f1_mag>0):                    
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-1-(math.atan(f1_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
-                # elif (f1_mag<0 and p_coord!=10):
                 elif (f1_mag<0):                
                     f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
                 else:                    
@@ -734,14 +730,14 @@ def Fun_Update(attrname, old, new):
             if (showvar==1):
                 if (p_mag>0):
                     if (f2_coord==10):
-                        support_label_source.data = dict(x=[0.05,0.6,0.6,0.65, f2_coord-1.1, f2_coord-0.55,f2_coord-0.55,f2_coord-0.50], y=[-1.3, -1.15,-1.2,-1.45, -1.3, -1.15,-1.2,-1.45], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "__", "2", "%.2f" % round(abs(f2_mag)/10,2), "pL", "__", "2",])
+                        support_label_source.data = dict(x=[0.1,0.60, f2_coord-1.0, f2_coord-0.5], y=[-1.3, -1.3, -1.3, -1.3], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
                     else:
-                        support_label_source.data = dict(x=[0.05,0.6,0.6,0.65, f2_coord+0.05, f2_coord+0.6,f2_coord+0.6,f2_coord+0.65], y=[-1.3, -1.15,-1.2,-1.45, -1.3, -1.15,-1.2,-1.45], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "__", "2", "%.2f" % round(abs(f2_mag)/10,2), "pL", "__", "2",])
+                        support_label_source.data = dict(x=[0.1,0.60, f2_coord+0.1, f2_coord+0.6], y=[-1.3, -1.3, -1.3, -1.3], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])                
                 else:
                     if (f2_coord==10):                    
-                        support_label_source.data = dict(x=[0.05,0.6,0.6,0.65, f2_coord-1.1, f2_coord-0.55,f2_coord-0.55,f2_coord-0.50], y=[1.3, 1.45, 1.4, 1.15, 1.3, 1.45, 1.4, 1.15], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "__", "2", "%.2f" % round(abs(f2_mag)/10,2), "pL", "__", "2",])
+                        support_label_source.data = dict(x=[0.1,0.6, f2_coord-1.0, f2_coord-0.5], y=[1.3, 1.3, 1.3, 1.3],  names=["%.2f" % round(abs(f1_mag)/10,2), "pL",  "%.2f" % round(abs(f2_mag)/10,2), "pL"])
                     else:
-                        support_label_source.data = dict(x=[0.05,0.6,0.6,0.65, f2_coord+0.05, f2_coord+0.6,f2_coord+0.6,f2_coord+0.65], y=[1.3, 1.45, 1.4, 1.15, 1.3, 1.45, 1.4, 1.15], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "__", "2", "%.2f" % round(abs(f2_mag)/10,2), "pL", "__", "2",])
+                        support_label_source.data = dict(x=[0.1,0.6, f2_coord+0.1, f2_coord+0.6], y=[1.3, 1.3, 1.3, 1.3],  names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
 
 # Initial function:
 def initial():
