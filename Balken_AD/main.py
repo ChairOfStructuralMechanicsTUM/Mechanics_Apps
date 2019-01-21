@@ -851,7 +851,7 @@ Showbutton.on_click(show)
 
 ### Add description from HTML file
 description_filename = join(dirname(__file__), "description.html")
-description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1140)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=910)
 
 ### Initialising all column data for the initial plots
 initial()
