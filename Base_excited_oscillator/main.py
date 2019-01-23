@@ -36,7 +36,7 @@ t=0     # time = 0
 s=0     # mass displacement = 0
 Floor_angle=4*141
 Active=False
-maxX=1
+maxX=20
 
 # Defining Floor
 def InitialFloor():
