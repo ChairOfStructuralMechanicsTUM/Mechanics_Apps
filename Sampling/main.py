@@ -1,6 +1,6 @@
 from __future__ import division
 
-from os.path import dirname, split, join
+from os.path import dirname, split, join, abspath
 
 import numpy as np
 from numpy.fft import ifft, fft, fftshift
@@ -11,10 +11,18 @@ from bokeh.layouts import widgetbox, layout, column, row, Spacer
 from bokeh.plotting import Figure
 from bokeh.models.widgets import TextInput, Dropdown, CheckboxButtonGroup
 from bokeh.embed import components
+from bokeh.models.annotations import LabelSet
 
 from sympy import sympify
 
 from sym_functions import string_to_function_parser
+
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir)
+from latex_support import LatexDiv, LatexLabelSet, LatexLegend
+
 
 # sample functions with corresponding id
 sample_f_names = [
@@ -60,6 +68,7 @@ if color_interval:
 # text input window for function f(x,y) to be transformed
 f_input = TextInput(value=sample_functions[sample_function_id][0],
                     title="x(t):")
+#TODO: add Latex title
 # dropdown menu for selecting one of the sample functions
 sample_fun_input_f = Dropdown(label="choose a sample function x(t) or enter one above",
                               menu=sample_f_names,
@@ -79,28 +88,36 @@ nyquist_button = CheckboxButtonGroup(labels=[nyquist_label_default],
 ###########
 # FIGURES #
 ###########
-toolset=["crosshair, pan, wheel_zoom"]
+toolset=["crosshair, pan, wheel_zoom, reset"]
 # Generate a figure container for the original function
 plot_original = Figure(x_axis_label='t',
                        y_axis_label='x(t)',
-                       tools=toolset, logo=None,
+                       tools=toolset, #logo=None,
                        active_scroll="wheel_zoom",
-                       title="Function in Original Domain")
+                       title="Function in Original Domain", width=650, height=300)
+plot_original.toolbar.logo = None 
+#TODO: add LatexAxis or wait for update (should come early 2019) -- add for all figures
 
 # Generate a figure container for the real part of the transformed function
 plot_transform_real= Figure(x_axis_label='f',
                             y_axis_label='Re [X(f)]',
-                            tools=toolset, logo=None,
+                            tools=toolset, #logo=None,
                             active_scroll="wheel_zoom",
-                            title="Fourier transform of function - Real part")
+                            title="Fourier transform of function - Real part", width=650, height=300)
+plot_transform_real.toolbar.logo = None
+#plot_transform_real.add_layout(LatexLabelSet(x=dict(x=[0,5]),y=dict(y=[5,0]),text=["f","Re [X(f)]"]))
+# nein, columndata source object und dann mit einzelnem String darauf zugreifen
+
+
 
 # Generate a figure container for the imaginary part of the transformed function
 plot_transform_imag= Figure(x_axis_label='f',
                             y_axis_label='Im [X(f)]',
                             x_range=plot_transform_real.x_range, y_range=plot_transform_real.y_range,  # this line links the displayed region in the imaginary and the real part.
-                            tools=toolset, logo=None,
+                            tools=toolset, #logo=None,
                             active_scroll="wheel_zoom",
-                            title="Fourier transform of function - Imaginary part")
+                            title="Fourier transform of function - Imaginary part", width=650, height=300)
+plot_transform_imag.toolbar.logo = None
 
 def extract_parameters():
     """
@@ -218,12 +235,24 @@ def initialize():
 
     update()
 
-    plot_original.scatter('t', 'x', source=x_sampled_source, legend='samples')
-    plot_original.line('t', 'x', color='red', source=x_analytical_source, line_width=.5, legend='x(t)')
-    plot_transform_imag.scatter('frequency', 'X_imag', source=X_sampled_source, legend='Im[X(f)] - DFT')
-    plot_transform_imag.line('frequency', 'X_imag', color='red', source=X_analytical_source, line_width=.5, legend='Im[X(f)]')
-    plot_transform_real.scatter('frequency', 'X_real', source=X_sampled_source, legend='Re[X(f)] - DFT')
-    plot_transform_real.line('frequency', 'X_real', color='red', source=X_analytical_source, line_width=.5, legend='Re[X(f)]')
+    #plot_original.scatter('t', 'x', source=x_sampled_source, legend='samples')
+    plot_original_scatter = plot_original.scatter('t', 'x', source=x_sampled_source)
+    #plot_original.line('t', 'x', color='red', source=x_analytical_source, line_width=.5, legend='x(t)')
+    plot_original_line = plot_original.line('t', 'x', color='red', source=x_analytical_source, line_width=.5)
+    plot_original.add_layout(LatexLegend(items=[("\\text{samples}",[plot_original_scatter]),("x(t)",[plot_original_line])]))#,label_text_font_size="10pt"))
+    #plot_original.legend.label_width = 10 # seems like there is some minimum label width since it does not change for sizes <= 80 
+#    plot_transform_imag.scatter('frequency', 'X_imag', source=X_sampled_source, legend='Im[X(f)] - DFT')
+#    plot_transform_imag.line('frequency', 'X_imag', color='red', source=X_analytical_source, line_width=.5, legend='Im[X(f)]')
+    plot_transform_imag_scatter = plot_transform_imag.scatter('frequency', 'X_imag', source=X_sampled_source)
+    plot_transform_imag_line = plot_transform_imag.line('frequency', 'X_imag', color='red', source=X_analytical_source, line_width=.5)
+    plot_transform_imag.add_layout(LatexLegend(items=[("\mathrm{Im}[X(f)] - DFT",[plot_transform_imag_scatter]),("\mathrm{Im}[X(f)]",[plot_transform_imag_line])]))#,label_text_font_size="10pt",label_width=110))
+    #plot_transform_imag.legend.label_width = 130
+    #plot_transform_real.scatter('frequency', 'X_real', source=X_sampled_source, legend='Re[X(f)] - DFT')
+    #plot_transform_real.line('frequency', 'X_real', color='red', source=X_analytical_source, line_width=.5, legend='Re[X(f)]')
+    plot_transform_real_scatter = plot_transform_real.scatter('frequency', 'X_real', source=X_sampled_source)
+    plot_transform_real_line = plot_transform_real.line('frequency', 'X_real', color='red', source=X_analytical_source, line_width=.5)
+    plot_transform_real.add_layout(LatexLegend(items=[("\mathrm{Re}[X(f)] - DFT",[plot_transform_real_scatter]),("\mathrm{Re}[X(f)]",[plot_transform_real_line])]))#,label_text_font_size="10pt"))
+    #plot_transform_real.legend.label_width = 130
 
     if color_interval:
         plot_transform_real.patch('x_patch', 'y_patch', source=source_interval_patch, alpha=.2)
@@ -342,13 +371,14 @@ nyquist_button.on_change('active', on_nyquist_button_changed)
 #Description
 description_filename = join(dirname(__file__), "description.html")
 
-description = Div(text=open(description_filename).read(), render_as_text=False)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1250)
 
 
 # create layout
 controls = [f_input, sample_fun_input_f, t0_input, N_input, nyquist_button]
-controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
-#curdoc().add_root(column(description, row(column(plot_original, controls_box), column(plot_transform_real, plot_trans#form_imag)),sizing_mode='stretch_both'))  # plots ar too stretched
+#controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
+controls_box = widgetbox(controls, width=650)  # all controls
+curdoc().add_root(column(description, row(column(plot_original, controls_box), column(plot_transform_real, plot_transform_imag))))  # plots ar too stretched
 
 #curdoc().add_root(column(description ,layout([[plot_original, plot_transform_real],
 #                          [controls_box, plot_transform_imag]],     
@@ -368,6 +398,9 @@ controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
 #                          [controls_box, plot_transform_imag]],     
 #                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
 
+#curdoc().add_root([[plot_original, plot_transform_real],
+#                          [controls_box, plot_transform_imag]]) # add plots and controls to root # text is overlapped by plots...
+
 
 #rest_layout =layout([[plot_original, plot_transform_real],
 #                               [controls_box, plot_transform_imag]], sizing_mode='stretch_both')
@@ -376,10 +409,18 @@ controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
 
 
 ### this block works, but only after zooming around in a plot...
-curdoc().add_root(layout([[description],[Spacer(height=500)],[plot_original, plot_transform_real],
-                          [controls_box, plot_transform_imag]],     
-                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
+#curdoc().add_root(layout([[description],[plot_original, plot_transform_real],
+#                          [controls_box, plot_transform_imag]],     
+#                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
 
+
+
+#f_input.value = sample_functions[1][0]
+#curdoc().add_root(layout([[plot_original, plot_transform_real],
+#                          [controls_box, plot_transform_imag],[description]],     
+#                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
+
+#print([1]*1000)
 
 #curdoc().add_root(layout([[description],[plot_original, plot_transform_real],
 #                          [controls_box, plot_transform_imag]],     
