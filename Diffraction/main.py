@@ -203,13 +203,14 @@ def update_wave_amplitude_at_probe(x,y,t):
     textbox.value = "%.2f dB" % loudness  # write measured value to textbox
 
 
-target_frame_time = 100  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
-frame_end_time = 0
-lagcount = 0
+target_frame_time     = 100  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
+global_frame_end_time = ColumnDataSource(data=dict(val=[0]))
+global_lagcount       = ColumnDataSource(data=dict(val=[0]))
 
 
 def do_time_measurement(frame_no, computation_time):
-    global lagcount, frame_end_time
+    [frame_end_time] = global_frame_end_time.data["val"] # input/output
+    [lagcount]       = global_lagcount.data["val"]       # input/output    
 
     this_frame_end_time = time.time() * 1000  # in ms
     frame_duration = (this_frame_end_time - frame_end_time)
@@ -229,8 +230,10 @@ def do_time_measurement(frame_no, computation_time):
         print "Computation time is much lower than frame time and framerate is below 25Hz. Consider decreasing TARGET_FRAME_TIME to improve user experience!"
 
     frame_end_time = this_frame_end_time
+    global_frame_end_time.data = dict(val=[frame_end_time])
+    global_lagcount.data       = dict(val=[lagcount])
 
-frame_no = 0
+global_frame_no = ColumnDataSource(data=dict(val=[0]))
 
 def update():
     """
@@ -238,7 +241,7 @@ def update():
     :param t: time
     :return:
     """
-    global frame_no  # todo remove global if possible
+    [frame_no] = global_frame_no.data["val"] #input/output
     frame_no += 1
     t = frame_no * target_frame_time / 1000.0
     computation_start_time = time.time()
@@ -260,6 +263,7 @@ def update():
     computation_time = (time.time() - computation_start_time) * 1000
 
     do_time_measurement(frame_no, computation_time)
+    global_frame_no.data = dict(val=[frame_no])
 
 
 def initialize():
@@ -292,6 +296,7 @@ plot.patch(x='x', y='y', color='yellow', source=source_light, alpha=.1)  # light
 plot.patch(x='x', y='y', color='red',source=source_reflection, alpha=.1)  # reflection area
 plot.patch(x='x', y='y', color='blue', source=source_shadow, alpha=.1)  # shadow area
 plot.scatter(x='x',y='y', source=source_value_plotter, size=10)  # value probing
+plot.toolbar.logo = None
 
 initialize()
 

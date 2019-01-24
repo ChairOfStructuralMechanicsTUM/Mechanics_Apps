@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from bokeh.models import ColumnDataSource
 from MoveNodeTool import *
+#import MoveNodeTool as mvNode
 import numpy as np
 from timeit import default_timer as timer
 

@@ -1,11 +1,11 @@
 from string import find, count, replace
-from math import sqrt
+#from math import sqrt
 
 acceptable_characters=u"1234567890.+-*/^()\u221A "
 numbers=u"1234567890."
     
 def isEquation(equation,x):
-    global acceptable_characters, numbers
+    #global acceptable_characters, numbers
     # change , to . so 0,5 becomes 0.5, thus rendering European notation readable by python
     equation=replace(equation,',','.')
     #print (equation)

@@ -611,7 +611,7 @@ def GetMaximumDisplacement( modes, siesmicParameters ):
     
     beta = list()
     period = list()
-    Sa = list()
+    Sa = list() # never used?
     for i in range(0,3):
         beta.append( np.dot( modes[i].M , r ) )
         period.append( 2*np.pi / modes[i].frequency )

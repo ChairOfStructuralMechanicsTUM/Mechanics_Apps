@@ -54,7 +54,7 @@ class Graphs:
         self.st.line(x='s',y='t',source=self.UserStSource,color="red")
         self.vs.line(x='s',y='v',source=self.UserVsSource,color="red")
         # place the graphs in a grid layout
-        self.Layout = gridplot([[self.vt,self.at],[self.st,self.vs]],plot_width=300,plot_height=250)
+        self.Layout = gridplot([[self.vt,self.at],[self.st,self.vs]],plot_width=300,plot_height=250,toolbar_options=dict(logo=None))
         # depending upon whether the user specifies the initial velocity or v(s)
         # either a(t) or a(s) is shown in figure=self.at
         # it is important to know what is being drawn

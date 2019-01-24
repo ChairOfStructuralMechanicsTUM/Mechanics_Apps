@@ -18,6 +18,7 @@ class Visualisation:
         #  remove graph lines
         self.fig.yaxis.visible = False
         self.fig.grid.visible = False
+        self.fig.toolbar.logo = None
         self.fig.outline_line_color = None
         # draw the house
         self.fig.line([30.0,30.0,29.5,30.5],[0,3.0,3.0,4.0],line_color="black",line_width=4)

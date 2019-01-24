@@ -25,6 +25,12 @@ from os.path import dirname, join, split
 from bokeh.events import Pan, PanEnd
 
 '''
+############################## GLobal variables ###############################
+'''
+glob_active   = ColumnDataSource(data=dict(Active=[False])) # play is active
+glob_callback = ColumnDataSource(data=dict(cid=[0])) # callback id
+
+'''
 ######################## Define the plotting space ############################
 '''
 xMin, xMax = -7.5, 7.5
@@ -40,10 +46,11 @@ playGround = Figure(
                    )
 
 playGround.title.text_font_size = "25px"
-playGround.title.align = "center"
-playGround.grid.visible = False
-playGround.xaxis.visible = False
-playGround.yaxis.visible = False
+playGround.title.align          = "center"
+playGround.grid.visible         = False
+playGround.xaxis.visible        = False
+playGround.yaxis.visible        = False
+playGround.toolbar.logo         = None
 
 # Define the energy bar
 barsFig = BC.BarChart(
@@ -65,7 +72,6 @@ J_circle = 1 # Angular moment of inertia of the wheel
 J_base   = 2 # Angular moment of inertia of the rectangular base
 
 dt = 0.01
-Active = False
 
 '''
 #################### Define the objects to be rotating ########################
@@ -136,14 +142,14 @@ Include:
     (4) Mouse touch
 '''
 ############################## (1) Reset button ###############################
-periodicCallback = 0
 def Reset():
-    global Active, periodicCallback
-
+    #global Active, periodicCallback
+    [Active]           = glob_active.data["Active"] # input/output
+    [periodicCallback] = glob_callback.data["cid"]  # input/output
     # The preiodic callback has been removed here because when the pause 
     # button is set to False, this reactivates the periodic callback
     if periodicCallback == 0 and Active == True:
-        curdoc().remove_periodic_callback(compute_tranjectory)
+        curdoc().remove_periodic_callback(periodicCallback)
         periodicCallback += 1
         rotatingObject.set_velocity(0)
         
@@ -155,17 +161,21 @@ def Reset():
     else:
         pass
     
-    Active = False
+    #Active = False
+    glob_active.data   = dict(Active=[False])
+    glob_callback.data = dict(cid=[periodicCallback])
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)
 
 ############################## (2) Pause button ###############################
 def pause ():
-    global Active
+    #global Active
+    [Active]           = glob_active.data["Active"] # input/output
+    [periodicCallback] = glob_callback.data["cid"]  # input/
     # When active pause animation
     if Active == True:
-        curdoc().remove_periodic_callback(compute_tranjectory)
-        Active=False
+        curdoc().remove_periodic_callback(periodicCallback)
+        glob_active.data = dict(Active=[False])
     else:
         pass
 pause_button = Button(label="Pause", button_type="success")
@@ -173,12 +183,15 @@ pause_button.on_click(pause)
 
 ############################## (3) Play button ################################
 def play ():
-    global Active, periodicCallback
+    #global Active, periodicCallback
+    [Active]           = glob_active.data["Active"] # input/output
+    [periodicCallback] = glob_callback.data["cid"]  # input/output
     
     if Active == False:
-        curdoc().add_periodic_callback(compute_tranjectory, 10)
-        Active=True
+        periodicCallback = curdoc().add_periodic_callback(compute_tranjectory, 10)
+        glob_active.data = dict(Active=[True])
         periodicCallback = 0
+        glob_callback.data = dict(cid=[periodicCallback])
     else:
         pass
         

@@ -7,16 +7,16 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_div import LatexDiv
+from latex_support import LatexDiv
 
 from bokeh.io import curdoc
 from bokeh.layouts import column, row
 
 
 # create each part of the window
-Visual=Visualisation()
-Plotter=Graphs()
-Prob = Problem(Visual,Plotter)
+Visual  = Visualisation()
+Plotter = Graphs()
+Prob    = Problem(Visual,Plotter)
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")

@@ -5,27 +5,27 @@ Python Bokeh program which interactively change two vectos and display its sum
 
 
 from bokeh.plotting import figure
-from bokeh.layouts import column, row, Spacer
-from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead, Button, Line,Div
+from bokeh.layouts import column, row#, Spacer
+from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead, Div#, Button, Line
 from bokeh.io import curdoc
-from numpy import loadtxt
-from os.path import dirname, join, split
-from math import radians, cos, sin, tan
+#from numpy import loadtxt
+from os.path import dirname, join#, split
+from math import radians, cos, sin#, tan
 
 
 
 #Initialise Variables
-theta1 = radians(30)
-theta2 = radians(60)
-Vector1=50
-Vector2=50
-Vector1_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
-Vector2_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
+glob_theta1            = ColumnDataSource(data=dict(val=[radians(30)]))
+glob_theta2            = ColumnDataSource(data=dict(val=[radians(60)]))
+glob_Vector1           = ColumnDataSource(data=dict(val=[50]))
+glob_Vector2           = ColumnDataSource(data=dict(val=[50]))
+Vector1_source         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
+Vector2_source         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
 VectorResultant_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
 V1parallel_line_source = ColumnDataSource(data=dict(x=[],y=[]))
 V2parallel_line_source = ColumnDataSource(data=dict(x=[],y=[]))
-V1_label_source = ColumnDataSource(data=dict(x=[],y=[],V1=[]))
-V2_label_source = ColumnDataSource(data=dict(x=[],y=[],V2=[]))
+V1_label_source        = ColumnDataSource(data=dict(x=[],y=[],V1=[]))
+V2_label_source        = ColumnDataSource(data=dict(x=[],y=[],V2=[]))
 Resultant_label_source = ColumnDataSource(data=dict(x=[],y=[],R=[]))
 
 #responsible for the display of initial conditions 
@@ -36,7 +36,8 @@ def init ():
     
 # update Vectors
 def updateVector1 ():
-    global theta1,Vector1
+    [theta1]  = glob_theta1.data["val"]  # input/
+    [Vector1] = glob_Vector1.data["val"] # input/
  
     if (Vector1== 0):
         Vector1_source.data = dict(xS=[],yS=[],xE=[],yE=[])
@@ -45,11 +46,12 @@ def updateVector1 ():
     # else the arrow is proportional to the Vector1
         xE=Vector1*cos(theta1)
         yE=Vector1*sin(theta1)
-        Vector1_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
+        Vector1_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
         V1_label_source.data = dict (x=[xE+3],y=[yE-3],V1=["V"u"\u2081"])
 
 def updateVector2 ():
-    global Vector2, theta2
+    [theta2]  = glob_theta2.data["val"]  # input/
+    [Vector2] = glob_Vector2.data["val"] # input/
     # if Vector2 = 0 then there is no arrow
     if (Vector2== 0):
         Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
@@ -57,11 +59,14 @@ def updateVector2 ():
         # else the arrow is proportional to the Vector1
         xE=Vector2*cos(theta2)
         yE=Vector2*sin(theta2)
-        Vector2_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
+        Vector2_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
         V2_label_source.data = dict (x=[xE-3],y=[yE+3],V2=["V"u"\u2082"])
 
 def updateResultant():
-    global vector1,vector2,theta1,theta2
+    [theta1]  = glob_theta1.data["val"]  # input/
+    [theta2]  = glob_theta2.data["val"]  # input/
+    [Vector1] = glob_Vector1.data["val"] # input/
+    [Vector2] = glob_Vector2.data["val"] # input/
     
     xE=Vector1*cos(theta1)+Vector2*cos(theta2)
     yE=Vector1*sin(theta1)+Vector2*sin(theta2)
@@ -98,6 +103,7 @@ p.add_layout(VectorResultant_glyph)
 p.add_layout(V1_label_glyph)
 p.add_layout(V2_label_glyph)
 p.add_layout(Resultant_label_glyph)
+p.toolbar.logo = None
 #p.axis.visible = False
 #p.grid.visible = False
 #p.background_fill_color = "#D1F4FF"
@@ -106,33 +112,25 @@ init()
 
 #Changing Vector1
 def changeVector1(attr,old,new):
-    global Vector1, Active, Vector1Slider
-  
-    Vector1=new
+    glob_Vector1.data = dict(val=[new]) #      /output
     updateVector1()
     updateResultant()
 
 #Changing Vector2
 def changeVector2(attr,old,new):
-    global Vector2, Active, Vector2Slider
-  
-    Vector2=new
+    glob_Vector1.data = dict(val=[new]) #      /output
     updateVector2()
     updateResultant()
 
 #changing thea1
 def changetheta1(attr,old,new):
-    global Vector1, Active, AngleVector1Slider,theta1
-  
-    theta1=radians(new)
+    glob_theta1.data = dict(val=[radians(new)]) #      /output
     updateVector1()
     updateResultant()
  
 #changing thea2
 def changetheta2(attr,old,new):
-    global Vector2, Active, AngleVector2Slider,theta2
-  
-    theta2=radians(new)
+    glob_theta2.data = dict(val=[radians(new)]) #      /output
     updateVector2()
     updateResultant()
     
@@ -141,13 +139,13 @@ def changetheta2(attr,old,new):
 
 Vector1Slider = Slider(title="Vector 1",value=50,start=0,end=100,step=5)
 Vector1Slider.on_change('value',changeVector1)
-Vector2Slider= Slider(title="Vector 2", value=50.0, start=0.0, end=100.0, step=5)
+Vector2Slider = Slider(title="Vector 2", value=50.0, start=0.0, end=100.0, step=5)
 Vector2Slider.on_change('value',changeVector2)
 
 
-AngleVector1Slider= Slider(title="Angle of Vector 1", value=30.0, start=0.0, end=360.0, step=5)
+AngleVector1Slider = Slider(title="Angle of Vector 1", value=30.0, start=0.0, end=360.0, step=5)
 AngleVector1Slider.on_change('value',changetheta1)
-AngleVector2Slider= Slider(title="Angle of Vector 2", value=60.0, start=0.0, end=360.0, step=5)
+AngleVector2Slider = Slider(title="Angle of Vector 2", value=60.0, start=0.0, end=360.0, step=5)
 AngleVector2Slider.on_change('value',changetheta2)
 
 # add app description

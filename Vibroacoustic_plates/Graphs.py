@@ -298,6 +298,7 @@ def plotWaveSpeedGraph( GraphInstance ):
     GraphInstance.cleanLabels( 10 )
     GraphInstance.Graph.yaxis.axis_label = "Wave Velocity in m/s"
     GraphInstance.Graph.xaxis.axis_label = "Frequency in Hz"
+    GraphInstance.Graph.toolbar.logo = None
 
     # Find the maximum values in both x and y direction to be able to
     # depict both vertical and horizontal lines

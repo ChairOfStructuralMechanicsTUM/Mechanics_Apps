@@ -9,24 +9,29 @@ from os.path import dirname, join, split
 from drawable import Drawable
 
 # initialise variables
-aim_line = ColumnDataSource(data=dict(x=[],y=[]))
-hill_source = ColumnDataSource(data=dict(x=[],y=[]))
-theta = radians(30)
-speed = 50
-g = 9.81
+aim_line      = ColumnDataSource(data=dict(x=[],y=[]))
+hill_source   = ColumnDataSource(data=dict(x=[],y=[]))
 PlanetGravity = dict(Space = 0.0, Mercury = 3.61, Venus = 8.83, Earth = 9.81, Mars = 3.75, Ceres = 0.27,
-    Jupiter = 26.0, Saturn = 11.2, Uranus = 10.5, Neptune = 13.3, Pluto = 0.61)
-PlanetHue = dict(Space = "#696A8C", Mercury = "#EDD9FC", Venus = "#FCDDBB", Earth = "#D1F4FF", Mars = "#FF9E9E", Ceres = "#C4C4C4",
-    Jupiter = "#FFE1AD", Saturn = "#F3FFC9", Uranus = "#46FAB2", Neptune = "#AFC0DB", Pluto = "#DBD0D0")
+      Jupiter = 26.0, Saturn = 11.2, Uranus = 10.5, Neptune = 13.3, Pluto = 0.61)
+PlanetHue     = dict(Space = "#696A8C", Mercury = "#EDD9FC", Venus = "#FCDDBB", Earth = "#D1F4FF", Mars = "#FF9E9E", Ceres = "#C4C4C4",
+      Jupiter = "#FFE1AD", Saturn = "#F3FFC9", Uranus = "#46FAB2", Neptune = "#AFC0DB", Pluto = "#DBD0D0")
 x_0 = 5.0
 y_0 = 7.5
 direction_arrow = ColumnDataSource(data=dict(xS=[],yS=[],xE=[],yE=[]))
-t=0
-Active = False
-Done = False
-height = 0
-mass = 0.7
 
+glob_t        = ColumnDataSource(data=dict(val=[0]))
+glob_g        = ColumnDataSource(data=dict(val=[9.81]))
+
+glob_speed    = ColumnDataSource(data=dict(val=[50]))
+glob_theta    = ColumnDataSource(data=dict(val=[radians(30)]))
+glob_mass     = ColumnDataSource(data=dict(val=[0.7]))
+
+glob_y0       = ColumnDataSource(data=dict(val=[y_0]))
+glob_height   = ColumnDataSource(data=dict(val=[0]))
+
+glob_active   = ColumnDataSource(data=dict(Active=[False]))
+glob_done     = ColumnDataSource(data=dict(Done=[False]))
+glob_callback = ColumnDataSource(data=dict(cid=[None]))
 
 def init ():
     updateTargetArrow()
@@ -38,6 +43,10 @@ def bananaPosition(t):
     :param t:
     :return:
     """
+    [g]     = glob_g.data["val"]     # input/
+    [speed] = glob_speed.data["val"] # input/
+    [theta] = glob_theta.data["val"] # input/
+    [y_0]   = glob_y0.data["val"]    # input/
     x = x_0 + speed*cos(theta)*t
     y = y_0 + speed*sin(theta)*t-g*t**2/2.0
     return (x,y)
@@ -49,6 +58,7 @@ def monkeyPosition(t):
     :param t:
     :return:
     """
+    [g] = glob_g.data["val"] # input/
     x = monkey_init_pos[0]
     y = monkey_init_pos[1] - g*t**2 * .5
     return (x,y)
@@ -59,6 +69,9 @@ def updateTargetArrow():
     update directional indicator arrows
     :return:
     """
+    [speed] = glob_speed.data["val"] # input/
+    [theta] = glob_theta.data["val"] # input/
+    [y_0]   = glob_y0.data["val"]    # input/
     # if speed = 0 then there is no arrow
     if (speed == 0):
         direction_arrow.data = dict(xS=[],yS=[],xE=[],yE=[])
@@ -77,9 +90,11 @@ def evolve():
     function which makes banana and monkey move
     :return:
     """
-    global t, Active, Done
+    [t] = glob_t.data["val"] # input/output
+    [g1Projectiles] = glob_callback.data["cid"] # input/
 
     t += 0.1
+    glob_t.data = dict(val=[t])
 
     xM, yM = monkeyPosition(t)
     xB, yB = bananaPosition(t)
@@ -89,18 +104,18 @@ def evolve():
     # if monkey is hit with banana then stop
     if xM < xB < xM+20 and yM < yB < yM+20:
         curdoc().remove_periodic_callback(g1Projectiles)
-        Active = False
-        Done = True
+        glob_active.data = dict(Active=[False]) #      /output
+        glob_done.data   = dict(Done=[True])    #      /output
     # else if the banana hit the floor then stop
     elif yB < 0 or yM < 0:
         curdoc().remove_periodic_callback(g1Projectiles)
-        Active = False
-        Done = True
+        glob_active.data = dict(Active=[False]) #      /output
+        glob_done.data   = dict(Done=[True])    #      /output
     # else if nothing is falling and the banana has exited the screen
     elif grav_select.value == "Space" and yB > 105:
         curdoc().remove_periodic_callback(g1Projectiles)
-        Active = False
-        Done = True
+        glob_active.data = dict(Active=[False]) #      /output
+        glob_done.data   = dict(Done=[True])    #      /output
 
 
 # set up image
@@ -112,25 +127,26 @@ arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
     line_color="black",line_width=3)
 p.add_layout(arrow_glyph)
 
-monkey = Drawable(p, "Images/monkey.png")
+monkey          = Drawable(p, "Images/monkey.png")
 monkey_init_pos = (180, 70)
 monkey.draw_at(x=monkey_init_pos[0], y=monkey_init_pos[1], w=20, h=20)
 
-branch = Drawable(p, "Images/branch.png")
+branch          = Drawable(p, "Images/branch.png")
 branch_init_pos = (150, 70)
 branch.draw_at(x=branch_init_pos[0], y=branch_init_pos[1], w=50, h=25)
 
-banana = Drawable(p, "Images/banana.png")
+banana          = Drawable(p, "Images/banana.png")
 banana_init_pos = (8, 10)
 banana.draw_at(x=banana_init_pos[0], y=banana_init_pos[1], w=5, h=5)
 
-cannon = Drawable(p, "Images/cannon.png")
+cannon          = Drawable(p, "Images/cannon.png")
 cannon.draw_at(x=2.8, y=3.0, h=10, w=10, pad_fraction=.25)
-base = Drawable(p, "Images/base.png")
+base            = Drawable(p, "Images/base.png")
 base.draw_at(x=0, y=0, w=10, h=10)
 
 p.background_fill_color = PlanetHue["Earth"]
-p.grid.visible=False
+p.grid.visible = False
+p.toolbar.logo = None
 
 init()
 
@@ -141,25 +157,27 @@ def rotateCannon(angle):
     :param angle:
     :return:
     """
+    [height] = glob_height.data["val"] # input/
     # find points (in image coordinates) about which the image is rotated
     center = (4.7 * cannon.orig_size[0] / 15.0, 7.5 * cannon.orig_size[1] / 15.0)
     cannon.rotate_to(angle, center)
-    cos_theta = cos(angle)
-    sin_theta = sin(angle)
+    cos_theta  = cos(angle)
+    sin_theta  = sin(angle)
     pos_banana = (.2 + 4.8 * sin_theta + 5.5 * cos_theta, 4.5 + height + 4.8 * cos_theta - 5.5 * sin_theta)
     banana.move_to(pos_banana)
 
 
 ## slider/button/dropdown functions
 def changeTheta(attr,old,new):
-    global theta, Active
+    [Active] = glob_active.data["Active"] # input/
+    [theta]  = glob_theta.data["val"]     # input/output
     # if it has been modified during the simulation
     # move back == deactivated (does not exist in bokeh)
     if (Active and theta!=radians(new)):
         angle_slider.value=old
     else:
         # else update angle and update images
-        theta=radians(new)
+        glob_theta.data = dict(val=[radians(new)])
         rotateCannon(radians(30-new))
         updateTargetArrow()
 
@@ -170,14 +188,15 @@ angle_slider.on_change('value',changeTheta)
 
 
 def changeSpeed(attr,old,new):
-    global speed, Active
+    [Active] = glob_active.data["Active"] # input/
+    [speed]  = glob_speed.data["val"]     # input/output
     # if it has been modified during the simulation
     # move back == deactivated (does not exist in bokeh)
     if (Active and speed!=new):
         speed_slider.value=old
     else:
         # else update speed and directional arrow
-        speed=new
+        glob_speed.data = dict(val=[new])
         updateTargetArrow()
 
 
@@ -187,19 +206,22 @@ speed_slider.on_change('value', changeSpeed)
 
 # mass is not necessary but function is needed to protect the integrity of the simulation
 def massCheck(attr, old, new):
-    global Active, mass
+    [Active] = glob_active.data["Active"] # input/
+    [mass]   = glob_mass.data["val"]      # input/output
     if (Active and mass!=new):
         mass_slider.value=old
     else:
-        mass=new
+        glob_mass.data = dict(val=[new])
 
 
-mass_slider = Slider(title="Mass (kg)",value=mass,start=0,end=2,step=0.1)
+mass_slider = Slider(title="Mass (kg)",value=0.7,start=0,end=2,step=0.1)
 mass_slider.on_change('value',massCheck)
 
 
 def changeHeight(attr,old,new):
-    global y_0, height
+    [Active] = glob_active.data["Active"] # input/
+    [height] = glob_height.data["val"]    # input/output
+    [y_0]    = glob_y0.data["val"]        # input/output
     # if it has been modified during the simulation
     # move back == deactivated (does not exist in bokeh)
     if Active and height != new:
@@ -214,6 +236,8 @@ def changeHeight(attr,old,new):
         y_0+=(height-old)
         updateTargetArrow()
         hill_source.data = dict(x=[0, 30, 30],y=[height, height, 0])
+        glob_height.data = dict(val=[height])
+        glob_y0.data     = dict(val=[y_0])
 
 
 height_slider = Slider(title="Height of base (m)",value=0.0,start=0,end=60,step=5)
@@ -221,25 +245,26 @@ height_slider.on_change('value',changeHeight)
 
 
 def changeGrav(attr,old,new):
-    global g
+    [Active] = glob_active.data["Active"] # input/
+    [g]      = glob_g.data["val"]         # input/output
     # if it has been modified during the simulation
     # move back == deactivated (does not exist in bokeh)
     if (Active and g != PlanetGravity[new]):
         grav_select.value=old
     else:
         # else reset and change gravity
-        g=PlanetGravity[new]
+        g           = PlanetGravity[new]
+        glob_g.data = dict(val=[g])
         p.background_fill_color = PlanetHue[new]
         Reset()
-
 
 grav_select = Select(title="Planet:", value="Earth",
     options=["Space", "Mercury", "Venus", "Earth", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"])
 grav_select.on_change('value',changeGrav)
 
-g1Projectiles=None
 def Fire():
-    global Active,g1Projectiles
+    [Active] = glob_active.data["Active"] # input/output
+    [t]      = glob_t.data["val"]         # input/
     if not Active:
         if t!=0:
             Reset()
@@ -247,7 +272,8 @@ def Fire():
         # release branch and start simulation
         monkeyLetGo(monkey, grav_select.value!="Earth")
         g1Projectiles=curdoc().add_periodic_callback(evolve, 50)
-        Active = True
+        glob_callback.data = dict(cid=[g1Projectiles]) #      /output
+        glob_active.data   = dict(Active=[True])
 
 
 fire_button = Button(label="Fire!",button_type="success")
@@ -255,13 +281,15 @@ fire_button.on_click(Fire)
 
 
 def Reset():
-    global Active, Done, t
+    [Active]        = glob_active.data["Active"] # input/output
+    [g1Projectiles] = glob_callback.data["cid"]  # input/
+    [Done]          = glob_done.data["Done"]     # input/output
     # if simulation is in progress, stop simulation
     if Active:
         curdoc().remove_periodic_callback(g1Projectiles)
-        Active = False
+        glob_active.data = dict(Active=[False])
     elif Done:
-        Done = False
+        glob_done.data   = dict(Done=[False])
     # return banana, monkey and cannon to original positions
     banana_current_position = (banana_init_pos[0],banana_init_pos[1]+height_slider.value)
     banana.move_to(banana_current_position)
@@ -270,7 +298,7 @@ def Reset():
     # make monkey grab branch again (also resets helmet)
     monkeyGrab(monkey, grav_select.value != "Earth")
     # reset time
-    t=0
+    glob_t.data = dict(val=[0])
 
 
 reset_button = Button(label="Reset",button_type="success")

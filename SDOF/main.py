@@ -16,58 +16,58 @@ currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv
-from math import sqrt, exp, pow, sin , cos, ceil, pi, atan2, sinh, cosh
+from math import sqrt, exp, pow, sin , cos, pi, atan2, sinh, cosh
 
 ## initial values
-initial_mass_value = 8.
-initial_spring_constant_value = 50.
+initial_mass_value                = 8.
+initial_spring_constant_value     = 50.
 initial_damping_coefficient_value = 1.5
-initial_velocity_value = 0.
-initial_displacement_value = 0.
-frequency_ratio_value = 0.5
-force_value = 1.
+initial_velocity_value            = 0.
+initial_displacement_value        = 0.
+frequency_ratio_value             = 0.5
+force_value                       = 1.
 
 ## input parameters for the analytic solution
-ef = sqrt(initial_spring_constant_value/initial_mass_value)
-D = initial_damping_coefficient_value / (2.0*initial_mass_value*ef)
+ef        = sqrt(initial_spring_constant_value/initial_mass_value)
+D         = initial_damping_coefficient_value / (2.0*initial_mass_value*ef)
 damped_ef = ef * sqrt(1-pow(D,2))
 excitation_frequency_value = frequency_ratio_value * ef
 
-s=0
-t=0
-dt=0.03
+s  = 0
+t  = 0
+dt = 0.03
 
-mass = CircularMass(initial_mass_value,0,10,2,2)
+mass   = CircularMass(initial_mass_value,0,10,2,2)
 spring = SDOF_Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
 damper = SDOF_Dashpot((2,.75),(2,8),initial_damping_coefficient_value)
 
-Bottom_Line = ColumnDataSource(data = dict(x=[-2,2],y=[8,8]))
+Bottom_Line  = ColumnDataSource(data = dict(x=[-2,2],y=[8,8]))
 Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[8,10]))
 
 displacement = ColumnDataSource(data = dict(t=[0],s=[initial_displacement_value]))
-displacement_particular = ColumnDataSource(data = dict(t=[0],s=[0]))
+displacement_particular  = ColumnDataSource(data = dict(t=[0],s=[0]))
 displacement_homogeneous = ColumnDataSource(data = dict(t=[0],s=[0]))
 
-arrow_line = ColumnDataSource(data = dict(x1=[0],y1=[15],x2=[0],y2=[12]))
+arrow_line   = ColumnDataSource(data = dict(x1=[0],y1=[15],x2=[0],y2=[12]))
 arrow_offset = ColumnDataSource(data = dict(x1=[0],y1=[12],x2=[0],y2=[11.9]))
+phase_angle  = ColumnDataSource(data = dict(beta=[0],phi=[0]))
 amplification_function = ColumnDataSource(data = dict(beta=[0],V=[1]))
-phase_angle = ColumnDataSource(data = dict(beta=[0],phi=[0]))
 for beta in range(1,75):
     amplification_function.stream(dict(beta=[beta/25.0],V=[1]))
     phase_angle.stream(dict(beta=[beta/25.0],phi=[1]))
 current_ratio = ColumnDataSource(data = dict(beta=[0],V=[1],phi=[0]))
-parameters = ColumnDataSource(data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)]))
+parameters    = ColumnDataSource(data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)]))
 
 ## global variables
-glob_t = ColumnDataSource(data = dict(t = [t]))
-glob_s = ColumnDataSource(data = dict(s = [s]))
-glob_D = ColumnDataSource(data = dict(D = [D]))
-glob_ef = ColumnDataSource(data = dict(ef = [ef]))
+glob_t         = ColumnDataSource(data = dict(t = [t]))
+glob_s         = ColumnDataSource(data = dict(s = [s]))
+glob_D         = ColumnDataSource(data = dict(D = [D]))
+glob_ef        = ColumnDataSource(data = dict(ef = [ef]))
 glob_damped_ef = ColumnDataSource(data = dict(damped_ef = [damped_ef]))
 
-glob_mass = ColumnDataSource(data = dict(mass = [mass]))
-glob_spring = ColumnDataSource(data = dict(spring = [spring]))
-glob_damper = ColumnDataSource(data = dict(damper = [damper]))
+glob_mass      = ColumnDataSource(data = dict(mass = [mass]))
+glob_spring    = ColumnDataSource(data = dict(spring = [spring]))
+glob_damper    = ColumnDataSource(data = dict(damper = [damper]))
 
 glob_initial_displacement_value = ColumnDataSource(data = dict(initial_displacement_value = [initial_displacement_value]))
 glob_initial_velocity_value = ColumnDataSource(data = dict(initial_velocity_value = [initial_velocity_value]))
@@ -80,17 +80,17 @@ glob_callback_id = ColumnDataSource(data = dict(callback_id = [None]))
 
 def evolve():
     # extract global variables
-    [t] = glob_t.data["t"] # input/output
-    [s] = glob_s.data["s"] #      /output
-    [D] = glob_D.data["D"] # input/
-    [ef] = glob_ef.data["ef"] # input/
+    [t]         = glob_t.data["t"]                 # input/output
+    [s]         = glob_s.data["s"]                 #      /output
+    [D]         = glob_D.data["D"]                 # input/
+    [ef]        = glob_ef.data["ef"]               # input/
     [damped_ef] = glob_damped_ef.data["damped_ef"] # input/
-    [spring] = glob_spring.data["spring"] # input/
+    [spring]    = glob_spring.data["spring"]       # input/
     
     [initial_displacement_value] = glob_initial_displacement_value.data["initial_displacement_value"] # input/
-    [initial_velocity_value] = glob_initial_velocity_value.data["initial_velocity_value"] # input/
-    [frequency_ratio_value] = glob_frequency_ratio_value.data["frequency_ratio_value"] # input/
-    [force_value] = glob_force_value.data["force_value"] # input/
+    [initial_velocity_value]     = glob_initial_velocity_value.data["initial_velocity_value"]         # input/
+    [frequency_ratio_value]      = glob_frequency_ratio_value.data["frequency_ratio_value"]           # input/
+    [force_value]                = glob_force_value.data["force_value"]                               # input/
     [excitation_frequency_value] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/
     
     #########
@@ -145,10 +145,10 @@ title_box = Div(text="""<h2 style="text-align:center;">Single degree-of-freedom 
 
 # sdof drawing
 fig = figure(title="", tools="", x_range=(-7,7), y_range=(0,20),width=350,height=450)
-fig.title.text_font_size="20pt"
-fig.axis.visible = False
-fig.grid.visible = False
-fig.outline_line_color = None
+fig.title.text_font_size = "20pt"
+fig.axis.visible         = False
+fig.grid.visible         = False
+fig.outline_line_color   = None
 # fig.line(x=[-7,7],y=[9,9],color="blue",line_width=3)
 fig.line(x=[-2,2],y=[.75,.75],color="black",line_width=3)
 fig.multi_line(xs=[[-2.75,-2],[-1.75,-1.0],[-0.75,0],[.25,1],[1.25,2]],
@@ -297,9 +297,9 @@ damping_coefficient_input.on_change('value',change_damping_coefficient)
 def change_initV(attr,old,new):
     # extract global variables
     [initial_velocity_value] = glob_initial_velocity_value.data["initial_velocity_value"] # input/output
-    [spring] = glob_spring.data["spring"] # input/ouput -> class
+    [spring]                 = glob_spring.data["spring"] # input/ouput -> class
     
-    initial_velocity_value = float(new) / spring.getSpringConstant
+    initial_velocity_value           = float(new) / spring.getSpringConstant
     glob_initial_velocity_value.data = dict(initial_velocity_value = [initial_velocity_value])
 
 
@@ -310,9 +310,9 @@ initial_velocity_input.on_change('value',change_initV)
 def change_initial_displacement(attr,old,new):
     # extract global variables
     [initial_displacement_value] = glob_initial_displacement_value.data["initial_displacement_value"] # input/output
-    [spring] = glob_spring.data["spring"] # input/ouput -> class
+    [spring]                     = glob_spring.data["spring"] # input/ouput -> class
     
-    initial_displacement_value = float(new) / spring.getSpringConstant
+    initial_displacement_value           = float(new) / spring.getSpringConstant
     glob_initial_displacement_value.data = dict(initial_displacement_value = [initial_displacement_value])
     move_system(-new)
     updateParameters()
@@ -325,7 +325,7 @@ def change_frequency_ratio(attr,old,new):
     # extract global variables
     [frequency_ratio_value] = glob_frequency_ratio_value.data["frequency_ratio_value"] # input/output
     
-    frequency_ratio_value = new
+    frequency_ratio_value           = new
     glob_frequency_ratio_value.data = dict(frequency_ratio_value = [frequency_ratio_value])
     updateParameters()
     plot_current_ratio()
@@ -338,17 +338,17 @@ def change_force_value(attr,old,new):
     # extract global variables
     [force_value] = glob_force_value.data["force_value"] # input/output
     
-    force_value = new
+    force_value           = new
     glob_force_value.data = dict(force_value = [force_value])
-    current_y1 = arrow_line.data["y1"][0]
-    current_y2 = arrow_line.data["y2"][0]
+    current_y1            = arrow_line.data["y1"][0]
+    current_y2            = arrow_line.data["y2"][0]
     updateParameters()
     if new == 1:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20])
+        arrow_line.data   = dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20])
         arrow_offset.data = dict(x1=[0],y1=[current_y1-23],x2=[0],y2=[current_y2-20.1])
     else:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
-        arrow_offset.data=dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
+        arrow_line.data   = dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
+        arrow_offset.data = dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
     
 force_value_input = Slider(title="Force", value=force_value, start=0, end=1.0, step=1,width=400)
 force_value_input.on_change('value',change_force_value)
@@ -433,43 +433,43 @@ def stop():
 
 def reset():
     stop()
-    mass_input.value = initial_mass_value
-    spring_constant_input.value = initial_spring_constant_value
-    damping_coefficient_input.value = initial_damping_coefficient_value
-    initial_velocity_input.value = initial_velocity_value
+    mass_input.value                 = initial_mass_value
+    spring_constant_input.value      = initial_spring_constant_value
+    damping_coefficient_input.value  = initial_damping_coefficient_value
+    initial_velocity_input.value     = initial_velocity_value
     initial_displacement_input.value = initial_displacement_value
-    frequency_ratio_input.value = frequency_ratio_value
-    force_value_input.value = force_value
+    frequency_ratio_input.value      = frequency_ratio_value
+    force_value_input.value          = force_value
 
 
 def updateParameters():
     # extract global variables
     # input
-    [mass] = glob_mass.data["mass"] # input/
+    [mass]   = glob_mass.data["mass"] # input/
     [spring] = glob_spring.data["spring"] # input/
     [damper] = glob_damper.data["damper"] # input/
     [frequency_ratio_value] = glob_frequency_ratio_value.data["frequency_ratio_value"] # input/
     [force_value] = glob_force_value.data["force_value"] # input/
     
     #output
-    [D] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/output
-    [ef] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/output
-    [damped_ef] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/output
+    [D]                          = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/output
+    [ef]                         = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/output
+    [damped_ef]                  = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/output
     [excitation_frequency_value] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/output
     
-    m = mass.getMass
-    k = spring.getSpringConstant
-    c = damper.getDampingCoefficient
+    m  = mass.getMass
+    k  = spring.getSpringConstant
+    c  = damper.getDampingCoefficient
     ef = sqrt(k/m)
-    D = c / (2*m*ef)
+    D  = c / (2*m*ef)
     if D < 1:
         damped_ef = ef * sqrt(1-pow(D,2))
     else:
         damped_ef = ef * sqrt(pow(D,2)-1)
     excitation_frequency_value = frequency_ratio_value * ef
     parameters.data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)])
-    glob_D.data = dict(D = [D])
-    glob_ef.data = dict(ef = [ef])
+    glob_D.data     = dict(D = [D])
+    glob_ef.data    = dict(ef = [ef])
     glob_damped_ef.data = dict(damped_ef = [damped_ef])
     glob_excitation_frequency_value.data = dict(excitation_frequency_value = [excitation_frequency_value])
     # deactivate play button if there exists no solution for these configurations
