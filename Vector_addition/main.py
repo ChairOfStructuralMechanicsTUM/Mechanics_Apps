@@ -55,7 +55,10 @@ def updateVector1 ():
         xE=Vector1*cos(theta1)
         yE=Vector1*sin(theta1)
         Vector1_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        V1_label_source.data = dict (x=[xE+3],y=[yE-3],V1=["V"u"\u2081"])
+        # Readjust positions
+        xL = xE-3
+        yL = yE-6
+        V1_label_source.data = dict (x=[(xL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],y=[(yL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],V1=["V"u"\u2081"])
 
 def updateVector2 ():
     global Vector2, theta2
@@ -67,7 +70,11 @@ def updateVector2 ():
         xE=Vector2*cos(theta2)
         yE=Vector2*sin(theta2)
         Vector2_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        V2_label_source.data = dict (x=[xE-3],y=[yE+3],V2=["V"u"\u2082"])
+        # Readjust positions
+        xL = xE-3
+        yL = yE-6
+        V2_label_source.data = dict (x=[(xL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],y=[(yL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],V2=["V"u"\u2082"])
+
 
 def updateResultant():
     global vector1,vector2,theta1,theta2
@@ -78,9 +85,12 @@ def updateResultant():
         VectorResultant_source.data = dict(xS=[], yS=[], xE=[], yE=[])
     else:
         VectorResultant_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        Resultant_label_source.data = dict (x=[xE+3],y=[yE+3],R=['R'])
+        # Readjust positions
+        xL = xE-3
+        yL = yE-6
+        Resultant_label_source.data = dict (x=[(xL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],y=[(yL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],R=['R'])
         
-    #fors showing the resultant paralleogram
+    # Show the resultant paralleogram
     V1parallel_line_source.data = dict(x=[Vector2*cos(theta2),xE], y=[Vector2*sin(theta2),yE])
     V2parallel_line_source.data = dict(x=[Vector1*cos(theta1),xE], y=[Vector1*sin(theta1),yE])
 
@@ -114,9 +124,9 @@ Vector2_glyph = Arrow(end=NormalHead(line_color="#0065BD", fill_color="#0065BD",
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Vector2_source,line_color="#0065BD",line_width=7)
 VectorResultant_glyph = Arrow(end=NormalHead(line_color="#E37222",fill_color="#E37222", line_width=2,size=15),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=VectorResultant_source,line_color="#E37222",line_width=7)
-V1_label_glyph=LabelSet(x='x', y='y',text='V1',text_font_size="15pt",level='glyph',source=V1_label_source)
-V2_label_glyph=LabelSet(x='x', y='y',text='V2',text_font_size="15pt",level='glyph',source=V2_label_source)
-Resultant_label_glyph = LabelSet(x='x',y='y',text='R',text_font_size="15pt",level='glyph',source=Resultant_label_source)
+V1_label_glyph=LabelSet(x='x', y='y',text='V1',text_font_size="15pt",level='overlay',source=V1_label_source)
+V2_label_glyph=LabelSet(x='x', y='y',text='V2',text_font_size="15pt",level='overlay',source=V2_label_source)
+Resultant_label_glyph = LabelSet(x='x',y='y',text='R',text_font_size="15pt",level='overlay',source=Resultant_label_source)
 Resultant_values_glyph = LatexLabelSet(x='x',y='y',text='names',text_font_size="15pt", text_color="#E37222", level='glyph',source=Resultant_values_source)
 
 
