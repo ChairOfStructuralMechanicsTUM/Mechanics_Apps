@@ -7,10 +7,19 @@ from Person import create_people
 from Person import create_arrows_velocityDiagram, reset_arrows_velocityDiagram, modify_swimmer_arrows
 from bokeh.layouts import column, row
 import BarChart as BC
-from os.path import dirname, join
-from bokeh.models.layouts import Spacer
 from os.path import dirname, join, split
+from bokeh.models.layouts import Spacer
 from bokeh.models import Arrow, OpenHead
+
+'''
+###############################################################################
+Global variables as ColumnDataSources
+###############################################################################
+'''
+glob_active     = ColumnDataSource(data=dict(Active=[False]))
+glob_callback   = ColumnDataSource(data=dict(cid=[None])) # callback id
+glob_boatSpeed  = ColumnDataSource(data=dict(val=[0]))
+glob_listPeople = ColumnDataSource(data=dict(List=[None]))
 
 '''
 ###############################################################################
@@ -25,12 +34,12 @@ scene = figure(
                 y_range=(yMin,yMax),width=1200, height=400,
                 tools=''
               )
-scene.title.align = "center"
+scene.title.align          = "center"
 scene.title.text_font_size = "25px"
-scene.grid.visible=False
-scene.xaxis.visible=False
-scene.yaxis.visible=False
-Active = False
+scene.grid.visible         = False
+scene.xaxis.visible        = False
+scene.yaxis.visible        = False
+scene.toolbar.logo         = None
 
 bar_chart_data = {'objects':{'boat':600,'swimmer1':150}}
 
@@ -40,12 +49,13 @@ velocity_diagram = figure(
                             y_range=(-3,7),width=700, height=300,
                             tools=''
                          )
-velocity_diagram.title.align = "center"
+velocity_diagram.title.align          = "center"
 velocity_diagram.title.text_font_size = "25px"
-velocity_diagram.grid.visible=True
-velocity_diagram.xaxis.visible=False
-velocity_diagram.yaxis.axis_label="Velocity (m/s)"
-velocity_diagram.yaxis.visible=True
+velocity_diagram.grid.visible         = True
+velocity_diagram.xaxis.visible        = False
+velocity_diagram.yaxis.axis_label     = "Velocity (m/s)"
+velocity_diagram.yaxis.visible        = True
+velocity_diagram.toolbar.logo         = None
 
 '''
 ###############################################################################
@@ -72,16 +82,16 @@ boatX = np.array( [
                        initBoatCGx - 3.0, 
                        initBoatCGx + 3.0, 
                        initBoatCGx + 2.5
-                  ] )
+                  ] )                # constant
 boatY = np.array( [
                        initBoatCGy - 1.0,
                        initBoatCGy + 0.5,
                        initBoatCGy + 0.5,
                        initBoatCGy - 1.0
-                  ] )
-startBoatSpeed = 2
-boatSpeed = 2.0
-boatColor = '#DAD7CB'
+                  ] )                # constant
+startBoatSpeed = 2.0                 # constant
+glob_boatSpeed.data = dict(val=[startBoatSpeed])
+boatColor  = '#DAD7CB'
 boatSource = ColumnDataSource(data=dict(x = boatX,
                                         y = boatY,
                                         ))
@@ -137,6 +147,7 @@ for person in listPeople:
     listXCoords.append(person.standingPosition[0])
     listYCoords.append(person.standingPosition[1])
     #listSources.append(ColumnDataSource(data=person.jumpingPath))
+glob_listPeople.data = dict(List=[listPeople]) #      /output
     
 swimmers_colors = ['#E37222','#A2AD00','#64A0C8','#FFDC00','#C4071B']
     
@@ -148,10 +159,10 @@ personSource = ColumnDataSource(
                                          )         
                                )
 
-scene.patches(xs='x',ys='y',color='c',source =personSource )
+scene.patches(xs='x',ys='y',color='c',source = personSource )
 
 
-boatArrows_sources, swimmerArrows_sources = create_arrows_velocityDiagram(velocity_diagram, swimmers_colors, boatSpeed)
+boatArrows_sources, swimmerArrows_sources = create_arrows_velocityDiagram(velocity_diagram, swimmers_colors, startBoatSpeed)
 
 '''
 ###############################################################################
@@ -160,7 +171,9 @@ through time
 ###############################################################################
 '''
 def move_boat():
-    global personSource, listSources
+    #global listSources
+    [boatSpeed]  = glob_boatSpeed.data["val"]   # input/
+    [listPeople] = glob_listPeople.data["List"] # input/output
     
     # Making the boat move
     dx = np.ones(4)*dt*boatSpeed
@@ -168,7 +181,7 @@ def move_boat():
 
     # Making the people move
     dxStandting = np.ones(28)
-    dxJumping = np.ones(29)
+    dxJumping   = np.ones(29)
 
     newListXCoords = list()
     newListYCoords = list()
@@ -209,6 +222,7 @@ def move_boat():
                                  y=newListYCoords,
                                  c=newListColor
                             )
+    glob_listPeople.data = dict(List=[listPeople])
     
 '''
 ###############################################################################
@@ -217,17 +231,16 @@ Add the interactive functionalities
 '''
 ##################### Creating numberPeopleSlider slider ######################
 def updateNoPersons(attr,old,new):
-    global Active, listSources
+    [Active]    = glob_active.data["Active"] # input/
+    [boatSpeed] = glob_boatSpeed.data["val"] # input/
     
     # If the boat is moving, new people connot be added
-    if Active == False:
-        global listPeople
-    
+    if Active == False:    
         # Acount for the displacement already carried out by the boat for
         # creating the new people on board
         displacement = ( boatX[2] - boatSource.data['x'][2] )
-        dxStanding = displacement * np.ones(28)
-        dxJumping = displacement * np.ones(29)
+        dxStanding   = displacement * np.ones(28)
+        dxJumping    = displacement * np.ones(29)
         
         # Creating people on the boat
         listPeople = create_people(
@@ -252,7 +265,8 @@ def updateNoPersons(attr,old,new):
             listYCoords.append(person.currentPosition[1])
             listColors.append(swimmers_colors[counter])
             counter += 1
-        personSource.data = dict(x=listXCoords, y=listYCoords,c=listColors)
+        personSource.data    = dict(x=listXCoords, y=listYCoords,c=listColors) #      /output
+        glob_listPeople.data = dict(List=[listPeople])                         #      /output
             
         reset_arrows_velocityDiagram( boatArrows_sources, swimmerArrows_sources, boatSpeed )
             
@@ -282,18 +296,20 @@ numberPersonsSlider.on_change('value',updateNoPersons)
 #pause_button.on_click(pause)
 
 ########################### Creating play button ##############################
-g1Boatwiththreeswimmers = None
 def play ():
-    global Active,g1Boatwiththreeswimmers
+    [Active]                  = glob_active.data["Active"] # input/output
+    [g1Boatwiththreeswimmers] = glob_callback.data["cid"]  # input/output
     # if inactive, reactivate animation
     if Active == True:
         g1Boatwiththreeswimmers=curdoc().remove_periodic_callback(g1Boatwiththreeswimmers)
-        Active=False
-        play_button.label = "Play"
+        glob_active.data   = dict(Active=[False])
+        glob_callback.data = dict(cid=[g1Boatwiththreeswimmers])
+        play_button.label  = "Play"
     else:
         g1Boatwiththreeswimmers=curdoc().add_periodic_callback(move_boat, 50)
-        Active=True
-        play_button.label = "Pause"
+        glob_active.data   = dict(Active=[True])
+        glob_callback.data = dict(cid=[g1Boatwiththreeswimmers])
+        play_button.label  = "Pause"
     #update_bars()
 
 play_button = Button(label="Play", button_type="success")
@@ -301,8 +317,8 @@ play_button.on_click(play)
 
 ########################### Creating reset button #############################
 def reset ():
-    global Active, boatX, boatY, boatSource, boatSpeed, startBoatSpeed
-    global listPeople, listSources
+    #global listSources
+    [Active] = glob_active.data["Active"] # input/output
     
     for element in listSources:
         element.data = dict(x=[],y=[])
@@ -311,17 +327,18 @@ def reset ():
     if Active == False:
         pass
     else:
+        [g1Boatwiththreeswimmers] = glob_callback.data["cid"]  # input/
         curdoc().remove_periodic_callback(g1Boatwiththreeswimmers)
-        Active = False
+        glob_active.data = dict(Active=[False])
 
     #Reset Play Button
     play_button.label = "Play"
 
     # Reset the coordinates defining the boat in its source data file
-    boatSource.data = dict(x = boatX, y = boatY)
-    boatSpeed = startBoatSpeed
+    boatSource.data     = dict(x = boatX, y = boatY)
+    glob_boatSpeed.data = dict(val=[startBoatSpeed]) #      /output
     
-    reset_arrows_velocityDiagram( boatArrows_sources, swimmerArrows_sources, boatSpeed )
+    reset_arrows_velocityDiagram( boatArrows_sources, swimmerArrows_sources, startBoatSpeed )
     
 
     # Creating a new list of people with only one person as default
@@ -344,14 +361,17 @@ def reset ():
         listYCoords.append(person.currentPosition[1])
         listColors.append(swimmers_colors[counter])
         counter += 1
-    personSource.data = dict(x=listXCoords, y=listYCoords,c=listColors)
+    personSource.data    = dict(x=listXCoords, y=listYCoords,c=listColors) #      /output
+    glob_listPeople.data = dict(List=[listPeople])                         #      /output
         
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(reset)
 
 ########################### Creating jump button ##############################
 def jump ():
-    global Active, boatSpeed, personSource
+    [Active]     = glob_active.data["Active"]   # input/
+    [boatSpeed]  = glob_boatSpeed.data["val"]   # input/output
+    [listPeople] = glob_listPeople.data["List"] # input/
     
     if Active == True:
         counter = 0
@@ -389,7 +409,7 @@ def jump ():
                 newPersonSourceX = personSource.data['x']
                 newPersonSourceY = personSource.data['y']
                 
-                # Chagning the shape of the jumping person to the jumping position
+                # Changing the shape of the jumping person to the jumping position
                 newPersonSourceX[counter] = person.jumpingPosition[0]+totalDisplacement
                 newPersonSourceY[counter] = person.jumpingPosition[1]
     
@@ -412,6 +432,7 @@ def jump ():
 
     else:
         pass
+    glob_boatSpeed.data = dict(val=[boatSpeed])
 
 jump_button = Button(label="Jump!", button_type="success")
 jump_button.on_click(jump)
