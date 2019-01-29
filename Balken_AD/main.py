@@ -758,7 +758,7 @@ def show():
 ##########Plotting##########
 
 ####### Main Plot:
-plot = Figure(title="Beam with Supports and Load", tools="", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5), height = 400, logo=None)
+plot = Figure(title="Beam with Supports and Load", tools="", x_range=(x0-.5,xf+.5), y_range=(-2.5,2.5), height = 400)
 my_line=plot.line(x='x', y='y', source=plot_source, color='#0065BD',line_width=20)
 plot.add_glyph(support_source1,ImageURL(url="sp1", x=-0.325, y=-0.1, w=0.66, h=0.4))
 plot.add_glyph(support_source2,ImageURL(url="sp2", x='x', y='y', w=0.66, h=0.4))
@@ -771,13 +771,14 @@ plot.axis.visible = False
 plot.outline_line_width = 2
 plot.outline_line_color = "Black"
 plot.title.text_font_size="13pt"
+plot.toolbar.logo = None
 labels = LabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=5, y_offset=-30, source=labels_source, render_mode='canvas')
 support_label = LabelSet(x='x', y='y', text='names', source=support_label_source, text_color = "#A2AD00", level='glyph', x_offset=3, y_offset=-15, text_font_size="10pt")
 beam_measure_label= LabelSet(x='x', y='y', text='names', source=beam_measure_label_source, text_color = 'black', level='glyph', x_offset=3, y_offset=-15)
 
 ####### Plot1 with shear:
-plot1 = Figure(title="Shear Force", tools="", x_range=(x0-.5,xf+.5), y_range=(-1.5,1.5), height = 200, logo=None)
+plot1 = Figure(title="Shear Force", tools="", x_range=(x0-.5,xf+.5), y_range=(-1.5,1.5), height = 200)
 plot1_labels1 = LabelSet(x='x', y='y', text='names', source=plot1_label_source, text_color = "#A2AD00", level='glyph', x_offset=3, y_offset=-15)
 plot1.add_layout(plot1_labels1)
 plot1.line(x='x', y='y', source=shear_source, color="#A2AD00",line_width=2)
@@ -789,9 +790,10 @@ plot1.outline_line_color = "Black"
 plot1.title.text_font_size="13pt"
 plot1.square([0.0],[0.0],size=0,fill_color="#A2AD00",fill_alpha=0.5,legend="Shear Force")
 plot1.legend.location = 'top_right'
+plot1.toolbar.logo = None
 
 ####### Plot2 with moment:
-plot2 = Figure(title="Bending Moment", tools="", x_range=(x0-.5,xf+.5), y_range=(-6,6), height = 200, logo=None)
+plot2 = Figure(title="Bending Moment", tools="", x_range=(x0-.5,xf+.5), y_range=(-6,6), height = 200)
 plot2_labels1 = LabelSet(x='x', y='y', text='names', source=plot2_label_source, text_color ="#E37222", level='glyph', x_offset=3, y_offset=-15)
 plot2.add_layout(plot2_labels1)
 plot2.line(x="x", y="y", source=mom_source, color="#E37222",line_width=2)
@@ -803,6 +805,8 @@ plot2.outline_line_color = "Black"
 plot2.title.text_font_size="13pt"
 plot2.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5,legend="Bending Moment")
 plot2.legend.location = 'top_right'
+plot2.toolbar.logo=None
+
 
 ### Arrow plotting:
 # Beam measurements arrow:
@@ -816,11 +820,11 @@ p_arrow_glyph2 = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
 p_arrow_glyph3 = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=p_arrow_source3,line_color="#0065BD")        
 # Position 2 arrow:
-f2_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 3,size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width = "lW", source=f2_arrow_source,line_color="#0065BD")
+f2_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3,size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width = "lW", source=f2_arrow_source,line_color="#A2AD00")
 # Position 1 arrow:
-f1_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 3,size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width = "lW", source=f1_arrow_source,line_color="#0065BD" )
+f1_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 3,size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width = "lW", source=f1_arrow_source,line_color="#A2AD00" )
 # Load-shapes glyph
 constant_load_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 triangular_load_glyph = Patch(x="x", y="y", fill_color="#0065BD",  fill_alpha=0.5)
