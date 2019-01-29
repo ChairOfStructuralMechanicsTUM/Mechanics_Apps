@@ -6,7 +6,7 @@ Python Bokeh program which interactively change two vectos and display its sum
 
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
-from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead, Button, Line,Div
+from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead, Button, Line,Div, NormalHead
 from bokeh.io import curdoc
 from numpy import loadtxt
 from os.path import dirname, join, split
@@ -108,11 +108,11 @@ def ChangeShow():
     updateResultant()        
 
 # adding the vectors to the plot
-Vector1_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width=10,size=10),
+Vector1_glyph = Arrow(end=NormalHead(line_color="#A2AD00",fill_color="#A2AD00", line_width=2,size=15),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Vector1_source,line_color="#A2AD00",line_width=7)
-Vector2_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width=10,size=10),
+Vector2_glyph = Arrow(end=NormalHead(line_color="#0065BD", fill_color="#0065BD", line_width=2,size=15),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Vector2_source,line_color="#0065BD",line_width=7)
-VectorResultant_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width=10,size=10),
+VectorResultant_glyph = Arrow(end=NormalHead(line_color="#E37222",fill_color="#E37222", line_width=2,size=15),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=VectorResultant_source,line_color="#E37222",line_width=7)
 V1_label_glyph=LabelSet(x='x', y='y',text='V1',text_font_size="15pt",level='glyph',source=V1_label_source)
 V2_label_glyph=LabelSet(x='x', y='y',text='V2',text_font_size="15pt",level='glyph',source=V2_label_source)
