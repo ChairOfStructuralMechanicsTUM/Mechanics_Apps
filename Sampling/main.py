@@ -3,15 +3,13 @@ from __future__ import division
 from os.path import dirname, split, join, abspath
 
 import numpy as np
-from numpy.fft import ifft, fft, fftshift
+from numpy.fft import fft, fftshift
 
 from bokeh.io import curdoc
-from bokeh.models import ColumnDataSource, Div
-from bokeh.layouts import widgetbox, layout, column, row, Spacer
+from bokeh.models import ColumnDataSource
+from bokeh.layouts import widgetbox, column, row
 from bokeh.plotting import Figure
 from bokeh.models.widgets import TextInput, Dropdown, CheckboxButtonGroup
-from bokeh.embed import components
-from bokeh.models.annotations import LabelSet
 
 from sympy import sympify
 
@@ -21,7 +19,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
-from latex_support import LatexDiv, LatexLabelSet, LatexLegend
+from latex_support import LatexDiv, LatexLegend
 
 
 # sample functions with corresponding id
@@ -46,9 +44,7 @@ color_interval           = False    # here we can decide if we want to color the
 show_analytical_solution = True     # here we can decide if we want to show the analytical solution for sample functions
 sample_function_id       = "cos"    # here we set the sample function that initially activated
 sample_function_used     = True     # global bool that states whether a sample function is currently used
-# put sample_function_id and sample_function_used to ColumnDataSources for global changes
-#glob_sample_function = ColumnDataSource(data=dict(
-#        sfid=[sample_function_id], used=[sample_function_used]))
+# put sample_function_id and sample_function_used into a dict for global changes
 glob_sample_function = dict(sfid=sample_function_id, used=sample_function_used)
 
 ################
@@ -108,9 +104,6 @@ plot_transform_real= Figure(x_axis_label='f',
                             active_scroll="wheel_zoom",
                             title="Fourier transform of function - Real part", width=650, height=300)
 plot_transform_real.toolbar.logo = None
-#plot_transform_real.add_layout(LatexLabelSet(x=dict(x=[0,5]),y=dict(y=[5,0]),text=["f","Re [X(f)]"]))
-# nein, columndata source object und dann mit einzelnem String darauf zugreifen
-
 
 
 # Generate a figure container for the imaginary part of the transformed function
@@ -134,6 +127,9 @@ def extract_parameters():
     if N > 10**5:  # we do not accept more than 10**5 sampling points!
         N = 10**5
         N_input.value = '10^5'
+    elif N <= 0:   # we do not accept non-positive values
+        N = 2**6
+        N_input.value = '2^6'
 
     h = T_0 / N
     #print f_input.value
@@ -153,7 +149,9 @@ def approximate_fourier_transform(T_0, N, f_function):
     T_S = T_0 / N  # Length of one sampling interval
 
     t_samples = np.arange(0, T_0, T_S)  # Grid in the Time Domain
-    f_samples = np.arange(-(N/2) / T_0, (N/2 - 1) / T_0 + 1, 1/ T_0)  # Grid in the Frequency Domain
+    #f_samples = np.arange(-(N/2) / T_0, (N/2 - 1) / T_0 + 1, 1/ T_0)  # Grid in the Frequency Domain
+    # produces wrong amount of frequencies 
+    f_samples = np.linspace(-(N/2) / T_0, (N/2 - 1) / T_0, N)
 
     # Function sampling
     x_samples = f_function(t_samples)
@@ -180,8 +178,8 @@ def sample_fourier_transform(T_0, N):
     returns samples of the fourier transform
     :return:
     """
-    sample_function_id   = glob_sample_function["sfid"] # input/ #glob_sample_function.data["sfid"] # input/
-    sample_function_used = glob_sample_function["used"] # input/ #glob_sample_function.data["used"] # input/
+    sample_function_id   = glob_sample_function["sfid"] # input/
+    sample_function_used = glob_sample_function["used"] # input/
     assert sample_function_used
 
     sample_functions_transform = sample_functions[sample_function_id][1]
@@ -241,24 +239,17 @@ def initialize():
 
     update()
 
-    #plot_original.scatter('t', 'x', source=x_sampled_source, legend='samples')
     plot_original_scatter = plot_original.scatter('t', 'x', source=x_sampled_source)
-    #plot_original.line('t', 'x', color='red', source=x_analytical_source, line_width=.5, legend='x(t)')
     plot_original_line = plot_original.line('t', 'x', color='red', source=x_analytical_source, line_width=.5)
-    plot_original.add_layout(LatexLegend(items=[("\\text{samples}",[plot_original_scatter]),("x(t)",[plot_original_line])]))#,label_text_font_size="10pt"))
-    #plot_original.legend.label_width = 10 # seems like there is some minimum label width since it does not change for sizes <= 80 
-#    plot_transform_imag.scatter('frequency', 'X_imag', source=X_sampled_source, legend='Im[X(f)] - DFT')
-#    plot_transform_imag.line('frequency', 'X_imag', color='red', source=X_analytical_source, line_width=.5, legend='Im[X(f)]')
+    plot_original.add_layout(LatexLegend(items=[("\\text{samples}",[plot_original_scatter]),("x(t)",[plot_original_line])]))
+
     plot_transform_imag_scatter = plot_transform_imag.scatter('frequency', 'X_imag', source=X_sampled_source)
     plot_transform_imag_line = plot_transform_imag.line('frequency', 'X_imag', color='red', source=X_analytical_source, line_width=.5)
-    plot_transform_imag.add_layout(LatexLegend(items=[("\mathrm{Im}[X(f)] - DFT",[plot_transform_imag_scatter]),("\mathrm{Im}[X(f)]",[plot_transform_imag_line])]))#,label_text_font_size="10pt",label_width=110))
-    #plot_transform_imag.legend.label_width = 130
-    #plot_transform_real.scatter('frequency', 'X_real', source=X_sampled_source, legend='Re[X(f)] - DFT')
-    #plot_transform_real.line('frequency', 'X_real', color='red', source=X_analytical_source, line_width=.5, legend='Re[X(f)]')
+    plot_transform_imag.add_layout(LatexLegend(items=[("\mathrm{Im}[X(f)] - DFT",[plot_transform_imag_scatter]),("\mathrm{Im}[X(f)]",[plot_transform_imag_line])]))
+
     plot_transform_real_scatter = plot_transform_real.scatter('frequency', 'X_real', source=X_sampled_source)
     plot_transform_real_line = plot_transform_real.line('frequency', 'X_real', color='red', source=X_analytical_source, line_width=.5)
-    plot_transform_real.add_layout(LatexLegend(items=[("\mathrm{Re}[X(f)] - DFT",[plot_transform_real_scatter]),("\mathrm{Re}[X(f)]",[plot_transform_real_line])]))#,label_text_font_size="10pt"))
-    #plot_transform_real.legend.label_width = 130
+    plot_transform_real.add_layout(LatexLegend(items=[("\mathrm{Re}[X(f)] - DFT",[plot_transform_real_scatter]),("\mathrm{Re}[X(f)]",[plot_transform_real_line])]))
 
     if color_interval:
         plot_transform_real.patch('x_patch', 'y_patch', source=source_interval_patch, alpha=.2)
@@ -324,8 +315,6 @@ def on_function_changed(attr, old, new):
     :return:
     """
     # we set the bool false, because we use an arbitrary function that is input by the user
-    #global sample_function_used
-    #sample_function_used = False
     glob_sample_function["used"] = False
 
     update()
@@ -339,20 +328,15 @@ def sample_fun_input_changed(self):
     :return:
     """
 
-    # we set the bool true, because we use a sample function for which we know the analytical solution
-    #global sample_function_used, sample_function_id
-    #sample_function_used = True
-    #sample_function_id = glob_sample_function["sfid"]
-
     # get the id
     sample_function_id = sample_fun_input_f.value
     # get the corresponding sample function
     sample_function = sample_functions[sample_function_id][0]
     # write the sample function into the textbox
     f_input.value = sample_function
-    #sample_function_used = True
     glob_sample_function["sfid"] = sample_function_id #      /output
-    glob_sample_function["used"] = True#sample_function_used
+    # we set the bool true, because we use a sample function for which we know the analytical solution
+    glob_sample_function["used"] = True #      /output
     update()
     reset_views()
 
@@ -386,53 +370,7 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 
 # create layout
 controls = [f_input, sample_fun_input_f, t0_input, N_input, nyquist_button]
-#controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
 controls_box = widgetbox(controls, width=650)  # all controls
 curdoc().add_root(column(description, row(column(plot_original, controls_box), column(plot_transform_real, plot_transform_imag))))  # plots ar too stretched
 
-#curdoc().add_root(column(description ,layout([[plot_original, plot_transform_real],
-#                          [controls_box, plot_transform_imag]],     
-#                          sizing_mode='stretch_both'))) # add plots and controls to root # text is overlapped by plots...
-
-
-#curdoc().add_root(layout([[plot_original, plot_transform_real],
-#                          [controls_box, plot_transform_imag]],     
-#                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
-
-#script, desc_div = components(description)
-#print(script)
-#print(desc_div)
-
-#curdoc().add_root(layout([description],sizing_mode='stretch_both'))
-#curdoc().add_root(layout([[plot_original, plot_transform_real],
-#                          [controls_box, plot_transform_imag]],     
-#                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
-
-#curdoc().add_root([[plot_original, plot_transform_real],
-#                          [controls_box, plot_transform_imag]]) # add plots and controls to root # text is overlapped by plots...
-
-
-#rest_layout =layout([[plot_original, plot_transform_real],
-#                               [controls_box, plot_transform_imag]], sizing_mode='stretch_both')
-#
-#curdoc().add_root(layout([[description],rest_layout]))
-
-
-### this block works, but only after zooming around in a plot...
-#curdoc().add_root(layout([[description],[plot_original, plot_transform_real],
-#                          [controls_box, plot_transform_imag]],     
-#                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
-
-
-
-#f_input.value = sample_functions[1][0]
-#curdoc().add_root(layout([[plot_original, plot_transform_real],
-#                          [controls_box, plot_transform_imag],[description]],     
-#                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
-
-#print([1]*1000)
-
-#curdoc().add_root(layout([[description],[plot_original, plot_transform_real],
-#                          [controls_box, plot_transform_imag]],     
-#                          sizing_mode='stretch_both')) # add plots and controls to root # text is overlapped by plots...
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
