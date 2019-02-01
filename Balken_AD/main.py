@@ -271,11 +271,11 @@ def Fun_Update(attrname, old, new):
             # Show max Values:    
             if (p_coord==5 and f2_coord==10 ):
                 if p_mag>0:
-                    plot1_label_source.data = dict(x=[0,9.4], y=[4.0,-2.0], names=['\\frac{-F}{2}','\\frac{F}{2}'])
-                    plot2_label_source.data = dict(x=[4.725], y=[1.05], names=['\\frac{FL}{4}'])
+                    plot1_label_source.data = dict(x=[0,9.4], y=[3.0,-2.0], names=['\\frac{-F}{2}','\\frac{F}{2}'])
+                    plot2_label_source.data = dict(x=[4.725], y=[-3.5], names=['\\frac{FL}{4}'])
                 else:
-                    plot1_label_source.data = dict(x=[0,9.4], y=[-2,4], names=['\\frac{-F}{2}','\\frac{F}{2}'])
-                    plot2_label_source.data = dict(x=[4.725], y=[1.05], names=['\\frac{FL}{4}'])
+                    plot1_label_source.data = dict(x=[0,9.4], y=[-2,3], names=['\\frac{-F}{2}','\\frac{F}{2}'])
+                    plot2_label_source.data = dict(x=[4.725], y=[4.5], names=['\\frac{FL}{4}'])
 
             # p_arrow and labels:
             if (p_mag>0):
@@ -446,11 +446,11 @@ def Fun_Update(attrname, old, new):
             # Show max values:
             if (p_coord==10 and f2_coord==10 ):
                 if p_mag >0:
-                    plot1_label_source.data = dict(x=[0.0,9.4], y=[4,-2], names=['\\frac{pL}{2}','\\frac{-pL}{2}'])
-                    plot2_label_source.data = dict(x=[4.7], y=[0.90], names=['\\frac{pL^2}{8}'])                    
+                    plot1_label_source.data = dict(x=[0.0,9.4], y=[3,-2], names=['\\frac{pL}{2}','\\frac{-pL}{2}'])
+                    plot2_label_source.data = dict(x=[4.7], y=[-4], names=['\\frac{pL^2}{8}'])                    
                 else:
-                    plot1_label_source.data = dict(x=[0.0,9.4], y=[-2,4], names=['\\frac{pL}{2}','\\frac{-pL}{2}'])
-                    plot2_label_source.data =dict(x=[4.7], y=[0.90], names=['\\frac{pL^2}{8}'])   
+                    plot1_label_source.data = dict(x=[0.0,9.4], y=[-2,3], names=['\\frac{pL}{2}','\\frac{-pL}{2}'])
+                    plot2_label_source.data =dict(x=[4.7], y=[5], names=['\\frac{pL^2}{8}'])   
 
             # p_arrow and labels:
             if (p_mag>0) and (p_coord!=0):
@@ -644,11 +644,11 @@ def Fun_Update(attrname, old, new):
             # Show max values:
             if (p_coord==10 and f2_coord==10 ):
                 if p_mag >0:
-                    plot1_label_source.data = dict(x=[0.0,9.4], y=[4.0,-2.0], names=['\\frac{pL}{6}','\\frac{-pL}{3}'])  
-                    plot2_label_source.data = dict(x=[4.7], y=[3], names=['\\frac{pL^2}{9\cdot\sqrt{3}}'])
+                    plot1_label_source.data = dict(x=[0.0,9.4], y=[3.0,-2.0], names=['\\frac{pL}{6}','\\frac{-pL}{3}'])  
+                    plot2_label_source.data = dict(x=[5.7], y=[-3], names=['\\frac{pL^2}{9\cdot\sqrt{3}}'])
                 else:
-                    plot1_label_source.data = dict(x=[0.0,9.4], y=[-2.0,4.0], names=['\\frac{pL}{6}','\\frac{-pL}{3}'])
-                    plot2_label_source.data =dict(x=[4.7], y=[0], names=['\\frac{pL^2}{9\cdot\sqrt{3}}'])
+                    plot1_label_source.data = dict(x=[0.0,9.4], y=[-2.0,3.0], names=['\\frac{pL}{6}','\\frac{-pL}{3}'])
+                    plot2_label_source.data =dict(x=[5.7], y=[4], names=['\\frac{pL^2}{9\cdot\sqrt{3}}'])
 
             # p_arrow and labels:
             if (p_mag>0) and (p_coord!=0):
