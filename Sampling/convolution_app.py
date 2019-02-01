@@ -19,7 +19,8 @@ import numpy as np
 import convolution_settings
 import sym_functions
 
-global update_is_enabled
+#global update_is_enabled
+glob_update_enabled = ColumnDataSource(data=dict(state=[True]))
 
 
 def update_data():
@@ -78,7 +79,8 @@ def input_change(attrname, old, new):
     :param old: not used
     :param new: not used
     """
-    global update_is_enabled
+    #global update_is_enabled
+    update_is_enabled = glob_update_enabled.data["state"] # input/
     if update_is_enabled:
         update_data()
 
@@ -88,13 +90,16 @@ def function_pair_input_change(self):
     called if the sample function changes
     :param self:
     """
+    #update_is_enabled = glob_update_enabled.data["state"] # input/output
     function_key = function_type.value
     function1, function2 = convolution_settings.sample_functions[function_key]
-    global update_is_enabled
-    update_is_enabled = False  # disable update, that update is not committed again
+    #global update_is_enabled
+    #update_is_enabled = False  # disable update, that update is not committed again
+    glob_update_enabled.data = dict(state=[False])
     function1_input.value = function1
     function2_input.value = function2
-    update_is_enabled = True
+    #update_is_enabled = True
+    glob_update_enabled.data = dict(state=[True]) #      /output
 
     update_data()
 
@@ -108,7 +113,8 @@ source_xmarker = ColumnDataSource(data=dict(x=[], y=[]))
 source_overlay = ColumnDataSource(data=dict(x=[], y=[], y_neg=[], y_pos=[]))
 
 # initialize properties
-update_is_enabled = True
+#update_is_enabled = True
+glob_update_enabled.data = dict(state=[True])
 
 # initialize controls
 # dropdown menu for sample functions

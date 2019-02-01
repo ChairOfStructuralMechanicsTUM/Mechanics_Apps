@@ -42,11 +42,14 @@ sample_functions = {
 # General Settings #
 ####################
 
-color_interval = False              # here we can decide if we want to color the transformed interval
+color_interval           = False    # here we can decide if we want to color the transformed interval
 show_analytical_solution = True     # here we can decide if we want to show the analytical solution for sample functions
-sample_function_id = "cos"          # here we set the sample function that initially activated
-sample_function_used = True         # global bool that states whether a sample function is currently used
-
+sample_function_id       = "cos"    # here we set the sample function that initially activated
+sample_function_used     = True     # global bool that states whether a sample function is currently used
+# put sample_function_id and sample_function_used to ColumnDataSources for global changes
+#glob_sample_function = ColumnDataSource(data=dict(
+#        sfid=[sample_function_id], used=[sample_function_used]))
+glob_sample_function = dict(sfid=sample_function_id, used=sample_function_used)
 
 ################
 # Data Sources #
@@ -177,6 +180,8 @@ def sample_fourier_transform(T_0, N):
     returns samples of the fourier transform
     :return:
     """
+    sample_function_id   = glob_sample_function["sfid"] # input/ #glob_sample_function.data["sfid"] # input/
+    sample_function_used = glob_sample_function["used"] # input/ #glob_sample_function.data["used"] # input/
     assert sample_function_used
 
     sample_functions_transform = sample_functions[sample_function_id][1]
@@ -193,6 +198,7 @@ def update():
     """
     Compute data depending on input parameters. We compute the fft and the analytical fourier transform
     """
+    sample_function_used = glob_sample_function["used"] # input/
 
     # Extract parameters
     T_0, N, x_function = extract_parameters()
@@ -318,8 +324,9 @@ def on_function_changed(attr, old, new):
     :return:
     """
     # we set the bool false, because we use an arbitrary function that is input by the user
-    global sample_function_used
-    sample_function_used = False
+    #global sample_function_used
+    #sample_function_used = False
+    glob_sample_function["used"] = False
 
     update()
     reset_views()
@@ -333,8 +340,9 @@ def sample_fun_input_changed(self):
     """
 
     # we set the bool true, because we use a sample function for which we know the analytical solution
-    global sample_function_used, sample_function_id
-    sample_function_used = True
+    #global sample_function_used, sample_function_id
+    #sample_function_used = True
+    #sample_function_id = glob_sample_function["sfid"]
 
     # get the id
     sample_function_id = sample_fun_input_f.value
@@ -342,7 +350,9 @@ def sample_fun_input_changed(self):
     sample_function = sample_functions[sample_function_id][0]
     # write the sample function into the textbox
     f_input.value = sample_function
-    sample_function_used = True
+    #sample_function_used = True
+    glob_sample_function["sfid"] = sample_function_id #      /output
+    glob_sample_function["used"] = True#sample_function_used
     update()
     reset_views()
 
