@@ -163,7 +163,7 @@ def fun_col1(x0,y0):
 def fun_col2(x0,y0):
     '''Function: Calculates deflection in column 2'''
     y = np.linspace(0,col2.h,30)
-    x = np.sin(np.pi/col2.h*y)
+    x = -np.sin(np.pi/col2.h*y)
     col2.pts.data = dict(x = x0 + x, y = y0 + y)
     col2.sk.data = dict(x=[col2.xstart+1.2, col2.xstart+1.8, col2.xstart+1.5, col2.xstart+1.5, col2.xstart+1.2, col2.xstart+1.8], y=[zstart, zstart, zstart, zstart+col2.h, zstart+col2.h, zstart+col2.h])
     col2.sk_labels.data = dict(x=[col2.xstart+1.7], y=[zstart+0.5*col2.h], name=["s_k = L"])
