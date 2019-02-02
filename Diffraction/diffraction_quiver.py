@@ -1,9 +1,8 @@
 from __future__ import division
 import numpy as np
 from bokeh.models import ColumnDataSource
-import matplotlib as mpl
 
-class Quiver:
+class diffraction_Quiver:
     """
     adds a quiver plot to the given bokeh.Figure
     """

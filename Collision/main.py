@@ -1,11 +1,11 @@
 import numpy as np
 from bokeh.io import curdoc
 from bokeh.plotting import Figure
-import BarChart as BC
+import Collision_BarChart as BC
 from bokeh.layouts import column, row, widgetbox
 from bokeh.models import Button, Slider, Arrow, OpenHead, Div, ColumnDataSource
 from bokeh.models.layouts import Spacer
-import Functions
+import Collision_Functions
 from os.path import dirname, join, split
 from bokeh.events import Pan
 
@@ -84,8 +84,8 @@ tolerance = 0.1
 velocityTolerance = 0.05
 
 # Construct particles
-particleOne = Functions.Particle(m1, r1, c1, np.array([x1,y1]), velocityVectorOne)
-particleTwo = Functions.Particle(m2, r2, c2, np.array([x2,y2]), velocityVectorTwo)
+particleOne = Collision_Functions.Collision_Particle(m1, r1, c1, np.array([x1,y1]), velocityVectorOne)
+particleTwo = Collision_Functions.Collision_Particle(m2, r2, c2, np.array([x2,y2]), velocityVectorTwo)
 
 # Construct source files
 particleOne.update_position_source()
@@ -127,13 +127,13 @@ playGround.add_layout(
                            ) 
                      )
                             
-system = Functions.CollidingSystem([[xMin,xMax],[yMin,yMax]], [particleOne, particleTwo])
+system = Collision_Functions.Collision_CollidingSystem([[xMin,xMax],[yMin,yMax]], [particleOne, particleTwo])
 
 '''
 ##  Define the energy bar
 '''
 
-barsFig = BC.BarChart(
+barsFig = BC.Collision_BarChart(
                       ["Green ball",
                       "Orange ball",
                       "Whole system"],

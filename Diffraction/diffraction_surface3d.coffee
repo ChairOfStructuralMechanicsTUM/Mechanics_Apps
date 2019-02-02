@@ -78,14 +78,14 @@ export class Surface3dView extends LayoutDOMView
 # correspond to the python Bokeh model subclass. In this case, since we want
 # an element that can position itself in the DOM according to a Bokeh layout,
 # we subclass from ``LayoutDOM.model``
-export class Surface3d extends LayoutDOM
+export class diffraction_Surface3d extends LayoutDOM
 
   # This is usually boilerplate. In some cases there may not be a view.
   default_view: Surface3dView
 
   # The ``type`` class attribute should generally match exactly the name
   # of the corresponding Python class.
-  type: "Surface3d"
+  type: "diffraction_Surface3d"
 
   # The @define block adds corresponding "properties" to the JS model. These
   # should basically line up 1-1 with the Python model class. Most property

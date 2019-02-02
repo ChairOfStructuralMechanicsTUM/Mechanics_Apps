@@ -5,7 +5,7 @@
 # if the patch coordinates are saved in a Shape we can simply do
 # myShape+(b,c)
 
-class Shape:
+class SD_Shape:
     def __init__ (self,x,y):
         self.x=x
         self.y=y
@@ -16,4 +16,4 @@ class Shape:
         for i in range(0,len(x)):
             x[i]+=b
             y[i]+=c
-        return Shape(x,y)
+        return SD_Shape(x,y)

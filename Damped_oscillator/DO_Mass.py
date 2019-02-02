@@ -1,9 +1,9 @@
 from bokeh.models import ColumnDataSource
-from Coord1 import Coord
+from DO_Coord import DO_Coord
 from copy import deepcopy
 from abc import ABCMeta, abstractmethod
 
-class Mass(object):
+class DO_Mass(object):
     __metaclass__ = ABCMeta
     ## create mass
     @abstractmethod
@@ -14,7 +14,7 @@ class Mass(object):
         self.nextStepForces=[]
         self.nextStepObjForces=[]
         # initialise velocity
-        self.v=Coord(0,0)
+        self.v=DO_Coord(0,0)
         # create vector of objects affected by this object
         self.affectedObjects=[]
         #create the (empty) shape
@@ -22,7 +22,7 @@ class Mass(object):
     
     ## Add an object that is affected by the movement of the mass
     def linkObj(self,obj,point):
-        p=Coord(point[0],point[1])
+        p=DO_Coord(point[0],point[1])
         # save the object and the point where it touches the object
         self.affectedObjects.append([obj,p])
         # tell the object that it is linked so it can also apply forces to the mass
@@ -30,7 +30,7 @@ class Mass(object):
     
     ## reset linking point between mass and object
     def resetLinks(self,obj,point):
-        p=Coord(point[0],point[1])
+        p=DO_Coord(point[0],point[1])
         # initialise values for loop
         n=len(self.affectedObjects)
         i=0
@@ -75,7 +75,7 @@ class Mass(object):
     def evolve(self,dt):
         # find the total force:
         # Start with gravitational force
-        F=Coord(0,-self.mass*9.81)
+        F=DO_Coord(0,-self.mass*9.81)
         for i in range(0,len(self.thisStepForces)):
             # add all forces acting on mass (e.g. spring, dashpot)
             F+=self.thisStepForces.pop()
@@ -112,7 +112,7 @@ class Mass(object):
         self.mass=mass
     
     def changeInitV(self,v):
-        self.v=Coord(0,v)
+        self.v=DO_Coord(0,v)
 
     @abstractmethod
     def plot(self,fig,colour,width):
@@ -124,9 +124,9 @@ class Mass(object):
 
 ### Types of Masses
 
-class RectangularMass(Mass):
+class DO_RectangularMass(DO_Mass):
     def __init__ (self, mass, x, y, w, h):
-        Mass.__init__(self,mass)
+        DO_Mass.__init__(self,mass)
         # create ColumnDataSource
         self.shape = ColumnDataSource(data=dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y]))
     
@@ -140,9 +140,9 @@ class RectangularMass(Mass):
         # update ColumnDataSource
         self.shape.data=temp
 
-class CircularMass(Mass):
+class DO_CircularMass(DO_Mass):
     def __init__ (self, mass, x=0, y=0, w=0, h=0):
-        Mass.__init__(self,mass)
+        DO_Mass.__init__(self,mass)
         # create ColumnDataSource
         self.shape = ColumnDataSource(data=dict(x=[x],y=[y],w=[w],h=[h]))
     

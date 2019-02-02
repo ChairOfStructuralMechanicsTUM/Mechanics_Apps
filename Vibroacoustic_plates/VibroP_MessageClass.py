@@ -1,7 +1,7 @@
 from bokeh.models import Div
 
 
-class Message:
+class VibroP_Message:
 
     def __init__( self, Color = "red",
                   Size = 4,

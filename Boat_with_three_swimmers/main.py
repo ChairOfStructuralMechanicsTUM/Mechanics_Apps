@@ -2,14 +2,14 @@ import numpy as np
 from bokeh.plotting import figure
 from bokeh.io import curdoc
 from bokeh.plotting import ColumnDataSource
-from bokeh.models import Button, Toggle, Slider, Div
-from Person import create_people
-from Person import create_arrows_velocityDiagram, reset_arrows_velocityDiagram, modify_swimmer_arrows
+from bokeh.models import Button, Slider, Div
+from BwtS_Person import create_people
+from BwtS_Person import create_arrows_velocityDiagram, reset_arrows_velocityDiagram, modify_swimmer_arrows
 from bokeh.layouts import column, row
-import BarChart as BC
+#import BwtS_BarChart as BC
 from os.path import dirname, join, split
 from bokeh.models.layouts import Spacer
-from bokeh.models import Arrow, OpenHead
+#from bokeh.models import Arrow, OpenHead
 
 '''
 ###############################################################################

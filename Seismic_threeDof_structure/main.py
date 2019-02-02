@@ -6,8 +6,8 @@ Imports
 import numpy as np
 from bokeh.plotting import figure
 from bokeh.io import curdoc
-from Functions import Mode, Structure, SeismicParameters
-import Functions as fc
+from S3S_Functions import S3S_Mode, S3S_Structure, S3S_SeismicParameters
+import S3S_Functions as fc
 from bokeh.models import Button, Toggle, LabelSet
 from bokeh.layouts import column, row
 from bokeh.models.widgets import TextInput, RadioGroup, Div, DataTable, TableColumn
@@ -180,7 +180,7 @@ base =dict(
           )
 
 ############################### Create Structure ##############################
-structure = Structure(masses, massSupports, trussSources, trussLength, base)
+structure = S3S_Structure(masses, massSupports, trussSources, trussLength, base)
 
 structure.update_system([0,0,0])
 
@@ -252,7 +252,7 @@ the modal parametes (here, the eigenfrequencies and the eigenmodes)
 # Construct the modes
 modes = list()
 for i in range(0,3):
-    modes.append( Mode(i, masses, massSupports, trussSources, trussLength, base, frequency=0, modeShape=np.zeros(3)) )
+    modes.append( S3S_Mode(i, masses, massSupports, trussSources, trussLength, base, frequency=0, modeShape=np.zeros(3)) )
 
 # Get the modal parameters
 eigenvalues, eigenvectors = fc.solve_modal_analysis(structure)
@@ -282,7 +282,7 @@ Construct the Elastic Response Spectrum
 '''
 # Construct the siesmic parametes for the building
 # INITIALIZE WITH DEFAULT VALUES
-siesmicParameters = SeismicParameters(a=0.4,gamma=1.0,S=1.0,eta=1.0,beta=2.5,undergroundParamter = 'A-R')
+siesmicParameters = S3S_SeismicParameters(a=0.4,gamma=1.0,S=1.0,eta=1.0,beta=2.5,undergroundParamter = 'A-R')
 #GetMaximumDisplacement(modes,siesmicParameters)
 
 # To construct the ERS plot data source
@@ -348,7 +348,7 @@ def solve_system():
         # Update the location of the mode shapes in the ERS diagram
         mode.modify_location_in_ERS(siesmicParameters)
         
-        maxes = mode.get_maximum_displacement(siesmicParameters) # maxes will be used just to let the function run
+        S3S_maxes = mode.get_maximum_displacement(siesmicParameters) # S3S_maxes will be used just to let the function run
         
         counter += 1
     

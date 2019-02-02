@@ -4,10 +4,10 @@ from math import pi, floor
 
 #ColourOptions = ["red","blue","green","black","yellow","purple"]
 
-class BarChart(object):
-    def __init__(self, xVals, yVals, colours = None, width=None):
-        Max = 0
-        Min=0
+class CAM_BarChart(object):
+    def __init__(self, xVals, yValsMax, yValsMin, colours = None, width=None):
+        Max = 0;
+        Min=0;
         N=len(xVals)
         # create list of colours
         if (colours==None):
@@ -23,23 +23,23 @@ class BarChart(object):
         if (width==None):
             width=[]
             for i in range(0,N):
-                width.append(1)
+                width.append(1);
         # initialise values for loop
         self.fig=figure(tools="")
         self.barSources=[]
-        x=0
+        x=0;
         places=[]
         label_places=[]
         index={}
         for i in range(0,N):
             # add ColumnDataSource describing each bar
             self.barSources.append(ColumnDataSource(data=dict(x=[x, x, x+width[i],x+width[i]],
-                y=[0,yVals[i], yVals[i], 0])))
+                y=[yValsMin[i],yValsMax[i], yValsMax[i], yValsMin[i]])))
             # update Max and Min for y_range
-            if (yVals[i]+1>Max):
-                Max=yVals[i]+1
-            elif (yVals[i]<0 and yVals[i]-1<Min):
-                Min=yVals[i]-1
+            if (yValsMax[i]+1>Max):
+                Max=yValsMax[i]+1
+            elif (yValsMin[i]<0 and yValsMin[i]-1<Min):
+                Min=yValsMin[i]-1
             # create bar
             self.fig.patch(x='x', y='y', fill_color=colours[i], source=self.barSources[i], line_color=None)
             br=xVals[i].find('\n')
@@ -67,11 +67,9 @@ class BarChart(object):
         self.fig.x_range=Range1d(-1,x)
         self.fig.y_range=Range1d(Min,Max)
         self.fig.grid.visible=False
-        self.fig.xaxis.major_label_text_font_size="14pt"
+        self.fig.xaxis.major_label_text_font_size="11pt"
         self.fig.xaxis.major_tick_line_color=None
         self.fig.xaxis.major_label_orientation=pi/2
-        self.fig.yaxis.major_label_orientation=pi/2
-        self.fig.yaxis.axis_label="Kinetic Energy ( Joule )"
         self.fig.toolbar.logo = None
         # only give x ticks at bars
         self.fig.xaxis[0].ticker=FixedTicker(ticks=label_places)
@@ -103,3 +101,4 @@ class BarChart(object):
     def Width(self,width):
         self.fig.width=width
 
+#eFig = CAM_BarChart(['A','B'],[10,20])

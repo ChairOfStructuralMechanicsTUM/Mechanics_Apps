@@ -3,10 +3,10 @@ from bokeh.plotting import figure
 from bokeh.models import Slider, Arrow, OpenHead, Select, Button, ColumnDataSource, Div
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
-from drawingFuncs import monkeyLetGo, monkeyGrab
+from Projectiles_drawingFuncs import monkeyLetGo, monkeyGrab
 from math import radians, cos, sin
 from os.path import dirname, join, split
-from drawable import Drawable
+from Projectiles_drawable import Projectiles_Drawable
 
 # initialise variables
 aim_line      = ColumnDataSource(data=dict(x=[],y=[]))
@@ -127,21 +127,21 @@ arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
     line_color="black",line_width=3)
 p.add_layout(arrow_glyph)
 
-monkey          = Drawable(p, "Images/monkey.png")
+monkey          = Projectiles_Drawable(p, "Images/monkey.png")
 monkey_init_pos = (180, 70)
 monkey.draw_at(x=monkey_init_pos[0], y=monkey_init_pos[1], w=20, h=20)
 
-branch          = Drawable(p, "Images/branch.png")
+branch          = Projectiles_Drawable(p, "Images/branch.png")
 branch_init_pos = (150, 70)
 branch.draw_at(x=branch_init_pos[0], y=branch_init_pos[1], w=50, h=25)
 
-banana          = Drawable(p, "Images/banana.png")
+banana          = Projectiles_Drawable(p, "Images/banana.png")
 banana_init_pos = (8, 10)
 banana.draw_at(x=banana_init_pos[0], y=banana_init_pos[1], w=5, h=5)
 
-cannon          = Drawable(p, "Images/cannon.png")
+cannon          = Projectiles_Drawable(p, "Images/cannon.png")
 cannon.draw_at(x=2.8, y=3.0, h=10, w=10, pad_fraction=.25)
-base            = Drawable(p, "Images/base.png")
+base            = Projectiles_Drawable(p, "Images/base.png")
 base.draw_at(x=0, y=0, w=10, h=10)
 
 p.background_fill_color = PlanetHue["Earth"]

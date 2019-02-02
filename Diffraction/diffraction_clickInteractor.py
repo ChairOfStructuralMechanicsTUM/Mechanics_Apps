@@ -3,7 +3,7 @@ import numpy as np
 from bokeh.models import ColumnDataSource
 
 
-class ClickInteractor:
+class diffraction_ClickInteractor:
     """
     adds a click interactor to a given plot. This interactor can detect, if a position in the plot is clicked on, return
     that position and call a respective callback function, if a point is clicked.

@@ -5,7 +5,7 @@ from math import sqrt, isnan
 from numpy import linspace
 
 
-class Graphs:
+class SD_Graphs:
     def __init__(self):
         ## create the 4 figures and set their visual properties
         # create velocity vs. time graph

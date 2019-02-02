@@ -3,7 +3,7 @@ import numpy as np
 from scipy import linalg
 from bokeh.models.widgets import Div
 
-class Structure:
+class S3S_Structure:
     
     def __init__(self, masses, massSupports, trusses, trussLength, base):
         
@@ -207,10 +207,10 @@ class Structure:
                                                      ]
                                             )
         
-class Mode( Structure ):
+class S3S_Mode( S3S_Structure ):
     
     def __init__(self, ID, masses, massSupports, trusses, trussLength, base, frequency, modeShape):
-        Structure.__init__(self, masses, massSupports, trusses, trussLength, base)
+        S3S_Structure.__init__(self, masses, massSupports, trusses, trussLength, base)
         self.id = ID
         self.frequency = frequency
         self.modeShape = modeShape
@@ -264,7 +264,7 @@ class Mode( Structure ):
             
         return self.modeShape / maxAmplitude
         
-class SeismicParameters():
+class S3S_SeismicParameters():
     
     def __init__(self,a,gamma,S,eta,beta,undergroundParamter):
         self.a = a

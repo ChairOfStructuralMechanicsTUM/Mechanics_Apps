@@ -1,13 +1,13 @@
 from bokeh.models.widgets import TextInput
-from bokeh.layouts import column, row, Spacer
+from bokeh.layouts import column, row#, Spacer
 import numpy as np
 
 
-class TableCorrupted(Exception):
+class VibroP_TableCorrupted(Exception):
     pass
 
 
-class InteractiveTable:
+class VibroP_InteractiveTable:
     MINIMUM_WIDGET_HEIGHT = 1
 
     def __init__( self, TableName, Rows, Columns ):
@@ -158,7 +158,7 @@ class InteractiveTable:
             return self.__Buffer[ BufferName ]
 
         except KeyError:
-            raise TableCorrupted( "table \"{}\" doesn't have the "
+            raise VibroP_TableCorrupted( "table \"{}\" doesn't have the "
                                   "buffer \"{}\"".format( self.__TableName,
                                                           BufferName ) )
 
@@ -179,7 +179,7 @@ class InteractiveTable:
         nColumns = len( Data[ 0 ] )
 
         if nRows != self.__nRows or nColumns != self.__nColumns:
-            raise TableCorrupted( "error in \"addBuffer\" function. "
+            raise VibroP_TableCorrupted( "error in \"addBuffer\" function. "
                                   "( buffer name:  \"{}\" ) "
                                   "Wrong dimensions of the buffer data. "
                                   "It doesn't match with the number of rows and "
@@ -198,12 +198,12 @@ class InteractiveTable:
         # Check if the input data is consistent i.e.
         # check the number of rows and columns
         if ( len( Titels ) != self.__nRows ):
-            raise TableCorrupted( "ERROR from setValues: wrong number of " + \
+            raise VibroP_TableCorrupted( "ERROR from setValues: wrong number of " + \
                                     "rows were passed")
 
         for Entry in Titels:
             if ( len(Entry) != self.__nColumns ):
-                raise TableCorrupted( "ERROR from setValues: wrong number of " + \
+                raise VibroP_TableCorrupted( "ERROR from setValues: wrong number of " + \
                                        "columns were passed")
 
 
@@ -228,11 +228,11 @@ class InteractiveTable:
         # Check if the input data is consistent i.e.
         # check the number of rows and columns
         if ( len( Values ) != self.__nRows ):
-            raise TableCorrupted( "ERROR from setValues: wrong number of " +\
+            raise VibroP_TableCorrupted( "ERROR from setValues: wrong number of " +\
                                     "rows were passed")
         for Entry in Values:
             if ( len(Entry) != self.__nColumns ):
-                raise TableCorrupted( "ERROR from setValues: wrong number of " +\
+                raise VibroP_TableCorrupted( "ERROR from setValues: wrong number of " +\
                                        "columns were passed")
 
 
@@ -341,7 +341,7 @@ class InteractiveTable:
         try:
             return float( self.__Widgets[ aRow ][ aColumn ].value )
         except ValueError:
-            raise TableCorrupted("wrong formant of the "
+            raise VibroP_TableCorrupted("wrong formant of the "
                                  "entry: {}, {}; table: {}".format( aRow + 1 ,
                                                                     aColumn + 1,
                                                                     self.__TableName))
@@ -382,7 +382,7 @@ class InteractiveTable:
                     Temp.append( float( self.__Widgets[ i ][ j ].value ) )
                 except ValueError:
                     #self.__Widgets[ i ][ j ].value = self.__DefaultValues[ i ][ j ]
-                    raise TableCorrupted("wrong formant of the "
+                    raise VibroP_TableCorrupted("wrong formant of the "
                                          "entry: {}, {}; table: {}".format( i + 1,
                                                                             j + 1,
                                                                             self.__TableName))
@@ -409,7 +409,7 @@ class InteractiveTable:
 
                 except ValueError:
                     #self.__Widgets[ i ][ j ].value = self.__DefaultValues[ i ][ j ]
-                    raise TableCorrupted( "wrong formant of the "
+                    raise VibroP_TableCorrupted( "wrong formant of the "
                                           "entry: {}, {};"
                                           " table: {}".format( i + 1,
                                                                j + 1,

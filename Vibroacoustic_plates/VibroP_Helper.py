@@ -1,4 +1,4 @@
-class Flag:
+class VibroP_Flag:
 
     def __init__( self, Input ):
         """
@@ -25,7 +25,7 @@ class Flag:
         self.__Value = Input
 
 
-class DataCorrupted(Exception):
+class VibroP_DataCorrupted(Exception):
     """
     Class represents the ...
     """
@@ -54,14 +54,14 @@ def testInputData( Mode, Nu):
         CheckFour = 1 - FirstTerm - SecondTerm - ThirdTerm - FourthTerm
 
         if CheckOne < 0 or CheckTwo < 0 or CheckThree < 0 or CheckFour < 0:
-            raise DataCorrupted("The material property is not feasible")
+            raise VibroP_DataCorrupted("The material property is not feasible")
 
     if (Mode == 1):
 
         Threshold = 0.49
 
         if Nu[ 0 ][ 0 ] > Threshold or Nu[ 0 ][ 1 ] > Threshold or Nu[ 0 ][ 2 ] > Threshold:
-            raise DataCorrupted("The material property is not feasible.</p>"
+            raise VibroP_DataCorrupted("The material property is not feasible.</p>"
                                 "<p> Current mode: ISOTROPIC; Threshold: 0.49 </p>"
                                 "<p> Change: POISSON'S RATIOS VALUE")
 
@@ -85,18 +85,18 @@ def isInputNegative( Input ):
         for i in range( nRows ):
             for j in range( nColumns ):
                 if Input[ i ][ j ] < 0:
-                    raise DataCorrupted("the material properties are not feasible" )
+                    raise VibroP_DataCorrupted("the material properties are not feasible" )
 
     else:
 
         for i in range( len( Input ) ):
 
             if Input[ i ] < 0:
-                raise DataCorrupted("the material properties are not feasible" )
+                raise VibroP_DataCorrupted("the material properties are not feasible" )
 
 
 
-class WrongLayersThikness(Exception):
+class VibroP_WrongLayersThikness(Exception):
     pass
 
 
@@ -152,7 +152,7 @@ def parseString( aString ):
             LayersThickness.append( float(aWord) )
 
     except:
-        raise WrongLayersThikness( "The data format for the layers thickness is wrong. "
+        raise VibroP_WrongLayersThikness( "The data format for the layers thickness is wrong. "
                                    "The delimiter can be comma, semicolon or space.")
 
     return LayersThickness
@@ -166,10 +166,10 @@ def checkLayerConsistency( Layers ):
     """
     for Layer in Layers:
         if Layer < 0.0:
-            raise WrongLayersThikness("The thickness of one of the layers "
+            raise VibroP_WrongLayersThikness("The thickness of one of the layers "
                                       "has its negative value")
         if Layer == 0.0:
-            raise WrongLayersThikness("The thickness of one of the layers "
+            raise VibroP_WrongLayersThikness("The thickness of one of the layers "
                                       "is eqaul to zero" )
 
 

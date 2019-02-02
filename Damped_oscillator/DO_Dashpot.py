@@ -1,11 +1,11 @@
 from bokeh.models import ColumnDataSource
-from Coord1 import Coord
+from DO_Coord import DO_Coord
 from copy import deepcopy
 
-class Dashpot(object):
+class DO_Dashpot(object):
     def __init__(self,start,end,lam=1.0):
-        start=Coord(start[0],start[1])
-        end=Coord(end[0],end[1])
+        start = DO_Coord(start[0],start[1])
+        end   = DO_Coord(end[0],end[1])
         # define dashpot constant
         self.lam=lam
         # save points

@@ -1,13 +1,13 @@
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, Arrow, OpenHead, LabelSet
-from Shape import Shape
+from SD_Shape import SD_Shape
 
 # class that handles the drawing of the car and house
 
-class Visualisation:
+class SD_Visualisation:
     def __init__ (self):
         # save original shape of car in a shape (to make displacement easy)
-        self.carshape = Shape([-3,0,0,-0.05,-0.5,-1,-2,-2,-3],[0.25,0.25,0.7,0.75,0.75,1.25,1.25,0.75,0.75])
+        self.carshape = SD_Shape([-3,0,0,-0.05,-0.5,-1,-2,-2,-3],[0.25,0.25,0.7,0.75,0.75,1.25,1.25,0.75,0.75])
         # create column data sources for the car and its acceleration
         self.car = ColumnDataSource(data=dict(x=self.carshape.x,y=self.carshape.y))
         self.wheels = ColumnDataSource(data=dict(x=[-2.25,-0.75],y=[0.25,0.25],w=[0.5,0.5],h=[0.5,0.5]))

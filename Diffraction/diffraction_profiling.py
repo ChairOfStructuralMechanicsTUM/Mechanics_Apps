@@ -1,17 +1,16 @@
 from __future__ import division
 
-import profile
 from main import update, initialize
-from numpy import pi, cos, sin
-from bokeh.models import ColumnDataSource, Div
+from numpy import pi#, cos, sin
+from bokeh.models import ColumnDataSource#, Div
 from bokeh.plotting import Figure
 from bokeh.models.widgets import Slider, TextInput
 
-from surface3d import Surface3d
-from contour import Contour
-from clickInteractor import ClickInteractor
+from diffraction_surface3d import diffraction_Surface3d
+from diffraction_contour import diffraction_Contour
+from diffraction_clickInteractor import diffraction_ClickInteractor
 
-from diffraction_grid import Grid
+from diffraction_grid import diffraction_Grid
 
 # number of gridpoints in x and y direction
 nx_surface = 20  # resolution surface plot
@@ -22,8 +21,8 @@ x_min, x_max = -50, 50  # x extend of domain
 y_min, y_max = -50, 50  # y extend of domain
 
 # initialize diffraction grids
-contour_grid = Grid(x_min, x_max, nx_contour, y_min, y_max, ny_contour)
-surface_grid = Grid(x_min, x_max, nx_surface, y_min, y_max, ny_surface)
+contour_grid = diffraction_Grid(x_min, x_max, nx_contour, y_min, y_max, ny_contour)
+surface_grid = diffraction_Grid(x_min, x_max, nx_surface, y_min, y_max, ny_surface)
 
 # Wave parameters
 phi0_init = pi / 3.0  # angle of incident
@@ -67,13 +66,13 @@ plot = Figure(plot_height=300,
               tools=["crosshair, save, tap"])
 
 # create interactor that detects click location in plot
-interactor = ClickInteractor(plot)
+interactor = diffraction_ClickInteractor(plot)
 
 # create plots
-surface = Surface3d(x="x", y="y", z="z", color="color", data_source=source_surf)  # wave surface
+surface = diffraction_Surface3d(x="x", y="y", z="z", color="color", data_source=source_surf)  # wave surface
 # contour plots of wave
-contour_zero = Contour(plot, line_width=2, line_color='black', path_filter=10)  # zero level
-contour_all = Contour(plot, line_width=1, path_filter=10)  # some other levels
+contour_zero = diffraction_Contour(plot, line_width=2, line_color='black', path_filter=10)  # zero level
+contour_all  = diffraction_Contour(plot, line_width=1, path_filter=10)  # some other levels
 
 initialize()
 

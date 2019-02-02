@@ -1,4 +1,4 @@
-from Colors import *
+from VibroP_Colors import *
 from bokeh.models.annotations import LegendItem
 from bokeh.events import Reset
 

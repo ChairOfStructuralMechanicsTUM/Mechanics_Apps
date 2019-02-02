@@ -1,8 +1,8 @@
 import numpy as np
 from bokeh.plotting import ColumnDataSource
-from bokeh.models import Arrow, OpenHead, LabelSet, Label
+from bokeh.models import Arrow, OpenHead, Label
 
-class Person():
+class BwtS_Person():
     
     def __init__( self, number, mass, standingPosition, jumpingPosition ):
         self.n = number
@@ -60,7 +60,7 @@ def create_people(
             
     listPeople = list()
     for i in range(N):
-        listPeople.append( Person( 
+        listPeople.append( BwtS_Person( 
                                       i, 
                                       mass, 
                                       [standingPositionX+standingShiftingList[i,:],standingPositionY],

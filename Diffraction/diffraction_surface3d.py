@@ -26,12 +26,12 @@ DEFAULTS = {
 # Bokeh layouts, so use ``LayoutDOM`` as the base class. If you wanted to create
 # a custom tool, you could inherit from ``Tool``, or from ``Glyph`` if you
 # wanted to create a custom glyph, etc.
-class Surface3d(LayoutDOM):
+class diffraction_Surface3d(LayoutDOM):
 
     # The special class attribute ``__implementation__`` should contain a string
     # of JavaScript (or CoffeeScript) code that implements the JavaScript side
     # of the custom extension model.
-    __implementation__ = "surface3d.coffee"
+    __implementation__ = "diffraction_surface3d.coffee"
     # this is the local resource for the vis.js library
     __javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.min.js"] ## online resource
     #__javascript__ = ["Diffraction/static/js/vis.min.js"] ## offline resource

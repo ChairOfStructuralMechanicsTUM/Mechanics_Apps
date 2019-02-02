@@ -1,4 +1,4 @@
-from bokeh.models import Tool, CustomJS
+from bokeh.models import Tool
 
 JS_CODE = """
 import * as p from "core/properties"
@@ -24,9 +24,9 @@ export class MoveMassToolView extends GestureToolView
   _pan_end: (e) ->
       @plot_model.plot.tool_events.geometries = [{x:-1, y:-1}]
 
-export class MoveMassTool extends GestureTool
+export class Pendulum_MoveMassTool extends GestureTool
   default_view: MoveMassToolView
-  type: "MoveMassTool"
+  type: "Pendulum_MoveMassTool"
 
   tool_name: "Drag Span"
   icon: "bk-tool-icon-pan"
@@ -36,5 +36,5 @@ export class MoveMassTool extends GestureTool
   @define { vals: [ p.Instance ] }
 """
 
-class MoveMassTool(Tool):
+class Pendulum_MoveMassTool(Tool):
     __implementation__ = JS_CODE

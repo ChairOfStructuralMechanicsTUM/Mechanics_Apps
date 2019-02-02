@@ -1,6 +1,5 @@
 import numpy as np
 from bokeh.plotting import Figure, ColumnDataSource
-from bokeh.models import Range1d
 
 def Base_forced_amplification_function_plot( m, c, We, Omega_max, n_points, plot_width, plot_height ):
     

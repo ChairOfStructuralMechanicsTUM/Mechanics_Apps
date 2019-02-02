@@ -1,14 +1,14 @@
 from string import replace
 
-from Visualisation import Visualisation
-from Graphs import Graphs
-from TestSolutions import isEquation
+#from SD_Visualisation import SD_Visualisation
+#from SD_Graphs import SD_Graphs
+from SD_TestSolutions import isEquation
 from random import seed, randrange
 from bokeh.layouts import column, row
-from bokeh.models.widgets import TextInput, Button, Paragraph, CheckboxGroup, Slider, Select, Div
+from bokeh.models.widgets import TextInput, Button, Paragraph, CheckboxGroup, Select#, Slider, Div
 from bokeh.io import curdoc
 
-class Problem:
+class SD_Problem:
     def __init__(self,Vis,Plotter):
         # setup random by selecting a seed (so that numbers are truly random)
         seed()

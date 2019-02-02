@@ -5,7 +5,7 @@ import numpy as np
 from math import ceil, floor, cos, sin
 
 
-class Drawable:
+class Projectiles_Drawable:
 
     def __init__(self, p, filepath):
         """

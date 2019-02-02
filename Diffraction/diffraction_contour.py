@@ -6,7 +6,7 @@ import vtk
 from vtk.util import numpy_support
 
 
-class Contour:
+class diffraction_Contour:
     """
     adds a contour plot to a given plot. MatPlotLibs contour plot is utilized for computing the contour data. That data
     is plotted using bokehs multi_line function. Optionally the user can add labels to the contour data using bokehs

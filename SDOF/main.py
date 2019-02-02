@@ -1,7 +1,7 @@
 from SDOF_Coord import SDOF_Coord
 from SDOF_Spring import SDOF_Spring
 from SDOF_Dashpot import SDOF_Dashpot
-from SDOF_Mass import CircularMass
+from SDOF_Mass import SDOF_CircularMass
 
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer, gridplot
@@ -37,7 +37,7 @@ s  = 0
 t  = 0
 dt = 0.03
 
-mass   = CircularMass(initial_mass_value,0,10,2,2)
+mass   = SDOF_CircularMass(initial_mass_value,0,10,2,2)
 spring = SDOF_Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
 damper = SDOF_Dashpot((2,.75),(2,8),initial_damping_coefficient_value)
 

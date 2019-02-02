@@ -1,14 +1,13 @@
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, Range1d, FuncTickFormatter, FixedTicker
-from bokeh.core.properties import Dict
 from math import pi, floor
 
 #ColourOptions = ["red","blue","green","black","yellow","purple"]
 
-class BarChart(object):
+class Collision_BarChart(object):
     def __init__(self, xVals, yVals, colours = None, width=None):
-        Max = 0;
-        Min=0;
+        Max = 0
+        Min=0
         N=len(xVals)
         # create list of colours
         if (colours==None):
@@ -24,11 +23,11 @@ class BarChart(object):
         if (width==None):
             width=[]
             for i in range(0,N):
-                width.append(1);
+                width.append(1)
         # initialise values for loop
         self.fig=figure(tools="")
         self.barSources=[]
-        x=0;
+        x=0
         places=[]
         label_places=[]
         index={}
@@ -68,16 +67,12 @@ class BarChart(object):
         self.fig.x_range=Range1d(-1,x)
         self.fig.y_range=Range1d(Min,Max)
         self.fig.grid.visible=False
-        self.fig.xaxis.major_label_text_font_size="15pt"
+        self.fig.xaxis.major_label_text_font_size="14pt"
         self.fig.xaxis.major_tick_line_color=None
-        self.fig.xaxis.major_label_orientation=0
-        self.fig.yaxis.axis_label="speed (m/second)"
-        self.fig.yaxis.axis_label_text_font_size="14pt"
-        self.fig.min_border_bottom = 5
-        self.fig.title.text = 'Boat'
-        self.fig.title_location = 'below'
-        self.fig.title.text_font_size = "15pt"
-        self.fig.title.align = "center"
+        self.fig.xaxis.major_label_orientation=pi/2
+        self.fig.yaxis.major_label_orientation=pi/2
+        self.fig.yaxis.axis_label="Kinetic Energy ( Joule )"
+        self.fig.toolbar.logo = None
         # only give x ticks at bars
         self.fig.xaxis[0].ticker=FixedTicker(ticks=label_places)
         # save vals in ColumnDataSource so ticker_func can use it as default val
@@ -108,4 +103,3 @@ class BarChart(object):
     def Width(self,width):
         self.fig.width=width
 
-#eFig = BarChart(['A','B'],[10,20])

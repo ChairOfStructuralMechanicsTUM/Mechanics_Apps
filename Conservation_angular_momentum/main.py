@@ -16,11 +16,11 @@ App describtion:
 import numpy as np
 from bokeh.io import curdoc
 from bokeh.plotting import Figure
-import BarChart as BC
+import CAM_BarChart as BC
 from bokeh.layouts import column, row
-from bokeh.models import Button
-from bokeh.models import Div
-from Functions import *
+from bokeh.models import Button, Div, ColumnDataSource
+#from Functions import *
+import CAM_Functions as CAM_fun
 from os.path import dirname, join, split
 from bokeh.events import Pan, PanEnd
 
@@ -53,7 +53,7 @@ playGround.yaxis.visible        = False
 playGround.toolbar.logo         = None
 
 # Define the energy bar
-barsFig = BC.BarChart(
+barsFig = BC.CAM_BarChart(
                       ["Wheel",
                       "Rectangular Base",
                       "Whole system"],
@@ -65,8 +65,8 @@ barsFig = BC.BarChart(
 barsFig.Width(300)
 barsFig.Height(500)
 
-rotation_speed_wheel = get_velocity('circle') # rad/sec
-rotation_speed_base  = get_velocity('base') # rad/sec
+rotation_speed_wheel = CAM_fun.get_velocity('circle') # rad/sec
+rotation_speed_base  = CAM_fun.get_velocity('base') # rad/sec
 
 J_circle = 1 # Angular moment of inertia of the wheel
 J_base   = 2 # Angular moment of inertia of the rectangular base
@@ -82,7 +82,7 @@ The objects include:
     (2) Rotating rectangle
 '''
 ########################## (1) Rotating circle ################################
-rotatingObject = RotatingObject()
+rotatingObject = CAM_fun.CAM_RotatingObject()
 rotatingObject.construct_circle_source( 
                                        [[0.0,0.0], [0.0,0.0]],
                                        [4.0, 3.0],
@@ -95,7 +95,7 @@ rect_width  = 12
 rect_height = 8
 
 rotatingObject.construct_rectangle_source([0.0,0.0], rect_width, rect_height)
-mouseTouch = MouseTouch([[xMin,xMax],[yMin,yMax]], rotatingObject)
+mouseTouch = CAM_fun.CAM_MouseTouch([[xMin,xMax],[yMin,yMax]], rotatingObject)
 
 '''
 ####################### Define the evolution function #########################
@@ -156,7 +156,7 @@ def Reset():
         angle = np.array([0,np.pi/2])
         rotatingObject.update_cross_source( angle )
         rotatingObject.update_rectangle_source( angle=0 ) 
-        update_bars(get_velocity('circle'), get_velocity('base'))
+        update_bars(CAM_fun.get_velocity('circle'), CAM_fun.get_velocity('base'))
         
     else:
         pass

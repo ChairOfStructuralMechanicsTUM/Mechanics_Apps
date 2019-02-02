@@ -1,11 +1,9 @@
-import matplotlib.pyplot as plt
 from bokeh.models import ColumnDataSource
-from MoveNodeTool import *
+#from MoveNodeTool import *
 #import MoveNodeTool as mvNode
 import numpy as np
-from timeit import default_timer as timer
 
-class RotatingObject():
+class CAM_RotatingObject():
     
     def __init__(self):
         self.circleSource  = 0
@@ -83,7 +81,7 @@ class RotatingObject():
             raise Exception("This rotating object doesn't exist")
             
    
-class MouseTouch():
+class CAM_MouseTouch():
     
     def __init__(self, domain, rotatingObject):
         self.domain         = domain
@@ -148,15 +146,15 @@ they are used extensively by the functions inNode() and modify_location(), and
 this use cannot be achieved without storing them here.
 '''
 
-currentNode=-1
+glob_currentNode  = dict(currentNode=-1)
 
-circleSource = list()
-crossSource  = 0
-baseSource  = 0
+glob_circleSource = dict(circleSource=0)
+glob_crossSource  = dict(crossSource=0)
+glob_baseSource   = dict(baseSource=0)
 
-olderAngle = 0
-oldAngle = 0
-velocity = 0
+glob_olderAngle   = dict(olderAngle=0)
+glob_oldAngle     = dict(oldAngle=0)
+glob_velocity     = dict(velocity=0)
     
 '''
 The functions inNode() and modify_location() are concerned with the 
@@ -166,7 +164,7 @@ For more information, get in touch with Emily Bourne, whom I got this code from.
 # find index of node in which coordinates are found
 # (return -1 if not in a node)
 def inNode (xPos,yPos,new):
-    
+    circleSource = glob_circleSource["circleSource"] # input/
     baseWidth = 12
     baseHeight = 8
     if abs(xPos)<=(baseWidth/2) and abs(yPos)<=(baseHeight/2) and np.sqrt( new[0][u'x']**2 + new[0][u'y']**2 ) >= circleSource.data['radius'][1]:
@@ -179,6 +177,11 @@ def inNode (xPos,yPos,new):
 def modify_location(attr, old, new):
     
     global currentNode, oldAngle, olderAngle, velocity
+    baseSource  = glob_baseSource["baseSource"]   # input/
+    currentNode = glob_currentNode["currentNode"] # input/output
+    oldAngle    = glob_oldAngle["oldAngle"]       # input/output
+    olderAngle  = glob_olderAngle["olderAngle"]   # input/output
+    velocity    = glob_velocity["velocity"]       # input/output
     
     # if there is a previous node (not first time the function is called)
     # and the node has not been released (new['x']=-1 on release to prepare for future calls)
@@ -233,9 +236,13 @@ def modify_location(attr, old, new):
         
         currentNode=-1
         return -1
+    glob_currentNode["currentNode"] = currentNode
+    glob_oldAngle["oldAngle"]       = oldAngle
+    glob_olderAngle["olderAngle"]   = olderAngle
+    glob_velocity["velocity"]       = velocity
 
 def construct_circle_source( center, radius, color ):
-    global circleSource
+    #global circleSource
             
     centerX = list()
     centerY = list()
@@ -251,9 +258,11 @@ def construct_circle_source( center, radius, color ):
                                               color = np.array(color),
                                              )
                                    )
+    glob_circleSource["circleSource"] = circleSource #      /output
     
 def construct_cross_source():
-    global crossSource
+    #global crossSource
+    circleSource = glob_circleSource["circleSource"] # input/
     
     center = [circleSource.data['x'][0] , circleSource.data['y'][0]]
 
@@ -265,29 +274,32 @@ def construct_cross_source():
                                               y=[center[1], center[1]],
                                               angle = np.array([0, np.pi/2])
                                              )
-                                  )                                           
+                                  )
+    glob_crossSource["crossSource"] = crossSource #      /output                                        
             
 def update_cross_source( angle ):
-    global crossSource
-    
+    #global crossSource
+    crossSource = glob_crossSource["crossSource"] # input/
     crossSource.data['angle'] = 0*crossSource.data['angle'] + angle
     
 def update_circle_source( centerX, centerY, radius, color ):
-    global circleSource
-    
+    #global circleSource
+    circleSource = glob_circleSource["circleSource"] # input/
     circleSource.data['x'] = 0*circleSource.data['x'] + centerX
     circleSource.data['y'] = 0*circleSource.data['y'] + centerY
     circleSource.data['radius'] = 0*circleSource.data['radius'] + radius
     circleSource.data['color'] = 0*circleSource.data['color'] + color
                                                 
 def get_circle_source():
+    circleSource = glob_circleSource["circleSource"] # input/
     return circleSource
     
 def get_cross_source():
+    crossSource = glob_crossSource["crossSource"] # input/
     return crossSource
 
 def construct_rectangle_source( center ):
-    global baseSource
+    #global baseSource
     
     baseSource = ColumnDataSource(
                                   data=dict(
@@ -296,17 +308,19 @@ def construct_rectangle_source( center ):
                                             angle = [0.0]
                                            )
                                  )
+    glob_baseSource["baseSource"] = baseSource #      /output   
                                   
 def update_rectangle_source( angle ):
-    global baseSource
-    
+    #global baseSource
+    baseSource = glob_baseSource["baseSource"] # input/
     baseSource.data['angle'] = 0*baseSource.data['angle'] + [angle]
                                          
 def get_rectangle_source():
+    baseSource = glob_baseSource["baseSource"] # input/
     return baseSource
     
 def get_velocity(objectName):
-    
+    velocity = glob_velocity["velocity"] # input/
     if objectName == 'base':
         return velocity
     elif objectName == 'circle':
@@ -315,5 +329,6 @@ def get_velocity(objectName):
         raise Exception("This rotating object doesn't exist")
         
 def set_velocity(value):
-    global velocity
-    velocity = value
+    #global velocity
+    #velocity = value
+    glob_velocity["velocity"] = value

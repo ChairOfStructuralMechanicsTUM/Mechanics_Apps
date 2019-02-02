@@ -1,10 +1,9 @@
-import os.path
-from drawable import Drawable
+from Projectiles_drawable import Projectiles_Drawable
 
 
 def monkeyLetGo(monkey, space=False):
     print "monkeyLetGo"
-    assert isinstance(monkey, Drawable)
+    assert isinstance(monkey, Projectiles_Drawable)
     if space:
         filename = "Images/spaceMonkeyLetGo.png"
     else:
@@ -15,7 +14,7 @@ def monkeyLetGo(monkey, space=False):
 
 def monkeyGrab(monkey, space = False):
     print "monkeyGrab"
-    assert isinstance(monkey, Drawable)
+    assert isinstance(monkey, Projectiles_Drawable)
     if (space):
         filename = "Images/spaceMonkey.png"
     else:

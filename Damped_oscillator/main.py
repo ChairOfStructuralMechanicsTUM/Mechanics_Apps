@@ -1,7 +1,7 @@
-from Spring1 import Spring
-from Dashpot1 import Dashpot
-from Mass1 import CircularMass#, Mass, RectangularMass
-from Coord1 import Coord
+from DO_Spring import DO_Spring
+from DO_Dashpot import DO_Dashpot
+from DO_Mass import DO_CircularMass#, Mass, RectangularMass
+from DO_Coord import DO_Coord
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
@@ -22,10 +22,10 @@ s=0
 t=0
 dt=0.03
 
-mass = CircularMass(initial_mass_value,0,9,2,2)
+mass = DO_CircularMass(initial_mass_value,0,9,2,2)
 mass.changeInitV(initial_velocity_value)
-spring = Spring((-2,18),(-2,11),7,initial_kappa_value)
-dashpot = Dashpot((2,18),(2,11),initial_lambda_value)
+spring = DO_Spring((-2,18),(-2,11),7,initial_kappa_value)
+dashpot = DO_Dashpot((2,18),(2,11),initial_lambda_value)
 mass.linkObj(spring,(-2,11))
 mass.linkObj(dashpot,(2,11))
 Bottom_Line = ColumnDataSource(data = dict(x=[-2,2],y=[11,11]))
@@ -147,8 +147,8 @@ def stop():
     Position.data=dict(t=[0],s=[0])             #      /output
     Bottom_Line.data = dict(x=[-2,2],y=[11,11]) #      /output
     Linking_Line.data = dict(x=[0,0],y=[11,9])  #      /output
-    spring.compressTo(Coord(-2,18),Coord(-2,11))
-    dashpot.compressTo(Coord(2,18),Coord(2,11))
+    spring.compressTo(DO_Coord(-2,18),DO_Coord(-2,11))
+    dashpot.compressTo(DO_Coord(2,18),DO_Coord(2,11))
     mass.moveTo((0,9))
     mass.resetLinks(spring,(-2,11))
     mass.resetLinks(dashpot,(2,11))

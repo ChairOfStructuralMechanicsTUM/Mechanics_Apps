@@ -1,12 +1,12 @@
 from bokeh.models import ColumnDataSource
 from math import floor
-from Coord1 import Coord
+from DO_Coord import DO_Coord
 
-class Spring(object):
+class DO_Spring(object):
     ## create spring
     def __init__(self,start,end,x0,kappa=50.0,spacing = 1.0):
-        start=Coord(start[0],start[1])
-        end=Coord(end[0],end[1])
+        start = DO_Coord(start[0],start[1])
+        end   = DO_Coord(end[0],end[1])
         # define spring constant
         self.kappa=kappa
         # define rest length
@@ -38,10 +38,10 @@ class Spring(object):
         length = direction.norm()
         self.direction = direction/length
         # define (normalised) perpendicular vector for spike directions
-        perpVect = Coord(direction.y/length,-direction.x/length)
+        perpVect = DO_Coord(direction.y/length,-direction.x/length)
         # create values to help with loop
         Pos=dict(x=[],y=[])
-        Zero=Coord(0,0)
+        Zero=DO_Coord(0,0)
         wiggle=[Zero,perpVect,Zero,-perpVect]
         
         # add first points

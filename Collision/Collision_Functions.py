@@ -3,7 +3,7 @@ from math import floor
 import numpy as np
 
 
-class Particle():
+class Collision_Particle():
     
     def __init__( self, mass, radius, color, position, velocity ):
         self.mass = mass
@@ -79,7 +79,7 @@ class Particle():
     def get_velocity_source(self):
         return self.velocityInPlot
         
-class CollidingSystem():
+class Collision_CollidingSystem():
     
     def __init__(self, domain, particles):
         self.particles = particles

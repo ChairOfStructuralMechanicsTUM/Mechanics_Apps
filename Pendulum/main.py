@@ -1,4 +1,4 @@
-from MoveMassTool import MoveMassTool
+from Pendulum_MoveMassTool import Pendulum_MoveMassTool
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
@@ -329,7 +329,7 @@ glob_fun_getKinEng.data    = dict(fun=[getKinEngSingle])
 
 # draw pendulum diagram
 fig = figure(title="Kinetic energy balance",tools="",x_range=(-4.5,4.5),y_range=(3,12),width=500,height=500)
-fig.add_tools(MoveMassTool())
+fig.add_tools(Pendulum_MoveMassTool())
 fig.on_event(Pan, on_mouse_move)
 fig.title.text_font_size="16pt"
 fig.axis.visible = False

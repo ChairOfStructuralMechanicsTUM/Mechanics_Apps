@@ -1,18 +1,18 @@
 from bokeh.models.widgets import RadioButtonGroup
-from bokeh.models import ColumnDataSource, Div
-from bokeh.layouts import row, column, Spacer
-from bokeh.plotting import figure, reset_output
+from bokeh.models import ColumnDataSource#, Div
+from bokeh.layouts import row, column#, Spacer
+from bokeh.plotting import figure#, reset_output
 from bokeh.models import Legend
 from copy import deepcopy
-from MessageClass import Message
+from VibroP_MessageClass import VibroP_Message
 from bokeh.models.annotations import LegendItem
-from bokeh.models.glyphs import ImageURL
+#from bokeh.models.glyphs import ImageURL
 
-class GraphCorrupted(Exception):
+class VibroP_GraphCorrupted(Exception):
     pass
 
 
-class GraphObject:
+class VibroP_GraphObject:
     # Private class variables
     IMAGE_COUNTER = 0
     _MAX_NUMBER_OF_LINES = 20
@@ -60,13 +60,13 @@ class GraphObject:
         self.Height = Height
         #.................. Set up all necessary variables ....................
         if len( GraphNames ) == 0:
-            raise GraphCorrupted( "ERROR: the list of graph names is empty" )
+            raise VibroP_GraphCorrupted( "ERROR: the list of graph names is empty" )
         else:
             self.__GraphNames = GraphNames
 
 
         if len( aRange ) == 0:
-            raise GraphCorrupted( "ERROR: the list of argument values is empty" )
+            raise VibroP_GraphCorrupted( "ERROR: the list of argument values is empty" )
         else:
             self.__Range = aRange
 
@@ -78,7 +78,7 @@ class GraphObject:
 
         # ........................ Initialize all widgets ..........................
 
-        self.TextWidget = Message( Color = "Black",
+        self.TextWidget = VibroP_Message( Color = "Black",
                                    Size = 2 ,
                                    FontStyle = "n",
                                    MessageHeader = "",
@@ -109,7 +109,7 @@ class GraphObject:
         self.Lines = [ ]
         LegendItems = [ ]
         self.GraphData = [ ]
-        for i in range( GraphObject._MAX_NUMBER_OF_LINES ):
+        for i in range( VibroP_GraphObject._MAX_NUMBER_OF_LINES ):
 
             self.GraphData.append( ColumnDataSource( data = dict( XData = [ ],
                                                                   YData = [ ] ) ) )
@@ -124,7 +124,7 @@ class GraphObject:
 
 
         self.Circles = [ ]
-        for i in range( GraphObject._MAX_NUMBER_OF_DOTTED_LINES ):
+        for i in range( VibroP_GraphObject._MAX_NUMBER_OF_DOTTED_LINES ):
 
             self.Circles.append( self.Graph.circle( x = [ ],
                                                     y = [ ],
@@ -152,7 +152,7 @@ class GraphObject:
         :return:
         """
         if len( aRange ) == 0:
-            raise GraphCorrupted( "ERROR: the list of argument values is empty" )
+            raise VibroP_GraphCorrupted( "ERROR: the list of argument values is empty" )
         else:
             self.__Range = aRange
 
@@ -165,7 +165,7 @@ class GraphObject:
         :return:
         """
         if ( aMode != 0 ) and ( aMode != 1 ):
-            raise GraphCorrupted( "ERROR: a wrong mode was set" )
+            raise VibroP_GraphCorrupted( "ERROR: a wrong mode was set" )
         else:
             self.__Mode = aMode
 
@@ -213,11 +213,11 @@ class GraphObject:
 
         :return:
         """
-        for i in range( GraphObject._MAX_NUMBER_OF_LINES ):
+        for i in range( VibroP_GraphObject._MAX_NUMBER_OF_LINES ):
             self.GraphData[ i ].data = dict(XData = [], YData = [])
 
 
-        for i in range( GraphObject._MAX_NUMBER_OF_DOTTED_LINES ):
+        for i in range( VibroP_GraphObject._MAX_NUMBER_OF_DOTTED_LINES ):
             # remove circles from the graph
             self.Circles[ i ].data_source.data.update( { "x": [],"y": [] } )
 
@@ -229,7 +229,7 @@ class GraphObject:
         :return:
         """
 
-        for i in range( nLabels, GraphObject._MAX_NUMBER_OF_LINES ):
+        for i in range( nLabels, VibroP_GraphObject._MAX_NUMBER_OF_LINES ):
             self.Graph.legend[ 0 ].items[ i ] = LegendItem( label = "" )
             self.Lines[ i ].glyph.line_color = 'white'
 
