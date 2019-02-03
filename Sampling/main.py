@@ -13,7 +13,7 @@ from bokeh.models.widgets import TextInput, Dropdown, CheckboxButtonGroup
 
 from sympy import sympify
 
-from sym_functions import string_to_function_parser
+from Sampling_sym_functions import string_to_function_parser
 
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
