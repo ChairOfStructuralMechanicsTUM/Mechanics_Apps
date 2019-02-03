@@ -7,14 +7,16 @@ from os.path import dirname, split
 import numpy as np
 
 # create variables
-maxR  = 4.0
-g     = 9.81
-alpha = radians(20)
+g         = 9.81
+alpha     = radians(20)
+# constants
+maxR       = 4.0
+alpha_max  = 25.0
+rampLength = 50
 # variables created to avoid repeated calculations
 # (speeds up calculations)
 SIN        = sin(alpha)
 COS        = cos(alpha)
-rampLength = 50
 offset     = -rampLength*COS
 t          = 0.0
 H          = rampLength*SIN
@@ -33,22 +35,29 @@ ramp_source       = ColumnDataSource(data = dict(x=[offset,0],y=[H,0]))
 AngleMarkerSource = ColumnDataSource(data = dict(x=[],y=[]))
 AlphaPos          = ColumnDataSource(data = dict(x=[],y=[],t=[]))
 
-
 # global variables
 glob_callback_id  = ColumnDataSource(data = dict(callback_id = [None]))
 glob_SphereXLines = ColumnDataSource(data = dict(SphereXLines = [SphereXLines]))
 glob_SphereYLines = ColumnDataSource(data = dict(SphereYLines = [SphereYLines]))
 # following ColumnDataSources could be exchanged by a single dict
-glob_offset       = ColumnDataSource(data = dict(offset = [offset]))
-glob_SIN          = ColumnDataSource(data = dict(SIN = [SIN]))
-glob_COS          = ColumnDataSource(data = dict(COS = [COS]))
-glob_g            = ColumnDataSource(data = dict(g = [g]))
-glob_alpha        = ColumnDataSource(data = dict(alpha = [alpha]))
-glob_t            = ColumnDataSource(data = dict(t = [t]))
+#
+#glob_offset       = ColumnDataSource(data = dict(offset = [offset]))
+#glob_SIN          = ColumnDataSource(data = dict(SIN = [SIN]))
+#glob_COS          = ColumnDataSource(data = dict(COS = [COS]))
+#glob_g            = ColumnDataSource(data = dict(g = [g]))
+#glob_alpha        = ColumnDataSource(data = dict(alpha = [alpha]))
+#glob_t            = ColumnDataSource(data = dict(t = [t]))
+
+glob_values = dict(offset = offset,
+                   alpha  = alpha,
+                   SIN    = SIN,
+                   COS    = COS,
+                   g      = g,
+                   t      = t,
+                   H      = H)
 
 
 def init():
-    #global SphereXLines, SphereYLines
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] #      /output
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] #      /output
     # create the lines on a reference sphere
@@ -80,20 +89,25 @@ def init():
 
 
 def createSphere(r,sphere_data,sphere_lines_data):
-    #global offset, SphereXLines, SphereYLines, SIN, COS
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
-    [offset]       = glob_offset.data["offset"]             # input/
-    [SIN]          = glob_SIN.data["SIN"]                   # input/
-    [COS]          = glob_COS.data["COS"]                   # input/
+    #[offset]       = glob_offset.data["offset"]             # input/
+    #[SIN]          = glob_SIN.data["SIN"]                   # input/
+    #[COS]          = glob_COS.data["COS"]                   # input/
+    load_vals = ["SIN", "COS", "offset", "H"]
+    SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     # find the centre, knowing that it touches the ramp at (offset,H)
     newX = offset+r*SIN
+    #newX = glob_values["offset"]+r*glob_values["SIN"]
     newY = H+r*COS
+    #newY = glob_values["H"]+r*glob_values["COS"]
     # draw the sphere in blue
     sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1])
     # use the referece lines to find the current position of the lines
     RCOS = r*COS
     RSIN = r*SIN
+    #RCOS = r*glob_values["COS"]
+    #RSIN = r*glob_values["SIN"]
     X1 = SphereXLines[0]*RCOS+SphereYLines*RSIN+newX
     X2 = SphereXLines[1]*RCOS+SphereYLines*RSIN+newX
     Y1 = -SphereXLines[0]*RSIN+SphereYLines*RCOS+newY
@@ -102,16 +116,18 @@ def createSphere(r,sphere_data,sphere_lines_data):
     sphere_lines_data.data=dict(x=[X1, X2],y=[Y1,Y2])
 
 def moveSphere(t,r,m,sphere_data,sphere_lines_data):
-    #global g, alpha, offset, SphereXLines, SphereYLines, SIN, COS
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
-    [offset]       = glob_offset.data["offset"]             # input/
-    [SIN]          = glob_SIN.data["SIN"]                   # input/
-    [COS]          = glob_COS.data["COS"]                   # input/
-    [g]            = glob_g.data["g"]                       # input/
-    [alpha]        = glob_alpha.data["alpha"]               # input/
+    #[offset]       = glob_offset.data["offset"]             # input/
+    #[SIN]          = glob_SIN.data["SIN"]                   # input/
+    #[COS]          = glob_COS.data["COS"]                   # input/
+    #[g]            = glob_g.data["g"]                       # input/
+    #[alpha]        = glob_alpha.data["alpha"]               # input/
+    load_vals = ["g", "alpha", "SIN", "COS", "offset", "H"]
+    g, alpha, SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     # find the displacement of the point touching the ramp
     displacement = g*SIN*t*t*1.25
+    #displacement = glob_values["g"]*SIN*t*t*1.25
     # find the rotation of the sphere
     rotation = -displacement/r
     # find the new centre of the sphere
@@ -131,12 +147,13 @@ def moveSphere(t,r,m,sphere_data,sphere_lines_data):
     return (newX,newY)
 
 def createHollowSphere(r,sphere_data,sphere_lines_data):
-    #global offset, SphereXLines, SphereYLines, SIN, COS
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
-    [offset]       = glob_offset.data["offset"]             # input/
-    [SIN]          = glob_SIN.data["SIN"]                   # input/
-    [COS]          = glob_COS.data["COS"]                   # input/
+    #[offset]       = glob_offset.data["offset"]             # input/
+    #[SIN]          = glob_SIN.data["SIN"]                   # input/
+    #[COS]          = glob_COS.data["COS"]                   # input/
+    load_vals = ["SIN", "COS", "offset", "H"]
+    SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     # find the centre, knowing that it touches the ramp at (offset,H)
     newX = offset+r*SIN
     newY = H+r*COS
@@ -153,14 +170,15 @@ def createHollowSphere(r,sphere_data,sphere_lines_data):
     sphere_lines_data.data=dict(x=[X1, X2],y=[Y1,Y2])
 
 def moveHollowSphere(t,r,m,ri,sphere_data,sphere_lines_data):
-    #global g, alpha, offset, SphereXLines, SphereYLines, SIN, COS
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
-    [offset]       = glob_offset.data["offset"]             # input/
-    [SIN]          = glob_SIN.data["SIN"]                   # input/
-    [COS]          = glob_COS.data["COS"]                   # input/
-    [g]            = glob_g.data["g"]                       # input/
-    [alpha]        = glob_alpha.data["alpha"]               # input/
+    #[offset]       = glob_offset.data["offset"]             # input/
+    #[SIN]          = glob_SIN.data["SIN"]                   # input/
+    #[COS]          = glob_COS.data["COS"]                   # input/
+    #[g]            = glob_g.data["g"]                       # input/
+    #[alpha]        = glob_alpha.data["alpha"]               # input/
+    load_vals = ["g", "alpha", "SIN", "COS", "offset", "H"]
+    g, alpha, SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     temp = r*g*SIN*t*t*1.25*(r**3-ri**3)/(r**5-ri**5)
     # find the rotation of the sphere
     rotation = -temp
@@ -182,10 +200,11 @@ def moveHollowSphere(t,r,m,ri,sphere_data,sphere_lines_data):
     return (newX,newY)
 
 def createCylinder(r, cylinder_data, cylinder_lines_data):
-    #global offset, SIN, COS
-    [offset]       = glob_offset.data["offset"]             # input/
-    [SIN]          = glob_SIN.data["SIN"]                   # input/
-    [COS]          = glob_COS.data["COS"]                   # input/
+    #[offset]       = glob_offset.data["offset"]             # input/
+    #[SIN]          = glob_SIN.data["SIN"]                   # input/
+    #[COS]          = glob_COS.data["COS"]                   # input/
+    load_vals = ["SIN", "COS", "offset", "H"]
+    SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     # draw the cylinder around the centre, knowing that it touches the ramp at (offset,H)
     cylinder_data.data=dict(x=[offset+r*SIN],y=[H+r*COS],w=[2*r],c=["#0065BD"],a=[1])
     cylinder_lines_data.data=dict(x=[[offset,offset+2*r*SIN],
@@ -193,12 +212,13 @@ def createCylinder(r, cylinder_data, cylinder_lines_data):
         y=[[H,H+2*r*COS],[H+r*(COS+SIN),H+r*(COS-SIN)]])
 
 def moveCylinder(t,r,m, cylinder_data, cylinder_lines_data):
-    #global g, alpha, offset, SIN, COS
-    [offset]       = glob_offset.data["offset"]             # input/
-    [SIN]          = glob_SIN.data["SIN"]                   # input/
-    [COS]          = glob_COS.data["COS"]                   # input/
-    [g]            = glob_g.data["g"]                       # input/
-    [alpha]        = glob_alpha.data["alpha"]               # input/
+    #[offset]       = glob_offset.data["offset"]             # input/
+    #[SIN]          = glob_SIN.data["SIN"]                   # input/
+    #[COS]          = glob_COS.data["COS"]                   # input/
+    #[g]            = glob_g.data["g"]                       # input/
+    #[alpha]        = glob_alpha.data["alpha"]               # input/
+    load_vals = ["g", "alpha", "SIN", "COS", "offset", "H"]
+    g, alpha, SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     # find the displacement of the point touching the ramp
     displacement = g*SIN*t*t
     # find the rotation of the cylinder
@@ -217,10 +237,11 @@ def moveCylinder(t,r,m, cylinder_data, cylinder_lines_data):
     return (newX,newY)
 
 def createHollowCylinder(r,ri, hollowCylinder_data, hollowCylinder_lines_data):
-    #global offset, SIN, COS
-    [offset]       = glob_offset.data["offset"]             # input/
-    [SIN]          = glob_SIN.data["SIN"]                   # input/
-    [COS]          = glob_COS.data["COS"]                   # input/
+    #[offset]       = glob_offset.data["offset"]             # input/
+    #[SIN]          = glob_SIN.data["SIN"]                   # input/
+    #[COS]          = glob_COS.data["COS"]                   # input/
+    load_vals = ["SIN", "COS", "offset", "H"]
+    SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     # draw the cylinder around the centre, knowing that it touches the ramp at (offset,H)
     hollowCylinder_data.data=dict(x=[offset+r*SIN,offset+r*SIN],
         y=[H+r*COS,H+r*COS],w=[2*r,2*ri],c=["#0065BD","#FFFFFF"],a=[1,1])
@@ -233,13 +254,14 @@ def createHollowCylinder(r,ri, hollowCylinder_data, hollowCylinder_lines_data):
         [H+r*(COS-SIN),H+r*COS-ri*SIN]])
 
 def moveHollowCylinder(t,r,m,ri,hollowCylinder_data,hollowCylinder_lines_data):
-    #global g, alpha, offset, SIN, COS
-    [offset]       = glob_offset.data["offset"]             # input/
-    [SIN]          = glob_SIN.data["SIN"]                   # input/
-    [COS]          = glob_COS.data["COS"]                   # input/
-    [g]            = glob_g.data["g"]                       # input/
-    [alpha]        = glob_alpha.data["alpha"]               # input/
-    temp=r*g*SIN*t*t/(r*r+ri*ri)
+    #[offset]       = glob_offset.data["offset"]             # input/
+    #[SIN]          = glob_SIN.data["SIN"]                   # input/
+    #[COS]          = glob_COS.data["COS"]                   # input/
+    #[g]            = glob_g.data["g"]                       # input/
+    #[alpha]        = glob_alpha.data["alpha"]               # input/
+    load_vals = ["g", "alpha", "SIN", "COS", "offset", "H"]
+    g, alpha, SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
+    temp = r*g*SIN*t*t/(r*r+ri*ri)
     # find the rotation of the cylinder
     rotation = -temp
     # find the displacement of the point touching the ramp
@@ -270,8 +292,9 @@ def moveHollowCylinder(t,r,m,ri,hollowCylinder_data,hollowCylinder_lines_data):
 ## draw 3 graphs each containing a ramp, the angle marker, an ellipse, and lines
 
 XStart = -rampLength-maxR-5
-YEnd   = H+2*maxR
-Width  = -220.0*XStart/YEnd
+#YEnd   = H+2*maxR # start height, but we need height for max alpha
+YEnd   = rampLength*sin(radians(alpha_max))+2*maxR
+Width  = -255.4*XStart/YEnd #-220.0*XStart/YEnd
 fig1 = figure(title="Sphere",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
 fig1.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig1_data)
@@ -294,7 +317,7 @@ angle_glyph2=LabelSet(x='x', y='y',text='t',text_color='black',
     text_font_size="15pt", source=AlphaPos)
 fig2.add_layout(angle_glyph2)
 fig2.toolbar_location = None
-fig2.toolbar.logo = None
+#fig2.toolbar.logo = None
 
 fig3 = figure(title="Hollow cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
 fig3.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
@@ -305,12 +328,13 @@ fig3.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 angle_glyph3=LabelSet(x='x', y='y',text='t',text_color='black',
     text_font_size="15pt", source=AlphaPos)
 fig3.add_layout(angle_glyph3)
-fig3.toolbar.logo = None
+fig3.toolbar_location = None
 
 # name the functions to be used by each figure depending upon their content
 evolveFunc1=lambda(x):moveSphere(x,2.0,1.0,fig1_data,fig1_lines_data)
 evolveFunc2=lambda(x):moveCylinder(x,2.0,1.0,fig2_data,fig2_lines_data)
 evolveFunc3=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig3_data,fig3_lines_data)
+glob_fun_handles = dict(fun1=evolveFunc1, fun2=evolveFunc2, fun3=evolveFunc3)
 
 # function to change the shape, radius, or mass of the object in figure FIG
 def changeObject(FIG,new,r,m):
@@ -340,16 +364,20 @@ def changeObject(FIG,new,r,m):
         func=lambda(x):moveCylinder(x,r,m,data,line_data)
     # save the evolution function to the appropriate function handle
     if (FIG==1):
-        global evolveFunc1
-        evolveFunc1=func
+        #global evolveFunc1
+        #evolveFunc1=func
+        glob_fun_handles["fun1"] = func
+        
         fig1.title.text=new
     elif(FIG==2):
-        global evolveFunc2
-        evolveFunc2=func
+        #global evolveFunc2
+        #evolveFunc2=func
+        glob_fun_handles["fun2"] = func
         fig2.title.text=new
     else:
-        global evolveFunc3
-        evolveFunc3=func
+        #global evolveFunc3
+        #evolveFunc3=func
+        glob_fun_handles["fun3"] = func
         fig3.title.text=new
     # if a simulation is in progress, restart it
     #global Active,t
@@ -387,16 +415,16 @@ object_select2.on_change('value',changeObject2)
 object_select3 = Select(title="Object:", value="Hollow cylinder",
     options=["Sphere", "Hollow sphere", "Full cylinder", "Hollow cylinder"])
 object_select3.on_change('value',changeObject3)
-radius_select1 = Slider(title="Radius", value=2.0, start=1.0, end=4.0, step=0.5)
+radius_select1 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
 radius_select1.on_change('value',changeRadius1)
-radius_select2 = Slider(title="Radius", value=2.0, start=1.0, end=4.0, step=0.5)
+radius_select2 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
 radius_select2.on_change('value',changeRadius2)
-radius_select3 = Slider(title="Radius", value=2.0, start=1.0, end=4.0, step=0.5)
+radius_select3 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
 radius_select3.on_change('value',changeRadius3)
 
 # slider function for the angle
 def changeAlpha(attr,old,new):
-    global alpha, COS, SIN, offset, H, rampLength, ramp_source
+    #global alpha, COS, SIN, offset, H
     alpha=radians(new)
     X=[]
     Y=[]
@@ -408,11 +436,13 @@ def changeAlpha(attr,old,new):
     SIN    = sin(alpha)
     offset = -rampLength*COS
     H      = rampLength*SIN
+    glob_values.update(dict(alpha=alpha, SIN=SIN, COS=COS, offset=offset, H=H)) #      /output
+    #print("<<<<check<<<<", glob_values)
     ramp_source.data = dict(x=[offset,0],y=[H,0])
     reset()
 
 # slider for the angle
-alpha_slider = Slider(title=u"\u03B1", value=20.0, start=5.0, end=25.0, step=1.0)
+alpha_slider = Slider(title=u"\u03B1", value=20.0, start=5.0, end=alpha_max, step=1.0)
 alpha_slider.on_change('value',changeAlpha)
 
 def disable_all_sliders(d=True):
@@ -425,7 +455,6 @@ def disable_all_sliders(d=True):
     alpha_slider.disabled   = d
 
 def start():
-    #global Active, t
     [callback_id] = glob_callback_id.data["callback_id"] # input/output
     # switch the label
     if start_button.label == "Start":
@@ -444,10 +473,10 @@ def start():
     
 
 def reset():
-    #global Active, t
-    [t] = glob_t.data["t"] # input/output
+    #[t] = glob_t.data["t"] # input/output
     # reset the simulation
-    glob_t.data = dict(t = [0.0]) #      /output
+    #glob_t.data = dict(t = [0.0]) #      /output
+    glob_values["t"] = 0.0 #      /output
     changeObject(1,object_select1.value,radius_select1.value,1.0)
     changeObject(2,object_select2.value,radius_select2.value,1.0)
     changeObject(3,object_select3.value,radius_select3.value,1.0)
@@ -456,14 +485,18 @@ def reset():
     
 
 def evolve():
-    #global t
-    [t] = glob_t.data["t"] # input/output
+    #[t] = glob_t.data["t"] # input/output
+    t = glob_values["t"] # input/output
     t+=0.01
-    glob_t.data = dict(t = [t])
+    #glob_t.data = dict(t = [t])
+    glob_values["t"] = t
     # call all necessary functions
-    (x1,y1)=evolveFunc1(t)
-    (x2,y2)=evolveFunc2(t)
-    (x3,y3)=evolveFunc3(t)
+    #(x1,y1)=evolveFunc1(t)
+    #(x2,y2)=evolveFunc2(t)
+    #(x3,y3)=evolveFunc3(t)
+    (x1,y1) = glob_fun_handles["fun1"](t)
+    (x2,y2) = glob_fun_handles["fun2"](t)
+    (x3,y3) = glob_fun_handles["fun3"](t)
     # if an object has reached the end of the ramp then stop the simulation
     if (max(x1,x2,x3)>0 or min(y1,y2,y3)<0):
         start() #equals to stop if it is running
