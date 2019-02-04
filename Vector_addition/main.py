@@ -55,13 +55,8 @@ def updateVector1 ():
     # else the arrow is proportional to the Vector1
         xE=Vector1*cos(theta1)
         yE=Vector1*sin(theta1)
-        # Vector1_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE]) -> matthias
-        # V1_label_source.data = dict (x=[xE+3],y=[yE-3],V1=["V"u"\u2081"])
-        Vector1_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        # Readjust positions
-        xL = xE-3
-        yL = yE-6
-        V1_label_source.data = dict (x=[(xL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],y=[(yL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],V1=["V"u"\u2081"])
+        Vector1_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
+        V1_label_source.data = dict (x=[xE+3],y=[yE-3],V1=["V"u"\u2081"])
 
 def updateVector2 ():
     [theta2]  = glob_theta2.data["val"]  # input/
@@ -73,14 +68,8 @@ def updateVector2 ():
         # else the arrow is proportional to the Vector1
         xE=Vector2*cos(theta2)
         yE=Vector2*sin(theta2)
-        # Vector2_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE]) -> matthias
-        # V2_label_source.data = dict (x=[xE-3],y=[yE+3],V2=["V"u"\u2082"])
-        Vector2_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        # Readjust positions
-        xL = xE-3
-        yL = yE-6
-        V2_label_source.data = dict (x=[(xL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],y=[(yL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],V2=["V"u"\u2082"])
-
+        Vector2_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
+        V2_label_source.data = dict (x=[xE-3],y=[yE+3],V2=["V"u"\u2082"])
 
 def updateResultant():
     [theta1]  = glob_theta1.data["val"]  # input/
