@@ -266,6 +266,8 @@ numberPersonsSlider = Slider(
 numberPersonsSlider.on_change('value',updateNoPersons)
 
 
+
+
 ########################### Creating pause button #############################
 #def pause ():
 #    global Active
@@ -280,15 +282,16 @@ numberPersonsSlider.on_change('value',updateNoPersons)
 #pause_button.on_click(pause)
 
 ########################### Creating play button ##############################
+g1Boatwiththreeswimmers = None
 def play ():
-    global Active
+    global Active,g1Boatwiththreeswimmers
     # if inactive, reactivate animation
     if Active == True:
-        curdoc().remove_periodic_callback(move_boat)
+        g1Boatwiththreeswimmers=curdoc().remove_periodic_callback(g1Boatwiththreeswimmers)
         Active=False
         play_button.label = "Play"
     else:
-        curdoc().add_periodic_callback(move_boat, 50)
+        g1Boatwiththreeswimmers=curdoc().add_periodic_callback(move_boat, 50)
         Active=True
         play_button.label = "Pause"
     #update_bars()
@@ -308,7 +311,7 @@ def reset ():
     if Active == False:
         pass
     else:
-        curdoc().remove_periodic_callback(move_boat)
+        curdoc().remove_periodic_callback(g1Boatwiththreeswimmers)
         Active = False
 
     #Reset Play Button
