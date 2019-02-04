@@ -313,7 +313,7 @@ Add the interactive functionalities
 def Reset():
     if curdoc().session_callbacks:
         for c in curdoc().session_callbacks:
-            curdoc().remove_periodic_callback(c)
+            curdoc().remove_periodic_callback(g1Collision)
     
     # Return the solider to their default values
     ballOneVelocityDirSlider.value = dirOne
@@ -338,9 +338,11 @@ reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)
 
 ########################### Creating play-pause button ##############################
+g1Collision=None
 def playpause():
+    global g1Collision
     if playpause_button.label == "Play":
-        curdoc().add_periodic_callback(compute_trajectory, 10)
+        g1Collision=curdoc().add_periodic_callback(compute_trajectory, 10)
         playpause_button.label = "Pause"
         ballOneVelocityDirSlider.disabled = True
         ballOneVelocityMagSlider.disabled = True
@@ -349,7 +351,7 @@ def playpause():
        # crSlider.disabled = True  # We can leave the Cr Slider enabled while the app is running, changing Cr on the fly is anice feature and has no impact on performance
     else:
         for c in curdoc().session_callbacks:
-            curdoc().remove_periodic_callback(c)
+            curdoc().remove_periodic_callback(g1Collision)
         playpause_button.label = "Play"
 
         #update sliders

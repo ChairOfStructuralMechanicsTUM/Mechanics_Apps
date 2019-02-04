@@ -16,7 +16,7 @@ currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv
-from math import sqrt, exp, pow, sin , cos, pi, atan2, sinh, cosh
+from math import sqrt, exp, pow, sin , cos, ceil, pi, atan2, sinh, cosh
 
 ## initial values
 initial_mass_value = 8.
@@ -352,6 +352,21 @@ def change_force_value(attr,old,new):
     
 force_value_input = Slider(title="Force", value=force_value, start=0, end=1.0, step=1,width=400)
 force_value_input.on_change('value',change_force_value)
+#<<<<<<< HEAD -> Irfan
+# g1SDOF=None
+# def pause():
+    # global Active
+    # if (Active):
+        # curdoc().remove_periodic_callback(g1SDOF)
+        # Active=False
+
+# def play():
+    # global Active,g1SDOF
+    # if (not Active):
+        # g1SDOF=curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
+        # Active=True
+
+#=======
 
 #steer activity of sliders
 def disable_all_sliders(d=True):
@@ -389,6 +404,7 @@ def play():
     callback_id = curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
     glob_callback_id.data = dict(callback_id = [callback_id])
     
+#>>>>>>> master -> Matthias
 def stop():
     # extract global variables
     [t] = glob_t.data["t"] # input/output

@@ -1,6 +1,6 @@
 from bokeh.models import ColumnDataSource
 from math import floor
-from Coord1 import *
+from Coord1 import Coord
 
 class Spring(object):
     ## create spring
