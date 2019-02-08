@@ -1,302 +1,261 @@
 # -*- coding: utf-8 -*-
 """
-@author: antonis
+@author: antonis, matthias (re-structured to function design)
 """
 from __future__ import division
 import numpy as np
-import pandas as pd
-from bokeh.io import curdoc
-from bokeh.layouts import row,column, gridplot
-from bokeh.models import ColumnDataSource,CustomJS, Label,Legend
-from bokeh.models.widgets import Slider,Toggle, Paragraph
-from bokeh.plotting import figure
-from os.path import dirname, join, split 
 
+from scipy.optimize import brentq # fast numerical solver for roots
+from bokeh.io import curdoc
+from bokeh.layouts import column, Spacer
+from bokeh.models import ColumnDataSource
+from bokeh.models.glyphs import ImageURL
+from bokeh.models.widgets import Slider
+from bokeh.plotting import figure
+from os.path import dirname, join, split, abspath
+
+# for LaTeX support
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexDiv, LatexLegend
+
+# beam length
 l=1
+
+# first ev eigenvalues for each beam
+ev_total = 6
+
 #beam 1-->simply supported
 beam1 = ColumnDataSource(data=dict(x=[0,1], y=[0,0]))
-#create the boundary conditions for simply supported beam
-support_left=ColumnDataSource(data=dict(x=[0,-0.05,0.05,0.025,0.05,0.025,0,0.025,0,-0.025,0,-0.025,-0.05,-0.025,-0.05,-0.075,-0.05,0.05,0], y=[0,-0.5,-0.5,
-                                        -0.7,-0.5,-0.5,-0.7,-0.5,-0.5,-0.7,-0.5,-0.5,-0.7,-0.5,-0.5,-0.7,-0.5,-0.5,0]))
-support_righta=ColumnDataSource(data=dict(x=[1,0.95,1.05,1],y=[0,-0.5,-0.5,0]))
-support_rightb= ColumnDataSource(data=dict(x=[0.95,1.05,1.025,1.05,1.025,1,1.025,1,0.975,1,0.975,0.95,0.975,0.95],y=[-0.7,-0.7,-0.9,-0.7,-0.7,-0.9,-0.7,-0.7,
-                                           -0.9,-0.7,-0.7,-0.9,-0.7,-0.7]))
 
 #beam 2-->fixed at both ends
 beam2 = ColumnDataSource(data=dict(x=[0,1], y=[0,0]))
-#create the boundary conditions for the beam fixed at both ends
-fixed_left=ColumnDataSource(data=dict(x=[0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03],y=[2*0.25,-2*0.25,-2*0.3,-2*0.25,-2*0.125,-2*0.175,-2*0.125,0,-2*0.05,-0,+2*0.125,
-                                        +2*0.075,+2*0.125,2*0.25,2*0.2]))
-fixed_right=ColumnDataSource(data=dict(x=[1,1,1.03,1,1,1.03,1,1,1.03,1,1,1.03,1,1,1.03],y=[2*0.25,-2*0.25,-2*0.3,-2*0.25,-2*0.125,-2*0.175,-2*0.125,0,-2*0.05,-0,+2*0.125,
-                                        +2*0.075,+2*0.125,2*0.25,2*0.2]))
 
 #beam 3-->cantilever beam
 beam3=ColumnDataSource(data=dict(x=[0,1], y=[0,0]))
-#create the left fixed support for the cantilever beam
-fixed_cantil=ColumnDataSource(data=dict(x=[0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03,0,0,-0.03],y=[2*0.25,-2*0.25,-2*0.3,-2*0.25,-2*0.125,-2*0.175,-2*0.125,0,-2*0.05,-0,+2*0.125,
-                                        +2*0.075,+2*0.125,2*0.25,2*0.2]))
 
-#simply supported beam
-N=200
-x1 = np.linspace(0, 1, N)
-y1=-np.sin(np.pi*x1/l)
-source1 = ColumnDataSource(data=dict(x=x1,y=y1))
+# load support symbols
+support1 = "Bernoulli_beam_vibrations/static/images/auflager01.svg"
+support2 = "Bernoulli_beam_vibrations/static/images/auflager02.svg"
+support3 = "Bernoulli_beam_vibrations/static/images/auflager03.svg"
+support4 = "Bernoulli_beam_vibrations/static/images/auflager04.svg"
+support_src = ColumnDataSource(dict(sp1=[support1], sp2=[support2], sp3=[support3], sp4=[support4]))
 
-#beam fixed at both ends
-N=200
-x2=np.linspace(0,1,N)
-y2=-(1/2*(np.cosh(4.73004*x2/l)-np.cos(4.73004*x2/l))-((1/2*(np.cosh(4.73004)-np.cos(4.73004)))/(1/2*(np.sinh(4.73004)-np.sin(4.73004))))*1/2*(np.sinh(4.73004*x2/l)-np.sin(4.73004*x2/l)))
-y2cosh=-(1/2*(np.cosh(4.73004*x2/l)))
-y2sinh=+((1/2*(np.cosh(4.73004)-np.cos(4.73004)))/(1/2*(np.sinh(4.73004)-np.sin(4.73004))))*1/2*(np.sinh(4.73004*x2/l))
-y2cos=-(1/2*(np.cos(4.73004*x2/l)))
-y2sin=-((1/2*(np.cosh(4.73004)-np.cos(4.73004)))/(1/2*(np.sinh(4.73004)-np.sin(4.73004))))*1/2*(np.sin(4.73004*x2/l))
-source2=ColumnDataSource(data=dict(x=x2,y=y2))
-source2cosh=ColumnDataSource(data=dict(x=x2,y=y2cosh))
-source2sinh=ColumnDataSource(data=dict(x=x2,y=y2sinh))
-source2cos=ColumnDataSource(data=dict(x=x2,y=y2cos))
-source2sin=ColumnDataSource(data=dict(x=x2,y=y2sin))
+## pre-compute the eigenvalues for all beams
+def eq_fixed_beam(x):
+    return np.cosh(x)*np.cos(x) - 1.0
 
-#cantilever beam
-N=200
-x3=np.linspace(0,1,N)
-y3=-(1/2*(np.cosh(1.8751*x3/l)-np.cos(1.8751*x3/l))-((1/2*(np.cosh(1.8751)+np.cos(1.8751)))/(1/2*(np.sinh(1.8751)+np.sin(1.8751))))*1/2*(np.sinh(1.8751*x3/l)-
-            np.sin(1.8751*x3/l)))
-y3cosh=-(1/2*(np.cosh(1.8751*x2/l)))
-y3sinh=+((1/2*(np.cosh(1.8751)+np.cos(1.8751)))/(1/2*(np.sinh(1.8751)+np.sin(1.8751))))*1/2*(np.sinh(1.8751*x2/l))
-y3cos=-(1/2*(np.cos(1.8751*x2/l)))
-y3sin=-((1/2*(np.cosh(1.8751)+np.cos(1.8751)))/(1/2*(np.sinh(1.8751)+np.sin(1.8751))))*1/2*(np.sin(1.8751*x2/l))
-source3=ColumnDataSource(data=dict(x=x3,y=y3))
-source3cosh=ColumnDataSource(data=dict(x=x3,y=y3cosh))
-source3sinh=ColumnDataSource(data=dict(x=x3,y=y3sinh))
-source3cos=ColumnDataSource(data=dict(x=x3,y=y3cos))
-source3sin=ColumnDataSource(data=dict(x=x3,y=y3sin))
+def eq_cantilever_beam(x):
+    return np.cosh(x)*np.cos(x) + 1.0
+
+
+x_start_fixed_beam, x_start_cant_beam = [[],[]] 
+x_end_fixed_beam, x_end_cant_beam = [[],[]]
+
+# set start and end of intervals surounding a root
+# x_mid approximates the roots (good approximation for ev>3)
+# set some variance to define an interval for the root search via brentq
+for k in range(1,ev_total+1):
+    x_mid_fixed_beam = 0.5*np.pi*(2*k+1)/l
+    x_mid_cant_beam  = 0.5*np.pi*(2*k-1)/l
+    x_start_fixed_beam.append(x_mid_fixed_beam - 0.5)
+    x_start_cant_beam.append(x_mid_cant_beam - 0.5)
+    x_end_fixed_beam.append(x_mid_fixed_beam + 0.5)
+    x_end_cant_beam.append(x_mid_cant_beam + 0.5)
+
+# compute the roots, i.e. eigenvalues
+ev_fixed_beam = np.zeros((ev_total,1))
+ev_cant_beam = np.zeros((ev_total,1))
+for k in range(0,ev_total):
+    ev_fixed_beam[k] = brentq(eq_fixed_beam, x_start_fixed_beam[k], x_end_fixed_beam[k])
+    ev_cant_beam[k]  = brentq(eq_cantilever_beam, x_start_cant_beam[k], x_end_cant_beam[k])
+## end of pre-computation
+
+
+# initialize ColumnDataSources
+source1 = ColumnDataSource(data=dict(x=[0],y=[0]))
+
+source2=ColumnDataSource(data=dict(x=[0],y=[0]))
+source2cosh=ColumnDataSource(data=dict(x=[0],y=[0]))
+source2sinh=ColumnDataSource(data=dict(x=[0],y=[0]))
+source2cos=ColumnDataSource(data=dict(x=[0],y=[0]))
+source2sin=ColumnDataSource(data=dict(x=[0],y=[0]))
+
+source3=ColumnDataSource(data=dict(x=[0],y=[0]))
+source3cosh=ColumnDataSource(data=dict(x=[0],y=[0]))
+source3sinh=ColumnDataSource(data=dict(x=[0],y=[0]))
+source3cos=ColumnDataSource(data=dict(x=[0],y=[0]))
+source3sin=ColumnDataSource(data=dict(x=[0],y=[0]))
+
+    
+# define functions instead of hard-coded solutions
+def beam_simple_supp(ev_num=1, N=200):
+    #print("simple_supp:", ev_num)
+    x1 = np.linspace(0, 1, N)
+    y1=-np.sin(ev_num*np.pi*x1/l)
+    source1.data=dict(x=x1,y=y1)
+    
+def beam_fixed_ends(ev_num=1, N=200):
+    #print("fixed: ", ev_num)
+    x2=np.linspace(0,1,N)
+    ev = ev_fixed_beam[ev_num-1]
+    #print("fixed_val: ", ev)
+    # y2=-(1/2*(np.cosh(ev*x2/l)-np.cos(ev*x2/l))-((1/2*(np.cosh(ev)-np.cos(ev)))/(1/2*(np.sinh(ev)-np.sin(ev))))*1/2*(np.sinh(ev*x2/l)-np.sin(ev*x2/l)))
+    y2cosh=-(1/2*(np.cosh(ev*x2/l)))
+    y2sinh=((1/2*(np.cosh(ev)-np.cos(ev)))/(1/2*(np.sinh(ev)-np.sin(ev))))*1/2*(np.sinh(ev*x2/l))
+    y2cos=(1/2*(np.cos(ev*x2/l)))
+    y2sin=-((1/2*(np.cosh(ev)-np.cos(ev)))/(1/2*(np.sinh(ev)-np.sin(ev))))*1/2*(np.sin(ev*x2/l))
+    y2 = y2cos+y2cosh+y2sin+y2sinh
+    source2.data=dict(x=x2,y=y2)
+    source2cosh.data=dict(x=x2,y=y2cosh)
+    source2sinh.data=dict(x=x2,y=y2sinh)
+    source2cos.data=dict(x=x2,y=y2cos)
+    source2sin.data=dict(x=x2,y=y2sin)
+    
+def beam_cantilever(ev_num=1, N=200):
+    #print("canti: ", ev_num)
+    x3=np.linspace(0,1,N)
+    ev = ev_cant_beam[ev_num-1]
+    #print("cant_val: ", ev)
+    # y3=-(1/2*(np.cosh(ev*x3/l)-np.cos(ev*x3/l))-((1/2*(np.cosh(ev)+np.cos(ev)))/(1/2*(np.sinh(ev)+np.sin(ev))))*1/2*(np.sinh(ev*x3/l)-
+    #             np.sin(ev*x3/l)))
+    y3cosh=-(1/2*(np.cosh(ev*x3/l)))
+    y3sinh=+((1/2*(np.cosh(ev)+np.cos(ev)))/(1/2*(np.sinh(ev)+np.sin(ev))))*1/2*(np.sinh(ev*x3/l))
+    y3cos=+(1/2*(np.cos(ev*x3/l)))
+    y3sin=-((1/2*(np.cosh(ev)+np.cos(ev)))/(1/2*(np.sinh(ev)+np.sin(ev))))*1/2*(np.sin(ev*x3/l))
+    y3 = y3cos+y3cosh+y3sin+y3sinh
+    source3.data=dict(x=x3,y=y3)
+    source3cosh.data=dict(x=x3,y=y3cosh)
+    source3sinh.data=dict(x=x3,y=y3sinh)
+    source3cos.data=dict(x=x3,y=y3cos)
+    source3sin.data=dict(x=x3,y=y3sin)
+
+    
+# call functions for initial view
+beam_simple_supp()
+beam_fixed_ends()
+beam_cantilever()
+
 
 #Plot 1
 p1 = figure(plot_height=250, plot_width=900,title="Simply supported beam", tools="", x_range=(-0.075,1.075), y_range=(-2.5,2.5))
 p1.axis.visible = False
 #p1.grid.visible = False
-p1.outline_line_color = None
+p1.outline_line_width = 2
+p1.outline_line_color = "black"
 p1.title.text_font_size="13pt"
 
 beam1=p1.line(x='x', y='y', source=beam1,line_width=5,line_color='black') 
 eigenmodes_beam1=p1.line(x='x', y='y', source=source1,
-                         line_width=3,line_color='#0065BD')
+                         line_width=3,line_color='#3070b3') # TUM color pantone 300
 eigenmodes_beam1.visible=True
-support_left_beam1=p1.line(x='x', y='y', source=support_left,line_width=2,line_color='black')
-support_righta_beam1=p1.line(x='x', y='y', source=support_righta,line_width=2,line_color='black')
-support_rightb_beam1=p1.line(x='x', y='y', source=support_rightb,line_width=2,line_color='black')
-
-legend1 = Legend(items=[
-    ("Eigenvalue Problem: sin("u"\u03BB)=0 "u"\u279CSolution: w"u"\u1D62("u"\u03BE)=sin(i"u"\u00B7"u"\u03C0"u"\u00B7"u"\u03BE)"   , [eigenmodes_beam1]),
-], location=(0, 0))
+p1.add_glyph(support_src,ImageURL(url="sp2", x=0.0, y=0.35, w=2, h=2, anchor="top_center"))
+p1.add_glyph(support_src,ImageURL(url="sp1", x=1.0, y=0.35, w=1.8, h=1.8, anchor="top_center"))
+    
+legend1 = LatexLegend(items=[
+    ("\\text{Eigenvalue Problem: } \\sin(\\lambda) = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = \\sin(i \\cdot \\pi \\xi)"   , [eigenmodes_beam1]),
+], location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
 
 p1.add_layout(legend1, 'above')
 p1.legend.click_policy="hide"
+p1.toolbar.logo = None
 
 #Plot 2
-p2 = figure(plot_height=400, plot_width=900,title="Beam fixed at both ends", tools="", x_range=(-0.075,1.075), y_range=(-3,3))
+p2 = figure(plot_height=500, plot_width=900,title="Beam fixed at both ends", tools="", x_range=(-0.075,1.075), y_range=(-3,3))
 p2.axis.visible = False
-#p2.grid.visible = False
-p2.outline_line_color = None
+p2.outline_line_width = 2
+p2.outline_line_color = "black"
 p2.title.text_font_size="13pt"
 
 beam2=p2.line(x='x', y='y', source=beam2,line_width=5,line_color='black') 
 eigenmodes_beam2=p2.line(x='x', y='y', source=source2,
-                         line_width=3,line_color='#A2AD00')# pantone 383
+                         line_width=3,line_color='#3070b3') # TUM color pantone 300
 eigenmodes_beam2cosh=p2.line(x='x', y='y', source=source2cosh,
-                         line_width=1, color='#c6f808')#greeny wellow
+                         line_width=1, color='#005293') # TUM color pantone 301
 eigenmodes_beam2sinh=p2.line(x='x', y='y', source=source2sinh,
-                         line_width=1,line_color='#9bb53c')#booger
+                         line_width=1,line_color='#003359') # TUM color pantone 540
 eigenmodes_beam2cos=p2.line(x='x', y='y', source=source2cos,
-                         line_width=1,line_color='#677a04')#olive green
+                         line_width=1,line_color='#64A0C8') # TUM color pantone 542 
 eigenmodes_beam2sin=p2.line(x='x', y='y', source=source2sin,
-                         line_width=1,line_color='#ffda03')#sunflower yellow
-fixed_support_left=p2.line(x='x', y='y', source=fixed_left,line_width=2,line_color='black')
-fixed_support_right=p2.line(x='x', y='y', source=fixed_right,line_width=2,line_color='black')
-legend2 = Legend(items=[
-    ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)-1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - c("u"\u03BB"u"\u1D62) / s("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam2]),
-    ("Solution part: "u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cosh]),
-    ("Solution part: -"u"\u00BD  "u"\u00B7 c("u"\u03BB)/s("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sinh]),
-    ("Solution part: -"u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2cos]),
-    ("Solution part: "u"\u00BD "u"\u00B7 c("u"\u03BB)/s("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam2sin]),
-], location=(0, 0))
+                         line_width=1,line_color='#98C6EA') # TUM color pantone 283
+p2.add_glyph(support_src,ImageURL(url="sp3", x=-0.0105, y=0.0, w=2, h=2, anchor="center"))
+p2.add_glyph(support_src,ImageURL(url="sp4", x=1.0105, y=0.0, w=2, h=2, anchor="center"))
+
+legend2 = LatexLegend(items=[
+    ("\\text{Eigenvalue Problem: } \cosh(\\lambda) \cdot \cos(\\lambda) -1 = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = c(\\lambda_i \\xi) - \\frac{c(\\lambda_i)}{s(\\lambda_i)} \\cdot s(\\lambda_i \\xi)", [eigenmodes_beam2]),
+    ("\\text{Solution part: } - \\frac{1}{2} \\cosh(\\lambda \\cdot \\xi)", [eigenmodes_beam2cosh]),
+    ("\\text{Solution part: } \\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\cdot \\sinh(\\lambda \\xi)", [eigenmodes_beam2sinh]),
+    ("\\text{Solution part: } \\frac{1}{2} \\cos(\\lambda \\cdot \\xi)", [eigenmodes_beam2cos]),
+    ("\\text{Solution part: } - \\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\cdot \\sin(\\lambda \\xi)", [eigenmodes_beam2sin]),
+], location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
 
 p2.add_layout(legend2, 'above')
 p2.legend.click_policy="hide"
+p2.toolbar.logo = None
+
 
 #Plot 3
-p3 = figure(plot_height=400, plot_width=900,title="Cantilever beam", tools="", x_range=(-0.075,1.075), y_range=(-3,3))
+p3 = figure(plot_height=500, plot_width=900,title="Cantilever beam", tools="", x_range=(-0.075,1.075), y_range=(-3,3))
 p3.axis.visible = False
 #p3.grid.visible = False
-p3.outline_line_color = None
+p3.outline_line_width = 2
+p3.outline_line_color = "black"
 p3.title.text_font_size="13pt"
 
 beam3=p3.line(x='x', y='y', source=beam3,line_width=5,line_color='black') 
-fixed_cantilever=p3.line(x='x', y='y', source=fixed_cantil,line_width=2,line_color='black')
-eigenmodes_beam3=p3.line(x='x', y='y', source=source3,line_width=3,line_color='#E37222')
+p3.add_glyph(support_src,ImageURL(url="sp3", x=-0.0105, y=0.0, w=2, h=2, anchor="center"))
+eigenmodes_beam3=p3.line(x='x', y='y', source=source3,
+                         line_width=3,line_color='#3070b3') # TUM color pantone 300
 eigenmodes_beam3cosh=p3.line(x='x', y='y', source=source3cosh,
-                         line_width=1, color='#fd8d49')#orangeish
+                         line_width=1, color='#005293') # TUM color pantone 301
 eigenmodes_beam3sinh=p3.line(x='x', y='y', source=source3sinh,
-                         line_width=1,line_color='#c45508')#rust orange
+                         line_width=1,line_color='#003359') # TUM color pantone 540
 eigenmodes_beam3cos=p3.line(x='x', y='y', source=source3cos,
-                         line_width=1,line_color='#fe4b03')#blood orange
+                         line_width=1,line_color='#64A0C8') # TUM color pantone 542 
 eigenmodes_beam3sin=p3.line(x='x', y='y', source=source3sin,
-                         line_width=1,line_color='#fdaa48')#ligth orange
-#eigenmodes_beam3.visible= False
-legend3 = Legend(items=[
-    ("Eigenvalue Problem: cosh("u"\u03BB)"u"\u00B7cos("u"\u03BB)+1=0 "u"\u279C Solution: w"u"\u1D62("u"\u03BE) = c("u"\u03BB"u"\u1D62"u"\u03BE) - C("u"\u03BB"u"\u1D62) / S("u"\u03BB"u"\u1D62) "u"\u00B7s ("u"\u03BB"u"\u1D62"u"\u03BE)", [eigenmodes_beam3]),
-    ("Solution part: "u"\u00BD "u"\u00B7 cosh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cosh]),
-    ("Solution part: -"u"\u00BD  "u"\u00B7 C("u"\u03BB)/S("u"\u03BB)"u"\u00B7 sinh ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sinh]),
-    ("Solution part: -"u"\u00BD "u"\u00B7 cos ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3cos]),
-    ("Solution part: "u"\u00BD "u"\u00B7 C("u"\u03BB)/S("u"\u03BB) "u"\u00B7 sin ("u"\u03BB"u"\u00B7"u"\u03BE)", [eigenmodes_beam3sin]),
-], location=(0, 0))
+                         line_width=1,line_color='#98C6EA') # TUM color pantone 283
+
+legend3 = LatexLegend(items=[
+    ("\\text{Eigenvalue Problem: } \cosh(\\lambda) \cdot \cos(\\lambda) +1 = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = c(\\lambda_i \\xi) - \\frac{C(\\lambda_i)}{S(\\lambda_i)} \\cdot s(\\lambda_i \\xi)", [eigenmodes_beam3]),
+    ("\\text{Solution part: } - \\frac{1}{2} \\cosh(\\lambda \\cdot \\xi)", [eigenmodes_beam3cosh]),
+    ("\\text{Solution part: } \\frac{1}{2} \\frac{C(\\lambda)}{S(\\lambda)} \\cdot \\sinh(\\lambda \\xi)", [eigenmodes_beam3sinh]),
+    ("\\text{Solution part: } \\frac{1}{2} \\cos(\\lambda \\cdot \\xi)", [eigenmodes_beam3cos]),
+    ("\\text{Solution part: } - \\frac{1}{2} \\frac{C(\\lambda)}{S(\\lambda)} \\cdot \\sin(\\lambda \\xi)", [eigenmodes_beam3sin]),
+], location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
 
 p3.add_layout(legend3, 'above')
 p3.legend.click_policy="hide"
+p3.toolbar.logo = None
 
-#Description paragraph as label of an empy plot
+## Create slider widgets to choose eigenvalue from 1 to ev_total
+ev_input1 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1, width=862)
+ev_input2 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1, width=862)
+ev_input3 = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=ev_total, step=1, width=862)
 
-p4 = figure(plot_height=200, plot_width=300,title="Definitions", tools="", x_range=(0,0), y_range=(0,0))
-definitions1=p4.line(x=[0],y=[0],line_width=1,line_color='white',legend="C("u"\u03BB)="u"\u00BD [cosh("u"\u03BB) + cos("u"\u03BB)]")
-definitions2=p4.line(x=[0],y=[0],line_width=1,line_color='white',legend="S("u"\u03BB)="u"\u00BD [sinh("u"\u03BB) + sin("u"\u03BB)]")
-definitions3=p4.line(x=[0],y=[0],line_width=1,line_color='white',legend="c("u"\u03BB)="u"\u00BD [cosh("u"\u03BB) - cos("u"\u03BB)]")
-definitions4=p4.line(x=[0],y=[0],line_width=1,line_color='white',legend="s("u"\u03BB)="u"\u00BD [sinh("u"\u03BB) - sin("u"\u03BB)]")
-definitions5=p4.line(x=[0],y=[0],line_width=1,line_color='white',legend=""u"\u03BE=x/l")
-definitions6=p4.line(x=[0],y=[0],line_width=1,line_color='white',legend=""u"\u03BB=l"u"\u221C("u"\u03BC "u"\u03C9"u"\u00B2/ (EI) )")
+# functions to update plots when using the specific sliders
+def update_simple_beam(attrname, old, new):
+    beam_simple_supp(ev_num=new)
 
-p4.axis.visible = False
-p4.grid.visible = False
-p4.outline_line_color = None
-p4.legend.location = "bottom_left"
-p4.legend.border_line_color = "white"
+def update_fixed_beam(attrname, old, new):
+    beam_fixed_ends(ev_num=new)
 
-#Toggle not necessary
-# coffeescript to link toggle with visible property
-#code = '''\
-#object.visible = toggle.active
-#'''
-#I created 3 callbacks with CustomJS so that when the student presses the button he sees the eigenmodes for the beam he chose.
-#My only problem is that the first time one has to press the button twice in order to get the line. Then it works properly. Dont know why??
-#callback1 = CustomJS.from_coffeescript(code=code, args={})
-#toggle1 = Toggle(label="Simply supported beam", button_type="success",callback=callback1)
-#callback1.args = {'toggle': toggle1, 'object':eigenmodes_beam1 }
-
-#callback2 = CustomJS.from_coffeescript(code=code, args={})
-#toggle2 = Toggle(label="Beam fixed at both ends", button_type="success",callback=callback2)
-#callback2.args = {'toggle': toggle2, 'object':eigenmodes_beam2 }
-
-#callback3 = CustomJS.from_coffeescript(code=code, args={})
-#toggle3 = Toggle(label="Cantilever beam", button_type="success",callback=callback3)
-#callback3.args = {'toggle': toggle3, 'object':eigenmodes_beam3 }
-
-## Create slider widget to choose eigenvalue 1-4
-Eigenvalue_input = Slider(title="Eigenvalue/Eigenmode", value=1, start=1, end=4, step=1)
-
-def update_data(attrname, old, new):
-    global radio_button_group
-    eigen_num=Eigenvalue_input.value
-    #simply supported beam
-    x1 = np.linspace(0, 1, N)
-    y1=-np.sin(eigen_num*np.pi*x1/l)
-    source1.data = dict(x=x1, y=y1)
-    #beam fixed at both ends
-    x2=np.linspace(0,1,N)
-    if new==1:
-        y2=-(1/2*(np.cosh(4.73004*x2/l)-np.cos(4.73004*x2/l))-((1/2*(np.cosh(4.73004)-np.cos(4.73004)))/(1/2*(np.sinh(4.73004)-np.sin(4.73004))))*1/2*(np.sinh(4.73004*x2/l)-np.sin(4.73004*x2/l)))
-        y2cosh=-(1/2*(np.cosh(4.73004*x2/l)))
-        y2sinh=+((1/2*(np.cosh(4.73004)-np.cos(4.73004)))/(1/2*(np.sinh(4.73004)-np.sin(4.73004))))*1/2*(np.sinh(4.73004*x2/l))
-        y2cos=-(1/2*(np.cos(4.73004*x2/l)))
-        y2sin=-((1/2*(np.cosh(4.73004)-np.cos(4.73004)))/(1/2*(np.sinh(4.73004)-np.sin(4.73004))))*1/2*(np.sin(4.73004*x2/l))
-        source2.data=dict(x=x2,y=y2)
-        source2cosh.data=dict(x=x2,y=y2cosh)
-        source2sinh.data=dict(x=x2,y=y2sinh)
-        source2cos.data=dict(x=x2,y=y2cos)
-        source2sin.data=dict(x=x2,y=y2sin)
-    elif new==2:
-        y2=-(1/2*(np.cosh(7.853*x2/l)-np.cos(7.853*x2/l))-((1/2*(np.cosh(7.853)-np.cos(7.853)))/(1/2*(np.sinh(7.853)-np.sin(7.853))))*1/2*(np.sinh(7.853*x2/l)-np.sin(7.853*x2/l)))
-        y2cosh=-(1/2*(np.cosh(7.853*x2/l)))
-        y2sinh=+((1/2*(np.cosh(7.853)-np.cos(7.853)))/(1/2*(np.sinh(7.853)-np.sin(7.853))))*1/2*(np.sinh(7.853*x2/l))
-        y2cos=-(1/2*(np.cos(7.853*x2/l)))
-        y2sin=-((1/2*(np.cosh(7.853)-np.cos(7.853)))/(1/2*(np.sinh(7.853)-np.sin(7.853))))*1/2*(np.sin(7.853*x2/l))
-        source2.data=dict(x=x2,y=y2)
-        source2cosh.data=dict(x=x2,y=y2cosh)
-        source2sinh.data=dict(x=x2,y=y2sinh)
-        source2cos.data=dict(x=x2,y=y2cos)
-        source2sin.data=dict(x=x2,y=y2sin)
-    elif new==3:
-        y2=-(1/2*(np.cosh(10.99561*x2/l)-np.cos(10.99561*x2/l))-((1/2*(np.cosh(10.99561)-np.cos(10.99561)))/(1/2*(np.sinh(10.99561)-np.sin(10.99561))))*1/2*(np.sinh(10.99561*x2/l)-np.sin(10.99561*x2/l)))
-        y2cosh=-(1/2*(np.cosh(10.99561*x2/l)))
-        y2sinh=+((1/2*(np.cosh(10.99561)-np.cos(10.99561)))/(1/2*(np.sinh(10.99561)-np.sin(10.99561))))*1/2*(np.sinh(10.99561*x2/l))
-        y2cos=-(1/2*(np.cos(10.99561*x2/l)))
-        y2sin=-((1/2*(np.cosh(10.99561)-np.cos(10.99561)))/(1/2*(np.sinh(10.99561)-np.sin(10.99561))))*1/2*(np.sin(10.99561*x2/l))
-        source2.data=dict(x=x2,y=y2)
-        source2cosh.data=dict(x=x2,y=y2cosh)
-        source2sinh.data=dict(x=x2,y=y2sinh)
-        source2cos.data=dict(x=x2,y=y2cos)
-        source2sin.data=dict(x=x2,y=y2sin)
-    elif new==4:
-        y2=-(1/2*(np.cosh(14.137*x2/l)-np.cos(14.137*x2/l))-((1/2*(np.cosh(14.137)-np.cos(14.137)))/(1/2*(np.sinh(14.137)-np.sin(14.137))))*1/2*(np.sinh(14.137*x2/l)-np.sin(14.137*x2/l)))
-        y2cosh=-(1/2*(np.cosh(14.137*x2/l)))
-        y2sinh=+((1/2*(np.cosh(14.137)-np.cos(14.137)))/(1/2*(np.sinh(14.137)-np.sin(14.137))))*1/2*(np.sinh(14.137*x2/l))
-        y2cos=-(1/2*(np.cos(14.137*x2/l)))
-        y2sin=-((1/2*(np.cosh(14.137)-np.cos(14.137)))/(1/2*(np.sinh(14.137)-np.sin(14.137))))*1/2*(np.sin(14.137*x2/l))
-        source2.data=dict(x=x2,y=y2)
-        source2cosh.data=dict(x=x2,y=y2cosh)
-        source2sinh.data=dict(x=x2,y=y2sinh)
-        source2cos.data=dict(x=x2,y=y2cos)
-        source2sin.data=dict(x=x2,y=y2sin)
-    #cantilever beam
-    x3=np.linspace(0,1,N)
-    if new==1:
-        y3=-(1/2*(np.cosh(1.8751*x3/l)-np.cos(1.8751*x3/l))-((1/2*(np.cosh(1.8751)+np.cos(1.8751)))/(1/2*(np.sinh(1.8751)+np.sin(1.8751))))*1/2*(np.sinh(1.8751*x3/l)-np.sin(1.8751*x3/l)))
-        y3=-(1/2*(np.cosh(1.8751*x3/l)-np.cos(1.8751*x3/l))-((1/2*(np.cosh(1.8751)+np.cos(1.8751)))/(1/2*(np.sinh(1.8751)+np.sin(1.8751))))*1/2*(np.sinh(1.8751*x3/l)-
-            np.sin(1.8751*x3/l)))
-        y3cosh=-(1/2*(np.cosh(1.8751*x2/l)))
-        y3sinh=+((1/2*(np.cosh(1.8751)+np.cos(1.8751)))/(1/2*(np.sinh(1.8751)+np.sin(1.8751))))*1/2*(np.sinh(1.8751*x2/l))
-        y3cos=-(1/2*(np.cos(1.8751*x2/l)))
-        y3sin=-((1/2*(np.cosh(1.8751)+np.cos(1.8751)))/(1/2*(np.sinh(1.8751)+np.sin(1.8751))))*1/2*(np.sin(1.8751*x2/l))
-        source3.data=dict(x=x3,y=y3)
-        source3cosh.data=dict(x=x3,y=y3cosh)
-        source3sinh.data=dict(x=x3,y=y3sinh)
-        source3cos.data=dict(x=x3,y=y3cos)
-        source3sin.data=dict(x=x3,y=y3sin)
-    elif new==2:
-        y3=-(1/2*(np.cosh(4.69409*x3/l)-np.cos(4.69409*x3/l))-((1/2*(np.cosh(4.69409)+np.cos(4.69409)))/(1/2*(np.sinh(4.69409)+np.sin(4.69409))))*1/2*(np.sinh(4.69409*x3/l)-
-            np.sin(4.69409*x3/l)))
-        y3cosh=-(1/2*(np.cosh(4.69409*x2/l)))
-        y3sinh=+((1/2*(np.cosh(4.69409)+np.cos(4.69409)))/(1/2*(np.sinh(4.69409)+np.sin(4.69409))))*1/2*(np.sinh(4.69409*x2/l))
-        y3cos=-(1/2*(np.cos(4.69409*x2/l)))
-        y3sin=-((1/2*(np.cosh(4.69409)+np.cos(4.69409)))/(1/2*(np.sinh(4.69409)+np.sin(4.69409))))*1/2*(np.sin(4.69409*x2/l))
-        source3.data=dict(x=x3,y=y3)
-        source3cosh.data=dict(x=x3,y=y3cosh)
-        source3sinh.data=dict(x=x3,y=y3sinh)
-        source3cos.data=dict(x=x3,y=y3cos)
-        source3sin.data=dict(x=x3,y=y3sin)
-    elif new==3:
-        y3=-(1/2*(np.cosh(7.85476*x3/l)-np.cos(7.85476*x3/l))-((1/2*(np.cosh(7.85476)+np.cos(7.85476)))/(1/2*(np.sinh(7.85476)+np.sin(7.85476))))*1/2*(np.sinh(7.85476*x3/l)-np.sin(7.85476*x3/l)))
-        y3cosh=-(1/2*(np.cosh(7.85476*x2/l)))
-        y3sinh=+((1/2*(np.cosh(7.85476)+np.cos(7.85476)))/(1/2*(np.sinh(7.85476)+np.sin(7.85476))))*1/2*(np.sinh(7.85476*x2/l))
-        y3cos=-(1/2*(np.cos(7.85476*x2/l)))
-        y3sin=-((1/2*(np.cosh(7.85476)+np.cos(7.85476)))/(1/2*(np.sinh(7.85476)+np.sin(7.85476))))*1/2*(np.sin(7.85476*x2/l))
-        source3.data=dict(x=x3,y=y3)
-        source3cosh.data=dict(x=x3,y=y3cosh)
-        source3sinh.data=dict(x=x3,y=y3sinh)
-        source3cos.data=dict(x=x3,y=y3cos)
-        source3sin.data=dict(x=x3,y=y3sin)
-    elif new==4:
-        y3=-(1/2*(np.cosh(10.99554*x3/l)-np.cos(10.99554*x3/l))-((1/2*(np.cosh(10.99554)+np.cos(10.99554)))/(1/2*(np.sinh(10.99554)+np.sin(10.99554))))*1/2*(np.sinh(10.99554*x3/l)-np.sin(10.99554*x3/l)))
-        y3cosh=-(1/2*(np.cosh(10.99554*x2/l)))
-        y3sinh=+((1/2*(np.cosh(10.99554)+np.cos(10.99554)))/(1/2*(np.sinh(10.99554)+np.sin(10.99554))))*1/2*(np.sinh(10.99554*x2/l))
-        y3cos=-(1/2*(np.cos(10.99554*x2/l)))
-        y3sin=-((1/2*(np.cosh(10.99554)+np.cos(10.99554)))/(1/2*(np.sinh(10.99554)+np.sin(10.99554))))*1/2*(np.sin(10.99554*x2/l))
-        source3.data=dict(x=x3,y=y3)
-        source3cosh.data=dict(x=x3,y=y3cosh)
-        source3sinh.data=dict(x=x3,y=y3sinh)
-        source3cos.data=dict(x=x3,y=y3cos)
-        source3sin.data=dict(x=x3,y=y3sin)
+def update_cantilever_beam(attrname, old, new):
+    beam_cantilever(ev_num=new)
     
-Eigenvalue_input.on_change('value',update_data)
+ev_input1.on_change('value',update_simple_beam)
+ev_input2.on_change('value',update_fixed_beam)
+ev_input3.on_change('value',update_cantilever_beam)
 
-curdoc().add_root(row(column(p1,p2,p3),column(Eigenvalue_input,p4)))
+
+# app description
+description_filename = join(dirname(__file__), "description.html")
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=862)
+
+curdoc().add_root(column(description, Spacer(height=50), \
+                  p1,ev_input1, Spacer(height=100), \
+                  p2,ev_input2, Spacer(height=100), \
+                  p3,ev_input3))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 

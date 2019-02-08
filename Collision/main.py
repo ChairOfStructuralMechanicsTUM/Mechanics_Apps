@@ -1,13 +1,21 @@
 import numpy as np
 from bokeh.io import curdoc
 from bokeh.plotting import Figure
-import BarChart as BC
+import Collision_BarChart as BC
 from bokeh.layouts import column, row, widgetbox
-from bokeh.models import Button, Slider, Arrow, OpenHead, Div
+from bokeh.models import Button, Slider, Arrow, OpenHead, Div, ColumnDataSource
 from bokeh.models.layouts import Spacer
-import Functions
+import Collision_Functions
 from os.path import dirname, join, split
 from bokeh.events import Pan
+
+'''
+###############################################################################
+Global variables as ColumnDataSources
+###############################################################################
+'''
+glCollisionCr = ColumnDataSource(data=dict(val=[1.0])) # collision parameter
+g1Collision   = ColumnDataSource(data=dict(cid=[None])) # callback id
 
 '''
 ###############################################################################
@@ -28,12 +36,11 @@ playGround = Figure(
                    )
 
 playGround.title.text_font_size = "25px"
-playGround.title.align = "center"
-playGround.grid.visible = False
-playGround.xaxis.visible = False
-playGround.yaxis.visible = False
-
-
+playGround.title.align          = "center"
+playGround.grid.visible         = False
+playGround.xaxis.visible        = False
+playGround.yaxis.visible        = False
+playGround.toolbar.logo         = None
 
 
 '''
@@ -68,13 +75,8 @@ if dirTwo < 0:
 magOne = np.sqrt( v_x1 ** 2 + v_y1 ** 2 )
 magTwo = np.sqrt( v_x2 ** 2 + v_y2 ** 2 )
 
-
-
 velocityVectorOne = np.array([v_x1,v_y1])
 velocityVectorTwo = np.array([v_x2,v_y2])
-
-# Collision Parameters
-glCollisionCr = 1.0
 
 # Define the dynamic simulation parameters
 dt = 0.01
@@ -82,8 +84,8 @@ tolerance = 0.1
 velocityTolerance = 0.05
 
 # Construct particles
-particleOne = Functions.Particle(m1, r1, c1, np.array([x1,y1]), velocityVectorOne)
-particleTwo = Functions.Particle(m2, r2, c2, np.array([x2,y2]), velocityVectorTwo)
+particleOne = Collision_Functions.Collision_Particle(m1, r1, c1, np.array([x1,y1]), velocityVectorOne)
+particleTwo = Collision_Functions.Collision_Particle(m2, r2, c2, np.array([x2,y2]), velocityVectorTwo)
 
 # Construct source files
 particleOne.update_position_source()
@@ -125,13 +127,13 @@ playGround.add_layout(
                            ) 
                      )
                             
-system = Functions.CollidingSystem([[xMin,xMax],[yMin,yMax]], [particleOne, particleTwo])
+system = Collision_Functions.Collision_CollidingSystem([[xMin,xMax],[yMin,yMax]], [particleOne, particleTwo])
 
 '''
 ##  Define the energy bar
 '''
 
-barsFig = BC.BarChart(
+barsFig = BC.Collision_BarChart(
                       ["Green ball",
                       "Orange ball",
                       "Whole system"],
@@ -173,6 +175,8 @@ through time
 '''
 # Calculate the new location of the two balls
 def compute_trajectory():
+    [glCollisionCr_val] = glCollisionCr.data["val"] # input/
+    
     # Compute the new position of the circles' center
     particleOne.position[0] += particleOne.velocity[0]*dt
     particleOne.position[1] += particleOne.velocity[1]*dt
@@ -262,12 +266,12 @@ def compute_trajectory():
         # Calculate the new normal velocity component of each ball according to
         # the law of collision
         v1NormalAfter = (
-                             glCollisionCr*m2*(v2Normal-v1Normal) 
+                             glCollisionCr_val*m2*(v2Normal-v1Normal) 
                            + m1*v1Normal + m2*v2Normal
                         ) / (m1 + m2)
         
         v2NormalAfter = (
-                             glCollisionCr*m1*(v1Normal-v2Normal) 
+                             glCollisionCr_val*m1*(v1Normal-v2Normal) 
                            + m1*v1Normal + m2*v2Normal
                         ) / (m1 + m2)
         
@@ -302,8 +306,7 @@ def compute_trajectory():
     particleOne.update_position_source()
     particleTwo.update_position_source()
     
-
-    
+ 
 '''
 ###############################################################################
 Add the interactive functionalities
@@ -311,9 +314,10 @@ Add the interactive functionalities
 '''
 ########################### Creating reset button #############################
 def Reset():
+    [g1Collision_id] = g1Collision.data["cid"] # input/
     if curdoc().session_callbacks:
         for c in curdoc().session_callbacks:
-            curdoc().remove_periodic_callback(c)
+            curdoc().remove_periodic_callback(g1Collision_id)
     
     # Return the solider to their default values
     ballOneVelocityDirSlider.value = dirOne
@@ -339,17 +343,18 @@ reset_button.on_click(Reset)
 
 ########################### Creating play-pause button ##############################
 def playpause():
+    [g1Collision_id] = g1Collision.data["cid"] # input/output
     if playpause_button.label == "Play":
-        curdoc().add_periodic_callback(compute_trajectory, 10)
+        g1Collision_id = curdoc().add_periodic_callback(compute_trajectory, 10)
         playpause_button.label = "Pause"
         ballOneVelocityDirSlider.disabled = True
         ballOneVelocityMagSlider.disabled = True
-        ballTwoVelocityDirSlider.disabled = True
+        ballTwoVelocityDirSlider.disabled = True    
         ballTwoVelocityMagSlider.disabled = True
        # crSlider.disabled = True  # We can leave the Cr Slider enabled while the app is running, changing Cr on the fly is anice feature and has no impact on performance
     else:
         for c in curdoc().session_callbacks:
-            curdoc().remove_periodic_callback(c)
+            curdoc().remove_periodic_callback(g1Collision_id)
         playpause_button.label = "Play"
 
         #update sliders
@@ -363,7 +368,8 @@ def playpause():
         ballTwoVelocityDirSlider.disabled = False
         ballTwoVelocityMagSlider.disabled = False
        # crSlider.disabled = False # The slider has not to be enabled again, if it did not get disabled in line 349
-
+       
+    g1Collision.data = dict(cid=[g1Collision_id])
 
 playpause_button = Button(label="Play", button_type="success")
 playpause_button.on_click(playpause)
@@ -474,8 +480,7 @@ ballTwoVelocityMagSlider.on_change('value',update_ballTwo_VelocityMag)
 
 ################# Creating coefficient of restitution slider ##################
 def update_Cr_value(attr,old,new):
-    global glCollisionCr
-    glCollisionCr = new
+    glCollisionCr.data = dict(val=[new]) #      /output
 
 crSlider = Slider(
                    title=u" Coefficient of Restitution ",

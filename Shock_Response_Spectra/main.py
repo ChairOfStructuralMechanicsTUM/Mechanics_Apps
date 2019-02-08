@@ -1,9 +1,9 @@
 from __future__ import division
+#Importing spring,damper and mass
 from Spring import *
 from Dashpot import *
 from Mass import *
-
-
+#importing plotting objects from bokeh
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer, gridplot
 from bokeh.io import curdoc
@@ -17,7 +17,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_support import LatexDiv
+from latex_support import LatexDiv,LatexLabel,LatexLabelSet
 from math import sqrt, exp, pow, sin , cos, ceil, pi, atan2, sinh, cosh
 from numpy import convolve, amax, argmax
 import numpy 
@@ -30,7 +30,7 @@ TimePeriodRatio = 1
 force_value = 1.
 Force_duration = 1
 ForceInput = ""
-h = []
+h = [] 
 FI =[]
 final = []
 Te = Force_duration/TimePeriodRatio   
@@ -82,8 +82,6 @@ def Initialise():
         h.append(x)
     final = dt*convolve(FI,h,mode='full')
     
-    
-
 Initialise()
 
 Bottom_Line = ColumnDataSource(data = dict(x=[-2,2],y=[8,8]))
@@ -116,8 +114,8 @@ def evolve():
     maximum = 0
     maximumat = 0
     if(t==0):
-        final*=0
-        for i in range(0,1000,1): # making rectangular function 
+        final*=0 # reset the list 
+        for i in range(0,1000,1): # finding unit response function and store
             T= i*dt
             x=(1/(float(mass.Getmass())*WD))*exp(-D*W*T)*sin(WD*T) 
             h[i] = x
@@ -142,7 +140,6 @@ fig.title.text_font_size="20pt"
 fig.axis.visible = False
 fig.grid.visible = False
 fig.outline_line_color = None
-# fig.line(x=[-7,7],y=[9,9],color="blue",line_width=3)
 fig.line(x=[-2,2],y=[.75,.75],color="black",line_width=3)
 fig.multi_line(xs=[[-2.75,-2],[-1.75,-1.0],[-0.75,0],[.25,1],[1.25,2]],
     ys=[[0,0.75],[0,0.75],[0,0.75],[0,0.75],[0,0.75]],
@@ -158,27 +155,27 @@ arrow = fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red",
 
 # time plot
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
-p = figure(title="", y_range=(2,-2), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
+Displacement = figure(title="", y_range=(2,-2), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
     toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
-p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
-p.axis.major_label_text_font_size="12pt"
-p.axis.axis_label_text_font_style="normal"
-p.axis.axis_label_text_font_size="14pt"
-p.xaxis.axis_label="Time [s]"
-p.yaxis.axis_label="Displacement [u/(F/k)]"
-p.legend.location="top_right"
-p.legend.click_policy="mute"
+Displacement.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
+Displacement.axis.major_label_text_font_size="12pt"
+Displacement.axis.axis_label_text_font_style="normal"
+Displacement.axis.axis_label_text_font_size="14pt"
+Displacement.xaxis.axis_label="Time [s]"
+Displacement.yaxis.axis_label="Displacement [u/(F/k)]"
+Displacement.legend.location="top_right"
+Displacement.legend.click_policy="mute"
 
 
-p_af = figure(title="", tools="", x_range=(0,3.0), y_range=(0,4), width=300, height=300)
-p_af.circle(x='time', y='omega', source=omega_max, color="#a2ad00")
-p_af.xaxis.axis_label="To/Te"
-p_af.yaxis.axis_label="w_max/(F/k)"
+Dis_max = figure(title="", tools="", x_range=(0,3.0), y_range=(0,4), width=600, height=600)
+Dis_max.circle(x='time', y='omega', source=omega_max, color="#a2ad00")
+Dis_max.xaxis.axis_label="To/Te"
+Dis_max.yaxis.axis_label="w_max/(F/k)"
 
-p_pa = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=300, height=300)
-p_pa.circle(x='time', y='tmax', source=t_max, color="#a2ad00")
-p_pa.xaxis.axis_label="Tmax to T0 ratio"
-p_pa.yaxis.axis_label="t_max"
+T_max = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=600, height=600)
+T_max.circle(x='time', y='tmax', source=t_max, color="#a2ad00")
+T_max.xaxis.axis_label="Tmax to T0 ratio"
+T_max.yaxis.axis_label="t_max"
 
 InputForce = figure(title="", tools="", x_range=(0,3.0), y_range=(0,2), width=300, height=150)
 InputForce.line(x='beta', y='phi', source=Force_input, color="#a2ad00")
@@ -204,7 +201,7 @@ def change_damping_coefficient(attr,old,new):
     global damper,initial_spring_constant_value,initial_mass_value
     damper.changeDamperCoeff(float(new*2*sqrt(initial_spring_constant_value*initial_mass_value)))
     updateParameters()
-damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=initial_damping_ratio, callback_policy="mouseup", start=0.0, end=1, step=0.05,width=400)
+damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=initial_damping_ratio, callback_policy="mouseup", start=0.0, end=1, step=0.05,width=600)
 damping_coefficient_input.on_change('value',change_damping_coefficient)
 
 ## Create slider to choose the frequency ratio
@@ -213,7 +210,7 @@ def change_frequency_ratio(attr,old,new):
     if (not Active):
         TimePeriodRatio = new
         updateParameters()
-frequency_ratio_input = Slider(title="Impulse duration to natural period ratio", value=TimePeriodRatio, start=0.1, end=3.0, step=0.1,width=400)
+frequency_ratio_input = Slider(title="Impulse duration to natural period ratio", value=TimePeriodRatio, start=0.1, end=3.0, step=0.1,width=600)
 frequency_ratio_input.on_change('value',change_frequency_ratio)
 
 def pause():
@@ -233,7 +230,6 @@ def reset(): # resets values to initial cofiguration
     pause()
     t=0
     s=0
-    
     displacement.data=dict(t=[0],s=[initial_displacement_value])
     drawing_displacement = -initial_displacement_value * spring.getSpringConstant
     move_system(drawing_displacement)
@@ -241,9 +237,28 @@ def reset(): # resets values to initial cofiguration
         arrow_line.data=dict(x1=[0],x2=[0],y1=[15+drawing_displacement],y2=[12+drawing_displacement])
     else:
         arrow_line.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
-
-    #Initialise() 
     updateParameters()
+
+def reset_OmegaMax_plot():
+    global omega_max,time,omega
+    pause()
+    time = 0
+    omega = 0
+    omega_max.data=dict(time=[0],omega=[0])
+    updateParameters()
+
+def reset_Tmax_plot():
+    global t_max,time,tmax
+    pause()
+    time = 0
+    tmax =0
+    t_max.data=dict(time=[0],tmax=[0])
+    updateParameters()
+
+reset_button_p_af = Button(label="Reset", button_type="success", width=50)
+reset_button_p_af.on_click(reset_OmegaMax_plot)
+reset_button_p_pa = Button(label="Reset", button_type="success", width=50)
+reset_button_p_pa.on_click(reset_Tmax_plot)
 
 def updateParameters():
     #input
@@ -267,13 +282,12 @@ def updateParameters():
 
     parameters.data = dict(names1=[u'\u03c9',"Te"],names2=["D",u'\u03c9*'],values1=[round(W,4),round(Te,4)],values2=[round(D,4),round(WD,4)])
 
-
 play_button = Button(label="Play", button_type="success",width=100)
 play_button.on_click(play)
 pause_button = Button(label="Pause", button_type="success",width=100)
 pause_button.on_click(pause)
-stop_button = Button(label="Reset", button_type="success", width=100)
-stop_button.on_click(reset)
+reset_button = Button(label="Reset", button_type="success", width=100)
+reset_button.on_click(reset)
 
 def ChangeForce(forcetype):
     global FI,final
@@ -285,7 +299,7 @@ def ChangeForce(forcetype):
         Force_input.stream(dict(beta=[2],phi=[0]))
         final *= 0
         FI *= 0
-        for i in range(0,1000,1): # making rectangular function 
+        for i in range(0,1000,1): # making triangular function 
             T= i*0.02
             if (T<=1):
                 FI.append(T) 
@@ -306,7 +320,17 @@ def ChangeForce(forcetype):
             else:
                 FI.append(0)
     else:
-        print("Sinusoidal not yet implemented")
+        Force_input.data=dict(beta=[0],phi=[0])
+        for i in range(0,100,1):
+            Force_input.stream(dict(beta=[0.01*i],phi=[sin(0.01*i*pi)]))
+        final *= 0
+        FI *= 0
+        for i in range(0,1000,1): # making sinusoidal functions
+            T= i*0.02
+            if (T<=1):
+                FI.append(sin(T*pi)) 
+            else:
+                FI.append(0)
 
 def ForceSelection(attr,old,new):   
     ChangeForce(new)
@@ -332,8 +356,13 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 ## Send to window
 hspace = 20
 curdoc().add_root(column(description,\
-    row(column(row(column(row(column(fig,column(play_button,Spacer(width = 10),pause_button,column(Spacer(width = 10),stop_button))),column(Force_select,InputForce,parameter_table)),Spacer(height=10),p)),Spacer(height=hspace)),Spacer(width=10),\
-    column(damping_coefficient_input,frequency_ratio_input,Spacer(height=hspace),gridplot([p_af,p_pa],ncols=1,plot_width=400,plot_height=350,merge_tools=True,toolbar_location="below"))\
-    ), \
-     ))
-curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
+    row(column(row(column(row(column(fig,column(play_button,Spacer(width = 10),\
+    pause_button,column(Spacer(width = 10),reset_button))),column(Force_select,InputForce,parameter_table)),\
+    Spacer(height=10),Displacement)),Spacer(height=hspace)),Spacer(width=10),\
+    column(damping_coefficient_input,frequency_ratio_input,Spacer(height=hspace),\
+    row(gridplot([Dis_max,T_max],ncols=1,plot_width=480,plot_height=420,merge_tools=True,toolbar_location="below"),\
+    column(Spacer(height=160),reset_button_p_af,Spacer(height=370),reset_button_p_pa)))\
+    ),))
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  
+# get path of parent directory and only use the name of the Parent Directory for the tab name. 
+# Replace underscores '_' and minuses '-' with blanks ' '

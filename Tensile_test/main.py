@@ -225,7 +225,9 @@ Force_input = Slider(title="Kraft (Force)", value=0.0, start=0.0, end=110.0, ste
 Force_input.on_change('value',Pull)
 
 ## Create Plot
-toolset = "pan,reset,resize,wheel_zoom"
+# seems like resize is not supported anymore
+#toolset = "pan,reset,resize,wheel_zoom"
+toolset = "pan,reset,box_zoom,wheel_zoom"
 plot = figure(title="Diagramm (Graph)", tools=toolset, x_range=[0,110], y_range=[0,120])
 plot.title.text_font_size="20pt"
 plot.xaxis.axis_label_text_font_size="14pt"

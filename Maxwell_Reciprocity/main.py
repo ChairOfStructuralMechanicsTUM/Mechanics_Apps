@@ -1,16 +1,16 @@
-from bokeh.plotting import Figure, output_file , show
-from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, NormalHead, Arrow, Div
-from bokeh.layouts import column, row, widgetbox
+from bokeh.plotting import Figure#, output_file , show
+from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, NormalHead, Arrow#, Div
+from bokeh.layouts import column, row#, widgetbox
 from bokeh.models.widgets import Button
 from bokeh.models.glyphs import Text
 from bokeh.io import curdoc
-import numpy as np
+#import numpy as np
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_div import LatexDiv
+from latex_support import LatexDiv
 
 
 #main1
@@ -84,13 +84,13 @@ class Frame(object):
 ################################################################################
 #global constants:
 ################################################################################
-a           = 0.5                                                               #width of frames
-b           = 0.7                                                               #Height of box
-FScale      = 150.0                                                             #Scaling factor
+a            = 0.5                                                               #width of frames
+b            = 0.7                                                               #Height of box
+FScale       = 150.0                                                             #Scaling factor
 #offsetKraft = 0.08                                                              #
-tri_size    = 30                                                                #Default size of Triangle
-changer     = 0                                                                 #Global variable that changes when 'save deformed button is clicked'
-shift       = 0.01                                                              #Shifting factor
+tri_size     = 30                                                                #Default size of Triangle
+glob_changer = ColumnDataSource(data=dict(val=[0]))                                                                 #Global variable that changes when 'save deformed button is clicked'
+shift        = 0.01                                                              #Shifting factor
 #shift2      = 0.015
 ps = 0.3                                                                        #used to shift size of plot
 plotx0 = 0.1-ps
@@ -798,7 +798,7 @@ def calc_betty_displacements12(f):
 def calc_betty_displacements21(f):
     ParamInt = f1.get_param()
     #print ParamInt
-    i = f.get_mag()
+    #i = f.get_mag()
     names21 = " w"u"\u2082"u"\u2081" 
     
     if ParamInt < 30:
@@ -966,7 +966,8 @@ def update_fun(attr,old,new):
     called in update_fun
     changer == 0 means that the 'save deformed frame' button has not been
     pressed yet.
-    changer == 1 is when the button has been preseed and f2 is created'''
+    changer == 1 is when the button has been pressed and f2 is created'''
+    [changer] = glob_changer.data["val"] # input/
     if changer == 0:
         f1.set_param(loc_slider.value)
         f1.set_mag(mag_slider.value)
@@ -999,16 +1000,15 @@ def button_fun():
     This button changes the changer value to 1, which affects update_fun
     (see update_fun for more details.) it also switches f2 to f1 if f2 already
     exists.'''
-    global changer
-    changer = 1
+    glob_changer.data=dict(val=[1]) #      /output
     f1.set_param(loc_slider.value)
     f1.set_mag(mag_slider.value)
     create_prof(f1)
     create_shift(f1)
     create_wdline(f1)
     # mag_slider.value        = mag_val
-    loc_slider.value        = loc_val
-    f2.p_mag = f1.p_mag
+    loc_slider.value  = loc_val
+    f2.p_mag          = f1.p_mag
     # f2.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     # f2.w1.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
     # f2.w2.data              = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -1017,19 +1017,18 @@ def button_fun():
     # f2.w12_12.data              = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     # f2.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     mag_slider.disabled = True
-    button.disabled = True
+    button.disabled     = True
     
 
 def initial():
     '''Function that initializes everything'''
-    global changer
-    changer                 = 0
-    mag_slider.value        = mag_val
-    loc_slider.value        = loc_val
+    glob_changer.data = dict(val=[0]) #      /output
+    mag_slider.value  = mag_val
+    loc_slider.value  = loc_val
     clearf1()
     clearf2()
     mag_slider.disabled = False
-    button.disabled = False
+    button.disabled     = False
 
 def clearf1():
     '''Clears the f1 frame'''
@@ -1104,6 +1103,7 @@ plot = Figure(tools = "", x_range=(plotx0,plotxf),
 #Plot properties:
 plot.axis.visible = False
 plot.grid.visible = False
+plot.toolbar.logo = None
 plot.outline_line_width = 1
 plot.outline_line_alpha = 0.3
 plot.outline_line_color = "Black"

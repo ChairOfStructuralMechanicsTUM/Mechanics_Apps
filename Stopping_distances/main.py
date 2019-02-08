@@ -1,22 +1,22 @@
-from Problem import Problem
-from Graphs import Graphs
-from Visualisation import Visualisation
+from SD_Problem import SD_Problem
+from SD_Graphs import SD_Graphs
+from SD_Visualisation import SD_Visualisation
 
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_div import LatexDiv
+from latex_support import LatexDiv
 
 from bokeh.io import curdoc
 from bokeh.layouts import column, row
 
 
 # create each part of the window
-Visual=Visualisation()
-Plotter=Graphs()
-Prob = Problem(Visual,Plotter)
+Visual  = SD_Visualisation()
+Plotter = SD_Graphs()
+Prob    = SD_Problem(Visual,Plotter)
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")

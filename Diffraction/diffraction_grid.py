@@ -3,7 +3,7 @@ import numpy as np
 from diffraction_computation import compute_wave_amplitude, compute_fresnel_at_polar, cart2pol
 
 
-class Grid:
+class diffraction_Grid:
 
     def __init__(self, x_min, x_max, nx, y_min, y_max, ny):
 
