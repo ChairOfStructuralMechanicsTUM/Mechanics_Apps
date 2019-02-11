@@ -1,11 +1,12 @@
 import Cantilever_beam_classes as functions
 from bokeh.io import curdoc
 from bokeh.plotting import Figure, ColumnDataSource
-from bokeh.layouts import row, column
+from bokeh.layouts import row, column, widgetbox
 from bokeh.models import Slider, LabelSet, Div
 from bokeh.models import Arrow, NormalHead, OpenHead, VeeHead
 from os.path import dirname, join, split
 from bokeh.models.layouts import Spacer
+from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
 
 # Define basic beam parameters and loading
 length = 5.0
@@ -14,6 +15,7 @@ thickness = 1.0
 E = 1000000000.0
 Py = 0.0 #-1000
 Pz = 0.0 #2000
+cross_section_options_i = 0
 
 # Define mesh for visualization
 noElementsX = 80
@@ -412,6 +414,7 @@ def fun_change_Pz(attrname, old, new):
 def init_data():
     fun_change_Py(None,None,None)
     fun_change_Pz(None,None,None)
+    radio_button_group.active = 0
 
 
 # Construct the source file of all the beams
@@ -446,11 +449,18 @@ sourceFzLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fz']
 Yforce_slider = Slider(title="Y-direction of the force (N)", value=0.0, start=-5000.0, end=5000.0, step=100.0)
 Zforce_slider = Slider(title="Z-direction of the force (N)", value=0.0, start=-5000.0, end=5000.0, step=100.0)
 
+# Construct radio button to choose between geometries of cross section
+radio_button_group = RadioButtonGroup(name="Geometry of cross section",labels=["Rectangular", "Circular", "Double-T"], active=cross_section_options_i)
 
-# Construct the figures which will visulize the beams
-#plotUndefXY = Figure(    
-#                         plot_width=350    , 
-#                         plot_height=350   ,
+# Construct slider to choose x-position of visualized cross section
+Xpos_slider = Slider(title="X-position", value=0.0, start=0.0, end=5.0, step=0.5)
+
+# Construct reset button
+Reset_button = Button(label="Reset", button_type="success")
+
+
+
+
 #                         x_range = ( 0,6 ) ,
 #                         y_range= ( -3,3 ) ,
 #                         title = 'Undefromed Cofiguration in XY plane',
@@ -486,6 +496,7 @@ plotDefXY.yaxis.major_label_text_color=None
 plotDefXY.yaxis.minor_tick_line_color=None
 plotDefXY.yaxis.axis_line_color=None
 plotDefXY.grid.visible = False
+plotDefXY.toolbar.logo = None
 plotDefXY.title.text_font_size="12.5pt"
 #plotDefXY.xaxis.axis_label_text_font_size="12pt"
 #plotDefXY.yaxis.axis_label_text_font_size="12pt"
@@ -557,6 +568,7 @@ plotDefXZ.yaxis.major_label_text_color=None
 plotDefXZ.yaxis.minor_tick_line_color=None
 plotDefXZ.yaxis.axis_line_color=None
 plotDefXZ.grid.visible = False
+plotDefXZ.toolbar.logo = None
 plotDefXZ.title.text_font_size="12.5pt"
 #plotDefXZ.xaxis.axis_label_text_font_size="12pt"
 #plotDefXZ.yaxis.axis_label_text_font_size="12pt"
@@ -590,6 +602,62 @@ plotDefXZ.add_layout(
                                 )
                     )
 
+
+######################
+plotDefYZ = Figure(    
+                       plot_width=400    , 
+                       plot_height=400   ,
+                       x_range = ( -1,6.5 ) ,
+                       y_range= ( -3.5,3.5 ) ,
+                       title = 'Stresses in Y-Z plane',
+                       tools = ''
+                  )
+plotDefYZ.xaxis.major_tick_line_color=None
+plotDefYZ.xaxis.major_label_text_color=None
+plotDefYZ.xaxis.minor_tick_line_color=None
+plotDefYZ.xaxis.axis_line_color=None
+plotDefYZ.yaxis.major_tick_line_color=None
+plotDefYZ.yaxis.major_label_text_color=None
+plotDefYZ.yaxis.minor_tick_line_color=None
+plotDefYZ.yaxis.axis_line_color=None
+plotDefYZ.grid.visible = False
+plotDefYZ.toolbar.logo = None
+plotDefYZ.title.text_font_size="12.5pt"
+#plotDefXY.xaxis.axis_label_text_font_size="12pt"
+#plotDefXY.yaxis.axis_label_text_font_size="12pt"
+#plotDefXY.xaxis.axis_label="x"
+#plotDefXY.yaxis.axis_label="y"
+labelYZ = ColumnDataSource(data=dict(x=[2.5,-0.5],
+                                     y=[2.7,-.3],
+                                     text=['y','z']))
+plotDefYZ.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_start=2.75, 
+                           y_start=-3, 
+                           x_end=2.75, 
+                           y_end=2.9, 
+                           ))
+
+plotDefYZ.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_end=-.5, 
+                           y_start=0, 
+                           x_start=5.9, 
+                           y_end=0, 
+                           ))
+plotDefYZ.add_layout(
+                      LabelSet(
+                                  x='x', y='y',
+                                  text='text',
+                                  text_color='black',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=labelYZ
+                                )
+                    )
+####################
+
+
+
 # Construct the color-bar figure
 colorBar = Figure(
                       title = '',
@@ -602,6 +670,7 @@ colorBar = Figure(
                  )
 colorBar.xaxis.visible = False
 colorBar.yaxis.visible = False
+colorBar.toolbar.logo = None
 colorBar.title.text_font_size="12pt"
 
 # create colorBar patches
@@ -641,6 +710,12 @@ plotDefXY.patches  (xs='x', ys='y', source=sourceXYdef  , color = 'c', alpha = '
 #plotUndefXZ.patches(xs='x', ys='y', source=sourceXZundef, color = 'c', alpha = 'a')
 plotDefXZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
 
+
+###################
+# plotDefYZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
+######################
+
+
 # Construct the arrows
 plotDefXY.add_layout( 
                      Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
@@ -658,7 +733,17 @@ plotDefXZ.add_layout(
                            y_end=['ye'][0], 
                            source = sourceArrowXZ)
                     )
-
+###############
+# plotDefYZ.add_layout( 
+#                      Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
+#                            x_start=['xs'][0], 
+#                            y_start=['ys'][0], 
+#                            x_end=['xe'][0], 
+#                            y_end=['ye'][0], 
+#                            source = sourceArrowXZ)
+#                     )
+########################                
+            
 
 
 # Construct the force labels
@@ -682,6 +767,20 @@ plotDefXZ.add_layout(
                               )
                     )
 
+
+########################
+# plotDefYZ.add_layout(
+#                       LabelSet(
+#                                   x='x', y='y',
+#                                   text='f',
+#                                   text_color='black',text_font_size="12pt",
+#                                   level='glyph',text_baseline="middle",text_align="center",
+#                                   source=sourceFzLabel
+#                               )
+#                     )
+#########################
+
+
 # x Axis                     
 #plotDefXY.line([0, 6], [0, 0], line_width=1, line_color="black")
 #plotDefXZ.line([0, 6], [0, 0], line_width=1, line_color="black", line_dash='dotted')
@@ -690,18 +789,21 @@ plotDefXZ.add_layout(
 # the sliders
 Yforce_slider.on_change('value',fun_change_Py)
 Zforce_slider.on_change('value',fun_change_Pz)
+radio_button_group.on_change('active',fun_change_Py,fun_change_Pz)
+Xpos_slider.on_change('value',fun_change_Py,fun_change_Pz)
+Reset_button.on_click(init_data)
 
 init_data()    
 
-area_image = Div(text="""
-<p>
-<img src="/2D_cantilever_beam/static/images/picture.jpg" width=400>
-</p>
-<p>
-3D scheme of the Cantilever Beam with the Corresponding Geometry and Material Parameters
-</p>
-<p>
-**For visualization purposes, there is a magnification factor of 100 that exaggerates the deformation""", render_as_text=False, width=400)
+# area_image = Div(text="""
+# <p>
+# <img src="/2D_cantilever_beam/static/images/picture.jpg" width=400>
+# </p>
+# <p>
+# 3D scheme of the Cantilever Beam with the Corresponding Geometry and Material Parameters
+# </p>
+# <p>
+# **For visualization purposes, there is a magnification factor of 100 that exaggerates the deformation""", render_as_text=False, width=400)
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
@@ -713,16 +815,19 @@ curdoc().add_root(
                     column(
                             description,
                             row(
-                                   column(
-                                           row(plotDefXY, plotDefXZ),
-                                           colorBar
-                                         ),
-                                   column(
-                                          Yforce_slider,
-                                          Zforce_slider,
-                                          Spacer(height=30),
-                                          area_image
-                                         )
+                                column(
+                                    widgetbox(radio_button_group),
+                                    Yforce_slider,
+                                    Zforce_slider,
+                                    Reset_button
+                                        #   Spacer(height=30),
+                                        #   area_image
+                                ),
+                                column(
+                                    row(column(row(plotDefXY, plotDefXZ),colorBar), column(plotDefYZ,Xpos_slider)),
+                                    
+                                ),
+
                                )
                           )
                  )
