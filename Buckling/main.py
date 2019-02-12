@@ -214,7 +214,7 @@ def fun_check1(attr,old,new):
     elif weight_slide.value > old_slide_val:
         fun_update(attr,old,new)
     else:
-        print "does not work"
+        print ("does not work")
     
 
 def fun_update(attr,old,new):
