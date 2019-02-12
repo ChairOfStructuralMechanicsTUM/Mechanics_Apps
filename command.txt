@@ -1,1 +1,2 @@
-bokeh serve --show Base_excited_oscillator
+activate yourenvname
+bokeh serve --show WaveletApp
