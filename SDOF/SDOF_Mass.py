@@ -2,7 +2,7 @@ from bokeh.models import ColumnDataSource
 from SDOF_Coord import SDOF_Coord
 from abc import ABCMeta, abstractmethod
 
-class DiscreteMass(object):
+class SDOF_DiscreteMass(object):
     __metaclass__ = ABCMeta
     ## create mass
     @abstractmethod
@@ -34,9 +34,9 @@ class DiscreteMass(object):
 
 ### Types of Masses
 
-class RectangularMass(DiscreteMass):
+class SDOF_RectangularMass(SDOF_DiscreteMass):
     def __init__ (self, mass, x, y, w, h):
-        DiscreteMass.__init__(self,mass)
+        SDOF_DiscreteMass.__init__(self,mass)
         # create ColumnDataSource
         self.shape = ColumnDataSource(data=dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y]))
     
@@ -50,9 +50,9 @@ class RectangularMass(DiscreteMass):
         # update ColumnDataSource
         self.shape.data=temp
 
-class CircularMass(DiscreteMass):
+class SDOF_CircularMass(SDOF_DiscreteMass):
     def __init__ (self, mass, x=0, y=0, w=0, h=0):
-        DiscreteMass.__init__(self,mass)
+        SDOF_DiscreteMass.__init__(self,mass)
         # create ColumnDataSource
         self.shape = ColumnDataSource(data=dict(x=[x],y=[y],w=[w],h=[h]))
     
