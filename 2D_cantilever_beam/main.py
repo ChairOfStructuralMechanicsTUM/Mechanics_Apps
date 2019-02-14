@@ -7,7 +7,7 @@ from bokeh.models import Arrow, NormalHead, OpenHead, VeeHead
 from os.path import dirname, join, split
 from bokeh.models.layouts import Spacer
 from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
-
+from bokeh.models.glyphs import ImageURL
 # Define basic beam parameters and loading
 length = 5.0
 height = 1.0
@@ -15,6 +15,8 @@ thickness = 1.0
 E = 1000000000.0
 Py = 0.0 #-1000
 Pz = 0.0 #2000
+
+global cross_section_options_i
 cross_section_options_i = 0
 
 # Define mesh for visualization
@@ -26,6 +28,13 @@ elementSizeY = height / noElementsY
 elementSizeZ = thickness / noElementsZ
 amplificationFactor = 100
 
+# Cross Section Source:
+CrossSection1 = "2D_cantilever_beam/static/images/Rectangular.png"
+CrossSection2 = "2D_cantilever_beam/static/images/Circular.png"
+CrossSection3 = "2D_cantilever_beam/static/images/DoubleT.png"
+CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
+CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
+CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , y=[]))
 def deformed_cantilever_beam_determiner_XY( 
                                             length, height, thickness, E, Py, 
                                             Pz, noElementsX, noElementsY, 
@@ -410,11 +419,43 @@ def fun_change_Pz(attrname, old, new):
         
     update_colorBar_extremas(smallestValue,biggestValue)
 
+##########################
+
+def fun_change_Tyz(attrname, old, new):
+    # global Pz, listDeformedElementsXZ 
+    # global radio_button_group.active
+    # print radio_button_group.active
+    if (radio_button_group.active == 0 ):
+        CrossSectionSource1.data = dict(sp1=[CrossSection1], x = [0], y = [0])
+        CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
+        CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
+    elif (radio_button_group.active == 1):
+        CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
+        CrossSectionSource2.data = dict(sp2=[CrossSection2], x = [0], y = [0])
+        CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
+    elif (radio_button_group.active == 2):
+        CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
+        CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
+        CrossSectionSource3.data = dict(sp3=[CrossSection3], x = [0], y = [0])
+
+
+
+
+
+
+##########################
         
 def init_data():
-    fun_change_Py(None,None,None)
-    fun_change_Pz(None,None,None)
+
+    Yforce_slider.value = 0
+    Zforce_slider.value = 0
+    Xpos_slider.value   = 0
     radio_button_group.active = 0
+
+    fun_change_Py(None,None, None)
+    fun_change_Pz(None,None, None)
+    fun_change_Tyz(None,None,None)
+    
 
 
 # Construct the source file of all the beams
@@ -607,8 +648,8 @@ plotDefXZ.add_layout(
 plotDefYZ = Figure(    
                        plot_width=400    , 
                        plot_height=400   ,
-                       x_range = ( -1,6.5 ) ,
-                       y_range= ( -3.5,3.5 ) ,
+                       x_range = ( -10,10 ) ,
+                       y_range= ( -10,10 ) ,
                        title = 'Stresses in Y-Z plane',
                        tools = ''
                   )
@@ -627,22 +668,22 @@ plotDefYZ.title.text_font_size="12.5pt"
 #plotDefXY.yaxis.axis_label_text_font_size="12pt"
 #plotDefXY.xaxis.axis_label="x"
 #plotDefXY.yaxis.axis_label="y"
-labelYZ = ColumnDataSource(data=dict(x=[2.5,-0.5],
-                                     y=[2.7,-.3],
+labelYZ = ColumnDataSource(data=dict(x=[0.5,-8.5],
+                                     y=[8.0,-1.0],
                                      text=['y','z']))
 plotDefYZ.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                           x_start=2.75, 
-                           y_start=-3, 
-                           x_end=2.75, 
-                           y_end=2.9, 
+                           x_start=0, 
+                           y_start=-9, 
+                           x_end=0, 
+                           y_end=9, 
                            ))
 
 plotDefYZ.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                           x_end=-.5, 
+                           x_end=-9, 
                            y_start=0, 
-                           x_start=5.9, 
+                           x_start=9, 
                            y_end=0, 
                            ))
 plotDefYZ.add_layout(
@@ -654,6 +695,10 @@ plotDefYZ.add_layout(
                                   source=labelYZ
                                 )
                     )
+plotDefYZ.add_glyph(CrossSectionSource1,ImageURL(url="sp1", x=-5.0/3.0, y=5.0/3.0, w=10.0/3.0, h=10.0/3.0))
+plotDefYZ.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-5.0/3.0, y=5.0/3.0, w=10.0/3.0, h=10.0/3.0))
+plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-5.0/3.0, y=5.0/3.0, w=10.0/3.0, h=10.0/3.0))
+
 ####################
 
 
@@ -789,7 +834,7 @@ plotDefXZ.add_layout(
 # the sliders
 Yforce_slider.on_change('value',fun_change_Py)
 Zforce_slider.on_change('value',fun_change_Pz)
-radio_button_group.on_change('active',fun_change_Py,fun_change_Pz)
+radio_button_group.on_change('active',fun_change_Py,fun_change_Pz,fun_change_Tyz)
 Xpos_slider.on_change('value',fun_change_Py,fun_change_Pz)
 Reset_button.on_click(init_data)
 
