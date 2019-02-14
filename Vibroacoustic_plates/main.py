@@ -3,19 +3,20 @@ from bokeh.io import curdoc, show
 from bokeh.models import Div, Label, Plot, ColumnDataSource
 from bokeh.models.widgets import Button, RadioButtonGroup, Select, Slider
 from bokeh.plotting import figure
+from bokeh.layouts import column, row, Spacer
 
 # Link third-party python libraries
 from functools import partial
 
 # Link custom files
-from UnicodeSymbols import *
-from Helper import *
-from Graphs import *
-from GraphClass import GraphObject
-from MessageClass import Message
-from Functions import *
-from Homogenization import *
-from InteractiveTable import *
+from VibroP_UnicodeSymbols import *
+from VibroP_Helper import *
+from VibroP_Graphs import *
+from VibroP_GraphClass import VibroP_GraphObject
+from VibroP_MessageClass import VibroP_Message
+from VibroP_Functions import *
+from VibroP_Homogenization import homogenize
+from VibroP_InteractiveTable import VibroP_TableCorrupted, VibroP_InteractiveTable
 
 
 
@@ -41,7 +42,7 @@ def main( ):
 
 
 
-    Graph = GraphObject( [ "Wave Velocities",
+    Graph = VibroP_GraphObject( [ "Wave Velocities",
                            "Wave Velocities plus Limit Frequencies",
                            "Modes in Band",
                            "Modal Density",
@@ -65,7 +66,7 @@ def main( ):
     # CREATE TABLES:
     # ........................ Elastic Modulus table ...........................
     ELASTIC_MODULUS_TITEL = Div( text = """ELASTIC MODULUS:""" )
-    ElasticModulus = InteractiveTable( TableName = "ELASTIC MODULUS",
+    ElasticModulus = VibroP_InteractiveTable( TableName = "ELASTIC MODULUS",
                                        Rows = 1,
                                        Columns =  3 )
 
@@ -92,7 +93,7 @@ def main( ):
 
     # ........................ Shear Modulus table .............................
     SHEAR_MODULUS_TITEL = Div( text = """SHEAR MODULUS:""" )
-    ShearModulus = InteractiveTable( TableName = "SHEAR MODULUS",
+    ShearModulus = VibroP_InteractiveTable( TableName = "SHEAR MODULUS",
                                      Rows = 1,
                                      Columns =  3 )
 
@@ -121,7 +122,7 @@ def main( ):
 
     # ........................ Poissons ratios ................................
     POISSON_RATIO_TITEL = Div( text = """POISSON'S RATIOS:""" )
-    PoissonRatios = InteractiveTable( TableName = "POISSON'S RATIOS",
+    PoissonRatios = VibroP_InteractiveTable( TableName = "POISSON'S RATIOS",
                                       Rows = 2,
                                       Columns = 3 )
 
@@ -163,7 +164,7 @@ def main( ):
 
     # ........................ Material Properties table .......................
     MATERIALS_TITEL = Div( text = """FURTHER MATERIAL PROPERTIES:""" )
-    MaterialProperties = InteractiveTable( TableName = "MATERIAL PROPERTIES",
+    MaterialProperties = VibroP_InteractiveTable( TableName = "MATERIAL PROPERTIES",
                                            Rows = 1,
                                            Columns = 2 )
 
@@ -189,7 +190,7 @@ def main( ):
 
     # ........................ Geometry table .......................
     GEOMETRY_TITEL = Div( text = """GEOMETRY:""" )
-    GeometryProperties = InteractiveTable( TableName = "GEOMETRY",
+    GeometryProperties = VibroP_InteractiveTable( TableName = "GEOMETRY",
                                            Rows =  1,
                                            Columns =  3 )
 
@@ -256,11 +257,11 @@ def main( ):
 
 
     
-    LayersInfo = Message( Color = "black",
+    LayersInfo = VibroP_Message( Color = "black",
                           Size = 2,
                           MessageHeader = "Number of layers: " )
 
-    WarningMessage = Message( Color = "grey",
+    WarningMessage = VibroP_Message( Color = "grey",
                               Size = 3 ,
                               MessageHeader = "Warning: " )
 
@@ -397,7 +398,7 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
     the result of them into the Graph instance containers
 
     :param Tables: dictionary (container with tables)
-    :param Graph: an instance of GraphObject class
+    :param Graph: an instance of VibroP_GraphObject class
     :param LayersInfo: MessageClass instance
     :param WarningMessage: MessageClass instance
     :return:
@@ -515,16 +516,16 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
         WarningMessage.clean()
 
 
-    except DataCorrupted as Error:
+    except VibroP_DataCorrupted as Error:
         WarningMessage.printMessage( str(Error) )
         Tables[ "GeometryProperties" ].setValue( 0, 2, LayerThicknessBuffer, "" )
 
 
-    except WrongLayersThikness as Error:
+    except VibroP_WrongLayersThikness as Error:
         WarningMessage.printMessage( str(Error) )
 
 
-    except TableCorrupted as Error:
+    except VibroP_TableCorrupted as Error:
         WarningMessage.printMessage( str(Error) )
 
     #'''
@@ -537,7 +538,7 @@ def updateGraph( Graph, GraphNumber ):
     """
     The function calls an appropriate plot-function based on the mode (value) of
     the radio-button
-    :param Graph: an instance of GraphObject class
+    :param Graph: an instance of VibroP_GraphObject class
     :param GraphNumber: int
     :return:
     """
@@ -578,7 +579,7 @@ def updateMode( Tables,
     first default run from main()
     :param Tables: dictionary (container with tables)
     :param WarningMessage: MessageClass instance
-    :param Graph: an instance of GraphObject class
+    :param Graph: an instance of VibroP_GraphObject class
     :param Properties: boolean (Isotropic and Orthotropic)
     :return:
     """
@@ -635,7 +636,7 @@ def cangeMode( Tables, WarningMessage, Mode ):
 
         try:
             testInputData( Mode, Tables[ "PoissonRatios" ].getData() )
-        except DataCorrupted as Error:
+        except VibroP_DataCorrupted as Error:
             WarningMessage.printMessage( str( Error ) )
 
 
@@ -659,7 +660,7 @@ def setDefaultSettings( Tables, Graph, LayersInfo, WarningMessage ):
     """
     The function sets up the default values for the tables
     :param Tables: dictionary (container with tables)
-    :param Graph: an instance of GraphObject class
+    :param Graph: an instance of VibroP_GraphObject class
     :param LayersInfo: MessageClass instance
     :param WarningMessage: MessageClass instance
     :return:

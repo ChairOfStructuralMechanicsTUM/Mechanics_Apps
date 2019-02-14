@@ -29,27 +29,24 @@ from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, Late
 ### Initial Values
 radius = 10
 centreX = 10
-glMohrNx =0
-glMohrNz =0
-glMohrNxz =0
-glMohrP_Angle = 0*(pi/180)
+glob_MohrNx      = ColumnDataSource(data=dict(val=[0]))
+glob_MohrNz      = ColumnDataSource(data=dict(val=[0]))
+glob_MohrNxz     = ColumnDataSource(data=dict(val=[0]))
+glob_MohrP_Angle = ColumnDataSource(data=dict(val=[0*(pi/180)]))
 Neta =0 
 Nzeta =0 
 Nzetaeta =0  
 rleft_x = centreX-radius
 rleft_z=0
 
-global glMohrChangeShow
-glMohrChangeShow  = -1
 
-global NzetaI0
-NzetaI0     =  0
+glob_MohrChangeShow = ColumnDataSource(data=dict(val=[-1]))
+glob_NzetaI0        = ColumnDataSource(data=dict(val=[0]))
+glob_NetaI0         = ColumnDataSource(data=dict(val=[0]))
+glob_alpha          = ColumnDataSource(data=dict(val=[0]))
 
-global NetaI0
-NetaI0      =  0
-
-global alpha
-alpha       = 0
+glob_MohrNzeta_zero_angles = ColumnDataSource(data=dict(val=[0]))
+glob_MohrNeta_zero_angles  = ColumnDataSource(data=dict(val=[0]))
 
 
 ### Initializing variables
@@ -151,28 +148,22 @@ def reset():
     Tangential_XZ_slider.disabled = False
     Plane_Angle_slider.disabled   = True
 
-    global glMohrChangeShow
-    glMohrChangeShow  = -1
+    glob_MohrChangeShow.data      = dict(val=[-1])         #      /output
+    glob_NzetaI0.data             = dict(val=[0])          #      /output
+    glob_NetaI0.data              = dict(val=[0])          #      /output
+    
+    glob_alpha.data               = dict(val=[0])          #      /output
+    glob_MohrP_Angle.data         = dict(val=[0*(pi/180)]) #      /output
    
-    global NzetaI0
-    NzetaI0     =  0
-
-    global NetaI0
-    NetaI0      =  0
-
-    global alpha
-    global glMohrP_Angle
-    alpha = 0
-    glMohrP_Angle = 0*(pi/180)
-    radius = 10
-    centreX = 10
-    glMohrNx =0
-    glMohrNz =0
-    glMohrNxz =0
+    radius    = 0 #10
+    centreX   = 0 #10
+    glob_MohrNx.data  = dict(val=[0]) #      /output
+    glob_MohrNz.data  = dict(val=[0]) #      /output
+    glob_MohrNxz.data = dict(val=[0]) #      /output
     
     ### Calculations
-    radius    = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
-    centreX   = float((glMohrNx+glMohrNz)/2)
+    #radius    = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
+    #centreX   = float((glMohrNx+glMohrNz)/2)
 
     Normal_X_slider.value=0
     Normal_Z_slider.value=0
@@ -242,9 +233,11 @@ def reset():
     
 def show():
     
-    global glMohrChangeShow
+    [glMohrChangeShow] = glob_MohrChangeShow.data["val"] # input/output
+    [glMohrNx]         = glob_MohrNx.data["val"]         # input/
+    [glMohrNz]         = glob_MohrNz.data["val"]         # input/
+    [glMohrNxz]        = glob_MohrNxz.data["val"]        # input/
     if glMohrChangeShow == 1:
-        global glMohrP_Angle
         radius   = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
         centreX  = float((glMohrNx+glMohrNz)/2)
         rleft_x  = centreX-radius
@@ -267,6 +260,8 @@ def show():
         glMohrFigure2_angle_label.text = ''
         #global glMohrChangeShow
         glMohrChangeShow = glMohrChangeShow*-1
+        
+    glob_MohrChangeShow.data = dict(val=[glMohrChangeShow])
 
 
 
@@ -278,8 +273,11 @@ def draw():
     Tangential_XZ_slider.disabled = True
     Plane_Angle_slider.disabled   = False
 
-    global glMohrChangeShow
-    glMohrChangeShow  = 1
+    glob_MohrChangeShow.data = dict(val=[1])                   #      /output
+    [glMohrNx]               = glob_MohrNx.data["val"]         # input/
+    [glMohrNz]               = glob_MohrNz.data["val"]         # input/
+    [glMohrNxz]              = glob_MohrNxz.data["val"]        # input/
+    [glMohrP_Angle]          = glob_MohrP_Angle.data["val"]    # input/
 
     ## Calculations
     radius    = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
@@ -288,15 +286,14 @@ def draw():
     Nzetaeta  = float((-(((glMohrNx-glMohrNz)/2)*sin(2*glMohrP_Angle)))+glMohrNxz*cos(2*glMohrP_Angle))
 
     ## Calculate Angle for which Nzeta or Neta will be zero (sign-change-method):
-    global glMohrNzeta_zero_angles
-    global glMohrNeta_zero_angles
-
     NZeta_List0 = [181]*360
     NZeta_List1 = [181]*360
     glMohrNzeta_zero_angles = [181]*360
+    glob_MohrNzeta_zero_angles.data = dict(val=[glMohrNzeta_zero_angles]) #      /output
     Neta_List0 = [181]*360
     Neta_List1 = [181]*360
     glMohrNeta_zero_angles = [181]*360
+    glob_MohrNeta_zero_angles.data = dict(val=[glMohrNeta_zero_angles]) #      /output
 
     ## Nzeta:
     for n in range(-180,180):
@@ -400,7 +397,8 @@ def draw():
     ## Figure 3, initializing:
     Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[-glMohrP_Angle],size = [75])
 
-  
+    glob_MohrNeta_zero_angles.data  = dict(val=[glMohrNeta_zero_angles])  #       /output
+    glob_MohrNzeta_zero_angles.data = dict(val=[glMohrNzeta_zero_angles]) #       /output
     ChangeRotatingPlane_Forces()
     ChangeMohrCircle()
 
@@ -410,8 +408,9 @@ def NormalForceX_init(attr,old,new):
 
    ## Figure 1, Present the Normal Forces while Draw-Button wasn't yet activated:  
    
-        global glMohrNx
-        glMohrNx = new 
+        #global glMohrNx
+        #glMohrNx = new 
+        glob_MohrNx.data = dict(val=[new]) #      /output
         new = new*0.75
         if(new<0):
             NxP_arrow_source.data = dict(xS=[12.5-new],  xE=[12.5],  yS=[0], yE=[0], lW = [2])
@@ -440,8 +439,9 @@ def NormalForceZ_init(attr,old,new):
     ## Figure 1, Present the Normal Forces while draw() hasn't been called yet:
 
         ## Global change of glMohrNz
-        global glMohrNz   
-        glMohrNz = new
+        #global glMohrNz   
+        #glMohrNz = new
+        glob_MohrNz.data = dict(val=[new]) #      /output
         new=new*0.75
         if(new<0):
             NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2])
@@ -469,12 +469,13 @@ def TangentialXZ_init(attr,old,new):
     ## Figure 1, Present the Shear Forces while draw() hasn't yet been called:
 
         ## global change of glMohrNxz    
-        global glMohrNxz     
+        #global glMohrNxz     
         glMohrNxz = new
 
         # Check if glMohrNxz is zero to prevent division by zero:
         if glMohrNxz == 0:
             glMohrNxz = 0.00001
+        glob_MohrNxz.data = dict(val=[glMohrNxz]) #      /output
         
         new=new*0.75
             
@@ -504,8 +505,12 @@ def TangentialXZ_init(attr,old,new):
         
 def changePlaneAngle(attr,old,new):
 
-        global glMohrP_Angle
-        global alpha
+        #global glMohrP_Angle
+        #global alpha
+        
+        [glMohrNx]               = glob_MohrNx.data["val"]         # input/
+        [glMohrNz]               = glob_MohrNz.data["val"]         # input/
+        [glMohrNxz]              = glob_MohrNxz.data["val"]        # input/
 
         alpha= new
         glMohrP_Angle = -new*(pi/180)
@@ -534,13 +539,22 @@ def changePlaneAngle(attr,old,new):
         Rotating_Axis_Y_source.data = dict(xS=[0], yS=[0], xE=[-25*sin(-glMohrP_Angle)],  yE=[-25*cos(-glMohrP_Angle)])
         
         glMohrP_Angle = -glMohrP_Angle
+        
+        glob_alpha.data       = dict(val=[alpha])         #      /output
+        glob_MohrP_Angle.data = dict(val=[glMohrP_Angle]) #      /output
+        
         ChangeMohrCircle()
         ChangeRotatingPlane_Forces()
 
 
                  
 def ChangeMohrCircle():
-    global glMohrP_Angle
+    #global glMohrP_Angle
+    
+    [glMohrNx]      = glob_MohrNx.data["val"]      # input/
+    [glMohrNz]      = glob_MohrNz.data["val"]      # input/
+    [glMohrNxz]     = glob_MohrNxz.data["val"]     # input/
+    [glMohrP_Angle] = glob_MohrP_Angle.data["val"] # input/
     
     radius  = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
     centreX = float((glMohrNx+glMohrNz)/2)
@@ -578,8 +592,15 @@ def ChangeMohrCircle():
     
 def ChangeRotatingPlane_Forces():
     
-    global glMohrP_Angle
-    global glMohrNx,glMohrNz,glMohrNxz
+    #global glMohrP_Angle
+    #global glMohrNx,glMohrNz,glMohrNxz
+    [alpha]                   = glob_alpha.data["val"]                 # input/
+    [glMohrNx]                = glob_MohrNx.data["val"]                # input/
+    [glMohrNz]                = glob_MohrNz.data["val"]                # input/
+    [glMohrNxz]               = glob_MohrNxz.data["val"]               # input/
+    [glMohrP_Angle]           = glob_MohrP_Angle.data["val"]           # input/output
+    [glMohrNzeta_zero_angles] = glob_MohrNzeta_zero_angles.data["val"] # input/
+    [glMohrNeta_zero_angles]  = glob_MohrNeta_zero_angles.data["val"]  # input/
     Nzeta    = float(float((glMohrNx+glMohrNz)/2)+(float((glMohrNx-glMohrNz)/2)*cos(2*glMohrP_Angle))+float(glMohrNxz*sin(2*glMohrP_Angle)))
     Neta     = float(float((glMohrNx+glMohrNz)/2)-(float((glMohrNx-glMohrNz)/2)*cos(2*glMohrP_Angle))-float(glMohrNxz*sin(2*glMohrP_Angle)))
     Nzetaeta = float((-(((glMohrNx-glMohrNz)/2)*sin(2*glMohrP_Angle)))+glMohrNxz*cos(2*glMohrP_Angle))
@@ -694,6 +715,7 @@ def ChangeRotatingPlane_Forces():
         Nzetaeta4_rect_source.data  = dict(x=[(9*sin(glMohrP_Angle)+((Nzetaeta/2)*cos(glMohrP_Angle))+9*sin(glMohrP_Angle)-((Nzetaeta/2)*cos(glMohrP_Angle)))/2],   y=[((0-9*cos(glMohrP_Angle))+((Nzetaeta/2)*sin(glMohrP_Angle))+(0-9*cos(glMohrP_Angle))-((Nzetaeta/2)*sin(glMohrP_Angle)))/2], h=[0.3*Nzetaeta-.5], w = [13], angle=[glMohrP_Angle])
 
     glMohrP_Angle=-glMohrP_Angle
+    glob_MohrP_Angle.data = dict(val=[glMohrP_Angle])
 
 
    
@@ -726,7 +748,7 @@ Nxz3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_
 Nxz4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 
 ### Figure 1, Define Figure and add Geometry:
-figure1 = figure(title="Stress State A", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400, logo=None)
+figure1 = figure(title="Stress State A", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
 figure1.square([0], [0], size=75, color="black", alpha=0.5)
 figure1.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=25, y_end=0))
@@ -769,7 +791,7 @@ figure1.add_layout(legend1)
 Mohr_Circle_glyph = Circle(x='x',y='y',radius='radius', radius_dimension='y', fill_color='#c3c3c3', fill_alpha=0.5)
 Wedge_glyph = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
 ### Figure 2: Define Figure and add Geometry
-figure2 = figure(title="Mohr's Circle", tools="pan,save,wheel_zoom,reset", x_range=(-25.5,25.5), y_range=(-25.5,25.5),width=400,height=400, logo=None, toolbar_location="right")
+figure2 = figure(title="Mohr's Circle", tools="pan,save,wheel_zoom,reset", x_range=(-25.5,25.5), y_range=(-25.5,25.5),width=400,height=400, toolbar_location="right")
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=-23, y_start=0, x_end=23, y_end=0))
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
@@ -790,7 +812,7 @@ figure2.add_layout(figure2_labels3)
 # Original line
 figure2.line(x='x',y='y',source= OriginalPlane_line_source, color="black", alpha=0.5, line_width=3, line_join = 'bevel')
 figure2.circle(x='x',y='y',source= OriginalPlane_line_source, size=4, color="black", alpha=0.4)
-global glMohrFigure2_angle_label
+#global glMohrFigure2_angle_label # not necessary
 glMohrFigure2_angle_label = LatexLabel(text="",x=20,y=330,render_mode='css',text_color='firebrick', x_units='screen', y_units='screen')
 figure2.add_layout(glMohrFigure2_angle_label)
 
@@ -827,7 +849,7 @@ Nzetaeta2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", 
 Nzetaeta3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 Nzetaeta4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 ### Figure 3, Define Figure and add Geometry:
-figure3 = figure(title="Stress State B", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400, logo=None)
+figure3 = figure(title="Stress State B", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400,)
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=25, y_end=0))
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
@@ -879,6 +901,7 @@ figure1.yaxis.minor_tick_line_color=None
 figure1.yaxis.axis_line_color=None
 figure1.xgrid.visible = False
 figure1.ygrid.visible = False
+figure1.toolbar.logo = None
 
 figure2.xaxis.major_tick_line_color=None
 figure2.xaxis.major_label_text_color=None
@@ -890,6 +913,7 @@ figure2.yaxis.minor_tick_line_color=None
 figure2.yaxis.axis_line_color=None
 figure2.xgrid.visible = False
 figure2.ygrid.visible = False
+figure2.toolbar.logo = None
 
 figure3.xaxis.major_tick_line_color=None
 figure3.xaxis.major_label_text_color=None
@@ -901,6 +925,7 @@ figure3.yaxis.minor_tick_line_color=None
 figure3.yaxis.axis_line_color=None
 figure3.xgrid.visible = False
 figure3.ygrid.visible = False
+figure3.toolbar.logo = None
 
 
 ### Create  sliders to change Normal and Tangential Forces
