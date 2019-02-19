@@ -73,7 +73,7 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - [ ] 1) Tensile testing/Zugversuch (eb,rr)
 - [ ] 2) Transverse strain/Querdehnung (eb,rr)
 - [ ] 3) Double-supported beam with point load/Balken (ad)
-- [x] 4) Maxwell's reciprocity theorem/Reziprozitaetssatz von Maxwell (ad)
+- [x] 4) Maxwell's reciprocity theorem/Reziprozitaetssatz von Maxwell (ad, me)
 - [x] 5) Buckling/Knickung (ad, me)
 - [ ] 6) Funicular/Seilbahn (br)
 - [ ] 7) Polar moment of inertia/Polares Flaechentraegheitmoments/ ()
