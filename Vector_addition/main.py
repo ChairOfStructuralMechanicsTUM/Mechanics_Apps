@@ -21,17 +21,17 @@ from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, Late
 
 
 #Initialise Variables
-theta1 = radians(30)
-theta2 = radians(60)
-Vector1=50
-Vector2=50
-Vector1_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
-Vector2_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
+glob_theta1            = ColumnDataSource(data=dict(val=[radians(30)]))
+glob_theta2            = ColumnDataSource(data=dict(val=[radians(60)]))
+glob_Vector1           = ColumnDataSource(data=dict(val=[50]))
+glob_Vector2           = ColumnDataSource(data=dict(val=[50]))
+Vector1_source         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
+Vector2_source         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
 VectorResultant_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
 V1parallel_line_source = ColumnDataSource(data=dict(x=[],y=[]))
 V2parallel_line_source = ColumnDataSource(data=dict(x=[],y=[]))
-V1_label_source = ColumnDataSource(data=dict(x=[],y=[],V1=[]))
-V2_label_source = ColumnDataSource(data=dict(x=[],y=[],V2=[]))
+V1_label_source        = ColumnDataSource(data=dict(x=[],y=[],V1=[]))
+V2_label_source        = ColumnDataSource(data=dict(x=[],y=[],V2=[]))
 Resultant_label_source = ColumnDataSource(data=dict(x=[],y=[],R=[]))
 Resultant_values_source = ColumnDataSource(data=dict(x=[],y=[],names=[]))
 global ShowVariable
@@ -45,7 +45,8 @@ def init ():
     
 # update Vectors
 def updateVector1 ():
-    global theta1,Vector1
+    [theta1]  = glob_theta1.data["val"]  # input/
+    [Vector1] = glob_Vector1.data["val"] # input/
  
     if (Vector1== 0):
         Vector1_source.data = dict(xS=[],yS=[],xE=[],yE=[])
@@ -54,14 +55,12 @@ def updateVector1 ():
     # else the arrow is proportional to the Vector1
         xE=Vector1*cos(theta1)
         yE=Vector1*sin(theta1)
-        Vector1_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        # Readjust positions
-        xL = xE-3
-        yL = yE-6
-        V1_label_source.data = dict (x=[(xL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],y=[(yL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],V1=["V"u"\u2081"])
+        Vector1_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
+        V1_label_source.data = dict (x=[xE+3],y=[yE-3],V1=["V"u"\u2081"])
 
 def updateVector2 ():
-    global Vector2, theta2
+    [theta2]  = glob_theta2.data["val"]  # input/
+    [Vector2] = glob_Vector2.data["val"] # input/
     # if Vector2 = 0 then there is no arrow
     if (Vector2== 0):
         Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
@@ -69,15 +68,14 @@ def updateVector2 ():
         # else the arrow is proportional to the Vector1
         xE=Vector2*cos(theta2)
         yE=Vector2*sin(theta2)
-        Vector2_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        # Readjust positions
-        xL = xE-3
-        yL = yE-6
-        V2_label_source.data = dict (x=[(xL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],y=[(yL/(sqrt(xL**2+yL**2)))*(sqrt(xL**2+yL**2)+10)],V2=["V"u"\u2082"])
-
+        Vector2_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
+        V2_label_source.data = dict (x=[xE-3],y=[yE+3],V2=["V"u"\u2082"])
 
 def updateResultant():
-    global vector1,vector2,theta1,theta2
+    [theta1]  = glob_theta1.data["val"]  # input/
+    [theta2]  = glob_theta2.data["val"]  # input/
+    [Vector1] = glob_Vector1.data["val"] # input/
+    [Vector2] = glob_Vector2.data["val"] # input/
     
     xE=Vector1*cos(theta1)+Vector2*cos(theta2)
     yE=Vector1*sin(theta1)+Vector2*sin(theta2)
@@ -151,33 +149,25 @@ init()
 
 #Changing Vector1
 def changeVector1(attr,old,new):
-    global Vector1, Active, Vector1Slider
-  
-    Vector1=new
+    glob_Vector1.data = dict(val=[new]) #      /output
     updateVector1()
     updateResultant()
 
 #Changing Vector2
 def changeVector2(attr,old,new):
-    global Vector2, Active, Vector2Slider
-  
-    Vector2=new
+    glob_Vector2.data = dict(val=[new]) #      /output
     updateVector2()
     updateResultant()
 
 #changing theta1
 def changetheta1(attr,old,new):
-    global Vector1, Active, AngleVector1Slider,theta1
-  
-    theta1=radians(new)
+    glob_theta1.data = dict(val=[radians(new)]) #      /output
     updateVector1()
     updateResultant()
 
 #changing theta2
 def changetheta2(attr,old,new):
-    global Vector2, Active, AngleVector2Slider,theta2
-  
-    theta2=radians(new)
+    glob_theta2.data = dict(val=[radians(new)]) #      /output
     updateVector2()
     updateResultant()
     
