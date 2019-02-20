@@ -1,6 +1,6 @@
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
-from bokeh.models import ColumnDataSource, Select, Button, LabelSet, Slider
+from bokeh.models import ColumnDataSource, Select, Button, LabelSet, Slider, CustomJS
 from bokeh.io import curdoc
 from math import sin, cos, pi, sqrt, radians
 from os.path import dirname, split
@@ -146,7 +146,7 @@ def moveSphere(t,r,m,sphere_data,sphere_lines_data):
     sphere_lines_data.data=dict(x=[X1, X2],y=[Y1,Y2])
     return (newX,newY)
 
-def createHollowSphere(r,sphere_data,sphere_lines_data):
+def createHollowSphere(r,ri,sphere_data,sphere_lines_data):
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
     #[offset]       = glob_offset.data["offset"]             # input/
@@ -158,7 +158,7 @@ def createHollowSphere(r,sphere_data,sphere_lines_data):
     newX = offset+r*SIN
     newY = H+r*COS
     # draw the sphere in semi-transparent blue
-    sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[0.4])
+    sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1-ri/r]) # a=[0.4]
     # use the referece lines to find the current position of the lines
     RCOS = r*COS
     RSIN = r*SIN
@@ -179,7 +179,11 @@ def moveHollowSphere(t,r,m,ri,sphere_data,sphere_lines_data):
     #[alpha]        = glob_alpha.data["alpha"]               # input/
     load_vals = ["g", "alpha", "SIN", "COS", "offset", "H"]
     g, alpha, SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
-    temp = r*g*SIN*t*t*1.25*(r**3-ri**3)/(r**5-ri**5)
+    try:
+        temp = r*g*SIN*t*t*1.25*(r**3-ri**3)/(r**5-ri**5)
+    except ZeroDivisionError:
+        ri   = r-1e-3;
+        temp = r*g*SIN*t*t*1.25*(r**3-ri**3)/(r**5-ri**5)
     # find the rotation of the sphere
     rotation = -temp
     # find the displacement of the point touching the ramp
@@ -188,7 +192,7 @@ def moveHollowSphere(t,r,m,ri,sphere_data,sphere_lines_data):
     newX = displacement*COS+offset+r*SIN
     newY = H-displacement*SIN+r*COS
     # update the drawing
-    sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[0.4])
+    sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1-ri/r])
     # find the new positions of the guidelines from the reference sphere
     cosAngle = r*cos(alpha-rotation)
     sinAngle = r*sin(alpha-rotation)
@@ -337,7 +341,7 @@ evolveFunc3=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig3_data,fig3_lines_data
 glob_fun_handles = dict(fun1=evolveFunc1, fun2=evolveFunc2, fun3=evolveFunc3)
 
 # function to change the shape, radius, or mass of the object in figure FIG
-def changeObject(FIG,new,r,m):
+def changeObject(FIG,new,r,wt,m):
     # save the data concerned in data and line_data
     if (FIG==1):
         data=fig1_data
@@ -354,11 +358,7 @@ def changeObject(FIG,new,r,m):
         createSphere(r,data,line_data)
         func=lambda(x):moveSphere(x,r,m,data,line_data)
     elif (new=="Hollow cylinder"):
-        createHollowCylinder(r,r-0.5,data,line_data)
-        func=lambda(x):moveHollowCylinder(x,r,m,r-0.5,data,line_data)
     elif (new == "Hollow sphere"):
-        createHollowSphere(r,data,line_data)
-        func=lambda(x):moveHollowSphere(x,r,m,r-0.5,data,line_data)
     else:
         createCylinder(r,data,line_data)
         func=lambda(x):moveCylinder(x,r,m,data,line_data)
@@ -403,24 +403,91 @@ def changeRadius2(attr,old,new):
     changeObject(2,object_select2.value,new,1.0)
 
 def changeRadius3(attr,old,new):
-    changeObject(3,object_select3.value,new,1.0)
+    changeObject(3,object_select3.value,new,wall_select3.value,1.0)
+    wall_select3.end = new
+    
+#functions to change the inner radius  / wall thickness
+def changeWall1(attr,old,new):
+    changeObject(1,object_select1.value,radius_select1.value,new,1.0)
+def changeWall2(attr,old,new):
+    changeObject(2,object_select2.value,radius_select2.value,new,1.0)
+def changeWall3(attr,old,new):
+    changeObject(3,object_select3.value,radius_select3.value,new,1.0)
+    
+#changeWall3_JS = """
+#console.log("test");
+#"""
+
+object_select_JS = """
+choice = cb_obj.value;
+console.log(choice);
+caller = cb_obj.name;
+console.log(caller);
+
+// extract the number of the name and convert it to integer
+slider_idx = parseInt(caller.match(/\d/g).join(""))-1; //-1 for starting at 0
+console.log(slider_idx)
+
+slider_in_question = document.getElementsByClassName("wall_slider")[slider_idx];
+
+console.log(slider_in_question)
+
+// if hollow object is selected, show the slider (get rid of hidden)
+if(choice.includes("Hollow")){
+        slider_in_question.className=slider_in_question.className.replace(" hidden","");
+        // special case for hollow sphere: ri != r, i.e. wallthickness of zero not allowed
+        if(choice.includes("sphere")){
+                console.log("there");
+                console.log(slider_in_question.start); // undefined
+                slider_in_question.start=0.5;  // does not work, how to access start??
+        }
+}
+// if full object is select, check if slider is hidden; if not, hide it
+else if(!slider_in_question.className.includes("hidden")){
+        slider_in_question.className+=" hidden";
+}
+
+console.log(slider_in_question)
+console.log("------")
+
+
+"""
+
 
 # sliders
-object_select1 = Select(title="Object:", value="Sphere",
+object_select1 = Select(title="Object:", value="Sphere", name="obj1",
     options=["Sphere", "Hollow sphere", "Full cylinder", "Hollow cylinder"])
 object_select1.on_change('value',changeObject1)
-object_select2 = Select(title="Object:", value="Full cylinder",
+object_select2 = Select(title="Object:", value="Full cylinder", name="obj2",
     options=["Sphere", "Hollow sphere", "Full cylinder", "Hollow cylinder"])
 object_select2.on_change('value',changeObject2)
-object_select3 = Select(title="Object:", value="Hollow cylinder",
+object_select3 = Select(title="Object:", value="Hollow cylinder", name="obj3",
     options=["Sphere", "Hollow sphere", "Full cylinder", "Hollow cylinder"])
 object_select3.on_change('value',changeObject3)
+
+object_select1.callback = CustomJS(code=object_select_JS)
+object_select2.callback = CustomJS(code=object_select_JS)
+object_select3.callback = CustomJS(code=object_select_JS)
+
 radius_select1 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
 radius_select1.on_change('value',changeRadius1)
 radius_select2 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
 radius_select2.on_change('value',changeRadius2)
 radius_select3 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
 radius_select3.on_change('value',changeRadius3)
+
+# ri = 0 ok
+# ri = r  --> zero div at hollow sphere
+# ri = r - wall_thickness
+# end value dependend on selected radius size
+wall_select1 = Slider(title="wall thickness", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj1", "hidden"])
+wall_select1.on_change('value',changeWall1)
+wall_select2 = Slider(title="wall thickness", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj2", "hidden"])
+wall_select2.on_change('value',changeWall2)
+wall_select3 = Slider(title="wall thickness", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj3", "hidden"])
+wall_select3.on_change('value',changeWall3)
+#wall_select3.js_on_change('value',changeWall3_JS)
+#wall_select3.callback = CustomJS(code=changeWall3_JS)
 
 # slider function for the angle
 def changeAlpha(attr,old,new):
@@ -477,9 +544,9 @@ def reset():
     # reset the simulation
     #glob_t.data = dict(t = [0.0]) #      /output
     glob_values["t"] = 0.0 #      /output
-    changeObject(1,object_select1.value,radius_select1.value,1.0)
-    changeObject(2,object_select2.value,radius_select2.value,1.0)
-    changeObject(3,object_select3.value,radius_select3.value,1.0)
+    changeObject(1,object_select1.value,radius_select1.value,0.5,1.0)
+    changeObject(2,object_select2.value,radius_select2.value,0.5,1.0)
+    changeObject(3,object_select3.value,radius_select3.value,0.5,1.0)
     disable_all_sliders(False)
 
     
@@ -509,8 +576,8 @@ reset_button.on_click(reset)
 
 init()
 ## Send to window
-curdoc().add_root(row(column(row(fig1,column(object_select1,radius_select1)),
-    row(fig2,column(object_select2,radius_select2)),
-    row(fig3,column(object_select3,radius_select3))),Spacer(width=100),
+curdoc().add_root(row(column(row(fig1,column(object_select1,radius_select1,wall_select1)),
+    row(fig2,column(object_select2,radius_select2,wall_select2)),
+    row(fig3,column(object_select3,radius_select3,wall_select3))),Spacer(width=100),
     column(start_button,reset_button,alpha_slider)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
