@@ -358,7 +358,11 @@ def changeObject(FIG,new,r,wt,m):
         createSphere(r,data,line_data)
         func=lambda(x):moveSphere(x,r,m,data,line_data)
     elif (new=="Hollow cylinder"):
+        createHollowCylinder(r,r-wt,data,line_data)
+        func=lambda(x):moveHollowCylinder(x,r,m,r-wt,data,line_data)
     elif (new == "Hollow sphere"):
+        createHollowSphere(r,r-wt,data,line_data)
+        func=lambda(x):moveHollowSphere(x,r,m,r-wt,data,line_data)
     else:
         createCylinder(r,data,line_data)
         func=lambda(x):moveCylinder(x,r,m,data,line_data)
@@ -387,20 +391,22 @@ def changeObject(FIG,new,r,wt,m):
 ## slider functions
 # functions to change the shape
 def changeObject1(attr,old,new):
-    changeObject(1,new,radius_select1.value,1.0)
+    changeObject(1,new,radius_select1.value,wall_select1.value,1.0)
 
 def changeObject2(attr,old,new):
-    changeObject(2,new,radius_select2.value,1.0)
+    changeObject(2,new,radius_select2.value,wall_select2.value,1.0)
 
 def changeObject3(attr,old,new):
-    changeObject(3,new,radius_select3.value,1.0)
+    changeObject(3,new,radius_select3.value,wall_select3.value,1.0)
 
 # functions to change the radius
 def changeRadius1(attr,old,new):
-    changeObject(1,object_select1.value,new,1.0)
+    changeObject(1,object_select1.value,new,wall_select1.value,1.0)
+    wall_select1.end = new
 
 def changeRadius2(attr,old,new):
-    changeObject(2,object_select2.value,new,1.0)
+    changeObject(2,object_select2.value,new,wall_select2.value,1.0)
+    wall_select2.end = new
 
 def changeRadius3(attr,old,new):
     changeObject(3,object_select3.value,new,wall_select3.value,1.0)
