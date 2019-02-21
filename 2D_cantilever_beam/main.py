@@ -48,7 +48,8 @@ def deformed_cantilever_beam_determiner_XY(
                                                                                       noElementsX,
                                                                                       thickness, height, 
                                                                                       length, elementSizeX,
-                                                                                      amplificationFactor
+                                                                                      amplificationFactor, 
+                                                                                      cross_section_options_i
                                                                                  )
     
     # Construct the normal vectors to the deformed beam's center line
@@ -113,7 +114,8 @@ def deformed_cantilever_beam_determiner_XZ(
                                                                                       noElementsX,
                                                                                       thickness, height, 
                                                                                       length, elementSizeX,
-                                                                                      amplificationFactor
+                                                                                      amplificationFactor,
+                                                                                      cross_section_options_i
                                                                                  )
     
     # Construct the normal vectors to the deformed beam's center line
@@ -437,6 +439,9 @@ def fun_change_Tyz(attrname, old, new):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[CrossSection3], x = [0], y = [0])
+    
+    global cross_section_options_i
+    cross_section_options_i = radio_button_group.active
 
 
 
@@ -646,11 +651,11 @@ plotDefXZ.add_layout(
 
 ######################
 plotDefYZ = Figure(    
-                       plot_width=400    , 
-                       plot_height=400   ,
-                       x_range = ( -10,10 ) ,
-                       y_range= ( -10,10 ) ,
-                       title = 'Stresses in Y-Z plane',
+                       plot_width=300    , 
+                       plot_height=300   ,
+                       x_range = ( -5,5 ) ,
+                       y_range= ( -5,5 ) ,
+                       title = 'Selected Cross Section',
                        tools = ''
                   )
 plotDefYZ.xaxis.major_tick_line_color=None
@@ -668,22 +673,22 @@ plotDefYZ.title.text_font_size="12.5pt"
 #plotDefXY.yaxis.axis_label_text_font_size="12pt"
 #plotDefXY.xaxis.axis_label="x"
 #plotDefXY.yaxis.axis_label="y"
-labelYZ = ColumnDataSource(data=dict(x=[0.5,-8.5],
-                                     y=[8.0,-1.0],
+labelYZ = ColumnDataSource(data=dict(x=[0.5,-3.5],
+                                     y=[4.0,-1.0],
                                      text=['y','z']))
 plotDefYZ.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_start=0, 
-                           y_start=-9, 
+                           y_start=-4, 
                            x_end=0, 
-                           y_end=9, 
+                           y_end=4, 
                            ))
 
 plotDefYZ.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                           x_end=-9, 
+                           x_end=-4, 
                            y_start=0, 
-                           x_start=9, 
+                           x_start=4, 
                            y_end=0, 
                            ))
 plotDefYZ.add_layout(
@@ -701,6 +706,63 @@ plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-5.0/3.0, y=5.0/3.
 
 ####################
 
+
+#################################
+
+
+plotXYElement = Figure(    
+                       plot_width=400    , 
+                       plot_height=400   ,
+                       x_range = ( -5,5 ) ,
+                       y_range= ( -5,5 ) ,
+                       title = 'Stresses of XY-Element',
+                       tools = ''
+                  )
+plotXYElement.xaxis.major_tick_line_color=None
+plotXYElement.xaxis.major_label_text_color=None
+plotXYElement.xaxis.minor_tick_line_color=None
+plotXYElement.xaxis.axis_line_color=None
+plotXYElement.yaxis.major_tick_line_color=None
+plotXYElement.yaxis.major_label_text_color=None
+plotXYElement.yaxis.minor_tick_line_color=None
+plotXYElement.yaxis.axis_line_color=None
+plotXYElement.grid.visible = False
+plotXYElement.toolbar.logo = None
+plotXYElement.title.text_font_size="12.5pt"
+#plotDefXY.xaxis.axis_label_text_font_size="12pt"
+#plotDefXY.yaxis.axis_label_text_font_size="12pt"
+#plotDefXY.xaxis.axis_label="x"
+#plotDefXY.yaxis.axis_label="y"
+labelXYElement = ColumnDataSource(data=dict(x=[3.5],
+                                     y=[-1.0],
+                                     text=['x']))
+
+# plotXYElement.add_layout( 
+#                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+#                            x_start=0, 
+#                            y_start=-4, 
+#                            x_end=0, 
+#                            y_end=4, 
+#                            ))
+
+plotXYElement.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_end=4, 
+                           y_start=0, 
+                           x_start=-4, 
+                           y_end=0, 
+                           ))
+plotDefYZ.add_layout(
+                      LabelSet(
+                                  x='x', y='y',
+                                  text='text',
+                                  text_color='black',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=labelXYElement
+                                )
+                    )
+
+#####################################
 
 
 # Construct the color-bar figure
@@ -834,7 +896,7 @@ plotDefXZ.add_layout(
 # the sliders
 Yforce_slider.on_change('value',fun_change_Py)
 Zforce_slider.on_change('value',fun_change_Pz)
-radio_button_group.on_change('active',fun_change_Py,fun_change_Pz,fun_change_Tyz)
+radio_button_group.on_change('active',fun_change_Tyz,fun_change_Py,fun_change_Pz)
 Xpos_slider.on_change('value',fun_change_Py,fun_change_Pz)
 Reset_button.on_click(init_data)
 
@@ -861,6 +923,7 @@ curdoc().add_root(
                             description,
                             row(
                                 column(
+                                    plotDefYZ,
                                     widgetbox(radio_button_group),
                                     Yforce_slider,
                                     Zforce_slider,
@@ -869,11 +932,13 @@ curdoc().add_root(
                                         #   area_image
                                 ),
                                 column(
-                                    row(column(row(plotDefXY, plotDefXZ),colorBar), column(plotDefYZ,Xpos_slider)),
-                                    
+                                    row(
+                                        column(row(plotDefXY, plotDefXZ),colorBar),
+                                        plotXYElement
                                 ),
 
                                )
                           )
+                     ) 
                  )
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

@@ -1,4 +1,5 @@
 import numpy as np
+import math
 from bokeh.plotting import figure
 
 def generate_colorbar(palette, low=0, high=15, plot_height = 100, plot_width = 500):
@@ -43,15 +44,24 @@ class coords():
 def construct_deformed_beam_centerLine( Py, Pz, E,
                                         noElementsX,
                                         thickness, height, length, elementSizeX,
-                                        amplificationFactor
+                                        amplificationFactor, cross_section_options_i
                                       ):
     
     deformedBeamXY = list()
     # v(x) = Px^2(3L - x)/6EI
     # I = bh^3/12
     # strainxx(top) = -6P(L-x)/bh^2E
-    # strainxx(bottom) = 6P(L-x)/bh^2E      
-    I = thickness*height*height*height/12
+    # strainxx(bottom) = 6P(L-x)/bh^2E  
+
+    ## Iz = Sum(Iz_i) + Sum(ez_i^2*A_i)
+    if(cross_section_options_i==0):
+        I = thickness*height**3/12
+    elif(cross_section_options_i==1):
+        I = math.pi*(height/2)**4/4  
+    elif(cross_section_options_i==2):        
+        I = 2*(height*(height/10.0)**3/12.0) + height/10.0/12 + 2*((height/2.0)**2*height/10.0)
+    
+
     xComponent = 0.0
     yComponent = 0.0
     for i in range(noElementsX + 1):
@@ -62,8 +72,15 @@ def construct_deformed_beam_centerLine( Py, Pz, E,
         xComponent += xIncrement
 
     deformedBeamXZ = list()
- 
-    I = height*thickness*thickness*thickness/12
+
+    ## Iy = Sum(Iy_i) + Sum(ey_i^2*A_i) = Sum(Iy_i) + 0 
+    if(cross_section_options_i==0):
+        I = height*thickness**3/12
+    if(cross_section_options_i==1):
+        I = math.pi*(height/2)**4/4
+    if(cross_section_options_i==2):
+        I = 2*(height/10.0*height**3/12) + (height/10.0)**3*height/12
+    
     xComponent = 0.0
     zComponent = 0.0
     for i in range(noElementsX + 1):
