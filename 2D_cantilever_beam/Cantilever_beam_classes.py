@@ -317,37 +317,54 @@ def create_coordinates_list( listElements ):
     return listXCoord , listYCoord
 
 
-def calculate_stresses_xy_element(length, height, thickness, cross_section_options_i, Py, Pz, E):
+def calculate_stresses_xy_element(length, height, thickness, cross_section_options_i, Py, Pz, E, x_pos, y_pos, z_pos,length_of_element,height_of_element):
     sigma_x_l = list()
     sigma_x_r = list()
-    tau_xy_l = list() 
-    tau_xy_r = list()    
+    tau_xy = list() 
 
     ## Iz = Sum(Iz_i) + Sum(ez_i^2*A_i)
     if(cross_section_options_i==0):
-        Iz = thickness*height**3/12
+        Iz = thickness*height**3.0/12.0
     elif(cross_section_options_i==1):
-        Iz = math.pi*(height/2)**4/4  
+        Iz = math.pi*(height/2.0)**4.0/4.0  
     elif(cross_section_options_i==2):        
-        Iz = 2*(height*(height/10.0)**3/12.0) + height/10.0/12 + 2*((height/2.0)**2*height/10.0)
+        Iz = 2*(height*(height/10.0)**3.0/12.0) + height/10.0/12.0 + 2.0*((height/2.0)**2.0*height/10.0)
 
     ## Iy = Sum(Iy_i) + Sum(ey_i^2*A_i) = Sum(Iy_i) + 0 
     if(cross_section_options_i==0):
-        Iy = height*thickness**3/12
+        Iy = height*thickness**3.0/12.0
     if(cross_section_options_i==1):
-        Iy = math.pi*(height/2)**4/4
+        Iy = math.pi*(height/2.0)**4.0/4.0
     if(cross_section_options_i==2):
-        Iy = 2*(height/10.0*height**3/12) + (height/10.0)**3*height/12
+        Iy = 2*(height/10.0*height**3.0/12.0) + (height/10.0)**3.0*height/12.0
 
+    ## Iyz = Sum(Iyz_i) + Sum(ey_i*ez_i*A_i) = 0 + Sum(ey_i*ez_i*A_i) - Deviation momentum is zero because of symmetry of cross sections
+    if(cross_section_options_i==0):
+        Iyz = 0.0
+    if(cross_section_options_i==1):
+        Iy = 0.0
+    if(cross_section_options_i==2):
+        Iy = 0.0
 
-    M_y_l = -(length *1/4) * Py
-    M_y_r = -(length *3/4) * Py
-    M_z_l = -(length *1/4) * Pz
-    M_z_r = -(length *3/4) * Pz
-    for i in range(20):
-        sigma_x_l.append(M_y_l/Iy*(i-10)/10)
-        sigma_x_r.append(M_y_r/Iy*(i-10)/10)
+    ## Calculation of Momentum M_y & M_z
+    M_y_l = -(x_pos-length_of_element/2.0) * Py
+    M_y_r = -(x_pos+length_of_element/2.0) * Py
+    M_z_l = -(x_pos-length_of_element/2.0) * Pz
+    M_z_r = -(x_pos+length_of_element/2.0) * Pz
+
+    ## Calculation of sigma(x,y,z) for y=[-0.25;0.25]
+    n=10
+    for i in range(n):
+        # sigma(x,y,z) = (N(x)/A) + (My*Iz-Mz*Iyz)/(Iy*Iz-Iyz**2)*z + (Mz*Iy-My*Iyz)/(Iy*Iz-Iyz**2)*y
+        sigma_x_l.append((M_y_l*Iz - M_z_l*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_l*Iy-M_y_l*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n/2.0)/2.0/n-y_pos))  
+        sigma_x_r.append((M_y_r*Iz - M_z_r*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_r*Iy-M_y_r*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n/2.0)/2.0/n-y_pos))
     
+    ## Calculation of tau_xy for y=[-0.25;0.25]
+    m=10
+    for i in range(m):
+        # tau_xy(s,z) = -(Q_y(x)*S_z(s))/(Iy*thickness) = -(Q_y(x)*((height/2-s_+/2)*(s_+*length_of_element))/(Iy*thickness), with s starting at y=-height/2 and s_max=height/2
+        tau_xy.append(-(Py*(-y_pos-float(i)/float(m)*height_of_element/2.0)*(float(i)/float(m)/height_of_element*length_of_element))/(Iz*length_of_element))
+
     print sigma_x_l
-    print sigma_x_r
-    return sigma_x_l,sigma_x_r, tau_xy_l, tau_xy_r
+    print tau_xy
+    return sigma_x_l,sigma_x_r,tau_xy,n,m

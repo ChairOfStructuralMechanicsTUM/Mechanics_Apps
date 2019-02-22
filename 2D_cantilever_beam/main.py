@@ -363,7 +363,12 @@ def fun_change_Py(attrname, old, new):
 
     ##################################
     # Update Stresses acting on internal XY-Element:
-    functions.calculate_stresses_xy_element(length, height, thickness, cross_section_options_i, Py, Pz, E)
+    x_pos = 2.5
+    y_pos = -height/2
+    z_pos = 0
+    length_of_element = 2.0
+    height_of_element = height/2.0
+    functions.calculate_stresses_xy_element(length,height,thickness,cross_section_options_i,Py,Pz,E,x_pos, y_pos,z_pos,length_of_element,height_of_element)
     ##################################
 
         
@@ -435,7 +440,12 @@ def fun_change_Pz(attrname, old, new):
 
     ##################################
     # Update Stresses acting on internal XY-Element:
-    functions.calculate_stresses_xy_element(length, height, thickness, cross_section_options_i, Py, Pz, E)
+    x_pos = 2.5
+    y_pos = -height/2
+    z_pos = 0
+    length_of_element = 2.0
+    height_of_element = height/2.0
+    functions.calculate_stresses_xy_element(length,height,thickness,cross_section_options_i,Py,Pz,E,x_pos, y_pos,z_pos,length_of_element,height_of_element)
     ##################################
 
 
