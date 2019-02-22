@@ -315,3 +315,39 @@ def create_coordinates_list( listElements ):
                             element.lowerRightPosition[1] ])    
     
     return listXCoord , listYCoord
+
+
+def calculate_stresses_xy_element(length, height, thickness, cross_section_options_i, Py, Pz, E):
+    sigma_x_l = list()
+    sigma_x_r = list()
+    tau_xy_l = list() 
+    tau_xy_r = list()    
+
+    ## Iz = Sum(Iz_i) + Sum(ez_i^2*A_i)
+    if(cross_section_options_i==0):
+        Iz = thickness*height**3/12
+    elif(cross_section_options_i==1):
+        Iz = math.pi*(height/2)**4/4  
+    elif(cross_section_options_i==2):        
+        Iz = 2*(height*(height/10.0)**3/12.0) + height/10.0/12 + 2*((height/2.0)**2*height/10.0)
+
+    ## Iy = Sum(Iy_i) + Sum(ey_i^2*A_i) = Sum(Iy_i) + 0 
+    if(cross_section_options_i==0):
+        Iy = height*thickness**3/12
+    if(cross_section_options_i==1):
+        Iy = math.pi*(height/2)**4/4
+    if(cross_section_options_i==2):
+        Iy = 2*(height/10.0*height**3/12) + (height/10.0)**3*height/12
+
+
+    M_y_l = -(length *1/4) * Py
+    M_y_r = -(length *3/4) * Py
+    M_z_l = -(length *1/4) * Pz
+    M_z_r = -(length *3/4) * Pz
+    for i in range(20):
+        sigma_x_l.append(M_y_l/Iy*(i-10)/10)
+        sigma_x_r.append(M_y_r/Iy*(i-10)/10)
+    
+    print sigma_x_l
+    print sigma_x_r
+    return sigma_x_l,sigma_x_r, tau_xy_l, tau_xy_r

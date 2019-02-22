@@ -35,6 +35,13 @@ CrossSection3 = "2D_cantilever_beam/static/images/DoubleT.png"
 CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , y=[]))
+
+# Internal Element Source & Initialization:
+XYElement = "2D_cantilever_beam/static/images/XYElement.png"
+XYElementSource = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
+XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])
+
+
 def deformed_cantilever_beam_determiner_XY( 
                                             length, height, thickness, E, Py, 
                                             Pz, noElementsX, noElementsY, 
@@ -354,6 +361,11 @@ def fun_change_Py(attrname, old, new):
         
     update_colorBar_extremas(smallestValue,biggestValue)
 
+    ##################################
+    # Update Stresses acting on internal XY-Element:
+    functions.calculate_stresses_xy_element(length, height, thickness, cross_section_options_i, Py, Pz, E)
+    ##################################
+
         
 # The function to be excuted whenever the force in the z direction changes
 def fun_change_Pz(attrname, old, new):
@@ -421,6 +433,13 @@ def fun_change_Pz(attrname, old, new):
         
     update_colorBar_extremas(smallestValue,biggestValue)
 
+    ##################################
+    # Update Stresses acting on internal XY-Element:
+    functions.calculate_stresses_xy_element(length, height, thickness, cross_section_options_i, Py, Pz, E)
+    ##################################
+
+
+
 ##########################
 
 def fun_change_Tyz(attrname, old, new):
@@ -461,7 +480,6 @@ def init_data():
     fun_change_Pz(None,None, None)
     fun_change_Tyz(None,None,None)
     
-
 
 # Construct the source file of all the beams
 #sourceXYundef = ColumnDataSource(data=dict( x=XCoordsUndefXY, y=YCoordsUndefXY, c =colorListUndeformedXY, a=alphaList ))
@@ -752,7 +770,7 @@ plotXYElement.add_layout(
                            x_start=-4, 
                            y_end=0, 
                            ))
-plotDefYZ.add_layout(
+plotXYElement.add_layout(
                       LabelSet(
                                   x='x', y='y',
                                   text='text',
@@ -762,6 +780,7 @@ plotDefYZ.add_layout(
                                 )
                     )
 
+plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=-1.5*(5.0/3.0), y=0.3*(5.0/3.0), w=1.5*(10.0/3.0), h=0.3*(10.0/3.0)))
 #####################################
 
 
@@ -897,7 +916,7 @@ plotDefXZ.add_layout(
 Yforce_slider.on_change('value',fun_change_Py)
 Zforce_slider.on_change('value',fun_change_Pz)
 radio_button_group.on_change('active',fun_change_Tyz,fun_change_Py,fun_change_Pz)
-Xpos_slider.on_change('value',fun_change_Py,fun_change_Pz)
+# Xpos_slider.on_change('value',fun_change_Py,fun_change_Pz)
 Reset_button.on_click(init_data)
 
 init_data()    
