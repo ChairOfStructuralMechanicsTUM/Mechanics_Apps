@@ -36,10 +36,13 @@ CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , y=[]))
 
-# Internal Element Source & Initialization:
+# Source & Initialization of Internal Element Plot:
 XYElement = "2D_cantilever_beam/static/images/XYElement.png"
 XYElementSource = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
 XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])
+XYBeam = "2D_cantilever_beam/static/images/XYBeam.png"
+XYBeamSource = ColumnDataSource(data=dict(sp5=[], x=[] , y=[]))
+XYBeamSource.data = dict(sp5=[XYBeam], x = [0], y = [0])
 
 
 def deformed_cantilever_beam_determiner_XY( 
@@ -741,8 +744,8 @@ plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-5.0/3.0, y=5.0/3.
 plotXYElement = Figure(    
                        plot_width=400    , 
                        plot_height=400   ,
-                       x_range = ( -5,5 ) ,
-                       y_range= ( -5,5 ) ,
+                       x_range = ( -.5,6 ) ,
+                       y_range= ( -3,3 ) ,
                        title = 'Stresses of XY-Element',
                        tools = ''
                   )
@@ -761,23 +764,22 @@ plotXYElement.title.text_font_size="12.5pt"
 #plotDefXY.yaxis.axis_label_text_font_size="12pt"
 #plotDefXY.xaxis.axis_label="x"
 #plotDefXY.yaxis.axis_label="y"
-labelXYElement = ColumnDataSource(data=dict(x=[3.5],
-                                     y=[-1.0],
-                                     text=['x']))
-
-# plotXYElement.add_layout( 
-#                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-#                            x_start=0, 
-#                            y_start=-4, 
-#                            x_end=0, 
-#                            y_end=4, 
-#                            ))
+labelXYElement = ColumnDataSource(data=dict(x=[-.3,5.8],
+                                     y=[2.7,-.3],
+                                     text=['y','x']))
+plotXYElement.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_start=0, 
+                           y_start=-3, 
+                           x_end=0, 
+                           y_end=2.9, 
+                           ))
 
 plotXYElement.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                           x_end=4, 
+                           x_start=-.5, 
                            y_start=0, 
-                           x_start=-4, 
+                           x_end=5.9, 
                            y_end=0, 
                            ))
 plotXYElement.add_layout(
@@ -790,7 +792,39 @@ plotXYElement.add_layout(
                                 )
                     )
 
-plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=-1.5*(5.0/3.0), y=0.3*(5.0/3.0), w=1.5*(10.0/3.0), h=0.3*(10.0/3.0)))
+# labelXYElement = ColumnDataSource(data=dict(x=[3.5],
+#                                      y=[-1.0],
+#                                      text=['x']))
+
+# plotXYElement.add_layout( 
+#                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+#                            x_start=0, 
+#                            y_start=-4, 
+#                            x_end=0, 
+#                            y_end=4, 
+#                            ))
+
+# plotXYElement.add_layout( 
+#                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+#                            x_end=4, 
+#                            y_start=0, 
+#                            x_start=-4, 
+#                            y_end=0, 
+#                            ))
+# plotXYElement.add_layout(
+#                       LabelSet(
+#                                   x='x', y='y',
+#                                   text='text',
+#                                   text_color='black',text_font_size="12pt",
+#                                   level='glyph',text_baseline="middle",text_align="center",
+#                                   source=labelXYElement
+#                                 )
+#                     )
+
+# plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=-1.5*(5.0/3.0), y=1.0*(5.0/3.0), w=1.5*(10.0/3.0), h=1.0*(10.0/3.0)))
+plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1))
+# plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=-1.5*(5.0/3.0), y=0.3*(5.0/3.0)-0.3*(10.0/3.0), w=1.5*(10.0/3.0), h=0.3*(10.0/3.0)))
+plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=1, y=0, w=3, h=0.5))
 #####################################
 
 

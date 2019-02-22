@@ -352,17 +352,17 @@ def calculate_stresses_xy_element(length, height, thickness, cross_section_optio
     M_z_l = -(x_pos-length_of_element/2.0) * Pz
     M_z_r = -(x_pos+length_of_element/2.0) * Pz
 
-    ## Calculation of sigma(x,y,z) for y=[-0.25;0.25]
+    ## Calculation of sigma(x,y,z) 
     n=10
     for i in range(n):
         # sigma(x,y,z) = (N(x)/A) + (My*Iz-Mz*Iyz)/(Iy*Iz-Iyz**2)*z + (Mz*Iy-My*Iyz)/(Iy*Iz-Iyz**2)*y
-        sigma_x_l.append((M_y_l*Iz - M_z_l*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_l*Iy-M_y_l*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n/2.0)/2.0/n-y_pos))  
-        sigma_x_r.append((M_y_r*Iz - M_z_r*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_r*Iy-M_y_r*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n/2.0)/2.0/n-y_pos))
+        sigma_x_l.append((M_y_l*Iz - M_z_l*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_l*Iy-M_y_l*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n/2.0)*height_of_element/n+y_pos))  
+        sigma_x_r.append((M_y_r*Iz - M_z_r*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_r*Iy-M_y_r*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n/2.0)*height_of_element/n+y_pos))
     
-    ## Calculation of tau_xy for y=[-0.25;0.25]
+    ## Calculation of tau_xy
     m=10
     for i in range(m):
-        # tau_xy(s,z) = -(Q_y(x)*S_z(s))/(Iy*thickness) = -(Q_y(x)*((height/2-s_+/2)*(s_+*length_of_element))/(Iy*thickness), with s starting at y=-height/2 and s_max=height/2
+        # tau_xy(s,z) = -(Q_y(x)*S_z(s))/(Iy*thickness) = -(Q_y(x)*((height/2-s_+/2)*(s_+*length_of_element))/(Iy*thickness), with s starting at y=y_pos and s_max=height_of_element
         tau_xy.append(-(Py*(-y_pos-float(i)/float(m)*height_of_element/2.0)*(float(i)/float(m)/height_of_element*length_of_element))/(Iz*length_of_element))
 
     print sigma_x_l
