@@ -7,7 +7,8 @@ from bokeh.models import Arrow, NormalHead, OpenHead, VeeHead
 from os.path import dirname, join, split
 from bokeh.models.layouts import Spacer
 from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
-from bokeh.models.glyphs import ImageURL
+from bokeh.models.glyphs import ImageURL, Patch
+import numpy as np
 # Define basic beam parameters and loading
 length = 5.0
 height = 1.0
@@ -18,6 +19,9 @@ Pz = 0.0 #2000
 
 global cross_section_options_i
 cross_section_options_i = 0
+
+global stress_options_i
+stress_options_i = 0
 
 # Define mesh for visualization
 noElementsX = 80
@@ -43,6 +47,15 @@ XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])
 XYBeam = "2D_cantilever_beam/static/images/XYBeam.png"
 XYBeamSource = ColumnDataSource(data=dict(sp5=[], x=[] , y=[]))
 XYBeamSource.data = dict(sp5=[XYBeam], x = [0], y = [0])
+
+Sigmaplot_l_Source = ColumnDataSource(data=dict(x=[] , y=[]))
+Sigmaplot_r_Source = ColumnDataSource(data=dict(x=[] , y=[]))
+# SigmaPlot_l_x = np.hstack(([0,0,0,0,0], [2,2,2,2,2]))
+# SigmaPlot_l_y = np.hstack(([0,1,2,3,4], [4,3,2,1,0]))
+# SigmaplotSource_l.data = dict(x = SigmaPlotx, y = SigmaPloty)
+Tauplot_l_Source = ColumnDataSource(data=dict(x=[] , y=[]))
+Tauplot_r_Source = ColumnDataSource(data=dict(x=[] , y=[]))
+Tauplot_u_Source = ColumnDataSource(data=dict(x=[] , y=[]))
 
 
 def deformed_cantilever_beam_determiner_XY( 
@@ -366,12 +379,73 @@ def fun_change_Py(attrname, old, new):
 
     ##################################
     # Update Stresses acting on internal XY-Element:
-    x_pos = 2.5
-    y_pos = -height/2
-    z_pos = 0
-    length_of_element = 2.0
-    height_of_element = height/2.0
-    functions.calculate_stresses_xy_element(length,height,thickness,cross_section_options_i,Py,Pz,E,x_pos, y_pos,z_pos,length_of_element,height_of_element)
+    sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(length,height,thickness,cross_section_options_i,Py,Pz,E)
+    
+    if (stress_options_i==0):
+        ## DELETE TAU PLOTS
+        Tauplot_l_Source.data = dict(x = [], y = [])
+        Tauplot_r_Source.data = dict(x = [], y = [])
+        Tauplot_u_Source.data = dict(x = [], y = [])        
+        ## SCALING AND POSITION OF SIGMA
+        sigmascaling = 0.000005
+        sigma_l_pos = 1.5
+        sigma_r_pos = 3.5
+        ##SIGMA_X LEFT END DATA SOURCE:
+        sigma_x_l_scaled = np.linspace(0, 0, len(sigma_x_l))
+        # Create scaled and reversed list 
+        for i in range(len(sigma_x_l)): 
+            sigma_x_l_scaled[i]=sigma_x_l[len(sigma_x_l)-i-1]*sigmascaling
+        SigmaPlot_l_x = np.hstack((np.linspace(sigma_l_pos, sigma_l_pos, len(sigma_x_l)), sigma_l_pos-abs(sigma_x_l_scaled)))
+        SigmaPlot_l_y = np.hstack((np.linspace(-0.5, 0, len(sigma_x_l)),np.linspace(0, -0.5, len(sigma_x_l))))
+        Sigmaplot_l_Source.data = dict(x = SigmaPlot_l_x, y = SigmaPlot_l_y)
+        ##SIGMA_X RIGHT END DATA SOURCE:
+        sigma_x_r_scaled = np.linspace(0, 0, len(sigma_x_r))
+        # Create scaled and reversed list 
+        for i in range(len(sigma_x_r)): 
+            sigma_x_r_scaled[i]=sigma_x_r[len(sigma_x_r)-i-1]*sigmascaling
+        SigmaPlot_r_x = np.hstack((np.linspace(sigma_r_pos, sigma_r_pos, len(sigma_x_r)), sigma_r_pos+abs(sigma_x_r_scaled)))
+        SigmaPlot_r_y = np.hstack((np.linspace(-0.5, 0, len(sigma_x_r)),np.linspace(0, -0.5, len(sigma_x_r))))
+        Sigmaplot_r_Source.data = dict(x = SigmaPlot_r_x, y = SigmaPlot_r_y)
+
+    if (stress_options_i==1):    
+        ## DELETE SIGMA PLOTS
+        Sigmaplot_l_Source.data = dict(x = [], y = [])
+        Sigmaplot_r_Source.data = dict(x = [], y = [])
+        ## SCALING AND POSITION OF TAU
+        tau_xy_scaling = 0.00001
+        tau_xy_l_pos = 1.5
+        tau_xy_r_pos = 3.5
+        tau_xy_u_pos = 2.5        
+
+        ## TAU LEFT END DATA SOURCE:
+        tau_xy_l_scaled = np.linspace(0, 0, len(tau_xy))
+        # Create scaled and reversed list 
+        for i in range(len(tau_xy)): 
+            tau_xy_l_scaled[i]=tau_xy[len(tau_xy)-i-1]*tau_xy_scaling
+        TauPlot_l_x = np.hstack((np.linspace(tau_xy_l_pos, tau_xy_l_pos, len(tau_xy)), tau_xy_l_pos-abs(tau_xy_l_scaled)))
+        TauPlot_l_y = np.hstack((np.linspace(-0.5, 0, len(tau_xy)),np.linspace(0, -0.5, len(tau_xy))))
+        Tauplot_l_Source.data = dict(x = TauPlot_l_x, y = TauPlot_l_y)
+        
+        ## TAU RIGHT END DATA SOURCE:
+        tau_xy_r_scaled = np.linspace(0, 0, len(tau_xy))
+        # Create scaled and reversed list 
+        for i in range(len(tau_xy)): 
+            tau_xy_r_scaled[i]=tau_xy[len(tau_xy)-i-1]*tau_xy_scaling
+        TauPlot_r_x = np.hstack((np.linspace(tau_xy_r_pos, tau_xy_r_pos, len(tau_xy)), tau_xy_r_pos+abs(tau_xy_r_scaled)))
+        TauPlot_r_y = np.hstack((np.linspace(-0.5, 0, len(tau_xy)),np.linspace(0, -0.5, len(tau_xy))))
+        Tauplot_r_Source.data = dict(x = TauPlot_r_x, y = TauPlot_r_y)
+
+        ## TAU UPPER BORDER DATA SOURCE
+        tau_xy_u_scaled = np.linspace(0, 0, len(tau_xy))
+        # Create scaled and reversed list consisting of tau_max value: 
+        for i in range(len(tau_xy)): 
+            tau_xy_u_scaled[i]=tau_xy[len(tau_xy)-1]*tau_xy_scaling
+        TauPlot_u_x = np.hstack((np.linspace(tau_xy_u_pos-1, tau_xy_u_pos+1, len(tau_xy)), np.linspace(tau_xy_u_pos+1, tau_xy_u_pos-1, len(tau_xy))))
+        TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xy)), abs(tau_xy_u_scaled)))
+        Tauplot_u_Source.data = dict(x = TauPlot_u_x, y = TauPlot_u_y)
+
+
+
     ##################################
 
         
@@ -443,19 +517,19 @@ def fun_change_Pz(attrname, old, new):
 
     ##################################
     # Update Stresses acting on internal XY-Element:
-    x_pos = 2.5
-    y_pos = -height/2
-    z_pos = 0
-    length_of_element = 2.0
-    height_of_element = height/2.0
-    functions.calculate_stresses_xy_element(length,height,thickness,cross_section_options_i,Py,Pz,E,x_pos, y_pos,z_pos,length_of_element,height_of_element)
+    # x_pos = 2.5
+    # y_pos = -height/2
+    # z_pos = 0
+    # length_of_element = 2.0
+    # height_of_element = height/2.0
+    functions.calculate_stresses_xy_element(length,height,thickness,cross_section_options_i,Py,Pz,E)
     ##################################
 
 
 
 ##########################
 
-def fun_change_Tyz(attrname, old, new):
+def fun_change_Cross_Section(attrname, old, new):
     # global Pz, listDeformedElementsXZ 
     # global radio_button_group.active
     # print radio_button_group.active
@@ -474,7 +548,8 @@ def fun_change_Tyz(attrname, old, new):
     
     global cross_section_options_i
     cross_section_options_i = radio_button_group.active
-
+    global stress_options_i
+    stress_options_i = radio_button_group2.active
 
 
 
@@ -486,18 +561,17 @@ def init_data():
 
     Yforce_slider.value = 0
     Zforce_slider.value = 0
-    Xpos_slider.value   = 0
+    # Xpos_slider.value   = 0
     radio_button_group.active = 0
+    radio_button_group2.active = 0
 
     fun_change_Py(None,None, None)
     fun_change_Pz(None,None, None)
-    fun_change_Tyz(None,None,None)
+    fun_change_Cross_Section(None,None,None)
     
 
 # Construct the source file of all the beams
-#sourceXYundef = ColumnDataSource(data=dict( x=XCoordsUndefXY, y=YCoordsUndefXY, c =colorListUndeformedXY, a=alphaList ))
 sourceXYdef   = ColumnDataSource(data=dict( x=XCoordsDefXY,   y=YCoordsDefXY,   c =colorListDeformedXY,   a=alphaList ))
-#sourceXZundef = ColumnDataSource(data=dict( x=XCoordsUndefXZ, y=YCoordsUndefXZ, c =colorListUndeformedXZ, a=alphaList ))
 sourceXZdef   = ColumnDataSource(data=dict( x=XCoordsDefXZ,   y=YCoordsDefXZ,   c =colorListDeformedXZ,   a=alphaList ))
 
 # Construct the source file of both the arrows
@@ -529,8 +603,11 @@ Zforce_slider = Slider(title="Z-direction of the force (N)", value=0.0, start=-5
 # Construct radio button to choose between geometries of cross section
 radio_button_group = RadioButtonGroup(name="Geometry of cross section",labels=["Rectangular", "Circular", "Double-T"], active=cross_section_options_i)
 
-# Construct slider to choose x-position of visualized cross section
-Xpos_slider = Slider(title="X-position", value=0.0, start=0.0, end=5.0, step=0.5)
+# Construct radio button to choose between plot of sigma(y) or tau(y)
+radio_button_group2 = RadioButtonGroup(name="Plot of sigma or tau",labels=["Sigma", "Tau"], active=stress_options_i)
+
+# # Construct slider to choose x-position of visualized cross section
+# Xpos_slider = Slider(title="X-position", value=0.0, start=0.0, end=5.0, step=0.5)
 
 # Construct reset button
 Reset_button = Button(label="Reset", button_type="success")
@@ -647,10 +724,7 @@ plotDefXZ.yaxis.axis_line_color=None
 plotDefXZ.grid.visible = False
 plotDefXZ.toolbar.logo = None
 plotDefXZ.title.text_font_size="12.5pt"
-#plotDefXZ.xaxis.axis_label_text_font_size="12pt"
-#plotDefXZ.yaxis.axis_label_text_font_size="12pt"
-#plotDefXZ.xaxis.axis_label="x"
-#plotDefXZ.yaxis.axis_label="z"
+
 labelXZ = ColumnDataSource(data=dict(x=[-.3,5.8],
                                      y=[-2.7,-.3],
                                      text=['z','x']))
@@ -700,10 +774,7 @@ plotDefYZ.yaxis.axis_line_color=None
 plotDefYZ.grid.visible = False
 plotDefYZ.toolbar.logo = None
 plotDefYZ.title.text_font_size="12.5pt"
-#plotDefXY.xaxis.axis_label_text_font_size="12pt"
-#plotDefXY.yaxis.axis_label_text_font_size="12pt"
-#plotDefXY.xaxis.axis_label="x"
-#plotDefXY.yaxis.axis_label="y"
+
 labelYZ = ColumnDataSource(data=dict(x=[0.5,-3.5],
                                      y=[4.0,-1.0],
                                      text=['y','z']))
@@ -739,8 +810,6 @@ plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-5.0/3.0, y=5.0/3.
 
 
 #################################
-
-
 plotXYElement = Figure(    
                        plot_width=400    , 
                        plot_height=400   ,
@@ -821,10 +890,25 @@ plotXYElement.add_layout(
 #                                 )
 #                     )
 
-# plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=-1.5*(5.0/3.0), y=1.0*(5.0/3.0), w=1.5*(10.0/3.0), h=1.0*(10.0/3.0)))
-plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1))
-# plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=-1.5*(5.0/3.0), y=0.3*(5.0/3.0)-0.3*(10.0/3.0), w=1.5*(10.0/3.0), h=0.3*(10.0/3.0)))
-plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=1, y=0, w=3, h=0.5))
+plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1.0))
+plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=1.5, y=0, w=2, h=0.5))
+
+
+Sigmaplot_l_Glyph = Patch(x="x", y="y", fill_color='#0065BD', fill_alpha=0.5)
+plotXYElement.add_glyph(Sigmaplot_l_Source, Sigmaplot_l_Glyph)
+
+Sigmaplot_r_Glyph = Patch(x="x", y="y", fill_color='#0065BD', fill_alpha=0.5)
+plotXYElement.add_glyph(Sigmaplot_r_Source, Sigmaplot_r_Glyph)
+
+
+Tauplot_l_Glyph = Patch(x="x", y="y", fill_color='#E37222', fill_alpha=0.5)
+plotXYElement.add_glyph(Tauplot_l_Source, Tauplot_l_Glyph)
+
+Tauplot_r_Glyph = Patch(x="x", y="y", fill_color='#E37222', fill_alpha=0.5)
+plotXYElement.add_glyph(Tauplot_r_Source, Tauplot_r_Glyph)
+
+Tauplot_u_Glyph = Patch(x="x", y="y", fill_color='#E37222', fill_alpha=0.5)
+plotXYElement.add_glyph(Tauplot_u_Source, Tauplot_u_Glyph)
 #####################################
 
 
@@ -875,9 +959,7 @@ colorBarSource = ColumnDataSource(data=dict( x=colorBarXCoords, y=colorBarYCoord
 
 # Construct the patches 
 colorBar.patches( xs='x', ys='y', source=colorBarSource, color = 'c', alpha = 'a' )
-#plotUndefXY.patches(xs='x', ys='y', source=sourceXYundef, color = 'c', alpha = 'a')
 plotDefXY.patches  (xs='x', ys='y', source=sourceXYdef  , color = 'c', alpha = 'a')
-#plotUndefXZ.patches(xs='x', ys='y', source=sourceXZundef, color = 'c', alpha = 'a')
 plotDefXZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
 
 
@@ -888,7 +970,8 @@ plotDefXZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = '
 
 # Construct the arrows
 plotDefXY.add_layout( 
-                     Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
+                     Arrow(end=NormalHead(line_color="black",line_width=3,size=10),
+                           line_width=3,
                            x_start=['xs'][0],
                            y_start=['ys'][0],
                            x_end=['xe'][0], 
@@ -896,7 +979,8 @@ plotDefXY.add_layout(
                            source = sourceArrowXY) 
                     )
 plotDefXZ.add_layout( 
-                     Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
+                     Arrow(end=NormalHead(line_color="black",line_width=3,size=10),
+                           line_width=3,
                            x_start=['xs'][0], 
                            y_start=['ys'][0], 
                            x_end=['xe'][0], 
@@ -959,28 +1043,19 @@ plotDefXZ.add_layout(
 # the sliders
 Yforce_slider.on_change('value',fun_change_Py)
 Zforce_slider.on_change('value',fun_change_Pz)
-radio_button_group.on_change('active',fun_change_Tyz,fun_change_Py,fun_change_Pz)
+radio_button_group.on_change('active',fun_change_Cross_Section,fun_change_Py,fun_change_Pz)
+radio_button_group2.on_change('active',fun_change_Cross_Section,fun_change_Py,fun_change_Pz)
 # Xpos_slider.on_change('value',fun_change_Py,fun_change_Pz)
 Reset_button.on_click(init_data)
 
 init_data()    
 
-# area_image = Div(text="""
-# <p>
-# <img src="/2D_cantilever_beam/static/images/picture.jpg" width=400>
-# </p>
-# <p>
-# 3D scheme of the Cantilever Beam with the Corresponding Geometry and Material Parameters
-# </p>
-# <p>
 # **For visualization purposes, there is a magnification factor of 100 that exaggerates the deformation""", render_as_text=False, width=400)
-
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
-#curdoc().add_root(row(description,row(column(row(column(plotUndefXY,plotDefXY) , column(plotUndefXZ,plotDefXZ)),colorBar),column(Yforce_slider,Zforce_slider,Spacer(height=30),area_image))))
 curdoc().add_root(
                     column(
                             description,
@@ -997,7 +1072,7 @@ curdoc().add_root(
                                 column(
                                     row(
                                         column(row(plotDefXY, plotDefXZ),colorBar),
-                                        plotXYElement
+                                        column(plotXYElement,row(Spacer(width=150),radio_button_group2))
                                 ),
 
                                )

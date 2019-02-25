@@ -317,11 +317,18 @@ def create_coordinates_list( listElements ):
     return listXCoord , listYCoord
 
 
-def calculate_stresses_xy_element(length, height, thickness, cross_section_options_i, Py, Pz, E, x_pos, y_pos, z_pos,length_of_element,height_of_element):
+def calculate_stresses_xy_element(length, height, thickness, cross_section_options_i, Py, Pz, E):
     sigma_x_l = list()
     sigma_x_r = list()
     tau_xy = list() 
 
+    ##Element Properties:
+    x_pos = 2.5
+    y_pos = -height/2
+    z_pos = 0
+    length_of_element = 2.0
+    height_of_element = height/2.0
+    
     ## Iz = Sum(Iz_i) + Sum(ez_i^2*A_i)
     if(cross_section_options_i==0):
         Iz = thickness*height**3.0/12.0
@@ -342,22 +349,24 @@ def calculate_stresses_xy_element(length, height, thickness, cross_section_optio
     if(cross_section_options_i==0):
         Iyz = 0.0
     if(cross_section_options_i==1):
-        Iy = 0.0
+        Iyz = 0.0
     if(cross_section_options_i==2):
-        Iy = 0.0
+        Iyz = 0.0
 
     ## Calculation of Momentum M_y & M_z
-    M_y_l = -(x_pos-length_of_element/2.0) * Py
-    M_y_r = -(x_pos+length_of_element/2.0) * Py
-    M_z_l = -(x_pos-length_of_element/2.0) * Pz
-    M_z_r = -(x_pos+length_of_element/2.0) * Pz
+    M_y_l = -(5-(x_pos-length_of_element/2.0)) * Pz
+    M_y_r = -(5-(x_pos+length_of_element/2.0)) * Pz
+    M_z_l = -(5-(x_pos-length_of_element/2.0)) * Py
+    M_z_r = -(5-(x_pos+length_of_element/2.0)) * Py
 
     ## Calculation of sigma(x,y,z) 
-    n=10
+    n=11
     for i in range(n):
         # sigma(x,y,z) = (N(x)/A) + (My*Iz-Mz*Iyz)/(Iy*Iz-Iyz**2)*z + (Mz*Iy-My*Iyz)/(Iy*Iz-Iyz**2)*y
-        sigma_x_l.append((M_y_l*Iz - M_z_l*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_l*Iy-M_y_l*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n/2.0)*height_of_element/n+y_pos))  
-        sigma_x_r.append((M_y_r*Iz - M_z_r*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_r*Iy-M_y_r*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n/2.0)*height_of_element/n+y_pos))
+        # sigma_x_l.append((M_y_l*Iz - M_z_l*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_l*Iy-M_y_l*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n/2.0)*height_of_element/n+y_pos))
+        sigma_x_l.append((M_y_l*Iz - M_z_l*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_l*Iy-M_y_l*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n+1)/20.0))        
+        # sigma_x_r.append((M_y_r*Iz - M_z_r*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_r*Iy-M_y_r*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n/2.0)*height_of_element/n+y_pos))
+        sigma_x_r.append((M_y_r*Iz - M_z_r*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_r*Iy-M_y_r*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n+1)/20.0))
     
     ## Calculation of tau_xy
     m=10
@@ -365,6 +374,6 @@ def calculate_stresses_xy_element(length, height, thickness, cross_section_optio
         # tau_xy(s,z) = -(Q_y(x)*S_z(s))/(Iy*thickness) = -(Q_y(x)*((height/2-s_+/2)*(s_+*length_of_element))/(Iy*thickness), with s starting at y=y_pos and s_max=height_of_element
         tau_xy.append(-(Py*(-y_pos-float(i)/float(m)*height_of_element/2.0)*(float(i)/float(m)/height_of_element*length_of_element))/(Iz*length_of_element))
 
-    print sigma_x_l
-    print tau_xy
-    return sigma_x_l,sigma_x_r,tau_xy,n,m
+    # print sigma_x_l
+    # print tau_xy
+    return sigma_x_l,sigma_x_r,tau_xy
