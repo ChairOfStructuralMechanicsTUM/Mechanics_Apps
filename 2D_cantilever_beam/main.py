@@ -48,14 +48,26 @@ XYBeam = "2D_cantilever_beam/static/images/XYBeam.png"
 XYBeamSource = ColumnDataSource(data=dict(sp5=[], x=[] , y=[]))
 XYBeamSource.data = dict(sp5=[XYBeam], x = [0], y = [0])
 
+# Sigma and tau sources in "XY-Element" plot:
 Sigmaplot_l_Source = ColumnDataSource(data=dict(x=[] , y=[]))
 Sigmaplot_r_Source = ColumnDataSource(data=dict(x=[] , y=[]))
-# SigmaPlot_l_x = np.hstack(([0,0,0,0,0], [2,2,2,2,2]))
-# SigmaPlot_l_y = np.hstack(([0,1,2,3,4], [4,3,2,1,0]))
-# SigmaplotSource_l.data = dict(x = SigmaPlotx, y = SigmaPloty)
 Tauplot_l_Source = ColumnDataSource(data=dict(x=[] , y=[]))
 Tauplot_r_Source = ColumnDataSource(data=dict(x=[] , y=[]))
 Tauplot_u_Source = ColumnDataSource(data=dict(x=[] , y=[]))
+# Arrow sources in "XY-Element" plot:
+SigmaArrowSource1 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
+SigmaArrowSource2 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
+SigmaArrowSource3 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
+SigmaArrowSource4 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
+SigmaArrowSource5 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
+SigmaArrowSource6 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
+TauArrowSource1 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
+TauArrowSource2 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
+TauArrowSource3 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
+TauArrowSource4 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
+
+
+
 
 
 def deformed_cantilever_beam_determiner_XY( 
@@ -390,7 +402,7 @@ def fun_change_Py(attrname, old, new):
         sigmascaling = 0.000005
         sigma_l_pos = 1.5
         sigma_r_pos = 3.5
-        ##SIGMA_X LEFT END DATA SOURCE:
+        ## SIGMA_X LEFT END DATA SOURCE:
         sigma_x_l_scaled = np.linspace(0, 0, len(sigma_x_l))
         # Create scaled and reversed list 
         for i in range(len(sigma_x_l)): 
@@ -398,7 +410,7 @@ def fun_change_Py(attrname, old, new):
         SigmaPlot_l_x = np.hstack((np.linspace(sigma_l_pos, sigma_l_pos, len(sigma_x_l)), sigma_l_pos-abs(sigma_x_l_scaled)))
         SigmaPlot_l_y = np.hstack((np.linspace(-0.5, 0, len(sigma_x_l)),np.linspace(0, -0.5, len(sigma_x_l))))
         Sigmaplot_l_Source.data = dict(x = SigmaPlot_l_x, y = SigmaPlot_l_y)
-        ##SIGMA_X RIGHT END DATA SOURCE:
+        ## SIGMA_X RIGHT END DATA SOURCE:
         sigma_x_r_scaled = np.linspace(0, 0, len(sigma_x_r))
         # Create scaled and reversed list 
         for i in range(len(sigma_x_r)): 
@@ -406,6 +418,47 @@ def fun_change_Py(attrname, old, new):
         SigmaPlot_r_x = np.hstack((np.linspace(sigma_r_pos, sigma_r_pos, len(sigma_x_r)), sigma_r_pos+abs(sigma_x_r_scaled)))
         SigmaPlot_r_y = np.hstack((np.linspace(-0.5, 0, len(sigma_x_r)),np.linspace(0, -0.5, len(sigma_x_r))))
         Sigmaplot_r_Source.data = dict(x = SigmaPlot_r_x, y = SigmaPlot_r_y)
+
+        ## Stress Arrows Plot
+        TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
+        TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])        
+        TauArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
+        TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        
+        # Arrows left end
+        arrow_scale = 0.7
+        arrow_adjust_x = 0.05
+        if (Py<-1500):
+            SigmaArrowSource1.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
+            SigmaArrowSource2.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
+            # SigmaTauArrowSource3.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*1.0/5.0))]] , ys=[-0.1] , ye=[-0.1] )
+            SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        elif (Py>1500):
+            SigmaArrowSource1.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
+            SigmaArrowSource2.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
+            # SigmaTauArrowSource3.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*1.0/5.0))]] , ys=[-0.1] , ye=[-0.1] )        
+            SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])        
+        else:
+            SigmaArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+            SigmaArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+            SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        # Arrows right end
+        arrow_scale = 0.7
+        arrow_adjust_x = 0.05
+        if (Py<-1500):
+            SigmaArrowSource4.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
+            SigmaArrowSource5.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
+            # SigmaTauArrowSource6.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*1.0/5.0))]] , ys=[-0.1] , ye=[-0.1] )
+            SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        elif (Py>1500):
+            SigmaArrowSource4.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
+            SigmaArrowSource5.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
+            # SigmaTauArrowSource6.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*1.0/5.0))]] , ys=[-0.1] , ye=[-0.1] )        
+            SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        else:
+            SigmaArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+            SigmaArrowSource5.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+            SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
 
     if (stress_options_i==1):    
         ## DELETE SIGMA PLOTS
@@ -444,6 +497,50 @@ def fun_change_Py(attrname, old, new):
         TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xy)), abs(tau_xy_u_scaled)))
         Tauplot_u_Source.data = dict(x = TauPlot_u_x, y = TauPlot_u_y)
 
+
+        ## Stress Arrows Plot
+        SigmaArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        SigmaArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        SigmaArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        SigmaArrowSource5.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+
+        # Arrows left end
+        arrow_scale = 0.7
+        arrow_adjust_x = 0
+        arrow_adjust_y = 0    
+        if (Py<-1500):
+            TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        elif (Py>1500):
+            TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        else:            
+            TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])  
+        
+        # Arrows right end
+        arrow_scale = 0.7
+        arrow_adjust_x = 0
+        arrow_adjust_y = 0
+        if (Py<-1500):
+            TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
+        elif (Py>1500):
+            TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])  
+        else:
+            TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[]) 
+
+        # Arrows upper border
+        arrow_scale = 0.7
+        arrow_adjust_x = 0
+        arrow_adjust_y = 0
+        if (Py<-1500):
+            TauArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
+            TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])                        
+        elif (Py>1500):
+            TauArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
+            TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])   
+        else:
+            TauArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
+            TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])   
 
 
     ##################################
@@ -861,6 +958,29 @@ plotXYElement.add_layout(
                                 )
                     )
 
+plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource1))
+plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource2))
+plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource3))
+plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource4))
+plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource5))
+plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource6))
+
+plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = TauArrowSource1))
+plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = TauArrowSource2))
+plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = TauArrowSource3))
+plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = TauArrowSource4))
+                      
+
 # labelXYElement = ColumnDataSource(data=dict(x=[3.5],
 #                                      y=[-1.0],
 #                                      text=['x']))
@@ -890,8 +1010,8 @@ plotXYElement.add_layout(
 #                                 )
 #                     )
 
-plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1.0))
-plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=1.5, y=0, w=2, h=0.5))
+plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1.04))
+plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=1.5, y=0, w=2, h=0.52))
 
 
 Sigmaplot_l_Glyph = Patch(x="x", y="y", fill_color='#0065BD', fill_alpha=0.5)
