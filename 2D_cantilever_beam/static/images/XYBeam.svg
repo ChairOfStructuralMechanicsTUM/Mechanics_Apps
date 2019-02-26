@@ -14,7 +14,7 @@
    id="svg4290"
    version="1.1"
    inkscape:version="0.48.0 r9654"
-   sodipodi:docname="XYBeam.svg.2019_02_25_01_07_22.0.svg"
+   sodipodi:docname="XYBeam.svg"
    inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\XYBeam.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300">
@@ -55,7 +55,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4.9;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:26.94999801999999900"
+       style="fill:#c3c3c3;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4.90000000000000040;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:26.94999801999999900"
        id="rect4813"
        width="571.42859"
        height="178.02045"
