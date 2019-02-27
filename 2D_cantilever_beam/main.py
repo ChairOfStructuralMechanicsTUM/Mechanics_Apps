@@ -393,22 +393,31 @@ def fun_change_Py(attrname, old, new):
     # Update Stresses acting on internal XY-Element:
     sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(length,height,thickness,cross_section_options_i,Py,Pz,E)
     
+
+    ## IF SIGMA BUTTON IS ACTIVATED:
     if (stress_options_i==0):
         ## DELETE TAU PLOTS
         Tauplot_l_Source.data = dict(x = [], y = [])
         Tauplot_r_Source.data = dict(x = [], y = [])
-        Tauplot_u_Source.data = dict(x = [], y = [])        
-        ## SCALING AND POSITION OF SIGMA
+        Tauplot_u_Source.data = dict(x = [], y = [])   
+        ## DELETE TAU ARROWS
+        TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
+        TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])        
+        TauArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
+        TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+
+        ## SCALING AND POSITION OF SIGMA GLYPHS
         sigmascaling = 0.000005
         sigma_l_pos = 1.5
         sigma_r_pos = 3.5
+
         ## SIGMA_X LEFT END DATA SOURCE:
         sigma_x_l_scaled = np.linspace(0, 0, len(sigma_x_l))
         # Create scaled and reversed list 
         for i in range(len(sigma_x_l)): 
             sigma_x_l_scaled[i]=sigma_x_l[len(sigma_x_l)-i-1]*sigmascaling
         SigmaPlot_l_x = np.hstack((np.linspace(sigma_l_pos, sigma_l_pos, len(sigma_x_l)), sigma_l_pos-abs(sigma_x_l_scaled)))
-        SigmaPlot_l_y = np.hstack((np.linspace(-0.5, 0, len(sigma_x_l)),np.linspace(0, -0.5, len(sigma_x_l))))
+        SigmaPlot_l_y = np.hstack((np.linspace(-0.525, 0, len(sigma_x_l)),np.linspace(0, -0.525, len(sigma_x_l))))
         Sigmaplot_l_Source.data = dict(x = SigmaPlot_l_x, y = SigmaPlot_l_y)
         ## SIGMA_X RIGHT END DATA SOURCE:
         sigma_x_r_scaled = np.linspace(0, 0, len(sigma_x_r))
@@ -416,18 +425,13 @@ def fun_change_Py(attrname, old, new):
         for i in range(len(sigma_x_r)): 
             sigma_x_r_scaled[i]=sigma_x_r[len(sigma_x_r)-i-1]*sigmascaling
         SigmaPlot_r_x = np.hstack((np.linspace(sigma_r_pos, sigma_r_pos, len(sigma_x_r)), sigma_r_pos+abs(sigma_x_r_scaled)))
-        SigmaPlot_r_y = np.hstack((np.linspace(-0.5, 0, len(sigma_x_r)),np.linspace(0, -0.5, len(sigma_x_r))))
+        SigmaPlot_r_y = np.hstack((np.linspace(-0.525, 0, len(sigma_x_r)),np.linspace(0, -0.525, len(sigma_x_r))))
         Sigmaplot_r_Source.data = dict(x = SigmaPlot_r_x, y = SigmaPlot_r_y)
-
-        ## Stress Arrows Plot
-        TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
-        TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])        
-        TauArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
-        TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])
         
-        # Arrows left end
+        # SCALING AND POSITIONING OF SIGMA ARROWS
         arrow_scale = 0.7
         arrow_adjust_x = 0.05
+        # Arrows left end    
         if (Py<-1500):
             SigmaArrowSource1.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
             SigmaArrowSource2.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
@@ -460,45 +464,12 @@ def fun_change_Py(attrname, old, new):
             SigmaArrowSource5.data = dict(xs=[] , xe= [], ys=[] , ye=[])
             SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
 
+    ## IF TAU BUTTON IS ACTIVATED:
     if (stress_options_i==1):    
         ## DELETE SIGMA PLOTS
         Sigmaplot_l_Source.data = dict(x = [], y = [])
         Sigmaplot_r_Source.data = dict(x = [], y = [])
-        ## SCALING AND POSITION OF TAU
-        tau_xy_scaling = 0.00001
-        tau_xy_l_pos = 1.5
-        tau_xy_r_pos = 3.5
-        tau_xy_u_pos = 2.5        
-
-        ## TAU LEFT END DATA SOURCE:
-        tau_xy_l_scaled = np.linspace(0, 0, len(tau_xy))
-        # Create scaled and reversed list 
-        for i in range(len(tau_xy)): 
-            tau_xy_l_scaled[i]=tau_xy[len(tau_xy)-i-1]*tau_xy_scaling
-        TauPlot_l_x = np.hstack((np.linspace(tau_xy_l_pos, tau_xy_l_pos, len(tau_xy)), tau_xy_l_pos-abs(tau_xy_l_scaled)))
-        TauPlot_l_y = np.hstack((np.linspace(-0.5, 0, len(tau_xy)),np.linspace(0, -0.5, len(tau_xy))))
-        Tauplot_l_Source.data = dict(x = TauPlot_l_x, y = TauPlot_l_y)
-        
-        ## TAU RIGHT END DATA SOURCE:
-        tau_xy_r_scaled = np.linspace(0, 0, len(tau_xy))
-        # Create scaled and reversed list 
-        for i in range(len(tau_xy)): 
-            tau_xy_r_scaled[i]=tau_xy[len(tau_xy)-i-1]*tau_xy_scaling
-        TauPlot_r_x = np.hstack((np.linspace(tau_xy_r_pos, tau_xy_r_pos, len(tau_xy)), tau_xy_r_pos+abs(tau_xy_r_scaled)))
-        TauPlot_r_y = np.hstack((np.linspace(-0.5, 0, len(tau_xy)),np.linspace(0, -0.5, len(tau_xy))))
-        Tauplot_r_Source.data = dict(x = TauPlot_r_x, y = TauPlot_r_y)
-
-        ## TAU UPPER BORDER DATA SOURCE
-        tau_xy_u_scaled = np.linspace(0, 0, len(tau_xy))
-        # Create scaled and reversed list consisting of tau_max value: 
-        for i in range(len(tau_xy)): 
-            tau_xy_u_scaled[i]=tau_xy[len(tau_xy)-1]*tau_xy_scaling
-        TauPlot_u_x = np.hstack((np.linspace(tau_xy_u_pos-1, tau_xy_u_pos+1, len(tau_xy)), np.linspace(tau_xy_u_pos+1, tau_xy_u_pos-1, len(tau_xy))))
-        TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xy)), abs(tau_xy_u_scaled)))
-        Tauplot_u_Source.data = dict(x = TauPlot_u_x, y = TauPlot_u_y)
-
-
-        ## Stress Arrows Plot
+        ## DELETE SIGMA ARROWS
         SigmaArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
         SigmaArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])
         SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
@@ -506,38 +477,81 @@ def fun_change_Py(attrname, old, new):
         SigmaArrowSource5.data = dict(xs=[] , xe= [], ys=[] , ye=[])
         SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
 
-        # Arrows left end
-        arrow_scale = 0.7
-        arrow_adjust_x = 0
-        arrow_adjust_y = 0    
+        ## SCALING AND POSITION OF TAU GLYPHS
+        tau_xy_scaling = 0.00001
+        tau_xy_l_pos_x = 1.5
+        tau_xy_r_pos_x = 3.5
+        tau_xy_u_pos_x = 2.5        
+
+        ## TAU LEFT END DATA SOURCE:
+        tau_xy_l_scaled = np.linspace(0, 0, len(tau_xy))
+        # Create scaled and reversed list 
+        for i in range(len(tau_xy)): 
+            tau_xy_l_scaled[i]=tau_xy[len(tau_xy)-i-1]*tau_xy_scaling
+        TauPlot_l_x = np.hstack((np.linspace(tau_xy_l_pos_x, tau_xy_l_pos_x, len(tau_xy)), tau_xy_l_pos_x-abs(tau_xy_l_scaled)))
+        TauPlot_l_y = np.hstack((np.linspace(-0.525, 0, len(tau_xy)),np.linspace(0, -0.525, len(tau_xy))))
+        Tauplot_l_Source.data = dict(x = TauPlot_l_x, y = TauPlot_l_y)
+        
+        ## TAU RIGHT END DATA SOURCE:
+        tau_xy_r_scaled = np.linspace(0, 0, len(tau_xy))
+        # Create scaled and reversed list 
+        for i in range(len(tau_xy)): 
+            tau_xy_r_scaled[i]=tau_xy[len(tau_xy)-i-1]*tau_xy_scaling
+        TauPlot_r_x = np.hstack((np.linspace(tau_xy_r_pos_x, tau_xy_r_pos_x, len(tau_xy)), tau_xy_r_pos_x+abs(tau_xy_r_scaled)))
+        TauPlot_r_y = np.hstack((np.linspace(-0.525, 0, len(tau_xy)),np.linspace(0, -0.525, len(tau_xy))))
+        Tauplot_r_Source.data = dict(x = TauPlot_r_x, y = TauPlot_r_y)
+
+        ## TAU UPPER BORDER DATA SOURCE
+        tau_xy_u_scaled = np.linspace(0, 0, len(tau_xy))
+        # Create scaled and reversed list consisting of tau_max value: 
+        for i in range(len(tau_xy)): 
+            tau_xy_u_scaled[i]=tau_xy[len(tau_xy)-1]*tau_xy_scaling
+        TauPlot_u_x = np.hstack((np.linspace(tau_xy_u_pos_x-1, tau_xy_u_pos_x+1, len(tau_xy)), np.linspace(tau_xy_u_pos_x+1, tau_xy_u_pos_x-1, len(tau_xy))))
+        TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xy)), abs(tau_xy_u_scaled)))
+        Tauplot_u_Source.data = dict(x = TauPlot_u_x, y = TauPlot_u_y)
+
+        ### SCALING AND POSITIONING OF ARROWS:
+        # Position arrows into tau glyph
+        arrow_adjust_x = max(abs(tau_xy_l_scaled))/4.0
+        # Make arrow size grow with increasing tau stress, but restrict length of arrows to dimensions of tau glyph
+        if (max(abs(tau_xy_u_scaled))/2.0 >= 0.15):
+            arrow_adjust_y = 0.15
+        else:
+            arrow_adjust_y = max(abs(tau_xy_u_scaled))/2.0
+        arrow_move_y = 0.04    
+        
+        ## ARROW LEFT END:
+        tau_xy_l_pos_y = -0.25                 
         if (Py<-1500):
-            TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+            TauArrowSource1.data = dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y])
         elif (Py>1500):
-            TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+            TauArrowSource1.data = dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y])
         else:            
             TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])  
         
-        # Arrows right end
-        arrow_scale = 0.7
-        arrow_adjust_x = 0
-        arrow_adjust_y = 0
+        ## ARROWS RIGHT END:             
+        tau_xy_r_pos_y = -0.25           
         if (Py<-1500):
-            TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
+            TauArrowSource2.data = dict(xs=[tau_xy_r_pos_x+arrow_adjust_x] , xe= [tau_xy_r_pos_x+arrow_adjust_x], ys=[tau_xy_r_pos_y-arrow_adjust_y+arrow_move_y] , ye=[tau_xy_r_pos_y+arrow_adjust_y+arrow_move_y])
         elif (Py>1500):
+            TauArrowSource2.data = dict(xs=[tau_xy_r_pos_x+arrow_adjust_x] , xe= [tau_xy_r_pos_x+arrow_adjust_x], ys=[tau_xy_r_pos_y+arrow_adjust_y+arrow_move_y] , ye=[tau_xy_r_pos_y-arrow_adjust_y+arrow_move_y])
+        else:            
             TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])  
-        else:
-            TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[]) 
 
-        # Arrows upper border
-        arrow_scale = 0.7
-        arrow_adjust_x = 0
-        arrow_adjust_y = 0
+        ## ARROWS UPPER BORDER:
+        tau_xy_u_pos_y = 0.0            
+        # New arrow scaling and positioning for upper tau stress
+        if (max(abs(tau_xy_u_scaled)) >= 0.3):
+            arrow_adjust_x = 0.3
+        else:
+            arrow_adjust_x = max(abs(tau_xy_u_scaled))
+        arrow_adjust_y = max(abs(tau_xy_u_scaled))/2.0
         if (Py<-1500):
-            TauArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
-            TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])                        
+            TauArrowSource3.data = dict(xs=[(tau_xy_u_pos_x-0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)+arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])            
+            TauArrowSource4.data = dict(xs=[(tau_xy_u_pos_x+0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)+arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])                                  
         elif (Py>1500):
-            TauArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
-            TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])   
+            TauArrowSource3.data = dict(xs=[(tau_xy_u_pos_x-0.5)+arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)-arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])            
+            TauArrowSource4.data = dict(xs=[(tau_xy_u_pos_x+0.5)+arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)-arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])
         else:
             TauArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
             TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])   
@@ -1011,7 +1025,7 @@ plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,s
 #                     )
 
 plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1.04))
-plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=1.5, y=0, w=2, h=0.52))
+plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=1.5, y=0, w=2, h=0.535))
 
 
 Sigmaplot_l_Glyph = Patch(x="x", y="y", fill_color='#0065BD', fill_alpha=0.5)
