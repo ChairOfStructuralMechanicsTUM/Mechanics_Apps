@@ -201,6 +201,89 @@ def deformed_cantilever_beam_determiner_XZ(
                 biggestValue, smallestValue
            )
 
+#def undeformed_cantilever_beam_determiner( 
+#                                          length, height, thickness, E, Py, Pz,
+#                                          noElementsX, noElementsY, 
+#                                          noElementsZ, elementSizeX, 
+#                                          elementSizeY, elementSizeZ,
+#                                          amplificationFactor 
+#                                         ):
+#    
+#    # Construct The undeformed beam's center line
+#    undeformedBeamXY, undeformedBeamXZ = functions.construct_undeformed_beam_centerline( 
+#                                                                                            noElementsX, 
+#                                                                                            noElementsY, 
+#                                                                                            noElementsZ,
+#                                                                                            elementSizeX
+#                                                                                       )
+#
+#    # Construct normal vectors for both XY and XZ projections of the beam
+#    normalVecrtorsXYUpperUndef, normalVectorsXYLowerUndef = functions.construct_normal_vectors( undeformedBeamXY )
+#    normalVecrtorsXZUpperUndef, normalVectorsXZLowerUndef = functions.construct_normal_vectors( undeformedBeamXZ )
+#
+#    # Construct mesh for the undeformed and the deformed beams    
+#    listUndeformedElementsXY = functions.construct_deformed_elements( 
+#                                                                        undeformedBeamXY,
+#                                                                        elementSizeX,
+#                                                                        elementSizeY,
+#                                                                        noElementsX,
+#                                                                        noElementsY,
+#                                                                        normalVecrtorsXYUpperUndef,
+#                                                                        normalVectorsXYLowerUndef
+#                                                                    )
+#    listUndeformedElementsXZ = functions.construct_deformed_elements( 
+#                                                                        undeformedBeamXZ,
+#                                                                        elementSizeX,
+#                                                                        elementSizeZ,
+#                                                                        noElementsX,
+#                                                                        noElementsZ,
+#                                                                        normalVecrtorsXZUpperUndef,
+#                                                                        normalVectorsXZLowerUndef
+#                                                                    )
+#    
+#    # Determine the patches' X,Y,Z coordinates
+#    XCoordsUndefXY , YCoordsUndefXY = functions.create_coordinates_list( listUndeformedElementsXY )
+#    XCoordsUndefXZ , YCoordsUndefXZ = functions.create_coordinates_list( listUndeformedElementsXZ )
+#
+#    # Detemine the color of the elements
+#    biggestValue, smallestValue, listValuesUpperXY, listValuesLowerXZ = functions.values_determiner( 
+#                                                                                                        Py, Pz,
+#                                                                                                        length,
+#                                                                                                        height,
+#                                                                                                        thickness,
+#                                                                                                        E, elementSizeX
+#                                                                                                   )
+#    # Coloring the undeformed elements
+#    colorListUndeformedXY = functions.elements_color_determiner(
+#                                                                    False,
+#                                                                    'XY',
+#                                                                    listUndeformedElementsXY,
+#                                                                    noElementsX,
+#                                                                    noElementsY,
+#                                                                    E, height, thickness,
+#                                                                    length, Py, 
+#                                                                    smallestValue, biggestValue,
+#                                                                    listValuesLowerXZ
+#                                                               )    
+#    colorListUndeformedXZ = functions.elements_color_determiner(
+#                                                                    False,
+#                                                                    'XZ',
+#                                                                    listUndeformedElementsXZ,
+#                                                                    noElementsX,
+#                                                                    noElementsZ,
+#                                                                    E, thickness, height,
+#                                                                    length, Pz, 
+#                                                                    biggestValue, smallestValue,
+#                                                                    listValuesUpperXY
+#                                                               )
+#
+#    return (
+#                listUndeformedElementsXY, listUndeformedElementsXY,
+#                XCoordsUndefXY, XCoordsUndefXZ,
+#                YCoordsUndefXY, YCoordsUndefXZ, 
+#                colorListUndeformedXY, colorListUndeformedXZ,
+#                biggestValue, smallestValue
+#           )    
 
 # Construct the deformed beam in XY plane
 (listDeformedElementsXY, XCoordsDefXY,
@@ -222,6 +305,17 @@ def deformed_cantilever_beam_determiner_XZ(
                                amplificationFactor
                            )
 
+## Construct the undeformed beams in XY and XZ planes
+#(listUndeformedElementsXY, listUndeformedElementsXZ, XCoordsUndefXY,
+# XCoordsUndefXZ, YCoordsUndefXY, YCoordsUndefXZ,
+# colorListUndeformedXY, colorListUndeformedXZ,
+# biggestValue, smallestValue) = undeformed_cantilever_beam_determiner( 
+#                               length, height, thickness, E, Py, Pz,
+#                               noElementsX, noElementsY, noElementsZ,
+#                               elementSizeX, elementSizeY, elementSizeZ,
+#                               amplificationFactor
+#                           )
+    
 # Create alpha list for the transparency of the colored patches
 alphaList = list()
 for index in range(len(listDeformedElementsXY)):
@@ -268,45 +362,38 @@ def fun_change_Py(attrname, old, new):
     # Update the source data file of the force arrow and the force label
     # The first part of the if-statement is excuted whenever the beam is 
     # deforming downwards
-
-    if Py == 0:
-        sourceArrowXY.data = dict(xs=[], ys=[],xe=[], ye=[],)
-        sourceFyLabel.data = dict(x= [],y= [],f= [])                                 
-    else:
-        if sourceXYdef.data['y'][0][3] <= 0:
-            sourceArrowXY.data = dict(
+    if sourceXYdef.data['y'][0][3] <= 0:
+        sourceArrowXY.data = dict(
                                       xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Py)/5000+0.25],
                                       xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
                                  )
-            sourceFyLabel.data = dict(
+        sourceFyLabel.data = dict(
                                       x= sourceArrowXY.data['xs'],
                                       y= [sourceArrowXY.data['ys'][0] + 0.5],
                                       f= ['Fy']
                                  )
-        else:
-            sourceArrowXY.data = dict(
+    else:
+        sourceArrowXY.data = dict(
                                       xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Py)/5000-0.25],
                                       xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
                                  )
-            sourceFyLabel.data = dict(
+        sourceFyLabel.data = dict(
                                       x= sourceArrowXY.data['xs'],
                                       y= [sourceArrowXY.data['ys'][0] - 0.5],
                                       f= ['Fy']
                                  )
         
     update_colorBar_extremas(smallestValue,biggestValue)
-    
-    
-    ####################################
-    # UPDATE STRESSES ALONG X-Y ELEMENT
-    ####################################
 
+    ##################################
+    # Update Stresses acting on internal XY-Element:
     sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(length,height,thickness,glCantileverCrossSection,Py,Pz,E)
     
+
     ## IF SIGMA BUTTON IS ACTIVATED:
     if (glCantileverStress==0):
         ## DELETE TAU PLOTS
@@ -332,7 +419,6 @@ def fun_change_Py(attrname, old, new):
         SigmaPlot_l_x = np.hstack((np.linspace(sigma_l_pos, sigma_l_pos, len(sigma_x_l)), sigma_l_pos-abs(sigma_x_l_scaled)))
         SigmaPlot_l_y = np.hstack((np.linspace(-0.525, 0, len(sigma_x_l)),np.linspace(0, -0.525, len(sigma_x_l))))
         Sigmaplot_l_Source.data = dict(x = SigmaPlot_l_x, y = SigmaPlot_l_y)
-
         ## SIGMA_X RIGHT END DATA SOURCE:
         sigma_x_r_scaled = np.linspace(0, 0, len(sigma_x_r))
         # Create scaled and reversed list 
@@ -345,8 +431,7 @@ def fun_change_Py(attrname, old, new):
         # SCALING AND POSITIONING OF SIGMA ARROWS
         arrow_scale = 0.7
         arrow_adjust_x = 0.05
-
-        # ARROWS LEFT END 
+        # Arrows left end    
         if (Py<-1500):
             SigmaArrowSource1.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
             SigmaArrowSource2.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
@@ -361,8 +446,7 @@ def fun_change_Py(attrname, old, new):
             SigmaArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
             SigmaArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])
             SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-
-        # ARROWS RIGHT END
+        # Arrows right end
         arrow_scale = 0.7
         arrow_adjust_x = 0.05
         if (Py<-1500):
@@ -382,10 +466,10 @@ def fun_change_Py(attrname, old, new):
 
     ## IF TAU BUTTON IS ACTIVATED:
     if (glCantileverStress==1):    
-        ## Delete sigma plots
+        ## DELETE SIGMA PLOTS
         Sigmaplot_l_Source.data = dict(x = [], y = [])
         Sigmaplot_r_Source.data = dict(x = [], y = [])
-        ## Delete sigma arrows
+        ## DELETE SIGMA ARROWS
         SigmaArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
         SigmaArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])
         SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
@@ -473,6 +557,9 @@ def fun_change_Py(attrname, old, new):
             TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])   
 
 
+    ##################################
+
+        
 # The function to be excuted whenever the force in the z direction changes
 def fun_change_Pz(attrname, old, new):
     global Pz, listDeformedElementsXZ
@@ -512,31 +599,26 @@ def fun_change_Pz(attrname, old, new):
     # Update the source data file of the force arrow and the force label
     # The first part of the if-statement is excuted whenever the beam is 
     # deforming downwards
-
-    if Pz == 0:
-        sourceArrowXZ.data = dict(xs=[],ys=[],xe=[],ye=[])
-        sourceFzLabel.data = dict(x=[],y=[],f=[])
-    else:
-        if sourceXZdef.data['y'][0][3] <= 0:
-            sourceArrowXZ.data = dict(
+    if sourceXZdef.data['y'][0][3] <= 0:
+        sourceArrowXZ.data = dict(
                                       xs=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Pz)/5000.0+0.25],
                                       xe=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ye=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
                                  )
-            sourceFzLabel.data = dict(
+        sourceFzLabel.data = dict(
                                       x= sourceArrowXZ.data['xs'],
                                       y= [sourceArrowXZ.data['ys'][0] + 0.5],
                                       f= ['Fz']
                                  )
-        else:
-            sourceArrowXZ.data = dict(
+    else:
+        sourceArrowXZ.data = dict(
                                       xs=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Pz)/5000.0-0.25],
                                       xe=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ye=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
                                  )
-            sourceFzLabel.data = dict(
+        sourceFzLabel.data = dict(
                                       x= sourceArrowXZ.data['xs'],
                                       y= [sourceArrowXZ.data['ys'][0] - 0.5],
                                       f= ['Fz']
@@ -544,10 +626,24 @@ def fun_change_Pz(attrname, old, new):
         
     update_colorBar_extremas(smallestValue,biggestValue)
 
+    ##################################
+    # Update Stresses acting on internal XY-Element:
+    # x_pos = 2.5
+    # y_pos = -height/2
+    # z_pos = 0
+    # length_of_element = 2.0
+    # height_of_element = height/2.0
     functions.calculate_stresses_xy_element(length,height,thickness,glCantileverCrossSection,Py,Pz,E)
+    ##################################
 
+
+
+##########################
 
 def fun_change_Cross_Section(attrname, old, new):
+    # global Pz, listDeformedElementsXZ 
+    # global radio_button_group.active
+    # print radio_button_group.active
     if (radio_button_group.active == 0 ):
         CrossSectionSource1.data = dict(sp1=[CrossSection1], x = [0], y = [0])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
@@ -566,10 +662,17 @@ def fun_change_Cross_Section(attrname, old, new):
     global glCantileverStress
     glCantileverStress = radio_button_group2.active
 
+
+
+
+
+##########################
+        
 def init_data():
 
     Yforce_slider.value = 0
     Zforce_slider.value = 0
+    # Xpos_slider.value   = 0
     radio_button_group.active = 0
     radio_button_group2.active = 0
 
@@ -614,10 +717,32 @@ radio_button_group = RadioButtonGroup(name="Geometry of cross section",labels=["
 # Construct radio button to choose between plot of sigma(y) or tau(y)
 radio_button_group2 = RadioButtonGroup(name="Plot of sigma or tau",labels=["Normal Stresses", "Shear Stresses"], active=glCantileverStress)
 
+# # Construct slider to choose x-position of visualized cross section
+# Xpos_slider = Slider(title="X-position", value=0.0, start=0.0, end=5.0, step=0.5)
+
 # Construct reset button
 Reset_button = Button(label="Reset", button_type="success")
 
 
+
+
+#                         x_range = ( 0,6 ) ,
+#                         y_range= ( -3,3 ) ,
+#                         title = 'Undefromed Cofiguration in XY plane',
+#                         tools = '',
+#                    )
+#plotUndefXY.xaxis.major_tick_line_color=None
+#plotUndefXY.xaxis.major_label_text_color=None
+#plotUndefXY.xaxis.minor_tick_line_color=None
+#plotUndefXY.yaxis.major_tick_line_color=None
+#plotUndefXY.yaxis.major_label_text_color=None
+#plotUndefXY.yaxis.minor_tick_line_color=None
+#plotUndefXY.grid.visible = False
+#plotUndefXY.title.text_font_size="12.5pt"
+#plotUndefXY.xaxis.axis_label_text_font_size="14pt"
+#plotUndefXY.yaxis.axis_label_text_font_size="14pt"
+#plotUndefXY.xaxis.axis_label="x"
+#plotUndefXY.yaxis.axis_label="y"
 
 plotDefXY = Figure(    
                        plot_width=400    , 
@@ -638,6 +763,10 @@ plotDefXY.yaxis.axis_line_color=None
 plotDefXY.grid.visible = False
 plotDefXY.toolbar.logo = None
 plotDefXY.title.text_font_size="12.5pt"
+#plotDefXY.xaxis.axis_label_text_font_size="12pt"
+#plotDefXY.yaxis.axis_label_text_font_size="12pt"
+#plotDefXY.xaxis.axis_label="x"
+#plotDefXY.yaxis.axis_label="y"
 labelXY = ColumnDataSource(data=dict(x=[-.3,5.8],
                                      y=[2.7,-.3],
                                      text=['y','x']))
@@ -665,6 +794,27 @@ plotDefXY.add_layout(
                                   source=labelXY
                                 )
                     )
+
+#plotUndefXZ = Figure(    
+#                         plot_width=350    , 
+#                         plot_height=350   ,
+#                         x_range = ( 0,6 ) ,
+#                         y_range= ( -3,3 ) ,
+#                         title = 'Undefromed Cofiguration in XZ plane',
+#                         tools = ''
+#                    )
+#plotUndefXZ.xaxis.major_tick_line_color=None
+#plotUndefXZ.xaxis.major_label_text_color=None
+#plotUndefXZ.xaxis.minor_tick_line_color=None
+#plotUndefXZ.yaxis.major_tick_line_color=None
+#plotUndefXZ.yaxis.major_label_text_color=None
+#plotUndefXZ.yaxis.minor_tick_line_color=None
+#plotUndefXZ.grid.visible = False
+#plotUndefXZ.title.text_font_size="12.5pt"
+#plotUndefXZ.xaxis.axis_label_text_font_size="14pt"
+#plotUndefXZ.yaxis.axis_label_text_font_size="14pt"
+#plotUndefXZ.xaxis.axis_label="x"
+#plotUndefXZ.yaxis.axis_label="z"
 
 plotDefXZ = Figure(    
                        plot_width=400    , 
@@ -714,6 +864,8 @@ plotDefXZ.add_layout(
                                 )
                     )
 
+
+######################
 plotDefYZ = Figure(    
                        plot_width=300    , 
                        plot_height=300   ,
@@ -765,6 +917,10 @@ plotDefYZ.add_glyph(CrossSectionSource1,ImageURL(url="sp1", x=-5.0/3.0, y=5.0/3.
 plotDefYZ.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-5.0/3.0, y=5.0/3.0, w=10.0/3.0, h=10.0/3.0))
 plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-5.0/3.0, y=5.0/3.0, w=10.0/3.0, h=10.0/3.0))
 
+####################
+
+
+#################################
 plotXYElement = Figure(    
                        plot_width=400    , 
                        plot_height=400   ,
@@ -784,7 +940,10 @@ plotXYElement.yaxis.axis_line_color=None
 plotXYElement.grid.visible = False
 plotXYElement.toolbar.logo = None
 plotXYElement.title.text_font_size="12.5pt"
-
+#plotDefXY.xaxis.axis_label_text_font_size="12pt"
+#plotDefXY.yaxis.axis_label_text_font_size="12pt"
+#plotDefXY.xaxis.axis_label="x"
+#plotDefXY.yaxis.axis_label="y"
 labelXYElement = ColumnDataSource(data=dict(x=[-.3,5.8],
                                      y=[2.7,-.3],
                                      text=['y','x']))
@@ -834,7 +993,36 @@ plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,s
                            line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = TauArrowSource3))
 plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
                            line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = TauArrowSource4))
+                      
 
+# labelXYElement = ColumnDataSource(data=dict(x=[3.5],
+#                                      y=[-1.0],
+#                                      text=['x']))
+
+# plotXYElement.add_layout( 
+#                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+#                            x_start=0, 
+#                            y_start=-4, 
+#                            x_end=0, 
+#                            y_end=4, 
+#                            ))
+
+# plotXYElement.add_layout( 
+#                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+#                            x_end=4, 
+#                            y_start=0, 
+#                            x_start=-4, 
+#                            y_end=0, 
+#                            ))
+# plotXYElement.add_layout(
+#                       LabelSet(
+#                                   x='x', y='y',
+#                                   text='text',
+#                                   text_color='black',text_font_size="12pt",
+#                                   level='glyph',text_baseline="middle",text_align="center",
+#                                   source=labelXYElement
+#                                 )
+#                     )
 
 plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1.04))
 plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=1.5, y=0, w=2, h=0.535))
@@ -855,6 +1043,8 @@ plotXYElement.add_glyph(Tauplot_r_Source, Tauplot_r_Glyph)
 
 Tauplot_u_Glyph = Patch(x="x", y="y", fill_color='#E37222', fill_alpha=0.5)
 plotXYElement.add_glyph(Tauplot_u_Source, Tauplot_u_Glyph)
+#####################################
+
 
 # Construct the color-bar figure
 colorBar = Figure(
@@ -906,6 +1096,12 @@ colorBar.patches( xs='x', ys='y', source=colorBarSource, color = 'c', alpha = 'a
 plotDefXY.patches  (xs='x', ys='y', source=sourceXYdef  , color = 'c', alpha = 'a')
 plotDefXZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
 
+
+###################
+# plotDefYZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
+######################
+
+
 # Construct the arrows
 plotDefXY.add_layout( 
                      Arrow(end=NormalHead(line_color="black",line_width=3,size=10),
@@ -925,6 +1121,18 @@ plotDefXZ.add_layout(
                            y_end=['ye'][0], 
                            source = sourceArrowXZ)
                     )
+###############
+# plotDefYZ.add_layout( 
+#                      Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
+#                            x_start=['xs'][0], 
+#                            y_start=['ys'][0], 
+#                            x_end=['xe'][0], 
+#                            y_end=['ye'][0], 
+#                            source = sourceArrowXZ)
+#                     )
+########################                
+            
+
 
 # Construct the force labels
 plotDefXY.add_layout(
@@ -937,7 +1145,8 @@ plotDefXY.add_layout(
                               )
                     )
 
-plotDefXZ.add_layout(LabelSet(
+plotDefXZ.add_layout(
+                      LabelSet(
                                   x='x', y='y',
                                   text='f',
                                   text_color='black',text_font_size="12pt",
@@ -946,12 +1155,31 @@ plotDefXZ.add_layout(LabelSet(
                               )
                     )
 
+
+########################
+# plotDefYZ.add_layout(
+#                       LabelSet(
+#                                   x='x', y='y',
+#                                   text='f',
+#                                   text_color='black',text_font_size="12pt",
+#                                   level='glyph',text_baseline="middle",text_align="center",
+#                                   source=sourceFzLabel
+#                               )
+#                     )
+#########################
+
+
+# x Axis                     
+#plotDefXY.line([0, 6], [0, 0], line_width=1, line_color="black")
+#plotDefXZ.line([0, 6], [0, 0], line_width=1, line_color="black", line_dash='dotted')
+                        
 # Notify the corresponding functions to carry out the changes characterized by
 # the sliders
 Yforce_slider.on_change('value',fun_change_Py)
 Zforce_slider.on_change('value',fun_change_Pz)
 radio_button_group.on_change('active',fun_change_Cross_Section,fun_change_Py,fun_change_Pz)
 radio_button_group2.on_change('active',fun_change_Cross_Section,fun_change_Py,fun_change_Pz)
+# Xpos_slider.on_change('value',fun_change_Py,fun_change_Pz)
 Reset_button.on_click(init_data)
 
 init_data()    
@@ -959,9 +1187,30 @@ init_data()
 # **For visualization purposes, there is a magnification factor of 100 that exaggerates the deformation""", render_as_text=False, width=400)
 # add app description
 description_filename = join(dirname(__file__), "description.html")
+
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
-curdoc().add_root(column(description,row(
-    column(plotDefYZ,widgetbox(radio_button_group),Yforce_slider,Zforce_slider,Reset_button),
-    column(row(column(row(plotDefXY, plotDefXZ),colorBar),column(plotXYElement,row(Spacer(width=80),radio_button_group2)))))))
+curdoc().add_root(
+                    column(
+                            description,
+                            row(
+                                column(
+                                    plotDefYZ,
+                                    widgetbox(radio_button_group),
+                                    Yforce_slider,
+                                    Zforce_slider,
+                                    Reset_button
+                                        #   Spacer(height=30),
+                                        #   area_image
+                                ),
+                                column(
+                                    row(
+                                        column(row(plotDefXY, plotDefXZ),colorBar),
+                                        column(plotXYElement,row(Spacer(width=80),radio_button_group2))
+                                ),
+
+                               )
+                          )
+                     ) 
+                 )
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

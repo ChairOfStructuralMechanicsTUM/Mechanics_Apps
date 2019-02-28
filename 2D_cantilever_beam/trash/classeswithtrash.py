@@ -58,7 +58,7 @@ def construct_deformed_beam_centerLine( Py, Pz, E,
         I = thickness*height**3/12
     elif(glCantileverCrossSection==1):        
         I = 2*(height*(height/10.0)**3/12.0) + height/10.0/12 + 2*((height/2.0)**2*height/10.0)        
-    elif(glCantileverCrossSection==2):
+    elif(glCantileverCrossSectioni==2):
         I = math.pi*(height/2)**4/4  
 
     
@@ -367,7 +367,9 @@ def calculate_stresses_xy_element(length, height, thickness, glCantileverCrossSe
     n=11
     for i in range(n):
         # sigma(x,y,z) = (N(x)/A) + (My*Iz-Mz*Iyz)/(Iy*Iz-Iyz**2)*z + (Mz*Iy-My*Iyz)/(Iy*Iz-Iyz**2)*y
+        # sigma_x_l.append((M_y_l*Iz - M_z_l*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_l*Iy-M_y_l*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n/2.0)*height_of_element/n+y_pos))
         sigma_x_l.append((M_y_l*Iz - M_z_l*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_l*Iy-M_y_l*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n+1)/20.0))        
+        # sigma_x_r.append((M_y_r*Iz - M_z_r*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_r*Iy-M_y_r*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n/2.0)*height_of_element/n+y_pos))
         sigma_x_r.append((M_y_r*Iz - M_z_r*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z_r*Iy-M_y_r*Iyz)/(Iy*Iz-Iyz**2.0)*((i-n+1)/20.0))
     
     ## Calculation of tau_xy
@@ -376,4 +378,6 @@ def calculate_stresses_xy_element(length, height, thickness, glCantileverCrossSe
         # tau_xy(s,z) = -(Q_y(x)*S_z(s))/(Iy*thickness) = -(Q_y(x)*((height/2-s_+/2)*(s_+*length_of_element))/(Iy*thickness), with s starting at y=y_pos and s_max=height_of_element
         tau_xy.append(-(Py*(-y_pos-float(i)/float(m)*height_of_element/2.0)*(float(i)/float(m)/height_of_element*length_of_element))/(Iz*length_of_element))
 
+    # print sigma_x_l
+    # print tau_xy
     return sigma_x_l,sigma_x_r,tau_xy

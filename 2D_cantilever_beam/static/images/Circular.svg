@@ -46,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -63,6 +63,9 @@
        sodipodi:rx="145.46196"
        sodipodi:ry="145.46196"
        d="m 539.42146,708.91034 a 145.46196,145.46196 0 1 1 -290.92392,0 145.46196,145.46196 0 1 1 290.92392,0 z"
-       transform="matrix(0.97222222,0,0,0.97222222,-13.300341,-325.78021)" />
+       transform="matrix(0.97222222,0,0,0.97222222,-13.300341,-325.78021)"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
   </g>
 </svg>
