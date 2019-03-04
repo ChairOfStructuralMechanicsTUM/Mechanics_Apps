@@ -186,10 +186,26 @@ def construct_normal_vectors( deformedBeam ):
     
     return averageNormalVector1, averageNormalVector2
 
-def values_determiner( Py, Pz, length, height, thickness, E, elementSizeX ):
+##### EDIT HERE TO NORMALIZE VALUE RANGE
+def values_determiner( Py, Pz, length, height, thickness, E, elementSizeX, glCantileverCrossSection):
     
-    biggestValueXY = abs(Py)*length / (height*thickness*thickness)
-    smallestValueXY = -abs(Py)*length / (height*thickness*thickness)
+    x_pos = 0.0
+    y_pos = -height/2.0
+    z_pos = 0.0
+    sigma_max_xy = calculate_normal_stress_xy(x_pos, y_pos, z_pos, length, height, thickness, glCantileverCrossSection, Py, Pz, E)
+    biggestValueXY = sigma_max_xy
+    # print "1 new: ", biggestValueXY
+    # biggestValueXY = abs(Py)*length / (height*thickness*thickness)
+    # print "1 old : ", biggestValueXY
+
+    x_pos = 0.0
+    y_pos = height/2
+    sigma_min_xy = calculate_normal_stress_xy(x_pos, y_pos, z_pos, length, height, thickness, glCantileverCrossSection, Py, Pz, E)
+    smallestValueXY = sigma_min_xy
+    # print "2 new: ", smallestValueXY
+    # smallestValueXY = -abs(Py)*length / (height*thickness*thickness)
+    # print "2 old: ", smallestValueXY
+
     biggestValueXZ = abs(Pz)*length / (height*height*thickness)
     smallestValueXZ = -abs(Pz)*length / (height*height*thickness)
 
@@ -319,14 +335,14 @@ def create_coordinates_list( listElements ):
     return listXCoord , listYCoord
 
 
-def calculate_stresses_xy_element(length, height, thickness, glCantileverCrossSection, Py, Pz, E):
+def calculate_stresses_xy_element(x_pos, y_pos, length, height, thickness, glCantileverCrossSection, Py, Pz, E):
     sigma_x_l = list()
     sigma_x_r = list()
     tau_xy = list() 
 
     ##Element Properties:
-    x_pos = 2.5
-    y_pos = -height/2
+    # x_pos = 2.5
+    # y_pos = -height/2
     z_pos = 0
     length_of_element = 2.0
     height_of_element = height/2.0
@@ -377,3 +393,42 @@ def calculate_stresses_xy_element(length, height, thickness, glCantileverCrossSe
         tau_xy.append(-(Py*(-y_pos-float(i)/float(m)*height_of_element/2.0)*(float(i)/float(m)/height_of_element*length_of_element))/(Iz*length_of_element))
 
     return sigma_x_l,sigma_x_r,tau_xy
+
+
+def calculate_normal_stress_xy(x_pos, y_pos, z_pos, length, height, thickness, glCantileverCrossSection, Py, Pz, E):
+    
+    ## Declare and initialize sigma:
+    sigma = 0
+
+    ## Calculate Iz, Iy and Iyz:
+    # Calculation of Iz:  Iz = Sum(Iz_i) + Sum(ez_i^2*A_i)
+    if(glCantileverCrossSection==0):
+        Iz = thickness*height**3.0/12.0
+    elif(glCantileverCrossSection==1):        
+        Iz = 2*(height*(height/10.0)**3.0/12.0) + height/10.0/12.0 + 2.0*((height/2.0)**2.0*height/10.0)        
+    elif(glCantileverCrossSection==2):
+        Iz = math.pi*(height/2.0)**4.0/4.0  
+    #  Calculation of Iy:  Iy = Sum(Iy_i) + Sum(ey_i^2*A_i) = Sum(Iy_i) + 0 
+    if(glCantileverCrossSection==0):
+        Iy = height*thickness**3.0/12.0
+    if(glCantileverCrossSection==1):
+        Iy = 2*(height/10.0*height**3.0/12.0) + (height/10.0)**3.0*height/12.0        
+    if(glCantileverCrossSection==2):
+        Iy = math.pi*(height/2.0)**4.0/4.0
+    #  Calculation of Iyz:   Iyz = Sum(Iyz_i) + Sum(ey_i*ez_i*A_i) = 0 + Sum(ey_i*ez_i*A_i) 
+    #  Deviation momentum is zero because of symmetry of cross sections
+    if(glCantileverCrossSection==0):
+        Iyz = 0.0
+    if(glCantileverCrossSection==1):
+        Iyz = 0.0
+    if(glCantileverCrossSection==2):
+        Iyz = 0.0
+
+    ## Calculation of Momentum M_y and M_z:
+    M_y = -(5-x_pos) * Pz
+    M_z = -(5-x_pos) * Py
+
+    ## Calculation of sigma(x,y,z):
+    #  Calculation of sigma:  sigma(x,y,z) = (N(x)/A) + (My*Iz-Mz*Iyz)/(Iy*Iz-Iyz**2)*z + (Mz*Iy-My*Iyz)/(Iy*Iz-Iyz**2)*y
+    sigma = (M_y*Iz - M_z*Iyz)/(Iy*Iz-Iyz**2.0)*z_pos + (M_z*Iy-M_y*Iyz)/(Iy*Iz-Iyz**2.0)*y_pos 
+    return sigma

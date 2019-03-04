@@ -10,13 +10,31 @@ from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
 from bokeh.models.glyphs import ImageURL, Patch
 import numpy as np
 
-# from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
+
+
+from bokeh.plotting import Figure, output_file , show
+from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
+from bokeh.models.glyphs import ImageURL, Quadratic, Rect, Patch
+from bokeh.models.layouts import Spacer
+from bokeh.layouts import column, row, widgetbox, layout
+from bokeh.io import curdoc, output_file, show
+from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
+import numpy as np
+import math
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir)
+from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
+
 
 # Define basic beam parameters and loading
 length = 5.0
 height = 1.0
 thickness = 1.0
-E = 1000000000.0
+# E = 1000000000.0
+E = 50000000.0
 Py = 0.0 #-1000
 Pz = 0.0 #2000
 
@@ -36,9 +54,9 @@ elementSizeZ = thickness / noElementsZ
 amplificationFactor = 100
 
 # Cross Section Source:
-CrossSection1 = "2D_cantilever_beam/static/images/Rectangular.png"
-CrossSection2 = "2D_cantilever_beam/static/images/DoubleT.png"
-CrossSection3 = "2D_cantilever_beam/static/images/Circular.png"
+CrossSection1 = "2D_cantilever_beam/static/images/Rectangular_with_measure.png"
+CrossSection2 = "2D_cantilever_beam/static/images/DoubleT_with_measure.png"
+CrossSection3 = "2D_cantilever_beam/static/images/Circular_with_measure.png"
 CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , y=[]))
@@ -57,6 +75,8 @@ Sigmaplot_r_Source = ColumnDataSource(data=dict(x=[] , y=[]))
 Tauplot_l_Source = ColumnDataSource(data=dict(x=[] , y=[]))
 Tauplot_r_Source = ColumnDataSource(data=dict(x=[] , y=[]))
 Tauplot_u_Source = ColumnDataSource(data=dict(x=[] , y=[]))
+Sigmaplot_Label_Source = ColumnDataSource(data=dict(x=[], y=[], names=[]))
+Tauplot_Label_Source = ColumnDataSource(data=dict(x=[], y=[], names=[]))
 # Arrow sources in "XY-Element" plot:
 SigmaArrowSource1 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
 SigmaArrowSource2 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
@@ -110,7 +130,8 @@ def deformed_cantilever_beam_determiner_XY(
                                                                                                         length,
                                                                                                         height,
                                                                                                         thickness,
-                                                                                                        E, elementSizeX
+                                                                                                        E, elementSizeX,
+                                                                                                        glCantileverCrossSection
                                                                                                    )
     
     # Coloring the deformed elements
@@ -176,7 +197,8 @@ def deformed_cantilever_beam_determiner_XZ(
                                                                                                         length,
                                                                                                         height,
                                                                                                         thickness,
-                                                                                                        E, elementSizeX
+                                                                                                        E, elementSizeX,
+                                                                                                        glCantileverCrossSection
                                                                                                    )
     
     # Coloring the deformed elements
@@ -304,8 +326,9 @@ def fun_change_Py(attrname, old, new):
     ####################################
     # UPDATE STRESSES ALONG X-Y ELEMENT
     ####################################
-
-    sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(length,height,thickness,glCantileverCrossSection,Py,Pz,E)
+    x_pos = 2.5
+    y_pos = -height/2
+    sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(x_pos,y_pos,length,height,thickness,glCantileverCrossSection,Py,Pz,E)
     
     ## IF SIGMA BUTTON IS ACTIVATED:
     if (glCantileverStress==0):
@@ -313,6 +336,8 @@ def fun_change_Py(attrname, old, new):
         Tauplot_l_Source.data = dict(x = [], y = [])
         Tauplot_r_Source.data = dict(x = [], y = [])
         Tauplot_u_Source.data = dict(x = [], y = [])   
+        ## DELETE TAU LABELS
+        Tauplot_Label_Source.data = dict(x=[], y=[], names=[])
         ## DELETE TAU ARROWS
         TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
         TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])        
@@ -320,7 +345,7 @@ def fun_change_Py(attrname, old, new):
         TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])
 
         ## SCALING AND POSITION OF SIGMA GLYPHS
-        sigmascaling = 0.000005
+        sigmascaling = 0.000005*50
         sigma_l_pos = 1.5
         sigma_r_pos = 3.5
 
@@ -341,18 +366,23 @@ def fun_change_Py(attrname, old, new):
         SigmaPlot_r_x = np.hstack((np.linspace(sigma_r_pos, sigma_r_pos, len(sigma_x_r)), sigma_r_pos+abs(sigma_x_r_scaled)))
         SigmaPlot_r_y = np.hstack((np.linspace(-0.525, 0, len(sigma_x_r)),np.linspace(0, -0.525, len(sigma_x_r))))
         Sigmaplot_r_Source.data = dict(x = SigmaPlot_r_x, y = SigmaPlot_r_y)
+
+        # POSITION SIGMA LABELS
+        Sigmaplot_Label_Source.data = dict(
+            x=[max(sigma_r_pos+abs(sigma_x_r_scaled))+0.1,min(sigma_l_pos-abs(sigma_x_l_scaled))-0.6], 
+            y=[-0.5, -0.5], names=["\\sigma_{xx}","\\sigma_{xx}"])
         
         # SCALING AND POSITIONING OF SIGMA ARROWS
         arrow_scale = 0.7
         arrow_adjust_x = 0.05
 
-        # ARROWS LEFT END 
-        if (Py<-1500):
+        # Arrows left end 
+        if (Py<-30):
             SigmaArrowSource1.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
             SigmaArrowSource2.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
             # SigmaTauArrowSource3.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*1.0/5.0))]] , ys=[-0.1] , ye=[-0.1] )
             SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-        elif (Py>1500):
+        elif (Py>30):
             SigmaArrowSource1.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
             SigmaArrowSource2.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
             # SigmaTauArrowSource3.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*1.0/5.0))]] , ys=[-0.1] , ye=[-0.1] )        
@@ -362,15 +392,13 @@ def fun_change_Py(attrname, old, new):
             SigmaArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])
             SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
 
-        # ARROWS RIGHT END
-        arrow_scale = 0.7
-        arrow_adjust_x = 0.05
-        if (Py<-1500):
+        # Arrows right end
+        if (Py<-30):
             SigmaArrowSource4.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
             SigmaArrowSource5.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
             # SigmaTauArrowSource6.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*1.0/5.0))]] , ys=[-0.1] , ye=[-0.1] )
             SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-        elif (Py>1500):
+        elif (Py>30):
             SigmaArrowSource4.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
             SigmaArrowSource5.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
             # SigmaTauArrowSource6.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*1.0/5.0))]] , ys=[-0.1] , ye=[-0.1] )        
@@ -382,10 +410,12 @@ def fun_change_Py(attrname, old, new):
 
     ## IF TAU BUTTON IS ACTIVATED:
     if (glCantileverStress==1):    
-        ## Delete sigma plots
+        ## DELETE SIGMA PLOTS
         Sigmaplot_l_Source.data = dict(x = [], y = [])
         Sigmaplot_r_Source.data = dict(x = [], y = [])
-        ## Delete sigma arrows
+        ## DELETE SIGMA LABELS
+        Sigmaplot_Label_Source.data = dict(x=[], y=[], names=[])
+        ## DELETE SIGMA ARROWS
         SigmaArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
         SigmaArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])
         SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
@@ -394,7 +424,7 @@ def fun_change_Py(attrname, old, new):
         SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
 
         ## SCALING AND POSITION OF TAU GLYPHS
-        tau_xy_scaling = 0.00001
+        tau_xy_scaling = 0.00001*50
         tau_xy_l_pos_x = 1.5
         tau_xy_r_pos_x = 3.5
         tau_xy_u_pos_x = 2.5        
@@ -426,6 +456,11 @@ def fun_change_Py(attrname, old, new):
         TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xy)), abs(tau_xy_u_scaled)))
         Tauplot_u_Source.data = dict(x = TauPlot_u_x, y = TauPlot_u_y)
 
+        # POSITION TAU LABELS
+        Tauplot_Label_Source.data = dict(
+            x=[max(tau_xy_r_pos_x+abs(tau_xy_r_scaled))+0.1, min(tau_xy_l_pos_x-abs(tau_xy_l_scaled))-0.5, tau_xy_l_pos_x+0.7], 
+            y=[-0.5, -0.5, max(abs(tau_xy_u_scaled))+0.1 ], names=['\\tau_{xy}','\\tau_{xy}','\\tau_{yx}'])
+
         ### SCALING AND POSITIONING OF ARROWS:
         # Position arrows into tau glyph
         arrow_adjust_x = max(abs(tau_xy_l_scaled))/4.0
@@ -438,18 +473,18 @@ def fun_change_Py(attrname, old, new):
         
         ## ARROW LEFT END:
         tau_xy_l_pos_y = -0.25                 
-        if (Py<-1500):
+        if (Py<-30):
             TauArrowSource1.data = dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y])
-        elif (Py>1500):
+        elif (Py>30):
             TauArrowSource1.data = dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y])
         else:            
             TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])  
         
         ## ARROWS RIGHT END:             
         tau_xy_r_pos_y = -0.25           
-        if (Py<-1500):
+        if (Py<-30):
             TauArrowSource2.data = dict(xs=[tau_xy_r_pos_x+arrow_adjust_x] , xe= [tau_xy_r_pos_x+arrow_adjust_x], ys=[tau_xy_r_pos_y-arrow_adjust_y+arrow_move_y] , ye=[tau_xy_r_pos_y+arrow_adjust_y+arrow_move_y])
-        elif (Py>1500):
+        elif (Py>30):
             TauArrowSource2.data = dict(xs=[tau_xy_r_pos_x+arrow_adjust_x] , xe= [tau_xy_r_pos_x+arrow_adjust_x], ys=[tau_xy_r_pos_y+arrow_adjust_y+arrow_move_y] , ye=[tau_xy_r_pos_y-arrow_adjust_y+arrow_move_y])
         else:            
             TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])  
@@ -462,10 +497,10 @@ def fun_change_Py(attrname, old, new):
         else:
             arrow_adjust_x = max(abs(tau_xy_u_scaled))
         arrow_adjust_y = max(abs(tau_xy_u_scaled))/2.0
-        if (Py<-1500):
+        if (Py<-30):
             TauArrowSource3.data = dict(xs=[(tau_xy_u_pos_x-0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)+arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])            
             TauArrowSource4.data = dict(xs=[(tau_xy_u_pos_x+0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)+arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])                                  
-        elif (Py>1500):
+        elif (Py>30):
             TauArrowSource3.data = dict(xs=[(tau_xy_u_pos_x-0.5)+arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)-arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])            
             TauArrowSource4.data = dict(xs=[(tau_xy_u_pos_x+0.5)+arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)-arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])
         else:
@@ -543,8 +578,9 @@ def fun_change_Pz(attrname, old, new):
                                  )
         
     update_colorBar_extremas(smallestValue,biggestValue)
-
-    functions.calculate_stresses_xy_element(length,height,thickness,glCantileverCrossSection,Py,Pz,E)
+    x_pos = 2.5
+    y_pos = -height/2
+    sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(x_pos,y_pos,length,height,thickness,glCantileverCrossSection,Py,Pz,E)
 
 
 def fun_change_Cross_Section(attrname, old, new):
@@ -605,8 +641,8 @@ sourceFyLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fy']
 sourceFzLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fz'] ))
 
 # Construct the force sliders
-Yforce_slider = Slider(title="Y-direction of the force (N)", value=0.0, start=-5000.0, end=5000.0, step=100.0)
-Zforce_slider = Slider(title="Z-direction of the force (N)", value=0.0, start=-5000.0, end=5000.0, step=100.0)
+Yforce_slider = LatexSlider(title= 'F_y   ', value=0.0, start=-100.0, end=100.0, step=10.0, value_unit='[N]')
+Zforce_slider = LatexSlider(title= 'F_z   ', value=0.0, start=-100.0, end=100.0, step=10.0, value_unit='[N]')
 
 # Construct radio button to choose between geometries of cross section
 radio_button_group = RadioButtonGroup(name="Geometry of cross section",labels=["Rectangular", "Double-T", "Circular"], active=glCantileverCrossSection)
@@ -714,6 +750,8 @@ plotDefXZ.add_layout(
                                 )
                     )
 
+
+
 plotDefYZ = Figure(    
                        plot_width=300    , 
                        plot_height=300   ,
@@ -734,22 +772,27 @@ plotDefYZ.grid.visible = False
 plotDefYZ.toolbar.logo = None
 plotDefYZ.title.text_font_size="12.5pt"
 
-labelYZ = ColumnDataSource(data=dict(x=[0.5,-3.5],
-                                     y=[4.0,-1.0],
+
+plotDefYZ.add_glyph(CrossSectionSource1,ImageURL(url="sp1", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+plotDefYZ.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-3*5.0/3.0, y=2.575*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+
+labelYZ = ColumnDataSource(data=dict(x=[0.5,-4.0],
+                                     y=[4.0,-0.6],
                                      text=['y','z']))
 plotDefYZ.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_start=0, 
-                           y_start=-4, 
+                           y_start=-4.5, 
                            x_end=0, 
-                           y_end=4, 
+                           y_end=4.5, 
                            ))
 
 plotDefYZ.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                           x_end=-4, 
+                           x_end=-4.5, 
                            y_start=0, 
-                           x_start=4, 
+                           x_start=4.5, 
                            y_end=0, 
                            ))
 plotDefYZ.add_layout(
@@ -761,9 +804,9 @@ plotDefYZ.add_layout(
                                   source=labelYZ
                                 )
                     )
-plotDefYZ.add_glyph(CrossSectionSource1,ImageURL(url="sp1", x=-5.0/3.0, y=5.0/3.0, w=10.0/3.0, h=10.0/3.0))
-plotDefYZ.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-5.0/3.0, y=5.0/3.0, w=10.0/3.0, h=10.0/3.0))
-plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-5.0/3.0, y=5.0/3.0, w=10.0/3.0, h=10.0/3.0))
+
+
+
 
 plotXYElement = Figure(    
                        plot_width=400    , 
@@ -847,6 +890,7 @@ Sigmaplot_r_Glyph = Patch(x="x", y="y", fill_color='#0065BD', fill_alpha=0.5)
 plotXYElement.add_glyph(Sigmaplot_r_Source, Sigmaplot_r_Glyph)
 
 
+
 Tauplot_l_Glyph = Patch(x="x", y="y", fill_color='#E37222', fill_alpha=0.5)
 plotXYElement.add_glyph(Tauplot_l_Source, Tauplot_l_Glyph)
 
@@ -855,6 +899,19 @@ plotXYElement.add_glyph(Tauplot_r_Source, Tauplot_r_Glyph)
 
 Tauplot_u_Glyph = Patch(x="x", y="y", fill_color='#E37222', fill_alpha=0.5)
 plotXYElement.add_glyph(Tauplot_u_Source, Tauplot_u_Glyph)
+
+
+Sigmaplot_Labels = LatexLabelSet(
+    x='x', y='y', text='names', source=Sigmaplot_Label_Source, 
+    text_color ="#0065BD", level='glyph', x_offset=0, y_offset=0)
+
+Tauplot_Labels = LatexLabelSet(
+    x='x', y='y', text='names', source=Tauplot_Label_Source, 
+    text_color ="#E37222", level='glyph', x_offset=0, y_offset=0)    
+
+plotXYElement.add_layout(Sigmaplot_Labels)
+plotXYElement.add_layout(Tauplot_Labels)
+
 
 # Construct the color-bar figure
 colorBar = Figure(
@@ -896,7 +953,7 @@ for i in range(50):
     colorBarAlphaList.append( 1 )
 
 def update_colorBar_extremas(smallesValue, biggestValue):
-    colorBar.title.text = str(smallesValue)+" Pa" + " "*50 + "normal stress" + " "*50 + str(biggestValue)+" Pa"
+    colorBar.title.text = str(smallesValue)+" Pa" + " "*50 + "Normal Stress" + " "*50 + str(biggestValue)+" Pa"
 
 # Construct the source file for the color bar
 colorBarSource = ColumnDataSource(data=dict( x=colorBarXCoords, y=colorBarYCoords, c =colorBarColorList, a=colorBarAlphaList ))
