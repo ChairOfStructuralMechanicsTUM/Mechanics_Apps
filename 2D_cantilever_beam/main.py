@@ -45,9 +45,9 @@ global glCantileverStress
 glCantileverStress = 0
 
 # Define mesh for visualization
-noElementsX = 80
-noElementsY = 20
-noElementsZ = 20
+noElementsX = 200
+noElementsY = 50
+noElementsZ = 50
 elementSizeX = length / noElementsX
 elementSizeY = height / noElementsY
 elementSizeZ = thickness / noElementsZ
@@ -144,7 +144,8 @@ def deformed_cantilever_beam_determiner_XY(
                                                                   E, height, thickness,
                                                                   length, Py, 
                                                                   biggestValue, smallestValue,
-                                                                  listValuesLowerXZ
+                                                                  listValuesLowerXZ,
+                                                                  glCantileverCrossSection
                                                              )
 
     return (
@@ -211,7 +212,8 @@ def deformed_cantilever_beam_determiner_XZ(
                                                                   E, thickness, height,
                                                                   length, Pz, 
                                                                   biggestValue, smallestValue,
-                                                                  listValuesUpperXY
+                                                                  listValuesUpperXY,
+                                                                  glCantileverCrossSection
                                                              )
 
     return (
@@ -280,7 +282,8 @@ def fun_change_Py(attrname, old, new):
                                                                   E, thickness, height,
                                                                   length, Pz, 
                                                                   biggestValue, smallestValue,
-                                                                  listValuesUpperXY
+                                                                  listValuesUpperXY,
+                                                                  glCantileverCrossSection
                                                              )
     
     # Update the source files of the deforemd beams
@@ -328,7 +331,7 @@ def fun_change_Py(attrname, old, new):
     ####################################
     x_pos = 2.5
     y_pos = -height/2
-    sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(x_pos,y_pos,length,height,thickness,glCantileverCrossSection,Py,Pz,E)
+    sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(x_pos,y_pos,length,height,thickness,glCantileverCrossSection,Py,Pz)
     
     ## IF SIGMA BUTTON IS ACTIVATED:
     if (glCantileverStress==0):
@@ -537,7 +540,8 @@ def fun_change_Pz(attrname, old, new):
                                                                   E, thickness, height,
                                                                   length, Py, 
                                                                   biggestValue, smallestValue,
-                                                                  listValuesLowerXZ
+                                                                  listValuesLowerXZ,
+                                                                  glCantileverCrossSection
                                                              )
     
     # Update the source files of the deforemd beams
@@ -580,7 +584,7 @@ def fun_change_Pz(attrname, old, new):
     update_colorBar_extremas(smallestValue,biggestValue)
     x_pos = 2.5
     y_pos = -height/2
-    sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(x_pos,y_pos,length,height,thickness,glCantileverCrossSection,Py,Pz,E)
+    sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(x_pos,y_pos,length,height,thickness,glCantileverCrossSection,Py,Pz)
 
 
 def fun_change_Cross_Section(attrname, old, new):
@@ -928,7 +932,7 @@ colorBar.yaxis.visible = False
 colorBar.toolbar.logo = None
 colorBar.title.text_font_size="12pt"
 
-# create colorBar patches
+## Create colorBar patches with node coords 
 colorBarXCoords = list()
 colorBarYCoords = list()
 for i in range(50):
@@ -942,20 +946,22 @@ for i in range(50):
 colorBarColorList = list()
 colorBarAlphaList = list()
 
-# Determine the color distribution in the color bar
+## Determine the color distribution in the color bar
 smallestValue,biggestValue = 0.0,10.0
 valuesRange = list()
+## Create equidistant vector with 50 members between smallestValue and biggestValue:
 for i in range(50):
     valuesRange.append(smallestValue + (float(i)/49.0)*(biggestValue - smallestValue))
-
+## Create vector with 50 colors corresponding to varluesRange-vector:
 for i in range(50):
     colorBarColorList.append(functions.color_determiner( smallestValue, biggestValue, valuesRange[i] ))
     colorBarAlphaList.append( 1 )
 
+## Label colorbar min-max stess range
 def update_colorBar_extremas(smallesValue, biggestValue):
     colorBar.title.text = str(smallesValue)+" Pa" + " "*50 + "Normal Stress" + " "*50 + str(biggestValue)+" Pa"
 
-# Construct the source file for the color bar
+## Construct the source file for the color bar
 colorBarSource = ColumnDataSource(data=dict( x=colorBarXCoords, y=colorBarYCoords, c =colorBarColorList, a=colorBarAlphaList ))
 
 # Construct the patches 
