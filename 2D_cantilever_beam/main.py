@@ -1,27 +1,15 @@
 import Cantilever_beam_classes as functions
 from bokeh.io import curdoc
-from bokeh.plotting import Figure, ColumnDataSource
-from bokeh.layouts import row, column, widgetbox
+from bokeh.plotting import Figure, ColumnDataSource, output_file , show
+from bokeh.layouts import row, column, widgetbox, layout
 from bokeh.models import Slider, LabelSet, Div
 from bokeh.models import Arrow, NormalHead, OpenHead, VeeHead
-from os.path import dirname, join, split
+from os.path import dirname, join, split, abspath
 from bokeh.models.layouts import Spacer
 from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
-from bokeh.models.glyphs import ImageURL, Patch
-import numpy as np
-
-
-
-from bokeh.plotting import Figure, output_file , show
-from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
-from bokeh.models.glyphs import ImageURL, Quadratic, Rect, Patch
-from bokeh.models.layouts import Spacer
-from bokeh.layouts import column, row, widgetbox, layout
-from bokeh.io import curdoc, output_file, show
-from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
+from bokeh.models.glyphs import ImageURL, Patch, Quadratic, Rect
 import numpy as np
 import math
-from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
@@ -32,7 +20,7 @@ from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, Late
 # Define basic beam parameters and loading
 length = 5.0
 height = 1.0
-thickness = 1.0
+thickness = height
 # E = 1000000000.0
 E = 50000000.0
 Py = 0.0 #-1000
@@ -45,9 +33,9 @@ global glCantileverStress
 glCantileverStress = 0
 
 # Define mesh for visualization
-noElementsX = 200
-noElementsY = 50
-noElementsZ = 50
+noElementsX = 80
+noElementsY = 20
+noElementsZ = 20
 elementSizeX = length / noElementsX
 elementSizeY = height / noElementsY
 elementSizeZ = thickness / noElementsZ
@@ -142,7 +130,7 @@ def deformed_cantilever_beam_determiner_XY(
                                                                   noElementsX,
                                                                   noElementsY,
                                                                   E, height, thickness,
-                                                                  length, Py, 
+                                                                  length, Py, Pz,
                                                                   biggestValue, smallestValue,
                                                                   listValuesLowerXZ,
                                                                   glCantileverCrossSection
@@ -210,7 +198,7 @@ def deformed_cantilever_beam_determiner_XZ(
                                                                   noElementsX,
                                                                   noElementsZ,
                                                                   E, thickness, height,
-                                                                  length, Pz, 
+                                                                  length, Py, Pz, 
                                                                   biggestValue, smallestValue,
                                                                   listValuesUpperXY,
                                                                   glCantileverCrossSection
@@ -254,7 +242,7 @@ for index in range(len(listDeformedElementsXY)):
 
 # The function to be excuted whenever the force in the y direction changes
 def fun_change_Py(attrname, old, new):
-    global Py, listDeformedElementsXY
+    global Py,Pz, listDeformedElementsXY
     
     # Change the value of the applied force according to the slider value
     Py = Yforce_slider.value
@@ -280,7 +268,7 @@ def fun_change_Py(attrname, old, new):
                                                                   noElementsX,
                                                                   noElementsZ,
                                                                   E, thickness, height,
-                                                                  length, Pz, 
+                                                                  length, Py, Pz, 
                                                                   biggestValue, smallestValue,
                                                                   listValuesUpperXY,
                                                                   glCantileverCrossSection
@@ -329,6 +317,7 @@ def fun_change_Py(attrname, old, new):
     ####################################
     # UPDATE STRESSES ALONG X-Y ELEMENT
     ####################################
+
     x_pos = 2.5
     y_pos = -height/2
     sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(x_pos,y_pos,length,height,thickness,glCantileverCrossSection,Py,Pz)
@@ -383,12 +372,10 @@ def fun_change_Py(attrname, old, new):
         if (Py<-30):
             SigmaArrowSource1.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
             SigmaArrowSource2.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
-            # SigmaTauArrowSource3.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*1.0/5.0))]] , ys=[-0.1] , ye=[-0.1] )
             SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
         elif (Py>30):
             SigmaArrowSource1.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
-            SigmaArrowSource2.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
-            # SigmaTauArrowSource3.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*1.0/5.0))]] , ys=[-0.1] , ye=[-0.1] )        
+            SigmaArrowSource2.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )       
             SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])        
         else:
             SigmaArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
@@ -399,12 +386,10 @@ def fun_change_Py(attrname, old, new):
         if (Py<-30):
             SigmaArrowSource4.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
             SigmaArrowSource5.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
-            # SigmaTauArrowSource6.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*1.0/5.0))]] , ys=[-0.1] , ye=[-0.1] )
             SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
         elif (Py>30):
             SigmaArrowSource4.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
-            SigmaArrowSource5.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
-            # SigmaTauArrowSource6.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*1.0/5.0))]] , ys=[-0.1] , ye=[-0.1] )        
+            SigmaArrowSource5.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )     
             SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
         else:
             SigmaArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])
@@ -513,7 +498,7 @@ def fun_change_Py(attrname, old, new):
 
 # The function to be excuted whenever the force in the z direction changes
 def fun_change_Pz(attrname, old, new):
-    global Pz, listDeformedElementsXZ
+    global Py,Pz, listDeformedElementsXZ
     
     # Change the value of the applied force according to the slider value
     Pz = Zforce_slider.value
@@ -538,7 +523,7 @@ def fun_change_Pz(attrname, old, new):
                                                                   noElementsX,
                                                                   noElementsY,
                                                                   E, thickness, height,
-                                                                  length, Py, 
+                                                                  length, Py, Pz,
                                                                   biggestValue, smallestValue,
                                                                   listValuesLowerXZ,
                                                                   glCantileverCrossSection
@@ -582,9 +567,6 @@ def fun_change_Pz(attrname, old, new):
                                  )
         
     update_colorBar_extremas(smallestValue,biggestValue)
-    x_pos = 2.5
-    y_pos = -height/2
-    sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(x_pos,y_pos,length,height,thickness,glCantileverCrossSection,Py,Pz)
 
 
 def fun_change_Cross_Section(attrname, old, new):
@@ -664,7 +646,7 @@ plotDefXY = Figure(
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Deformation in X-Y Plane',
+                       title = 'Deformation in X-Y Plane (z=a/2)',
                        tools = ''
                   )
 plotDefXY.xaxis.major_tick_line_color=None
@@ -711,7 +693,7 @@ plotDefXZ = Figure(
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Deformation in X-Z Plane',
+                       title = 'Deformation in X-Z Plane (y=a/2)',
                        tools = ''
                   )
 plotDefXZ.xaxis.major_tick_line_color=None
@@ -809,15 +791,12 @@ plotDefYZ.add_layout(
                                 )
                     )
 
-
-
-
 plotXYElement = Figure(    
                        plot_width=400    , 
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Stresses along X-Y Element',
+                       title = 'Stresses along X-Y Element (z=0)',
                        tools = ''
                   )
 plotXYElement.xaxis.major_tick_line_color=None
@@ -886,14 +865,11 @@ plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,s
 plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1.04))
 plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=1.5, y=0, w=2, h=0.535))
 
-
 Sigmaplot_l_Glyph = Patch(x="x", y="y", fill_color='#0065BD', fill_alpha=0.5)
 plotXYElement.add_glyph(Sigmaplot_l_Source, Sigmaplot_l_Glyph)
 
 Sigmaplot_r_Glyph = Patch(x="x", y="y", fill_color='#0065BD', fill_alpha=0.5)
 plotXYElement.add_glyph(Sigmaplot_r_Source, Sigmaplot_r_Glyph)
-
-
 
 Tauplot_l_Glyph = Patch(x="x", y="y", fill_color='#E37222', fill_alpha=0.5)
 plotXYElement.add_glyph(Tauplot_l_Source, Tauplot_l_Glyph)
@@ -903,7 +879,6 @@ plotXYElement.add_glyph(Tauplot_r_Source, Tauplot_r_Glyph)
 
 Tauplot_u_Glyph = Patch(x="x", y="y", fill_color='#E37222', fill_alpha=0.5)
 plotXYElement.add_glyph(Tauplot_u_Source, Tauplot_u_Glyph)
-
 
 Sigmaplot_Labels = LatexLabelSet(
     x='x', y='y', text='names', source=Sigmaplot_Label_Source, 
@@ -959,7 +934,7 @@ for i in range(50):
 
 ## Label colorbar min-max stess range
 def update_colorBar_extremas(smallesValue, biggestValue):
-    colorBar.title.text = str(smallesValue)+" Pa" + " "*50 + "Normal Stress" + " "*50 + str(biggestValue)+" Pa"
+    colorBar.title.text = str(int(smallesValue/(abs(Py)+abs(Pz)-0.1)/height**2.0-0.5))+ " (Fy+Fz)/(a*a)" + " "*40 + "Normal Stress" + " "*40 + str(int(biggestValue/(abs(Py)+abs(Pz)+0.1)/height**2.0+0.5))+ " (Fy+Fz)/(a*a)"
 
 ## Construct the source file for the color bar
 colorBarSource = ColumnDataSource(data=dict( x=colorBarXCoords, y=colorBarYCoords, c =colorBarColorList, a=colorBarAlphaList ))
