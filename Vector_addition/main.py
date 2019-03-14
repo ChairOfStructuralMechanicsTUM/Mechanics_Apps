@@ -20,7 +20,7 @@ sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
 
-#Initialise Variables
+# Initialise Variables
 glob_theta1            = ColumnDataSource(data=dict(val=[radians(30)]))
 glob_theta2            = ColumnDataSource(data=dict(val=[radians(60)]))
 glob_Vector1           = ColumnDataSource(data=dict(val=[50]))
@@ -37,7 +37,7 @@ Resultant_values_source = ColumnDataSource(data=dict(x=[],y=[],names=[]))
 global ShowVariable
 ShowVariable = -1
 
-#responsible for the display of initial conditions 
+# responsible for the display of initial conditions 
 def init ():
     updateVector1()
     updateVector2()
