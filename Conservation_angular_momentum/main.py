@@ -13,7 +13,7 @@ App describtion:
 '''
 ################################# Imports #####################################
 '''
-import numpy as np
+import numpy as np 123
 from bokeh.io import curdoc
 from bokeh.plotting import Figure
 import CAM_BarChart as BC
