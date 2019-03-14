@@ -304,7 +304,7 @@ def compute_trajectory():
     particleTwo.update_velocity_source()
     
     particleOne.update_position_source()
-    particleTwo.update_position_source()123
+    particleTwo.update_position_source()
     
  
 '''
