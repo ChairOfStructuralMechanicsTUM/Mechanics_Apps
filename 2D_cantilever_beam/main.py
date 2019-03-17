@@ -42,9 +42,9 @@ elementSizeZ = thickness / noElementsZ
 amplificationFactor = 100
 
 # Cross Section Source:
-CrossSection1 = "2D_cantilever_beam/static/images/Rectangular_with_measure.png"
-CrossSection2 = "2D_cantilever_beam/static/images/DoubleT_with_measure.png"
-CrossSection3 = "2D_cantilever_beam/static/images/Circular_with_measure.png"
+CrossSection1 = "2D_cantilever_beam/static/images/Rectangular_with_measure_and_views.png"
+CrossSection2 = "2D_cantilever_beam/static/images/DoubleT_with_measure_and_views.png"
+CrossSection3 = "2D_cantilever_beam/static/images/Circular_with_measure_and_views.png"
 CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , y=[]))
@@ -646,7 +646,7 @@ plotDefXY = Figure(
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Deformation in X-Y Plane',
+                       title = 'Deformation in X-Y View',
                        tools = ''
                   )
 plotDefXY.xaxis.major_tick_line_color=None
@@ -693,7 +693,7 @@ plotDefXZ = Figure(
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Deformation in X-Z Plane',
+                       title = 'Deformation in X-Z View',
                        tools = ''
                   )
 plotDefXZ.xaxis.major_tick_line_color=None
@@ -760,7 +760,7 @@ plotDefYZ.title.text_font_size="12.5pt"
 
 
 plotDefYZ.add_glyph(CrossSectionSource1,ImageURL(url="sp1", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
-plotDefYZ.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-3*5.0/3.0, y=2.575*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+plotDefYZ.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
 plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
 
 labelYZ = ColumnDataSource(data=dict(x=[0.5,-4.0],
