@@ -646,7 +646,7 @@ plotDefXY = Figure(
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Deformation in X-Y Plane (z=a/2)',
+                       title = 'Deformation in X-Y Plane',
                        tools = ''
                   )
 plotDefXY.xaxis.major_tick_line_color=None
@@ -693,7 +693,7 @@ plotDefXZ = Figure(
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Deformation in X-Z Plane (y=a/2)',
+                       title = 'Deformation in X-Z Plane',
                        tools = ''
                   )
 plotDefXZ.xaxis.major_tick_line_color=None

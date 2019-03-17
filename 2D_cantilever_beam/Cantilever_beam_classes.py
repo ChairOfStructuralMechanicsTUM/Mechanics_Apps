@@ -121,10 +121,13 @@ def color_determiner( minimumValue, maximumValue, currentValue ):
         minimumPoint = [minimumValue , 0]
         maximumPoint = [maximumValue , 816 ]
         colorIndex = (maximumPoint[1] /(maximumPoint[0] - minimumPoint[0]))*(currentValue - minimumPoint[0])
-        # Prevent colorindex from getting too low, as this will cause irregularities in painting of beam: 
+        ratio = colorIndex / maximumPoint[1]      
+        # Prevent colorindex from getting too extreme, as this will cause irregularities in painting of beam: 
         if colorIndex<20:
             colorIndex = 20
-        ratio = colorIndex / maximumPoint[1]
+        if colorIndex>780:
+            colorIndex = 780
+
 
 
         # Cases
@@ -275,12 +278,36 @@ def elements_color_determiner( deformed,
             
                 x_pos = xIncrement
                 y_pos = ((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
-                z_pos = thickness/2.0
+                
+                if glCantileverCrossSection==0:
+                    z_pos = thickness/2.0
+
+                elif glCantileverCrossSection==1:
+                    if abs(y_pos) < height*4.0/10.0:
+                        z_pos = thickness/10.0/2.0
+                    else:
+                        z_pos = thickness/2.0
+
+
+                elif glCantileverCrossSection==2:
+                    z_pos = np.cos(np.arcsin(y_pos/(thickness/2.0)))
+
                 strainXXup = calculate_normal_stress(x_pos, y_pos, z_pos, length, height, thickness, glCantileverCrossSection, Py, Pz) 
+
 
                 x_pos = xIncrement
                 y_pos = -((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
-                z_pos = thickness/2.0
+
+                if glCantileverCrossSection==0:
+                    z_pos = thickness/2.0
+                elif glCantileverCrossSection==1:
+                    if abs(y_pos) < height*4.0/10.0:
+                        z_pos = thickness/10.0/2.0
+                    else:
+                        z_pos = thickness/2.0
+                elif glCantileverCrossSection==2:
+                    z_pos = np.cos(np.arcsin(y_pos/(thickness/2.0)))
+
                 strainXXbottom = calculate_normal_stress(x_pos, y_pos, z_pos, length, height, thickness, glCantileverCrossSection,  Py, Pz) 
 
                 elementColor = color_determiner( smallestValue , biggestValue , strainXXup )
@@ -303,13 +330,29 @@ def elements_color_determiner( deformed,
                     pass
             
                 x_pos = xIncrement
-                y_pos = height/2.0
+                # y_pos = height/2.0
                 z_pos = ((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
+
+                if glCantileverCrossSection==0:
+                    y_pos = height/2.0
+                elif glCantileverCrossSection==1:
+                        y_pos = height/2.0
+                elif glCantileverCrossSection==2:
+                    y_pos = np.sin(np.arccos(abs(z_pos)/(height/2.0)))
+
                 strainXXup = calculate_normal_stress(x_pos, y_pos, z_pos, length, height, thickness, glCantileverCrossSection, Py, Pz)        
 
                 x_pos = xIncrement
-                y_pos = height/2.0
+                # y_pos = height/2.0
                 z_pos = -((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
+
+                if glCantileverCrossSection==0:
+                    y_pos = height/2.0
+                elif glCantileverCrossSection==1:
+                        y_pos = height/2.0
+                elif glCantileverCrossSection==2:
+                    y_pos = np.sin(np.arccos(abs(z_pos)/(height/2.0)))
+
                 strainXXbottom = calculate_normal_stress(x_pos, y_pos, z_pos, length, height, thickness, glCantileverCrossSection,  Py, Pz)       
             
                 elementColor = color_determiner( smallestValue , biggestValue , strainXXup )
