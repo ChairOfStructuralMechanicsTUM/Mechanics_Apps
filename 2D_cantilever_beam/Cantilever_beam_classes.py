@@ -215,16 +215,20 @@ def construct_normal_vectors( deformedBeam ):
 def values_determiner( Py, Pz, length, height, thickness, E, elementSizeX, glCantileverCrossSection):
 
     # Determine biggest and smallest value at left end of cantilever:
-    biggestValue =  max(
-                        calculate_normal_stress(0.0, height/2.0, height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz),
-                        calculate_normal_stress(0.0, -height/2.0, height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz),
-                        calculate_normal_stress(0.0, height/2.0, -height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz),
-                        calculate_normal_stress(0.0, -height/2.0, -height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz) )
-    smallestValue = min(
-                        calculate_normal_stress(0.0, height/2.0, height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz),
-                        calculate_normal_stress(0.0, -height/2.0, height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz),
-                        calculate_normal_stress(0.0, height/2.0, -height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz),
-                        calculate_normal_stress(0.0, -height/2.0, -height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz) )
+    # biggestValue =  max(
+    #                     calculate_normal_stress(0.0, height/2.0, height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz),
+    #                     calculate_normal_stress(0.0, -height/2.0, height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz),
+    #                     calculate_normal_stress(0.0, height/2.0, -height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz),
+    #                     calculate_normal_stress(0.0, -height/2.0, -height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz) )
+    biggestValue = calculate_normal_stress(0.0, 0.0, height/2.0, length, height, thickness, 2, 0, 100)
+
+    smallestValue = calculate_normal_stress(0.0, 0.0, -height/2.0, length, height, thickness, 2, 0, 100)
+
+    # smallestValue = min(
+    #                     calculate_normal_stress(0.0, height/2.0, height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz),
+    #                     calculate_normal_stress(0.0, -height/2.0, height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz),
+    #                     calculate_normal_stress(0.0, height/2.0, -height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz),
+    #                     calculate_normal_stress(0.0, -height/2.0, -height/2.0, length, height, thickness, glCantileverCrossSection, Py, Pz) )
 
     listValuesUpperXY = list()
     listValuesLowerXZ = list()

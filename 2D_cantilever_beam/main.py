@@ -934,7 +934,9 @@ for i in range(50):
 
 ## Label colorbar min-max stess range
 def update_colorBar_extremas(smallesValue, biggestValue):
-    colorBar.title.text = str(int(smallesValue/(abs(Py)+abs(Pz)-0.1)/height**2.0-0.5))+ " (Fy+Fz)/(a*a)" + " "*40 + "Normal Stress" + " "*40 + str(int(biggestValue/(abs(Py)+abs(Pz)+0.1)/height**2.0+0.5))+ " (Fy+Fz)/(a*a)"
+    # colorBar.title.text = str(int(smallesValue/(abs(Py)+abs(Pz)-0.1)/height**2.0-0.5))+ " (Fy+Fz)/(a*a)" + " "*40 + "Normal Stress" + " "*40 + str(int(biggestValue/(abs(Py)+abs(Pz)+0.1)/height**2.0+0.5))+ " (Fy+Fz)/(a*a)"
+
+    colorBar.title.text =  " "*15  + "-" + " "*55 + "Normal Stress" + " "*55 + "+"
 
 ## Construct the source file for the color bar
 colorBarSource = ColumnDataSource(data=dict( x=colorBarXCoords, y=colorBarYCoords, c =colorBarColorList, a=colorBarAlphaList ))
