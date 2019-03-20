@@ -1,3 +1,4 @@
+from __future__ import division # float devision only, like in python 3
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.models import ColumnDataSource, Select, Button, LabelSet, Slider, CustomJS
@@ -39,14 +40,6 @@ AlphaPos          = ColumnDataSource(data = dict(x=[],y=[],t=[]))
 glob_callback_id  = ColumnDataSource(data = dict(callback_id = [None]))
 glob_SphereXLines = ColumnDataSource(data = dict(SphereXLines = [SphereXLines]))
 glob_SphereYLines = ColumnDataSource(data = dict(SphereYLines = [SphereYLines]))
-# following ColumnDataSources could be exchanged by a single dict
-#
-#glob_offset       = ColumnDataSource(data = dict(offset = [offset]))
-#glob_SIN          = ColumnDataSource(data = dict(SIN = [SIN]))
-#glob_COS          = ColumnDataSource(data = dict(COS = [COS]))
-#glob_g            = ColumnDataSource(data = dict(g = [g]))
-#glob_alpha        = ColumnDataSource(data = dict(alpha = [alpha]))
-#glob_t            = ColumnDataSource(data = dict(t = [t]))
 
 glob_values = dict(offset = offset,
                    alpha  = alpha,
@@ -55,7 +48,6 @@ glob_values = dict(offset = offset,
                    g      = g,
                    t      = t,
                    H      = H)
-
 
 def init():
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] #      /output
@@ -91,23 +83,16 @@ def init():
 def createSphere(r,sphere_data,sphere_lines_data):
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
-    #[offset]       = glob_offset.data["offset"]             # input/
-    #[SIN]          = glob_SIN.data["SIN"]                   # input/
-    #[COS]          = glob_COS.data["COS"]                   # input/
     load_vals = ["SIN", "COS", "offset", "H"]
     SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     # find the centre, knowing that it touches the ramp at (offset,H)
     newX = offset+r*SIN
-    #newX = glob_values["offset"]+r*glob_values["SIN"]
     newY = H+r*COS
-    #newY = glob_values["H"]+r*glob_values["COS"]
     # draw the sphere in blue
     sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1])
     # use the referece lines to find the current position of the lines
     RCOS = r*COS
     RSIN = r*SIN
-    #RCOS = r*glob_values["COS"]
-    #RSIN = r*glob_values["SIN"]
     X1 = SphereXLines[0]*RCOS+SphereYLines*RSIN+newX
     X2 = SphereXLines[1]*RCOS+SphereYLines*RSIN+newX
     Y1 = -SphereXLines[0]*RSIN+SphereYLines*RCOS+newY
@@ -118,16 +103,10 @@ def createSphere(r,sphere_data,sphere_lines_data):
 def moveSphere(t,r,m,sphere_data,sphere_lines_data):
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
-    #[offset]       = glob_offset.data["offset"]             # input/
-    #[SIN]          = glob_SIN.data["SIN"]                   # input/
-    #[COS]          = glob_COS.data["COS"]                   # input/
-    #[g]            = glob_g.data["g"]                       # input/
-    #[alpha]        = glob_alpha.data["alpha"]               # input/
     load_vals = ["g", "alpha", "SIN", "COS", "offset", "H"]
     g, alpha, SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     # find the displacement of the point touching the ramp
     displacement = g*SIN*t*t*1.25
-    #displacement = glob_values["g"]*SIN*t*t*1.25
     # find the rotation of the sphere
     rotation = -displacement/r
     # find the new centre of the sphere
@@ -149,9 +128,6 @@ def moveSphere(t,r,m,sphere_data,sphere_lines_data):
 def createHollowSphere(r,ri,sphere_data,sphere_lines_data):
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
-    #[offset]       = glob_offset.data["offset"]             # input/
-    #[SIN]          = glob_SIN.data["SIN"]                   # input/
-    #[COS]          = glob_COS.data["COS"]                   # input/
     load_vals = ["SIN", "COS", "offset", "H"]
     SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     # find the centre, knowing that it touches the ramp at (offset,H)
@@ -172,17 +148,11 @@ def createHollowSphere(r,ri,sphere_data,sphere_lines_data):
 def moveHollowSphere(t,r,m,ri,sphere_data,sphere_lines_data):
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
-    #[offset]       = glob_offset.data["offset"]             # input/
-    #[SIN]          = glob_SIN.data["SIN"]                   # input/
-    #[COS]          = glob_COS.data["COS"]                   # input/
-    #[g]            = glob_g.data["g"]                       # input/
-    #[alpha]        = glob_alpha.data["alpha"]               # input/
     load_vals = ["g", "alpha", "SIN", "COS", "offset", "H"]
     g, alpha, SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
-    try:
-        temp = r*g*SIN*t*t*1.25*(r**3-ri**3)/(r**5-ri**5)
-    except ZeroDivisionError:
-        ri   = r-1e-3;
+    if (abs(r-ri) < 1e-5): # ri close to r
+        temp = -1000 # out of sight, object doesn't exist
+    else:
         temp = r*g*SIN*t*t*1.25*(r**3-ri**3)/(r**5-ri**5)
     # find the rotation of the sphere
     rotation = -temp
@@ -204,9 +174,6 @@ def moveHollowSphere(t,r,m,ri,sphere_data,sphere_lines_data):
     return (newX,newY)
 
 def createCylinder(r, cylinder_data, cylinder_lines_data):
-    #[offset]       = glob_offset.data["offset"]             # input/
-    #[SIN]          = glob_SIN.data["SIN"]                   # input/
-    #[COS]          = glob_COS.data["COS"]                   # input/
     load_vals = ["SIN", "COS", "offset", "H"]
     SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     # draw the cylinder around the centre, knowing that it touches the ramp at (offset,H)
@@ -216,11 +183,6 @@ def createCylinder(r, cylinder_data, cylinder_lines_data):
         y=[[H,H+2*r*COS],[H+r*(COS+SIN),H+r*(COS-SIN)]])
 
 def moveCylinder(t,r,m, cylinder_data, cylinder_lines_data):
-    #[offset]       = glob_offset.data["offset"]             # input/
-    #[SIN]          = glob_SIN.data["SIN"]                   # input/
-    #[COS]          = glob_COS.data["COS"]                   # input/
-    #[g]            = glob_g.data["g"]                       # input/
-    #[alpha]        = glob_alpha.data["alpha"]               # input/
     load_vals = ["g", "alpha", "SIN", "COS", "offset", "H"]
     g, alpha, SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     # find the displacement of the point touching the ramp
@@ -241,9 +203,6 @@ def moveCylinder(t,r,m, cylinder_data, cylinder_lines_data):
     return (newX,newY)
 
 def createHollowCylinder(r,ri, hollowCylinder_data, hollowCylinder_lines_data):
-    #[offset]       = glob_offset.data["offset"]             # input/
-    #[SIN]          = glob_SIN.data["SIN"]                   # input/
-    #[COS]          = glob_COS.data["COS"]                   # input/
     load_vals = ["SIN", "COS", "offset", "H"]
     SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
     # draw the cylinder around the centre, knowing that it touches the ramp at (offset,H)
@@ -258,14 +217,12 @@ def createHollowCylinder(r,ri, hollowCylinder_data, hollowCylinder_lines_data):
         [H+r*(COS-SIN),H+r*COS-ri*SIN]])
 
 def moveHollowCylinder(t,r,m,ri,hollowCylinder_data,hollowCylinder_lines_data):
-    #[offset]       = glob_offset.data["offset"]             # input/
-    #[SIN]          = glob_SIN.data["SIN"]                   # input/
-    #[COS]          = glob_COS.data["COS"]                   # input/
-    #[g]            = glob_g.data["g"]                       # input/
-    #[alpha]        = glob_alpha.data["alpha"]               # input/
     load_vals = ["g", "alpha", "SIN", "COS", "offset", "H"]
     g, alpha, SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
-    temp = r*g*SIN*t*t/(r*r+ri*ri)
+    if (abs(r-ri) < 1e-5): # ri close to r
+        temp = -1000 # out of sight, object doesn't exist
+    else:
+        temp = r*g*SIN*t*t/(r*r+ri*ri)
     # find the rotation of the cylinder
     rotation = -temp
     # find the displacement of the point touching the ramp
@@ -309,7 +266,6 @@ angle_glyph1=LabelSet(x='x', y='y',text='t',text_color='black',
     text_font_size="15pt", source=AlphaPos)
 fig1.add_layout(angle_glyph1)
 fig1.toolbar_location = None
-#fig1.toolbar.logo = None
 
 fig2 = figure(title="Full cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
 fig2.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
@@ -321,7 +277,6 @@ angle_glyph2=LabelSet(x='x', y='y',text='t',text_color='black',
     text_font_size="15pt", source=AlphaPos)
 fig2.add_layout(angle_glyph2)
 fig2.toolbar_location = None
-#fig2.toolbar.logo = None
 
 fig3 = figure(title="Hollow cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
 fig3.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
@@ -341,7 +296,7 @@ evolveFunc3=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig3_data,fig3_lines_data
 glob_fun_handles = dict(fun1=evolveFunc1, fun2=evolveFunc2, fun3=evolveFunc3)
 
 # function to change the shape, radius, or mass of the object in figure FIG
-def changeObject(FIG,new,r,wt,m):
+def changeObject(FIG,new,r,ri,m):
     # save the data concerned in data and line_data
     if (FIG==1):
         data=fig1_data
@@ -358,107 +313,78 @@ def changeObject(FIG,new,r,wt,m):
         createSphere(r,data,line_data)
         func=lambda(x):moveSphere(x,r,m,data,line_data)
     elif (new=="Hollow cylinder"):
-        createHollowCylinder(r,r-wt,data,line_data)
-        func=lambda(x):moveHollowCylinder(x,r,m,r-wt,data,line_data)
+        createHollowCylinder(r,ri,data,line_data)
+        func=lambda(x):moveHollowCylinder(x,r,m,ri,data,line_data)
     elif (new == "Hollow sphere"):
-        createHollowSphere(r,r-wt,data,line_data)
-        func=lambda(x):moveHollowSphere(x,r,m,r-wt,data,line_data)
+        createHollowSphere(r,ri,data,line_data)
+        func=lambda(x):moveHollowSphere(x,r,m,ri,data,line_data)
     else:
         createCylinder(r,data,line_data)
         func=lambda(x):moveCylinder(x,r,m,data,line_data)
     # save the evolution function to the appropriate function handle
     if (FIG==1):
-        #global evolveFunc1
-        #evolveFunc1=func
-        glob_fun_handles["fun1"] = func
-        
+        glob_fun_handles["fun1"] = func        
         fig1.title.text=new
     elif(FIG==2):
-        #global evolveFunc2
-        #evolveFunc2=func
         glob_fun_handles["fun2"] = func
         fig2.title.text=new
     else:
-        #global evolveFunc3
-        #evolveFunc3=func
         glob_fun_handles["fun3"] = func
         fig3.title.text=new
-    # if a simulation is in progress, restart it
-    #global Active,t
-    #if (Active):
-    #    t=0.0
 
 ## slider functions
 # functions to change the shape
 def changeObject1(attr,old,new):
-    changeObject(1,new,radius_select1.value,wall_select1.value,1.0)
+    changeObject(1,new,radius_slider1.value,ri_slider1.value,1.0)
 
 def changeObject2(attr,old,new):
-    changeObject(2,new,radius_select2.value,wall_select2.value,1.0)
+    changeObject(2,new,radius_slider2.value,ri_slider2.value,1.0)
 
 def changeObject3(attr,old,new):
-    changeObject(3,new,radius_select3.value,wall_select3.value,1.0)
+    changeObject(3,new,radius_slider3.value,ri_slider3.value,1.0)
 
 # functions to change the radius
 def changeRadius1(attr,old,new):
-    changeObject(1,object_select1.value,new,wall_select1.value,1.0)
-    wall_select1.end = new
+    changeObject(1,object_select1.value,new,ri_slider1.value,1.0)
+    ri_slider1.end = new
+    ri_slider1.value = min(ri_slider1.value,new)
 
 def changeRadius2(attr,old,new):
-    changeObject(2,object_select2.value,new,wall_select2.value,1.0)
-    wall_select2.end = new
+    changeObject(2,object_select2.value,new,ri_slider2.value,1.0)
+    ri_slider2.end = new
+    ri_slider2.value = min(ri_slider1.value,new)
 
 def changeRadius3(attr,old,new):
-    changeObject(3,object_select3.value,new,wall_select3.value,1.0)
-    wall_select3.end = new
+    changeObject(3,object_select3.value,new,ri_slider3.value,1.0)
+    ri_slider3.end = new
+    ri_slider3.value = min(ri_slider3.value,new)
     
 #functions to change the inner radius  / wall thickness
 def changeWall1(attr,old,new):
-    changeObject(1,object_select1.value,radius_select1.value,new,1.0)
+    changeObject(1,object_select1.value,radius_slider1.value,new,1.0)
 def changeWall2(attr,old,new):
-    changeObject(2,object_select2.value,radius_select2.value,new,1.0)
+    changeObject(2,object_select2.value,radius_slider2.value,new,1.0)
 def changeWall3(attr,old,new):
-    changeObject(3,object_select3.value,radius_select3.value,new,1.0)
+    changeObject(3,object_select3.value,radius_slider3.value,new,1.0)
     
-#changeWall3_JS = """
-#console.log("test");
-#"""
-
 object_select_JS = """
 choice = cb_obj.value;
-console.log(choice);
 caller = cb_obj.name;
-console.log(caller);
 
 // extract the number of the name and convert it to integer
 slider_idx = parseInt(caller.match(/\d/g).join(""))-1; //-1 for starting at 0
-console.log(slider_idx)
 
 slider_in_question = document.getElementsByClassName("wall_slider")[slider_idx];
-
-console.log(slider_in_question)
 
 // if hollow object is selected, show the slider (get rid of hidden)
 if(choice.includes("Hollow")){
         slider_in_question.className=slider_in_question.className.replace(" hidden","");
-        // special case for hollow sphere: ri != r, i.e. wallthickness of zero not allowed
-        if(choice.includes("sphere")){
-                console.log("there");
-                console.log(slider_in_question.start); // undefined
-                slider_in_question.start=0.5;  // does not work, how to access start??
-        }
 }
 // if full object is select, check if slider is hidden; if not, hide it
 else if(!slider_in_question.className.includes("hidden")){
         slider_in_question.className+=" hidden";
 }
-
-console.log(slider_in_question)
-console.log("------")
-
-
 """
-
 
 # sliders
 object_select1 = Select(title="Object:", value="Sphere", name="obj1",
@@ -475,29 +401,23 @@ object_select1.callback = CustomJS(code=object_select_JS)
 object_select2.callback = CustomJS(code=object_select_JS)
 object_select3.callback = CustomJS(code=object_select_JS)
 
-radius_select1 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
-radius_select1.on_change('value',changeRadius1)
-radius_select2 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
-radius_select2.on_change('value',changeRadius2)
-radius_select3 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
-radius_select3.on_change('value',changeRadius3)
+radius_slider1 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
+radius_slider1.on_change('value',changeRadius1)
+radius_slider2 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
+radius_slider2.on_change('value',changeRadius2)
+radius_slider3 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
+radius_slider3.on_change('value',changeRadius3)
 
-# ri = 0 ok
-# ri = r  --> zero div at hollow sphere
-# ri = r - wall_thickness
 # end value dependend on selected radius size
-wall_select1 = Slider(title="wall thickness", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj1", "hidden"])
-wall_select1.on_change('value',changeWall1)
-wall_select2 = Slider(title="wall thickness", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj2", "hidden"])
-wall_select2.on_change('value',changeWall2)
-wall_select3 = Slider(title="wall thickness", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj3", "hidden"])
-wall_select3.on_change('value',changeWall3)
-#wall_select3.js_on_change('value',changeWall3_JS)
-#wall_select3.callback = CustomJS(code=changeWall3_JS)
+ri_slider1 = Slider(title="Inner radius", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj1", "hidden"])
+ri_slider1.on_change('value',changeWall1)
+ri_slider2 = Slider(title="Inner radius", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj2", "hidden"])
+ri_slider2.on_change('value',changeWall2)
+ri_slider3 = Slider(title="Inner radius", value=1.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj3"])
+ri_slider3.on_change('value',changeWall3)
 
 # slider function for the angle
 def changeAlpha(attr,old,new):
-    #global alpha, COS, SIN, offset, H
     alpha=radians(new)
     X=[]
     Y=[]
@@ -510,7 +430,6 @@ def changeAlpha(attr,old,new):
     offset = -rampLength*COS
     H      = rampLength*SIN
     glob_values.update(dict(alpha=alpha, SIN=SIN, COS=COS, offset=offset, H=H)) #      /output
-    #print("<<<<check<<<<", glob_values)
     ramp_source.data = dict(x=[offset,0],y=[H,0])
     reset()
 
@@ -522,9 +441,9 @@ def disable_all_sliders(d=True):
     object_select1.disabled = d
     object_select2.disabled = d
     object_select3.disabled = d
-    radius_select1.disabled = d
-    radius_select2.disabled = d
-    radius_select3.disabled = d
+    radius_slider1.disabled = d
+    radius_slider2.disabled = d
+    radius_slider3.disabled = d
     alpha_slider.disabled   = d
 
 def start():
@@ -546,27 +465,19 @@ def start():
     
 
 def reset():
-    #[t] = glob_t.data["t"] # input/output
-    # reset the simulation
-    #glob_t.data = dict(t = [0.0]) #      /output
     glob_values["t"] = 0.0 #      /output
-    changeObject(1,object_select1.value,radius_select1.value,0.5,1.0)
-    changeObject(2,object_select2.value,radius_select2.value,0.5,1.0)
-    changeObject(3,object_select3.value,radius_select3.value,0.5,1.0)
+    changeObject(1,object_select1.value,radius_slider1.value,ri_slider1.value,1.0)
+    changeObject(2,object_select2.value,radius_slider2.value,ri_slider1.value,1.0)
+    changeObject(3,object_select3.value,radius_slider3.value,ri_slider1.value,1.0)
     disable_all_sliders(False)
 
     
 
 def evolve():
-    #[t] = glob_t.data["t"] # input/output
     t = glob_values["t"] # input/output
     t+=0.01
-    #glob_t.data = dict(t = [t])
     glob_values["t"] = t
     # call all necessary functions
-    #(x1,y1)=evolveFunc1(t)
-    #(x2,y2)=evolveFunc2(t)
-    #(x3,y3)=evolveFunc3(t)
     (x1,y1) = glob_fun_handles["fun1"](t)
     (x2,y2) = glob_fun_handles["fun2"](t)
     (x3,y3) = glob_fun_handles["fun3"](t)
@@ -582,8 +493,8 @@ reset_button.on_click(reset)
 
 init()
 ## Send to window
-curdoc().add_root(row(column(row(fig1,column(object_select1,radius_select1,wall_select1)),
-    row(fig2,column(object_select2,radius_select2,wall_select2)),
-    row(fig3,column(object_select3,radius_select3,wall_select3))),Spacer(width=100),
+curdoc().add_root(row(column(row(fig1,column(object_select1,radius_slider1,ri_slider1)),
+    row(fig2,column(object_select2,radius_slider2,ri_slider2)),
+    row(fig3,column(object_select3,radius_slider3,ri_slider3))),Spacer(width=100),
     column(start_button,reset_button,alpha_slider)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
