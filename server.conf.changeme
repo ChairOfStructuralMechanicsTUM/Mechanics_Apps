@@ -1,3 +1,4 @@
+# Copy this file and rename it to server.conf; then change IP address and ports according to your setup
 127.0.0.1 			# IP Address
 8080   				# Server Port
 5006				# Bokeh Port
