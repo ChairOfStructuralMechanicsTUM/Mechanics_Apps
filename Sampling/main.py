@@ -67,7 +67,7 @@ if color_interval:
 # text input window for function f(x,y) to be transformed
 f_input = TextInput(value=sample_functions[sample_function_id][0],
                     title="x(t):")
-#TODO: add Latex title
+#TODO: add Latex title for text inputs
 # dropdown menu for selecting one of the sample functions
 sample_fun_input_f = Dropdown(label="choose a sample function x(t) or enter one above",
                               menu=sample_f_names,
@@ -121,15 +121,20 @@ def extract_parameters():
     :return: float T_0, float N, lambda function f
     """
     T_0 = float(sympify(t0_input.value.replace(',','.')))  # Interval
-    t0_input.value = str(T_0)
-    N = float(sympify(N_input.value.replace(',','.')))  # Number of sampled values
+    N = int(sympify(N_input.value.replace(',','.')))  # Number of sampled values
 
     if N > 10**5:  # we do not accept more than 10**5 sampling points!
         N = 10**5
-        N_input.value = '10^5'
-    elif N <= 0:   # we do not accept non-positive values
+        #N_input.value = '10^5'
+    elif N <= 0:   # only positive values for N allowed
         N = 2**6
-        N_input.value = '2^6'
+        #N_input.value = '2^6'
+    if T_0 <= 0:  # only positive values for T_0 allowed
+        T_0 = 1.0
+        #t0_input.value = '1.0'
+        
+    t0_input.value = str(T_0)
+    N_input.value = str(N)
 
     h = T_0 / N
     #print f_input.value
