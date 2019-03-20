@@ -3,3 +3,5 @@
 *~
 *.md#
 .vscode/
+server.conf
+server_autorun.cmd
