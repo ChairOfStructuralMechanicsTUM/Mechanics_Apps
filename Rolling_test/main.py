@@ -44,6 +44,8 @@ wall_source       = ColumnDataSource(data = dict(x=[offset-rampAddLength*COS,off
 AngleMarkerSource = ColumnDataSource(data = dict(x=[],y=[]))
 AlphaPos          = ColumnDataSource(data = dict(x=[],y=[],t=[]))
 
+time_display1     = ColumnDataSource(data = dict(x=[],y=[],t=[]))
+
 # global variables
 glob_callback_id  = ColumnDataSource(data = dict(callback_id = [None]))
 glob_SphereXLines = ColumnDataSource(data = dict(SphereXLines = [SphereXLines]))
@@ -275,6 +277,10 @@ fig1.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #    text_font_size="15pt", source=AlphaPos)
 #fig1.add_layout(angle_glyph1)
 fig1.toolbar_location = None
+
+time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display1)
+fig1.add_layout(time_lable1)
+
 
 fig2 = figure(title="Full cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
 fig2.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
@@ -528,6 +534,11 @@ def evolve():
     # if an object has reached the end of the ramp then stop the simulation
     if (max(x1,x2,x3)>0 or min(y1,y2,y3)<0):
         start() #equals to stop if it is running
+        print(glob_values["t"])
+        time_display1.data=dict(x=[-10],y=[20],t=[str(glob_values["t"])+" s"])
+#TODO: only stop one figure and let the others finish too
+#      display finish time on each plot
+#      maybe add a button to swtich between "let all run through" and "stop all"
 
 # create the buttons
 start_button = Button(label="Start", button_type="success")
