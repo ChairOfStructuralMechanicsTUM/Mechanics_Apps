@@ -15,7 +15,6 @@ from latex_support import LatexDiv
 # external files
 from Maxwell_Frame import Maxwell_Frame
 import Maxwell_Constants as glc
-#from Maxwell_Functions_Side import side1, side2, side3
 import Maxwell_BettyDisplacements as MBD
 from Maxwell_Frame_Functions import create_prof, create_shift, create_wdline
 
@@ -29,10 +28,8 @@ from Maxwell_Frame_Functions import create_prof, create_shift, create_wdline
 ################################################################################
 orig            = Maxwell_Frame("o","0")                                                #Creation of original frame. This frame is a reference of the original location
 default     = dict(x = [0.1,0.8], y = [0.1,0.1], size = [glc.tri_size,glc.tri_size])    #Creation of triangle of original frame
-#MBD.f1              = Frame("F"u"\u2081","n"u"\u2081")                                              #Creation of object Frame 1 "MBD.f1". This frame is the first to be deformed
-#MBD.f2              = Frame("F"u"\u2082","n"u"\u2082")                                              #Creation of object Frame 2
 t_line          = dict(x=[0.7,0.9], y=[glc.ground,glc.ground])                          #Creation of Line
-
+# frame 1 and 2 are created in Maxwell_BettyDisplacements
 
 
 ################################################################################
@@ -84,13 +81,11 @@ def update_fun(attr,old,new):
         MBD.f2.p_mag = MBD.f1.p_mag 
         create_prof(MBD.f1)
         create_shift(MBD.f1)
-        #MBD.f1.tri.data = dict(x = [0.1,MBD.f1.pts.data["x"][-1]], y = [0.1,MBD.f1.pts.data["y"][-1]], size = [tri_size,tri_size])
         MBD.f1.tri.data = dict(x = [0.1,MBD.f1.pts.data["x"][-1]], y = [0.1,0.1], size = [glc.tri_size,glc.tri_size])
         create_wdline(MBD.f1)
 
     elif changer != 0:
         MBD.f2.set_param(loc_slider.value)
-        #MBD.f2.set_mag(mag_slider.value)
         create_prof(MBD.f2)
         create_shift(MBD.f2)
         MBD.f2.p_mag = MBD.f1.p_mag 
@@ -98,10 +93,8 @@ def update_fun(attr,old,new):
         #EDIT Start
         MBD.calc_betty_displacements12(MBD.f2)
         MBD.calc_betty_displacements21(MBD.f2)
-        #MBD.f2.tri.data = dict(x = [0.1,MBD.f2.pts.data["x"][-1]], y = [0.1,MBD.f2.pts.data["y"][-1]], size = [tri_size,tri_size])
         MBD.f2.tri.data = dict(x = [0.1,MBD.f2.pts.data["x"][-1]], y = [0.1,0.1], size = [glc.tri_size,glc.tri_size])
         create_wdline(MBD.f2)
-        #MBD.f1.tri.data = dict(x = [0.1,MBD.f1.pts.data["x"][-1]], y = [0.1,MBD.f1.pts.data["y"][-1]], size = [tri_size,tri_size])
         MBD.f1.tri.data = dict(x = [0.1,MBD.f1.pts.data["x"][-1]], y = [0.1,0.1], size = [glc.tri_size,glc.tri_size])
         #EDIT End
 
@@ -116,16 +109,8 @@ def button_fun():
     create_prof(MBD.f1)
     create_shift(MBD.f1)
     create_wdline(MBD.f1)
-    # mag_slider.value        = mag_val
     loc_slider.value  = loc_val
     MBD.f2.p_mag          = MBD.f1.p_mag
-    # MBD.f2.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    # MBD.f2.w1.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
-    # MBD.f2.w2.data              = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    # MBD.f2.w12.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
-    # MBD.f2.w12_11.data              = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    # MBD.f2.w12_12.data              = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    # MBD.f2.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     mag_slider.disabled = True
     button.disabled     = True
     
@@ -184,8 +169,6 @@ def clearMBDf2():
 
 button.on_click(button_fun)
 rbutton.on_click(initial)
-#rbutton.on_click(clearMBD.f2)
-#rbutton.on_click(clearMBD.f1)
 loc_slider.on_change('value', update_fun)
 mag_slider.on_change('value', update_fun)
 
@@ -229,12 +212,6 @@ plot.line(x='x', y='y', source=MBD.f2.pts, color=MBD.f2color,line_width=5)      
 plot.line(x='x', y='y', source=t_line, color="Black",line_width=5)              #Black line under frame righthandside
 
 ###Dashed Lines:
-
-#EDIT
-#plot.line(x='x', y='y', source=MBD.f1.dline, color="Black",
-        #line_width=2,line_dash = 'dashed',line_alpha = 0.3)                     #Dashed lines that follow load arrow
-#plot.line(x='x', y='y', source=MBD.f2.dline, color="Black",
-        #line_width=2,line_dash = 'dashed',line_alpha = 0.3)
 
 #dashed line that follows the deformations:
 plot.line(x = 'x1' , y = 'y1',source = MBD.f1.wdline, color="Black",
@@ -398,10 +375,8 @@ description1_filename = join(dirname(__file__), "description1.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=750)
 description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=False, width=750)
 
-
 ################################################################################
 ###Send to the browser
 ################################################################################
-#curdoc().add_root( row(column(MBD.f1.mag_slider,MBD.f1.loc_slider,MBD.f2.mag_slider,MBD.f2.loc_slider, toggle),plot ) )
 curdoc().add_root( column(description,plot,row(mag_slider, loc_slider), row(button,rbutton), description1 ) )
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
