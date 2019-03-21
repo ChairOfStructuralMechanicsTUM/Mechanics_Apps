@@ -485,6 +485,9 @@ def disable_all_sliders(d=True):
     radius_slider1.disabled = d
     radius_slider2.disabled = d
     radius_slider3.disabled = d
+    ri_slider1.disabled     = d
+    ri_slider2.disabled     = d
+    ri_slider3.disabled     = d
     alpha_slider.disabled   = d
 
 def start():
@@ -508,8 +511,8 @@ def start():
 def reset():
     glob_values["t"] = 0.0 #      /output
     changeObject(1,object_select1.value,radius_slider1.value,ri_slider1.value,1.0)
-    changeObject(2,object_select2.value,radius_slider2.value,ri_slider1.value,1.0)
-    changeObject(3,object_select3.value,radius_slider3.value,ri_slider1.value,1.0)
+    changeObject(2,object_select2.value,radius_slider2.value,ri_slider2.value,1.0)
+    changeObject(3,object_select3.value,radius_slider3.value,ri_slider3.value,1.0)
     disable_all_sliders(False)
 
     
