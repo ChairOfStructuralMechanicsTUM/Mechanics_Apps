@@ -49,27 +49,27 @@ def init():
     Mvar.Nxz3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     Mvar.Nxz4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
     ##Figure 1, Set Rectangles:
-    Mvar.NxP_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-    Mvar.NxN_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-    Mvar.NzP_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-    Mvar.NxN_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-    Mvar.Nxz1_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
-    Mvar.Nxz2_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
-    Mvar.Nxz3_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
-    Mvar.Nxz4_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
+    Mvar.NxP_rect_source.data   = dict(x=[], y=[], w=[], h=[], angle=[])
+    Mvar.NxN_rect_source.data   = dict(x=[], y=[], w=[], h=[], angle=[])
+    Mvar.NzP_rect_source.data   = dict(x=[], y=[], w=[], h=[], angle=[])
+    Mvar.NxN_rect_source.data   = dict(x=[], y=[], w=[], h=[], angle=[])
+    Mvar.Nxz1_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
+    Mvar.Nxz2_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
+    Mvar.Nxz3_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
+    Mvar.Nxz4_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
     
 def reset():
-    Normal_X_slider.disabled      = False
-    Normal_Z_slider.disabled      = False
-    Tangential_XZ_slider.disabled = False
-    Plane_Angle_slider.disabled   = True
+    Normal_X_slider.disabled        = False
+    Normal_Z_slider.disabled        = False
+    Tangential_XZ_slider.disabled   = False
+    Plane_Angle_slider.disabled     = True
 
-    Mvar.glob_MohrChangeShow.data      = dict(val=[-1])         #      /output
-    Mvar.glob_NzetaI0.data             = dict(val=[0])          #      /output
-    Mvar.glob_NetaI0.data              = dict(val=[0])          #      /output
+    Mvar.glob_MohrChangeShow.data   = dict(val=[-1])         #      /output
+    Mvar.glob_NzetaI0.data          = dict(val=[0])          #      /output
+    Mvar.glob_NetaI0.data           = dict(val=[0])          #      /output
     
-    Mvar.glob_alpha.data               = dict(val=[0])          #      /output
-    Mvar.glob_MohrP_Angle.data         = dict(val=[0*(pi/180)]) #      /output
+    Mvar.glob_alpha.data            = dict(val=[0])          #      /output
+    Mvar.glob_MohrP_Angle.data      = dict(val=[0*(pi/180)]) #      /output
    
     radius    = 0 #10
     centreX   = 0 #10
@@ -81,10 +81,10 @@ def reset():
     #radius    = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
     #centreX   = float((glMohrNx+glMohrNz)/2)
 
-    Normal_X_slider.value=0
-    Normal_Z_slider.value=0
-    Tangential_XZ_slider.value=0
-    Plane_Angle_slider.value=0
+    Normal_X_slider.value      = 0
+    Normal_Z_slider.value      = 0
+    Tangential_XZ_slider.value = 0
+    Plane_Angle_slider.value   = 0
 
     ### Figure 1, Reset values for arrows:
     Mvar.NxP_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -136,9 +136,9 @@ def reset():
     Mvar.Nzetaeta3_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
     Mvar.Nzetaeta4_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
     ## Figure 3, Reset rotating axis:
-    Mvar.Rotating_Axis_X_source.data=dict(xS=[], yS=[], xE=[], yE=[])
-    Mvar.Rotating_Axis_Y_source.data=dict(xS=[], yS=[], xE=[], yE=[])
-    Mvar.Figure3Moving_Label_source.data=dict(x=[], y=[], names =[])
+    Mvar.Rotating_Axis_X_source.data     = dict(xS=[], yS=[], xE=[], yE=[])
+    Mvar.Rotating_Axis_Y_source.data     = dict(xS=[], yS=[], xE=[], yE=[])
+    Mvar.Figure3Moving_Label_source.data = dict(x=[], y=[], names =[])
     
 def show():
     [glMohrChangeShow] = Mvar.glob_MohrChangeShow.data["val"] # input/output
@@ -149,15 +149,15 @@ def show():
         radius   = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
         centreX  = float((glMohrNx+glMohrNz)/2)
         Mvar.rleft_x  = centreX-radius
-        rright_x = centreX+radius
+        rright_x      = centreX+radius
 
         ## Print Labels for principal stress and direction
-        alpha=180*atan(glMohrNxz/(glMohrNz+(-Mvar.rleft_x+0.00001)))/(pi)
-        alpha=int(alpha+0.5)
+        alpha = 180*atan(glMohrNxz/(glMohrNz+(-Mvar.rleft_x+0.00001)))/(pi)
+        alpha = int(alpha+0.5)
         Mvar.Figure2Show_Label_source.data = dict(x=[Mvar.rleft_x,rright_x,centreX],
                                                 y=[0,0,0],
                                                 names=['\\sigma_{II}','\\sigma_{I}','\\sigma_{M}'])
-        Mvar.Wedge_source.data=dict(x=[Mvar.rleft_x], y=[0],radius=[radius/2], sA=[atan(glMohrNxz/(glMohrNz+(-Mvar.rleft_x)))], eA=[0])
+        Mvar.Wedge_source.data = dict(x=[Mvar.rleft_x], y=[0],radius=[radius/2], sA=[atan(glMohrNxz/(glMohrNz+(-Mvar.rleft_x)))], eA=[0])
         glMohrFigure2_angle_label.text = '\\alpha_0=' + str(alpha)
         glMohrChangeShow = glMohrChangeShow*-1
 
@@ -205,7 +205,7 @@ def NormalForceZ_init(attr,old,new):
     ## Figure 1, Present the Normal Forces while draw() hasn't been called yet:
         ## Global change of glMohrNz
         Mvar.glob_MohrNz.data = dict(val=[new]) #      /output
-        new=new*0.75
+        new = new*0.75
         if(new<0):
             Mvar.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2])
             Mvar.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2])
@@ -278,10 +278,10 @@ Nxz3_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5
 Nxz4_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Mvar.Nxz4_arrow_source,line_color="#0065BD")
 ### Figure 1, Rectangle glyphs:
-NxP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-NxN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-NzP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-NzN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+NxP_rect_glyph  = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+NxN_rect_glyph  = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+NzP_rect_glyph  = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+NzN_rect_glyph  = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
 Nxz1_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 Nxz2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 Nxz3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
@@ -316,7 +316,7 @@ figure1.add_glyph(Mvar.Nxz4_rect_source,Nxz1_rect_glyph)
 
 # dummy glyphs for the legend entries
 dummy_normal_1 = figure1.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5)
-dummy_shear_1 = figure1.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5)
+dummy_shear_1  = figure1.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5)
 
 legend1 = LatexLegend(items=[
     ("\\text{Normal Stresses}\\ \\sigma_x, \\sigma_z", [dummy_normal_1]),
@@ -326,7 +326,7 @@ figure1.add_layout(legend1)
 
 ### Figure 2: Define Geometry
 Mohr_Circle_glyph = Circle(x='x',y='y',radius='radius', radius_dimension='y', fill_color='#c3c3c3', fill_alpha=0.5)
-Wedge_glyph = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
+Wedge_glyph       = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
 ### Figure 2: Define Figure and add Geometry
 figure2 = figure(title="Mohr's Circle", tools="pan,save,wheel_zoom,reset", x_range=(-25.5,25.5), y_range=(-25.5,25.5),width=400,height=400, toolbar_location="right")
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
@@ -376,10 +376,10 @@ Mvar.Nzetaeta3_arrow_glyph= Arrow(end=OpenHead(line_color="#0065BD",line_width= 
 Mvar.Nzetaeta4_arrow_glyph=Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Mvar.Nzetaeta4_arrow_source,line_color="#0065BD")
 ### Figure 3, Rectangle glyphs:
-Mvar.NzetaP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-Mvar.NzetaN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-Mvar.NetaP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-Mvar.NetaN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+Mvar.NzetaP_rect_glyph    = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+Mvar.NzetaN_rect_glyph    = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+Mvar.NetaP_rect_glyph     = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+Mvar.NetaN_rect_glyph     = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
 Mvar.Nzetaeta1_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 Mvar.Nzetaeta2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 Mvar.Nzetaeta3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
@@ -427,41 +427,41 @@ legend3 = LatexLegend(items=[
 figure3.add_layout(legend3)
 
 ### All figures, Turn off grids: 
-figure1.xaxis.major_tick_line_color=None
-figure1.xaxis.major_label_text_color=None
-figure1.xaxis.minor_tick_line_color=None
-figure1.xaxis.axis_line_color=None
-figure1.yaxis.major_tick_line_color=None
-figure1.yaxis.major_label_text_color=None
-figure1.yaxis.minor_tick_line_color=None
-figure1.yaxis.axis_line_color=None
-figure1.xgrid.visible = False
-figure1.ygrid.visible = False
-figure1.toolbar.logo = None
+figure1.xaxis.major_tick_line_color  = None
+figure1.xaxis.major_label_text_color = None
+figure1.xaxis.minor_tick_line_color  = None
+figure1.xaxis.axis_line_color        = None
+figure1.yaxis.major_tick_line_color  = None
+figure1.yaxis.major_label_text_color = None
+figure1.yaxis.minor_tick_line_color  = None
+figure1.yaxis.axis_line_color        = None
+figure1.xgrid.visible                = False
+figure1.ygrid.visible                = False
+figure1.toolbar.logo                 = None
 
-figure2.xaxis.major_tick_line_color=None
-figure2.xaxis.major_label_text_color=None
-figure2.xaxis.minor_tick_line_color=None
-figure2.xaxis.axis_line_color=None
-figure2.yaxis.major_tick_line_color=None
-figure2.yaxis.major_label_text_color=None
-figure2.yaxis.minor_tick_line_color=None
-figure2.yaxis.axis_line_color=None
-figure2.xgrid.visible = False
-figure2.ygrid.visible = False
-figure2.toolbar.logo = None
+figure2.xaxis.major_tick_line_color  = None
+figure2.xaxis.major_label_text_color = None
+figure2.xaxis.minor_tick_line_color  = None
+figure2.xaxis.axis_line_color        = None
+figure2.yaxis.major_tick_line_color  = None
+figure2.yaxis.major_label_text_color = None
+figure2.yaxis.minor_tick_line_color  = None
+figure2.yaxis.axis_line_color        = None
+figure2.xgrid.visible                = False
+figure2.ygrid.visible                = False
+figure2.toolbar.logo                 = None
 
-figure3.xaxis.major_tick_line_color=None
-figure3.xaxis.major_label_text_color=None
-figure3.xaxis.minor_tick_line_color=None
-figure3.xaxis.axis_line_color=None
-figure3.yaxis.major_tick_line_color=None
-figure3.yaxis.major_label_text_color=None
-figure3.yaxis.minor_tick_line_color=None
-figure3.yaxis.axis_line_color=None
-figure3.xgrid.visible = False
-figure3.ygrid.visible = False
-figure3.toolbar.logo = None
+figure3.xaxis.major_tick_line_color  = None
+figure3.xaxis.major_label_text_color = None
+figure3.xaxis.minor_tick_line_color  = None
+figure3.xaxis.axis_line_color        = None
+figure3.yaxis.major_tick_line_color  = None
+figure3.yaxis.major_label_text_color = None
+figure3.yaxis.minor_tick_line_color  = None
+figure3.yaxis.axis_line_color        = None
+figure3.xgrid.visible                = False
+figure3.ygrid.visible                = False
+figure3.toolbar.logo                 = None
 
 ### Create  sliders to change Normal and Tangential Forces
 Normal_X_slider= LatexSlider(title="\\sigma_x=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value= 0,start = -10, end = 10, step = 0.5)

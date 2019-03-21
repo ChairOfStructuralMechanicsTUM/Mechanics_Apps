@@ -12,8 +12,8 @@ def draw():
     [glMohrP_Angle]          = Mvar.glob_MohrP_Angle.data["val"]    # input/
 
     ## Calculations
-    radius    = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
-    centreX   = float((glMohrNx+glMohrNz)/2)
+    radius         = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
+    centreX        = float((glMohrNx+glMohrNz)/2)
     Mvar.Neta      = float(((glMohrNx+glMohrNz)/2)-(((glMohrNx-glMohrNz)/2)*cos(2*glMohrP_Angle))-glMohrNxz*sin(2*glMohrP_Angle))
     Mvar.Nzetaeta  = float((-(((glMohrNx-glMohrNz)/2)*sin(2*glMohrP_Angle)))+glMohrNxz*cos(2*glMohrP_Angle))
 
@@ -34,7 +34,7 @@ def draw():
     count = 0
     for m in range(-180,179):
         if Mvar.Nzeta_List0[m+180]*Mvar.Nzeta_List0[m+181]<0:
-            glMohrNzeta_zero_angles[count]=Mvar.Nzeta_List1[m+180]
+            glMohrNzeta_zero_angles[count] = Mvar.Nzeta_List1[m+180]
             count = count+1
     ## Mvar.Neta:
     for n in range(-180,180):
@@ -43,7 +43,7 @@ def draw():
     count = 0
     for m in range(-180,179):
         if Mvar.Neta_List0[m+180]*Mvar.Neta_List0[m+181]<0:
-            glMohrNeta_zero_angles[count]=Mvar.Neta_List1[m+180]
+            glMohrNeta_zero_angles[count] = Mvar.Neta_List1[m+180]
             count = count+1
 
 
@@ -64,16 +64,16 @@ def draw():
         Mvar.NxN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
 
     else:
-        Mvar.NxP_arrow_source.data  = dict(xS=[12.5],  xE=[12.5+glMohrNx*0.75],  yS=[0], yE=[0], lW = [2])
-        Mvar.NxN_arrow_source.data  = dict(xS=[-12.5], xE=[-12.5-glMohrNx*0.75], yS=[0], yE=[0], lW = [2])
+        Mvar.NxP_arrow_source.data = dict(xS=[12.5],  xE=[12.5+glMohrNx*0.75],  yS=[0], yE=[0], lW = [2])
+        Mvar.NxN_arrow_source.data = dict(xS=[-12.5], xE=[-12.5-glMohrNx*0.75], yS=[0], yE=[0], lW = [2])
 
-        Mvar.NxP_rect_source.data   = dict(x=[(25+glMohrNx*0.75)/2],  y=[0], w=[glMohrNx*0.75+1.5], h = [13], angle=[0])        
-        Mvar.NxN_rect_source.data   = dict(x=[(-25-glMohrNx*0.75)/2], y=[0], w=[glMohrNx*0.75+1.5], h = [13], angle=[0])  
+        Mvar.NxP_rect_source.data  = dict(x=[(25+glMohrNx*0.75)/2],  y=[0], w=[glMohrNx*0.75+1.5], h = [13], angle=[0])        
+        Mvar.NxN_rect_source.data  = dict(x=[(-25-glMohrNx*0.75)/2], y=[0], w=[glMohrNx*0.75+1.5], h = [13], angle=[0])  
     
 
     ##Figure 1, Draw glMohrNz and keep it until reset() ist called:
     new = glMohrNz
-    new=new*0.75
+    new = new*0.75
     if(new<0):
         Mvar.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2])
         Mvar.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2])
@@ -81,11 +81,11 @@ def draw():
         Mvar.NzP_rect_source.data  = dict(x=[0], y=[(25-new)/2],  w=[13], h = [new-1.5], angle=[0])
         Mvar.NzN_rect_source.data  = dict(x=[0], y=[(-25+new)/2], w=[13], h = [new-1.5], angle=[0])   
     elif (new==0):
-        Mvar.NzP_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        Mvar.NzN_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        Mvar.NzP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        Mvar.NzN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
 
-        Mvar.NzP_rect_source.data   = dict(x=[], y=[], w=[], h = [], angle=[])
-        Mvar.NzN_rect_source.data   = dict(x=[], y=[], w=[], h = [], angle=[])
+        Mvar.NzP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
+        Mvar.NzN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
     else:
         Mvar.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new], lW = [2])
         Mvar.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2])
@@ -95,7 +95,7 @@ def draw():
          
           
     new = glMohrNxz
-    new=new*0.75        
+    new = new*0.75        
     if(new==0):
         Mvar.Nxz1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
         Mvar.Nxz2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])

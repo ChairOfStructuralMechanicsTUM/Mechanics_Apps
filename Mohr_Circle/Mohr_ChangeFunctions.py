@@ -9,12 +9,12 @@ def changePlaneAngle(attr,old,new):
         [glMohrNz]               = Mvar.glob_MohrNz.data["val"]         # input/
         [glMohrNxz]              = Mvar.glob_MohrNxz.data["val"]        # input/
 
-        alpha= new
+        alpha = new
         glMohrP_Angle = -new*(pi/180)
 
 
         ## Paint Rotating Plane red if angle=alpha_0
-        radius = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
+        radius  = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
         centreX = float((glMohrNx+glMohrNz)/2)
         Mvar.rleft_x=centreX-radius
         alpha_0=180*atan(glMohrNxz/(glMohrNz+(-Mvar.rleft_x+0.00001)))/(pi)
@@ -52,8 +52,8 @@ def ChangeMohrCircle():
     [glMohrNxz]     = Mvar.glob_MohrNxz.data["val"]     # input/
     [glMohrP_Angle] = Mvar.glob_MohrP_Angle.data["val"] # input/
     
-    radius  = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
-    centreX = float((glMohrNx+glMohrNz)/2)
+    radius       = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
+    centreX      = float((glMohrNx+glMohrNz)/2)
     Mvar.rleft_z = 0
     Mvar.rleft_x = centreX-radius
     
@@ -102,8 +102,8 @@ def ChangeRotatingPlane_Forces():
     glMohrP_Angle = -glMohrP_Angle
 
     ## Set Mvar.Nzetaeta=0 if angle-slider is set to principal direction
-    radius  = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
-    centreX = float((glMohrNx+glMohrNz)/2)
+    radius       = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
+    centreX      = float((glMohrNx+glMohrNz)/2)
     Mvar.rleft_x = centreX-radius
 
     alpha_0 = 180*atan(glMohrNxz/(glMohrNz+(-Mvar.rleft_x+0.00001)))/(pi)
@@ -208,5 +208,5 @@ def ChangeRotatingPlane_Forces():
         Mvar.Nzetaeta3_rect_source.data  = dict(x=[(-9*cos(glMohrP_Angle)-((Mvar.Nzetaeta/2)*sin(glMohrP_Angle))-9*cos(glMohrP_Angle)+((Mvar.Nzetaeta/2)*sin(glMohrP_Angle)))/2],  y=[((0-9*sin(glMohrP_Angle))+((Mvar.Nzetaeta/2)*cos(glMohrP_Angle))+(0-9*sin(glMohrP_Angle))-((Mvar.Nzetaeta/2)*cos(glMohrP_Angle)))/2], w=[0.3*Mvar.Nzetaeta-.5], h = [13], angle=[glMohrP_Angle])
         Mvar.Nzetaeta4_rect_source.data  = dict(x=[(9*sin(glMohrP_Angle)+((Mvar.Nzetaeta/2)*cos(glMohrP_Angle))+9*sin(glMohrP_Angle)-((Mvar.Nzetaeta/2)*cos(glMohrP_Angle)))/2],   y=[((0-9*cos(glMohrP_Angle))+((Mvar.Nzetaeta/2)*sin(glMohrP_Angle))+(0-9*cos(glMohrP_Angle))-((Mvar.Nzetaeta/2)*sin(glMohrP_Angle)))/2], h=[0.3*Mvar.Nzetaeta-.5], w = [13], angle=[glMohrP_Angle])
 
-    glMohrP_Angle=-glMohrP_Angle
+    glMohrP_Angle = -glMohrP_Angle
     Mvar.glob_MohrP_Angle.data = dict(val=[glMohrP_Angle])

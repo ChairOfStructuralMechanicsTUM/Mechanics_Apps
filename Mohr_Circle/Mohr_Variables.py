@@ -3,17 +3,17 @@ from math import pi
 
 
 ### Initial Values
-radius = 10
-centreX = 10
+radius           = 10
+centreX          = 10
 glob_MohrNx      = ColumnDataSource(data=dict(val=[0]))
 glob_MohrNz      = ColumnDataSource(data=dict(val=[0]))
 glob_MohrNxz     = ColumnDataSource(data=dict(val=[0]))
 glob_MohrP_Angle = ColumnDataSource(data=dict(val=[0*(pi/180)]))
-Neta =0 
-Nzeta =0 
-Nzetaeta =0  
-rleft_x = centreX-radius
-rleft_z=0
+Neta             = 0 
+Nzeta            = 0 
+Nzetaeta         = 0  
+rleft_x          = centreX-radius
+rleft_z          = 0
 
 
 glob_MohrChangeShow = ColumnDataSource(data=dict(val=[-1]))
@@ -36,14 +36,14 @@ Nxz2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = 
 Nxz3_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 Nxz4_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 ## Figure 1, Rectangles:
-NxP_rect_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-NzP_rect_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-NxN_rect_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-NzN_rect_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-Nxz1_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-Nxz2_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-Nxz3_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-Nxz4_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+NxP_rect_source   = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+NzP_rect_source   = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+NxN_rect_source   = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+NzN_rect_source   = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+Nxz1_rect_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+Nxz2_rect_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+Nxz3_rect_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+Nxz4_rect_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
 
 ### Figure 2, Mohr Circle:
 Mohr_Circle_source = ColumnDataSource(data=dict(x=[], y=[], radius=[]))
@@ -67,14 +67,14 @@ Nzetaeta2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], 
 Nzetaeta3_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 Nzetaeta4_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
 ##Figure 3, Rectangles:
-NzetaP_rect_source    = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-NzetaN_rect_source    = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-NetaP_rect_source     = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-NetaN_rect_source     = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-Nzetaeta1_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-Nzetaeta2_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-Nzetaeta3_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
-Nzetaeta4_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+NzetaP_rect_source     = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+NzetaN_rect_source     = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+NetaP_rect_source      = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+NetaN_rect_source      = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+Nzetaeta1_rect_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+Nzetaeta2_rect_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+Nzetaeta3_rect_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
+Nzetaeta4_rect_source  = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
 
 
 ### Labels
