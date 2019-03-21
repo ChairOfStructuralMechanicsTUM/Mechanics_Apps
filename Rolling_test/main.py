@@ -4,23 +4,30 @@ from bokeh.layouts import column, row, Spacer
 from bokeh.models import ColumnDataSource, Select, Button, LabelSet, Slider, CustomJS
 from bokeh.io import curdoc
 from math import sin, cos, pi, sqrt, radians
-from os.path import dirname, split
+from os.path import dirname, split, abspath, join
 import numpy as np
 
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexLabelSet
+
 # create variables
-g         = 9.81
-alpha     = radians(20)
+g             = 9.81
+alpha         = radians(20)
 # constants
-maxR       = 4.0
-alpha_max  = 25.0
-rampLength = 50
+maxR          = 4.0
+alpha_max     = 25.0
+rampLength    = 50
+rampAddLength = 5  # excess length for better visualization
 # variables created to avoid repeated calculations
 # (speeds up calculations)
-SIN        = sin(alpha)
-COS        = cos(alpha)
-offset     = -rampLength*COS
-t          = 0.0
-H          = rampLength*SIN
+SIN           = sin(alpha)
+COS           = cos(alpha)
+offset        = -rampLength*COS
+t             = 0.0
+H             = rampLength*SIN
 
 SphereXLines = [np.array([]),np.array([])]
 SphereYLines = np.array([])
@@ -32,7 +39,8 @@ fig2_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
 fig2_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 fig3_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
 fig3_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
-ramp_source       = ColumnDataSource(data = dict(x=[offset,0],y=[H,0]))
+ramp_source       = ColumnDataSource(data = dict(x=[offset-rampAddLength*COS,0],y=[H+rampAddLength*SIN,0]))
+wall_source       = ColumnDataSource(data = dict(x=[offset-rampAddLength*COS,offset-rampAddLength*COS],y=[H+rampAddLength*SIN,0]))
 AngleMarkerSource = ColumnDataSource(data = dict(x=[],y=[]))
 AlphaPos          = ColumnDataSource(data = dict(x=[],y=[],t=[]))
 
@@ -256,38 +264,68 @@ XStart = -rampLength-maxR-5
 #YEnd   = H+2*maxR # start height, but we need height for max alpha
 YEnd   = rampLength*sin(radians(alpha_max))+2*maxR
 Width  = -255.4*XStart/YEnd #-220.0*XStart/YEnd
-fig1 = figure(title="Sphere",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
+fig1 = figure(title="Sphere",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
 fig1.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig1_data)
 fig1.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig1_lines_data)
 fig1.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
+fig1.line(x='x',y='y',color="black",line_width=2,source=wall_source)
 fig1.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-angle_glyph1=LabelSet(x='x', y='y',text='t',text_color='black',
-    text_font_size="15pt", source=AlphaPos)
-fig1.add_layout(angle_glyph1)
+#angle_glyph1=LabelSet(x='x', y='y',text='t',text_color='black',
+#    text_font_size="15pt", source=AlphaPos)
+#fig1.add_layout(angle_glyph1)
 fig1.toolbar_location = None
 
-fig2 = figure(title="Full cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
+fig2 = figure(title="Full cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
 fig2.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig2_data)
 fig2.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig2_lines_data)
 fig2.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
+fig2.line(x='x',y='y',color="black",line_width=2,source=wall_source)
 fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-angle_glyph2=LabelSet(x='x', y='y',text='t',text_color='black',
-    text_font_size="15pt", source=AlphaPos)
-fig2.add_layout(angle_glyph2)
+#angle_glyph2=LabelSet(x='x', y='y',text='t',text_color='black',
+#    text_font_size="15pt", source=AlphaPos)
+#fig2.add_layout(angle_glyph2)
 fig2.toolbar_location = None
 
-fig3 = figure(title="Hollow cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
+fig3 = figure(title="Hollow cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
 fig3.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig3_data)
 fig3.multi_line(xs='x',ys='y',color="#003359",line_width=3,source=fig3_lines_data)
 fig3.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
+fig3.line(x='x',y='y',color="black",line_width=2,source=wall_source)
 fig3.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-angle_glyph3=LabelSet(x='x', y='y',text='t',text_color='black',
-    text_font_size="15pt", source=AlphaPos)
-fig3.add_layout(angle_glyph3)
+#angle_glyph3=LabelSet(x='x', y='y',text='t',text_color='black',
+#    text_font_size="15pt", source=AlphaPos)
+#fig3.add_layout(angle_glyph3)
 fig3.toolbar_location = None
+
+# sketch of the ramp and objects
+fig4 = figure(title="Annotations", x_range=(-50,0), y_range=(0,25), height=220, width=400, tools="")
+#fig4.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
+fig4.line(x=[0,-48],y=[0,18],color="black",line_width=2) # ramp
+fig4.line(x=[-48,-48],y=[0,18],color="black",line_width=2) # wall
+fig4.ellipse(x=[-45],y=[19],width=[4],height=[4],fill_color="#0065BD",line_color="#003359",line_width=3)
+fig4.ellipse(x=[-45],y=[19],width=[2.5],height=[4],fill_alpha=[0],line_color="#003359",line_width=3, angle=-0.7)
+fig4.ellipse(x=[0],y=[-1],width=[12], height=[10], fill_alpha=[0], line_color='black', line_width=2, line_dash='15 50', line_dash_offset=-10)
+#fig4.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
+angle_glyph4=LabelSet(x='x', y='y',text='t',text_color='black',
+    text_font_size="15pt", source=AlphaPos)
+fig4.add_layout(angle_glyph4)
+fig4.grid.visible = False
+fig4.axis.visible = False
+fig4.toolbar_location = None
+
+fig5 = figure(x_range=(-10,10), y_range=(-5,5), height=220, width=400, tools="")
+fig5.ellipse(x=[-5,-5],y=[0,0],width=[4,6],height=[4,6],fill_alpha=[0,0],line_color='black',line_width=3)
+fig5.line(x=[-5,-5],y=[0,3],line_width=2)
+fig5.line(x=[-5,-3],y=[0,0],line_width=2)
+r_lables_source = ColumnDataSource(data=dict(x=[-4.2,-5.7,1,1],y=[-0.8,1,1,-1],t=["r_i","r","r\\:=\\text{Radius}","r_i=\\text{Inner radius}"]))
+r_lables = LatexLabelSet(x='x', y='y', text='t', source=r_lables_source)
+fig5.add_layout(r_lables)
+fig5.grid.visible = False
+fig5.axis.visible = False
+fig5.toolbar_location = None
 
 # name the functions to be used by each figure depending upon their content
 evolveFunc1=lambda(x):moveSphere(x,2.0,1.0,fig1_data,fig1_lines_data)
@@ -366,7 +404,9 @@ def changeWall2(attr,old,new):
     changeObject(2,object_select2.value,radius_slider2.value,new,1.0)
 def changeWall3(attr,old,new):
     changeObject(3,object_select3.value,radius_slider3.value,new,1.0)
-    
+
+# hide inner radius slider if full object is selected
+# show inner radius slider if hollow object is selected    
 object_select_JS = """
 choice = cb_obj.value;
 caller = cb_obj.name;
@@ -430,7 +470,8 @@ def changeAlpha(attr,old,new):
     offset = -rampLength*COS
     H      = rampLength*SIN
     glob_values.update(dict(alpha=alpha, SIN=SIN, COS=COS, offset=offset, H=H)) #      /output
-    ramp_source.data = dict(x=[offset,0],y=[H,0])
+    ramp_source.data = dict(x=[offset-rampAddLength*COS,0],y=[H+rampAddLength*SIN,0])
+    wall_source.data = dict(x=[offset-rampAddLength*COS,offset-rampAddLength*COS],y=[H+rampAddLength*SIN,0])
     reset()
 
 # slider for the angle
@@ -496,5 +537,5 @@ init()
 curdoc().add_root(row(column(row(fig1,column(object_select1,radius_slider1,ri_slider1)),
     row(fig2,column(object_select2,radius_slider2,ri_slider2)),
     row(fig3,column(object_select3,radius_slider3,ri_slider3))),Spacer(width=100),
-    column(start_button,reset_button,alpha_slider)))
+    column(start_button,reset_button,alpha_slider, Spacer(height=70), fig4, fig5)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
