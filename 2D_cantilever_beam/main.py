@@ -45,9 +45,11 @@ amplificationFactor = 100
 CrossSection1 = "2D_cantilever_beam/static/images/Rectangular_with_measure_and_views.png"
 CrossSection2 = "2D_cantilever_beam/static/images/DoubleT_with_measure_and_views.png"
 CrossSection3 = "2D_cantilever_beam/static/images/Circular_with_measure_and_views.png"
+CrossSection4 = "2D_cantilever_beam/static/images/Triangular_with_measure_and_views.png"
 CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , y=[]))
+CrossSectionSource4 = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
 
 # Source & Initialization of Internal Element Plot:
 XYElement = "2D_cantilever_beam/static/images/XYElement.png"
@@ -110,7 +112,7 @@ def deformed_cantilever_beam_determiner_XY(
                                                                   )
     
     # Determine the patches' X,Y,Z coordinates
-    XCoordsDefXY , YCoordsDefXY = functions.create_coordinates_list( listDeformedElementsXY )
+    XCoordsDefXY , YCoordsDefXY = functions.create_coordinates_list( listDeformedElementsXY)
     
     # Detemine the color of the elements
     biggestValue, smallestValue, listValuesUpperXY, listValuesLowerXZ = functions.values_determiner( 
@@ -178,7 +180,7 @@ def deformed_cantilever_beam_determiner_XZ(
                                                                   )
     
     # Determine the patches' X,Y,Z coordinates
-    XCoordsDefXZ , YCoordsDefXZ = functions.create_coordinates_list( listDeformedElementsXZ )
+    XCoordsDefXZ , YCoordsDefXZ = functions.create_coordinates_list( listDeformedElementsXZ)
     
     # Detemine the color of the elements
     biggestValue, smallestValue, listValuesUpperXY, listValuesLowerXZ = functions.values_determiner( 
@@ -240,86 +242,15 @@ for index in range(len(listDeformedElementsXY)):
     alphaList.append(1)
 
 
-# The function to be excuted whenever the force in the y direction changes
-def fun_change_Py(attrname, old, new):
-    global Py,Pz, listDeformedElementsXY
-    
-    # Change the value of the applied force according to the slider value
-    Py = Yforce_slider.value
-
-    # Recalculate the deformed beam's shape
-    (listDeformedElementsXY, XCoordsDefXY,
-     YCoordsDefXY, listValuesUpperXY, colorListDeformedXY,
-     biggestValue, smallestValue) = deformed_cantilever_beam_determiner_XY( 
-                                   length, height, thickness, E, Py, Pz,
-                                   noElementsX, noElementsY, noElementsZ,
-                                   elementSizeX, elementSizeY, elementSizeZ,
-                                   amplificationFactor
-                               )
-    
-    # Update the global variable the describes the deformed elements
-    listDeformedElementsXY = listDeformedElementsXY
-    
-    # Determine the change of the color in the other view (XZ plane)
-    colorListDeformedXZ = functions.elements_color_determiner(
-                                                                  True,
-                                                                  'XZ',
-                                                                  listDeformedElementsXZ,
-                                                                  noElementsX,
-                                                                  noElementsZ,
-                                                                  E, thickness, height,
-                                                                  length, Py, Pz, 
-                                                                  biggestValue, smallestValue,
-                                                                  listValuesUpperXY,
-                                                                  glCantileverCrossSection
-                                                             )
-    
-    # Update the source files of the deforemd beams
-    sourceXZdef.data   = dict( x=sourceXZdef.data['x'], y=sourceXZdef.data['y'], c=colorListDeformedXZ, a=alphaList)
-    sourceXYdef.data   = dict( x=XCoordsDefXY,   y=YCoordsDefXY,   c =colorListDeformedXY,   a=alphaList )
-    
-    # Update the source data file of the force arrow and the force label
-    # The first part of the if-statement is excuted whenever the beam is 
-    # deforming downwards
-
-    if Py == 0:
-        sourceArrowXY.data = dict(xs=[], ys=[],xe=[], ye=[],)
-        sourceFyLabel.data = dict(x= [],y= [],f= [])                                 
-    else:
-        if sourceXYdef.data['y'][0][3] <= 0:
-            sourceArrowXY.data = dict(
-                                      xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
-                                      ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Py)/5000+0.25],
-                                      xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
-                                      ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
-                                 )
-            sourceFyLabel.data = dict(
-                                      x= sourceArrowXY.data['xs'],
-                                      y= [sourceArrowXY.data['ys'][0] + 0.5],
-                                      f= ['Fy']
-                                 )
-        else:
-            sourceArrowXY.data = dict(
-                                      xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
-                                      ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Py)/5000-0.25],
-                                      xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
-                                      ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
-                                 )
-            sourceFyLabel.data = dict(
-                                      x= sourceArrowXY.data['xs'],
-                                      y= [sourceArrowXY.data['ys'][0] - 0.5],
-                                      f= ['Fy']
-                                 )
-        
-    update_colorBar_extremas(smallestValue,biggestValue)
-    
-    
+def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSection,Py,Pz):
     ####################################
     # UPDATE STRESSES ALONG X-Y ELEMENT
     ####################################
 
     x_pos = 2.5
-    y_pos = -height/2
+    y_pos = -height/2.0
+    if(glCantileverCrossSection==3):
+        y_pos = -height*2.0/3.0
     sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(x_pos,y_pos,length,height,thickness,glCantileverCrossSection,Py,Pz)
     
     ## IF SIGMA BUTTON IS ACTIVATED:
@@ -496,12 +427,88 @@ def fun_change_Py(attrname, old, new):
             TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])   
 
 
+
+# The function to be excuted whenever the force in the y direction changes
+def fun_change_Py(attrname, old, new):
+    global Py,Pz, listDeformedElementsXY
+    
+    # Change the value of the applied force according to the slider value
+    Py = Yforce_slider.value*100.0
+
+    # Recalculate the deformed beam's shape
+    (listDeformedElementsXY, XCoordsDefXY,
+     YCoordsDefXY, listValuesUpperXY, colorListDeformedXY,
+     biggestValue, smallestValue) = deformed_cantilever_beam_determiner_XY( 
+                                   length, height, thickness, E, Py, Pz,
+                                   noElementsX, noElementsY, noElementsZ,
+                                   elementSizeX, elementSizeY, elementSizeZ,
+                                   amplificationFactor
+                               )
+    
+    # Update the global variable the describes the deformed elements
+    listDeformedElementsXY = listDeformedElementsXY
+    
+    # Determine the change of the color in the other view (XZ plane)
+    colorListDeformedXZ = functions.elements_color_determiner(
+                                                                  True,
+                                                                  'XZ',
+                                                                  listDeformedElementsXZ,
+                                                                  noElementsX,
+                                                                  noElementsZ,
+                                                                  E, thickness, height,
+                                                                  length, Py, Pz, 
+                                                                  biggestValue, smallestValue,
+                                                                  listValuesUpperXY,
+                                                                  glCantileverCrossSection
+                                                             )
+    
+    # Update the source files of the deforemd beams
+    sourceXZdef.data   = dict( x=sourceXZdef.data['x'], y=sourceXZdef.data['y'], c=colorListDeformedXZ, a=alphaList)
+    sourceXYdef.data   = dict( x=XCoordsDefXY,   y=YCoordsDefXY,   c =colorListDeformedXY,   a=alphaList )
+    
+    # Update the source data file of the force arrow and the force label
+    # The first part of the if-statement is excuted whenever the beam is 
+    # deforming downwards
+
+    if Py == 0:
+        sourceArrowXY.data = dict(xs=[], ys=[],xe=[], ye=[],)
+        sourceFyLabel.data = dict(x= [],y= [],f= [])                                 
+    else:
+        if sourceXYdef.data['y'][0][3] <= 0:
+            sourceArrowXY.data = dict(
+                                      xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
+                                      ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Py)/5000+0.25],
+                                      xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
+                                      ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
+                                 )
+            sourceFyLabel.data = dict(
+                                      x= sourceArrowXY.data['xs'],
+                                      y= [sourceArrowXY.data['ys'][0] + 0.5],
+                                      f= ['Fy']
+                                 )
+        else:
+            sourceArrowXY.data = dict(
+                                      xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
+                                      ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Py)/5000-0.25],
+                                      xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
+                                      ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
+                                 )
+            sourceFyLabel.data = dict(
+                                      x= sourceArrowXY.data['xs'],
+                                      y= [sourceArrowXY.data['ys'][0] - 0.5],
+                                      f= ['Fy']
+                                 )
+        
+    update_colorBar_extremas(smallestValue,biggestValue)
+    fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSection,Py,Pz)
+    
+
 # The function to be excuted whenever the force in the z direction changes
 def fun_change_Pz(attrname, old, new):
     global Py,Pz, listDeformedElementsXZ
     
     # Change the value of the applied force according to the slider value
-    Pz = Zforce_slider.value
+    Pz = Zforce_slider.value*100.0
 
     # Recalculate the deformed beam's shape
     (listDeformedElementsXZ, XCoordsDefXZ, YCoordsDefXZ, 
@@ -567,21 +574,45 @@ def fun_change_Pz(attrname, old, new):
                                  )
         
     update_colorBar_extremas(smallestValue,biggestValue)
-
+    fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSection,Py,Pz)
 
 def fun_change_Cross_Section(attrname, old, new):
     if (radio_button_group.active == 0 ):
         CrossSectionSource1.data = dict(sp1=[CrossSection1], x = [0], y = [0])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
+        CrossSectionSource4.data = dict(sp4=[], x = [], y = [])
+        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]) 
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])         
     elif (radio_button_group.active == 1):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[CrossSection2], x = [0], y = [0])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
+        CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
+        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])    
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])                
     elif (radio_button_group.active == 2):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[CrossSection3], x = [0], y = [0])
+        CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
+        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])        
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])            
+    elif (radio_button_group.active == 3):
+        CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
+        CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
+        CrossSectionSource3.data = dict(sp3=[], x = [], y = [])       
+        CrossSectionSource4.data = dict(sp4=[CrossSection4], x = [0], y = [0]) 
+        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0])
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[-1.0/6.0],xe=[5.9], ye=[-1.0/6.0])        
+
+
+    	
+
+
+
+
+
     
     global glCantileverCrossSection
     glCantileverCrossSection = radio_button_group.active
@@ -621,17 +652,19 @@ sourceArrowXZ = ColumnDataSource(
                                                    ye=[sourceXZdef.data['y'][len( sourceXYdef.data['y'])-2][2]],                            
                                               )
                                 )
+CoordArrowXYSource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])) 
+CoordArrowXZSource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]))                                
                                      
 # Construct the source files for the force labels
 sourceFyLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fy'] ))
 sourceFzLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fz'] ))
 
 # Construct the force sliders
-Yforce_slider = LatexSlider(title= 'F_y   ', value=0.0, start=-100.0, end=100.0, step=10.0, value_unit='[N]')
-Zforce_slider = LatexSlider(title= 'F_z   ', value=0.0, start=-100.0, end=100.0, step=10.0, value_unit='[N]')
+Yforce_slider = LatexSlider(title= 'F_y =   ', value=0.0, start=-1.0, end=1.0, step=0.1, value_unit='\cdot F_{y,max}')
+Zforce_slider = LatexSlider(title= 'F_z =  ', value=0.0, start=-1.0, end=1.0, step=0.1, value_unit='\cdot F_{z,max}')
 
 # Construct radio button to choose between geometries of cross section
-radio_button_group = RadioButtonGroup(name="Geometry of cross section",labels=["Rectangular", "Double-T", "Circular"], active=glCantileverCrossSection)
+radio_button_group = RadioButtonGroup(name="Geometry of cross section",labels=["Rectangular", "Double-T", "Circular","Triangular"], active=glCantileverCrossSection)
 
 # Construct radio button to choose between plot of sigma(y) or tau(y)
 radio_button_group2 = RadioButtonGroup(name="Plot of sigma or tau",labels=["Normal Stresses", "Shear Stresses"], active=glCantileverStress)
@@ -671,13 +704,13 @@ plotDefXY.add_layout(
                            y_end=2.9, 
                            ))
 
-plotDefXY.add_layout( 
-                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                           x_start=-.5, 
-                           y_start=0, 
-                           x_end=5.9, 
-                           y_end=0, 
-                           ))
+# plotDefXY.add_layout( 
+#                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+#                            x_start=-.5, 
+#                            y_start=0, 
+#                            x_end=5.9, 
+#                            y_end=0, 
+#                            ))
 plotDefXY.add_layout(
                       LabelSet(
                                   x='x', y='y',
@@ -719,13 +752,13 @@ plotDefXZ.add_layout(
                            y_end=-2.9, 
                            ))
 
-plotDefXZ.add_layout( 
-                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                           x_start=-.5, 
-                           y_start=0, 
-                           x_end=5.9, 
-                           y_end=0, 
-                           ))
+# plotDefXZ.add_layout( 
+#                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+#                            x_start=-.5, 
+#                            y_start=0, 
+#                            x_end=5.9, 
+#                            y_end=0, 
+#                            ))
 plotDefXZ.add_layout(
                       LabelSet(
                                   x='x', y='y',
@@ -762,6 +795,7 @@ plotDefYZ.title.text_font_size="12.5pt"
 plotDefYZ.add_glyph(CrossSectionSource1,ImageURL(url="sp1", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
 plotDefYZ.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
 plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+plotDefYZ.add_glyph(CrossSectionSource4,ImageURL(url="sp4", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
 
 labelYZ = ColumnDataSource(data=dict(x=[0.5,-4.0],
                                      y=[4.0,-0.6],
@@ -956,6 +990,16 @@ plotDefXY.add_layout(
                            y_end=['ye'][0], 
                            source = sourceArrowXY) 
                     )
+plotDefXY.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                        #    line_width=3,
+                           x_start='xs',
+                           y_start='ys',
+                           x_end='xe', 
+                           y_end='ye', 
+                           source = CoordArrowXYSource) 
+                    )
+
 plotDefXZ.add_layout( 
                      Arrow(end=NormalHead(line_color="black",line_width=3,size=10),
                            line_width=3,
@@ -965,6 +1009,16 @@ plotDefXZ.add_layout(
                            y_end=['ye'][0], 
                            source = sourceArrowXZ)
                     )
+
+plotDefXZ.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                        #    line_width=3,
+                           x_start='xs',
+                           y_start='ys',
+                           x_end='xe', 
+                           y_end='ye', 
+                           source = CoordArrowXZSource) 
+                    )                    
 
 # Construct the force labels
 plotDefXY.add_layout(
