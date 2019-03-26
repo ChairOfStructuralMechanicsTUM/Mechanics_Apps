@@ -174,8 +174,11 @@ Dis_max.yaxis.axis_label="w_max/(F/k)"
 
 T_max = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=600, height=600)
 T_max.circle(x='time', y='tmax', source=t_max, color="#a2ad00")
+T_max.label = 
+T_max_label = LatexLabelSet(x='x', y='y', text='names', source=Figure2Moving_Label_source, text_color = 'black', level='glyph', x_offset=3, y_offset=3)
 T_max.xaxis.axis_label="Tmax to T0 ratio"
 T_max.yaxis.axis_label="t_max"
+T_max.add_layout(T_max_label)
 
 InputForce = figure(title="", tools="", x_range=(0,3.0), y_range=(0,2), width=300, height=150)
 InputForce.line(x='beta', y='phi', source=Force_input, color="#a2ad00")
