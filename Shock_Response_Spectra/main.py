@@ -169,15 +169,14 @@ Displacement.legend.click_policy="mute"
 
 Dis_max = figure(title="", tools="", x_range=(0,3.0), y_range=(0,4), width=600, height=600)
 Dis_max.circle(x='time', y='omega', source=omega_max, color="#a2ad00")
-Dis_max.xaxis.axis_label="To/Te"
-Dis_max.yaxis.axis_label="w_max/(F/k)"
+FigureMoving_Label_source   = ColumnDataSource(data=dict(x=[-0.45,1.7], y=[2.5, -0.4], names=[ "\dfrac{W_{max}}{\dfrac{F}{K}}","\dfrac{T_0}{T_e}"]))
+D_max_label = LatexLabelSet(x='x', y='y', text='names', source=FigureMoving_Label_source, text_color = 'black', level='glyph', x_offset= 0, y_offset=0)
+Dis_max.add_layout(D_max_label)
 
 T_max = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=600, height=600)
-T_max.circle(x='time', y='tmax', source=t_max, color="#a2ad00")
-T_max.label = 
-T_max_label = LatexLabelSet(x='x', y='y', text='names', source=Figure2Moving_Label_source, text_color = 'black', level='glyph', x_offset=3, y_offset=3)
-T_max.xaxis.axis_label="Tmax to T0 ratio"
-T_max.yaxis.axis_label="t_max"
+T_max.circle(x='time', y='tmax', source=t_max, color="#a2ad00") 
+Figure2Moving_Label_source   = ColumnDataSource(data=dict(x=[-0.45,1.7], y=[2.5, -0.4], names=["\dfrac{T_{max}}{T_0}", "T_{max}"]))
+T_max_label = LatexLabelSet(x='x', y='y', text='names', source=Figure2Moving_Label_source, text_color = 'black', level='glyph', x_offset= 0, y_offset=0)
 T_max.add_layout(T_max_label)
 
 InputForce = figure(title="", tools="", x_range=(0,3.0), y_range=(0,2), width=300, height=150)
@@ -361,9 +360,9 @@ hspace = 20
 curdoc().add_root(column(description,\
     row(column(row(column(row(column(fig,column(play_button,Spacer(width = 10),\
     pause_button,column(Spacer(width = 10),reset_button))),column(Force_select,InputForce,parameter_table)),\
-    Spacer(height=10),Displacement)),Spacer(height=hspace)),Spacer(width=10),\
+    Spacer(height=10),Displacement)),Spacer(height=hspace)),Spacer(width=30),\
     column(damping_coefficient_input,frequency_ratio_input,Spacer(height=hspace),\
-    row(gridplot([Dis_max,T_max],ncols=1,plot_width=480,plot_height=420,merge_tools=True,toolbar_location="below"),\
+    row(gridplot([Dis_max,Spacer(height=3 *hspace),T_max],ncols=1,plot_width=480,plot_height=420,merge_tools=True,toolbar_location="below"),\
     column(Spacer(height=160),reset_button_p_af,Spacer(height=370),reset_button_p_pa)))\
     ),))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  
