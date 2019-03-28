@@ -46,6 +46,7 @@ mass = CircularMass(initial_mass_value,0,10,2,2)
 spring = Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
 damping_coeffcient=initial_damping_ratio*2*sqrt(initial_spring_constant_value*initial_mass_value)
 damper = Dashpot((2,.75),(2,8),damping_coeffcient)
+glob_callback_id = ColumnDataSource(data = dict(callback_id = [None]))
 
 def Initialise():
     global initial_spring_constant_value,initial_damping_ratio,initial_displacement_value,TimePeriodRatio
@@ -216,20 +217,29 @@ frequency_ratio_input = Slider(title="Impulse duration to natural period ratio",
 frequency_ratio_input.on_change('value',change_frequency_ratio)
 
 def pause():
+    [callback_id] = glob_callback_id.data["callback_id"]
     global Active
+    Active = True
+    print("Active is", Active)
     if (Active):
-        curdoc().remove_periodic_callback(evolve)
+        #curdoc().remove_periodic_callback(callback_id)
         Active=False
+    curdoc().remove_periodic_callback(callback_id)
 
 def play():
+    [callback_id] = glob_callback_id.data["callback_id"]
     global Active
     if (not Active):
-        curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
+        #curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
         Active=True
+    callback_id = curdoc().add_periodic_callback(evolve,dt*1000)
+    glob_callback_id.data = dict(callback_id = [callback_id])
 
 def reset(): # resets values to initial cofiguration
+
     global displacement, t, s, Bottom_Line, Linking_Line, spring, mass, damper, initial_displacement_value, force_value, damping_coefficient_input
     pause()
+    
     t=0
     s=0
     displacement.data=dict(t=[0],s=[initial_displacement_value])
