@@ -268,7 +268,7 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])
 
         ## SCALING AND POSITION OF SIGMA GLYPHS
-        sigmascaling = 0.000005*50
+        sigmascaling = 0.0000025*50
         sigma_l_pos = 1.5
         sigma_r_pos = 3.5
 
@@ -300,11 +300,11 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         arrow_adjust_x = 0.05
 
         # Arrows left end 
-        if (Py<-30):
+        if (sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))] < -0.05): 
             SigmaArrowSource1.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
             SigmaArrowSource2.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
             SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-        elif (Py>30):
+        elif (sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))] > 0.05): 
             SigmaArrowSource1.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
             SigmaArrowSource2.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )       
             SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])        
@@ -314,11 +314,11 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
             SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
 
         # Arrows right end
-        if (Py<-30):
+        if (sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))] < -0.05): 
             SigmaArrowSource4.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
             SigmaArrowSource5.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
             SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-        elif (Py>30):
+        elif (sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))] > 0.05): 
             SigmaArrowSource4.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
             SigmaArrowSource5.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )     
             SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
@@ -343,7 +343,7 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
 
         ## SCALING AND POSITION OF TAU GLYPHS
-        tau_xy_scaling = 0.00001*50
+        tau_xy_scaling = 0.000005*50
         tau_xy_l_pos_x = 1.5
         tau_xy_r_pos_x = 3.5
         tau_xy_u_pos_x = 2.5        
@@ -392,9 +392,10 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         
         ## ARROW LEFT END:
         tau_xy_l_pos_y = -0.25                 
-        if (Py<-30):
+        if (Py<0):
+            print 
             TauArrowSource1.data = dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y])
-        elif (Py>30):
+        elif (Py>0):
             TauArrowSource1.data = dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y])
         else:            
             TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])  
@@ -583,37 +584,37 @@ def fun_change_Cross_Section(attrname, old, new):
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])
         CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]) 
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])         
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]) 
+        labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])  
+        labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])                 
     elif (radio_button_group.active == 1):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[CrossSection2], x = [0], y = [0])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
         CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])    
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])                
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]) 
+        labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])
+        labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])                            
     elif (radio_button_group.active == 2):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[CrossSection3], x = [0], y = [0])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
         CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])        
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])            
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])
+        labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])  
+        labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])                         
     elif (radio_button_group.active == 3):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])       
         CrossSectionSource4.data = dict(sp4=[CrossSection4], x = [0], y = [0]) 
         CoordArrowXYSource.data=dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0])
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[-1.0/6.0],xe=[5.9], ye=[-1.0/6.0])        
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[-1.0/6.0],xe=[5.9], ye=[-1.0/6.0])   
+        labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3+1.0/6.0], text=['y','x'])
+        labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3-1.0/6.0], text=['z','x'])   
 
-
-    	
-
-
-
-
-
-    
     global glCantileverCrossSection
     glCantileverCrossSection = radio_button_group.active
     global glCantileverStress
@@ -653,7 +654,15 @@ sourceArrowXZ = ColumnDataSource(
                                               )
                                 )
 CoordArrowXYSource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])) 
-CoordArrowXZSource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]))                                
+CoordArrowXZSource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]))     
+
+
+labelXY = ColumnDataSource(data=dict(x=[-.3,5.8],
+                                     y=[2.7,-.3],
+                                     text=['y','x']))
+labelXZ = ColumnDataSource(data=dict(x=[-.3,5.8],
+                                     y=[-2.7,-.3],
+                                     text=['z','x']))                                  
                                      
 # Construct the source files for the force labels
 sourceFyLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fy'] ))
@@ -693,9 +702,9 @@ plotDefXY.yaxis.axis_line_color=None
 plotDefXY.grid.visible = False
 plotDefXY.toolbar.logo = None
 plotDefXY.title.text_font_size="12.5pt"
-labelXY = ColumnDataSource(data=dict(x=[-.3,5.8],
-                                     y=[2.7,-.3],
-                                     text=['y','x']))
+# labelXY = ColumnDataSource(data=dict(x=[-.3,5.8],
+#                                      y=[2.7,-.3],
+#                                      text=['y','x']))
 plotDefXY.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_start=0, 
@@ -703,14 +712,6 @@ plotDefXY.add_layout(
                            x_end=0, 
                            y_end=2.9, 
                            ))
-
-# plotDefXY.add_layout( 
-#                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-#                            x_start=-.5, 
-#                            y_start=0, 
-#                            x_end=5.9, 
-#                            y_end=0, 
-#                            ))
 plotDefXY.add_layout(
                       LabelSet(
                                   x='x', y='y',
@@ -741,9 +742,9 @@ plotDefXZ.grid.visible = False
 plotDefXZ.toolbar.logo = None
 plotDefXZ.title.text_font_size="12.5pt"
 
-labelXZ = ColumnDataSource(data=dict(x=[-.3,5.8],
-                                     y=[-2.7,-.3],
-                                     text=['z','x']))
+# labelXZ = ColumnDataSource(data=dict(x=[-.3,5.8],
+#                                      y=[-2.7,-.3],
+#                                      text=['z','x']))
 plotDefXZ.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_start=0, 

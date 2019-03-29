@@ -27,9 +27,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.32"
-     inkscape:cx="-534.6322"
-     inkscape:cy="905.85238"
+     inkscape:zoom="0.22627417"
+     inkscape:cx="1686.6143"
+     inkscape:cy="334.49879"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -48,7 +48,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -156,40 +156,24 @@
     <path
        inkscape:connector-curvature="0"
        id="path3021"
-       d="m 236.60143,533.96451 c 0,-42.91207 0,-43.51644 0,-43.51644"
-       style="fill:none;stroke:#e37222;stroke-width:11.99999714;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       inkscape:connector-curvature="0"
-       id="path3021-3"
-       d="m 233.86026,496.42812 c 132.54593,0 134.41278,0 134.41278,0"
-       style="fill:none;stroke:#e37222;stroke-width:12.00000095;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 236.60143,534.24777 c 0,-40.90921 0,-41.48538 0,-41.48538"
+       style="fill:none;stroke:#e37222;stroke-width:11.71661091;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
        inkscape:connector-curvature="0"
        id="path3021-3-8"
-       d="m 362.57893,495.75149 c 1.4686,-225.74746 1.4893,-228.927 1.4893,-228.927"
-       style="fill:none;stroke:#e37222;stroke-width:12.00000095;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       inkscape:connector-curvature="0"
-       id="path3021-3-9"
-       d="m 232.815,272.92976 c 129.3057,0 131.127,0 131.127,0"
-       style="fill:none;stroke:#e37222;stroke-width:12;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 362.5692,496.26091 c 1.48772,-222.11796 1.50876,-225.24644 1.50876,-225.24644"
+       style="fill:none;stroke:#e37222;stroke-width:11.98056507;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
        inkscape:connector-curvature="0"
        id="path3021-8"
-       d="m 238.63103,273.81381 c 0,-40.43482 0,-41.00433 0,-41.00433"
-       style="fill:none;stroke:#e37222;stroke-width:12;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 238.63103,274.23292 c 0,-41.66048 0,-42.24726 0,-42.24726"
+       style="fill:none;stroke:#e37222;stroke-width:12.18051529;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
@@ -404,7 +388,7 @@
            x="78.791901"
            y="70.493912"
            style="fill:none" /></flowRegion><flowPara
-         id="flowPara3898"></flowPara></flowRoot>    <text
+         id="flowPara3898" /></flowRoot>    <text
        xml:space="preserve"
        style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#e37222;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
        x="103.03555"

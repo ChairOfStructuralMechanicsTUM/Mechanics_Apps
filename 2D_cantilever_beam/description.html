@@ -33,8 +33,19 @@ code {
 <h1>Cantilever Beam</h1>
 
 <p>
+<justify>
 This application models the deformation and normal stresses of a 3D cantilever beam based on the solution of the Euler-Bernoulli Ordinary Differential Equation.
-
+<br>
+To visualize the influence of different cross sections on the behavior of the beam, four different cross sections can be chosen.
+<br>
+The force is separated into a vertical component Fy and a horizontal component Fz, of which the values can be changed using the sliders on the left. 
+Both loads are acting on the centroid. 
+<br>
+Two separate 2D plots show the reaction of the beam for both a X-Y and a X-Z perspective, whereby the coloring inside the beam corresponds to the magnitudes of normal stresses. 
+<br>
+Additionaly, a third plot visualizes the normal- and shear stresses along an element inside the X-Y plane with z=0.
+</justify>
+</p>
 
 <!-- <p> -->
 <!-- <center> -->
@@ -59,14 +70,10 @@ and the stresses can be determined with the following stress equation for 2-axia
 <a href="http://www.codecogs.com/eqnedit.php?latex=\sigma&space;(x,y,z)&space;=&space;\frac{M_{y}(x)\cdot&space;I_{z}-M_z(x)\cdot&space;I_{yz}}{I_{y}&space;\cdot&space;I_z&space;-&space;I_{yz}^2}\cdot&space;z&space;&plus;&space;\frac{M_{z}(x)\cdot&space;I_{y}-M_y(x)\cdot&space;I_{yz}}{I_{y}&space;\cdot&space;I_z&space;-&space;I_{yz}^2}\cdot&space;y" target="_blank"><img src="http://latex.codecogs.com/svg.latex?\sigma&space;(x,y,z)&space;=&space;\frac{M_{y}(x)\cdot&space;I_{z}-M_z(x)\cdot&space;I_{yz}}{I_{y}&space;\cdot&space;I_z&space;-&space;I_{yz}^2}\cdot&space;z&space;&plus;&space;\frac{M_{z}(x)\cdot&space;I_{y}-M_y(x)\cdot&space;I_{yz}}{I_{y}&space;\cdot&space;I_z&space;-&space;I_{yz}^2}\cdot&space;y" title="\sigma (x,y,z) = \frac{M_{y}(x)\cdot I_{z}-M_z(x)\cdot I_{yz}}{I_{y} \cdot I_z - I_{yz}^2}\cdot z + \frac{M_{z}(x)\cdot I_{y}-M_y(x)\cdot I_{yz}}{I_{y} \cdot I_z - I_{yz}^2}\cdot y" /></a>
 </center>
 </p>
+Here, the momentums of inertia Iy and Iz are determined by the shape of the cross section. If the cross section is
+symmetrical, Iyz will be zero.      
 
 
 
-<p>
-The beam is subjected to a force that can be separated into a vertical component Fy and into a horizontal component Fz. 
-The value of this load can be changed using the two sliders on the right.
-
-The results are then shown in two separate 2D plots for the X-Y and X-Z plane, where the colors of the beam correspond to the distribution of the normal stresses. 
-</p>
 
 
