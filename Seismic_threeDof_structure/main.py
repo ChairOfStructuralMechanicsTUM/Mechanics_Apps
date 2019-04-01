@@ -14,6 +14,13 @@ from bokeh.models.widgets import TextInput, RadioGroup, Div, DataTable, TableCol
 from os.path import dirname, join, split
 from bokeh.models.layouts import Spacer
 
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexDiv
+
 '''
 ###############################################################################
 Create the plotting domain 
@@ -497,7 +504,7 @@ Construct and show the resulting plot
 '''       
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 curdoc().add_root(
                     column(
