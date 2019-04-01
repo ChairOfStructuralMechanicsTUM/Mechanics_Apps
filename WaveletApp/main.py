@@ -5,12 +5,11 @@ import matplotlib.pyplot as plt
 from math import sin, cos, pi, exp
 from bokeh.plotting import Figure
 from bokeh.models import ColumnDataSource, Div, LinearColorMapper, LogTicker, ColorBar
-from bokeh.layouts import widgetbox, layout, column, row
+from bokeh.layouts import widgetbox, layout, column, row, Spacer
 from bokeh.models.widgets import Button, Select, Slider, TextInput, Dropdown
 from sympy import sympify, lambdify
 from bokeh.io import curdoc
 import traceback
-from draft import Surface3d
 
 from filled_contours import filled_contours
 
@@ -122,8 +121,6 @@ def Find_Rectangular_WT(T0,T1,amp):
             W[i][j]=quad(integrand1, T0, T1)[0]
     WaveLet_source.data = {'a': [a],'b':[b],'W':[W]}
     plot_Wavelet.image(image="W", source=WaveLet_source, color_mapper=color_mapper, x=0, y=0, dw=5, dh=5)
-    #surface = Surface3d(x="a", y="b", z="W", data_source=WaveLet_source, width=600, height=600)
-    # show(surface)
     #plot_Wavelet.add_layout(color_bar, 'right')
 
 def Find_Dirac_WT(T0, amp):
@@ -246,22 +243,22 @@ def sample_fun_input_modified(self):
     if (sample_function_id == "Heaviside Function"):
         controls = [sample_fun_input_f, T0_input, Amp_input]
         controls_box = widgetbox(controls, sizing_mode='scale_width')
-        My_Layout.children[0].children[0]= controls_box  # all controls
+        My_Layout.children[1].children[0]= controls_box  # all controls
         
     elif (sample_function_id == "Rectangular Function"):
         controls = [sample_fun_input_f, T0_input, T1_input, Amp_input]
         controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
-        My_Layout.children[0].children[0]= controls_box  # all controls
+        My_Layout.children[1].children[0]= controls_box  # all controls
     
     elif (sample_function_id == "Dirac delta Function"):
         controls = [sample_fun_input_f, T0_input, Amp_input]
         controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
-        My_Layout.children[0].children[0]= controls_box  # all controls
+        My_Layout.children[1].children[0]= controls_box  # all controls
 
     elif (sample_function_id == "User defined function"):
         controls = [sample_fun_input_f, User_Func]
         controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
-        My_Layout.children[0].children[0]= controls_box  # all controls
+        My_Layout.children[1].children[0]= controls_box  # all controls
 
 def Wavelet_fun_modified(self):
 
@@ -327,14 +324,15 @@ T1_input.on_change('value',update)
 Amp_input.on_change('value',update)
 User_Func.on_change('value',update)
 
-# #Description
-# description_filename = join(dirname(__file__), "description.html")
+#Description
+description_filename = join(dirname(__file__), "description.html")
 
-# description = Div(text=open(description_filename).read(), render_as_text=False)
+description = Div(text=open(description_filename).read(), render_as_text=False)
 
 # create layout
 controls = [sample_fun_input_f]
 controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
-My_Layout = layout([[controls_box, plot_function],[plot_Wavelet_Function,plot_Wavelet],column(row(Wavelet_fun_input),row(a_param, b_param))],sizing_mode='stretch_both')
+My_Layout = layout([[description],[controls_box, plot_function],[plot_Wavelet_Function,plot_Wavelet],
+            [column(row(Wavelet_fun_input),row(a_param, b_param))]],sizing_mode='stretch_both')
 curdoc().add_root(My_Layout) # add plots and controls to root
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
