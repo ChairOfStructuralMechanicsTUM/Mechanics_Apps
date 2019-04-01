@@ -247,10 +247,10 @@ class S3S_Mode( S3S_Structure ):
         self.locationInERS.data = dict(x=[period,period,0],y=[0,Sa,Sa])
         
     def modify_mode_text(self, multiplier):
-        self.multiplier_text.text = " $\\displaystyle\\frac{\\beta S_a(T)}{ \\omega^2} ="+ str(multiplier) + "$"
+        self.multiplier_text.text = " $\\displaystyle\\frac{\\beta S_a(T)}{ \\omega^2} ="+ '{:.3f}'.format(multiplier) + "$"
         
     def modify_frequency_text(self):
-        self.frequency_text.text = "$\\text{Natural Frequency} = " + str(self.frequency) + "\\, \\frac{\\mathrm{rad}}{\\mathrm{s}}$"
+        self.frequency_text.text = "$\\text{Natural Frequency} = " + '{:.3f}'.format(self.frequency) + "\\, \\frac{\\mathrm{rad}}{\\mathrm{s}}$"
         
     def normalize_mode_shape(self):
         m = np.dot(self.modeShape , np.dot(self.M , self.modeShape))
