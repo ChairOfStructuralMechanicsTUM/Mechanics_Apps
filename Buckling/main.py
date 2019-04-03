@@ -67,9 +67,9 @@ class Column(object):
         self.sk.data        = dict(x=[], y=[])
         self.sk_labels.data = dict(x=[], y=[], name = [])
 
-    def fun_floor(self):
+    def fun_floor(self,zoffset=0):
         '''Member function: creates the floor line for the column'''
-        self.floor = dict(x = [self.xstart-1,self.xstart+1], y = [zstart, zstart])
+        self.floor = dict(x = [self.xstart-1,self.xstart+1], y = [zstart+zoffset, zstart+zoffset])
 
     def fun_arrow(self):
         '''Member function: Creates Force arrow'''
@@ -131,7 +131,7 @@ col4.pts.data=dict(x=[col4.xstart, col4.xstart], y=[zstart, zstart+col4.h])
 #, "name" = ["L","2L","3L","4L"]
 #creation of the floors of the columns:
 col1.fun_floor()
-col2.fun_floor()
+col2.fun_floor(-.75)
 col3.fun_floor()
 col4.fun_floor()
 #col2.floor = dict(x = [col2.xstart-1,col2.xstart+1], y = [zstart-0.75,zstart-0.75])
