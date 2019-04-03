@@ -32,6 +32,9 @@ w_end           = 0.15
 L               = 10.0
 fcrit_2         = 1.0  # reference for critical force is second column
 
+#Layout options
+app_width = 570
+
 # replaces global var
 global_old_slide_val = ColumnDataSource(data=dict(val=[0]))
 
@@ -377,10 +380,10 @@ init()
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=app_width)
 
 description1_filename = join(dirname(__file__), "description1.html")
-description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=False, width=1200)
+description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=False, width=app_width)
 
 ################################################################################
 ####Output section
