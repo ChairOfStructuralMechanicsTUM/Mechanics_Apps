@@ -1,21 +1,12 @@
-Buckling Readme:
-
+# Buckling Application
 https://en.wikipedia.org/wiki/Buckling
 http://www.bu.edu/moss/mechanics-of-materials-beam-buckling/
 http://www.continuummechanics.org/columnbuckling.html
 
-Buckling: (Knickung)
+## Possible enhancement:
+All values can be precomputed and read into the CDS at startup. This would increase performance.
 
-Bifurkation - bifurcation
-
- - Buckling is the bifurcation (splitting) in the solution of static equilibrium
- - Boundary conditions determine the mode of bending of the column and the distance between inflection points on the displacement curve of the deflected column. The inflection points in the deflection shape of the column are the points at which the curvature of the column changes sign and are also the points at which the column's internal bending moments of the column are zero. The closer the inflection points are, the greater the resulting axial load capacity (bucking load) of the column.
- - Line 258: calculation of something
-
-
-F = pi^{2}*(E*I) / (K*L)^{2})
-
-Animation Description:
+## Animation Description:
 
 There are 4 beams. Each beam has different boundary conditions:
 	1. Beam is free at top end, fixed at bottom end.
