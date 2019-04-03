@@ -3,34 +3,6 @@ import math
 from bokeh.plotting import figure
 
 
-### FUNCTION NOT USED!! --> CUT ###
-def generate_colorbar(palette, low=0, high=15, plot_height = 100, plot_width = 500):
-
-    y = np.linspace(low,high,len(palette))
-    dy = y[1]-y[0]
-    fig = figure(tools="", y_range = [0, 1], x_range = [low, high],plot_width = plot_width, plot_height=plot_height)
-    fig.toolbar_location=None
-    fig.yaxis.visible = None
-    fig.rect(x=y, y=0.5, color=palette, width=dy, height = 1)
-    return fig
-
-## Build array for x- and y-coordinates of elements with y=0. Construct similar array for z=0.
-def construct_undeformed_beam_centerline( noElementsX, noElementsY, noElementsZ,
-                                          elementSizeX
-                                        ):
-    
-    undeformedBeamXY = list()
-    yComponent = 0.0
-    xComponent = 0.0
-    for i in range(noElementsX + 1):
-        undeformedBeamXY.append( [ xComponent, yComponent ] )
-        xIncrement = elementSizeX
-        xComponent += xIncrement        
-    
-    undeformedBeamXZ = undeformedBeamXY
-    
-    return undeformedBeamXY, undeformedBeamXZ
-
 ## Define element class with node coordinates as data members
 class element():
     
@@ -52,12 +24,6 @@ def construct_deformed_beam_centerLine( Py, Pz, E,
                                         thickness, height, length, elementSizeX,
                                         amplificationFactor, glCantileverCrossSection):
 
-    ## For rectangular cross sections:
-    # v(x) = Px^2(3L - x)/6EI
-    # I = bh^3/12
-    # strainxx(top) = -6P(L-x)/bh^2E
-    # strainxx(bottom) = 6P(L-x)/bh^2E  
-    #######
 
     ###### DEFORMATION IN XY DIRECTION ######
 
@@ -131,8 +97,6 @@ def color_determiner( minimumValue, maximumValue, currentValue ):
             colorIndex = 20
         if colorIndex>780:
             colorIndex = 780
-
-
 
         # Cases
         if ratio <= 0.25:
@@ -272,9 +236,7 @@ def elements_color_determiner( deformed,
                 else:
                     pass
             
-                x_pos = xIncrement
-                # y_pos = ((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
-                
+                x_pos = xIncrement              
                 if glCantileverCrossSection==0:
                     z_pos = thickness/2.0
                     y_pos = ((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
@@ -288,15 +250,12 @@ def elements_color_determiner( deformed,
                     y_pos = ((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
                     z_pos = np.cos(np.arcsin(y_pos/(thickness/2.0)))
                 elif glCantileverCrossSection==3:
-                    y_pos = ((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)*1.0/2.0-(1.0/6.0)*height       
-                    # print y_pos             
+                    y_pos = ((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)*1.0/2.0-(1.0/6.0)*height                
                     z_pos = thickness*1.0/3.0            
 
                 strainXXup = calculate_normal_stress(x_pos, y_pos, z_pos, length, height, thickness, glCantileverCrossSection, Py, Pz) 
 
                 x_pos = xIncrement
-                # y_pos = -((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
-
                 if glCantileverCrossSection==0:
                     y_pos = -((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
                     z_pos = thickness/2.0
@@ -310,10 +269,8 @@ def elements_color_determiner( deformed,
                     y_pos = -((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
                     z_pos = np.cos(np.arcsin(y_pos/(thickness/2.0)))
                 elif glCantileverCrossSection==3:
-                    y_pos = -((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)*1.0/2.0-(1.0/6.0)*height  
-                    # print y_pos                  
+                    y_pos = -((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)*1.0/2.0-(1.0/6.0)*height                  
                     z_pos = thickness*1.0/3.0    
-
 
                 strainXXbottom = calculate_normal_stress(x_pos, y_pos, z_pos, length, height, thickness, glCantileverCrossSection, Py, Pz) 
 
@@ -326,8 +283,7 @@ def elements_color_determiner( deformed,
 
     
         if orientation == 'XZ':  
-            # Py=-Py   
-            # Pz = -Pz
+
             for i in range( int( len(listElements)/2 ) ):
                 if i %(noElementsY/2) == 0 and i != 0:
                 # update verticalMultiplier to the original value
@@ -338,9 +294,6 @@ def elements_color_determiner( deformed,
                     pass
             
                 x_pos = xIncrement
-                # y_pos = height/2.0
-                # z_pos = ((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
-
                 if glCantileverCrossSection==0:
                     z_pos = ((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
                     y_pos = height/2.0
@@ -352,15 +305,11 @@ def elements_color_determiner( deformed,
                     y_pos = np.sin(np.arccos(abs(z_pos)/(height/2.0)))
                 elif glCantileverCrossSection==3:
                     z_pos = ((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)*1.0/2.0-(1.0/6.0)*thickness
-                    # print z_pos 
                     y_pos = height*1.0/3.0                    
 
                 strainXXbottom = calculate_normal_stress(x_pos, y_pos, z_pos, length, height, thickness, glCantileverCrossSection, Py, Pz)        
 
                 x_pos = xIncrement
-                # y_pos = height/2.0
-                # z_pos = -((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
-
                 if glCantileverCrossSection==0:
                     z_pos = -((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)/2.0
                     y_pos = height/2.0
@@ -372,7 +321,6 @@ def elements_color_determiner( deformed,
                     y_pos = np.sin(np.arccos(abs(z_pos)/(height/2.0)))
                 elif glCantileverCrossSection==3:
                     z_pos = -((verticalMultiplier-1.0)*height)/(noElementsY/2.0-1.0)*1.0/2.0-(1.0/6.0)*thickness 
-                    # print z_pos
                     y_pos = height*1.0/3.0                    
 
                 strainXXup = calculate_normal_stress(x_pos, y_pos, z_pos, length, height, thickness, glCantileverCrossSection, Py, Pz)       
@@ -492,11 +440,6 @@ def calculate_stresses_xy_element(x_pos, y_pos, length, height, thickness, glCan
     M_y_r = -(length-(x_pos+length_of_element/2.0)) * Pz
     M_z_l = -(length-(x_pos-length_of_element/2.0)) * Py
     M_z_r = -(length-(x_pos+length_of_element/2.0)) * Py
-    # M_y_l = (length-(x_pos-length_of_element/2.0)) * Pz
-    # M_y_r = (length-(x_pos+length_of_element/2.0)) * Pz
-    # M_z_l = (length-(x_pos-length_of_element/2.0)) * Py
-    # M_z_r = (length-(x_pos+length_of_element/2.0)) * Py
-
 
     ## Calculation of sigma(x,y,z) 
     n=11

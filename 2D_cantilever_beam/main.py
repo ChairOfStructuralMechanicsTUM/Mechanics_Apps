@@ -241,11 +241,8 @@ alphaList = list()
 for index in range(len(listDeformedElementsXY)):
     alphaList.append(1)
 
-
+# Update stresses along xy-Element (sigma and tau)
 def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSection,Py,Pz):
-    ####################################
-    # UPDATE STRESSES ALONG X-Y ELEMENT
-    ####################################
 
     x_pos = 2.5
     y_pos = -height/2.0
@@ -683,95 +680,7 @@ Reset_button = Button(label="Reset", button_type="success")
 
 
 
-plotDefXY = Figure(    
-                       plot_width=400    , 
-                       plot_height=400   ,
-                       x_range = ( -.5,6 ) ,
-                       y_range= ( -3,3 ) ,
-                       title = 'Deformation in X-Y View',
-                       tools = ''
-                  )
-plotDefXY.xaxis.major_tick_line_color=None
-plotDefXY.xaxis.major_label_text_color=None
-plotDefXY.xaxis.minor_tick_line_color=None
-plotDefXY.xaxis.axis_line_color=None
-plotDefXY.yaxis.major_tick_line_color=None
-plotDefXY.yaxis.major_label_text_color=None
-plotDefXY.yaxis.minor_tick_line_color=None
-plotDefXY.yaxis.axis_line_color=None
-plotDefXY.grid.visible = False
-plotDefXY.toolbar.logo = None
-plotDefXY.title.text_font_size="12.5pt"
-# labelXY = ColumnDataSource(data=dict(x=[-.3,5.8],
-#                                      y=[2.7,-.3],
-#                                      text=['y','x']))
-plotDefXY.add_layout( 
-                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                           x_start=0, 
-                           y_start=-3, 
-                           x_end=0, 
-                           y_end=2.9, 
-                           ))
-plotDefXY.add_layout(
-                      LabelSet(
-                                  x='x', y='y',
-                                  text='text',
-                                  text_color='black',text_font_size="12pt",
-                                  level='glyph',text_baseline="middle",text_align="center",
-                                  source=labelXY
-                                )
-                    )
-
-plotDefXZ = Figure(    
-                       plot_width=400    , 
-                       plot_height=400   ,
-                       x_range = ( -.5,6 ) ,
-                       y_range= ( -3,3 ) ,
-                       title = 'Deformation in X-Z View',
-                       tools = ''
-                  )
-plotDefXZ.xaxis.major_tick_line_color=None
-plotDefXZ.xaxis.major_label_text_color=None
-plotDefXZ.xaxis.minor_tick_line_color=None
-plotDefXZ.xaxis.axis_line_color=None
-plotDefXZ.yaxis.major_tick_line_color=None
-plotDefXZ.yaxis.major_label_text_color=None
-plotDefXZ.yaxis.minor_tick_line_color=None
-plotDefXZ.yaxis.axis_line_color=None
-plotDefXZ.grid.visible = False
-plotDefXZ.toolbar.logo = None
-plotDefXZ.title.text_font_size="12.5pt"
-
-# labelXZ = ColumnDataSource(data=dict(x=[-.3,5.8],
-#                                      y=[-2.7,-.3],
-#                                      text=['z','x']))
-plotDefXZ.add_layout( 
-                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                           x_start=0, 
-                           y_start=3, 
-                           x_end=0, 
-                           y_end=-2.9, 
-                           ))
-
-# plotDefXZ.add_layout( 
-#                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-#                            x_start=-.5, 
-#                            y_start=0, 
-#                            x_end=5.9, 
-#                            y_end=0, 
-#                            ))
-plotDefXZ.add_layout(
-                      LabelSet(
-                                  x='x', y='y',
-                                  text='text',
-                                  text_color='black',text_font_size="12pt",
-                                  level='glyph',text_baseline="middle",text_align="center",
-                                  source=labelXZ
-                                )
-                    )
-
-
-
+############ PLOT 1: YZ Cross Section PLOT ###############
 plotDefYZ = Figure(    
                        plot_width=300    , 
                        plot_height=300   ,
@@ -791,7 +700,6 @@ plotDefYZ.yaxis.axis_line_color=None
 plotDefYZ.grid.visible = False
 plotDefYZ.toolbar.logo = None
 plotDefYZ.title.text_font_size="12.5pt"
-
 
 plotDefYZ.add_glyph(CrossSectionSource1,ImageURL(url="sp1", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
 plotDefYZ.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
@@ -826,6 +734,148 @@ plotDefYZ.add_layout(
                                 )
                     )
 
+
+
+############ PLOT 2: XY PLOT ###############
+plotDefXY = Figure(    
+                       plot_width=400    , 
+                       plot_height=400   ,
+                       x_range = ( -.5,6 ) ,
+                       y_range= ( -3,3 ) ,
+                       title = 'Deformation in X-Y View',
+                       tools = ''
+                  )
+plotDefXY.xaxis.major_tick_line_color=None
+plotDefXY.xaxis.major_label_text_color=None
+plotDefXY.xaxis.minor_tick_line_color=None
+plotDefXY.xaxis.axis_line_color=None
+plotDefXY.yaxis.major_tick_line_color=None
+plotDefXY.yaxis.major_label_text_color=None
+plotDefXY.yaxis.minor_tick_line_color=None
+plotDefXY.yaxis.axis_line_color=None
+plotDefXY.grid.visible = False
+plotDefXY.toolbar.logo = None
+plotDefXY.title.text_font_size="12.5pt"
+
+plotDefXY.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_start=0, 
+                           y_start=-3, 
+                           x_end=0, 
+                           y_end=2.9, 
+                           ))
+plotDefXY.add_layout(
+                      LabelSet(
+                                  x='x', y='y',
+                                  text='text',
+                                  text_color='black',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=labelXY
+                                )
+                    )
+
+# Construct the arrows
+plotDefXY.add_layout( 
+                     Arrow(end=NormalHead(line_color="black",line_width=3,size=10),
+                           line_width=3,
+                           x_start=['xs'][0],
+                           y_start=['ys'][0],
+                           x_end=['xe'][0], 
+                           y_end=['ye'][0], 
+                           source = sourceArrowXY) 
+                    )
+plotDefXY.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_start='xs',
+                           y_start='ys',
+                           x_end='xe', 
+                           y_end='ye', 
+                           source = CoordArrowXYSource) 
+                    )
+
+# Construct the force labels
+plotDefXY.add_layout(
+                      LabelSet(
+                                  x='x', y='y',
+                                  text='f',
+                                  text_color='black',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=sourceFyLabel
+                              )
+                    )
+
+############ PLOT 3: XZ PLOT ###############
+plotDefXZ = Figure(    
+                       plot_width=400    , 
+                       plot_height=400   ,
+                       x_range = ( -.5,6 ) ,
+                       y_range= ( -3,3 ) ,
+                       title = 'Deformation in X-Z View',
+                       tools = ''
+                  )
+plotDefXZ.xaxis.major_tick_line_color=None
+plotDefXZ.xaxis.major_label_text_color=None
+plotDefXZ.xaxis.minor_tick_line_color=None
+plotDefXZ.xaxis.axis_line_color=None
+plotDefXZ.yaxis.major_tick_line_color=None
+plotDefXZ.yaxis.major_label_text_color=None
+plotDefXZ.yaxis.minor_tick_line_color=None
+plotDefXZ.yaxis.axis_line_color=None
+plotDefXZ.grid.visible = False
+plotDefXZ.toolbar.logo = None
+plotDefXZ.title.text_font_size="12.5pt"
+
+plotDefXZ.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_start=0, 
+                           y_start=3, 
+                           x_end=0, 
+                           y_end=-2.9, 
+                           ))
+
+plotDefXZ.add_layout(
+                      LabelSet(
+                                  x='x', y='y',
+                                  text='text',
+                                  text_color='black',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=labelXZ
+                                )
+                    )
+
+# Construct the arrows
+plotDefXZ.add_layout( 
+                     Arrow(end=NormalHead(line_color="black",line_width=3,size=10),
+                           line_width=3,
+                           x_start=['xs'][0], 
+                           y_start=['ys'][0], 
+                           x_end=['xe'][0], 
+                           y_end=['ye'][0], 
+                           source = sourceArrowXZ)
+                    )
+
+plotDefXZ.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_start='xs',
+                           y_start='ys',
+                           x_end='xe', 
+                           y_end='ye', 
+                           source = CoordArrowXZSource) 
+                    )             
+
+# Construct the force labels
+plotDefXZ.add_layout(LabelSet(
+                                  x='x', y='y',
+                                  text='f',
+                                  text_color='black',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=sourceFzLabel
+                              )
+                    )
+
+
+
+############ PLOT 4: XY ELEMENT PLOT ###############
 plotXYElement = Figure(    
                        plot_width=400    , 
                        plot_height=400   ,
@@ -896,7 +946,6 @@ plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,s
 plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
                            line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = TauArrowSource4))
 
-
 plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1.04))
 plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=1.5, y=0, w=2, h=0.535))
 
@@ -926,7 +975,7 @@ Tauplot_Labels = LatexLabelSet(
 plotXYElement.add_layout(Sigmaplot_Labels)
 plotXYElement.add_layout(Tauplot_Labels)
 
-
+############## PLOT 5: Color Bar ##########################
 # Construct the color-bar figure
 colorBar = Figure(
                       title = '',
@@ -981,65 +1030,6 @@ colorBar.patches( xs='x', ys='y', source=colorBarSource, color = 'c', alpha = 'a
 plotDefXY.patches  (xs='x', ys='y', source=sourceXYdef  , color = 'c', alpha = 'a')
 plotDefXZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
 
-# Construct the arrows
-plotDefXY.add_layout( 
-                     Arrow(end=NormalHead(line_color="black",line_width=3,size=10),
-                           line_width=3,
-                           x_start=['xs'][0],
-                           y_start=['ys'][0],
-                           x_end=['xe'][0], 
-                           y_end=['ye'][0], 
-                           source = sourceArrowXY) 
-                    )
-plotDefXY.add_layout( 
-                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                        #    line_width=3,
-                           x_start='xs',
-                           y_start='ys',
-                           x_end='xe', 
-                           y_end='ye', 
-                           source = CoordArrowXYSource) 
-                    )
-
-plotDefXZ.add_layout( 
-                     Arrow(end=NormalHead(line_color="black",line_width=3,size=10),
-                           line_width=3,
-                           x_start=['xs'][0], 
-                           y_start=['ys'][0], 
-                           x_end=['xe'][0], 
-                           y_end=['ye'][0], 
-                           source = sourceArrowXZ)
-                    )
-
-plotDefXZ.add_layout( 
-                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                        #    line_width=3,
-                           x_start='xs',
-                           y_start='ys',
-                           x_end='xe', 
-                           y_end='ye', 
-                           source = CoordArrowXZSource) 
-                    )                    
-
-# Construct the force labels
-plotDefXY.add_layout(
-                      LabelSet(
-                                  x='x', y='y',
-                                  text='f',
-                                  text_color='black',text_font_size="12pt",
-                                  level='glyph',text_baseline="middle",text_align="center",
-                                  source=sourceFyLabel
-                              )
-                    )
-
-plotDefXZ.add_layout(LabelSet(
-                                  x='x', y='y',
-                                  text='f',
-                                  text_color='black',text_font_size="12pt",
-                                  level='glyph',text_baseline="middle",text_align="center",
-                                  source=sourceFzLabel
-                              )
-                    )
 
 # Notify the corresponding functions to carry out the changes characterized by
 # the sliders
