@@ -406,7 +406,7 @@ def calculate_stresses_xy_element(x_pos, y_pos, length, height, thickness, glCan
     length_of_element = 2.0
 
     if(glCantileverCrossSection==3):
-        height_of_element = height/3.0
+        height_of_element = height*2.0/3.0
     else:
         height_of_element = height/2.0
     
@@ -428,7 +428,7 @@ def calculate_stresses_xy_element(x_pos, y_pos, length, height, thickness, glCan
     if(glCantileverCrossSection==2):
         Iy = math.pi*(height/2.0)**4.0/4.0
     if(glCantileverCrossSection==3):
-        Iy = thickness**4.0/36.0
+        Iy = thickness**4.0/48.0
     ## Iyz = Sum(Iyz_i) + Sum(ey_i*ez_i*A_i) = 0 + Sum(ey_i*ez_i*A_i) - Deviation momentum is zero because of symmetry of cross sections
     if(glCantileverCrossSection==0):
         Iyz = 0.0
@@ -437,7 +437,7 @@ def calculate_stresses_xy_element(x_pos, y_pos, length, height, thickness, glCan
     if(glCantileverCrossSection==2):
         Iyz = 0.0
     if(glCantileverCrossSection==3):
-        Iyz = -(thickness**4.0/72.0)       
+        Iyz = 0.0     
 
     ## Calculation of Momentum M_y & M_z
     M_y_l = -(length-(x_pos-length_of_element/2.0)) * Pz
@@ -484,7 +484,7 @@ def calculate_normal_stress(x_pos, y_pos, z_pos, length, height, thickness, glCa
     if(glCantileverCrossSection==2):
         Iy = math.pi*(height/2.0)**4.0/4.0
     if(glCantileverCrossSection==3):
-        Iy = thickness**4.0/36.0
+        Iy = thickness**4.0/48.0
     #  Calculation of Iyz:   Iyz = Sum(Iyz_i) + Sum(ey_i*ez_i*A_i) = 0 + Sum(ey_i*ez_i*A_i) 
     #  Deviation momentum is zero because of symmetry of cross sections
     if(glCantileverCrossSection==0):
@@ -494,7 +494,7 @@ def calculate_normal_stress(x_pos, y_pos, z_pos, length, height, thickness, glCa
     if(glCantileverCrossSection==2):
         Iyz = 0.0
     if(glCantileverCrossSection==3):
-        Iyz = -(thickness**4.0/72.0)
+        Iyz = 0.0
 
     ## Calculation of momentum M_y and M_z:
     M_y = (length-x_pos) * Pz

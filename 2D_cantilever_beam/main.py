@@ -54,9 +54,13 @@ CrossSectionSource4 = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
 XYElement = "2D_cantilever_beam/static/images/XYElement.png"
 XYElementSource = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
 XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])
+XYElement2 = "2D_cantilever_beam/static/images/XYElement.png"
+XYElement2Source = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
+XYElement2Source.data = dict(sp4=[XYElement], x = [0], y = [0])
 XYBeam = "2D_cantilever_beam/static/images/XYBeam.png"
 XYBeamSource = ColumnDataSource(data=dict(sp5=[], x=[] , y=[]))
 XYBeamSource.data = dict(sp5=[XYBeam], x = [0], y = [0])
+
 
 
 # Construct source files of dynamic labels:
@@ -66,9 +70,7 @@ labelXY = ColumnDataSource(data=dict(x=[-.3,5.8],
 labelXZ = ColumnDataSource(data=dict(x=[-.3,5.8],
                                      y=[-2.7,-.3],
                                      text=['z','x']))     
-labelXYElement2 = ColumnDataSource(data=dict(x=[-5,-5],
-                                     y=[1,-1],
-                                     text=['\\frac{a}{2}','\\frac{a}{2}']))                                                                     
+labelXYElement = ColumnDataSource(dict(x=[-.3,5.8,0.7,0.7], y=[2.7,-.3,0.7,-0.7], text=['y','x','\\frac{a}{2}','-\\frac{a}{2}']))                                                           
                                      
 # Construct the source files for the force labels
 sourceFyLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fy'] ))
@@ -268,7 +270,7 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
     x_pos = 2.5
     y_pos = -height/2.0
     if(glCantileverCrossSection==3):
-        y_pos = -height*1.0/3.0
+        y_pos = -height*2.0/3.0
     sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(x_pos,y_pos,length,height,thickness,glCantileverCrossSection,Py,Pz)
     
     ## IF SIGMA BUTTON IS ACTIVATED:
@@ -296,7 +298,10 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         for i in range(len(sigma_x_l)): 
             sigma_x_l_scaled[i]=sigma_x_l[len(sigma_x_l)-i-1]*sigmascaling
         SigmaPlot_l_x = np.hstack((np.linspace(sigma_l_pos, sigma_l_pos, len(sigma_x_l)), sigma_l_pos-abs(sigma_x_l_scaled)))
-        SigmaPlot_l_y = np.hstack((np.linspace(-0.525, 0, len(sigma_x_l)),np.linspace(0, -0.525, len(sigma_x_l))))
+        if (glCantileverCrossSection==3):        
+            SigmaPlot_l_y = np.hstack((np.linspace(-0.525, 1.0/6.0, len(sigma_x_l)),np.linspace(1.0/6.0, -0.525, len(sigma_x_l))))
+        else:
+            SigmaPlot_l_y = np.hstack((np.linspace(-0.525, 0, len(sigma_x_l)),np.linspace(0, -0.525, len(sigma_x_l))))
         Sigmaplot_l_Source.data = dict(x = SigmaPlot_l_x, y = SigmaPlot_l_y)
 
         ## SIGMA_X RIGHT END DATA SOURCE:
@@ -305,7 +310,10 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         for i in range(len(sigma_x_r)): 
             sigma_x_r_scaled[i]=sigma_x_r[len(sigma_x_r)-i-1]*sigmascaling
         SigmaPlot_r_x = np.hstack((np.linspace(sigma_r_pos, sigma_r_pos, len(sigma_x_r)), sigma_r_pos+abs(sigma_x_r_scaled)))
-        SigmaPlot_r_y = np.hstack((np.linspace(-0.525, 0, len(sigma_x_r)),np.linspace(0, -0.525, len(sigma_x_r))))
+        if (glCantileverCrossSection==3):
+            SigmaPlot_r_y = np.hstack((np.linspace(-0.525, 1.0/6.0, len(sigma_x_r)),np.linspace(1.0/6.0, -0.525, len(sigma_x_r))))
+        else:
+            SigmaPlot_r_y = np.hstack((np.linspace(-0.525, 0, len(sigma_x_r)),np.linspace(0, -0.525, len(sigma_x_r))))
         Sigmaplot_r_Source.data = dict(x = SigmaPlot_r_x, y = SigmaPlot_r_y)
 
         # POSITION SIGMA LABELS
@@ -372,7 +380,10 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         for i in range(len(tau_xy)): 
             tau_xy_l_scaled[i]=tau_xy[len(tau_xy)-i-1]*tau_xy_scaling
         TauPlot_l_x = np.hstack((np.linspace(tau_xy_l_pos_x, tau_xy_l_pos_x, len(tau_xy)), tau_xy_l_pos_x-abs(tau_xy_l_scaled)))
-        TauPlot_l_y = np.hstack((np.linspace(-0.525, 0, len(tau_xy)),np.linspace(0, -0.525, len(tau_xy))))
+        if (glCantileverCrossSection==3):        
+            TauPlot_l_y = np.hstack((np.linspace(-0.525, 1.0/6.0, len(tau_xy)),np.linspace(1.0/6.0, -0.525, len(tau_xy))))
+        else:    
+            TauPlot_l_y = np.hstack((np.linspace(-0.525, 0, len(tau_xy)),np.linspace(0, -0.525, len(tau_xy))))            
         Tauplot_l_Source.data = dict(x = TauPlot_l_x, y = TauPlot_l_y)
         
         ## TAU RIGHT END DATA SOURCE:
@@ -381,7 +392,10 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         for i in range(len(tau_xy)): 
             tau_xy_r_scaled[i]=tau_xy[len(tau_xy)-i-1]*tau_xy_scaling
         TauPlot_r_x = np.hstack((np.linspace(tau_xy_r_pos_x, tau_xy_r_pos_x, len(tau_xy)), tau_xy_r_pos_x+abs(tau_xy_r_scaled)))
-        TauPlot_r_y = np.hstack((np.linspace(-0.525, 0, len(tau_xy)),np.linspace(0, -0.525, len(tau_xy))))
+        if (glCantileverCrossSection==3):       
+            TauPlot_r_y = np.hstack((np.linspace(-0.525, 1.0/6.0, len(tau_xy)),np.linspace(1.0/6.0, -0.525, len(tau_xy))))
+        else:
+            TauPlot_r_y = np.hstack((np.linspace(-0.525, 0, len(tau_xy)),np.linspace(0, -0.525, len(tau_xy))))            
         Tauplot_r_Source.data = dict(x = TauPlot_r_x, y = TauPlot_r_y)
 
         ## TAU UPPER BORDER DATA SOURCE
@@ -390,7 +404,10 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         for i in range(len(tau_xy)): 
             tau_xy_u_scaled[i]=tau_xy[len(tau_xy)-1]*tau_xy_scaling
         TauPlot_u_x = np.hstack((np.linspace(tau_xy_u_pos_x-1, tau_xy_u_pos_x+1, len(tau_xy)), np.linspace(tau_xy_u_pos_x+1, tau_xy_u_pos_x-1, len(tau_xy))))
-        TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xy)), abs(tau_xy_u_scaled)))
+        if (glCantileverCrossSection==3):              
+            TauPlot_u_y = np.hstack((np.linspace(1.0/6.0, 1.0/6.0, len(tau_xy)), abs(tau_xy_u_scaled)))
+        else:
+            TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xy)), abs(tau_xy_u_scaled)))            
         Tauplot_u_Source.data = dict(x = TauPlot_u_x, y = TauPlot_u_y)
 
         # POSITION TAU LABELS
@@ -603,40 +620,46 @@ def fun_change_Cross_Section(attrname, old, new):
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])
         CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]) 
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])       
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])  
+        CoordArrowXYESource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])           
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])  
         labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])      
-        labelXYElement2.data=dict(x=[0.7,0.7], y=[0.7,-0.7], text=['\\frac{a}{2}','-\\frac{a}{2}'])                        
+        labelXYElement.data=dict(x=[-.3,5.8,0.7,0.7], y=[2.7,-.3,0.7,-0.7], text=['y','x','\\frac{a}{2}','-\\frac{a}{2}'])                          
+        XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])   
+        XYElement2Source.data = dict(sp4=[], x = [], y = [])          
     elif (radio_button_group.active == 1):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[CrossSection2], x = [0], y = [0])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
-        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])    
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])     
-        labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])
-        labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])                            
-        labelXYElement2.data=dict(x=[0.7,0.7], y=[0.7,-0.7], text=['\\frac{a}{2}','-\\frac{a}{2}'])                                        
+        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])       
+        CoordArrowXYESource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])             
+        labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                           
+        labelXYElement.data=dict(x=[-.3,5.8,0.7,0.7], y=[2.7,-.3,0.7,-0.7], text=['y','x','\\frac{a}{2}','-\\frac{a}{2}'])                                        
+        XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])           
+        XYElement2Source.data = dict(sp4=[], x = [], y = [])        
     elif (radio_button_group.active == 2):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[CrossSection3], x = [0], y = [0])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
-        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])        
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])      
-        labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])  
-        labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])                         
-        labelXYElement2.data=dict(x=[0.7,0.7], y=[0.7,-0.7], text=['\\frac{a}{2}','-\\frac{a}{2}'])                                    
+        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])   
+        CoordArrowXYESource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])                       
+        labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                         
+        labelXYElement.data=dict(x=[-.3,5.8,0.7,0.7], y=[2.7,-.3,0.7,-0.7], text=['y','x','\\frac{a}{2}','-\\frac{a}{2}'])    
+        XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])   
+        XYElement2Source.data = dict(sp4=[], x = [], y = [])                                            
     elif (radio_button_group.active == 3):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])       
         CrossSectionSource4.data = dict(sp4=[CrossSection4], x = [0], y = [0]) 
-        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0])
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[-1.0/6.0],xe=[5.9], ye=[-1.0/6.0])        
+        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0])  
+        CoordArrowXYESource.data=dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0])              
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3+1.0/6.0], text=['y','x'])
-        labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3-1.0/6.0], text=['z','x'])   
-        labelXYElement2.data=dict(x=[0.7,0.7], y=[0.7,-0.7], text=['\\frac{a}{3}','-\\frac{a}{3}'])                      
+        labelXYElement.data=dict(x=[-.3,5.8,0.7,0.7], y=[2.7,-.3+1.0/6.0,0.7,-0.7], text=['y','x','\\frac{a}{3}','-\\frac{2a}{3}'])    
+        XYElementSource.data = dict(sp4=[], x =[], y = []) 
+        XYElement2Source.data = dict(sp4=[XYElement], x = [0], y = [0])                                            
 
     global glCantileverCrossSection
     glCantileverCrossSection = radio_button_group.active
@@ -909,9 +932,9 @@ plotXYElement.grid.visible = False
 plotXYElement.toolbar.logo = None
 plotXYElement.title.text_font_size="12.5pt"
 
-labelXYElement1 = ColumnDataSource(data=dict(x=[-.3,5.8],
-                                     y=[2.7,-.3],
-                                     text=['y','x']))
+# labelXYElement1 = ColumnDataSource(data=dict(x=[-.3,5.8],
+#                                      y=[2.7,-.3],
+#                                      text=['y','x']))
 plotXYElement.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_start=0, 
@@ -919,22 +942,33 @@ plotXYElement.add_layout(
                            x_end=0, 
                            y_end=2.9, 
                            ))
+# plotXYElement.add_layout( 
+#                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+#                            x_start=-.5, 
+#                            y_start=0, 
+#                            x_end=5.9, 
+#                            y_end=0, 
+#                            ))
+# plotXYElement.add_layout(
+#                       LabelSet(
+#                                   x='x', y='y',
+#                                   text='text',
+#                                   text_color='black',text_font_size="12pt",
+#                                   level='glyph',text_baseline="middle",text_align="center",
+#                                   source=labelXYElement1
+#                                 )
+#                     )
+
 plotXYElement.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                           x_start=-.5, 
-                           y_start=0, 
-                           x_end=5.9, 
-                           y_end=0, 
-                           ))
-plotXYElement.add_layout(
-                      LabelSet(
-                                  x='x', y='y',
-                                  text='text',
-                                  text_color='black',text_font_size="12pt",
-                                  level='glyph',text_baseline="middle",text_align="center",
-                                  source=labelXYElement1
-                                )
+                           x_start='xs',
+                           y_start='ys',
+                           x_end='xe', 
+                           y_end='ye', 
+                           source = CoordArrowXYESource) 
                     )
+
+
 
 plotXYElement.add_layout(
                       LatexLabelSet(
@@ -942,7 +976,7 @@ plotXYElement.add_layout(
                                   text='text',
                                   text_color='black',text_font_size="12pt",
                                   level='glyph',text_baseline="middle",text_align="center",
-                                  source=labelXYElement2
+                                  source=labelXYElement
                                 )
                     )                    
 
@@ -972,6 +1006,7 @@ plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,s
 
 plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1.04))
 plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=1.5, y=0, w=2, h=0.535))
+plotXYElement.add_glyph(XYElement2Source,ImageURL(url="sp4", x=1.5, y=1.0/6.0, w=2, h=0.535*(1+1.0/3.0)))
 
 Sigmaplot_l_Glyph = Patch(x="x", y="y", fill_color='#0065BD', fill_alpha=0.5)
 plotXYElement.add_glyph(Sigmaplot_l_Source, Sigmaplot_l_Glyph)
