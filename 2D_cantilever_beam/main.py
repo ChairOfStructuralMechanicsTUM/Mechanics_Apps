@@ -21,7 +21,6 @@ from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, Late
 length = 5.0
 height = 1.0
 thickness = height
-# E = 1000000000.0
 E = 50000000.0
 Py = 0.0 #-1000
 Pz = 0.0 #2000
@@ -58,6 +57,28 @@ XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])
 XYBeam = "2D_cantilever_beam/static/images/XYBeam.png"
 XYBeamSource = ColumnDataSource(data=dict(sp5=[], x=[] , y=[]))
 XYBeamSource.data = dict(sp5=[XYBeam], x = [0], y = [0])
+
+
+# Construct source files of dynamic labels:
+labelXY = ColumnDataSource(data=dict(x=[-.3,5.8],
+                                     y=[2.7,-.3],
+                                     text=['y','x']))
+labelXZ = ColumnDataSource(data=dict(x=[-.3,5.8],
+                                     y=[-2.7,-.3],
+                                     text=['z','x']))     
+labelXYElement2 = ColumnDataSource(data=dict(x=[-5,-5],
+                                     y=[1,-1],
+                                     text=['\\frac{a}{2}','\\frac{a}{2}']))                                                                     
+                                     
+# Construct the source files for the force labels
+sourceFyLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fy'] ))
+sourceFzLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fz'] ))
+
+# Construct source files of dynamic axis:
+CoordArrowXYSource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])) 
+CoordArrowXZSource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]))  
+CoordArrowXYESource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]))     
+
 
 # Sigma and tau sources in "XY-Element" plot:
 Sigmaplot_l_Source = ColumnDataSource(data=dict(x=[] , y=[]))
@@ -247,7 +268,7 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
     x_pos = 2.5
     y_pos = -height/2.0
     if(glCantileverCrossSection==3):
-        y_pos = -height*2.0/3.0
+        y_pos = -height*1.0/3.0
     sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(x_pos,y_pos,length,height,thickness,glCantileverCrossSection,Py,Pz)
     
     ## IF SIGMA BUTTON IS ACTIVATED:
@@ -574,6 +595,7 @@ def fun_change_Pz(attrname, old, new):
     update_colorBar_extremas(smallestValue,biggestValue)
     fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSection,Py,Pz)
 
+# Function that is called, when change in selected cross section occurs
 def fun_change_Cross_Section(attrname, old, new):
     if (radio_button_group.active == 0 ):
         CrossSectionSource1.data = dict(sp1=[CrossSection1], x = [0], y = [0])
@@ -581,48 +603,53 @@ def fun_change_Cross_Section(attrname, old, new):
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])
         CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]) 
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]) 
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])       
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])  
-        labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])                 
+        labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])      
+        labelXYElement2.data=dict(x=[0.7,0.7], y=[0.7,-0.7], text=['\\frac{a}{2}','-\\frac{a}{2}'])                        
     elif (radio_button_group.active == 1):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[CrossSection2], x = [0], y = [0])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
         CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])    
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]) 
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])     
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])
         labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])                            
+        labelXYElement2.data=dict(x=[0.7,0.7], y=[0.7,-0.7], text=['\\frac{a}{2}','-\\frac{a}{2}'])                                        
     elif (radio_button_group.active == 2):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[CrossSection3], x = [0], y = [0])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
         CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])        
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])      
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])  
         labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])                         
+        labelXYElement2.data=dict(x=[0.7,0.7], y=[0.7,-0.7], text=['\\frac{a}{2}','-\\frac{a}{2}'])                                    
     elif (radio_button_group.active == 3):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])       
         CrossSectionSource4.data = dict(sp4=[CrossSection4], x = [0], y = [0]) 
         CoordArrowXYSource.data=dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0])
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[-1.0/6.0],xe=[5.9], ye=[-1.0/6.0])   
+        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[-1.0/6.0],xe=[5.9], ye=[-1.0/6.0])        
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3+1.0/6.0], text=['y','x'])
         labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3-1.0/6.0], text=['z','x'])   
+        labelXYElement2.data=dict(x=[0.7,0.7], y=[0.7,-0.7], text=['\\frac{a}{3}','-\\frac{a}{3}'])                      
 
     global glCantileverCrossSection
     glCantileverCrossSection = radio_button_group.active
     global glCantileverStress
     glCantileverStress = radio_button_group2.active
 
+# Function to initialize data
 def init_data():
-
     Yforce_slider.value = 0
     Zforce_slider.value = 0
     radio_button_group.active = 0
     radio_button_group2.active = 0
+
 
     fun_change_Py(None,None, None)
     fun_change_Pz(None,None, None)
@@ -650,20 +677,6 @@ sourceArrowXZ = ColumnDataSource(
                                                    ye=[sourceXZdef.data['y'][len( sourceXYdef.data['y'])-2][2]],                            
                                               )
                                 )
-CoordArrowXYSource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])) 
-CoordArrowXZSource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]))     
-
-
-labelXY = ColumnDataSource(data=dict(x=[-.3,5.8],
-                                     y=[2.7,-.3],
-                                     text=['y','x']))
-labelXZ = ColumnDataSource(data=dict(x=[-.3,5.8],
-                                     y=[-2.7,-.3],
-                                     text=['z','x']))                                  
-                                     
-# Construct the source files for the force labels
-sourceFyLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fy'] ))
-sourceFzLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fz'] ))
 
 # Construct the force sliders
 Yforce_slider = LatexSlider(title= 'F_y =   ', value=0.0, start=-1.0, end=1.0, step=0.1, value_unit='\cdot F_{y,max}')
@@ -735,7 +748,6 @@ plotDefYZ.add_layout(
                     )
 
 
-
 ############ PLOT 2: XY PLOT ###############
 plotDefXY = Figure(    
                        plot_width=400    , 
@@ -803,6 +815,7 @@ plotDefXY.add_layout(
                                   source=sourceFyLabel
                               )
                     )
+
 
 ############ PLOT 3: XZ PLOT ###############
 plotDefXZ = Figure(    
@@ -896,7 +909,7 @@ plotXYElement.grid.visible = False
 plotXYElement.toolbar.logo = None
 plotXYElement.title.text_font_size="12.5pt"
 
-labelXYElement = ColumnDataSource(data=dict(x=[-.3,5.8],
+labelXYElement1 = ColumnDataSource(data=dict(x=[-.3,5.8],
                                      y=[2.7,-.3],
                                      text=['y','x']))
 plotXYElement.add_layout( 
@@ -906,7 +919,6 @@ plotXYElement.add_layout(
                            x_end=0, 
                            y_end=2.9, 
                            ))
-
 plotXYElement.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_start=-.5, 
@@ -920,9 +932,21 @@ plotXYElement.add_layout(
                                   text='text',
                                   text_color='black',text_font_size="12pt",
                                   level='glyph',text_baseline="middle",text_align="center",
-                                  source=labelXYElement
+                                  source=labelXYElement1
                                 )
                     )
+
+plotXYElement.add_layout(
+                      LatexLabelSet(
+                                  x='x', y='y',
+                                  text='text',
+                                  text_color='black',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=labelXYElement2
+                                )
+                    )                    
+
+                          
 
 plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
                            line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource1))
@@ -1018,8 +1042,6 @@ for i in range(50):
 
 ## Label colorbar min-max stess range
 def update_colorBar_extremas(smallesValue, biggestValue):
-    # colorBar.title.text = str(int(smallesValue/(abs(Py)+abs(Pz)-0.1)/height**2.0-0.5))+ " (Fy+Fz)/(a*a)" + " "*40 + "Normal Stress" + " "*40 + str(int(biggestValue/(abs(Py)+abs(Pz)+0.1)/height**2.0+0.5))+ " (Fy+Fz)/(a*a)"
-
     colorBar.title.text =  " "*15  + "-" + " "*55 + "Normal Stress" + " "*55 + "+"
 
 ## Construct the source file for the color bar

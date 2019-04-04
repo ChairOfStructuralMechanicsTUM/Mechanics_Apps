@@ -404,7 +404,11 @@ def calculate_stresses_xy_element(x_pos, y_pos, length, height, thickness, glCan
     ##Element Properties:
     z_pos = 0
     length_of_element = 2.0
-    height_of_element = height/2.0
+
+    if(glCantileverCrossSection==3):
+        height_of_element = height/3.0
+    else:
+        height_of_element = height/2.0
     
     ## Iz = Sum(Iz_i) + Sum(ez_i^2*A_i)
     if(glCantileverCrossSection==0):
