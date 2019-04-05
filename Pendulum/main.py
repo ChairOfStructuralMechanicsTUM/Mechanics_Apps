@@ -211,6 +211,7 @@ def plotSingle():
     [m]              = glob_m.data["val"]                              # input/
     [theta]          = glob_theta.data["val"]                          # input/output
     [dTheta]         = glob_dTheta.data["val"]                         # input/output
+    currentPoint.data=dict(x=[phi],y=[dPhi])                             #      /output
     [Active]         = glob_active.data["Active"]
     if Active:
         basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi]))                   #      /output
@@ -220,7 +221,6 @@ def plotSingle():
         K=getKinEngSingle()*9.0/TotEng-4.5
     KinEnergySource.data=dict(x=[-4.5,-4.5, K, K], y=[12,11.5,11.5,12])  #      /output
     OtherEnergySource.data=dict(x=[K, K, 4.5, 4.5], y=[12,11.5,11.5,12]) #      /output
-    currentPoint.data=dict(x=[phi],y=[dPhi])                             #      /output
 
 # plot the double pendulum
 def plotDouble():
@@ -233,6 +233,7 @@ def plotDouble():
         y=[10,10.0-R*cos(phi),10.0-R*cos(phi)-R2*cos(theta+phi)]) #      /output
     PendulumElbow.data=dict(x=[R*sin(phi)],y=[10.0-R*cos(phi)])   #      /output
     Mass.data=dict(x=[R*sin(phi)+R2*sin(theta+phi)],y=[10.0-R*cos(phi)-R2*cos(theta+phi)]) #      /output
+    currentPoint.data      = dict(x=[phi],y=[dPhi])                         #      /output
     [Active]         = glob_active.data["Active"]
     if Active:
         basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi])) #      /output
@@ -242,7 +243,6 @@ def plotDouble():
         K=getKinEngDouble()*9.0/TotEng-4.5
     KinEnergySource.data   = dict(x=[-4.5,-4.5, K, K], y=[12,11.5,11.5,12]) #      /output
     OtherEnergySource.data = dict(x=[K, K, 4.5, 4.5], y=[12,11.5,11.5,12])  #      /output
-    currentPoint.data      = dict(x=[phi],y=[dPhi])                         #      /output
 
 # get position of mass in single pendulum
 def getCurrentXYSingle():
@@ -358,15 +358,15 @@ fig.add_layout(arrow_glyph)
 dPhiText = fig.text(x='x',y='y',text='t',source=dPhiArrowText,color="black",text_align="left")
 
 # draw phase diagram
-phase_diagramm = figure(title="Phase diagram",tools="",x_range=(-5,5),y_range=(-5,5))
+phase_diagramm = figure(title="Phase diagram",tools="yzoom_in,yzoom_out,reset",x_range=(-3.14,3.14),y_range=(-5,5))
 phase_diagramm.title.text_font_size="16pt"
 phase_diagramm.axis.major_label_text_font_size="12pt"
 phase_diagramm.axis.axis_label_text_font_style="normal"
 phase_diagramm.axis.axis_label_text_font_size="12pt"
 phase_diagramm.xaxis.axis_label=u"\u03C6 [rad]"
 phase_diagramm.yaxis.axis_label=u"\u03C6\u0307 [rad/s]"
-phase_diagramm.ellipse(x='x',y='y',width=0.02,height=0.02,color="#0065BD",source=basicPhaseDiagram)
-phase_diagramm.ellipse(x='x',y='y',width=0.2,height=0.2,color="#E37222",source=currentPoint)
+phase_diagramm.circle(x='x',y='y',size=2,color="#0065BD",source=basicPhaseDiagram)
+phase_diagramm.circle(x='x',y='y',size=10,color="#E37222",source=currentPoint)
 phase_diagramm.toolbar.logo = None
                        
 TotEng=getTotEng()
@@ -405,12 +405,15 @@ Stop_button.on_click(stop)
 
 def reset():
     [Active] = glob_active.data["Active"] # input/output
+    [plot] = glob_fun_plot.data["fun"]
     phi=0.5
     dPhi=1
     if (Active):
         [g1Pendulum] = glob_callback.data["cid"] # input/
         curdoc().remove_periodic_callback(g1Pendulum)
         glob_active.data   = dict(Active=[False])
+        phi0_input.disabled = False
+        dphi0_input.disabled = False
     mass_input.value       = 5.0
     lam_input.value        = 0.0
     phi0_input.value       = phi
@@ -419,6 +422,7 @@ def reset():
     glob_dPhi.data         = dict(val=[dPhi]) #      /output
     glob_dTheta.data       = dict(val=[0])    #      /output
     basicPhaseDiagram.data = dict(x=[],y=[])  #      /output
+    plot()
 Reset_button = Button(label="Reset",button_type="success",width=150)
 Reset_button.on_click(reset)
 
