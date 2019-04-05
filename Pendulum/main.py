@@ -11,7 +11,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_support import LatexDiv
+from latex_support import LatexDiv, LatexSlider
 
 # create column data sources
 Mass              = ColumnDataSource(data = dict(x=[],y=[]))
@@ -213,7 +213,10 @@ def plotSingle():
     [theta]          = glob_theta.data["val"]                          # input/output
     [dTheta]         = glob_dTheta.data["val"]                         # input/output
     basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi]))                   #      /output
-    K=getKinEngSingle()*9.0/TotEng-4.5
+    if TotEng == 0:
+        K=0
+    else:
+        K=getKinEngSingle()*9.0/TotEng-4.5
     KinEnergySource.data=dict(x=[-4.5,-4.5, K, K], y=[12,11.5,11.5,12])  #      /output
     OtherEnergySource.data=dict(x=[K, K, 4.5, 4.5], y=[12,11.5,11.5,12]) #      /output
     currentPoint.data=dict(x=[phi],y=[dPhi])                             #      /output
@@ -230,7 +233,10 @@ def plotDouble():
     PendulumElbow.data=dict(x=[R*sin(phi)],y=[10.0-R*cos(phi)])   #      /output
     Mass.data=dict(x=[R*sin(phi)+R2*sin(theta+phi)],y=[10.0-R*cos(phi)-R2*cos(theta+phi)]) #      /output
     basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi])) #      /output
-    K=getKinEngDouble()*9.0/TotEng-4.5
+    if TotEng == 0:
+        K=0
+    else:
+        K=getKinEngDouble()*9.0/TotEng-4.5
     KinEnergySource.data   = dict(x=[-4.5,-4.5, K, K], y=[12,11.5,11.5,12]) #      /output
     OtherEnergySource.data = dict(x=[K, K, 4.5, 4.5], y=[12,11.5,11.5,12])  #      /output
     currentPoint.data      = dict(x=[phi],y=[dPhi])                         #      /output
@@ -417,13 +423,13 @@ def change_mass(attr,old,new):
     glob_TotEng.data = dict(val=[TotEng])   #      /output
     plot()
 ## Create slider to choose mass of blob
-mass_input = Slider(title="Mass [kg]", value=5, start=0.5, end=10.0, step=0.1,width=200)
+mass_input = LatexSlider(title="\\mathrm{Mass =}", value_unit="[\\mathrm{kg}]", value=5, start=0.5, end=10.0, step=0.1,width=200)
 mass_input.on_change('value',change_mass)
 
 def change_lam(attr,old,new):
     glob_lam.data = dict(val=[new]) #      /output
 ## Create slider to choose damper coefficient
-lam_input = Slider(title=u"Damper coefficient [N*s/m]", value=0.0, start=0.0, end=5.0, step=0.2,width=400)
+lam_input = LatexSlider(title="\\mathrm{Damper\\ coefficient =}", value_unit="[\\mathrm{Ns}/\\mathrm{m}]", value=0.0, start=0.0, end=5.0, step=0.2,width=400)
 lam_input.on_change('value',change_lam)
 
 def change_phi0(attr,old,new):
@@ -441,7 +447,7 @@ def change_phi0(attr,old,new):
     elif (Phi0!=new):
         phi0_input.value=Phi0
 ## Create slider to choose damper coefficient
-phi0_input = Slider(title=u"\u03C6\u2080 [rad]", value=0.0, start=-3.0, end=3.0, step=0.2,width=200)
+phi0_input = LatexSlider(title="\\varphi_0 =", value_unit="[\\mathrm{rad}]", value=0.5, start=-3.0, end=3.0, step=0.2,width=200)
 phi0_input.on_change('value',change_phi0)
 
 def change_phi0dot(attr,old,new):
@@ -459,7 +465,7 @@ def change_phi0dot(attr,old,new):
     elif (dPhi0!=new):
         dphi0_input.value=dPhi0
 ## Create slider to choose damper coefficient
-dphi0_input = Slider(title=u"\u03C6\u0307\u2080 [rad/s]", value=0.0, start=-5.0, end=5.0, step=0.5,width=200)
+dphi0_input = LatexSlider(title="\\dot{\\varphi_0} =", value_unit="[\\mathrm{rad}/\\mathrm{s}]", value=1.0, start=-5.0, end=5.0, step=0.5,width=200)
 dphi0_input.on_change('value',change_phi0dot)
 
 # create selector for pendulum type which updates function handles and appropriate properties
