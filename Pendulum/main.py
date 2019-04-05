@@ -211,9 +211,11 @@ def plotSingle():
     [m]              = glob_m.data["val"]                              # input/
     [theta]          = glob_theta.data["val"]                          # input/output
     [dTheta]         = glob_dTheta.data["val"]                         # input/output
-    basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi]))                   #      /output
+    [Active]         = glob_active.data["Active"]
+    if Active:
+        basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi]))                   #      /output
     if TotEng == 0:
-        K=0
+        K=-4.5
     else:
         K=getKinEngSingle()*9.0/TotEng-4.5
     KinEnergySource.data=dict(x=[-4.5,-4.5, K, K], y=[12,11.5,11.5,12])  #      /output
@@ -231,9 +233,11 @@ def plotDouble():
         y=[10,10.0-R*cos(phi),10.0-R*cos(phi)-R2*cos(theta+phi)]) #      /output
     PendulumElbow.data=dict(x=[R*sin(phi)],y=[10.0-R*cos(phi)])   #      /output
     Mass.data=dict(x=[R*sin(phi)+R2*sin(theta+phi)],y=[10.0-R*cos(phi)-R2*cos(theta+phi)]) #      /output
-    basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi])) #      /output
+    [Active]         = glob_active.data["Active"]
+    if Active:
+        basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi])) #      /output
     if TotEng == 0:
-        K=0
+        K=-4.5
     else:
         K=getKinEngDouble()*9.0/TotEng-4.5
     KinEnergySource.data   = dict(x=[-4.5,-4.5, K, K], y=[12,11.5,11.5,12]) #      /output
@@ -354,7 +358,7 @@ fig.add_layout(arrow_glyph)
 dPhiText = fig.text(x='x',y='y',text='t',source=dPhiArrowText,color="black",text_align="left")
 
 # draw phase diagram
-phase_diagramm = figure(title="Phase diagram",tools="",x_range=(-3.14,3.14),y_range=(-5,5))
+phase_diagramm = figure(title="Phase diagram",tools="",x_range=(-5,5),y_range=(-5,5))
 phase_diagramm.title.text_font_size="16pt"
 phase_diagramm.axis.major_label_text_font_size="12pt"
 phase_diagramm.axis.axis_label_text_font_style="normal"
