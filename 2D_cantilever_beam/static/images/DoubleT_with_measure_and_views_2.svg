@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.0 r9654"
-   sodipodi:docname="DoubleT_with_measure_and_views.svg"
+   sodipodi:docname="DoubleT_with_measure_and_views_2.svg"
    inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300">
@@ -29,15 +29,15 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.45254834"
      inkscape:cx="727.9407"
-     inkscape:cy="444.09729"
+     inkscape:cy="694.07846"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="657"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
+     inkscape:window-width="505"
+     inkscape:window-height="403"
+     inkscape:window-x="104"
+     inkscape:window-y="104"
+     inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true" />
   <metadata
@@ -48,7 +48,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -423,7 +423,7 @@
        y="160.92361"
        id="text3900-4-6"
        sodipodi:linespacing="125%"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Rectangular_with_measure_and_views.png"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"><tspan
          sodipodi:role="line"
@@ -432,10 +432,10 @@
          id="tspan3904-6-1">XY-Element</tspan></text>
     <path
        style="fill:none;stroke:#a2ad00;stroke-width:11.54028034;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 386.04431,533.79404 c -0.88776,-147.38394 -0.90028,-149.4598 -0.90028,-149.4598"
+       d="m 382.04431,533.79404 c -0.88776,-147.38394 -0.90028,-149.4598 -0.90028,-149.4598"
        id="path3021-3-8-4"
        inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Rectangular_with_measure_and_views.png"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"
        inkscape:transform-center-x="-3.0493184"

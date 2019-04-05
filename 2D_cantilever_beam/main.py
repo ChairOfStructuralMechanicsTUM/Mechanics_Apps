@@ -404,10 +404,10 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         for i in range(len(tau_xy)): 
             tau_xy_u_scaled[i]=tau_xy[len(tau_xy)-1]*tau_xy_scaling
         TauPlot_u_x = np.hstack((np.linspace(tau_xy_u_pos_x-1, tau_xy_u_pos_x+1, len(tau_xy)), np.linspace(tau_xy_u_pos_x+1, tau_xy_u_pos_x-1, len(tau_xy))))
-        if (glCantileverCrossSection==3):              
-            TauPlot_u_y = np.hstack((np.linspace(1.0/6.0, 1.0/6.0, len(tau_xy)), abs(tau_xy_u_scaled)))
-        else:
-            TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xy)), abs(tau_xy_u_scaled)))            
+        # if (glCantileverCrossSection==3):              
+        #     TauPlot_u_y = np.hstack((np.linspace(1.0/6.0, 1.0/6.0, len(tau_xy)), abs(tau_xy_u_scaled)))
+        # else:
+        TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xy)), abs(tau_xy_u_scaled)))            
         Tauplot_u_Source.data = dict(x = TauPlot_u_x, y = TauPlot_u_y)
 
         # POSITION TAU LABELS
@@ -427,8 +427,7 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         
         ## ARROW LEFT END:
         tau_xy_l_pos_y = -0.25                 
-        if (Py<0):
-            print 
+        if (Py<0): 
             TauArrowSource1.data = dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y])
         elif (Py>0):
             TauArrowSource1.data = dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y])
@@ -1105,5 +1104,5 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 
 curdoc().add_root(column(description,row(
     column(plotDefYZ,widgetbox(radio_button_group),Yforce_slider,Zforce_slider,Reset_button),
-    column(row(column(row(plotDefXY, plotDefXZ),colorBar),column(plotXYElement,row(Spacer(width=80),radio_button_group2)))))))
+    column(row(column(plotXYElement,row(Spacer(width=80),radio_button_group2)),column(row(plotDefXY, plotDefXZ),colorBar))))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

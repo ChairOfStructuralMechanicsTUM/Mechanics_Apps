@@ -36,8 +36,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.49497475"
-     inkscape:cx="196.69634"
-     inkscape:cy="691.17456"
+     inkscape:cx="-44.360056"
+     inkscape:cy="739.93119"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -221,7 +221,7 @@
        height="280.82242"
        x="245.30307"
        y="250.5224"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Rectangular_with_measure.png"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Rectangular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
@@ -244,7 +244,7 @@
        inkscape:export-ydpi="300" />
     <path
        style="fill:none;stroke:#a2ad00;stroke-width:11.47940922;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 386.90908,532.54948 c -0.94778,-136.59672 -0.96102,-138.5206 -0.96102,-138.5206"
+       d="m 382.90908,532.54948 c -0.94778,-136.59672 -0.96102,-138.5206 -0.96102,-138.5206"
        id="path3021-3-8-4"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Rectangular_with_measure_and_views.png"
