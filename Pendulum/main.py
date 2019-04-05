@@ -382,6 +382,8 @@ def play():
         g1Pendulum         = curdoc().add_periodic_callback(evolve,100)
         glob_active.data   = dict(Active=[True])
         glob_callback.data = dict(cid=[g1Pendulum]) #      /output
+        phi0_input.disabled = True
+        dphi0_input.disabled = True
 Play_button = Button(label="Play",button_type="success",width=150)
 Play_button.on_click(play)
 
@@ -396,6 +398,8 @@ def stop():
         phi0_input.value  = phi
         dphi0_input.value = dPhi
         glob_dTheta.data  = dict(val=[0]) #      /output
+        phi0_input.disabled = False
+        dphi0_input.disabled = False
 Stop_button = Button(label="Stop",button_type="success",width=150)
 Stop_button.on_click(stop)
 
