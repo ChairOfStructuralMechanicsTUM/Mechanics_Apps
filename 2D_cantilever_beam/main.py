@@ -404,10 +404,10 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         for i in range(len(tau_xy)): 
             tau_xy_u_scaled[i]=tau_xy[len(tau_xy)-1]*tau_xy_scaling
         TauPlot_u_x = np.hstack((np.linspace(tau_xy_u_pos_x-1, tau_xy_u_pos_x+1, len(tau_xy)), np.linspace(tau_xy_u_pos_x+1, tau_xy_u_pos_x-1, len(tau_xy))))
-        # if (glCantileverCrossSection==3):              
-        #     TauPlot_u_y = np.hstack((np.linspace(1.0/6.0, 1.0/6.0, len(tau_xy)), abs(tau_xy_u_scaled)))
-        # else:
-        TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xy)), abs(tau_xy_u_scaled)))            
+        if (glCantileverCrossSection==3):              
+            TauPlot_u_y = np.hstack((np.linspace(1.0/6.0, 1.0/6.0, len(tau_xy)), abs(tau_xy_u_scaled)+1.0/6.0)) 
+        else:
+            TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xy)), abs(tau_xy_u_scaled)))            
         Tauplot_u_Source.data = dict(x = TauPlot_u_x, y = TauPlot_u_y)
 
         # POSITION TAU LABELS
@@ -423,7 +423,10 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
             arrow_adjust_y = 0.15
         else:
             arrow_adjust_y = max(abs(tau_xy_u_scaled))/2.0
-        arrow_move_y = 0.04    
+        if (glCantileverCrossSection==3):
+            arrow_move_y = 0.04 + 1.0/12.0    
+        else:
+            arrow_move_y = 0.04    
         
         ## ARROW LEFT END:
         tau_xy_l_pos_y = -0.25                 
@@ -450,7 +453,10 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
             arrow_adjust_x = 0.3
         else:
             arrow_adjust_x = max(abs(tau_xy_u_scaled))
-        arrow_adjust_y = max(abs(tau_xy_u_scaled))/2.0
+        if (glCantileverCrossSection==3):
+            arrow_adjust_y = max(abs(tau_xy_u_scaled))/2.0 + 1.0/6.0
+        else:            
+            arrow_adjust_y = max(abs(tau_xy_u_scaled))/2.0
         if (Py<-30):
             TauArrowSource3.data = dict(xs=[(tau_xy_u_pos_x-0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)+arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])            
             TauArrowSource4.data = dict(xs=[(tau_xy_u_pos_x+0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)+arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])                                  
@@ -623,7 +629,7 @@ def fun_change_Cross_Section(attrname, old, new):
         CoordArrowXYESource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])           
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])  
         labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])      
-        labelXYElement.data=dict(x=[-.3,5.8,0.7,0.7], y=[2.7,-.3,0.7,-0.7], text=['y','x','\\frac{a}{2}','-\\frac{a}{2}'])                          
+        labelXYElement.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                          
         XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])   
         XYElement2Source.data = dict(sp4=[], x = [], y = [])          
     elif (radio_button_group.active == 1):
@@ -634,7 +640,7 @@ def fun_change_Cross_Section(attrname, old, new):
         CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])       
         CoordArrowXYESource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])             
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                           
-        labelXYElement.data=dict(x=[-.3,5.8,0.7,0.7], y=[2.7,-.3,0.7,-0.7], text=['y','x','\\frac{a}{2}','-\\frac{a}{2}'])                                        
+        labelXYElement.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                                         
         XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])           
         XYElement2Source.data = dict(sp4=[], x = [], y = [])        
     elif (radio_button_group.active == 2):
@@ -645,7 +651,7 @@ def fun_change_Cross_Section(attrname, old, new):
         CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])   
         CoordArrowXYESource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])                       
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                         
-        labelXYElement.data=dict(x=[-.3,5.8,0.7,0.7], y=[2.7,-.3,0.7,-0.7], text=['y','x','\\frac{a}{2}','-\\frac{a}{2}'])    
+        labelXYElement.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])    
         XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])   
         XYElement2Source.data = dict(sp4=[], x = [], y = [])                                            
     elif (radio_button_group.active == 3):
@@ -656,7 +662,7 @@ def fun_change_Cross_Section(attrname, old, new):
         CoordArrowXYSource.data=dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0])  
         CoordArrowXYESource.data=dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0])              
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3+1.0/6.0], text=['y','x'])
-        labelXYElement.data=dict(x=[-.3,5.8,0.7,0.7], y=[2.7,-.3+1.0/6.0,0.7,-0.7], text=['y','x','\\frac{a}{3}','-\\frac{2a}{3}'])    
+        labelXYElement.data=dict(x=[-.3,5.8], y=[2.7,-.3+1.0/6.0], text=['y','x'])    
         XYElementSource.data = dict(sp4=[], x =[], y = []) 
         XYElement2Source.data = dict(sp4=[XYElement], x = [0], y = [0])                                            
 
@@ -909,7 +915,6 @@ plotDefXZ.add_layout(LabelSet(
                     )
 
 
-
 ############ PLOT 4: XY ELEMENT PLOT ###############
 plotXYElement = Figure(    
                        plot_width=400    , 
@@ -931,9 +936,6 @@ plotXYElement.grid.visible = False
 plotXYElement.toolbar.logo = None
 plotXYElement.title.text_font_size="12.5pt"
 
-# labelXYElement1 = ColumnDataSource(data=dict(x=[-.3,5.8],
-#                                      y=[2.7,-.3],
-#                                      text=['y','x']))
 plotXYElement.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_start=0, 
@@ -941,22 +943,6 @@ plotXYElement.add_layout(
                            x_end=0, 
                            y_end=2.9, 
                            ))
-# plotXYElement.add_layout( 
-#                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-#                            x_start=-.5, 
-#                            y_start=0, 
-#                            x_end=5.9, 
-#                            y_end=0, 
-#                            ))
-# plotXYElement.add_layout(
-#                       LabelSet(
-#                                   x='x', y='y',
-#                                   text='text',
-#                                   text_color='black',text_font_size="12pt",
-#                                   level='glyph',text_baseline="middle",text_align="center",
-#                                   source=labelXYElement1
-#                                 )
-#                     )
 
 plotXYElement.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
@@ -970,7 +956,7 @@ plotXYElement.add_layout(
 
 
 plotXYElement.add_layout(
-                      LatexLabelSet(
+                      LabelSet(
                                   x='x', y='y',
                                   text='text',
                                   text_color='black',text_font_size="12pt",
@@ -979,8 +965,7 @@ plotXYElement.add_layout(
                                 )
                     )                    
 
-                          
-
+                        
 plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
                            line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource1))
 plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
@@ -1085,7 +1070,6 @@ colorBarSource = ColumnDataSource(data=dict( x=colorBarXCoords, y=colorBarYCoord
 colorBar.patches( xs='x', ys='y', source=colorBarSource, color = 'c', alpha = 'a' )
 plotDefXY.patches  (xs='x', ys='y', source=sourceXYdef  , color = 'c', alpha = 'a')
 plotDefXZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
-
 
 # Notify the corresponding functions to carry out the changes characterized by
 # the sliders
