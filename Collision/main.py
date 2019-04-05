@@ -508,7 +508,7 @@ Add all the components together and initiate the app
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1000)
+description = Div(text=open(description_filename).read(), render_as_text=False, width=970)
 
 area_image = Div(text="""
 <h2>
