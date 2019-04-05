@@ -21,10 +21,10 @@ from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, Late
 
 
 # Initialise Variables
-glob_theta1            = ColumnDataSource(data=dict(val=[radians(30)]))
-glob_theta2            = ColumnDataSource(data=dict(val=[radians(60)]))
-glob_Vector1           = ColumnDataSource(data=dict(val=[50]))
-glob_Vector2           = ColumnDataSource(data=dict(val=[50]))
+glob_theta1            = ColumnDataSource(data=dict(val=[radians(50)]))
+glob_theta2            = ColumnDataSource(data=dict(val=[radians(140)]))
+glob_Vector1           = ColumnDataSource(data=dict(val=[95]))
+glob_Vector2           = ColumnDataSource(data=dict(val=[100]))
 Vector1_source         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
 Vector2_source         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
 VectorResultant_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
@@ -56,7 +56,7 @@ def updateVector1 ():
         xE=Vector1*cos(theta1)
         yE=Vector1*sin(theta1)
         Vector1_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        V1_label_source.data = dict (x=[xE+3],y=[yE-3],V1=["V"u"\u2081"])
+        V1_label_source.data = dict (x=[xE+3],y=[yE-3],V1=["V_1"])
 
 def updateVector2 ():
     [theta2]  = glob_theta2.data["val"]  # input/
@@ -69,7 +69,7 @@ def updateVector2 ():
         xE=Vector2*cos(theta2)
         yE=Vector2*sin(theta2)
         Vector2_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        V2_label_source.data = dict (x=[xE-3],y=[yE+3],V2=["V"u"\u2082"])
+        V2_label_source.data = dict (x=[xE-3],y=[yE+3],V2=["V_2"])
 
 def updateResultant():
     [theta1]  = glob_theta1.data["val"]  # input/
@@ -122,9 +122,9 @@ Vector2_glyph = Arrow(end=NormalHead(line_color="#0065BD", fill_color="#0065BD",
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Vector2_source,line_color="#0065BD",line_width=7)
 VectorResultant_glyph = Arrow(end=NormalHead(line_color="#E37222",fill_color="#E37222", line_width=2,size=15),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=VectorResultant_source,line_color="#E37222",line_width=7)
-V1_label_glyph=LabelSet(x='x', y='y',text='V1',text_font_size="15pt",level='overlay',source=V1_label_source)
-V2_label_glyph=LabelSet(x='x', y='y',text='V2',text_font_size="15pt",level='overlay',source=V2_label_source)
-Resultant_label_glyph = LabelSet(x='x',y='y',text='R',text_font_size="15pt",level='overlay',source=Resultant_label_source)
+V1_label_glyph=LatexLabelSet(x='x', y='y',text='V1',text_font_size="15pt",level='overlay',source=V1_label_source)
+V2_label_glyph=LatexLabelSet(x='x', y='y',text='V2',text_font_size="15pt",level='overlay',source=V2_label_source)
+Resultant_label_glyph = LatexLabelSet(x='x',y='y',text='R',text_font_size="15pt",level='overlay',source=Resultant_label_source)
 Resultant_values_glyph = LatexLabelSet(x='x',y='y',text='names',text_font_size="15pt", text_color="#E37222", level='glyph',source=Resultant_values_source)
 
 
