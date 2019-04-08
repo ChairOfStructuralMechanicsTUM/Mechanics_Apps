@@ -44,7 +44,7 @@ wall_source       = ColumnDataSource(data = dict(x=[offset-rampAddLength*COS,off
 AngleMarkerSource = ColumnDataSource(data = dict(x=[],y=[]))
 AlphaPos          = ColumnDataSource(data = dict(x=[],y=[],t=[]))
 
-time_display1     = ColumnDataSource(data = dict(x=[],y=[],t=[]))
+time_display      = ColumnDataSource(data = dict(x=[],y=[],t=[]))
 
 # global variables
 glob_callback_id  = ColumnDataSource(data = dict(callback_id = [None]))
@@ -278,7 +278,7 @@ fig1.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #fig1.add_layout(angle_glyph1)
 fig1.toolbar_location = None
 
-time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display1)
+time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display)
 fig1.add_layout(time_lable1)
 
 
@@ -293,6 +293,8 @@ fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #    text_font_size="15pt", source=AlphaPos)
 #fig2.add_layout(angle_glyph2)
 fig2.toolbar_location = None
+time_lable2 = LabelSet(x='x', y='y', text='t', source=time_display)
+fig2.add_layout(time_lable2)
 
 fig3 = figure(title="Hollow cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
 fig3.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
@@ -305,6 +307,8 @@ fig3.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #    text_font_size="15pt", source=AlphaPos)
 #fig3.add_layout(angle_glyph3)
 fig3.toolbar_location = None
+time_lable3 = LabelSet(x='x', y='y', text='t', source=time_display)
+fig3.add_layout(time_lable3)
 
 # sketch of the ramp and objects
 fig4 = figure(title="Annotations", x_range=(-50,0), y_range=(0,25), height=220, width=400, tools="")
@@ -520,6 +524,7 @@ def reset():
     changeObject(2,object_select2.value,radius_slider2.value,ri_slider2.value,1.0)
     changeObject(3,object_select3.value,radius_slider3.value,ri_slider3.value,1.0)
     disable_all_sliders(False)
+    time_display.data=dict(x=[],y=[],t=[])
 
     
 
@@ -535,7 +540,7 @@ def evolve():
     if (max(x1,x2,x3)>0 or min(y1,y2,y3)<0):
         start() #equals to stop if it is running
         print(glob_values["t"])
-        time_display1.data=dict(x=[-10],y=[20],t=[str(glob_values["t"])+" s"])
+        time_display.data=dict(x=[-10],y=[20],t=[str(glob_values["t"])+" s"])
 #TODO: only stop one figure and let the others finish too
 #      display finish time on each plot
 #      maybe add a button to swtich between "let all run through" and "stop all"
