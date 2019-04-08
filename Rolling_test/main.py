@@ -59,7 +59,8 @@ glob_values = dict(offset = offset,
                    COS    = COS,
                    g      = g,
                    t      = t,
-                   H      = H)
+                   H      = H,
+                   hollow_object_counter = 1) # start with 1 because one hollow object is selected by default at start time
 
 def init():
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] #      /output
@@ -350,6 +351,7 @@ glob_fun_handles = dict(fun1=evolveFunc1, fun2=evolveFunc2, fun3=evolveFunc3)
 
 # function to change the shape, radius, or mass of the object in figure FIG
 def changeObject(FIG,new,r,ri,m):
+    hoc = glob_values["hollow_object_counter"] # input/output
     # save the data concerned in data and line_data
     if (FIG==1):
         data=fig1_data
@@ -363,17 +365,32 @@ def changeObject(FIG,new,r,ri,m):
     # depending on the shape specified, create the object and
     # save the new evolution function in the variable func
     if (new == "Sphere"):
+        hoc -= 1
         createSphere(r,data,line_data)
         func=lambda(x):moveSphere(x,r,m,data,line_data)
     elif (new=="Hollow cylinder"):
         createHollowCylinder(r,ri,data,line_data)
+        hoc += 1
+        # if counter > 2 then disable start button
+        # TODO: vanishing objects
+        if (abs(r-ri)<1e-5):
+            data.data = dict(x=[],y=[],w=[],c=[],a=[])
         func=lambda(x):moveHollowCylinder(x,r,m,ri,data,line_data)
     elif (new == "Hollow sphere"):
+        hoc += 1
         createHollowSphere(r,ri,data,line_data)
         func=lambda(x):moveHollowSphere(x,r,m,ri,data,line_data)
     else:
+        hoc -= 1
         createCylinder(r,data,line_data)
         func=lambda(x):moveCylinder(x,r,m,data,line_data)
+    # store new counter value, valid values only in [0,3]-interval
+    # TODO: solve the problem that the counter still moves when switching between
+    #       full only or hollow only  (need a history of 1 for every dropdown!)
+    #       in case of history, we can't do it here...  "ChangeObject1,2,3" instead
+    # TODO: => check if we can outsurce those callback functions in another file
+    glob_values["hollow_object_counter"] = min(max(hoc,0),3)
+    print(glob_values["hollow_object_counter"])
     # save the evolution function to the appropriate function handle
     if (FIG==1):
         glob_fun_handles["fun1"] = func        
@@ -532,6 +549,7 @@ def reset():
     time_display[0].data=dict(x=[],y=[],t=[])
     time_display[1].data=dict(x=[],y=[],t=[])
     time_display[2].data=dict(x=[],y=[],t=[])
+    #glob_values["hollow_object_counter"] = 0
     
 
 def evolve():
