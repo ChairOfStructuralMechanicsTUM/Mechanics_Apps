@@ -44,7 +44,9 @@ wall_source       = ColumnDataSource(data = dict(x=[offset-rampAddLength*COS,off
 AngleMarkerSource = ColumnDataSource(data = dict(x=[],y=[]))
 AlphaPos          = ColumnDataSource(data = dict(x=[],y=[],t=[]))
 
-time_display      = ColumnDataSource(data = dict(x=[],y=[],t=[]))
+time_display      = [ColumnDataSource(data = dict(x=[],y=[],t=[])),
+                     ColumnDataSource(data = dict(x=[],y=[],t=[])),
+                     ColumnDataSource(data = dict(x=[],y=[],t=[]))]
 
 # global variables
 glob_callback_id  = ColumnDataSource(data = dict(callback_id = [None]))
@@ -277,8 +279,11 @@ fig1.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #    text_font_size="15pt", source=AlphaPos)
 #fig1.add_layout(angle_glyph1)
 fig1.toolbar_location = None
-
-time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display)
+time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display[0])
+# this if does not work, since it will be executed before the variable will be altered!
+# -> use array of time_display ColumnDataSources
+#if glob_values["hit_end"][0]:
+#    fig1.add_layout(time_lable1)
 fig1.add_layout(time_lable1)
 
 
@@ -293,7 +298,7 @@ fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #    text_font_size="15pt", source=AlphaPos)
 #fig2.add_layout(angle_glyph2)
 fig2.toolbar_location = None
-time_lable2 = LabelSet(x='x', y='y', text='t', source=time_display)
+time_lable2 = LabelSet(x='x', y='y', text='t', source=time_display[1])
 fig2.add_layout(time_lable2)
 
 fig3 = figure(title="Hollow cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
@@ -307,7 +312,7 @@ fig3.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #    text_font_size="15pt", source=AlphaPos)
 #fig3.add_layout(angle_glyph3)
 fig3.toolbar_location = None
-time_lable3 = LabelSet(x='x', y='y', text='t', source=time_display)
+time_lable3 = LabelSet(x='x', y='y', text='t', source=time_display[2])
 fig3.add_layout(time_lable3)
 
 # sketch of the ramp and objects
@@ -524,26 +529,35 @@ def reset():
     changeObject(2,object_select2.value,radius_slider2.value,ri_slider2.value,1.0)
     changeObject(3,object_select3.value,radius_slider3.value,ri_slider3.value,1.0)
     disable_all_sliders(False)
-    time_display.data=dict(x=[],y=[],t=[])
-
+    time_display[0].data=dict(x=[],y=[],t=[])
+    time_display[1].data=dict(x=[],y=[],t=[])
+    time_display[2].data=dict(x=[],y=[],t=[])
     
 
 def evolve():
     t = glob_values["t"] # input/output
     t+=0.01
     glob_values["t"] = t
+    
     # call all necessary functions
     (x1,y1) = glob_fun_handles["fun1"](t)
     (x2,y2) = glob_fun_handles["fun2"](t)
     (x3,y3) = glob_fun_handles["fun3"](t)
+    
     # if an object has reached the end of the ramp then stop the simulation
-    if (max(x1,x2,x3)>0 or min(y1,y2,y3)<0):
+    x_coords = [x1,x2,x3]
+    y_coords = [y1,y2,y3]
+    max_x = max(x_coords)  # avoid multiple max and min evaluations
+    min_y = min(y_coords)
+    if (max_x>0 or min_y<0):
         start() #equals to stop if it is running
-        print(glob_values["t"])
-        time_display.data=dict(x=[-10],y=[20],t=[str(glob_values["t"])+" s"])
+        # get the index (number of the plot) to know which plot finished the simulation
+        plot_num = x_coords.index(max_x) if max_x>0  else y_coords.index(min_y)
+        # change the corresponding CDS to display the time only in this plot
+        time_display[plot_num].data=dict(x=[-10],y=[20],t=[str(glob_values["t"])+" s"])
 #TODO: only stop one figure and let the others finish too
 #      display finish time on each plot
-#      maybe add a button to swtich between "let all run through" and "stop all"
+#      maybe add a button to switch between "let all run through" and "stop all"
 
 # create the buttons
 start_button = Button(label="Start", button_type="success")
