@@ -744,7 +744,7 @@ plotDefYZ.title.text_font_size="12.5pt"
 
 plotDefYZ.add_glyph(CrossSectionSource1,ImageURL(url="sp1", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
 plotDefYZ.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
-plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
 plotDefYZ.add_glyph(CrossSectionSource4,ImageURL(url="sp4", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
 
 labelYZ = ColumnDataSource(data=dict(x=[0.5,-4.0],
@@ -782,7 +782,7 @@ plotDefXY = Figure(
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Deformation in X-Y View',
+                       title = 'Deformation in XY-View',
                        tools = ''
                   )
 plotDefXY.xaxis.major_tick_line_color=None
@@ -851,7 +851,7 @@ plotDefXZ = Figure(
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Deformation in X-Z View',
+                       title = 'Deformation in XZ-View',
                        tools = ''
                   )
 plotDefXZ.xaxis.major_tick_line_color=None
@@ -921,7 +921,7 @@ plotXYElement = Figure(
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Stresses along X-Y Element (z=0)',
+                       title = 'Stresses along XY-Element (z=0)',
                        tools = ''
                   )
 plotXYElement.xaxis.major_tick_line_color=None
