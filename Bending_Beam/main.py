@@ -70,8 +70,8 @@ triangular_load_source  = ColumnDataSource(data=dict(x=[], y=[]))
 # Label Source:
 labels_source = ColumnDataSource(data=dict(x=[] , y=[], name = []))
 # Support Source:
-support1 = "Balken_AD/static/images/auflager02.svg"
-support2 = "Balken_AD/static/images/auflager01.svg"
+support1 = "Bending_Beam/static/images/auflager02.svg"
+support2 = "Bending_Beam/static/images/auflager01.svg"
 support_source1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 support_source2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 # Cantilever rectangle source:
@@ -331,14 +331,14 @@ def Fun_Update(attrname, old, new):
             if (showvar==1):
                 if (p_mag>0):
                     if (f2_coord==10):
-                        support_label_source.data = dict(x=[0.1,0.6, f2_coord-0.9, f2_coord-0.4], y=[-1.3, -1.3, -1.3, -1.3], names=["%.2f" % round(abs(f1_mag),2), "F", "%.2f" % round(abs(f2_mag),2), "F"])
+                        support_label_source.data = dict(x=[0.1, f2_coord-1.2], y=[-1.3, -1.3], names=["{:.2f}".format(round(abs(f1_mag),2)) + "\\cdot F", "{:.2f}".format(round(abs(f2_mag),2)) + "\\cdot F"])
                     else:
-                        support_label_source.data = dict(x=[0.1,0.6, f2_coord+0.1, f2_coord+0.6], y=[-1.3, -1.3, -1.3, -1.3], names=["%.2f" % round(abs(f1_mag),2), "F", "%.2f" % round(abs(f2_mag),2), "F"])
+                        support_label_source.data = dict(x=[0.1,f2_coord+0.1], y=[-1.3, -1.3], names=["{:.2f}".format(round(abs(f1_mag),2)) + "\\cdot F", "{:.2f}".format(round(abs(f2_mag),2)) + "\\cdot F"])
                 else:
                     if (f2_coord==10):                    
-                        support_label_source.data = dict(x=[0.1,0.6, f2_coord-0.9, f2_coord-0.4], y=[1.3, 1.3, 1.3, 1.3], names=["%.2f" % round(abs(f1_mag),2), "F", "%.2f" % round(abs(f2_mag),2), "F"])
+                        support_label_source.data = dict(x=[0.1, f2_coord-1.2], y=[1.3, 1.3], names=["{:.2f}".format(round(abs(f1_mag),2)) + "\\cdot F", "{:.2f}".format(round(abs(f2_mag),2)) + "\\cdot F"])
                     else:
-                        support_label_source.data = dict(x=[0.1,0.6, f2_coord+0.1, f2_coord+0.6], y=[1.3, 1.3, 1.3, 1.3], names=["%.2f" % round(abs(f1_mag),2), "F", "%.2f" % round(abs(f2_mag),2), "F"])
+                        support_label_source.data = dict(x=[0.1, f2_coord+0.1], y=[1.3, 1.3], names=["{:.2f}".format(round(abs(f1_mag),2)) + "\\cdot F", "{:.2f}".format(round(abs(f2_mag),2)) + "\\cdot F"])
 
     ##################################################################
     if radio_button_group.active == 1: # IF CONSTANT LOAD SELECTED
@@ -513,14 +513,14 @@ def Fun_Update(attrname, old, new):
             if (showvar==1):
                 if (p_mag>0):
                     if (f2_coord==10):
-                        support_label_source.data = dict(x=[0.1,0.60, f2_coord-1.0, f2_coord-0.5], y=[-1.3, -1.3, -1.3, -1.3], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
+                        support_label_source.data = dict(x=[0.1, f2_coord-1.4], y=[-1.3, -1.3], names=["{:.2f}".format(round(abs(f1_mag)/10,2)) + "\\cdot pL", "{:.2f}".format(round(abs(f2_mag)/10,2)) + "\\cdot pL"])
                     else:
-                        support_label_source.data = dict(x=[0.1,0.60, f2_coord+0.1, f2_coord+0.6], y=[-1.3, -1.3, -1.3, -1.3], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])                               
+                        support_label_source.data = dict(x=[0.1, f2_coord+0.1], y=[-1.3, -1.3], names=["{:.2f}".format(round(abs(f1_mag)/10,2)) + "\\cdot pL", "{:.2f}".format(round(abs(f2_mag)/10,2)) + "\\cdot pL"])                             
                 else:
                     if (f2_coord==10):
-                        support_label_source.data = dict(x=[0.1,0.6, f2_coord-1.0, f2_coord-0.5], y=[1.3, 1.3, 1.3, 1.3], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
+                        support_label_source.data = dict(x=[0.1, f2_coord-1.4], y=[1.3, 1.3], names=["{:.2f}".format(round(abs(f1_mag)/10,2)) + "\\cdot pL", "{:.2f}".format(round(abs(f2_mag)/10,2)) + "\\cdot pL"])
                     else:
-                        support_label_source.data = dict(x=[0.1,0.6, f2_coord+0.1, f2_coord+0.6], y=[1.3, 1.3, 1.3, 1.3], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
+                        support_label_source.data = dict(x=[0.1, f2_coord+0.1], y=[1.3, 1.3], names=["{:.2f}".format(round(abs(f1_mag)/10,2)) + "\\cdot pL", "{:.2f}".format(round(abs(f2_mag)/10,2)) + "\\cdot pL"])
 
     #####################################################################
     if radio_button_group.active == 2: # IF TRIANGULAR LOAD SELECTED
@@ -721,14 +721,14 @@ def Fun_Update(attrname, old, new):
             if (showvar==1):
                 if (p_mag>0):
                     if (f2_coord==10):
-                        support_label_source.data = dict(x=[0.1,0.60, f2_coord-1.0, f2_coord-0.5], y=[-1.3, -1.3, -1.3, -1.3], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
+                        support_label_source.data = dict(x=[0.1, f2_coord-1.4], y=[-1.3, -1.3], names=["{:.2f}".format(round(abs(f1_mag)/10,2)) + "\\cdot pL", "{:.2f}".format(round(abs(f2_mag)/10,2)) + "\\cdot pL"])
                     else:
-                        support_label_source.data = dict(x=[0.1,0.60, f2_coord+0.1, f2_coord+0.6], y=[-1.3, -1.3, -1.3, -1.3], names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])                
+                        support_label_source.data = dict(x=[0.1, f2_coord+0.1], y=[-1.3, -1.3], names=["{:.2f}".format(round(abs(f1_mag)/10,2)) + "\\cdot pL", "{:.2f}".format(round(abs(f2_mag)/10,2)) + "\\cdot pL"])               
                 else:
                     if (f2_coord==10):                    
-                        support_label_source.data = dict(x=[0.1,0.6, f2_coord-1.0, f2_coord-0.5], y=[1.3, 1.3, 1.3, 1.3],  names=["%.2f" % round(abs(f1_mag)/10,2), "pL",  "%.2f" % round(abs(f2_mag)/10,2), "pL"])
+                        support_label_source.data = dict(x=[0.1, f2_coord-1.4], y=[1.3, 1.3],  names=["{:.2f}".format(round(abs(f1_mag)/10,2)) + "\\cdot pL", "{:.2f}".format(round(abs(f2_mag)/10,2)) + "\\cdot pL"])
                     else:
-                        support_label_source.data = dict(x=[0.1,0.6, f2_coord+0.1, f2_coord+0.6], y=[1.3, 1.3, 1.3, 1.3],  names=["%.2f" % round(abs(f1_mag)/10,2), "pL", "%.2f" % round(abs(f2_mag)/10,2), "pL"])
+                        support_label_source.data = dict(x=[0.1, f2_coord+0.1], y=[1.3, 1.3],  names=["{:.2f}".format(round(abs(f1_mag)/10,2)) + "\\cdot pL", "{:.2f}".format(round(abs(f2_mag)/10,2)) + "\\cdot pL"])
 
 ##### INITIAL FUNCTION:
 def initial():
@@ -782,10 +782,10 @@ plot.quad(top='top', bottom='bottom', left='left',
     right='right', source = quad_source, color='black', fill_alpha = 0.5)
 plot.segment(x0='x0', y0='y0', x1='x1',
           y1='y1', source = segment_source, color='black', line_width=2)
-labels = LabelSet(x='x', y='y', text='name', level='glyph',
+labels = LatexLabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=5, y_offset=-30, source=labels_source, render_mode='canvas')
-support_label = LabelSet(x='x', y='y', text='names', source=support_label_source, text_color = "#A2AD00", level='glyph', x_offset=3, y_offset=-15, text_font_size="10pt")
-beam_measure_label= LabelSet(x='x', y='y', text='names', source=beam_measure_label_source, text_color = 'black', level='glyph', x_offset=3, y_offset=-15)
+support_label = LatexLabelSet(x='x', y='y', text='names', source=support_label_source, text_color = "#A2AD00", level='glyph', x_offset=3, y_offset=-15, text_font_size="10pt")
+beam_measure_label= LatexLabelSet(x='x', y='y', text='names', source=beam_measure_label_source, text_color = 'black', level='glyph', x_offset=3, y_offset=-15)
 # Set properties:
 plot.axis.visible = False
 plot.outline_line_width = 2
@@ -809,7 +809,7 @@ plot.add_glyph(triangular_load_source, triangular_load_glyph)
 
 ###### PLOT 1 (SHEAR):
 # Define plot
-plot1 = Figure(title="Shear Force", tools="", x_range=(x0-.5,xf+.5), y_range=(-11,11), height = 400)
+plot1 = Figure(title="Shear Force", tools="yzoom_in,yzoom_out,reset", x_range=(x0-.5,xf+.5), y_range=(-11,11), height = 400)
 # Define layouts
 plot1_labels1 = LatexLabelSet(x='x', y='y', text='names', source=plot1_label_source, text_color = "#A2AD00", level='glyph', x_offset=3, y_offset=-15)
 plot1.line(x='x', y='y', source=shear_source, color="#A2AD00",line_width=2)
@@ -828,7 +828,7 @@ plot1.add_layout(plot1_labels1)
 
 ###### PLOT 2 (MOMENT):
 # Define plot
-plot2 = Figure(title="Bending Moment", tools="", x_range=(x0-.5,xf+.5), y_range=(-12,12), height = 400)
+plot2 = Figure(title="Bending Moment", tools="yzoom_in,yzoom_out,reset", x_range=(x0-.5,xf+.5), y_range=(-12,12), height = 400)
 # Define layouts
 plot2_labels1 = LatexLabelSet(x='x', y='y', text='names', source=plot2_label_source, text_color ="#E37222", level='glyph', x_offset=3, y_offset=-15)
 plot2.line(x="x", y="y", source=mom_source, color="#E37222",line_width=2)
