@@ -809,7 +809,7 @@ plot.add_glyph(triangular_load_source, triangular_load_glyph)
 
 ###### PLOT 1 (SHEAR):
 # Define plot
-plot1 = Figure(title="Shear Force", tools="", x_range=(x0-.5,xf+.5), y_range=(-11,11), height = 400)
+plot1 = Figure(title="Shear Force", tools="yzoom_in,yzoom_out,reset", x_range=(x0-.5,xf+.5), y_range=(-11,11), height = 400)
 # Define layouts
 plot1_labels1 = LatexLabelSet(x='x', y='y', text='names', source=plot1_label_source, text_color = "#A2AD00", level='glyph', x_offset=3, y_offset=-15)
 plot1.line(x='x', y='y', source=shear_source, color="#A2AD00",line_width=2)
@@ -828,7 +828,7 @@ plot1.add_layout(plot1_labels1)
 
 ###### PLOT 2 (MOMENT):
 # Define plot
-plot2 = Figure(title="Bending Moment", tools="", x_range=(x0-.5,xf+.5), y_range=(-12,12), height = 400)
+plot2 = Figure(title="Bending Moment", tools="yzoom_in,yzoom_out,reset", x_range=(x0-.5,xf+.5), y_range=(-12,12), height = 400)
 # Define layouts
 plot2_labels1 = LatexLabelSet(x='x', y='y', text='names', source=plot2_label_source, text_color ="#E37222", level='glyph', x_offset=3, y_offset=-15)
 plot2.line(x="x", y="y", source=mom_source, color="#E37222",line_width=2)
