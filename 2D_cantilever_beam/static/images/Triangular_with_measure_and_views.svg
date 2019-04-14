@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.0 r9654"
-   sodipodi:docname="Triangular_with_measure_and_views_2.svg"
+   sodipodi:docname="Triangular_with_measure_and_views.svg"
    inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300">
@@ -35,9 +35,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35"
-     inkscape:cx="-197.23097"
-     inkscape:cy="689.854"
+     inkscape:zoom="0.1767767"
+     inkscape:cx="294.20339"
+     inkscape:cy="349.33256"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -62,179 +62,76 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
-       id="rect5295"
-       width="720"
-       height="720"
-       x="22.5"
-       y="32.362183"
+    <g
+       id="g3036"
+       transform="translate(-1.4738216,-2.2369118)"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000191;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000959, 20.00000959;stroke-dashoffset:22.25001065"
-       d="m 539.3988,282.64212 c 62.79747,0 100.34144,0 142.8766,0"
-       id="path3777-4"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:2.47652936;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 653.8089,259.04256 0,348.975"
-       id="path3797"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000191;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 672.67252,264.06744 c -36.70126,36.67039 -38.86016,38.82748 -38.86016,38.82748"
-       id="path3799"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000191;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 673.17387,562.23549 c -36.70126,36.67039 -38.86015,38.82747 -38.86015,38.82747"
-       id="path3799-9"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <text
-       xml:space="preserve"
-       style="font-size:32.04450607px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
-       x="663.44049"
-       y="473.34232"
-       id="text3819"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300"
-       transform="scale(1.0004209,0.99957927)"><tspan
-         sodipodi:role="line"
-         id="tspan3821"
-         x="663.44049"
-         y="473.34232">a</tspan></text>
-    <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000191;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000959, 20.00000959;stroke-dashoffset:22.25001065"
-       d="m 538.62182,582.0127 c 62.79747,0 100.34144,0 142.87661,0"
-       id="path3777-4-4"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000191;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000959, 20.00000959;stroke-dashoffset:22.25001065"
-       d="m 534.27115,585.50178 c 0,62.74463 0,100.25702 0,142.7564"
-       id="path3777-4-43"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:2.47652936;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 557.89058,699.81563 -349.26884,0"
-       id="path3797-0"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000191;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 552.86146,679.83591 C 516.1602,716.5063 514.0013,718.66337 514.0013,718.66337"
-       id="path3799-5"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000191;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 254.44236,680.33684 c -36.70127,36.67039 -38.86017,38.82747 -38.86017,38.82747"
-       id="path3799-9-8"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <text
-       xml:space="preserve"
-       style="font-size:32.04450607px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
-       x="324.52051"
-       y="728.79358"
-       id="text3819-0"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300"
-       transform="scale(1.0004209,0.99957927)"><tspan
-         sodipodi:role="line"
-         id="tspan3821-3"
-         x="324.52051"
-         y="728.79358">a</tspan></text>
-    <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000191;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000959, 20.00000959;stroke-dashoffset:22.25001065"
-       d="m 234.6485,584.72546 c 0,62.74463 0,100.25701 0,142.7564"
-       id="path3777-4-4-0"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:none;stroke:#e37222;stroke-width:12;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 379.2274,587.85495 C 234.99843,295.83588 232.967,291.72289 232.967,291.72289"
-       id="path3021-3-8"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300"
-       inkscape:transform-center-x="78.757702"
-       inkscape:transform-center-y="-144.98744" />
-    <path
-       style="fill:none;stroke:#0065bf;stroke-width:12;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 237.51869,282.21141 c 293.56982,1.65441 297.70466,1.67777 297.70466,1.67777"
-       id="path3021-3-8-3"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <text
-       xml:space="preserve"
-       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#e37222;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
-       x="103.035"
-       y="98.568588"
-       id="text3900"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300"><tspan
-         sodipodi:role="line"
-         x="103.035"
-         y="98.568588"
-         id="tspan3904">XY-View</tspan></text>
+       inkscape:export-ydpi="300">
+      <g
+         id="g3014">
+        <g
+           id="g3011">
+          <rect
+             inkscape:export-ydpi="300"
+             inkscape:export-xdpi="300"
+             inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
+             y="34.599094"
+             x="23.973822"
+             height="720"
+             width="720"
+             id="rect5295"
+             style="fill:#ffffff;fill-opacity:1;stroke:none" />
+        </g>
+      </g>
+    </g>
     <text
        xml:space="preserve"
        style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#0065bd;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
-       x="103.03545"
-       y="129.45062"
+       x="103.317"
+       y="160.92361"
        id="text3900-4"
        sodipodi:linespacing="125%"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"><tspan
          sodipodi:role="line"
-         x="103.03545"
-         y="129.45062"
+         x="103.317"
+         y="160.92361"
          id="tspan3904-6">XZ-View</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a2ad00;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
+       x="103.31749"
+       y="98.568619"
+       id="text3900-4-6"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"
+       inkscape:transform-center-x="-83.239746"
+       inkscape:transform-center-y="10.913086"><tspan
+         sodipodi:role="line"
+         x="103.31749"
+         y="98.568619"
+         id="tspan3904-6-1">XY-Element</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#e37222;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
+       x="103.317"
+       y="129.45062"
+       id="text3900-1"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         x="103.317"
+         y="129.45062"
+         id="tspan3904-4">XY-View</tspan></text>
     <path
        sodipodi:type="star"
-       style="fill:#c3c3c3;fill-opacity:1;stroke:#000000;stroke-width:1.81623566;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:#c3c3c3;fill-opacity:1;stroke:#000000;stroke-width:1.79991019;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="path3024"
        sodipodi:sides="3"
        sodipodi:cx="260"
@@ -247,34 +144,182 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="m 374.9512,903.01499 -229.9024,0 L 260,703.91368 z"
-       inkscape:transform-center-y="48.746815"
-       transform="matrix(-1.2809395,-0.00582857,0.00673024,-1.4791016,713.33329,1627.2428)"
-       inkscape:transform-center-x="-0.44661561"
+       inkscape:transform-center-y="49.133054"
+       transform="matrix(-1.2940274,-0.00587476,0.00679901,-1.4908224,708.81751,1635.5052)"
+       inkscape:transform-center-x="-0.45119191"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#a2ad00;stroke-width:15.95153046;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 382.35311,388.05616 c 1.27583,195.93711 1.29378,198.69687 1.29378,198.69687"
+       style="fill:none;stroke:#0065bf;stroke-width:12.00000095000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;opacity:0.75"
+       d="m 229.719,282.21141 c 294.55625,1.65441 298.70499,1.67777 298.70499,1.67777"
+       id="path3021-3-8-3"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;stroke:#a2ad00;stroke-width:11.55200005;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 378.4766,388.35218 c -0.0311,194.1662 -0.0316,196.901 -0.0316,196.901"
        id="path3021-3-8-4-4-3"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"
-       inkscape:transform-center-x="27.459436" />
+       inkscape:transform-center-y="98.720616"
+       inkscape:transform-center-x="0.66452" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="rect3801-1"
+       width="21.380667"
+       height="15.066926"
+       x="49.475243"
+       y="-687.86163"
+       transform="matrix(0.91812419,-0.39629278,-0.45246254,-0.89178341,0,0)"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="opacity:0.75;fill:none;stroke:#e37222;stroke-width:12;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 371.8274,584.85518 C 227.59843,292.83611 225.567,288.72312 225.567,288.72312"
+       id="path3021-3-8"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"
+       inkscape:transform-center-x="78.757702"
+       inkscape:transform-center-y="-144.98744" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="rect3801"
+       width="21.380667"
+       height="15.066926"
+       x="-624.64825"
+       y="-389.99026"
+       transform="matrix(-0.91812419,-0.39629278,0.45246254,-0.89178341,0,0)"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="rect3801-7"
+       width="5.2824244"
+       height="3.5846016"
+       x="-693.72314"
+       y="70.397728"
+       transform="matrix(-0.44780367,-0.89413191,0.90015521,-0.43556927,0,0)"
+       inkscape:transform-center-x="0.20733259"
+       inkscape:transform-center-y="1.8095389e-005"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000073, 20.00000073;stroke-dashoffset:25.00000093"
+       d="m 524.493,280.32923 102.0576,0"
+       id="path3777-4-1"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 601.6503,255.11541 0,357.89777"
+       id="path3797-7"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 581.159,262.41836 c 36.905,36.90508 39.0759,39.07597 39.0759,39.07597"
+       id="path3799-4"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 581.7755,565.30848 c 36.9051,36.9051 39.076,39.076 39.076,39.076"
+       id="path3799-9-0"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
     <text
        xml:space="preserve"
-       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a2ad00;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
-       x="103.035"
-       y="161.01062"
-       id="text3900-4-6"
+       style="font-size:32.23602295px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
+       x="611.61627"
+       y="474.03113"
+       id="text3819-9"
        sodipodi:linespacing="125%"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"><tspan
          sodipodi:role="line"
-         x="103.035"
-         y="161.01062"
-         id="tspan3904-6-1">XY-Element</tspan></text>
+         id="tspan3821-48"
+         x="611.61627"
+         y="474.03113">a</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000108, 20.00000108;stroke-dashoffset:25.00000138"
+       d="m 384.50117,584.71078 241.00695,0"
+       id="path3777-4-0-1"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000069, 20.00000069;stroke-dashoffset:25.00000088"
+       d="m 225.78282,301.42409 0,422.18413"
+       id="path3777-4-1-8"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 200.569,698.70791 357.89777,0"
+       id="path3797-7-7"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 207.87195,717.29251 c 36.90508,-36.905 39.07597,-39.0759 39.07597,-39.0759"
+       id="path3799-4-6"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 510.76207,717.90911 c 36.9051,-36.9051 39.076,-39.076 39.076,-39.076"
+       id="path3799-9-0-7"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-size:32.23602295px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
+       x="402.13113"
+       y="726.02753"
+       id="text3819-9-7"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan3821-48-5"
+         x="402.13113"
+         y="726.02753">a</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.0000009, 20.0000009;stroke-dashoffset:25.00000114"
+       d="m 530.16437,291.60512 0,430.96062"
+       id="path3777-4-0-1-3"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Triangular_with_measure_and_views.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
   </g>
 </svg>

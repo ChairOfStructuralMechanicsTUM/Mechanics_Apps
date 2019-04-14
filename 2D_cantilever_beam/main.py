@@ -106,7 +106,7 @@ TauArrowSource4 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
 def deformed_cantilever_beam_determiner_XY( 
                                             length, height, thickness, E, Py, 
                                             Pz, noElementsX, noElementsY, 
-                                            noElementsZ, elementSizeX, 
+                                            noElementsZ, elementSizeX,  
                                             elementSizeY, elementSizeZ, 
                                             amplificationFactor
                                           ):
@@ -317,9 +317,14 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         Sigmaplot_r_Source.data = dict(x = SigmaPlot_r_x, y = SigmaPlot_r_y)
 
         # POSITION SIGMA LABELS
-        Sigmaplot_Label_Source.data = dict(
-            x=[max(sigma_r_pos+abs(sigma_x_r_scaled))+0.1,min(sigma_l_pos-abs(sigma_x_l_scaled))-0.6], 
-            y=[-0.5, -0.5], names=["\\sigma_{xx}","\\sigma_{xx}"])
+        if(glCantileverCrossSection==3):
+            Sigmaplot_Label_Source.data = dict(
+                x=[max(sigma_r_pos+abs(sigma_x_r_scaled))+0.1,min(sigma_l_pos-abs(sigma_x_l_scaled))-0.6], 
+                y=[-0.3, -0.3], names=["\\sigma_{xx}","\\sigma_{xx}"])            
+        else:   
+            Sigmaplot_Label_Source.data = dict(
+                x=[max(sigma_r_pos+abs(sigma_x_r_scaled))+0.1,min(sigma_l_pos-abs(sigma_x_l_scaled))-0.6], 
+                y=[-0.4, -0.4], names=["\\sigma_{xx}","\\sigma_{xx}"])
         
         # SCALING AND POSITIONING OF SIGMA ARROWS
         arrow_scale = 0.7
@@ -411,9 +416,14 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         Tauplot_u_Source.data = dict(x = TauPlot_u_x, y = TauPlot_u_y)
 
         # POSITION TAU LABELS
-        Tauplot_Label_Source.data = dict(
-            x=[max(tau_xy_r_pos_x+abs(tau_xy_r_scaled))+0.1, min(tau_xy_l_pos_x-abs(tau_xy_l_scaled))-0.5, tau_xy_l_pos_x+0.7], 
-            y=[-0.5, -0.5, max(abs(tau_xy_u_scaled))+0.1 ], names=['\\tau_{xy}','\\tau_{xy}','\\tau_{yx}'])
+        if(glCantileverCrossSection==3):
+            Tauplot_Label_Source.data = dict(
+                x=[max(tau_xy_r_pos_x+abs(tau_xy_r_scaled))+0.1, min(tau_xy_l_pos_x-abs(tau_xy_l_scaled))-0.5, tau_xy_l_pos_x+0.7], 
+                y=[-0.3, -0.3, max(abs(tau_xy_u_scaled))+0.3 ], names=['\\tau_{xy}','\\tau_{xy}','\\tau_{yx}'])
+        else:    
+            Tauplot_Label_Source.data = dict(
+                x=[max(tau_xy_r_pos_x+abs(tau_xy_r_scaled))+0.1, min(tau_xy_l_pos_x-abs(tau_xy_l_scaled))-0.5, tau_xy_l_pos_x+0.7], 
+                y=[-0.4, -0.4, max(abs(tau_xy_u_scaled))+0.15 ], names=['\\tau_{xy}','\\tau_{xy}','\\tau_{yx}'])
 
         ### SCALING AND POSITIONING OF ARROWS:
         # Position arrows into tau glyph
@@ -711,7 +721,7 @@ Yforce_slider = LatexSlider(title= 'F_y =   ', value=0.0, start=-1.0, end=1.0, s
 Zforce_slider = LatexSlider(title= 'F_z =  ', value=0.0, start=-1.0, end=1.0, step=0.1, value_unit='\cdot F_{z,max}')
 
 # Construct radio button to choose between geometries of cross section
-radio_button_group = RadioButtonGroup(name="Geometry of cross section",labels=["Rectangular", "Double-T", "Circular","Triangular"], active=glCantileverCrossSection)
+radio_button_group = RadioButtonGroup(name="Geometry of cross section",labels=["Quadratic", "Double-T", "Circular","Triangular"], active=glCantileverCrossSection)
 
 # Construct radio button to choose between plot of sigma(y) or tau(y)
 radio_button_group2 = RadioButtonGroup(name="Plot of sigma or tau",labels=["Normal Stresses", "Shear Stresses"], active=glCantileverStress)
@@ -742,10 +752,10 @@ plotDefYZ.grid.visible = False
 plotDefYZ.toolbar.logo = None
 plotDefYZ.title.text_font_size="12.5pt"
 
-plotDefYZ.add_glyph(CrossSectionSource1,ImageURL(url="sp1", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
-plotDefYZ.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+plotDefYZ.add_glyph(CrossSectionSource1,ImageURL(url="sp1", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+plotDefYZ.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
 plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
-plotDefYZ.add_glyph(CrossSectionSource4,ImageURL(url="sp4", x=-3*5.0/3.0, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+plotDefYZ.add_glyph(CrossSectionSource4,ImageURL(url="sp4", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
 
 labelYZ = ColumnDataSource(data=dict(x=[0.5,-4.0],
                                      y=[4.0,-0.6],
@@ -1081,7 +1091,6 @@ Reset_button.on_click(init_data)
 
 init_data()    
 
-# **For visualization purposes, there is a magnification factor of 100 that exaggerates the deformation""", render_as_text=False, width=400)
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
