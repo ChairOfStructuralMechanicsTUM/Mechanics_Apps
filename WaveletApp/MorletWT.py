@@ -4,13 +4,12 @@ from math import sin, cos, pi, exp
 
 def Find_Heaviside_Morlet_WT(T0,amp,Resolut):
     # computation of WT
-    n = Resolut
-    a = np.linspace(0.1, 5, n)
-    b = np.linspace(0.1, 5, n)
-    W = np.zeros((len(a), len(b)))
+    a = np.linspace(0.1, 5, Resolut)
+    b = np.linspace(0.1, 5, Resolut)
+    W = np.zeros((Resolut, Resolut))
     
-    for i in range (0,len(a)):
-        for j in range (0,len(b)):
+    for i in range (0,Resolut):
+        for j in range (0,Resolutn):
             def integrand1(t):
                 output = a[i]**-0.5 * amp * exp(-(((t-b[j])/a[i])**2)/2) * cos(5*((t-b[j])/a[i]))
                 return output
@@ -29,13 +28,12 @@ def Find_Heaviside_Morlet_WT(T0,amp,Resolut):
 
 def Find_Rectangular_Morlet_WT(T0,T1,amp,Resolut):
     # computation of WT
-    n=Resolut
-    a=np.linspace(0.1,5,n)
-    b=np.linspace(0.1,5,n)
-    W=np.zeros((len(a), len(b)))
+    a=np.linspace(0.1,5,Resolut)
+    b=np.linspace(0.1,5,Resolut)
+    W = np.zeros((Resolut, Resolut))
     
-    for i in range (0,len(a)):
-        for j in range (0,len(b)):
+    for i in range (0,Resolut):
+        for j in range (0,Resolut):
             def integrand1(t):
                 output = a[i]**-0.5 * amp * exp(-(((t-b[j])/a[i])**2)/2) * cos(5*((t-b[j])/a[i]))
                 return output
@@ -45,22 +43,20 @@ def Find_Rectangular_Morlet_WT(T0,T1,amp,Resolut):
 
 def Find_Dirac_Morlet_WT(T0, amp,Resolut):
     # computation of WT
-    n=Resolut
-    a=np.linspace(0.1,5,n)
-    b=np.linspace(0.1,5,n)
-    W=np.zeros((len(a), len(b)))
-
-    for i in range (0,len(a)):
-        for j in range (0,len(b)):
+    a=np.linspace(0.1,5,Resolut)
+    b=np.linspace(0.1,5,Resolut)
+    W = np.zeros((Resolut, Resolut))
+    
+    for i in range (0,Resolut):
+        for j in range (0,Resolut):
             W[i][j]= a[i]**-0.5 * amp * exp(-(((T0-b[j])/a[i])**2)/2) * cos(5*((T0-b[j])/a[i]))
     return a,b,W
     #plot_Wavelet.add_layout(color_bar, 'right')
 
 def Find_Custom_Morlet_WT(user_func,Resolut):
-    n=Resolut
-    a=np.linspace(0.1,5,n)
-    b=np.linspace(0.1,5,n)
-    W=np.zeros((len(a), len(b)))
+    a=np.linspace(0.1,5,Resolut)
+    b=np.linspace(0.1,5,Resolut)
+    W = np.zeros((Resolut, Resolut))
    
     #make a list of safe functions
     safe_dict = {
@@ -72,8 +68,8 @@ def Find_Custom_Morlet_WT(user_func,Resolut):
     # WT= "exp(-(((t-b)/a)**2)/2) * cos(5*((t-b)/a))"
     # Stand_WT= "((t-b)/a) * exp(-((t-b)/a)**2)"
     # eval(Stand_WT, safe_dict)
-    for i, a_i in enumerate(a):
-        for j, b_j in enumerate(b):
+    for i in range (0,Resolut):
+        for j in range (0,Resolut):
             def integrand(t):
                 safe_dict['t'] = t
                 try:
