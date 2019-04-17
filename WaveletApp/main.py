@@ -271,13 +271,14 @@ def reset():
     #  Amp_input.value='' 
      function_source.data = dict(x=[],y=[])
      WaveLet_source.data = {'a': [],'b':[],'W':[]}
+     My_Layout.children[0].children[2].children[1].children[0] = plot_Wavelet
 
 def param_change(attr,old,new):
     Wavelet_function_id = Wavelet_fun_input.value
     Wavelet_fun_input.label=Wavelet_function_id
     n=400
     t=np.linspace(-10,10,n)
-    if (Wavelet_function_id == "Morlet Function"):
+    if (Wavelet_function_id == "Morlet function"):
         y= np.exp(-(((t-b_param.value)/a_param.value)**2)/2) * np.cos(5*((t-b_param.value)/a_param.value))
         Wavelet_Function_source.data = dict(t=t, y=y)
         plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
