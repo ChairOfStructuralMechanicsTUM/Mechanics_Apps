@@ -47,9 +47,10 @@ color_bar = ColorBar(color_mapper=color_mapper, ticker=LogTicker(),
                      label_standoff=12, border_line_color=None, location=(0,0))
 
 plot_Wavelet_Function = Figure(x_range=(-10, 10), y_range=(-2, 2),
-                            x_axis_label='t', y_axis_label='psi(t)',
+                            x_axis_label='t', y_axis_label = ""u"\u03A8 (t)",
                             tools=toolset,
                             title="Wavelet function",  width=650, height=300)
+#plot_Wavelet_Function.yaxis.axis_label = ""u"\u03A8 (t)" 
 plot_Wavelet_Function.toolbar.logo = None
 
 # sample functions with corresponding id
@@ -77,15 +78,15 @@ sample_Wavelet_functions = {
 #######################
 # INTERACTIVE WIDGETS #
 #######################
-T0_input = TextInput(value= '1.0', title="Input T0:", width=200)
-T1_input = TextInput(value= '2.0', title="Input T1:", width=200)
-Amp_input = TextInput(value= '1.0', title="Input Amplitude:", width=200)
-User_Func = TextInput(value= None, title="Input Function f(t)", width=200)
+T0_input = TextInput(value= '1.0', width=200)
+T1_input = TextInput(value= '2.0', title="Input t"u"\u2080 "u"\u2264 t"u"\u2081 "u"\u2264 5:", width=200)
+Amp_input = TextInput(value= '1.0', title="Input Amplitude "u"\u2264 3:", width=200)
+User_Func = TextInput(value= None, title="Input function f(t)", width=200)
 Resolution = TextInput(value= '60', title="Input resolution:", width=200)
 sample_fun_input_f = Dropdown(label="Choose a sample function f(t)",
                               menu=sample_f_names,
                               width=200)
-Wavelet_fun_input = Dropdown(label="Choose a wavelet function psi(t)",
+Wavelet_fun_input = Dropdown(label="Choose a wavelet function "u"\u03A8 (t)",
                               menu=sample_Wavelet_names,
                               width=200)
 Calc_button = Button(label="Calculate Wavelet Transform", button_type="success",width=100)
@@ -222,16 +223,19 @@ def sample_fun_input_modified(self):
     sample_fun_input_f.label=sample_function_id
 
     if (sample_function_id == "Heaviside function"):
+        T0_input.title = "Input 0 "u"\u2264  t"u"\u2080 "u"\u2264 5:"
         controls = [sample_fun_input_f, T0_input, Amp_input]
         controls_box = widgetbox(controls, sizing_mode='scale_width')
         My_Layout.children[0].children[1].children[0].children[0]= controls_box
         
     elif (sample_function_id == "Rectangular function"):
+        T0_input.title = "Input 0 "u"\u2264  t"u"\u2080 "u"\u2264 t"u"\u2081:"
         controls = [sample_fun_input_f, T0_input, T1_input, Amp_input]
         controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
         My_Layout.children[0].children[1].children[0].children[0]= controls_box
     
     elif (sample_function_id == "Dirac delta function"):
+        T0_input.title = "Input 0 "u"\u2264  t"u"\u2080 "u"\u2264 5:"
         controls = [sample_fun_input_f, T0_input, Amp_input]
         controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
         My_Layout.children[0].children[1].children[0].children[0]= controls_box
@@ -262,7 +266,7 @@ def Wavelet_fun_modified(self):
         y= t * np.exp(-t**2)
         Wavelet_Function_source.data = dict(t=t, y=y)
         WT = plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
-        plot_Wavelet_Function.add_layout(LatexLegend(items=[("                      {t} e^{-t^2}",[WT])], label_text_font_size='12pt', label_height= 20, label_width=40))
+        plot_Wavelet_Function.add_layout(LatexLegend(items=[("                       {t} e^{-t^2}",[WT])], label_text_font_size='12pt', label_height= 20, label_width=40))
     
  
 def reset():
