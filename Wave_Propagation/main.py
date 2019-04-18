@@ -67,7 +67,7 @@ initial_zeta = 0.3
 initial_ny = 0.3
 initial_Omega = 100
 initial_b = 3
-initial_p0 = 1
+initial_p0 = 0
 global_zeta = ColumnDataSource(data = dict(zeta = [initial_zeta]))
 global_ny = ColumnDataSource(data = dict(ny = [initial_ny]))
 global_Omega = ColumnDataSource(data = dict(Omega = [initial_Omega]))
@@ -253,7 +253,7 @@ global_rayleigh_vector_source = ColumnDataSource(data = dict(xS = [],zS = [],
 
 
 # callback 
-t = 0
+t = 0.02
 global_slider_zrange_active = ColumnDataSource(data =
  dict(slider_zrange_active = [False]))
 global_lamb_zrange_active = ColumnDataSource(data =
@@ -530,7 +530,7 @@ def evolve():
         w_rayleigh_vector_glyph.visible = False
         total_rayleigh_vector_glyph.visible = False
         evolve1()
-  t+=dt
+  #t+=dt
   global_t.data = dict(t=[t])
 
 
@@ -1143,6 +1143,7 @@ xaxis = LinearAxis()
 xaxis.axis_label = "x in [m]"
 yaxis = LinearAxis()
 yaxis.axis_label = "z in [m]"
+p.title.text_font_size = '15pt'
 
 glyph_line = Line(x='x', y='y', line_color='black', line_width=2)
 glyph_surface = Line(x='x', y='y', line_color='black', line_width=1)
@@ -1182,6 +1183,8 @@ a.toolbar.logo=None
 a.tools=[PanTool(), WheelZoomTool(), SaveTool(), BoxZoomTool(), ResetTool()]
 a.xaxis.axis_label = "x in [m]"
 a.yaxis.axis_label = "z in [m]"
+a.title.text_font_size = '15pt'
+
 
 dPhi_dx_vector_glyph = Arrow(end=NormalHead(line_color='#0065BD',
                                             fill_color='#0065BD',line_width=2,
