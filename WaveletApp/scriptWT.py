@@ -1,7 +1,6 @@
 import numpy as np
 from scipy.integrate import quad
 from math import sin, cos, pi, exp
-import traceback
 import time
 
 def Find_Heaviside_SWT(T0,amp,Resolut):
@@ -32,16 +31,6 @@ def Find_Heaviside_SWT(T0,amp,Resolut):
     toc = time.time()
     print (str(toc-tic) + ' sec Elapsed' )
     return a,b,W
-    # fig, ax = plt.subplots()
-    # A, B = np.meshgrid(a, b)
-    # contour = ax.contourf(A, B, W, extend='both', cmap='Spectral')
-    # try:
-    #     filled_contours(plot_Wavelet,  contour)
-    # except:
-    #     traceback.print_exc()
-    #     raise
-    # plot_Wavelet.patches(xs='a', ys='b', source=WaveLet_source, color='c', alpha='a')
-    # plot_Wavelet.add_layout(color_bar, 'right')
 
 def Find_Rectangular_SWT(T0,T1,amp,Resolut):
     # computation of WT
@@ -72,6 +61,34 @@ def Find_Dirac_SWT(T0, amp,Resolut):
             W[i][j]= a[i]**-0.5 * amp * (T0-b[j])/a[i] * exp(-( (T0-b[j])/a[i] )**2.0)
     return a,b,W
     #plot_Wavelet.add_layout(color_bar, 'right')
+
+def Find_Trig_SWT(index, frequency, Resolut):
+    tic = time.time()
+    a=np.linspace(0.1,5,Resolut)
+    b=np.linspace(0.1,5,Resolut)
+    W=np.zeros((Resolut, Resolut))
+
+    if (index == 0):
+
+        for i in range (0,Resolut):
+            for j in range (0,Resolut):
+                def integrand1(t):
+                    output = a[i]**-0.5 * np.sin(2 * np.pi * frequency * t) * (t-b[j])/a[i] * exp(-( (t-b[j])/a[i] )**2.0)
+                    return output
+                W[i][j]=quad(integrand1, -10, 15)[0]
+
+    else:
+        for i in range (0,Resolut):
+            for j in range (0,Resolut):
+                def integrand1(t):
+                    output = a[i]**-0.5 * np.cos(2 * np.pi * frequency * t) * (t-b[j])/a[i] * exp(-( (t-b[j])/a[i] )**2.0)
+                    return output
+                W[i][j]=quad(integrand1, -10, 15)[0]
+    
+    toc = time.time()
+    print (str(toc-tic) + ' sec Elapsed' )
+    return a,b,W
+
 
 def Find_Custom_SWT(user_func,Resolut):
     tic = time.time()

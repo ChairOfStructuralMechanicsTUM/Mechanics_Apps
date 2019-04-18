@@ -1,15 +1,12 @@
 from os.path import dirname, split, join, abspath
 import numpy as np
-from scipy.integrate import quad
-import matplotlib.pyplot as plt 
-from math import sin, cos, pi, exp
+from math import sin, cos, pi, exp, ceil
 from bokeh.plotting import Figure
-from bokeh.models import ColumnDataSource, Div, LinearColorMapper, LogTicker, ColorBar
+from bokeh.models import ColumnDataSource, Div, LinearColorMapper, ColorBar,BasicTicker
 from bokeh.layouts import widgetbox, layout, column, row, Spacer
-from bokeh.models.widgets import Button, Select, Slider, TextInput, Dropdown, Div
-from sympy import sympify, lambdify
+from bokeh.models.widgets import Button, RadioButtonGroup, Select, Slider, TextInput, Dropdown, Div
+from sympy import sympify
 from bokeh.io import curdoc
-import traceback
 from scriptWT import*
 from MorletWT import*
 
@@ -30,7 +27,7 @@ Wavelet_Function_source = ColumnDataSource(data=dict(t=[],y=[]))
 ###########
 # FIGURES #
 ###########
-toolset=["pan, wheel_zoom, reset"]
+toolset=["save, wheel_zoom, reset"]
 plot_function = Figure(x_range=(0, 5), y_range=(-3, 3), 
                         x_axis_label='t', y_axis_label='f(t)',
                         tools =toolset,
@@ -43,8 +40,9 @@ plot_Wavelet = Figure(x_range=(0, 5), y_range=(0, 5),
                             title="Wavelet transform of the function",  width=650, height=300)
 plot_Wavelet.toolbar.logo = None
 color_mapper = LinearColorMapper(palette="Spectral11")
-color_bar = ColorBar(color_mapper=color_mapper, ticker=LogTicker(),
+color_bar = ColorBar(color_mapper=color_mapper, ticker=BasicTicker(),
                      label_standoff=12, border_line_color=None, location=(0,0))
+plot_Wavelet.add_layout(color_bar, 'right')
 
 plot_Wavelet_Function = Figure(x_range=(-10, 10), y_range=(-2, 2),
                             x_axis_label='t', y_axis_label = ""u"\u03A8 (t)",
@@ -58,6 +56,7 @@ sample_f_names = [
     ("Heaviside function","Heaviside function"),
     ("Rectangular function","Rectangular function"),
     ("Dirac delta function","Dirac delta function"),
+    ("Trigonometric function","Trigonometric function"),
    ("User defined function","User defined function")
 ]
 
@@ -89,11 +88,20 @@ sample_fun_input_f = Dropdown(label="Choose a sample function f(t)",
 Wavelet_fun_input = Dropdown(label="Choose a wavelet function "u"\u03A8 (t)",
                               menu=sample_Wavelet_names,
                               width=200)
+a_param = Slider(title="Scaling parameter 'a'", value=1.0, start=0.5, end=5.0, step=0.1,width=200)
+b_param = Slider(title="Shifting parameter 'b'", value=0.0, start=0.0, end=5.0, step=0.1,width=200)
+Trigonometric_radio = RadioButtonGroup (labels=["sin", "cos"], active=0)
+Frequency_Slider = Slider(title="Frequency (Hz)", value=1.0, start=0.5, end=5.0, step=0.1,width=200)
 Calc_button = Button(label="Calculate Wavelet Transform", button_type="success",width=100)
 
 def Plot_WT(a,b,W):
     WaveLet_source.data = {'a': [a],'b':[b],'W':[W]}
     plot_Wavelet.image(image="W", source=WaveLet_source, color_mapper=color_mapper, x=0, y=0, dw=5, dh=5)
+    # print(W.min())
+    # print(W.max())
+    color_mapper.low = W.min()
+    color_mapper.high = W.max()
+    
 
 def update(attr, old, new):
     """
@@ -104,13 +112,30 @@ def update(attr, old, new):
     Resolut=int(sympify(Resolution.value.replace(',','.')))  # Interval
     Resolution.value=str(Resolut)
     My_Layout.children[0].children[2].children[1].children[0] = loading
+    #print("check3")
+    T_0 = float(sympify(T0_input.value.replace(',','.')))  # Interval
+    T_1 = float(sympify(T1_input.value.replace(',','.')))  # Interval
+    amp = float(sympify(Amp_input.value.replace(',','.')))  # Interval
+    #print (int (ceil( T_0 )))
+    
+    # Check interval
+    # if  int (ceil( T_0 )) > 5 :
+    #     T0_input.value = '5'
+    #     return None
+    # elif  int (ceil( T_0 )) < 0 or int (ceil( T_1 )) < 0  :
+    #     T0_input.value = '0'
+    #     T1_input.value = '0'
+    
+
+    # elif  (5 < T_0 < 0 ) :
+    #     T1_input.value = str(T_0)
+    #     return None
+    
+    Amp_input.value = str(amp)
 
     if (sample_function_id == "Heaviside function"):
         # Extract parameters
-        T_0 = float(sympify(T0_input.value.replace(',','.')))  # Interval
         T0_input.value = str(T_0)
-        amp = float(sympify(Amp_input.value.replace(',','.')))  # Interval
-        Amp_input.value = str(amp)
 
         function_source.data= dict(x=[0, T_0, T_0, 5] ,y=[0, 0, amp, amp])
         plot_function.line(x='x',y='y',source=function_source ,color="blue",line_width=3)
@@ -128,10 +153,8 @@ def update(attr, old, new):
     
     elif (sample_function_id == "Rectangular function"):
         # Extract parameters
-        T_0 = float(sympify(T0_input.value.replace(',','.')))  # Interval
-        T_1 = float(sympify(T1_input.value.replace(',','.')))  # Interval
-        amp = float(sympify(Amp_input.value.replace(',','.')))  # Interval
         Amp_input.value = str(amp)
+
         # if T0>T1, swap numbers
         if(T_0>T_1):
             temp=T_1
@@ -154,10 +177,7 @@ def update(attr, old, new):
 
     elif (sample_function_id == "Dirac delta function"):
         # Extract parameters
-        T_0 = float((T0_input.value.replace(',','.')))  # Interval
         T0_input.value = str(T_0)
-        amp = float((Amp_input.value.replace(',','.')))  # Interval
-        Amp_input.value = str(amp)
 
         function_source.data= dict(x=[0, T_0, T_0, T_0, 5] ,y=[0, 0, amp, 0, 0])
         plot_function.line(x='x',y='y',source=function_source ,color="blue",line_width=3)
@@ -165,6 +185,17 @@ def update(attr, old, new):
             a,b,W = Find_Dirac_Morlet_WT(T_0, amp, Resolut)
         elif (Wavelet_function_id == "script's WT"):
             a,b,W = Find_Dirac_SWT(T_0, amp, Resolut)
+        try:
+            Plot_WT(a,b,W)
+        except UnboundLocalError:
+            My_Layout.children[0].children[2].children[1].children[0] = choose_WaveLet
+            return None
+    
+    elif (sample_function_id == "Trigonometric function"):
+        if (Wavelet_function_id == "Morlet function"):
+            a,b,W = Find_Trig_Morlet_WT (Trigonometric_radio.active, Frequency_Slider.value, Resolut)
+        elif (Wavelet_function_id == "script's WT"):
+            a,b,W = Find_Trig_SWT (Trigonometric_radio.active, Frequency_Slider.value, Resolut)
         try:
             Plot_WT(a,b,W)
         except UnboundLocalError:
@@ -182,19 +213,19 @@ def update(attr, old, new):
         'exp' : np.exp,
         't'  : t
         }
-        print("check2")
+
         try:
             user_f= eval(User_Func.value, safe_dict)
         except (SyntaxError, TypeError, NameError):
             My_Layout.children[0].children[2].children[1].children[0] = user_function
             return None
-        print("check3")
+
         try:
             function_source.data= dict(x=t ,y=user_f)
         except ValueError:
             My_Layout.children[0].children[2].children[1].children[0] = user_function
             return None
-        print("check4")
+
         plot_function.line(x='x',y='y',source=function_source ,color="blue",line_width=3)
         if (Wavelet_function_id == "Morlet function"):
             a,b,W = Find_Custom_Morlet_WT(User_Func.value, Resolut)
@@ -239,6 +270,11 @@ def sample_fun_input_modified(self):
         controls = [sample_fun_input_f, T0_input, Amp_input]
         controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
         My_Layout.children[0].children[1].children[0].children[0]= controls_box
+    
+    elif (sample_function_id == "Trigonometric function"):
+        controls = [sample_fun_input_f, Trigonometric_radio, Frequency_Slider, Calc_button]
+        controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
+        My_Layout.children[0].children[1].children[0].children[0]= controls_box
 
     elif (sample_function_id == "User defined function"):
         controls = [sample_fun_input_f, User_Func]
@@ -268,7 +304,21 @@ def Wavelet_fun_modified(self):
         WT = plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
         plot_Wavelet_Function.add_layout(LatexLegend(items=[("                       {t} e^{-t^2}",[WT])], label_text_font_size='12pt', label_height= 20, label_width=40))
     
- 
+def Trig_fun_modified(attr, old, new):
+    reset()
+    n=200
+    t=np.linspace(0,5,n)
+
+    if (Trigonometric_radio.active == 0):
+        y= np.sin( 2 * np.pi * Frequency_Slider.value *t )
+        function_source.data= dict(x=t ,y=y )
+        plot_function.line(x='x',y='y',source=function_source ,color="blue",line_width=3)
+    
+    elif (Trigonometric_radio.active == 1):
+        y= np.cos( 2 * np.pi * Frequency_Slider.value *t )
+        function_source.data= dict(x=t ,y=y )
+        plot_function.line(x='x',y='y',source=function_source ,color="blue",line_width=3)
+
 def reset():
     #  T0_input.value=''
     #  T1_input.value=''
@@ -294,25 +344,22 @@ def param_change(attr,old,new):
         plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
         #plot_function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
 
- 
-
-# Create sliders to choose parameters
-a_param = Slider(title="Scaling parameter 'a'", value=1.0, start=0.5, end=5.0, step=0.1,width=200)
-a_param.on_change('value', param_change)
-
-b_param = Slider(title="Shifting parameter 'b'", value=0.0, start=0.0, end=5.0, step=0.1,width=200)
-b_param.on_change('value', param_change)
 
 # add callback behaviour
 sample_fun_input_f.on_click(sample_fun_input_modified)
 Wavelet_fun_input.on_click(Wavelet_fun_modified)
-Wavelet_fun_input.on_change('label',update)
-Calc_button.on_click(update)
-T0_input.on_change('value',update)
-T1_input.on_change('value',update)
-Amp_input.on_change('value',update)
-User_Func.on_change('value',update)
-Resolution.on_change('value',update)
+Wavelet_fun_input.on_change('label', update)
+T0_input.on_change('value', update)
+T1_input.on_change('value', update)
+Amp_input.on_change('value', update)
+User_Func.on_change('value', update)
+Resolution.on_change('value', update)
+a_param.on_change('value', param_change)
+b_param.on_change('value', param_change)
+Trigonometric_radio.on_change('active',Trig_fun_modified)
+Frequency_Slider.on_change('value',Trig_fun_modified)
+Calc_button.on_change('clicks',update)
+
 
 #Description
 description_filename = join(dirname(__file__), "description.html")
