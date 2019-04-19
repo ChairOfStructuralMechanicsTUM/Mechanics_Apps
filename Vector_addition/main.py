@@ -30,8 +30,7 @@ V1_label_source        = ColumnDataSource(data=dict(x=[],y=[],V1=[]))
 V2_label_source        = ColumnDataSource(data=dict(x=[],y=[],V2=[]))
 Resultant_label_source = ColumnDataSource(data=dict(x=[],y=[],R=[]))
 Resultant_values_source = ColumnDataSource(data=dict(x=[],y=[],names=[]))
-global ShowVariable
-ShowVariable = -1
+flags = ColumnDataSource(data=dict(show=[False]))
 
 # responsible for the display of initial conditions 
 def init ():
@@ -72,11 +71,14 @@ def updateResultant():
     [theta2]  = glob_theta2.data["val"]  # input/
     [Vector1] = glob_Vector1.data["val"] # input/
     [Vector2] = glob_Vector2.data["val"] # input/
+    [show] = flags.data["show"]
     
     xE=Vector1*cos(theta1)+Vector2*cos(theta2)
     yE=Vector1*sin(theta1)+Vector2*sin(theta2)
-    if (xE==0 and yE==0):
+    R = round(sqrt(xE**2.0+yE**2.0),1)
+    if (abs(R) < 1e-3):
         VectorResultant_source.data = dict(xS=[], yS=[], xE=[], yE=[])
+        Resultant_label_source.data = dict(x=[], y=[], R=[])
     else:
         VectorResultant_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
         # Readjust positions
@@ -88,26 +90,25 @@ def updateResultant():
     V1parallel_line_source.data = dict(x=[Vector2*cos(theta2),xE], y=[Vector2*sin(theta2),yE])
     V2parallel_line_source.data = dict(x=[Vector1*cos(theta1),xE], y=[Vector1*sin(theta1),yE])
 
-    global ShowVariable    
-    if (ShowVariable==1):
-        xE=Vector1*cos(theta1)+Vector2*cos(theta2)
-        yE=Vector1*sin(theta1)+Vector2*sin(theta2)
-        R = round(sqrt(xE**2.0+yE**2.0),1)
-        if (xE>0 and yE>0):
-            angle = round(atan(yE/xE)/pi*180,0)
-        elif (xE<0 and yE>0) or (xE<0 and yE<0):
-            angle = round(atan(yE/xE)/pi*180,0)+180
-        elif (xE>0 and yE<0):
-            angle = round(atan(yE/xE)/pi*180,0)+360
+    if show:
+        if R==0:
+            angle = "-"
         else:
-            angle = 0
+            if (xE>0 and yE>0):
+                angle = round(atan(yE/xE)/pi*180,0)
+            elif (xE<0 and yE>0) or (xE<0 and yE<0):
+                angle = round(atan(yE/xE)/pi*180,0)+180
+            elif (xE>0 and yE<0):
+                angle = round(atan(yE/xE)/pi*180,0)+360
+            else:
+                angle = 0
         Resultant_values_source.data = dict(x=[100,100], y=[160,140], names=["|R| = " + str(R), "\\alpha_{R} = " + str(angle) + "^{\\circ}"])
     else:
         Resultant_values_source.data = dict(x=[], y=[], names=[])
 
 def ChangeShow():
-    global ShowVariable
-    ShowVariable =ShowVariable*-1
+    [show] = flags.data["show"]
+    flags.data = dict(show=[not show])
     updateResultant()        
 
 # adding the vectors to the plot
@@ -135,10 +136,6 @@ p.add_layout(V2_label_glyph)
 p.add_layout(Resultant_label_glyph)
 p.add_layout(Resultant_values_glyph)
 p.toolbar.logo = None
-
-#p.axis.visible = False
-#p.grid.visible = False
-#p.background_fill_color = "#D1F4FF"
 
 init()
 
@@ -180,7 +177,6 @@ AngleVector2Slider.on_change('value',changetheta2)
 ###Create Show Resultant Properties Button:
 show_button = Button(label="Show/Hide Length and Direction of Resultant", button_type="success")
 show_button.on_click(ChangeShow)
-
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
