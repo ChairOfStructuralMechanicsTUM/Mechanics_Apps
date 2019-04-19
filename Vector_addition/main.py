@@ -2,22 +2,18 @@
 Python Bokeh program which interactively change two vectos and display its sum
 
 """
-
-
 from bokeh.plotting import figure
-from bokeh.layouts import column, row, Spacer
-from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead, Button, Line,Div, NormalHead
+from bokeh.layouts import column, row
+from bokeh.models import ColumnDataSource, Arrow, Button, Div, NormalHead
 from bokeh.io import curdoc
-from numpy import loadtxt
-from os.path import dirname, join, split
-from math import radians, cos, sin, tan, sqrt, atan, pi
+from math import radians, cos, sin, sqrt, atan, pi
 
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
-from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
+from latex_support import LatexLabelSet, LatexSlider
 
 
 # Initialise Variables
@@ -69,7 +65,7 @@ def updateVector2 ():
         xE=Vector2*cos(theta2)
         yE=Vector2*sin(theta2)
         Vector2_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        V2_label_source.data = dict (x=[xE-3],y=[yE+3],V2=["V_2"])
+        V2_label_source.data = dict (x=[xE+3],y=[yE-3],V2=["V_2"])
 
 def updateResultant():
     [theta1]  = glob_theta1.data["val"]  # input/
@@ -96,17 +92,16 @@ def updateResultant():
     if (ShowVariable==1):
         xE=Vector1*cos(theta1)+Vector2*cos(theta2)
         yE=Vector1*sin(theta1)+Vector2*sin(theta2)
+        R = round(sqrt(xE**2.0+yE**2.0),1)
         if (xE>0 and yE>0):
-            Resultant_values_source.data = dict(x=[100,140,100,140,155], y=[160,160, 140, 140,140], names=['|R| = ', round(sqrt(xE**2.0+yE**2.0),1), '\\alpha_{R} = ', round(atan(yE/xE)/pi*180,0), '^{\\circ}'])
-        if (xE<0 and yE>0):
-            if(round(atan(yE/xE)/pi*180,0)+180<100):
-                Resultant_values_source.data = dict(x=[100,140,100,140,155], y=[160,160, 140, 140,140], names=['|R| = ', round(sqrt(xE**2.0+yE**2.0),1), '\\alpha_{R} = ', round(atan(yE/xE)/pi*180,0)+180, '^{\\circ}'])
-            else:
-                Resultant_values_source.data = dict(x=[100,140,100,140,163], y=[160,160, 140, 140,140], names=['|R| = ', round(sqrt(xE**2.0+yE**2.0),1), '\\alpha_{R} = ', round(atan(yE/xE)/pi*180,0)+180, '^{\\circ}'])
-        if (xE<0 and yE<0):
-            Resultant_values_source.data = dict(x=[100,140,100,140,163], y=[160,160, 140, 140,140], names=['|R| = ', round(sqrt(xE**2.0+yE**2.0),1), '\\alpha_{R} = ', round(atan(yE/xE)/pi*180,0)+180, '^{\\circ}'])
-        if (xE>0 and yE<0 ):
-            Resultant_values_source.data = dict(x=[100,140,100,140,163], y=[160,160, 140, 140,140], names=['|R| = ', round(sqrt(xE**2.0+yE**2.0),1), '\\alpha_{R} = ', round(atan(yE/xE)/pi*180,0)+360, '^{\\circ}'])                
+            angle = round(atan(yE/xE)/pi*180,0)
+        elif (xE<0 and yE>0) or (xE<0 and yE<0):
+            angle = round(atan(yE/xE)/pi*180,0)+180
+        elif (xE>0 and yE<0):
+            angle = round(atan(yE/xE)/pi*180,0)+360
+        else:
+            angle = 0
+        Resultant_values_source.data = dict(x=[100,100], y=[160,140], names=["|R| = " + str(R), "\\alpha_{R} = " + str(angle) + "^{\\circ}"])
     else:
         Resultant_values_source.data = dict(x=[], y=[], names=[])
 
