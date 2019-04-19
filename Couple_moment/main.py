@@ -6,10 +6,9 @@ initial work by: Rishith Ellath Meethal
 
 from bokeh.plotting import figure 
 from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead, Line
+from bokeh.models import ColumnDataSource, Slider, Arrow, OpenHead, Line
 from bokeh.models.glyphs import ImageURL
 from bokeh.io import curdoc
-import numpy as np
 
 from os.path import dirname, join, split, abspath
 import sys, inspect
@@ -17,9 +16,6 @@ currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv, LatexLabelSet
-
-#Plot source:
-# plot_source = ColumnDataSource(data=dict(x = np.linspace(0,40,100), y = np.linspace(0,0,100)))
 
 #Force Vectors
 P1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
@@ -37,9 +33,9 @@ support_source = ColumnDataSource(data=dict(x= [], y= [], src = []))
 ForcegraphTop=ColumnDataSource(data=dict(x=[], y=[])) 
 ForcegraphBottom=ColumnDataSource(data=dict(x=[], y=[])) 
 
+h_beam = 1.0
 
 def initialize():
-    h_beam = 1.0
     P1_arrow_source.data = dict(xS=[0], xE=[0], yS=[-10], yE=[-h_beam], lW = [5])
     P1_label_source.data = dict(x=[1],y=[-7],P1=["P_1"])
     P2_arrow_source.data = dict(xS=[40], xE=[40], yS=[10], yE=[h_beam], lW = [5])
@@ -49,8 +45,8 @@ def initialize():
     F2_arrow_source.data = dict(xS=[40], xE=[40], yS=[-10], yE=[-h_beam], lW = [5])
     F2_label_source.data = dict(x=[37.5],y=[-7],F2=["F_2"])
     support_source.data = dict(x = [20], y = [-h_beam], src = ["Couple_moment/static/images/fixed_support.svg"]) 
-    ForcegraphTop.data      = dict(x =[0],y =[10] )
-    ForcegraphBottom.data      = dict(x =[40],y =[-10] )
+    ForcegraphTop.data = dict(x =[0],y =[10] )
+    ForcegraphBottom.data = dict(x =[40],y =[-10] )
 
 
 plot = figure(title="", tools="", x_range=(0-2,40+2), y_range=(-50,50))
@@ -59,7 +55,7 @@ plot.axis.axis_label_text_font_size="14pt"
 plot.xaxis.axis_label="Distance [m]"
 plot.yaxis.axis_label="Force [N]"
 
-# my_line=plot.line(x='x', y='y', source=plot_source, color='#3070B3',line_width=1)
+# plot bar and support
 plot.line([0, 40], [0, 0], line_width=10, color='#3070B3')
 plot.add_glyph(support_source,ImageURL(url="src", x='x', y='y', w=5, h=5, anchor="top_center"))
 
@@ -72,6 +68,7 @@ F1_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 4, size=10)
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=F1_arrow_source,line_color="#E37222")
 F2_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 4, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=F2_arrow_source,line_color="#E37222")
+
 P1_label_glyph=LatexLabelSet(x='x', y='y',text='P1',text_font_size="15pt",level='glyph',source=P1_label_source)
 P2_label_glyph=LatexLabelSet(x='x', y='y',text='P2',text_font_size="15pt",level='glyph',source=P2_label_source)
 F1_label_glyph=LatexLabelSet(x='x', y='y',text='F1',text_font_size="15pt",level='glyph',source=F1_label_source)
@@ -88,61 +85,61 @@ plot.line(x='x',y='y', source=ForcegraphTop,line_width=3,line_color="#E37222",le
 plot.line(x='x',y='y', source=ForcegraphBottom,line_width=3,line_color="#E37222",legend=" Force amplitude",line_dash='dotted' )
 
 
-initialize()
 
-def changeF1F2(attr,old,new):
-    
-     #changing Force graph back to initial condition
-     ForcegraphTop.data      = dict(x =[0],y =[10] )
-     ForcegraphBottom.data      = dict(x =[40],y =[-10] )
-     YS = 400/(40-2*new)
-     F1_arrow_source.data = dict(xS=[0+new], xE=[0+new], yS=[YS], yE=[0], lW = [5])
-     F1_label_source.data = dict(x=[1+new],y=[5],F1=["F_1"])
-     F2_arrow_source.data = dict(xS=[40-new], xE=[40-new], yS=[-YS], yE=[0], lW = [5])
-     F2_label_source.data = dict(x=[37.5-new],y=[-7],F2=["F_2"])
-     XcordinatesT=[None]*(new+2)
-     XcordinatesB=[None]*(new+2)
-     YcordinatesT=[None]*(new+2)
-     YcordinatesB=[None]*(new+2)
-    
-    
-     XcordinatesT[0]=0
-     XcordinatesB[0]=40
-     YcordinatesT[0]=10
-     YcordinatesB[0]=-10
-     i=1
-     count = 1
-     for i in range(new+1):
-         XcordinatesT[count]=(i)
-         XcordinatesB[count]=40-(i)
+def changeF1F2(attr, old, new):
 
-         y=400/float((40-(2*(i))))  # calculation of Force which will make equal amount of moment
-         YcordinatesT[count]=y
-         YcordinatesB[count]=-y
-         count=count+1
-                     
-                     
-     new_dataT= {
-    'x' : XcordinatesT,
-    'y' : YcordinatesT,
-            }
-     
-     ForcegraphTop.stream(new_dataT)
-     
-     new_dataB= {
-    'x' : XcordinatesB,
-    'y' : YcordinatesB,
-            }
-     ForcegraphBottom.stream(new_dataB)
+    #changing Force graph back to initial condition
+    # ForcegraphTop.data = dict(x=[0], y=[10])
+    # ForcegraphBottom.data = dict(x=[40], y=[-10])
+    YS = 400.0/(40.0-2.0*new)
+    F1_arrow_source.data = dict(xS=[0+new], xE=[0+new], yS=[YS], yE=[h_beam], lW=[80])
+    F1_label_source.data = dict(x=[1+new], y=[5], F1=["F_1"])
+    F2_arrow_source.data = dict(xS=[40-new], xE=[40-new], yS=[-YS], yE=[-h_beam], lW=[8])
+    F2_label_source.data = dict(x=[37.5-new], y=[-7], F2=["F_"+str(new)])
+    # XcordinatesT = [None]*(new+2)
+    # XcordinatesB = [None]*(new+2)
+    # YcordinatesT = [None]*(new+2)
+    # YcordinatesB = [None]*(new+2)
+
+    # XcordinatesT[0] = 0
+    # XcordinatesB[0] = 40
+    # YcordinatesT[0] = 10
+    # YcordinatesB[0] = -10
+    # i = 1
+    # count = 1
+    # for i in range(new+1):
+    #     XcordinatesT[count] = (i)
+    #     XcordinatesB[count] = 40-(i)
+
+    #     # calculation of Force which will make equal amount of moment
+    #     y = 400/float((40-(2*(i))))
+    #     YcordinatesT[count] = y
+    #     YcordinatesB[count] = -y
+    #     count = count+1
+
+    # new_dataT = {
+    #     'x': XcordinatesT,
+    #     'y': YcordinatesT,
+    # }
+
+    # ForcegraphTop.stream(new_dataT)
+
+    # new_dataB = {
+    #     'x': XcordinatesB,
+    #     'y': YcordinatesB,
+    # }
+    # ForcegraphBottom.stream(new_dataB)
      
 #creating  slider to change location of Forces F1 and F2
-F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082 (m)",value= 0,start = 0, end = 19, step = 1)
+#F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082 (m)",value= 0,start = 0, end = 19, step = 1)
 F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082 together",value= 0,start = 0, end = 19, step = 1)
 F1F2Location_slider.on_change('value',changeF1F2)
 
 #adding description from HTML file
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
+
+initialize()
 
 curdoc().add_root(column(description,row(plot,column(F1F2Location_slider))))
 curdoc().title = "Couple moment"
