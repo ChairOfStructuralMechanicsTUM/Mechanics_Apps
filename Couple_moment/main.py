@@ -37,13 +37,13 @@ h_beam = 1.0
 
 def initialize():
     P1_arrow_source.data = dict(xS=[0], xE=[0], yS=[-10], yE=[-h_beam], lW = [5])
-    P1_label_source.data = dict(x=[1],y=[-7],P1=["P_1"])
+    P1_label_source.data = dict(x=[1],y=[-7],P1=["P"])
     P2_arrow_source.data = dict(xS=[40], xE=[40], yS=[10], yE=[h_beam], lW = [5])
-    P2_label_source.data = dict(x=[37.5],y=[5],P2=["P_2"])
+    P2_label_source.data = dict(x=[37.5],y=[5],P2=["P"])
     F1_arrow_source.data = dict(xS=[0], xE=[0], yS=[10], yE=[h_beam], lW = [5])
-    F1_label_source.data = dict(x=[1],y=[5],F1=["F_1"])
+    F1_label_source.data = dict(x=[1],y=[5],F1=["F"])
     F2_arrow_source.data = dict(xS=[40], xE=[40], yS=[-10], yE=[-h_beam], lW = [5])
-    F2_label_source.data = dict(x=[37.5],y=[-7],F2=["F_2"])
+    F2_label_source.data = dict(x=[37.5],y=[-7],F2=["F"])
     support_source.data = dict(x = [20], y = [-h_beam], src = ["Couple_moment/static/images/fixed_support.svg"]) 
     ForcegraphTop.data = dict(x =[0],y =[10] )
     ForcegraphBottom.data = dict(x =[40],y =[-10] )
@@ -87,48 +87,12 @@ plot.line(x='x',y='y', source=ForcegraphBottom,line_width=3,line_color="#E37222"
 
 
 def changeF1F2(attr, old, new):
-
     #changing Force graph back to initial condition
-    # ForcegraphTop.data = dict(x=[0], y=[10])
-    # ForcegraphBottom.data = dict(x=[40], y=[-10])
     YS = 400.0/(40.0-2.0*new)
-    F1_arrow_source.data = dict(xS=[0+new], xE=[0+new], yS=[YS], yE=[h_beam], lW=[5])
-    F1_label_source.data = dict(x=[1+new], y=[5], F1=["F_1"])
-    F2_arrow_source.data = dict(xS=[40-new], xE=[40-new], yS=[-YS], yE=[-h_beam], lW=[5])
-    F2_label_source.data = dict(x=[37.5-new], y=[-7], F2=["F_2"])
-    XcordinatesT = [None]*(new+2)
-    XcordinatesB = [None]*(new+2)
-    YcordinatesT = [None]*(new+2)
-    YcordinatesB = [None]*(new+2)
-
-    XcordinatesT[0] = 0
-    XcordinatesB[0] = 40
-    YcordinatesT[0] = 10
-    YcordinatesB[0] = -10
-    i = 1
-    count = 1
-    for i in range(new+1):
-        XcordinatesT[count] = (i)
-        XcordinatesB[count] = 40-(i)
-
-        # calculation of Force which will make equal amount of moment
-        y = 400/float((40-(2*(i))))
-        YcordinatesT[count] = y
-        YcordinatesB[count] = -y
-        count = count+1
-
-    new_dataT = {
-        'x': XcordinatesT,
-        'y': YcordinatesT,
-    }
-
-    ForcegraphTop.stream(new_dataT)
-
-    new_dataB = {
-        'x': XcordinatesB,
-        'y': YcordinatesB,
-    }
-    ForcegraphBottom.stream(new_dataB)
+    F1_arrow_source.patch( {"xS":[(0,new)], "xE":[(0,new)], "yS":[(0,YS)]} )
+    F1_label_source.patch({"x":[(0,1+new)]})
+    F2_arrow_source.patch( {"xS":[(0,40-new)], "xE":[(0,40-new)], "yS":[(0,-YS)]} )
+    F2_label_source.patch({"x":[(0,37.5-new)]})
      
 #creating  slider to change location of Forces F1 and F2
 #F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082 (m)",value= 0,start = 0, end = 19, step = 1)
