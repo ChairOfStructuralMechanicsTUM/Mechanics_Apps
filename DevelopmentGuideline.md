@@ -161,11 +161,11 @@ foo()
 * All "global" variables need to be loaded in the specific function. If in-place-operations were used, the saving step is optional.
 
 
-# Francesca Final Acceptance and Publication
+# Franziska Final Acceptance and Publication
 
 The following points are executed by Francesca only.
 
-* Make sure that the status of finalized apps is updated in ```Mechanic_Apps/README.md``` (done by Francesca)
+* Make sure that the status of finalized apps is updated in ```Mechanic_Apps/README.md``` (done by Franziska)
 * Add description of app and a matching tooltip on overview page
     * put app in the right position in the hierarchy (semester, lecture).
 * Add app directory name to ```appnames.conf```.
