@@ -2,22 +2,18 @@
 Python Bokeh program which interactively change two vectos and display its sum
 
 """
-
-
 from bokeh.plotting import figure
-from bokeh.layouts import column, row, Spacer
-from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead, Button, Line,Div, NormalHead
+from bokeh.layouts import column, row
+from bokeh.models import ColumnDataSource, Arrow, Button, Div, NormalHead
 from bokeh.io import curdoc
-from numpy import loadtxt
-from os.path import dirname, join, split
-from math import radians, cos, sin, tan, sqrt, atan, pi
+from math import radians, cos, sin, sqrt, atan, pi
 
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
-from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
+from latex_support import LatexLabelSet, LatexSlider
 
 
 # Initialise Variables
@@ -34,8 +30,7 @@ V1_label_source        = ColumnDataSource(data=dict(x=[],y=[],V1=[]))
 V2_label_source        = ColumnDataSource(data=dict(x=[],y=[],V2=[]))
 Resultant_label_source = ColumnDataSource(data=dict(x=[],y=[],R=[]))
 Resultant_values_source = ColumnDataSource(data=dict(x=[],y=[],names=[]))
-global ShowVariable
-ShowVariable = -1
+flags = ColumnDataSource(data=dict(show=[False]))
 
 # responsible for the display of initial conditions 
 def init ():
@@ -69,18 +64,21 @@ def updateVector2 ():
         xE=Vector2*cos(theta2)
         yE=Vector2*sin(theta2)
         Vector2_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        V2_label_source.data = dict (x=[xE-3],y=[yE+3],V2=["V_2"])
+        V2_label_source.data = dict (x=[xE+3],y=[yE-3],V2=["V_2"])
 
 def updateResultant():
     [theta1]  = glob_theta1.data["val"]  # input/
     [theta2]  = glob_theta2.data["val"]  # input/
     [Vector1] = glob_Vector1.data["val"] # input/
     [Vector2] = glob_Vector2.data["val"] # input/
+    [show] = flags.data["show"]
     
     xE=Vector1*cos(theta1)+Vector2*cos(theta2)
     yE=Vector1*sin(theta1)+Vector2*sin(theta2)
-    if (xE==0 and yE==0):
+    R = round(sqrt(xE**2.0+yE**2.0),1)
+    if (abs(R) < 1e-3):
         VectorResultant_source.data = dict(xS=[], yS=[], xE=[], yE=[])
+        Resultant_label_source.data = dict(x=[], y=[], R=[])
     else:
         VectorResultant_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
         # Readjust positions
@@ -92,27 +90,25 @@ def updateResultant():
     V1parallel_line_source.data = dict(x=[Vector2*cos(theta2),xE], y=[Vector2*sin(theta2),yE])
     V2parallel_line_source.data = dict(x=[Vector1*cos(theta1),xE], y=[Vector1*sin(theta1),yE])
 
-    global ShowVariable    
-    if (ShowVariable==1):
-        xE=Vector1*cos(theta1)+Vector2*cos(theta2)
-        yE=Vector1*sin(theta1)+Vector2*sin(theta2)
-        if (xE>0 and yE>0):
-            Resultant_values_source.data = dict(x=[100,140,100,140,155], y=[160,160, 140, 140,140], names=['|R| = ', round(sqrt(xE**2.0+yE**2.0),1), '\\alpha_{R} = ', round(atan(yE/xE)/pi*180,0), '^{\\circ}'])
-        if (xE<0 and yE>0):
-            if(round(atan(yE/xE)/pi*180,0)+180<100):
-                Resultant_values_source.data = dict(x=[100,140,100,140,155], y=[160,160, 140, 140,140], names=['|R| = ', round(sqrt(xE**2.0+yE**2.0),1), '\\alpha_{R} = ', round(atan(yE/xE)/pi*180,0)+180, '^{\\circ}'])
+    if show:
+        if R==0:
+            angle = "-"
+        else:
+            if (xE>0 and yE>0):
+                angle = round(atan(yE/xE)/pi*180,0)
+            elif (xE<0 and yE>0) or (xE<0 and yE<0):
+                angle = round(atan(yE/xE)/pi*180,0)+180
+            elif (xE>0 and yE<0):
+                angle = round(atan(yE/xE)/pi*180,0)+360
             else:
-                Resultant_values_source.data = dict(x=[100,140,100,140,163], y=[160,160, 140, 140,140], names=['|R| = ', round(sqrt(xE**2.0+yE**2.0),1), '\\alpha_{R} = ', round(atan(yE/xE)/pi*180,0)+180, '^{\\circ}'])
-        if (xE<0 and yE<0):
-            Resultant_values_source.data = dict(x=[100,140,100,140,163], y=[160,160, 140, 140,140], names=['|R| = ', round(sqrt(xE**2.0+yE**2.0),1), '\\alpha_{R} = ', round(atan(yE/xE)/pi*180,0)+180, '^{\\circ}'])
-        if (xE>0 and yE<0 ):
-            Resultant_values_source.data = dict(x=[100,140,100,140,163], y=[160,160, 140, 140,140], names=['|R| = ', round(sqrt(xE**2.0+yE**2.0),1), '\\alpha_{R} = ', round(atan(yE/xE)/pi*180,0)+360, '^{\\circ}'])                
+                angle = 0
+        Resultant_values_source.data = dict(x=[100,100], y=[160,140], names=["|R| = " + str(R), "\\alpha_{R} = " + str(angle) + "\\,^{\\circ}"])
     else:
         Resultant_values_source.data = dict(x=[], y=[], names=[])
 
 def ChangeShow():
-    global ShowVariable
-    ShowVariable =ShowVariable*-1
+    [show] = flags.data["show"]
+    flags.data = dict(show=[not show])
     updateResultant()        
 
 # adding the vectors to the plot
@@ -141,10 +137,6 @@ p.add_layout(Resultant_label_glyph)
 p.add_layout(Resultant_values_glyph)
 p.toolbar.logo = None
 
-#p.axis.visible = False
-#p.grid.visible = False
-#p.background_fill_color = "#D1F4FF"
-
 init()
 
 #Changing Vector1
@@ -172,20 +164,19 @@ def changetheta2(attr,old,new):
     updateResultant()
     
 ## Create slider to choose force applied
-Vector1Slider = LatexSlider(title="|V1|=",value=50,start=0,end=100,step=5)
+Vector1Slider = LatexSlider(title="|V1|=",value=95.0,start=0,end=100,step=5)
 Vector1Slider.on_change('value',changeVector1)
-Vector2Slider= LatexSlider(title="|V2|=", value=50.0, start=0.0, end=100.0, step=5)
+Vector2Slider= LatexSlider(title="|V2|=", value=100.0, start=0.0, end=100.0, step=5)
 Vector2Slider.on_change('value',changeVector2)
 
-AngleVector1Slider= LatexSlider(title='\\alpha_{V1}=', value_unit='^{\\circ}', value=30.0, start=0.0, end=360.0, step=5)
+AngleVector1Slider= LatexSlider(title='\\alpha_{V1}=', value_unit='^{\\circ}', value=60.0, start=0.0, end=360.0, step=5)
 AngleVector1Slider.on_change('value',changetheta1)
-AngleVector2Slider= LatexSlider(title='\\alpha_{V2}=',value_unit='^{\\circ}', value=60.0, start=0.0, end=360.0, step=5)
+AngleVector2Slider= LatexSlider(title='\\alpha_{V2}=',value_unit='^{\\circ}', value=140.0, start=0.0, end=360.0, step=5)
 AngleVector2Slider.on_change('value',changetheta2)
 
 ###Create Show Resultant Properties Button:
 show_button = Button(label="Show/Hide Length and Direction of Resultant", button_type="success")
 show_button.on_click(ChangeShow)
-
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
