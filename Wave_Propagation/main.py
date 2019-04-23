@@ -16,7 +16,7 @@ from bokeh.plotting import figure, show
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
-parentdir = join(dirname(currentdir), "shared/")
+parentdir = join(dirname(currentdir), 'shared/')
 sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexLabel, LatexLabelSet
 from latex_support import LatexSlider, LatexLegend
@@ -67,7 +67,7 @@ initial_zeta = 0.3
 initial_ny = 0.3
 initial_Omega = 100
 initial_b = 3
-initial_p0 = 0
+initial_p0 = 1
 global_zeta = ColumnDataSource(data = dict(zeta = [initial_zeta]))
 global_ny = ColumnDataSource(data = dict(ny = [initial_ny]))
 global_Omega = ColumnDataSource(data = dict(Omega = [initial_Omega]))
@@ -253,7 +253,7 @@ global_rayleigh_vector_source = ColumnDataSource(data = dict(xS = [],zS = [],
 
 
 # callback 
-t = 0.02
+t = 0
 global_slider_zrange_active = ColumnDataSource(data =
  dict(slider_zrange_active = [False]))
 global_lamb_zrange_active = ColumnDataSource(data =
@@ -530,7 +530,7 @@ def evolve():
         w_rayleigh_vector_glyph.visible = False
         total_rayleigh_vector_glyph.visible = False
         evolve1()
-  #t+=dt
+  t+=dt
   global_t.data = dict(t=[t])
 
 
@@ -836,7 +836,7 @@ def change_zeta(attr,old,new):
   zeta = new
   global_zeta.data = dict(zeta = [zeta])
   update_parameters()
-zeta_Slider = LatexSlider(title="D =",
+zeta_Slider = LatexSlider(title='D =',
                           value=initial_zeta,start=0.01,end=0.99,step=0.01)
 zeta_Slider.on_change('value',change_zeta)
 
@@ -847,20 +847,20 @@ def change_ny(attr,old,new):
   ny = round(ny,2)
   global_ny.data = dict(ny = [ny])
   update_parameters()
-ny_Slider = LatexSlider(title="\\nu =",
+ny_Slider = LatexSlider(title='\\nu =',
                         value=initial_ny,start=0.05,end=0.45,step=0.05)
 ny_Slider.on_change('value',change_ny)
 
 # excitation frequency 
 def change_Omega(attr,old,new):
   [Omega] = global_Omega.data['Omega']
-  [lamb_zrange_active]  = global_lamb_zrange_active.data["lamb_zrange_active"]
+  [lamb_zrange_active]  = global_lamb_zrange_active.data['lamb_zrange_active']
   Omega = new
   global_lamb_zrange_active.data = dict(lamb_zrange_active=[True])
   global_Omega.data = dict(Omega = [Omega])
   update_parameters()
-Omega_Slider = LatexSlider(title="\\Omega =",
-                           value_unit="\\frac{\\mathrm{rad}}{\\mathrm{s}}",
+Omega_Slider = LatexSlider(title='\\Omega =',
+                           value_unit='\\frac{\\mathrm{rad}}{\\mathrm{s}}',
                            value=initial_Omega,start=30,end=300,step=1)
 Omega_Slider.on_change('value',change_Omega)
 
@@ -870,13 +870,13 @@ def change_b(attr,old,new):
   b = new
   global_b.data = dict(b = [b])
   if b == 0:
-    b_Slider.title="\\text{point load}\\ b="
+    b_Slider.title='\\text{point load}\\ b='
   elif b == 16:
-    b_Slider.title="\\text{load over entire area}\\ b="
+    b_Slider.title='\\text{load over entire area}\\ b='
   else:
-    b_Slider.title="\\text{line load with width}\\ b="
+    b_Slider.title='\\text{line load with width}\\ b='
   update_parameters()
-b_Slider = LatexSlider(title="\\text{line load with width}\\ b=",value_unit="\\mathrm{m}",
+b_Slider = LatexSlider(title='\\text{line load with width}\\ b=',value_unit='\\mathrm{m}',
                        value=initial_b,start=0,end=16,step=0.0625*4)
 b_Slider.on_change('value',change_b)
 
@@ -886,18 +886,18 @@ def change_p0(new):
   p0 = new
   global_p0.data = dict(p0 = [p0])
   update_parameters()
-p0_RadioButton = RadioButtonGroup(labels=["p0=0","p0=1"], active = 1)
+p0_RadioButton = RadioButtonGroup(labels=['p_0=0','p_0=1'], active = 1)
 p0_RadioButton.on_click(change_p0)
 
 # change z-range with Slider or automatically with Omega
 def change_zrange(attr,old,new):
   [slider_zrange] = global_slider_zrange.data['slider_zrange']
-  [slider_zrange_active] = global_slider_zrange_active.data["slider_zrange_active"]
+  [slider_zrange_active] = global_slider_zrange_active.data['slider_zrange_active']
   slider_zrange = new
   global_slider_zrange_active.data = dict(slider_zrange_active=[True])
   global_slider_zrange.data = dict(slider_zrange = [slider_zrange])
   update_parameters()
-zrange_Slider = RangeSlider(title="z-range",
+zrange_Slider = RangeSlider(title='z-range',
                             value=initial_slider_zrange,
                             start=0,end=200,step=1)
 zrange_Slider.on_change('value',change_zrange)
@@ -916,7 +916,7 @@ def change_x_range(attr,old,new):
   new = tuple(new)  
   global_x_range.data = dict(x_range = [x_range])
   update_parameters()
-x_range_Slider = RangeSlider(title="x-range",
+x_range_Slider = RangeSlider(title='x-range',
                             value=initial_x_range,
                             start=-8,end=8,step=0.25)
 x_range_Slider.on_change('value',change_x_range)
@@ -927,7 +927,7 @@ def change_chosen_x(attr,old,new):
   chosen_x = new
   global_chosen_x.data = dict(chosen_x = [chosen_x])
   update_parameters()
-chosen_x_Slider = LatexSlider(title="\\text{particle\\ in\\ x-direction:}",
+chosen_x_Slider = LatexSlider(title='\\text{particle\\ in\\ x-direction:}',
                               value=initial_chosen_x,start=-((len(initial_select_z)-1)/2),end=((len(initial_select_z)-1)/2),step=1)
 chosen_x_Slider.on_change('value',change_chosen_x)
 
@@ -937,7 +937,7 @@ def change_chosen_z(attr,old,new):
   chosen_z = new
   global_chosen_z.data = dict(chosen_z = [chosen_z])
   update_parameters()
-chosen_z_Slider = LatexSlider(title="\\text{particle\\ in\\ z-direction:}",
+chosen_z_Slider = LatexSlider(title='\\text{particle\\ in\\ z-direction:}',
                               value=initial_chosen_z,start=0,end=(len(initial_select_z)-1),step=1)
 chosen_z_Slider.on_change('value',change_chosen_z)
 
@@ -972,8 +972,8 @@ def update_parameters():
   [select_z] = global_select_z.data['select_z']
   [slider_zrange] = global_slider_zrange.data['slider_zrange']
   [lamb_zrange] = global_lamb_zrange.data['lamb_zrange'] 
-  [lamb_zrange_active] = global_lamb_zrange_active.data["lamb_zrange_active"]
-  [slider_zrange_active] = global_slider_zrange_active.data["slider_zrange_active"]
+  [lamb_zrange_active] = global_lamb_zrange_active.data['lamb_zrange_active']
+  [slider_zrange_active] = global_slider_zrange_active.data['slider_zrange_active']
   z = global_z.data['z']
   zeta = zeta
   ny = ny
@@ -1071,28 +1071,28 @@ def changeaxisranges():
 # Buttons and button functions ################################################
 ###############################################################################
 def play_pause():
-  if play_pause_button.label == "Play":
+  if play_pause_button.label == 'Play':
     play()
   else:
     pause()
 
 def pause():
-  [active] = global_active.data["active"]
-  [callback_id] = global_callback_id.data["callback_id"]
-  play_pause_button.label = "Play"
+  [active] = global_active.data['active']
+  [callback_id] = global_callback_id.data['callback_id']
+  play_pause_button.label = 'Play'
   try:
     curdoc().remove_periodic_callback(callback_id)
     global_active.data = dict(active=[False])
   except ValueError:
-    print("WARNING: callback_id was already removed - this can happen if stop was pressed after pause, usually no serious problem; if stop was not called this part should be changed")
+    print('WARNING: callback_id was already removed - this can happen if stop was pressed after pause, usually no serious problem; if stop was not called this part should be changed')
   except:
-    print("This error is not covered: ", sys.exc_info()[0])
+    print('This error is not covered: ', sys.exc_info()[0])
     raise
 
 def play():
-  [active] = global_active.data["active"]
-  [callback_id] = global_callback_id.data["callback_id"]
-  play_pause_button.label = "Pause"
+  [active] = global_active.data['active']
+  [callback_id] = global_callback_id.data['callback_id']
+  play_pause_button.label = 'Pause'
   disable_all_sliders(True)
   load_fft()
   solve_halfspace()
@@ -1100,15 +1100,15 @@ def play():
   callback_id = curdoc().add_periodic_callback(evolve,100)
   global_active.data = dict(active=[True])
   global_callback_id.data = dict(callback_id = [callback_id])
-play_pause_button = Button(label="Play", button_type="success",width=100)
+play_pause_button = Button(label='Play', button_type='success',width=100)
 play_pause_button.on_click(play_pause)
 
 def stop():
-  [t] = global_t.data["t"]
+  [t] = global_t.data['t']
   disable_all_sliders(False)
   pause()
   global_t.data = dict(t = [0])
-stop_button = Button(label="Stop", button_type="success", width=100)
+stop_button = Button(label='Stop', button_type='success', width=100)
 stop_button.on_click(stop)
 
 def reset():
@@ -1125,7 +1125,7 @@ def reset():
   p.x_range.end = 10
   p.y_range.start = -52
   p.y_range.end = 10
-reset_button = Button(label="Reset", button_type="success",width=100)
+reset_button = Button(label='Reset', button_type='success',width=100)
 reset_button.on_click(reset)
 
 
@@ -1140,9 +1140,9 @@ p = Plot(title=t,x_range=Range1d(start=-10,end=10),y_range=Range1d(start=-52,end
        plot_height = 928, plot_width = 800)
 p.toolbar.logo=None
 xaxis = LinearAxis()
-xaxis.axis_label = "x in [m]"
+xaxis.axis_label = 'x in [m]'
 yaxis = LinearAxis()
-yaxis.axis_label = "z in [m]"
+yaxis.axis_label = 'z in [m]'
 p.title.text_font_size = '15pt'
 
 glyph_line = Line(x='x', y='y', line_color='black', line_width=2)
@@ -1181,8 +1181,8 @@ a = figure(plot_height = 540, plot_width = 540,
            title='Displacement components of the potentials')
 a.toolbar.logo=None
 a.tools=[PanTool(), WheelZoomTool(), SaveTool(), BoxZoomTool(), ResetTool()]
-a.xaxis.axis_label = "x in [m]"
-a.yaxis.axis_label = "z in [m]"
+a.xaxis.axis_label = 'x in [m]'
+a.yaxis.axis_label = 'z in [m]'
 a.title.text_font_size = '15pt'
 
 
@@ -1190,54 +1190,54 @@ dPhi_dx_vector_glyph = Arrow(end=NormalHead(line_color='#0065BD',
                                             fill_color='#0065BD',line_width=2,
                                             size=10),
                   x_start='xS', y_start='zS', x_end='xE', y_end='zE',
-                  source=global_dPhi_dx_vector_source,line_color="#0065BD",
+                  source=global_dPhi_dx_vector_source,line_color='#0065BD',
                   line_width=3)
 dPsi_y_dz_vector_glyph = Arrow(end=NormalHead(line_color='#E37222',
                                              fill_color='#E37222',line_width=2,
                                              size=10, line_alpha=0.7),
                   x_start='xS', y_start='zS', x_end='xE', y_end='zE',
-                  source=global_dPsi_y_dz_vector_source,line_color="#E37222",
+                  source=global_dPsi_y_dz_vector_source,line_color='#E37222',
                   line_width=3,line_alpha=0.7)
 dPhi_dz_vector_glyph = Arrow(end=NormalHead(line_color='#A2AD00',
                                             fill_color='#A2AD00',line_width=2,
                                             size=10),
                   x_start='xS', y_start='zS', x_end='xE', y_end='zE',
-                  source=global_dPhi_dz_vector_source,line_color="#A2AD00",
+                  source=global_dPhi_dz_vector_source,line_color='#A2AD00',
                   line_width=3)
 dPsi_y_dx_vector_glyph = Arrow(end=NormalHead(line_color='red',
                                              fill_color='red',
                                              line_width=2,size=10,
                                              line_alpha=0.7),
                   x_start='xS', y_start='zS', x_end='xE', y_end='zE',
-                  source=global_dPsi_y_dx_vector_source,line_color="red",
+                  source=global_dPsi_y_dx_vector_source,line_color='red',
                   line_width=3,line_alpha=0.7)
 total_potential_vector_glyph = Arrow(end=NormalHead(line_color='black',
                                                     fill_color='black',
                                                     line_width=4,size=12,
                                                     line_alpha=0.5),
                   x_start='xS', y_start='zS', x_end='xE', y_end='zE',
-                  source=total_potential_vector_source,line_color="black",
+                  source=total_potential_vector_source,line_color='black',
                   line_width=4,line_alpha=0.5)
 u_rayleigh_vector_glyph = Arrow(end=NormalHead(line_color='purple',
                                                fill_color='purple',
                                                line_width=2,size=10,
                                                line_alpha=0.7),
                   x_start='xS', y_start='zS', x_end='xE', y_end='zE',
-                  source=global_u_rayleigh_source,line_color="purple",
+                  source=global_u_rayleigh_source,line_color='purple',
                   line_width=3,line_alpha=0.7)
 w_rayleigh_vector_glyph = Arrow(end=NormalHead(line_color='purple',
                                                fill_color='purple',
                                                line_width=2,size=10,
                                                line_alpha=0.7),
                   x_start='xS', y_start='zS', x_end='xE', y_end='zE',
-                  source=global_w_rayleigh_source,line_color="purple",
+                  source=global_w_rayleigh_source,line_color='purple',
                   line_width=3,line_alpha=0.7)
 total_rayleigh_vector_glyph = Arrow(end=NormalHead(line_color='black',
                                                    fill_color='black',
                                                    line_width=4,size=12,
                                                    line_alpha=0.5), 
                   x_start='xS', y_start='zS', x_end='xE', y_end='zE',
-                  source=global_rayleigh_vector_source,line_color="black",
+                  source=global_rayleigh_vector_source,line_color='black',
                   line_width=4,line_alpha=0.5)
 a.add_layout(dPhi_dx_vector_glyph)
 a.add_layout(dPsi_y_dz_vector_glyph)   
@@ -1255,13 +1255,13 @@ a.add_layout(total_rayleigh_vector_glyph)
 ###############################################################################
 # table with wave parameters ##################################################
 ###############################################################################
-table_columns = [TableColumn(field="lamb_p", title="lamb_p [m]"),
-                 TableColumn(field="c_p", title="c_p [m/s]"),
-                 TableColumn(field="lamb_s", title="lamb_s [m]"),
-                 TableColumn(field="c_s", title="c_s [m/s]"),
-                 TableColumn(field="lamb_r", title="lamb_r [m]"),
-                 TableColumn(field="c_r", title="c_r [m/s]"),
-                 TableColumn(field="my", title="G [MN/m^2]"),
+table_columns = [TableColumn(field='lamb_p', title='lamb_p [m]'),
+                 TableColumn(field='c_p', title='c_p [m/s]'),
+                 TableColumn(field='lamb_s', title='lamb_s [m]'),
+                 TableColumn(field='c_s', title='c_s [m/s]'),
+                 TableColumn(field='lamb_r', title='lamb_r [m]'),
+                 TableColumn(field='c_r', title='c_r [m/s]'),
+                 TableColumn(field='my', title='G [MN/m^2]'),
                  ]
 parameters_data_table = DataTable(source=global_parameters_data_table_source,
                                   columns=table_columns,
@@ -1277,8 +1277,8 @@ parameters_data_table = DataTable(source=global_parameters_data_table_source,
 ###############################################################################
 # descriptions ################################################################
 ###############################################################################
-paragraph =LatexDiv(text="""&nbsp;<span style="color: #0065bd;">$$\\frac{\\partial \\Phi}{\\partial x}$$</span><span style="color: #a2ad00;">$$\\frac{\\partial \\Phi}{\\partial z}$$</span><span style="color: #e37222;">$$\\frac{\\partial \\Psi_{y}}{\\partial z}$$</span><span style="color: #ff0000;">$$\\frac{\\partial \\Psi_{y}}{\\partial x}$$</span><span style="color: #993366;">$$\\text{Rayleigh}$$</span><span style="color: #993366;">$$(p_{0}=0)$$</span><span style="color: #000000;">$$\\text{total}$$</span>""",width=10, height=15)
-description_filename = join(dirname(__file__), "description.html")
+paragraph =LatexDiv(text='''&nbsp;<span style='color: #0065bd;'>$$\\frac{\\partial \\Phi}{\\partial x}$$</span><span style='color: #a2ad00;'>$$\\frac{\\partial \\Phi}{\\partial z}$$</span><span style='color: #e37222;'>$$\\frac{\\partial \\Psi_{y}}{\\partial z}$$</span><span style='color: #ff0000;'>$$\\frac{\\partial \\Psi_{y}}{\\partial x}$$</span><span style='color: #993366;'>$$\\text{Rayleigh}$$</span><span style='color: #993366;'>$$(p_{0}=0)$$</span><span style='color: #000000;'>$$\\text{total}$$</span>''',width=10, height=15)
+description_filename = join(dirname(__file__), 'description.html')
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1400)
 
 
@@ -1347,4 +1347,4 @@ doc_layout = layout(children=[column(description,
 # bokeh server ################################################################
 ###############################################################################
 curdoc().add_root(doc_layout)
-curdoc().title = "Wave Propagation"
+curdoc().title = 'Wave Propagation'
