@@ -17,38 +17,21 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv, LatexLabelSet
 
-#Force Vectors
-P1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
-P2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
-F1_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
-F2_arrow_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
-#labels for Forces
-P1_label_source = ColumnDataSource(data=dict(x=[],y=[],P1=[]))
-P2_label_source = ColumnDataSource(data=dict(x=[],y=[],P2=[]))
-F1_label_source = ColumnDataSource(data=dict(x=[],y=[],F1=[]))
-F2_label_source = ColumnDataSource(data=dict(x=[],y=[],F2=[]))
-#Triangle source:
-support_source = ColumnDataSource(data=dict(x= [], y= [], src = []))
-#plot corresponding  to  change in  Force
-ForcegraphTop=ColumnDataSource(data=dict(x=[], y=[])) 
-ForcegraphBottom=ColumnDataSource(data=dict(x=[], y=[])) 
-
 h_beam = 1.0
 
-def initialize():
-    P1_arrow_source.data = dict(xS=[0], xE=[0], yS=[-10], yE=[-h_beam], lW = [5])
-    P1_label_source.data = dict(x=[1],y=[-7],P1=["P"])
-    P2_arrow_source.data = dict(xS=[40], xE=[40], yS=[10], yE=[h_beam], lW = [5])
-    P2_label_source.data = dict(x=[37.5],y=[5],P2=["P"])
-    F1_arrow_source.data = dict(xS=[0], xE=[0], yS=[10], yE=[h_beam], lW = [5])
-    F1_label_source.data = dict(x=[1],y=[5],F1=["F"])
-    F2_arrow_source.data = dict(xS=[40], xE=[40], yS=[-10], yE=[-h_beam], lW = [5])
-    F2_label_source.data = dict(x=[37.5],y=[-7],F2=["F"])
-    support_source.data = dict(x = [20], y = [-h_beam], src = ["Couple_moment/static/images/fixed_support.svg"]) 
-    ForcegraphTop.data = dict(x =[0],y =[10] )
-    ForcegraphBottom.data = dict(x =[40],y =[-10] )
+# Force vectors and labels
+P1_arrow_source = ColumnDataSource(dict(xS=[0], xE=[0], yS=[-10], yE=[-h_beam], lW = [5]))
+P1_label_source = ColumnDataSource(dict(x=[1],y=[-7],P1=["P"]))
+P2_arrow_source = ColumnDataSource(dict(xS=[40], xE=[40], yS=[10], yE=[h_beam], lW = [5]))
+P2_label_source = ColumnDataSource(dict(x=[37.5],y=[5],P2=["P"]))
+F1_arrow_source = ColumnDataSource(dict(xS=[0], xE=[0], yS=[10], yE=[h_beam], lW = [5]))
+F1_label_source = ColumnDataSource(dict(x=[1],y=[5],F1=["F"]))
+F2_arrow_source = ColumnDataSource(dict(xS=[40], xE=[40], yS=[-10], yE=[-h_beam], lW = [5]))
+F2_label_source = ColumnDataSource(dict(x=[37.5],y=[-7],F2=["F"]))
+# Support source
+support_source = ColumnDataSource(dict(x = [20], y = [-h_beam], src = ["Couple_moment/static/images/fixed_support.svg"]))
 
-
+# Plot
 plot = figure(title="", tools="", x_range=(0-2,40+2), y_range=(-50,50))
 plot.axis.axis_label_text_font_style="normal"
 plot.axis.axis_label_text_font_size="14pt"
@@ -73,6 +56,7 @@ P1_label_glyph=LatexLabelSet(x='x', y='y',text='P1',text_font_size="15pt",level=
 P2_label_glyph=LatexLabelSet(x='x', y='y',text='P2',text_font_size="15pt",level='glyph',source=P2_label_source)
 F1_label_glyph=LatexLabelSet(x='x', y='y',text='F1',text_font_size="15pt",level='glyph',source=F1_label_source)
 F2_label_glyph=LatexLabelSet(x='x', y='y',text='F2',text_font_size="15pt",level='glyph',source=F2_label_source)
+
 plot.add_layout(P1_arrow_glyph)
 plot.add_layout(P2_arrow_glyph)
 plot.add_layout(F1_arrow_glyph)
@@ -81,10 +65,6 @@ plot.add_layout(P1_label_glyph)
 plot.add_layout(P2_label_glyph)
 plot.add_layout(F1_label_glyph)
 plot.add_layout(F2_label_glyph)
-plot.line(x='x',y='y', source=ForcegraphTop,line_width=3,line_color="#E37222",legend=" Force amplitude", line_dash='dotted')
-plot.line(x='x',y='y', source=ForcegraphBottom,line_width=3,line_color="#E37222",legend=" Force amplitude",line_dash='dotted' )
-
-
 
 def changeF1F2(attr, old, new):
     #changing Force graph back to initial condition
@@ -94,7 +74,7 @@ def changeF1F2(attr, old, new):
     F2_arrow_source.patch( {"xS":[(0,40-new)], "xE":[(0,40-new)], "yS":[(0,-YS)]} )
     F2_label_source.patch({"x":[(0,37.5-new)]})
      
-#creating  slider to change location of Forces F1 and F2
+# Slider to change location of Forces F1 and F2
 #F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082 (m)",value= 0,start = 0, end = 19, step = 1)
 F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082 together",value= 0,start = 0, end = 19, step = 1)
 F1F2Location_slider.on_change('value',changeF1F2)
@@ -102,8 +82,6 @@ F1F2Location_slider.on_change('value',changeF1F2)
 #adding description from HTML file
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
-
-initialize()
 
 curdoc().add_root(column(description,row(plot,column(F1F2Location_slider))))
 curdoc().title = "Couple moment"
