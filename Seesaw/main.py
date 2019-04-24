@@ -44,6 +44,10 @@ dist = Arrow(end=TeeHead(line_color="#808080", line_width=1, size=10),
     start=TeeHead(line_color="#808080",line_width=1, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width=1, line_color="#808080", source=dist_source)
 dist_label = LatexLabelSet(x='xL', y='yL', text='text', source=dist_source)
+length = Arrow(end=TeeHead(line_color="#808080", line_width=1, size=10),
+    start=TeeHead(line_color="#808080",line_width=1, size=10),
+    x_start=0, y_start=-25, x_end=40, y_end=-25, line_width=1, line_color="#808080")
+length_label = LatexLabelSet(x='x', y='y', text='text', source=ColumnDataSource(dict(x=[19.7], y=[-23.5], text=["l"])))
 
 #plotting Vectors as arrows
 F1_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222", line_width=4, size=10),
@@ -60,6 +64,8 @@ plot.add_layout(F1_label_glyph)
 plot.add_layout(F2_label_glyph)
 plot.add_layout(dist)
 plot.add_layout(dist_label)
+plot.add_layout(length)
+plot.add_layout(length_label)
 
 # Div to show force and distance values
 value_plot = LatexDiv(text="", render_as_text=False, width=300)
