@@ -297,6 +297,8 @@ fig1.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #angle_glyph1=LabelSet(x='x', y='y',text='t',text_color='black',
 #    text_font_size="15pt", source=AlphaPos)
 #fig1.add_layout(angle_glyph1)
+fig1.grid.visible = False
+fig1.axis.visible = False
 fig1.toolbar_location = None
 time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display[0])
 # this if does not work, since it will be executed before the variable will be altered!
@@ -316,6 +318,8 @@ fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #angle_glyph2=LabelSet(x='x', y='y',text='t',text_color='black',
 #    text_font_size="15pt", source=AlphaPos)
 #fig2.add_layout(angle_glyph2)
+fig2.grid.visible = False
+fig2.axis.visible = False
 fig2.toolbar_location = None
 time_lable2 = LabelSet(x='x', y='y', text='t', source=time_display[1])
 fig2.add_layout(time_lable2)
@@ -330,6 +334,8 @@ fig3.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #angle_glyph3=LabelSet(x='x', y='y',text='t',text_color='black',
 #    text_font_size="15pt", source=AlphaPos)
 #fig3.add_layout(angle_glyph3)
+fig3.grid.visible = False
+fig3.axis.visible = False
 fig3.toolbar_location = None
 time_lable3 = LabelSet(x='x', y='y', text='t', source=time_display[2])
 fig3.add_layout(time_lable3)
