@@ -98,7 +98,7 @@ F1F2Location_slider.on_change('value',changeF1F2)
 
 #adding description from HTML file
 description_filename = join(dirname(__file__), "description.html")
-description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=880)
 
 curdoc().add_root(column(description,row(plot,column(F1F2Location_slider))))
 curdoc().title = "Couple moment"
