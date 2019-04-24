@@ -32,6 +32,12 @@ H             = rampLength*SIN
 SphereXLines = [np.array([]),np.array([])]
 SphereYLines = np.array([])
 
+def is_empty(obj):
+    if obj:  # returns true in a boolean context if obj has elements inside 
+        return False
+    else:
+        return True
+
 # create ColumnDataSources
 fig1_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
 fig1_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
@@ -60,7 +66,9 @@ glob_values = dict(offset = offset,
                    g      = g,
                    t      = t,
                    H      = H,
-                   hollow_object_counter = 1) # start with 1 because one hollow object is selected by default at start time
+                   num_vanished = 0,
+                   hollow_object_counter = 1, # start with 1 because one hollow object is selected by default at start time
+                   full_object_counter   = 2) # start with 2 because two full objects are selected by default at start time
 
 def init():
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] #      /output
@@ -349,9 +357,15 @@ evolveFunc2=lambda(x):moveCylinder(x,2.0,1.0,fig2_data,fig2_lines_data)
 evolveFunc3=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig3_data,fig3_lines_data)
 glob_fun_handles = dict(fun1=evolveFunc1, fun2=evolveFunc2, fun3=evolveFunc3)
 
+
+#def check_fig_data(fd1,fd2,fd3):
+    
+
+
 # function to change the shape, radius, or mass of the object in figure FIG
 def changeObject(FIG,new,r,ri,m):
     hoc = glob_values["hollow_object_counter"] # input/output
+    foc = glob_values["full_object_counter"]   # input/output
     # save the data concerned in data and line_data
     if (FIG==1):
         data=fig1_data
@@ -365,23 +379,34 @@ def changeObject(FIG,new,r,ri,m):
     # depending on the shape specified, create the object and
     # save the new evolution function in the variable func
     if (new == "Sphere"):
-        hoc -= 1
+        foc += 1
+        #hoc -= 1
         createSphere(r,data,line_data)
         func=lambda(x):moveSphere(x,r,m,data,line_data)
     elif (new=="Hollow cylinder"):
         createHollowCylinder(r,ri,data,line_data)
+        #foc -= 1
         hoc += 1
         # if counter > 2 then disable start button
         # TODO: vanishing objects
         if (abs(r-ri)<1e-5):
             data.data = dict(x=[],y=[],w=[],c=[],a=[])
+            glob_values["num_vanished"] += 1
         func=lambda(x):moveHollowCylinder(x,r,m,ri,data,line_data)
     elif (new == "Hollow sphere"):
+        #foc -= 1
         hoc += 1
         createHollowSphere(r,ri,data,line_data)
+        
+        # TODO: vanishing objects
+        if (abs(r-ri)<1e-5):
+            data.data = dict(x=[],y=[],w=[],c=[],a=[])
+            glob_values["num_vanished"] += 1
+        
         func=lambda(x):moveHollowSphere(x,r,m,ri,data,line_data)
     else:
-        hoc -= 1
+        foc += 1
+        #hoc -= 1
         createCylinder(r,data,line_data)
         func=lambda(x):moveCylinder(x,r,m,data,line_data)
     # store new counter value, valid values only in [0,3]-interval
@@ -389,8 +414,42 @@ def changeObject(FIG,new,r,ri,m):
     #       full only or hollow only  (need a history of 1 for every dropdown!)
     #       in case of history, we can't do it here...  "ChangeObject1,2,3" instead
     # TODO: => check if we can outsurce those callback functions in another file
-    glob_values["hollow_object_counter"] = min(max(hoc,0),3)
-    print(glob_values["hollow_object_counter"])
+    #glob_values["hollow_object_counter"] = min(max(hoc,0),3)
+    # only store updated values if 
+    #if(hoc+foc == 3):
+    #    glob_values["hollow_object_counter"] = hoc
+    #    glob_values["full_object_counter"]   = foc
+    #print("hollow: ", glob_values["hollow_object_counter"])
+    #print("full: ", glob_values["full_object_counter"])
+    #print("--------")
+    #print(glob_values["num_vanished"])
+    #print(fig3_data)
+    #print(fig3_data.data)
+    #print(is_empty(sum(fig3_data.data.values(),[])))
+    
+    
+    #TODO: outsource this function
+    # check if the data of each plot is empty
+    f1_data_is_empty = is_empty(sum(fig1_data.data.values(),[]))
+    f2_data_is_empty = is_empty(sum(fig2_data.data.values(),[]))
+    f3_data_is_empty = is_empty(sum(fig3_data.data.values(),[]))
+    
+    if (f1_data_is_empty and f2_data_is_empty and f3_data_is_empty):
+        # if all datas are empty (radius == inner radius) disable the start button
+        # simulation cannot be run without any existing object
+        start_button.disabled = True
+    else:
+        # if any of the data is not empty, at least one obejcts exists
+        # therefore, enable start button
+        start_button.disabled = False
+    
+    
+#    
+#    if (glob_values["num_vanished"]==3):
+#        print("---disable start button---")
+    
+   
+   
     # save the evolution function to the appropriate function handle
     if (FIG==1):
         glob_fun_handles["fun1"] = func        
