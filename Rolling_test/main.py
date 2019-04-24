@@ -32,6 +32,7 @@ H             = rampLength*SIN
 SphereXLines = [np.array([]),np.array([])]
 SphereYLines = np.array([])
 
+#TODO: move this function (and some other functions) in separate files
 def is_empty(obj):
     if obj:  # returns true in a boolean context if obj has elements inside 
         return False
@@ -65,10 +66,7 @@ glob_values = dict(offset = offset,
                    COS    = COS,
                    g      = g,
                    t      = t,
-                   H      = H,
-                   num_vanished = 0,
-                   hollow_object_counter = 1, # start with 1 because one hollow object is selected by default at start time
-                   full_object_counter   = 2) # start with 2 because two full objects are selected by default at start time
+                   H      = H)
 
 def init():
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] #      /output
@@ -151,20 +149,26 @@ def createHollowSphere(r,ri,sphere_data,sphere_lines_data):
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
     load_vals = ["SIN", "COS", "offset", "H"]
     SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
-    # find the centre, knowing that it touches the ramp at (offset,H)
-    newX = offset+r*SIN
-    newY = H+r*COS
-    # draw the sphere in semi-transparent blue
-    sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1-ri/r]) # a=[0.4]
-    # use the referece lines to find the current position of the lines
-    RCOS = r*COS
-    RSIN = r*SIN
-    X1 = SphereXLines[0]*RCOS+SphereYLines*RSIN+newX
-    X2 = SphereXLines[1]*RCOS+SphereYLines*RSIN+newX
-    Y1 = -SphereXLines[0]*RSIN+SphereYLines*RCOS+newY
-    Y2 = -SphereXLines[1]*RSIN+SphereYLines*RCOS+newY
-    # draw the lines
-    sphere_lines_data.data=dict(x=[X1, X2],y=[Y1,Y2])
+    
+    if (abs(r-ri)<1e-5):
+        # empty data if radius == inner radius (numerically)
+        sphere_data.data       = dict(x=[],y=[],w=[],c=[],a=[])
+        sphere_lines_data.data = dict(x=[],y=[])
+    else:    
+        # find the centre, knowing that it touches the ramp at (offset,H)
+        newX = offset+r*SIN
+        newY = H+r*COS
+        # draw the sphere in semi-transparent blue
+        sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1-ri/r]) # a=[0.4]
+        # use the referece lines to find the current position of the lines
+        RCOS = r*COS
+        RSIN = r*SIN
+        X1 = SphereXLines[0]*RCOS+SphereYLines*RSIN+newX
+        X2 = SphereXLines[1]*RCOS+SphereYLines*RSIN+newX
+        Y1 = -SphereXLines[0]*RSIN+SphereYLines*RCOS+newY
+        Y2 = -SphereXLines[1]*RSIN+SphereYLines*RCOS+newY
+        # draw the lines
+        sphere_lines_data.data=dict(x=[X1, X2],y=[Y1,Y2])
 
 def moveHollowSphere(t,r,m,ri,sphere_data,sphere_lines_data):
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
@@ -226,16 +230,22 @@ def moveCylinder(t,r,m, cylinder_data, cylinder_lines_data):
 def createHollowCylinder(r,ri, hollowCylinder_data, hollowCylinder_lines_data):
     load_vals = ["SIN", "COS", "offset", "H"]
     SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
-    # draw the cylinder around the centre, knowing that it touches the ramp at (offset,H)
-    hollowCylinder_data.data=dict(x=[offset+r*SIN,offset+r*SIN],
-        y=[H+r*COS,H+r*COS],w=[2*r,2*ri],c=["#0065BD","#FFFFFF"],a=[1,1])
-    hollowCylinder_lines_data.data=dict(x=[[offset,offset+(r-ri)*SIN],
-        [offset+(r+ri)*SIN,offset+2*r*SIN],
-        [offset+r*(SIN-COS),offset+r*SIN-ri*COS],
-        [offset+r*(SIN+COS),offset+r*SIN+ri*COS]],
-        y=[[H,H+(r-ri)*COS],[H+(r+ri)*COS,H+2*r*COS],
-        [H+r*(COS+SIN),H+r*COS+ri*SIN],
-        [H+r*(COS-SIN),H+r*COS-ri*SIN]])
+    
+    if (abs(r-ri)<1e-5):
+        # empty data if radius == inner radius (numerically)
+        hollowCylinder_data.data       = dict(x=[],y=[],w=[],c=[],a=[])
+        hollowCylinder_lines_data.data = dict(x=[],y=[])
+    else:
+        # draw the cylinder around the centre, knowing that it touches the ramp at (offset,H)
+        hollowCylinder_data.data=dict(x=[offset+r*SIN,offset+r*SIN],
+            y=[H+r*COS,H+r*COS],w=[2*r,2*ri],c=["#0065BD","#FFFFFF"],a=[1,1])
+        hollowCylinder_lines_data.data=dict(x=[[offset,offset+(r-ri)*SIN],
+            [offset+(r+ri)*SIN,offset+2*r*SIN],
+            [offset+r*(SIN-COS),offset+r*SIN-ri*COS],
+            [offset+r*(SIN+COS),offset+r*SIN+ri*COS]],
+            y=[[H,H+(r-ri)*COS],[H+(r+ri)*COS,H+2*r*COS],
+            [H+r*(COS+SIN),H+r*COS+ri*SIN],
+            [H+r*(COS-SIN),H+r*COS-ri*SIN]])
 
 def moveHollowCylinder(t,r,m,ri,hollowCylinder_data,hollowCylinder_lines_data):
     load_vals = ["g", "alpha", "SIN", "COS", "offset", "H"]
@@ -358,14 +368,8 @@ evolveFunc3=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig3_data,fig3_lines_data
 glob_fun_handles = dict(fun1=evolveFunc1, fun2=evolveFunc2, fun3=evolveFunc3)
 
 
-#def check_fig_data(fd1,fd2,fd3):
-    
-
-
 # function to change the shape, radius, or mass of the object in figure FIG
 def changeObject(FIG,new,r,ri,m):
-    hoc = glob_values["hollow_object_counter"] # input/output
-    foc = glob_values["full_object_counter"]   # input/output
     # save the data concerned in data and line_data
     if (FIG==1):
         data=fig1_data
@@ -379,56 +383,20 @@ def changeObject(FIG,new,r,ri,m):
     # depending on the shape specified, create the object and
     # save the new evolution function in the variable func
     if (new == "Sphere"):
-        foc += 1
-        #hoc -= 1
         createSphere(r,data,line_data)
         func=lambda(x):moveSphere(x,r,m,data,line_data)
     elif (new=="Hollow cylinder"):
         createHollowCylinder(r,ri,data,line_data)
-        #foc -= 1
-        hoc += 1
-        # if counter > 2 then disable start button
-        # TODO: vanishing objects
-        if (abs(r-ri)<1e-5):
-            data.data = dict(x=[],y=[],w=[],c=[],a=[])
-            glob_values["num_vanished"] += 1
         func=lambda(x):moveHollowCylinder(x,r,m,ri,data,line_data)
     elif (new == "Hollow sphere"):
-        #foc -= 1
-        hoc += 1
         createHollowSphere(r,ri,data,line_data)
-        
-        # TODO: vanishing objects
-        if (abs(r-ri)<1e-5):
-            data.data = dict(x=[],y=[],w=[],c=[],a=[])
-            glob_values["num_vanished"] += 1
-        
         func=lambda(x):moveHollowSphere(x,r,m,ri,data,line_data)
     else:
-        foc += 1
-        #hoc -= 1
         createCylinder(r,data,line_data)
         func=lambda(x):moveCylinder(x,r,m,data,line_data)
-    # store new counter value, valid values only in [0,3]-interval
-    # TODO: solve the problem that the counter still moves when switching between
-    #       full only or hollow only  (need a history of 1 for every dropdown!)
-    #       in case of history, we can't do it here...  "ChangeObject1,2,3" instead
-    # TODO: => check if we can outsurce those callback functions in another file
-    #glob_values["hollow_object_counter"] = min(max(hoc,0),3)
-    # only store updated values if 
-    #if(hoc+foc == 3):
-    #    glob_values["hollow_object_counter"] = hoc
-    #    glob_values["full_object_counter"]   = foc
-    #print("hollow: ", glob_values["hollow_object_counter"])
-    #print("full: ", glob_values["full_object_counter"])
-    #print("--------")
-    #print(glob_values["num_vanished"])
-    #print(fig3_data)
-    #print(fig3_data.data)
-    #print(is_empty(sum(fig3_data.data.values(),[])))
     
     
-    #TODO: outsource this function
+    #TODO: outsource this part into another function (other purpose)
     # check if the data of each plot is empty
     f1_data_is_empty = is_empty(sum(fig1_data.data.values(),[]))
     f2_data_is_empty = is_empty(sum(fig2_data.data.values(),[]))
@@ -443,12 +411,6 @@ def changeObject(FIG,new,r,ri,m):
         # therefore, enable start button
         start_button.disabled = False
     
-    
-#    
-#    if (glob_values["num_vanished"]==3):
-#        print("---disable start button---")
-    
-   
    
     # save the evolution function to the appropriate function handle
     if (FIG==1):
@@ -607,9 +569,7 @@ def reset():
     disable_all_sliders(False)
     time_display[0].data=dict(x=[],y=[],t=[])
     time_display[1].data=dict(x=[],y=[],t=[])
-    time_display[2].data=dict(x=[],y=[],t=[])
-    #glob_values["hollow_object_counter"] = 0
-    
+    time_display[2].data=dict(x=[],y=[],t=[])    
 
 def evolve():
     t = glob_values["t"] # input/output
