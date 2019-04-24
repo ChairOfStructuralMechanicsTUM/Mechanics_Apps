@@ -24,15 +24,16 @@ P1_arrow_source = ColumnDataSource(dict(xS=[0], xE=[0], yS=[-10], yE=[-h_beam], 
 P1_label_source = ColumnDataSource(dict(x=[1],y=[-7],P1=["P"]))
 P2_arrow_source = ColumnDataSource(dict(xS=[40], xE=[40], yS=[10], yE=[h_beam], lW = [5]))
 P2_label_source = ColumnDataSource(dict(x=[37.5],y=[5],P2=["P"]))
-F1_arrow_source = ColumnDataSource(dict(xS=[0], xE=[0], yS=[10], yE=[h_beam], lW = [5]))
-F1_label_source = ColumnDataSource(dict(x=[1],y=[5],F1=["F"]))
-F2_arrow_source = ColumnDataSource(dict(xS=[40], xE=[40], yS=[-10], yE=[-h_beam], lW = [5]))
-F2_label_source = ColumnDataSource(dict(x=[37.5],y=[-7],F2=["F"]))
+F1_arrow_source = ColumnDataSource(dict(xS=[10], xE=[10], yS=[20], yE=[h_beam], lW = [5]))
+F1_label_source = ColumnDataSource(dict(x=[11],y=[5],F1=["F"]))
+F2_arrow_source = ColumnDataSource(dict(xS=[30], xE=[30], yS=[-20], yE=[-h_beam], lW = [5]))
+F2_label_source = ColumnDataSource(dict(x=[27.5],y=[-7],F2=["F"]))
 # Support source
 support_source = ColumnDataSource(dict(x = [20], y = [-h_beam], src = ["Couple_moment/static/images/fixed_support.svg"]))
 
 # Plot
 plot = figure(title="", tools="", x_range=(0-2,40+2), y_range=(-50,50))
+plot.toolbar.logo = None
 plot.axis.axis_label_text_font_style="normal"
 plot.axis.axis_label_text_font_size="14pt"
 plot.xaxis.axis_label="Distance [m]"
@@ -47,7 +48,7 @@ dist_a = Arrow(end=TeeHead(line_color="#808080", line_width=1, size=10),
     start=TeeHead(line_color="#808080",line_width=1, size=10),
     x_start=0, y_start=-15, x_end=20, y_end=-15,line_width=1, line_color="#808080")
 dist_a_label = LatexLabelSet(x='x', y='y', text='text', source=ColumnDataSource(dict(x=[9.7], y=[-13.5], text=["a"])))
-dist_b_source = ColumnDataSource(dict(xS=[20], xE=[40], yS=[15], yE=[15], xL=[29.7], yL=[16.5], text=["b"]))
+dist_b_source = ColumnDataSource(dict(xS=[20], xE=[30], yS=[15], yE=[15], xL=[24.7], yL=[16.5], text=["b"]))
 dist_b = Arrow(end=TeeHead(line_color="#808080", line_width=1, size=10),
     start=TeeHead(line_color="#808080",line_width=1, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width=1, line_color="#808080", source=dist_b_source)
@@ -92,7 +93,7 @@ def changeF1F2(attr, old, new):
     dist_b_source.patch( {'xE':[( 0,40-new )], 'xL':[(0,(20-new)/2.0+20)]} )
      
 # Slider to change location of Forces F1 and F2
-F1F2Location_slider = LatexSlider(title="\\text{Length } b =",value=20, start = 1, end = 20, step = 1, value_unit="\\text{m}")
+F1F2Location_slider = LatexSlider(title="\\text{Length } b =",value=10, start=1, end=20, step=1, value_unit="\\text{m}")
 F1F2Location_slider.on_change('value',changeF1F2)
 
 #adding description from HTML file
