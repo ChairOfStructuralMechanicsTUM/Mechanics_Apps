@@ -6,7 +6,7 @@ initial work by: Rishith Ellath Meethal
 
 from bokeh.plotting import figure 
 from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, Slider, Arrow, OpenHead, Line
+from bokeh.models import ColumnDataSource, Slider, Arrow, OpenHead, Line, TeeHead
 from bokeh.models.glyphs import ImageURL
 from bokeh.io import curdoc
 
@@ -15,7 +15,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_support import LatexDiv, LatexLabelSet
+from latex_support import LatexDiv, LatexSlider, LatexLabelSet
 
 h_beam = 1.0
 
@@ -42,6 +42,18 @@ plot.yaxis.axis_label="Force [N]"
 plot.line([0, 40], [0, 0], line_width=10, color='#3070B3')
 plot.add_glyph(support_source,ImageURL(url="src", x='x', y='y', w=5, h=5, anchor="top_center"))
 
+# plot distance
+dist_a = Arrow(end=TeeHead(line_color="#808080", line_width=1, size=10),
+    start=TeeHead(line_color="#808080",line_width=1, size=10),
+    x_start=0, y_start=-15, x_end=20, y_end=-15,line_width=1, line_color="#808080")
+dist_a_label = LatexLabelSet(x='x', y='y', text='text', source=ColumnDataSource(dict(x=[9.7], y=[-13.5], text=["a"])))
+dist_b_source = ColumnDataSource(dict(xS=[20], xE=[40], yS=[15], yE=[15], xL=[29.7], yL=[16.5], text=["b"]))
+dist_b = Arrow(end=TeeHead(line_color="#808080", line_width=1, size=10),
+    start=TeeHead(line_color="#808080",line_width=1, size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width=1, line_color="#808080", source=dist_b_source)
+dist_b_label = LatexLabelSet(x='xL', y='yL', text='text', source=dist_b_source)
+
+
 #plotting Vectors as arrows
 P1_arrow_glyph = Arrow(end=OpenHead(line_color="#A2AD00",line_width= 4, size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=P1_arrow_source,line_color="#A2AD00")
@@ -65,18 +77,22 @@ plot.add_layout(P1_label_glyph)
 plot.add_layout(P2_label_glyph)
 plot.add_layout(F1_label_glyph)
 plot.add_layout(F2_label_glyph)
+plot.add_layout(dist_a)
+plot.add_layout(dist_a_label)
+plot.add_layout(dist_b)
+plot.add_layout(dist_b_label)
 
 def changeF1F2(attr, old, new):
-    #changing Force graph back to initial condition
+    new = 20.0-new
     YS = 400.0/(40.0-2.0*new)
     F1_arrow_source.patch( {"xS":[(0,new)], "xE":[(0,new)], "yS":[(0,YS)]} )
-    F1_label_source.patch({"x":[(0,1+new)]})
+    F1_label_source.patch( {"x":[(0,1+new)]} )
     F2_arrow_source.patch( {"xS":[(0,40-new)], "xE":[(0,40-new)], "yS":[(0,-YS)]} )
-    F2_label_source.patch({"x":[(0,37.5-new)]})
+    F2_label_source.patch( {"x":[(0,37.5-new)]} )
+    dist_b_source.patch( {'xE':[( 0,40-new )], 'xL':[(0,(20-new)/2.0+20)]} )
      
 # Slider to change location of Forces F1 and F2
-#F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082 (m)",value= 0,start = 0, end = 19, step = 1)
-F1F2Location_slider= Slider(title="Change Location of F"u"\u2081 and F"u"\u2082 together",value= 0,start = 0, end = 19, step = 1)
+F1F2Location_slider = LatexSlider(title="\\text{Length } b =",value=20, start = 1, end = 20, step = 1, value_unit="\\text{m}")
 F1F2Location_slider.on_change('value',changeF1F2)
 
 #adding description from HTML file
