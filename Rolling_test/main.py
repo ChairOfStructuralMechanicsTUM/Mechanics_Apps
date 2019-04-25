@@ -12,7 +12,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_support import LatexLabelSet
+from latex_support import LatexLabelSet, LatexDiv
 
 # create variables
 g             = 9.81
@@ -302,17 +302,10 @@ fig0.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig_lines
 fig0.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
 fig0.line(x='x',y='y',color="black",line_width=2,source=wall_source)
 fig0.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-#angle_glyph1=LabelSet(x='x', y='y',text='t',text_color='black',
-#    text_font_size="15pt", source=AlphaPos)
-#fig0.add_layout(angle_glyph1)
 fig0.grid.visible = False
 fig0.axis.visible = False
 fig0.toolbar_location = None
 time_lable0 = LabelSet(x='x', y='y', text='t', source=time_display[0])
-# this if does not work, since it will be executed before the variable will be altered!
-# -> use array of time_display ColumnDataSources
-#if glob_values["hit_end"][0]:
-#    fig1.add_layout(time_lable1)
 fig0.add_layout(time_lable0)
 
 
@@ -323,10 +316,7 @@ fig1.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig_lines
 fig1.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
 fig1.line(x='x',y='y',color="black",line_width=2,source=wall_source)
 fig1.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-#angle_glyph2=LabelSet(x='x', y='y',text='t',text_color='black',
-#    text_font_size="15pt", source=AlphaPos)
-#fig2.add_layout(angle_glyph2)
-#fig2.grid.visible = False
+#fig1.grid.visible = False
 fig1.axis.visible = False
 fig1.toolbar_location = None
 time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display[1])
@@ -339,9 +329,6 @@ fig2.multi_line(xs='x',ys='y',color="#003359",line_width=3,source=fig_lines_data
 fig2.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
 fig2.line(x='x',y='y',color="black",line_width=2,source=wall_source)
 fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-#angle_glyph3=LabelSet(x='x', y='y',text='t',text_color='black',
-#    text_font_size="15pt", source=AlphaPos)
-#fig3.add_layout(angle_glyph3)
 #fig2.grid.visible = False
 #fig2.axis.visible = False
 fig2.toolbar_location = None
@@ -351,16 +338,14 @@ fig2.add_layout(time_lable2)
 
 # sketch of the ramp and objects
 fig3 = figure(title="Annotations", x_range=(-50,0), y_range=(0,25), height=220, width=400, tools="")
-#fig4.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
 fig3.line(x=[0,-48],y=[0,18],color="black",line_width=2) # ramp
 fig3.line(x=[-48,-48],y=[0,18],color="black",line_width=2) # wall
 fig3.ellipse(x=[-45],y=[19],width=[4],height=[4],fill_color="#0065BD",line_color="#003359",line_width=3)
 fig3.ellipse(x=[-45],y=[19],width=[2.5],height=[4],fill_alpha=[0],line_color="#003359",line_width=3, angle=-0.7)
 fig3.ellipse(x=[0],y=[-1],width=[12], height=[10], fill_alpha=[0], line_color='black', line_width=2, line_dash='15 50', line_dash_offset=-10)
-#fig4.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-angle_glyph4=LabelSet(x='x', y='y',text='t',text_color='black',
+angle_glyph3=LabelSet(x='x', y='y',text='t',text_color='black',
     text_font_size="15pt", source=AlphaPos)
-fig3.add_layout(angle_glyph4)
+fig3.add_layout(angle_glyph3)
 fig3.grid.visible = False
 fig3.axis.visible = False
 fig3.toolbar_location = None
@@ -515,12 +500,6 @@ ri_slider1.on_change('value',changeWall1)
 ri_slider2 = Slider(title="Inner radius", value=1.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj3"])
 ri_slider2.on_change('value',changeWall2)
 
-
-
-mode_selection = RadioGroup(labels=["one", "all"], active=0, inline=True)
-p_mode = Paragraph(text="""Stopping mode: """)
-
-
 # slider function for the angle
 def changeAlpha(attr,old,new):
     alpha=radians(new)
@@ -554,6 +533,7 @@ def disable_all_sliders(d=True):
     ri_slider1.disabled     = d
     ri_slider2.disabled     = d
     alpha_slider.disabled   = d
+    mode_selection.disabled = d
 
 def start():
     [callback_id] = glob_callback_id.data["callback_id"] # input/output
@@ -610,31 +590,23 @@ def evolve():
     # get new coordinates of objects which are still running
     (x_coords,y_coords) = get_coordinates(glob_fun_handles, fig_in_use, t)
     
-    
     # if an object has reached the end of the ramp then stop the simulation
     ind_x_max = np.argmax(x_coords)
     ind_y_max = np.argmax(y_coords)
-    #max_x = max(x_coords)  # avoid multiple max and min evaluations
-    #min_y = min(y_coords)
     if (x_coords[ind_x_max]>0 or y_coords[ind_y_max]<0):
         # in mode "one" (active==0) the simulation is stopped after one of the objects reached the end of the ramp
         # in mode "all" (active==1) the simulation is stopped after all objects reached the end of the ramp 
         #               -> (only one fig in use at this time, one "True" <==> sum==1)
         # mode "one" is selected -> run until one simulation is finished
         # mode "all" is selected -> run all simulations till the end
-        if (mode_selection.active==0 or sum(fig_in_use)==1):
+        if (mode_selection.active==0 or sum(fig_in_use)<=1):
             start() #equals to stop if it is running
         
         # get the index (number of the plot) to know which plot finished the simulation
         plot_num = ind_x_max if x_coords[ind_x_max]>0 else ind_y_max
         fig_in_use[plot_num] = False
-        print(plot_num)
-        print("------")
         # change the corresponding CDS to display the time only in this plot
         time_display[plot_num].data=dict(x=[-10],y=[20],t=[str(glob_values["t"])+" s"])
-#TODO: only stop one figure and let the others finish too
-#      display finish time on each plot
-#      maybe add a button to switch between "let all run through" and "stop all"
 
 # create the buttons
 start_button = Button(label="Start", button_type="success")
@@ -642,10 +614,16 @@ start_button.on_click(start)
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(reset)
 
+mode_selection = RadioGroup(labels=["one", "all"], active=0, inline=True)
+p_mode = Paragraph(text="""Stopping mode: """)
+
 init()
+
+description_filename = join(dirname(__file__), "description.html")
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1180)
 ## Send to window
-curdoc().add_root(row(column(row(fig0,column(object_select0,radius_slider0,ri_slider0)),
+curdoc().add_root(column(description,row(column(row(fig0,column(object_select0,radius_slider0,ri_slider0)),
     row(fig1,column(object_select1,radius_slider1,ri_slider1)),
     row(fig2,column(object_select2,radius_slider2,ri_slider2))),Spacer(width=100),
-    column(start_button,reset_button,row(widgetbox(p_mode,width=120),mode_selection),alpha_slider, Spacer(height=30), fig3, fig4)))
+    column(start_button,reset_button,row(widgetbox(p_mode,width=120),mode_selection),alpha_slider, Spacer(height=30), fig3, fig4))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
