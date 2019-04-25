@@ -14,6 +14,8 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexLabelSet, LatexDiv
 
+#from outsourced_fcts import check_empty_data, get_coordinates
+
 # create variables
 g             = 9.81
 alpha         = radians(20)
@@ -370,9 +372,16 @@ evolveFunc1=lambda(x):moveCylinder(x,2.0,1.0,fig_data[1],fig_lines_data[1])
 evolveFunc2=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig_data[2],fig_lines_data[2])
 glob_fun_handles = [evolveFunc0,evolveFunc1,evolveFunc2]
 
-def check_empty_data():
-    # checks if all fig_datas are empty
-    # this is the case if only hollow objects are choosen with radius == inner radius
+def logical_indexing(arr, arr_ind, val):
+    # length arr == length arr_ind
+    # arr[arr_ind] = val
+    # write val in places in arr where arr_ind is True
+    for i in range(len(arr)):
+        arr[i] = val if arr_ind[i] else arr[i]
+
+def check_availability():
+    # check if all fig_datas are empty (data of each plot)
+    # this is the case if only hollow objects are chosen with radius == inner radius
     # A simulation does not make sense in this case, so disable the start button.
     n = len(fig_data)
     data_is_empty = [False]*n
@@ -380,13 +389,19 @@ def check_empty_data():
         # unpack the values of the CDS dictionary and 
         # concatenate them via sum(.,[])
         data_is_empty[i] = is_empty(sum(fig_data[i].data.values(),[]))
-        
+    
+    # simulations can be ended for figures where radius == inner radius
+    # fig_in_use[data_is_empty] = False
+    logical_indexing(fig_in_use,data_is_empty,False)
+    # the same for the complementary data_is_empty list if we change back the slider
+    logical_indexing(fig_in_use,[not i for i in data_is_empty],True)
+    
     if (all(data_is_empty)):
         # if all datas are empty (radius == inner radius) disable the start button
         # simulation cannot be run without any existing object
         start_button.disabled = True
     else:
-        # if any of the data is not empty, at least one obejct exists
+        # if any of the data is not empty, at least one object exists
         # therefore, enable start button
         start_button.disabled = False
 
@@ -414,9 +429,9 @@ def changeObject(FIG,new_object,r,ri,m):
         createCylinder(r,data,line_data)
         func=lambda(x):moveCylinder(x,r,m,data,line_data)
     
-    # check if the data of each plot is empty    
-    check_empty_data()
-        
+    # check the availability of each plot (existing object, still running or finished)
+    check_availability()
+
     # save the evolution function to the appropriate function handle
     glob_fun_handles[FIG] = func
     figure_list[FIG].title.text=new_object
@@ -569,8 +584,7 @@ def reset():
     time_display[0].data=dict(x=[],y=[],t=[])
     time_display[1].data=dict(x=[],y=[],t=[])
     time_display[2].data=dict(x=[],y=[],t=[])
-    fig_in_use[:] = [True,True,True] # [True]*len(fig_data)  for more general case
-    
+    check_availability()
     
 def get_coordinates(fun_handles, in_execution, t):
     # Input:  - list of function handles, size n
@@ -585,8 +599,7 @@ def get_coordinates(fun_handles, in_execution, t):
         else:
             (x_coords[j], y_coords[j]) = (-50,50)
     return (x_coords, y_coords)
-    
-    
+       
 
 def evolve():
     t = glob_values["t"] # input/output
@@ -603,7 +616,7 @@ def evolve():
     if (x_coords[ind_x_max]>0 or y_coords[ind_y_max]<0):
         # in mode "one" (active==0) the simulation is stopped after one of the objects reached the end of the ramp
         # in mode "all" (active==1) the simulation is stopped after all objects reached the end of the ramp 
-        #               -> (only one fig in use at this time, one "True" <==> sum==1)
+        #               -> (only one fig in use anymore at ending time, one "True" <==> sum==1))
         # mode "one" is selected -> run until one simulation is finished
         # mode "all" is selected -> run all simulations till the end
         if (mode_selection.active==0 or sum(fig_in_use)<=1):
@@ -614,6 +627,9 @@ def evolve():
         fig_in_use[plot_num] = False
         # change the corresponding CDS to display the time only in this plot
         time_display[plot_num].data=dict(x=[-10],y=[20],t=[str(glob_values["t"])+" s"])
+    # if all simulations have finished, disable the start button
+    if (not any(fig_in_use)):
+        start_button.disabled = True
 
 # create the buttons
 start_button = Button(label="Start", button_type="success")
