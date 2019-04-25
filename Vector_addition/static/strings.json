@@ -1,0 +1,23 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Vector Addition",
+        "de": "Vektoraddition"
+    },
+    "language_button.label":
+    {
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Vector_addition/description.html').read()",
+        "de": "open('Vector_addition/description_de.html').read()"
+    },
+    "show_button.label":
+    {
+        "en": "Show/Hide values",
+        "de": "Werte anzeigen/verbergen"
+    }
+}
