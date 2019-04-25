@@ -47,9 +47,9 @@ fig1_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
 fig1_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 fig2_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
 fig2_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
-
-fig_data = [fig0_data,fig1_data,fig2_data]
-fig_lines_data = [fig0_lines_data,fig1_lines_data,fig2_lines_data]
+# put them in a list for easy access in functions
+fig_data          = [fig0_data,fig1_data,fig2_data]
+fig_lines_data    = [fig0_lines_data,fig1_lines_data,fig2_lines_data]
 
 
 ramp_source       = ColumnDataSource(data = dict(x=[offset-rampAddLength*COS,0],y=[H+rampAddLength*SIN,0]))
@@ -60,6 +60,7 @@ AlphaPos          = ColumnDataSource(data = dict(x=[],y=[],t=[]))
 time_display      = [ColumnDataSource(data = dict(x=[],y=[],t=[])),
                      ColumnDataSource(data = dict(x=[],y=[],t=[])),
                      ColumnDataSource(data = dict(x=[],y=[],t=[]))]
+fig_in_use        = [True,True,True]  # [True]*len(fig_data)  for more general case
 
 # global variables
 glob_callback_id  = ColumnDataSource(data = dict(callback_id = [None]))
@@ -91,9 +92,6 @@ def init():
     glob_SphereXLines.data = dict(SphereXLines = [SphereXLines])
     glob_SphereYLines.data = dict(SphereYLines = [SphereYLines])
     # create the objects
-#    createSphere(2.0,fig1_data,fig1_lines_data)
-#    createCylinder(2.0,fig2_data,fig2_lines_data)
-#    createHollowCylinder(2.0,1.5,fig3_data,fig3_lines_data)
     createSphere(2.0,fig_data[0],fig_lines_data[0])
     createCylinder(2.0,fig_data[1],fig_lines_data[1])
     createHollowCylinder(2.0,1.5,fig_data[2],fig_lines_data[2])
@@ -378,35 +376,34 @@ fig4.grid.visible = False
 fig4.axis.visible = False
 fig4.toolbar_location = None
 
+# put the figures in a list for easy access in functions
+figure_list = [fig0,fig1,fig2]
+
 # name the functions to be used by each figure depending upon their content
 evolveFunc0=lambda(x):moveSphere(x,2.0,1.0,fig_data[0],fig_lines_data[0])
 evolveFunc1=lambda(x):moveCylinder(x,2.0,1.0,fig_data[1],fig_lines_data[1])
 evolveFunc2=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig_data[2],fig_lines_data[2])
-#glob_fun_handles = dict(fun1=evolveFunc1, fun2=evolveFunc2, fun3=evolveFunc3)
 glob_fun_handles = [evolveFunc0,evolveFunc1,evolveFunc2]
 
 # function to change the shape, radius, or mass of the object in figure FIG
-def changeObject(FIG,new,r,ri,m):
+def changeObject(FIG,new_object,r,ri,m):
     # save the data concerned in data and line_data
-    if (FIG==0):
-        data=fig_data[0]
-        line_data=fig_lines_data[0]
-    elif(FIG==1):
-        data=fig_data[1]
-        line_data=fig_lines_data[1]
-    else:
-        data=fig_data[2]
-        line_data=fig_lines_data[2]
+    data      = fig_data[FIG]
+    line_data = fig_lines_data[FIG]
     # depending on the shape specified, create the object and
     # save the new evolution function in the variable func
-    if (new == "Sphere"):
+    if (new_object == "Sphere"):
         createSphere(r,data,line_data)
         func=lambda(x):moveSphere(x,r,m,data,line_data)
-    elif (new=="Hollow cylinder"):
+    elif (new_object =="Hollow cylinder"):
         createHollowCylinder(r,ri,data,line_data)
         func=lambda(x):moveHollowCylinder(x,r,m,ri,data,line_data)
-    elif (new == "Hollow sphere"):
+    elif (new_object == "Hollow sphere"):
         createHollowSphere(r,ri,data,line_data)
+        if (abs(r-ri)<1e-5):
+            time_display[FIG].data=dict(x=[-20],y=[20],t=["Object vanished!"])
+        else:
+            time_display[FIG].data=dict(x=[],y=[],t=[])
         func=lambda(x):moveHollowSphere(x,r,m,ri,data,line_data)
     else:
         createCylinder(r,data,line_data)
@@ -428,17 +425,9 @@ def changeObject(FIG,new,r,ri,m):
         # therefore, enable start button
         start_button.disabled = False
     
-   
     # save the evolution function to the appropriate function handle
-    if (FIG==0):
-        glob_fun_handles[0] = func        
-        fig0.title.text=new
-    elif(FIG==1):
-        glob_fun_handles[1] = func
-        fig1.title.text=new
-    else:
-        glob_fun_handles[2] = func
-        fig2.title.text=new
+    glob_fun_handles[FIG] = func
+    figure_list[FIG].title.text=new_object
 
 ## slider functions
 # functions to change the shape
@@ -592,7 +581,8 @@ def reset():
     disable_all_sliders(False)
     time_display[0].data=dict(x=[],y=[],t=[])
     time_display[1].data=dict(x=[],y=[],t=[])
-    time_display[2].data=dict(x=[],y=[],t=[])  
+    time_display[2].data=dict(x=[],y=[],t=[])
+    fig_in_use[:] = [True,True,True] # [True]*len(fig_data)  for more general case
     
     
 def get_coordinates(fun_handles, in_execution, t):
@@ -617,26 +607,27 @@ def evolve():
     glob_values["t"] = t
     
     # call all necessary functions
-    #(x1,y1) = glob_fun_handles["fun1"](t)
-    #(x2,y2) = glob_fun_handles["fun2"](t)
-    #(x3,y3) = glob_fun_handles["fun3"](t)
-    
-    #temp_list = [glob_fu]
-    
-    (x_coords,y_coords) = get_coordinates(glob_fun_handles, [True, True, True], t)
+    # get new coordinates of objects which are still running
+    (x_coords,y_coords) = get_coordinates(glob_fun_handles, fig_in_use, t)
     
     
     # if an object has reached the end of the ramp then stop the simulation
-    #x_coords = [x1,x2,x3]
-    #y_coords = [y1,y2,y3]
-    max_x = max(x_coords)  # avoid multiple max and min evaluations
-    min_y = min(y_coords)
-    if (max_x>0 or min_y<0):
-        start() #equals to stop if it is running
+    ind_x_max = np.argmax(x_coords)
+    ind_y_max = np.argmax(y_coords)
+    #max_x = max(x_coords)  # avoid multiple max and min evaluations
+    #min_y = min(y_coords)
+    if (x_coords[ind_x_max]>0 or y_coords[ind_y_max]<0):
+        # in mode "one" (active==0) the simulation is stopped after one of the objects reached the end of the ramp
+        # in mode "all" (active==1) the simulation is stopped after all objects reached the end of the ramp 
+        #               -> (only one fig in use at this time, one "True" <==> sum==1)
+        # mode "one" is selected -> run until one simulation is finished
+        # mode "all" is selected -> run all simulations till the end
+        if (mode_selection.active==0 or sum(fig_in_use)==1):
+            start() #equals to stop if it is running
+        
         # get the index (number of the plot) to know which plot finished the simulation
-        #plot_num = x_coords.index(max_x) if max_x>0  else y_coords.index(min_y)
-        #print(plot_num)
-        plot_num = np.argmax(x_coords) if max_x>0 else np.argmax(y_coords)
+        plot_num = ind_x_max if x_coords[ind_x_max]>0 else ind_y_max
+        fig_in_use[plot_num] = False
         print(plot_num)
         print("------")
         # change the corresponding CDS to display the time only in this plot
