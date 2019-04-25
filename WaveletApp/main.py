@@ -11,7 +11,6 @@ from bokeh.io import curdoc
 from scriptWT import*
 from MorletWT import*
 
-from filled_contours import filled_contours
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
@@ -370,15 +369,12 @@ description_filename = join(dirname(__file__), "description.html")
 loading_spinner_filename = join(dirname(__file__), "loading_spinner.html")
 choose_WaveLet_error_filename = join(dirname(__file__), "choose_WaveLet_error.html")
 user_function_error_filename = join(dirname(__file__), "user_function_error.html")
-wavelet_plot_filename = join(dirname(__file__), "Wavelet.html")
-wavelet_plot_filename = join(dirname(__file__), "lines.html")
     
 
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1250)
 loading = Div(text=open(loading_spinner_filename).read(), render_as_text=False, width=650, height=100)
 choose_WaveLet = Div(text=open(choose_WaveLet_error_filename).read(), render_as_text=False, width=650, height=100)
 user_function = Div(text=open(user_function_error_filename).read(), render_as_text=False, width=650, height=100)
-wavelet_plot = Div (text=open(wavelet_plot_filename).read(), render_as_text=False, width=650, height=100)
 
 # create layout
 controls = [sample_fun_input_f]
