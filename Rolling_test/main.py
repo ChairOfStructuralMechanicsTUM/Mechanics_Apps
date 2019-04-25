@@ -283,7 +283,7 @@ def moveHollowCylinder(t,r,m,ri,hollowCylinder_data,hollowCylinder_lines_data):
 
 ## draw 3 graphs each containing a ramp, the angle marker, an ellipse, and lines
 
-XStart = -rampLength-maxR-5
+XStart = -rampLength-maxR#-5
 #YEnd   = H+2*maxR # start height, but we need height for max alpha
 YEnd   = rampLength*sin(radians(alpha_max))+2*maxR
 Width  = -255.4*XStart/YEnd #-220.0*XStart/YEnd
@@ -318,7 +318,7 @@ fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #angle_glyph2=LabelSet(x='x', y='y',text='t',text_color='black',
 #    text_font_size="15pt", source=AlphaPos)
 #fig2.add_layout(angle_glyph2)
-fig2.grid.visible = False
+#fig2.grid.visible = False
 fig2.axis.visible = False
 fig2.toolbar_location = None
 time_lable2 = LabelSet(x='x', y='y', text='t', source=time_display[1])
@@ -334,8 +334,8 @@ fig3.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #angle_glyph3=LabelSet(x='x', y='y',text='t',text_color='black',
 #    text_font_size="15pt", source=AlphaPos)
 #fig3.add_layout(angle_glyph3)
-fig3.grid.visible = False
-fig3.axis.visible = False
+#fig3.grid.visible = False
+#fig3.axis.visible = False
 fig3.toolbar_location = None
 time_lable3 = LabelSet(x='x', y='y', text='t', source=time_display[2])
 fig3.add_layout(time_lable3)
@@ -575,7 +575,24 @@ def reset():
     disable_all_sliders(False)
     time_display[0].data=dict(x=[],y=[],t=[])
     time_display[1].data=dict(x=[],y=[],t=[])
-    time_display[2].data=dict(x=[],y=[],t=[])    
+    time_display[2].data=dict(x=[],y=[],t=[])  
+    
+    
+def get_coordinates(fun_handles, in_execution, t):
+    # Input:  - list of function handles, size n
+    #         - list of bool values if function is still in execution, size n
+    #         - time t to evaluate the function on
+    # Output: - list of x- and y-coordinates, size 2xn
+    x_coords = np.zeros(len(fun_handles))
+    y_coords = x_coords.copy()
+    for j, handle in enumerate(fun_handles):
+        if in_execution[j]:
+            (x_coords[j], y_coords[j]) = handle(t)
+        else:
+            (x_coords[j], y_coords[j]) = (-50,50)
+    return (x_coords, y_coords)
+    
+    
 
 def evolve():
     t = glob_values["t"] # input/output
@@ -583,19 +600,28 @@ def evolve():
     glob_values["t"] = t
     
     # call all necessary functions
-    (x1,y1) = glob_fun_handles["fun1"](t)
-    (x2,y2) = glob_fun_handles["fun2"](t)
-    (x3,y3) = glob_fun_handles["fun3"](t)
+    #(x1,y1) = glob_fun_handles["fun1"](t)
+    #(x2,y2) = glob_fun_handles["fun2"](t)
+    #(x3,y3) = glob_fun_handles["fun3"](t)
+    
+    #temp_list = [glob_fu]
+    
+    (x_coords,y_coords) = get_coordinates(glob_fun_handles.values(), [True, True, True], t)
+    
     
     # if an object has reached the end of the ramp then stop the simulation
-    x_coords = [x1,x2,x3]
-    y_coords = [y1,y2,y3]
+    #x_coords = [x1,x2,x3]
+    #y_coords = [y1,y2,y3]
     max_x = max(x_coords)  # avoid multiple max and min evaluations
     min_y = min(y_coords)
     if (max_x>0 or min_y<0):
         start() #equals to stop if it is running
         # get the index (number of the plot) to know which plot finished the simulation
-        plot_num = x_coords.index(max_x) if max_x>0  else y_coords.index(min_y)
+        #plot_num = x_coords.index(max_x) if max_x>0  else y_coords.index(min_y)
+        #print(plot_num)
+        plot_num = np.argmax(x_coords) if max_x>0 else np.argmax(y_coords)
+        print(plot_num)
+        print("------")
         # change the corresponding CDS to display the time only in this plot
         time_display[plot_num].data=dict(x=[-10],y=[20],t=[str(glob_values["t"])+" s"])
 #TODO: only stop one figure and let the others finish too
