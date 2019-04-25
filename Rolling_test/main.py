@@ -370,6 +370,26 @@ evolveFunc1=lambda(x):moveCylinder(x,2.0,1.0,fig_data[1],fig_lines_data[1])
 evolveFunc2=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig_data[2],fig_lines_data[2])
 glob_fun_handles = [evolveFunc0,evolveFunc1,evolveFunc2]
 
+def check_empty_data():
+    # checks if all fig_datas are empty
+    # this is the case if only hollow objects are choosen with radius == inner radius
+    # A simulation does not make sense in this case, so disable the start button.
+    n = len(fig_data)
+    data_is_empty = [False]*n
+    for i in range(0,n):
+        # unpack the values of the CDS dictionary and 
+        # concatenate them via sum(.,[])
+        data_is_empty[i] = is_empty(sum(fig_data[i].data.values(),[]))
+        
+    if (all(data_is_empty)):
+        # if all datas are empty (radius == inner radius) disable the start button
+        # simulation cannot be run without any existing object
+        start_button.disabled = True
+    else:
+        # if any of the data is not empty, at least one obejct exists
+        # therefore, enable start button
+        start_button.disabled = False
+
 # function to change the shape, radius, or mass of the object in figure FIG
 def changeObject(FIG,new_object,r,ri,m):
     # save the data concerned in data and line_data
@@ -394,22 +414,9 @@ def changeObject(FIG,new_object,r,ri,m):
         createCylinder(r,data,line_data)
         func=lambda(x):moveCylinder(x,r,m,data,line_data)
     
-    
-    #TODO: outsource this part into another function (other purpose)
-    # check if the data of each plot is empty
-    f1_data_is_empty = is_empty(sum(fig_data[0].data.values(),[]))
-    f2_data_is_empty = is_empty(sum(fig_data[1].data.values(),[]))
-    f3_data_is_empty = is_empty(sum(fig_data[2].data.values(),[]))
-    
-    if (f1_data_is_empty and f2_data_is_empty and f3_data_is_empty):
-        # if all datas are empty (radius == inner radius) disable the start button
-        # simulation cannot be run without any existing object
-        start_button.disabled = True
-    else:
-        # if any of the data is not empty, at least one obejcts exists
-        # therefore, enable start button
-        start_button.disabled = False
-    
+    # check if the data of each plot is empty    
+    check_empty_data()
+        
     # save the evolution function to the appropriate function handle
     glob_fun_handles[FIG] = func
     figure_list[FIG].title.text=new_object
