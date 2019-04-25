@@ -1,7 +1,8 @@
 from __future__ import division # float devision only, like in python 3
 from bokeh.plotting import figure
-from bokeh.layouts import column, row, Spacer
+from bokeh.layouts import column, row, Spacer, widgetbox
 from bokeh.models import ColumnDataSource, Select, Button, LabelSet, Slider, CustomJS
+from bokeh.models.widgets import RadioGroup, Paragraph
 from bokeh.io import curdoc
 from math import sin, cos, pi, sqrt, radians
 from os.path import dirname, split, abspath, join
@@ -40,12 +41,17 @@ def is_empty(obj):
         return True
 
 # create ColumnDataSources
+fig0_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
+fig0_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 fig1_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
 fig1_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 fig2_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
 fig2_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
-fig3_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
-fig3_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
+
+fig_data = [fig0_data,fig1_data,fig2_data]
+fig_lines_data = [fig0_lines_data,fig1_lines_data,fig2_lines_data]
+
+
 ramp_source       = ColumnDataSource(data = dict(x=[offset-rampAddLength*COS,0],y=[H+rampAddLength*SIN,0]))
 wall_source       = ColumnDataSource(data = dict(x=[offset-rampAddLength*COS,offset-rampAddLength*COS],y=[H+rampAddLength*SIN,0]))
 AngleMarkerSource = ColumnDataSource(data = dict(x=[],y=[]))
@@ -85,9 +91,13 @@ def init():
     glob_SphereXLines.data = dict(SphereXLines = [SphereXLines])
     glob_SphereYLines.data = dict(SphereYLines = [SphereYLines])
     # create the objects
-    createSphere(2.0,fig1_data,fig1_lines_data)
-    createCylinder(2.0,fig2_data,fig2_lines_data)
-    createHollowCylinder(2.0,1.5,fig3_data,fig3_lines_data)
+#    createSphere(2.0,fig1_data,fig1_lines_data)
+#    createCylinder(2.0,fig2_data,fig2_lines_data)
+#    createHollowCylinder(2.0,1.5,fig3_data,fig3_lines_data)
+    createSphere(2.0,fig_data[0],fig_lines_data[0])
+    createCylinder(2.0,fig_data[1],fig_lines_data[1])
+    createHollowCylinder(2.0,1.5,fig_data[2],fig_lines_data[2])
+    
     # create the curve which indicates the angle between the ground and the ramp
     X=[]
     Y=[]
@@ -283,109 +293,110 @@ def moveHollowCylinder(t,r,m,ri,hollowCylinder_data,hollowCylinder_lines_data):
 
 ## draw 3 graphs each containing a ramp, the angle marker, an ellipse, and lines
 
-XStart = -rampLength-maxR#-5
+XStart = -rampLength-maxR-3#-5
 #YEnd   = H+2*maxR # start height, but we need height for max alpha
 YEnd   = rampLength*sin(radians(alpha_max))+2*maxR
 Width  = -255.4*XStart/YEnd #-220.0*XStart/YEnd
-fig1 = figure(title="Sphere",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
-fig1.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
-    line_color="#003359",line_width=3,source=fig1_data)
-fig1.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig1_lines_data)
-fig1.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
-fig1.line(x='x',y='y',color="black",line_width=2,source=wall_source)
-fig1.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
+fig0 = figure(title="Sphere",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
+fig0.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
+    line_color="#003359",line_width=3,source=fig_data[0])
+fig0.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig_lines_data[0])
+fig0.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
+fig0.line(x='x',y='y',color="black",line_width=2,source=wall_source)
+fig0.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #angle_glyph1=LabelSet(x='x', y='y',text='t',text_color='black',
 #    text_font_size="15pt", source=AlphaPos)
-#fig1.add_layout(angle_glyph1)
-fig1.grid.visible = False
-fig1.axis.visible = False
-fig1.toolbar_location = None
-time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display[0])
+#fig0.add_layout(angle_glyph1)
+fig0.grid.visible = False
+fig0.axis.visible = False
+fig0.toolbar_location = None
+time_lable0 = LabelSet(x='x', y='y', text='t', source=time_display[0])
 # this if does not work, since it will be executed before the variable will be altered!
 # -> use array of time_display ColumnDataSources
 #if glob_values["hit_end"][0]:
 #    fig1.add_layout(time_lable1)
-fig1.add_layout(time_lable1)
+fig0.add_layout(time_lable0)
 
 
-fig2 = figure(title="Full cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
-fig2.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
-    line_color="#003359",line_width=3,source=fig2_data)
-fig2.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig2_lines_data)
-fig2.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
-fig2.line(x='x',y='y',color="black",line_width=2,source=wall_source)
-fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
+fig1 = figure(title="Full cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
+fig1.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
+    line_color="#003359",line_width=3,source=fig_data[1])
+fig1.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig_lines_data[1])
+fig1.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
+fig1.line(x='x',y='y',color="black",line_width=2,source=wall_source)
+fig1.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #angle_glyph2=LabelSet(x='x', y='y',text='t',text_color='black',
 #    text_font_size="15pt", source=AlphaPos)
 #fig2.add_layout(angle_glyph2)
 #fig2.grid.visible = False
-fig2.axis.visible = False
-fig2.toolbar_location = None
-time_lable2 = LabelSet(x='x', y='y', text='t', source=time_display[1])
-fig2.add_layout(time_lable2)
+fig1.axis.visible = False
+fig1.toolbar_location = None
+time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display[1])
+fig1.add_layout(time_lable1)
 
-fig3 = figure(title="Hollow cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
-fig3.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
-    line_color="#003359",line_width=3,source=fig3_data)
-fig3.multi_line(xs='x',ys='y',color="#003359",line_width=3,source=fig3_lines_data)
-fig3.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
-fig3.line(x='x',y='y',color="black",line_width=2,source=wall_source)
-fig3.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
+fig2 = figure(title="Hollow cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
+fig2.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
+    line_color="#003359",line_width=3,source=fig_data[2])
+fig2.multi_line(xs='x',ys='y',color="#003359",line_width=3,source=fig_lines_data[2])
+fig2.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
+fig2.line(x='x',y='y',color="black",line_width=2,source=wall_source)
+fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #angle_glyph3=LabelSet(x='x', y='y',text='t',text_color='black',
 #    text_font_size="15pt", source=AlphaPos)
 #fig3.add_layout(angle_glyph3)
-#fig3.grid.visible = False
-#fig3.axis.visible = False
-fig3.toolbar_location = None
-time_lable3 = LabelSet(x='x', y='y', text='t', source=time_display[2])
-fig3.add_layout(time_lable3)
+#fig2.grid.visible = False
+#fig2.axis.visible = False
+fig2.toolbar_location = None
+time_lable2 = LabelSet(x='x', y='y', text='t', source=time_display[2])
+fig2.add_layout(time_lable2)
+
 
 # sketch of the ramp and objects
-fig4 = figure(title="Annotations", x_range=(-50,0), y_range=(0,25), height=220, width=400, tools="")
+fig3 = figure(title="Annotations", x_range=(-50,0), y_range=(0,25), height=220, width=400, tools="")
 #fig4.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
-fig4.line(x=[0,-48],y=[0,18],color="black",line_width=2) # ramp
-fig4.line(x=[-48,-48],y=[0,18],color="black",line_width=2) # wall
-fig4.ellipse(x=[-45],y=[19],width=[4],height=[4],fill_color="#0065BD",line_color="#003359",line_width=3)
-fig4.ellipse(x=[-45],y=[19],width=[2.5],height=[4],fill_alpha=[0],line_color="#003359",line_width=3, angle=-0.7)
-fig4.ellipse(x=[0],y=[-1],width=[12], height=[10], fill_alpha=[0], line_color='black', line_width=2, line_dash='15 50', line_dash_offset=-10)
+fig3.line(x=[0,-48],y=[0,18],color="black",line_width=2) # ramp
+fig3.line(x=[-48,-48],y=[0,18],color="black",line_width=2) # wall
+fig3.ellipse(x=[-45],y=[19],width=[4],height=[4],fill_color="#0065BD",line_color="#003359",line_width=3)
+fig3.ellipse(x=[-45],y=[19],width=[2.5],height=[4],fill_alpha=[0],line_color="#003359",line_width=3, angle=-0.7)
+fig3.ellipse(x=[0],y=[-1],width=[12], height=[10], fill_alpha=[0], line_color='black', line_width=2, line_dash='15 50', line_dash_offset=-10)
 #fig4.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 angle_glyph4=LabelSet(x='x', y='y',text='t',text_color='black',
     text_font_size="15pt", source=AlphaPos)
-fig4.add_layout(angle_glyph4)
+fig3.add_layout(angle_glyph4)
+fig3.grid.visible = False
+fig3.axis.visible = False
+fig3.toolbar_location = None
+
+fig4 = figure(x_range=(-10,10), y_range=(-5,5), height=220, width=400, tools="")
+fig4.ellipse(x=[-5,-5],y=[0,0],width=[4,6],height=[4,6],fill_alpha=[0,0],line_color='black',line_width=3)
+fig4.line(x=[-5,-5],y=[0,3],line_width=2)
+fig4.line(x=[-5,-3],y=[0,0],line_width=2)
+r_lables_source = ColumnDataSource(data=dict(x=[-4.2,-5.7,1,1],y=[-0.8,1,1,-1],t=["r_i","r","r\\:=\\text{Radius}","r_i=\\text{Inner radius}"]))
+r_lables = LatexLabelSet(x='x', y='y', text='t', source=r_lables_source)
+fig4.add_layout(r_lables)
 fig4.grid.visible = False
 fig4.axis.visible = False
 fig4.toolbar_location = None
 
-fig5 = figure(x_range=(-10,10), y_range=(-5,5), height=220, width=400, tools="")
-fig5.ellipse(x=[-5,-5],y=[0,0],width=[4,6],height=[4,6],fill_alpha=[0,0],line_color='black',line_width=3)
-fig5.line(x=[-5,-5],y=[0,3],line_width=2)
-fig5.line(x=[-5,-3],y=[0,0],line_width=2)
-r_lables_source = ColumnDataSource(data=dict(x=[-4.2,-5.7,1,1],y=[-0.8,1,1,-1],t=["r_i","r","r\\:=\\text{Radius}","r_i=\\text{Inner radius}"]))
-r_lables = LatexLabelSet(x='x', y='y', text='t', source=r_lables_source)
-fig5.add_layout(r_lables)
-fig5.grid.visible = False
-fig5.axis.visible = False
-fig5.toolbar_location = None
-
 # name the functions to be used by each figure depending upon their content
-evolveFunc1=lambda(x):moveSphere(x,2.0,1.0,fig1_data,fig1_lines_data)
-evolveFunc2=lambda(x):moveCylinder(x,2.0,1.0,fig2_data,fig2_lines_data)
-evolveFunc3=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig3_data,fig3_lines_data)
-glob_fun_handles = dict(fun1=evolveFunc1, fun2=evolveFunc2, fun3=evolveFunc3)
-
+evolveFunc0=lambda(x):moveSphere(x,2.0,1.0,fig_data[0],fig_lines_data[0])
+evolveFunc1=lambda(x):moveCylinder(x,2.0,1.0,fig_data[1],fig_lines_data[1])
+evolveFunc2=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig_data[2],fig_lines_data[2])
+#glob_fun_handles = dict(fun1=evolveFunc1, fun2=evolveFunc2, fun3=evolveFunc3)
+glob_fun_handles = [evolveFunc0,evolveFunc1,evolveFunc2]
 
 # function to change the shape, radius, or mass of the object in figure FIG
 def changeObject(FIG,new,r,ri,m):
     # save the data concerned in data and line_data
-    if (FIG==1):
-        data=fig1_data
-        line_data=fig1_lines_data
-    elif(FIG==2):
-        data=fig2_data
-        line_data=fig2_lines_data
+    if (FIG==0):
+        data=fig_data[0]
+        line_data=fig_lines_data[0]
+    elif(FIG==1):
+        data=fig_data[1]
+        line_data=fig_lines_data[1]
     else:
-        data=fig3_data
-        line_data=fig3_lines_data
+        data=fig_data[2]
+        line_data=fig_lines_data[2]
     # depending on the shape specified, create the object and
     # save the new evolution function in the variable func
     if (new == "Sphere"):
@@ -404,9 +415,9 @@ def changeObject(FIG,new,r,ri,m):
     
     #TODO: outsource this part into another function (other purpose)
     # check if the data of each plot is empty
-    f1_data_is_empty = is_empty(sum(fig1_data.data.values(),[]))
-    f2_data_is_empty = is_empty(sum(fig2_data.data.values(),[]))
-    f3_data_is_empty = is_empty(sum(fig3_data.data.values(),[]))
+    f1_data_is_empty = is_empty(sum(fig_data[0].data.values(),[]))
+    f2_data_is_empty = is_empty(sum(fig_data[1].data.values(),[]))
+    f3_data_is_empty = is_empty(sum(fig_data[2].data.values(),[]))
     
     if (f1_data_is_empty and f2_data_is_empty and f3_data_is_empty):
         # if all datas are empty (radius == inner radius) disable the start button
@@ -419,50 +430,50 @@ def changeObject(FIG,new,r,ri,m):
     
    
     # save the evolution function to the appropriate function handle
-    if (FIG==1):
-        glob_fun_handles["fun1"] = func        
+    if (FIG==0):
+        glob_fun_handles[0] = func        
+        fig0.title.text=new
+    elif(FIG==1):
+        glob_fun_handles[1] = func
         fig1.title.text=new
-    elif(FIG==2):
-        glob_fun_handles["fun2"] = func
-        fig2.title.text=new
     else:
-        glob_fun_handles["fun3"] = func
-        fig3.title.text=new
+        glob_fun_handles[2] = func
+        fig2.title.text=new
 
 ## slider functions
 # functions to change the shape
+def changeObject0(attr,old,new):
+    changeObject(0,new,radius_slider0.value,ri_slider0.value,1.0)
+
 def changeObject1(attr,old,new):
     changeObject(1,new,radius_slider1.value,ri_slider1.value,1.0)
 
 def changeObject2(attr,old,new):
     changeObject(2,new,radius_slider2.value,ri_slider2.value,1.0)
 
-def changeObject3(attr,old,new):
-    changeObject(3,new,radius_slider3.value,ri_slider3.value,1.0)
-
 # functions to change the radius
+def changeRadius0(attr,old,new):
+    changeObject(0,object_select0.value,new,ri_slider0.value,1.0)
+    ri_slider0.end = new
+    ri_slider0.value = min(ri_slider0.value,new)
+
 def changeRadius1(attr,old,new):
     changeObject(1,object_select1.value,new,ri_slider1.value,1.0)
     ri_slider1.end = new
-    ri_slider1.value = min(ri_slider1.value,new)
+    ri_slider1.value = min(ri_slider0.value,new)
 
 def changeRadius2(attr,old,new):
     changeObject(2,object_select2.value,new,ri_slider2.value,1.0)
     ri_slider2.end = new
-    ri_slider2.value = min(ri_slider1.value,new)
-
-def changeRadius3(attr,old,new):
-    changeObject(3,object_select3.value,new,ri_slider3.value,1.0)
-    ri_slider3.end = new
-    ri_slider3.value = min(ri_slider3.value,new)
+    ri_slider2.value = min(ri_slider2.value,new)
     
 #functions to change the inner radius  / wall thickness
+def changeWall0(attr,old,new):
+    changeObject(0,object_select0.value,radius_slider0.value,new,1.0)
 def changeWall1(attr,old,new):
     changeObject(1,object_select1.value,radius_slider1.value,new,1.0)
 def changeWall2(attr,old,new):
     changeObject(2,object_select2.value,radius_slider2.value,new,1.0)
-def changeWall3(attr,old,new):
-    changeObject(3,object_select3.value,radius_slider3.value,new,1.0)
 
 # hide inner radius slider if full object is selected
 # show inner radius slider if hollow object is selected    
@@ -471,7 +482,7 @@ choice = cb_obj.value;
 caller = cb_obj.name;
 
 // extract the number of the name and convert it to integer
-slider_idx = parseInt(caller.match(/\d/g).join(""))-1; //-1 for starting at 0
+slider_idx = parseInt(caller.match(/\d/g).join("")); //-1; //-1 for starting at 0
 
 slider_in_question = document.getElementsByClassName("wall_slider")[slider_idx];
 
@@ -479,41 +490,47 @@ slider_in_question = document.getElementsByClassName("wall_slider")[slider_idx];
 if(choice.includes("Hollow")){
         slider_in_question.className=slider_in_question.className.replace(" hidden","");
 }
-// if full object is select, check if slider is hidden; if not, hide it
+// if full object is selected, check if slider is hidden; if not, hide it
 else if(!slider_in_question.className.includes("hidden")){
         slider_in_question.className+=" hidden";
 }
 """
 
 # sliders
-object_select1 = Select(title="Object:", value="Sphere", name="obj1",
+object_select0 = Select(title="Object:", value="Sphere", name="obj0",
+    options=["Sphere", "Hollow sphere", "Full cylinder", "Hollow cylinder"])
+object_select0.on_change('value',changeObject0)
+object_select1 = Select(title="Object:", value="Full cylinder", name="obj1",
     options=["Sphere", "Hollow sphere", "Full cylinder", "Hollow cylinder"])
 object_select1.on_change('value',changeObject1)
-object_select2 = Select(title="Object:", value="Full cylinder", name="obj2",
+object_select2 = Select(title="Object:", value="Hollow cylinder", name="obj2",
     options=["Sphere", "Hollow sphere", "Full cylinder", "Hollow cylinder"])
 object_select2.on_change('value',changeObject2)
-object_select3 = Select(title="Object:", value="Hollow cylinder", name="obj3",
-    options=["Sphere", "Hollow sphere", "Full cylinder", "Hollow cylinder"])
-object_select3.on_change('value',changeObject3)
 
+object_select0.callback = CustomJS(code=object_select_JS)
 object_select1.callback = CustomJS(code=object_select_JS)
 object_select2.callback = CustomJS(code=object_select_JS)
-object_select3.callback = CustomJS(code=object_select_JS)
 
+radius_slider0 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
+radius_slider0.on_change('value',changeRadius0)
 radius_slider1 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
 radius_slider1.on_change('value',changeRadius1)
 radius_slider2 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
 radius_slider2.on_change('value',changeRadius2)
-radius_slider3 = Slider(title="Radius", value=2.0, start=1.0, end=maxR, step=0.5)
-radius_slider3.on_change('value',changeRadius3)
 
 # end value dependend on selected radius size
-ri_slider1 = Slider(title="Inner radius", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj1", "hidden"])
+ri_slider0 = Slider(title="Inner radius", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj1", "hidden"])
+ri_slider0.on_change('value',changeWall0)
+ri_slider1 = Slider(title="Inner radius", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj2", "hidden"])
 ri_slider1.on_change('value',changeWall1)
-ri_slider2 = Slider(title="Inner radius", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj2", "hidden"])
+ri_slider2 = Slider(title="Inner radius", value=1.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj3"])
 ri_slider2.on_change('value',changeWall2)
-ri_slider3 = Slider(title="Inner radius", value=1.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj3"])
-ri_slider3.on_change('value',changeWall3)
+
+
+
+mode_selection = RadioGroup(labels=["one", "all"], active=0, inline=True)
+p_mode = Paragraph(text="""Stopping mode: """)
+
 
 # slider function for the angle
 def changeAlpha(attr,old,new):
@@ -538,15 +555,15 @@ alpha_slider = Slider(title=u"\u03B1", value=20.0, start=5.0, end=alpha_max, ste
 alpha_slider.on_change('value',changeAlpha)
 
 def disable_all_sliders(d=True):
+    object_select0.disabled = d
     object_select1.disabled = d
     object_select2.disabled = d
-    object_select3.disabled = d
+    radius_slider0.disabled = d
     radius_slider1.disabled = d
     radius_slider2.disabled = d
-    radius_slider3.disabled = d
+    ri_slider0.disabled     = d
     ri_slider1.disabled     = d
     ri_slider2.disabled     = d
-    ri_slider3.disabled     = d
     alpha_slider.disabled   = d
 
 def start():
@@ -569,9 +586,9 @@ def start():
 
 def reset():
     glob_values["t"] = 0.0 #      /output
+    changeObject(0,object_select0.value,radius_slider0.value,ri_slider0.value,1.0)
     changeObject(1,object_select1.value,radius_slider1.value,ri_slider1.value,1.0)
     changeObject(2,object_select2.value,radius_slider2.value,ri_slider2.value,1.0)
-    changeObject(3,object_select3.value,radius_slider3.value,ri_slider3.value,1.0)
     disable_all_sliders(False)
     time_display[0].data=dict(x=[],y=[],t=[])
     time_display[1].data=dict(x=[],y=[],t=[])
@@ -606,7 +623,7 @@ def evolve():
     
     #temp_list = [glob_fu]
     
-    (x_coords,y_coords) = get_coordinates(glob_fun_handles.values(), [True, True, True], t)
+    (x_coords,y_coords) = get_coordinates(glob_fun_handles, [True, True, True], t)
     
     
     # if an object has reached the end of the ramp then stop the simulation
@@ -636,8 +653,8 @@ reset_button.on_click(reset)
 
 init()
 ## Send to window
-curdoc().add_root(row(column(row(fig1,column(object_select1,radius_slider1,ri_slider1)),
-    row(fig2,column(object_select2,radius_slider2,ri_slider2)),
-    row(fig3,column(object_select3,radius_slider3,ri_slider3))),Spacer(width=100),
-    column(start_button,reset_button,alpha_slider, Spacer(height=70), fig4, fig5)))
+curdoc().add_root(row(column(row(fig0,column(object_select0,radius_slider0,ri_slider0)),
+    row(fig1,column(object_select1,radius_slider1,ri_slider1)),
+    row(fig2,column(object_select2,radius_slider2,ri_slider2))),Spacer(width=100),
+    column(start_button,reset_button,row(widgetbox(p_mode,width=120),mode_selection),alpha_slider, Spacer(height=30), fig3, fig4)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
