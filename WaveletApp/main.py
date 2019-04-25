@@ -1,8 +1,9 @@
 from os.path import dirname, split, join, abspath
 import numpy as np
 from math import sin, cos, pi, exp, ceil
-from bokeh.plotting import Figure
-from bokeh.models import ColumnDataSource, Div, LinearColorMapper, ColorBar,BasicTicker
+import colorcet as cc
+from bokeh.plotting import Figure, show
+from bokeh.models import ColumnDataSource, Div, LinearColorMapper, ColorBar,BasicTicker, SingleIntervalTicker
 from bokeh.layouts import widgetbox, layout, column, row, Spacer
 from bokeh.models.widgets import Button, RadioButtonGroup, Select, Slider, TextInput, Dropdown, Div
 from sympy import sympify
@@ -16,6 +17,7 @@ currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexLegend
+
 
 ################    
 # Data Sources #
@@ -39,8 +41,8 @@ plot_Wavelet = Figure(x_range=(0, 5), y_range=(0, 5),
                             tools =toolset,
                             title="Wavelet transform of the function",  width=650, height=300)
 plot_Wavelet.toolbar.logo = None
-color_mapper = LinearColorMapper(palette="Spectral11")
-color_bar = ColorBar(color_mapper=color_mapper, ticker=BasicTicker(),
+color_mapper = LinearColorMapper(palette=cc.palette.CET_R2)
+color_bar = ColorBar(color_mapper=color_mapper,
                      label_standoff=12, border_line_color=None, location=(0,0))
 plot_Wavelet.add_layout(color_bar, 'right')
 
@@ -96,11 +98,13 @@ Calc_button = Button(label="Calculate Wavelet Transform", button_type="success",
 
 def Plot_WT(a,b,W):
     WaveLet_source.data = {'a': [a],'b':[b],'W':[W]}
-    plot_Wavelet.image(image="W", source=WaveLet_source, color_mapper=color_mapper, x=0, y=0, dw=5, dh=5)
-    # print(W.min())
-    # print(W.max())
+    plot_Wavelet.image(image="W", source=WaveLet_source, palette=cc.palette.CET_R2, x=0, y=0, dw=5, dh=5)
+    color_bar.ticker = BasicTicker()
+    #color_bar.ticker = SingleIntervalTicker( interval = 0.1 * (W.max() - W.min()) )
     color_mapper.low = W.min()
     color_mapper.high = W.max()
+
+
     
 
 def update(attr, old, new):
@@ -137,8 +141,8 @@ def update(attr, old, new):
         # Extract parameters
         T0_input.value = str(T_0)
 
-        function_source.data= dict(x=[0, T_0, T_0, 5] ,y=[0, 0, amp, amp])
-        plot_function.line(x='x',y='y',source=function_source ,color="blue",line_width=3)
+        function_source.data = dict(x=[0, T_0, T_0, 5] ,y=[0, 0, amp, amp])
+        plot_function.line(x='x',y= 'y',source= function_source ,color= "blue",line_width=3)
         if (Wavelet_function_id == "Morlet function"):
             a,b,W = Find_Heaviside_Morlet_WT(T_0, amp, Resolut)
         elif (Wavelet_function_id == "script's WT"):
@@ -361,26 +365,24 @@ Frequency_Slider.on_change('value',Trig_fun_modified)
 Calc_button.on_change('clicks',update)
 
 
-#Description
+#Description and Warnings
 description_filename = join(dirname(__file__), "description.html")
 loading_spinner_filename = join(dirname(__file__), "loading_spinner.html")
 choose_WaveLet_error_filename = join(dirname(__file__), "choose_WaveLet_error.html")
 user_function_error_filename = join(dirname(__file__), "user_function_error.html")
+wavelet_plot_filename = join(dirname(__file__), "Wavelet.html")
+wavelet_plot_filename = join(dirname(__file__), "lines.html")
+    
 
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1250)
 loading = Div(text=open(loading_spinner_filename).read(), render_as_text=False, width=650, height=100)
 choose_WaveLet = Div(text=open(choose_WaveLet_error_filename).read(), render_as_text=False, width=650, height=100)
 user_function = Div(text=open(user_function_error_filename).read(), render_as_text=False, width=650, height=100)
+wavelet_plot = Div (text=open(wavelet_plot_filename).read(), render_as_text=False, width=650, height=100)
 
 # create layout
 controls = [sample_fun_input_f]
 controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
-#My_Layout = layout([[description],[controls_box, plot_function],[plot_Wavelet_Function,plot_Wavelet],
-#            [column(row(Wavelet_fun_input),row(a_param, b_param))]],sizing_mode='stretch_both')
 My_Layout = layout([column(description, row( column(controls_box), Spacer(width=10), column(Wavelet_fun_input,a_param, b_param, Resolution) , Spacer(width=135), column(plot_function) ), row( column(plot_Wavelet_Function), column(plot_Wavelet) ) )])
-# curdoc().add_root(column([description,row([controls_box, plot_function]),row([plot_Wavelet_Function,plot_Wavelet]),
-#             row([Wavelet_fun_input]),row([a_param, b_param])])) # add plots and controls to root
-# My_Layout= [column(description, row( column(controls_box), Spacer(width=350), column(plot_function) ), row( column(plot_Wavelet_Function), column(plot_Wavelet) ), 
-#             row( column(Wavelet_fun_input,a_param, b_param) ) )]
 curdoc().add_root(My_Layout) # add plots and controls to root
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

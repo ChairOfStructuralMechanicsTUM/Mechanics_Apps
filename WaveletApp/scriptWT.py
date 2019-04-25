@@ -48,7 +48,7 @@ def Find_Rectangular_SWT(T0,T1,amp,Resolut):
     toc = time.time()
     print (str(toc-tic) + ' sec Elapsed' )
     return a,b,W
-    #plot_Wavelet.add_layout(color_bar, 'right')
+
 
 def Find_Dirac_SWT(T0, amp,Resolut):
     # computation of WT
@@ -60,7 +60,7 @@ def Find_Dirac_SWT(T0, amp,Resolut):
         for j in range (0,Resolut):
             W[i][j]= a[i]**-0.5 * amp * (T0-b[j])/a[i] * exp(-( (T0-b[j])/a[i] )**2.0)
     return a,b,W
-    #plot_Wavelet.add_layout(color_bar, 'right')
+
 
 def Find_Trig_SWT(index, frequency, Resolut):
     tic = time.time()
@@ -120,4 +120,3 @@ def Find_Custom_SWT(user_func,Resolut):
     toc = time.time()
     print (str(toc-tic) + ' sec Elapsed' )
     return a,b,W
-    #plot_Wavelet.add_layout(color_bar, 'right')

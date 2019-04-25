@@ -1,77 +1,46 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from math import sin, cos, pi, exp
+from scipy.integrate import quad
 
-# JS_CODE = """
-# import {Label, LabelView} from "models/annotations/label"
+import mpld3
+from mpld3 import plugins
+from bokeh.io import output_file, show
+from bokeh.models.widgets import Div
+from os.path import dirname, split, join, abspath
 
-# export class LatexLabelView extends LabelView
-#   render: () ->
+wavelet_plot_filename = join(dirname(__file__), "lines.html")
 
-#     #--- Start of copied section from ``Label.render`` implementation
+Resolut=100
+amp=1
+T0=2
+a = np.linspace(1, 5, Resolut)
+b = np.linspace(0.1, 10, Resolut)
+W = np.zeros((Resolut, Resolut))
 
-#     # Here because AngleSpec does units tranform and label doesn't support specs
-#     switch @model.angle_units
-#       when "rad" then angle = -1 * @model.angle
-#       when "deg" then angle = -1 * @model.angle * Math.PI/180.0
+for i in range (0,Resolut):
+    for j in range (0,Resolut):
+        def integrand1(t):
+            output = a[i]**-0.5 * amp * (t-b[j])/a[i] * exp(-( (t-b[j])/a[i] )**2.0)
+            return output
+        W[i][j]=quad(integrand1, 1, 3)[0]
 
-#     panel = @model.panel ? @plot_view.frame
+fig, ax = plt.subplots()
+im = ax.pcolormesh(a,b,W)
+#plt.show()
 
-#     xscale = @plot_view.frame.xscales[@model.x_range_name]
-#     yscale = @plot_view.frame.yscales[@model.y_range_name]
 
-#     sx = if @model.x_units == "data" then xscale.compute(@model.x) else panel.xview.compute(@model.x)
-#     sy = if @model.y_units == "data" then yscale.compute(@model.y) else panel.yview.compute(@model.y)
+fig.colorbar(im, ax=ax)
+ax.set_title('An Image', size=20)
 
-#     sx += @model.x_offset
-#     sy -= @model.y_offset
 
-#     #--- End of copied section from ``Label.render`` implementation
+mpld3.fig_to_html(fig)
+mpld3.show()
+mpld3.save_html(fig, "Wavelet.html")
 
-#     # Must render as superpositioned div (not on canvas) so that KaTex
-#     # css can properly style the text
-#     @_css_text(@plot_view.canvas_view.ctx, "", sx, sy, angle)
-
-#     # ``katex`` is loaded into the global window at runtime
-#     # katex.renderToString returns a html ``span`` element
-#     katex.render(@model.text, @el, {displayMode: true})
-
-# export class LatexLabel extends Label
-#   type: 'LatexLabel'
-#   default_view: LatexLabelView
-# """
-
-# class LatexLabel(Label):
-#     """A subclass of the Bokeh built-in `Label` that supports rendering
-#     LaTex using the KaTex typesetting library.
-
-#     Only the render method of LabelView is overloaded to perform the
-#     text -> latex (via katex) conversion. Note: ``render_mode="canvas``
-#     isn't supported and certain DOM manipulation happens in the Label
-#     superclass implementation that requires explicitly setting
-#     `render_mode='css'`).
-#     """
-#     __javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
-#     __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
-#     __implementation__ = JS_CODE
-# x = np.arange(0.0, 1.0 + 0.01, 0.01)
-# y = np.cos(2*2*np.pi*x) + 2
-
-# p = figure(title="LaTex Demonstration", plot_width=500, plot_height=500)
-# p.line(x, y)
-
-# # Note: must set ``render_mode="css"``
-# latex = LatexLabel(text="f = \sum_{n=1}^\infty\\frac{-e^{i\pi}}{2^n}!",
-#                    x=35, y=445, x_units='screen', y_units='screen',
-#                    render_mode='css', text_font_size='16pt',
-#                    background_fill_color='#ffffff')
-
-# p.add_layout(latex)
-
-# show(p)
-
-T_0=4
-T_1=1
-
-if(T_0>T_1):
-    temp=T_1
-    T_1=T_0
-    T_0=temp
-print(T_0,T_1)
+# print(mpld3.fig_to_html(fig))
+# out_fname = os.path.join(options.outdir, 'plots', 'gene_overview_%s%s%s.html' % (gene.name, event_tag, log_tag))
+# plugins.clear(fig)
+# mpld3.save_html(fig, "Wavelet.html")
+# wavelet_plot = Div (text=open(wavelet_plot_filename).read(), render_as_text=False, width=650, height=100)
+# show(wavelet_plot)

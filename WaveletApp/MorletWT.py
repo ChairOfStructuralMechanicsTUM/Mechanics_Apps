@@ -20,16 +20,6 @@ def Find_Heaviside_Morlet_WT(T0,amp,Resolut):
     toc = time.time()
     print (str(toc-tic) + ' sec Elapsed' )
     return a,b,W
-    # fig, ax = plt.subplots()
-    # A, B = np.meshgrid(a, b)
-    # contour = ax.contourf(A, B, W, extend='both', cmap='Spectral')
-    # try:
-    #     filled_contours(plot_Wavelet,  contour)
-    # except:
-    #     traceback.print_exc()
-    #     raise
-    # plot_Wavelet.patches(xs='a', ys='b', source=WaveLet_source, color='c', alpha='a')
-    # plot_Wavelet.add_layout(color_bar, 'right')
 
 def Find_Rectangular_Morlet_WT(T0,T1,amp,Resolut):
     tic = time.time()
@@ -48,7 +38,6 @@ def Find_Rectangular_Morlet_WT(T0,T1,amp,Resolut):
     toc = time.time()
     print (str(toc-tic) + ' sec Elapsed' )
     return a,b,W
-    #plot_Wavelet.add_layout(color_bar, 'right')
 
 def Find_Dirac_Morlet_WT(T0, amp,Resolut):
     tic = time.time()
@@ -64,7 +53,6 @@ def Find_Dirac_Morlet_WT(T0, amp,Resolut):
     toc = time.time()
     print (str(toc-tic) + ' sec Elapsed' )
     return a,b,W
-    #plot_Wavelet.add_layout(color_bar, 'right')
 
 def Find_Trig_Morlet_WT(index, frequency, Resolut):
     tic = time.time()
@@ -122,4 +110,3 @@ def Find_Custom_Morlet_WT(user_func,Resolut):
     toc = time.time()
     print (str(toc-tic) + ' sec Elapsed' )
     return a,b,W
-    #plot_Wavelet.add_layout(color_bar, 'right')

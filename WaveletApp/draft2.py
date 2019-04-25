@@ -1,19 +1,33 @@
-from bokeh.io import curdoc
-from bokeh.layouts import row, widgetbox
-from bokeh.models import Slider, Span, CustomJS, Label
-from bokeh.plotting import figure
- 
-slider = Slider(start=0, end=10, value=3, step=0.1, title='Slider')
- 
-plot = figure(width=700, height=250, x_range=(0,10), y_range=(-1, 1))
-span = Span(location=slider.value, dimension='height')
-plot.add_layout(span)
-label = Label(x=slider.value, y=0, x_units='data', y_units='data',
-                 text="Minimum")
-plot.add_layout(label)
- 
-slider.callback = CustomJS(args=dict(span=span, label=label, slider=slider), code="""
-    span.location = slider.value
-    label.x = slider.value
-""")
-curdoc().add_root(row(plot, widgetbox(slider)))
+from bokeh.plotting import Figure, show
+import numpy as np
+from math import exp
+from scipy.integrate import quad
+from bokeh.models import ColumnDataSource, LinearColorMapper
+from bokeh.palettes import Viridis, Spectral
+import colorcet as cc
+
+Image = Figure(x_range=(0, 5), y_range=(0, 5),
+                            x_axis_label='b', y_axis_label='a',
+                            title="An Image",  width=400, height=400)
+Image_source = ColumnDataSource(data={'a': [],'b':[],'W':[]})
+color_mapper = LinearColorMapper(palette="Spectral11")
+
+Resolut=120
+amp=1
+T0=2
+a = np.linspace(0.1, 5, Resolut)
+b = np.linspace(0.1, 5, Resolut)
+W = np.zeros((Resolut, Resolut))
+
+for i in range (0,Resolut):
+    for j in range (0,Resolut):
+        def integrand1(t):
+            output = a[i]**-0.5 * amp * (t-b[j])/a[i] * exp(-( (t-b[j])/a[i] )**2.0)
+            return output
+        W[i][j]=quad(integrand1, 1, 3)[0]
+
+Image_source.data = {'a': [a],'b':[b],'W':[W]}
+Image.image(image="W", source=Image_source, palette=cc.palette.CET_R3, x=0, y=0, dw=5, dh=5)   
+show(Image)
+# CET_D1A
+# CET_R2
