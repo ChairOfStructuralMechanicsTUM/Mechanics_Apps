@@ -1,4 +1,4 @@
-from __future__ import division # float devision only, like in python 3
+from __future__ import division # float division only, like in python 3
 from bokeh.models import Select, Button, Slider#, CustomJS
 from bokeh.models.widgets import RadioGroup
 

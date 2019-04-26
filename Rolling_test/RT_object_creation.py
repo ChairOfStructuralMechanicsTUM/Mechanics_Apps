@@ -1,4 +1,4 @@
-from __future__ import division # float devision only, like in python 3
+from __future__ import division # float division only, like in python 3
 from RT_global_variables import glob_SphereXLines, glob_SphereYLines, glob_values
 
 

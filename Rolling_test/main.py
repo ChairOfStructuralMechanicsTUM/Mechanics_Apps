@@ -1,4 +1,4 @@
-from __future__ import division # float devision only, like in python 3
+from __future__ import division # float division only, like in python 3
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer, widgetbox
 from bokeh.models import ColumnDataSource, LabelSet, CustomJS

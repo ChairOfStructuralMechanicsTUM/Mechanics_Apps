@@ -1,4 +1,4 @@
-from __future__ import division # float devision only, like in python 3
+from __future__ import division # float division only, like in python 3
 from bokeh.io import curdoc
 from math import sin, cos, radians
 import numpy as np
