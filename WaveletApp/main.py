@@ -312,11 +312,16 @@ def reset():
     """
     function_source.data = dict(x=[],y=[])
     WaveLet_source.data = {'a': [],'b':[],'W':[]}
+    My_Layout.children[0].children[2].children[1].children[0] = plot_Wavelet
 
 def param_change(attr,old,new):
     """
     This function is called to plot a new wavelet function if "a" or "b" parameters are changed
     """
+    # Check if the user selected a wavelet function
+    if (Wavelet_fun_input.label == "Choose a wavelet function "u"\u03A8 (t)"):
+        My_Layout.children[0].children[2].children[1].children[0] = choose_WaveLet  # Choose a sample function warning
+        return None
     # Get the new wavelet function id
     Wavelet_function_id = Wavelet_fun_input.value
     Wavelet_fun_input.label = Wavelet_function_id
