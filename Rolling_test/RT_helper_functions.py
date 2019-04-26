@@ -36,7 +36,7 @@ def logical_indexing(arr, arr_ind, val):
         arr[i] = val if arr_ind[i] else arr[i]
         
 ###############################################################################
-###                new coordinations from each move function                ###
+###                 new coordinates from each move function                 ###
 ###############################################################################
 def get_coordinates(fun_handles, in_execution, t):
     # Input:  - list of function handles, size n
