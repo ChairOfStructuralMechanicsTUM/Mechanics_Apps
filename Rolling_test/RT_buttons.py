@@ -2,7 +2,7 @@ from __future__ import division # float devision only, like in python 3
 from bokeh.models import Select, Button, Slider#, CustomJS
 from bokeh.models.widgets import RadioGroup
 
-from outsourced_glob_var import maxR, alpha_max
+from RT_global_variables import maxR, alpha_max
 
 
 ###############################################################################

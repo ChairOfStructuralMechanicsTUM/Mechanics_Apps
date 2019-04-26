@@ -1,7 +1,7 @@
 from __future__ import division # float devision only, like in python 3
 from math import sin, cos
 
-from outsourced_glob_var import glob_SphereXLines, glob_SphereYLines, glob_values
+from RT_global_variables import glob_SphereXLines, glob_SphereYLines, glob_values
 
 
 ###############################################################################

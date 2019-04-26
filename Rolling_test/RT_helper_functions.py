@@ -1,19 +1,19 @@
 from __future__ import division # float devision only, like in python 3
 import numpy as np
 
-from outsourced_glob_var import (
+from RT_global_variables import (
         fig_data, fig_lines_data,
         fig_in_use,
         glob_fun_handles
         )
-from outsourced_buttons import (
+from RT_buttons import (
         start_button, mode_selection,
         object_select0, object_select1, object_select2,
         radius_slider0, radius_slider1, radius_slider2,
         ri_slider0, ri_slider1, ri_slider2,
         alpha_slider
         )
-from outsourced_obj_move import (
+from RT_object_movement import (
         moveSphere,
         moveCylinder, moveHollowCylinder
         )

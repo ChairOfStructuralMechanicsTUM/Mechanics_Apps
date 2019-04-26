@@ -17,7 +17,7 @@ from latex_support import LatexLabelSet, LatexDiv
 ###############################################################################
 ###                            inner app imports                            ###
 ###############################################################################
-from outsourced_glob_var import (
+from RT_global_variables import (
         glob_SphereXLines, glob_SphereYLines,
         fig_data, fig_lines_data,
         alpha, alpha_max,
@@ -27,18 +27,18 @@ from outsourced_glob_var import (
         time_display,
         figure_list
         )
-from outsourced_obj_creation import (
+from RT_object_creation import (
         createSphere,
         createCylinder, createHollowCylinder
         )
-from outsourced_buttons import (
+from RT_buttons import (
         start_button, reset_button, mode_selection,
         object_select0, object_select1, object_select2,
         radius_slider0, radius_slider1, radius_slider2,
         ri_slider0, ri_slider1, ri_slider2,
         alpha_slider
         )
-from outsourced_callback_fcts import (
+from RT_callback_functions import (
         start, reset,
         changeObject0, changeObject1, changeObject2, 
         changeRadius0, changeRadius1, changeRadius2, 

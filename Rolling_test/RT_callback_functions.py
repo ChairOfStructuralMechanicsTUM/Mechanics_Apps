@@ -3,7 +3,7 @@ from bokeh.io import curdoc
 from math import sin, cos, radians
 import numpy as np
 
-from outsourced_glob_var import (
+from RT_global_variables import (
         fig_data, fig_lines_data,
         fig_in_use,
         figure_list,
@@ -13,18 +13,18 @@ from outsourced_glob_var import (
         glob_fun_handles,
         rampLength, rampAddLength
         )
-from outsourced_buttons import (
+from RT_buttons import (
         start_button, reset_button, mode_selection,
         object_select0, object_select1, object_select2,
         radius_slider0, radius_slider1, radius_slider2,
         ri_slider0, ri_slider1, ri_slider2
         )
-from outsourced_fcts import check_availability, get_coordinates, disable_all_sliders
-from outsourced_obj_creation import (
+from RT_helper_functions import check_availability, get_coordinates, disable_all_sliders
+from RT_object_creation import (
         createSphere, createHollowSphere,
         createCylinder, createHollowCylinder
         )
-from outsourced_obj_move import (
+from RT_object_movement import (
         moveSphere, moveHollowSphere,
         moveCylinder, moveHollowCylinder
         )
