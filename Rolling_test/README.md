@@ -9,4 +9,4 @@ The app can be run using the command "bokeh serve --show Rolling_test/" from the
 
 ## To Do?
 - [x] add slider for hollow object thickness
-- [ ] revisit code structure (#lines < 500 !)
+- [x] revisit code structure (#lines < 500 !)
