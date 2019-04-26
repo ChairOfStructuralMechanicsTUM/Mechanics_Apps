@@ -1,4 +1,3 @@
-from Pendulum_MoveMassTool import Pendulum_MoveMassTool
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
@@ -11,7 +10,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_support import LatexDiv
+from latex_support import LatexDiv, LatexSlider
 
 # create column data sources
 Mass              = ColumnDataSource(data = dict(x=[],y=[]))
@@ -212,11 +211,16 @@ def plotSingle():
     [m]              = glob_m.data["val"]                              # input/
     [theta]          = glob_theta.data["val"]                          # input/output
     [dTheta]         = glob_dTheta.data["val"]                         # input/output
-    basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi]))                   #      /output
-    K=getKinEngSingle()*9.0/TotEng-4.5
+    currentPoint.data=dict(x=[phi],y=[dPhi])                             #      /output
+    [Active]         = glob_active.data["Active"]
+    if Active:
+        basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi]))                   #      /output
+    if TotEng == 0:
+        K=-4.5
+    else:
+        K=getKinEngSingle()*9.0/TotEng-4.5
     KinEnergySource.data=dict(x=[-4.5,-4.5, K, K], y=[12,11.5,11.5,12])  #      /output
     OtherEnergySource.data=dict(x=[K, K, 4.5, 4.5], y=[12,11.5,11.5,12]) #      /output
-    currentPoint.data=dict(x=[phi],y=[dPhi])                             #      /output
 
 # plot the double pendulum
 def plotDouble():
@@ -229,11 +233,16 @@ def plotDouble():
         y=[10,10.0-R*cos(phi),10.0-R*cos(phi)-R2*cos(theta+phi)]) #      /output
     PendulumElbow.data=dict(x=[R*sin(phi)],y=[10.0-R*cos(phi)])   #      /output
     Mass.data=dict(x=[R*sin(phi)+R2*sin(theta+phi)],y=[10.0-R*cos(phi)-R2*cos(theta+phi)]) #      /output
-    basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi])) #      /output
-    K=getKinEngDouble()*9.0/TotEng-4.5
+    currentPoint.data      = dict(x=[phi],y=[dPhi])                         #      /output
+    [Active]         = glob_active.data["Active"]
+    if Active:
+        basicPhaseDiagram.stream(dict(x=[phi],y=[dPhi])) #      /output
+    if TotEng == 0:
+        K=-4.5
+    else:
+        K=getKinEngDouble()*9.0/TotEng-4.5
     KinEnergySource.data   = dict(x=[-4.5,-4.5, K, K], y=[12,11.5,11.5,12]) #      /output
     OtherEnergySource.data = dict(x=[K, K, 4.5, 4.5], y=[12,11.5,11.5,12])  #      /output
-    currentPoint.data      = dict(x=[phi],y=[dPhi])                         #      /output
 
 # get position of mass in single pendulum
 def getCurrentXYSingle():
@@ -329,7 +338,6 @@ glob_fun_getKinEng.data    = dict(fun=[getKinEngSingle])
 
 # draw pendulum diagram
 fig = figure(title="Kinetic energy balance",tools="",x_range=(-4.5,4.5),y_range=(3,12),width=500,height=500)
-fig.add_tools(Pendulum_MoveMassTool())
 fig.on_event(Pan, on_mouse_move)
 fig.title.text_font_size="16pt"
 fig.axis.visible = False
@@ -350,15 +358,15 @@ fig.add_layout(arrow_glyph)
 dPhiText = fig.text(x='x',y='y',text='t',source=dPhiArrowText,color="black",text_align="left")
 
 # draw phase diagram
-phase_diagramm = figure(title="Phase diagram",tools="",x_range=(-3.14,3.14),y_range=(-5,5))
+phase_diagramm = figure(title="Phase diagram",tools="yzoom_in,yzoom_out,reset",x_range=(-3.14,3.14),y_range=(-5,5))
 phase_diagramm.title.text_font_size="16pt"
 phase_diagramm.axis.major_label_text_font_size="12pt"
 phase_diagramm.axis.axis_label_text_font_style="normal"
 phase_diagramm.axis.axis_label_text_font_size="12pt"
 phase_diagramm.xaxis.axis_label=u"\u03C6 [rad]"
 phase_diagramm.yaxis.axis_label=u"\u03C6\u0307 [rad/s]"
-phase_diagramm.ellipse(x='x',y='y',width=0.02,height=0.02,color="#0065BD",source=basicPhaseDiagram)
-phase_diagramm.ellipse(x='x',y='y',width=0.2,height=0.2,color="#E37222",source=currentPoint)
+phase_diagramm.circle(x='x',y='y',size=2,color="#0065BD",source=basicPhaseDiagram)
+phase_diagramm.circle(x='x',y='y',size=10,color="#E37222",source=currentPoint)
 phase_diagramm.toolbar.logo = None
                        
 TotEng=getTotEng()
@@ -374,6 +382,8 @@ def play():
         g1Pendulum         = curdoc().add_periodic_callback(evolve,100)
         glob_active.data   = dict(Active=[True])
         glob_callback.data = dict(cid=[g1Pendulum]) #      /output
+        phi0_input.disabled = True
+        dphi0_input.disabled = True
 Play_button = Button(label="Play",button_type="success",width=150)
 Play_button.on_click(play)
 
@@ -388,17 +398,22 @@ def stop():
         phi0_input.value  = phi
         dphi0_input.value = dPhi
         glob_dTheta.data  = dict(val=[0]) #      /output
+        phi0_input.disabled = False
+        dphi0_input.disabled = False
 Stop_button = Button(label="Stop",button_type="success",width=150)
 Stop_button.on_click(stop)
 
 def reset():
     [Active] = glob_active.data["Active"] # input/output
+    [plot] = glob_fun_plot.data["fun"]
     phi=0.5
     dPhi=1
     if (Active):
         [g1Pendulum] = glob_callback.data["cid"] # input/
         curdoc().remove_periodic_callback(g1Pendulum)
         glob_active.data   = dict(Active=[False])
+        phi0_input.disabled = False
+        dphi0_input.disabled = False
     mass_input.value       = 5.0
     lam_input.value        = 0.0
     phi0_input.value       = phi
@@ -407,6 +422,7 @@ def reset():
     glob_dPhi.data         = dict(val=[dPhi]) #      /output
     glob_dTheta.data       = dict(val=[0])    #      /output
     basicPhaseDiagram.data = dict(x=[],y=[])  #      /output
+    plot()
 Reset_button = Button(label="Reset",button_type="success",width=150)
 Reset_button.on_click(reset)
 
@@ -417,13 +433,13 @@ def change_mass(attr,old,new):
     glob_TotEng.data = dict(val=[TotEng])   #      /output
     plot()
 ## Create slider to choose mass of blob
-mass_input = Slider(title="Mass [kg]", value=5, start=0.5, end=10.0, step=0.1,width=200)
+mass_input = LatexSlider(title="\\mathrm{Mass =}", value_unit="[\\mathrm{kg}]", value=5, start=0.5, end=10.0, step=0.1,width=200)
 mass_input.on_change('value',change_mass)
 
 def change_lam(attr,old,new):
     glob_lam.data = dict(val=[new]) #      /output
 ## Create slider to choose damper coefficient
-lam_input = Slider(title=u"Damper coefficient [N*s/m]", value=0.0, start=0.0, end=5.0, step=0.2,width=400)
+lam_input = LatexSlider(title="\\mathrm{Damper\\ coefficient =}", value_unit="[\\mathrm{Ns}/\\mathrm{m}]", value=0.0, start=0.0, end=5.0, step=0.2,width=400)
 lam_input.on_change('value',change_lam)
 
 def change_phi0(attr,old,new):
@@ -441,7 +457,7 @@ def change_phi0(attr,old,new):
     elif (Phi0!=new):
         phi0_input.value=Phi0
 ## Create slider to choose damper coefficient
-phi0_input = Slider(title=u"\u03C6\u2080 [rad]", value=0.0, start=-3.0, end=3.0, step=0.2,width=200)
+phi0_input = LatexSlider(title="\\varphi_0 =", value_unit="[\\mathrm{rad}]", value=0.5, start=-3.0, end=3.0, step=0.2,width=200)
 phi0_input.on_change('value',change_phi0)
 
 def change_phi0dot(attr,old,new):
@@ -459,7 +475,7 @@ def change_phi0dot(attr,old,new):
     elif (dPhi0!=new):
         dphi0_input.value=dPhi0
 ## Create slider to choose damper coefficient
-dphi0_input = Slider(title=u"\u03C6\u0307\u2080 [rad/s]", value=0.0, start=-5.0, end=5.0, step=0.5,width=200)
+dphi0_input = LatexSlider(title="\\dot{\\varphi_0} =", value_unit="[\\mathrm{rad}/\\mathrm{s}]", value=1.0, start=-5.0, end=5.0, step=0.5,width=200)
 dphi0_input.on_change('value',change_phi0dot)
 
 # create selector for pendulum type which updates function handles and appropriate properties

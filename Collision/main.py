@@ -334,6 +334,10 @@ def Reset():
     particleTwo.update_velocity(v_x2, v_y2)
 
     playpause_button.label = "Play"
+    ballOneVelocityDirSlider.disabled = False
+    ballOneVelocityMagSlider.disabled = False
+    ballTwoVelocityDirSlider.disabled = False
+    ballTwoVelocityMagSlider.disabled = False
 
     # Update the height of the bars accordingly
     update_bars()
@@ -504,7 +508,7 @@ Add all the components together and initiate the app
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1000)
+description = Div(text=open(description_filename).read(), render_as_text=False, width=970)
 
 area_image = Div(text="""
 <h2>
@@ -517,39 +521,37 @@ Particles' Parameters:
 
 #buttons = widgetbox(reset_button, play_button, pause_button,width=150)
 
-curdoc().add_root(	
-                  column(
-                         description,
-                         row(
-                             playGround,
-                             barsFig.getFig()
-                         ),
-                         row(
-                             column(
-                                    row(
-                                        widgetbox(playpause_button,width=225),
-                                        #widgetbox(pause_button,width=150),
-                                        widgetbox(reset_button,width=225)
-                             ),
-                                     area_image),
-                             column(
-                                    row(
-                                        ballOneVelocityDirSlider,
-                                        Spacer(width=10),
-                                        ballOneVelocityMagSlider,
-                                        ),
-                                    row(
-                                        ballTwoVelocityDirSlider,
-                                        Spacer(width=10),
-                                        ballTwoVelocityMagSlider
-                                        ),
-                                    crSlider,
-                             )
-
-                        )
-                 )
+curdoc().add_root(
+    column(
+        description,
+        row(
+            playGround,
+            barsFig.getFig()
+        ),
+        row(
+            column(
+                row(
+                    widgetbox(playpause_button, width=225),
+                    widgetbox(reset_button, width=225)
+                ),
+                area_image),
+            column(
+                row(
+                    ballOneVelocityDirSlider,
+                    Spacer(width=10),
+                    ballOneVelocityMagSlider,
+                ),
+                row(
+                    ballTwoVelocityDirSlider,
+                    Spacer(width=10),
+                    ballTwoVelocityMagSlider
+                ),
+                crSlider,
+            )
+        )
+    )
 )
                                     
 # get path of parent directory and only use the name of the Parent Directory 
 # for the tab name. Replace underscores '_' and minuses '-' with blanks ' '				 
-curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')

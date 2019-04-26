@@ -25,12 +25,15 @@ xf              = 0.0
 window          = 18
 xstart          = 0.02 * window
 zstart          = 0.1 * window  #height of floor
-step            = 0.01
+step            = 0.05
 f_end           = 5.0 #1.5
 w_end           = 0.15
 
 L               = 10.0
 fcrit_2         = 1.0  # reference for critical force is second column
+
+#Layout options
+app_width = 870
 
 # replaces global var
 global_old_slide_val = ColumnDataSource(data=dict(val=[0]))
@@ -64,9 +67,9 @@ class Column(object):
         self.sk.data        = dict(x=[], y=[])
         self.sk_labels.data = dict(x=[], y=[], name = [])
 
-    def fun_floor(self):
+    def fun_floor(self,zoffset=0):
         '''Member function: creates the floor line for the column'''
-        self.floor = dict(x = [self.xstart-1,self.xstart+1], y = [zstart, zstart])
+        self.floor = dict(x = [self.xstart-1,self.xstart+1], y = [zstart+zoffset, zstart+zoffset])
 
     def fun_arrow(self):
         '''Member function: Creates Force arrow'''
@@ -90,11 +93,11 @@ class Column(object):
         lW = [3] # line width
         self.arrow.data = dict(xS = xS, xE = xE , yS = yS, yE = yE, lW = lW)
 
-    def fun_labels(self):
+    def fun_labels(self,force_label="F"):
         '''Member Function: Creates labels of force arrows'''
-        x                   = [self.pts.data['x'][-1]+1, self.xstart-.5]
+        x                   = [self.pts.data['x'][-1]+.6, self.xstart-.7]
         y                   = [self.h + zstart + 2  , 0]
-        name                = ["F",self.name]
+        name                = [force_label,"\\mathrm{"+self.name+"}"]
         self.labels.data    = dict(x = x, y = y, name = name)
 
 weight_slide = Slider(title="Force Ratio (F/Fcrit)", value=0, start=0, end=f_end, step=step, width=450)    #slider created to change weight on columns
@@ -128,7 +131,7 @@ col4.pts.data=dict(x=[col4.xstart, col4.xstart], y=[zstart, zstart+col4.h])
 #, "name" = ["L","2L","3L","4L"]
 #creation of the floors of the columns:
 col1.fun_floor()
-col2.fun_floor()
+col2.fun_floor(-.75)
 col3.fun_floor()
 col4.fun_floor()
 #col2.floor = dict(x = [col2.xstart-1,col2.xstart+1], y = [zstart-0.75,zstart-0.75])
@@ -203,6 +206,10 @@ def init():
     col2.reset()
     col3.reset()
     col4.reset()
+    col1.fun_labels()
+    col2.fun_labels()
+    col3.fun_labels()
+    col4.fun_labels()
     fun_update(None,None,None)
 
 def fun_check1(attr,old,new):
@@ -225,21 +232,21 @@ def fun_update(attr,old,new):
     #print(weight_slide.value)
     if weight_slide.value > col1.fcrit:
         fun_col1(col1.xstart,zstart)
+        col1.fun_labels("F_{crit,1}=\\frac{F_{crit,2}}{4}")
     if weight_slide.value > col2.fcrit:
         fun_col2(col2.xstart,zstart)
+        col2.fun_labels("F_{crit,2}")
     if weight_slide.value > col3.fcrit:
         fun_col3(col3.xstart,zstart)
+        col3.fun_labels("F_{crit,3}=2F_{crit,2}")
     if weight_slide.value > col4.fcrit:
         fun_col4(col4.xstart,zstart)
+        col4.fun_labels("F_{crit,4}=4F_{crit,2}")
     
     col1.fun_arrow()
     col2.fun_arrow()
     col3.fun_arrow()
     col4.fun_arrow()
-    col1.fun_labels()
-    col2.fun_labels()
-    col3.fun_labels()
-    col4.fun_labels()
     fun_figures()
     global_old_slide_val.data = dict(val=[weight_slide.value])
     
@@ -294,7 +301,7 @@ plot.outline_line_width = 1
 plot.outline_line_alpha = 0.5
 plot.outline_line_color = "Black"
 plot.title.text_font_size = "18pt"
-#plot.width = 900
+plot.width = 900
 
 #Arrow Glyph Section:
 col1_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
@@ -308,13 +315,13 @@ x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col4
 
 #Labels section:
 # F and column name
-labels1 = LabelSet(x='x', y='y', text='name', level='glyph',
+labels1 = LatexLabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-20, y_offset=0, source=col1.labels, render_mode='canvas')
-labels2 = LabelSet(x='x', y='y', text='name', level='glyph',
+labels2 = LatexLabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-20, y_offset=0, source=col2.labels, render_mode='canvas')
-labels3 = LabelSet(x='x', y='y', text='name', level='glyph',
+labels3 = LatexLabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-20, y_offset=0, source=col3.labels, render_mode='canvas')
-labels4 = LabelSet(x='x', y='y', text='name', level='glyph',
+labels4 = LatexLabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-20, y_offset=0, source=col4.labels, render_mode='canvas')
 
 # buckling length
@@ -377,10 +384,10 @@ init()
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=app_width)
 
 description1_filename = join(dirname(__file__), "description1.html")
-description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=False, width=1200)
+description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=False, width=app_width)
 
 ################################################################################
 ####Output section
