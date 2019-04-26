@@ -29,6 +29,12 @@ xf = 10.0               # end value of rod
 ###############################
 ####       SOURCES         ####
 ###############################
+# Support Source:
+slide_support_img = "Normal_Force_Rod/static/images/auflager01.svg"
+fixed_support_img = "Normal_Force_Rod/static/images/auflager02.svg"
+
+support_source1 = ColumnDataSource(data=dict(sp_img=[], x=[] , y=[]))
+support_source2 = ColumnDataSource(data=dict(sp_img=[], x=[] , y=[]))
 
 
 ###################################
@@ -36,6 +42,12 @@ xf = 10.0               # end value of rod
 ###################################
 
 ### Sliders and Buttons:
+
+p_loc_slide= LatexSlider(title="\\mathrm{Load \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value= 5,start = 0, end = 10, step = 1.0)
+p_mag_slide = LatexSlider(title="\\mathrm{Load \ Amplitude}", value = 1.0, start=-1.0, end=1.0, step=2.0)
+sup2_loc_slide = LatexSlider(title="\\mathrm{Support \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=10,start = 0, end = 10, step = 1.0)
+
+
 
 # Button to choose type of load:
 radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Triangular Load", "Temperature"], active=0, width = 600)
@@ -71,6 +83,36 @@ plot_main.outline_line_color = "Black"
 plot_main.title.text_font_size = "13pt"
 plot_main.toolbar.logo = None
 
+
+
+
+
+#######################
+##########  TESTS #
+###################################
+
+support_source1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
+support_source2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
+
+support_source1.data = dict(sp_img=[fixed_support_img], x= [-0.325], y= [-0.1]) 
+support_source2.data = dict(sp_img=[slide_support_img], x = [10-0.33] , y = [-0.1])
+
+
+plot_main.add_glyph(support_source1,ImageURL(url="sp_img", x='x', y='y', w=0.66, h=0.4))
+plot_main.add_glyph(support_source2,ImageURL(url="sp_img", x='x', y='y', w=0.66, h=0.4))
+
+rod_source = ColumnDataSource(data=dict(x = np.linspace(0,10,100), y = np.ones(100) * 0 ))
+
+plot_main.line(x='x', y='y', source=rod_source, color='#0065BD',line_width=15)
+
+
+
+
+
+
+
+
+
 ###### PLOT (NORMAL FORCE):
 # Define plot
 plot_normalF = Figure(title="Normal force N(x)", tools="", x_range=(x0-.5,xf+.5), y_range=(-11,11), height = 400)
@@ -80,6 +122,17 @@ plot_normalF.outline_line_width = 2
 plot_normalF.outline_line_color = "Black"
 plot_normalF.title.text_font_size = "13pt"
 plot_normalF.toolbar.logo = None
+
+
+# const p=2     -2x
+x = np.linspace(0,10,1000)
+y = np.ones(1000)*-2*x
+normalF_source = ColumnDataSource(data=dict(x=[] , y=[]))
+normalF_source.data = dict(x=x, y=y)
+
+plot_normalF.line(x='x', y='y', source=normalF_source, color="#A2AD00",line_width=2)
+
+# evtl. gleichmit scipy und integration rules für beliebiges p
 
 ###### PLOT (DEFORMATION):
 # Define plot
@@ -112,6 +165,7 @@ p_rt2 = Paragraph(text="""Right support: """)
 p_rt3 = Paragraph(text="""Cross-section: """)
 #width=200, height=100)
 
+#slider_group = widgetbox(p_loc_slide,p_mag_slide,sup2_loc_slide) # together to close....
 simple_button_group = widgetbox([Reset_button, dummy_button])
 
 doc_layout = layout(children=[
@@ -127,7 +181,11 @@ doc_layout = layout(children=[
                        row(widgetbox(p_rt3, width=120), widgetbox(radio_group_cross)), 
                        #row(rt, widgetbox(radio_group_left)),
                        #row(rt, widgetbox(radio_group_right)), 
-                       #row(rt, widgetbox(radio_group_cross)), 
+                       #row(rt, widgetbox(radio_group_cross)),
+                       p_loc_slide,
+                       p_mag_slide,
+                       sup2_loc_slide,
+                       #slider_group,
                        simple_button_group),
                    column(plot_main,plot_normalF,plot_deform ) ) ) ] )
 
