@@ -48,10 +48,6 @@ def changeObject(FIG,new_object,r,ri,m):
         func=lambda(x):moveHollowCylinder(x,r,m,ri,data,line_data)
     elif (new_object == "Hollow sphere"):
         createHollowSphere(r,ri,data,line_data)
-        if (abs(r-ri)<1e-5):
-            time_display[FIG].data=dict(x=[-20],y=[20],t=["Object vanished!"])
-        else:
-            time_display[FIG].data=dict(x=[],y=[],t=[])
         func=lambda(x):moveHollowSphere(x,r,m,ri,data,line_data)
     else:
         createCylinder(r,data,line_data)
