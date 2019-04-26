@@ -106,6 +106,7 @@ curdoc().remove_periodic_callback(callback_id)
 
 
 ## `ColumnDataSource` objects
+### Use `ColumnDataSource` to avoid global variables
 Instead of using global variables like in this code
 ```python
 class m_class:
@@ -160,12 +161,14 @@ foo()
 * Updating single variables of a ColumnDataSource is **not** possible. Always update the whole dict, otherwise variables will get lost.
 * All "global" variables need to be loaded in the specific function. If in-place-operations were used, the saving step is optional.
 
+### Modify data in `ColumnDataSource` objects
+If only a subset of the data stored in a `ColumnDataSource` object need to be replaced, the `patch` function can be used. See https://github.com/bokeh/bokeh/blob/1.1.0/examples/howto/patch_app.py for an illustrative example.
 
-# Francesca Final Acceptance and Publication
+# Franziska Final Acceptance and Publication
 
 The following points are executed by Francesca only.
 
-* Make sure that the status of finalized apps is updated in ```Mechanic_Apps/README.md``` (done by Francesca)
+* Make sure that the status of finalized apps is updated in ```Mechanic_Apps/README.md``` (done by Franziska)
 * Add description of app and a matching tooltip on overview page
     * put app in the right position in the hierarchy (semester, lecture).
 * Add app directory name to ```appnames.conf```.

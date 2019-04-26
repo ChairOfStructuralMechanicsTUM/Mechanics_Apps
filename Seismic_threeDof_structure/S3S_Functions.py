@@ -3,6 +3,13 @@ import numpy as np
 from scipy import linalg
 from bokeh.models.widgets import Div
 
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexDiv
+
 class S3S_Structure:
     
     def __init__(self, masses, massSupports, trusses, trussLength, base):
@@ -218,8 +225,8 @@ class S3S_Mode( S3S_Structure ):
         self.locationInERS = ColumnDataSource(data=dict(x=[0],y=[0])) # with default values
         self.participationFactor = 0 # 0 is a default value
         
-        self.multiplier_text = Div(text="""<b>\u03b2S\u2090/\u03C9\u00B2 =</b> """+ str(0))
-        self.frequency_text  = Div(text="""<b>Natural Frequency =</b> """)
+        self.multiplier_text = LatexDiv(text=" $\\displaystyle\\frac{\\beta S_a(T) }{ \\omega^2} ="+ str(0) + "$")
+        self.frequency_text  = LatexDiv(text="""<b>Natural Frequency =</b> """)
     
     def get_maximum_displacement( self, siesmicParameters ):
         r = np.ones(3)
@@ -239,17 +246,11 @@ class S3S_Mode( S3S_Structure ):
         Sa = siesmicParameters.get_Sa( period )
         self.locationInERS.data = dict(x=[period,period,0],y=[0,Sa,Sa])
         
-    def modify_mode_text(self, multiplier):  
-        if self.id == 2:
-            self.multiplier_text.text = " "u"<b>\u03b2S"u"\u2090(T)/"u"\u03C9"u"\u00B2 = </b>"+ str(multiplier)
-        elif self.id == 1:
-            self.multiplier_text.text = " "u"<b>\u03b2S"u"\u2090(T)/"u"\u03C9"u"\u00B2 = </b>"+ str(multiplier)
-        elif self.id == 0:
-            self.multiplier_text.text = " "u"<b>\u03b2S"u"\u2090(T)/"u"\u03C9"u"\u00B2 = </b>"+ str(multiplier)
-        #self.multiplier_text.text = """<b>Multiplier =</b> """ 
+    def modify_mode_text(self, multiplier):
+        self.multiplier_text.text = " $\\displaystyle\\frac{\\beta S_a(T)}{ \\omega^2} ="+ '{:.3f}'.format(multiplier) + "$"
         
     def modify_frequency_text(self):
-        self.frequency_text.text = """<b>Natural Frequency =</b> """ + str(self.frequency) + " rad/sec"
+        self.frequency_text.text = "$\\text{Natural Frequency} = " + '{:.3f}'.format(self.frequency) + "\\, \\frac{\\mathrm{rad}}{\\mathrm{s}}$"
         
     def normalize_mode_shape(self):
         m = np.dot(self.modeShape , np.dot(self.M , self.modeShape))
