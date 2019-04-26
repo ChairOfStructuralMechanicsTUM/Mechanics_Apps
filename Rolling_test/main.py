@@ -98,21 +98,22 @@ Width  = -255.4*XStart/YEnd #-220.0*XStart/YEnd
 ###############################################################################
 # draw 3 graphs each containing a ramp, the angle marker, an ellipse, and lines
 
-fig0 = figure(title="Sphere",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
+fig0 = figure(title="Sphere",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)
 fig0.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig_data[0])
 fig0.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig_lines_data[0])
 fig0.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
 fig0.line(x='x',y='y',color="black",line_width=2,source=wall_source)
 fig0.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-fig0.grid.visible     = False
+#fig0.grid.visible     = False
 fig0.axis.visible     = False
 fig0.toolbar_location = None
 time_lable0 = LabelSet(x='x', y='y', text='t', source=time_display[0])
 fig0.add_layout(time_lable0)
+#fig0.circle()
 
 
-fig1 = figure(title="Full cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
+fig1 = figure(title="Full cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)
 fig1.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig_data[1])
 fig1.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig_lines_data[1])
@@ -126,7 +127,7 @@ time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display[1])
 fig1.add_layout(time_lable1)
 
 
-fig2 = figure(title="Hollow cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="")
+fig2 = figure(title="Hollow cylinder",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)
 fig2.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig_data[2])
 fig2.multi_line(xs='x',ys='y',color="#003359",line_width=3,source=fig_lines_data[2])
@@ -134,7 +135,7 @@ fig2.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
 fig2.line(x='x',y='y',color="black",line_width=2,source=wall_source)
 fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #fig2.grid.visible     = False
-#fig2.axis.visible     = False
+fig2.axis.visible     = False
 fig2.toolbar_location = None
 time_lable2 = LabelSet(x='x', y='y', text='t', source=time_display[2])
 fig2.add_layout(time_lable2)
@@ -157,7 +158,7 @@ fig3.grid.visible = False
 fig3.axis.visible = False
 fig3.toolbar_location = None
 
-fig4 = figure(x_range=(-10,10), y_range=(-5,5), height=220, width=400, tools="")
+fig4 = figure(x_range=(-10,10), y_range=(-5,5), height=220, width=400, tools="", match_aspect=True)
 fig4.ellipse(x=[-5,-5],y=[0,0],width=[4,6],height=[4,6],fill_alpha=[0,0],line_color='black',line_width=3)
 fig4.line(x=[-5,-5],y=[0,3],line_width=2)
 fig4.line(x=[-5,-3],y=[0,0],line_width=2)
@@ -167,6 +168,7 @@ fig4.add_layout(r_lables)
 fig4.grid.visible = False
 fig4.axis.visible = False
 fig4.toolbar_location = None
+
 
 # put the figures in a list for easy access in functions
 #figure_list = [fig0,fig1,fig2]
