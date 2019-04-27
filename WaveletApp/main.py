@@ -144,7 +144,7 @@ def update(attr, old, new):
         # Determine which wavelet function to use for computation
         if (Wavelet_function_id == "Wavelet 1"):
             a,b,W = Find_Heaviside_Wavelet_One(T_0, amp, Resolut)
-        elif (Wavelet_function_id == "Wavelet 2"):
+        else:
             a,b,W = Find_Heaviside_Wavelet_Two(T_0, amp, Resolut)
 
     elif (sample_function_id == "Rectangular function"):
@@ -166,7 +166,7 @@ def update(attr, old, new):
         # Determine which wavelet function to use for computation
         if (Wavelet_function_id == "Wavelet 1"):
             a,b,W = Find_Rectangular_Wavelet_One(T_0, T_1 , amp, Resolut)
-        elif (Wavelet_function_id == "Wavelet 2"):
+        else:
             a,b,W = Find_Rectangular_Wavelet_Two(T_0, T_1 , amp, Resolut)
 
     elif (sample_function_id == "Dirac delta function"):
@@ -177,7 +177,7 @@ def update(attr, old, new):
         # Determine which wavelet function to use for computation
         if (Wavelet_function_id == "Wavelet 1"):
             a,b,W = Find_Dirac_Wavelet_One(T_0, amp, Resolut)
-        elif (Wavelet_function_id == "Wavelet 2"):
+        else:
             a,b,W = Find_Dirac_Wavelet_Two(T_0, amp, Resolut)
     
     elif (sample_function_id == "Trigonometric function"):
@@ -185,10 +185,10 @@ def update(attr, old, new):
         # Determine which wavelet function to use for computation
         if (Wavelet_function_id == "Wavelet 1"):
             a,b,W = Find_Trig_Wavelet_One (Trigonometric_radio.active, Frequency_Slider.value, Resolut)
-        elif (Wavelet_function_id == "Wavelet 2"):
+        else:
             a,b,W = Find_Trig_Wavelet_Two (Trigonometric_radio.active, Frequency_Slider.value, Resolut)
 
-    elif (sample_function_id == "User defined function"):
+    else:
         
         n=200
         t=np.linspace(-5,5,n)
@@ -215,7 +215,7 @@ def update(attr, old, new):
         # Determine which wavelet function to use for computation
         if (Wavelet_function_id == "Wavelet 1"):
             a,b,W = Find_Custom_Wavelet_One(User_Func.value, Resolut)
-        elif (Wavelet_function_id == "Wavelet 2"):
+        else:
             a,b,W = Find_Custom_Wavelet_Two(User_Func.value,Resolut)
     
     Plot_WT(a,b,W)
@@ -256,7 +256,7 @@ def sample_fun_input_modified(self):
         controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
         My_Layout.children[0].children[1].children[0].children[0]= controls_box
 
-    elif (sample_function_id == "User defined function"):
+    else:
         controls = [sample_fun_input_f, User_Func]
         controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
         My_Layout.children[0].children[1].children[0].children[0]= controls_box
@@ -272,19 +272,19 @@ def Wavelet_fun_modified(self):
     t=np.linspace(-10,10,n)
     
     if (Wavelet_function_id == "Wavelet 1"):
+        y= t * np.exp(-t**2)
+        # Plot wavelet
+        Wavelet_Function_source.data = dict(t=t, y=y)
+        WT = plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
+        plot_Wavelet_Function.add_layout(LatexLegend(items=[("                       {t} e^{-t^2}",[WT])], label_text_font_size='12pt', label_height= 20, label_width=40))
+        
+    else:
         y= np.exp(-(t**2)/2) * np.cos(5*t)
         # Plot wavelet
         Wavelet_Function_source.data = dict(t=t, y=y)
         WT = plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
         plot_Wavelet_Function.add_layout(LatexLegend(items=[("e^{\\frac{t^2}{2}} \cos{(5t)}",[WT])], label_text_font_size='12pt', label_height= 20, label_width=40))
         
-    elif (Wavelet_function_id == "Wavelet 2"):
-        y= t * np.exp(-t**2)
-        # Plot wavelet
-        Wavelet_Function_source.data = dict(t=t, y=y)
-        WT = plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
-        plot_Wavelet_Function.add_layout(LatexLegend(items=[("                       {t} e^{-t^2}",[WT])], label_text_font_size='12pt', label_height= 20, label_width=40))
-    
 def Trig_fun_modified(attr, old, new):
     """
     Called to plot the new selected trigonometric function
@@ -332,13 +332,11 @@ def param_change(attr,old,new):
         y= np.exp(-(((t-b_param.value)/a_param.value)**2)/2) * np.cos(5*((t-b_param.value)/a_param.value))
         Wavelet_Function_source.data = dict(t=t, y=y)
         plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
-        #plot_function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
-    
+
     elif (Wavelet_function_id == "Wavelet 2"):
         y= (t-b_param.value)/a_param.value * np.exp(-((t-b_param.value)/a_param.value)**2)
         Wavelet_Function_source.data = dict(t=t, y=y)
         plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
-        #plot_function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
 
 
 ######################
