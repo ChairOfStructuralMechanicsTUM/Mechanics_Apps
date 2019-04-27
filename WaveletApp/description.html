@@ -28,7 +28,7 @@ code {
 This app finds the Wavelet Transform of: Heaviside functions, Rectangular functions, Dirac functions, Trigonometric functions and user defined functions using different two different Wavelet Functions.
 </p>
 
-The Wavelet Transform assigns a function f(t) of a real variable t to a function Wf (b, a). The transformation rule is:
+The Wavelet Transform assigns a function $ f(t) $ of a real variable t to a function $ W_{f}(a,b) $. The transformation rule is:
 </p>
 $$ W_{f}(a,b) = \mid a \mid^{-\frac{1}{2}} \int_{-\infty}^{\infty} f(t) \: \psi(\frac{t-b}{a}) \: dt$$
 The user is required to input the points in time where the suddun jump happens in a heaviside functions, rectangular function and dirac function along with the desired amplitude. On the other hand, user is asked to input the frequency of the trigonometric function. Please note that user defined functions can be of type:
@@ -38,7 +38,7 @@ The user is required to input the points in time where the suddun jump happens i
 <li>Combinations of the above mentioned functions</li>
 </p>
 
-The scaling parameter "a" effecting the center-frequency and the bandwidth can be manipulated from small values (good resolution in time domain) to high values (good resolution in frequency domain). Similarly, the shifting parameter "b" can be varied resulting in a time-shift of the wavelet. For a fixed value of the parameter "a" the transformation is interpreted as a convolution.
+The scaling parameter $a$ effecting the center-frequency and the bandwidth can be manipulated from small values (good resolution in time domain) to high values (good resolution in frequency domain). Similarly, the shifting parameter $b$ can be varied resulting in a time-shift of the wavelet. For a fixed value of the parameter $a$ the transformation is interpreted as a convolution.
 </p>
 
 Finally, the user has the ability to define the desired resolution (number of computations per axis). Please note that high resolution values would lead to higher computational need and hence longer time.
