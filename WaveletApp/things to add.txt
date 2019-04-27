@@ -1,5 +1,0 @@
-loading spinner --- done
-warning message if user entered wrong variable --- done
-enhance efficiency by 'a' dependent integration limits --- done
-change graph colours to TUM one
-add description --- done
