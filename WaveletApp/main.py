@@ -190,8 +190,8 @@ def update(attr, old, new):
 
     else:
         
-        n=200
-        t=np.linspace(-5,5,n)
+        n=1000
+        t=np.linspace(0,5,n)
         
         # Make a list of safe functions
         safe_dict = {
@@ -255,6 +255,7 @@ def sample_fun_input_modified(self):
         controls = [sample_fun_input_f, Trigonometric_radio, Frequency_Slider, Calc_button]
         controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
         My_Layout.children[0].children[1].children[0].children[0]= controls_box
+        Trig_fun_modified('active',0,0) # Plot sin
 
     else:
         controls = [sample_fun_input_f, User_Func]
