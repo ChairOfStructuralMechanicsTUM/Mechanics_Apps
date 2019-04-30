@@ -65,7 +65,7 @@ from latex_support import LatexSlider, LatexLegend
 # input values
 initial_zeta = 0.3
 initial_ny = 0.3
-initial_Omega = 100
+initial_Omega = 300
 initial_b = 3
 initial_p0 = 1
 global_zeta = ColumnDataSource(data = dict(zeta = [initial_zeta]))
@@ -253,7 +253,7 @@ global_rayleigh_vector_source = ColumnDataSource(data = dict(xS = [],zS = [],
 
 
 # callback 
-t = 0
+t = 0.11
 global_slider_zrange_active = ColumnDataSource(data =
  dict(slider_zrange_active = [False]))
 global_lamb_zrange_active = ColumnDataSource(data =
@@ -530,7 +530,7 @@ def evolve():
         w_rayleigh_vector_glyph.visible = False
         total_rayleigh_vector_glyph.visible = False
         evolve1()
-  t+=dt
+  #t+=dt
   global_t.data = dict(t=[t])
 
 
