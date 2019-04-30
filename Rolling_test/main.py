@@ -150,7 +150,7 @@ fig2.add_layout(time_lable2)
 ###                           annotation figures                            ###
 ###############################################################################
 # sketch of the ramp and objects
-fig3 = figure(title="Annotations", x_range=(-50,5), y_range=(0,25), height=220, width=400, tools="")
+fig3 = figure(title="Annotations", x_range=(-50,5), y_range=(0,25), height=200, width=295, tools="")
 fig3.line(x=[0,-48],y=[0,18],color="black",line_width=2) # ramp
 fig3.line(x=[-48,-48],y=[0,18],color="black",line_width=2) # wall
 fig3.ellipse(x=[-45],y=[19],width=[4],height=[4],fill_color="#0065BD",line_color="#003359",line_width=3)
@@ -176,10 +176,10 @@ fig3.line(x=[TX0-10*cos(i*alpha/10.0) for i in range(0,11)],y=[TY0+10*sin(i*alph
 
 
 
-fig4 = figure(x_range=(-10,10), y_range=(-5,5), height=220, width=400, tools="", match_aspect=True)
+fig4 = figure(x_range=(-10,10), y_range=(-5,5), height=200, width=295, tools="", match_aspect=True)
 #fig4.ellipse(x=[-5,-5],y=[0,0],width=[4,6],height=[4,6],fill_alpha=[0,0],line_color='black',line_width=3)
 fig4.circle(x=[-5,-5],y=[0,0],radius=[2,3],fill_alpha=[0,0],line_color='black',line_width=3)
-fig4.line(x=[-5,-5],y=[0,3],line_width=2)
+fig4.line(x=[-5,-5],y=[0,3*200/295],line_width=2)
 fig4.line(x=[-5,-3],y=[0,0],line_width=2)
 r_lables_source = ColumnDataSource(data=dict(x=[-4.2,-5.7,1,1],y=[-0.8,1,1,-1],t=["r_i","r","r\\:=\\text{Radius}","r_i=\\text{Inner radius}"]))
 r_lables = LatexLabelSet(x='x', y='y', text='t', source=r_lables_source)
@@ -254,5 +254,5 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 curdoc().add_root(column(description,row(column(row(fig0,column(object_select0,radius_slider0,ri_slider0)),
     row(fig1,column(object_select1,radius_slider1,ri_slider1)),
     row(fig2,column(object_select2,radius_slider2,ri_slider2))),Spacer(width=100),
-    column(start_button,reset_button,row(widgetbox(p_mode,width=120),mode_selection),alpha_slider, Spacer(height=30), fig3, fig4))))
+    column(start_button,reset_button,row(widgetbox(p_mode,width=120),mode_selection),alpha_slider, Spacer(height=20), fig3, Spacer(height=20), fig4))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
