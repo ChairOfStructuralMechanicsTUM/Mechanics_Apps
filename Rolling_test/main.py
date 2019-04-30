@@ -145,18 +145,31 @@ fig2.add_layout(time_lable2)
 ###                           annotation figures                            ###
 ###############################################################################
 # sketch of the ramp and objects
-fig3 = figure(title="Annotations", x_range=(-50,0), y_range=(0,25), height=220, width=400, tools="")
+fig3 = figure(title="Annotations", x_range=(-50,5), y_range=(0,25), height=220, width=400, tools="")
 fig3.line(x=[0,-48],y=[0,18],color="black",line_width=2) # ramp
 fig3.line(x=[-48,-48],y=[0,18],color="black",line_width=2) # wall
 fig3.ellipse(x=[-45],y=[19],width=[4],height=[4],fill_color="#0065BD",line_color="#003359",line_width=3)
 fig3.ellipse(x=[-45],y=[19],width=[2.5],height=[4],fill_alpha=[0],line_color="#003359",line_width=3, angle=-0.7)
-fig3.ellipse(x=[0],y=[-1],width=[12], height=[10], fill_alpha=[0], line_color='black', line_width=2, line_dash='15 50', line_dash_offset=-10)
+#fig3.ellipse(x=[0],y=[-1],width=[12], height=[10], fill_alpha=[0], line_color='black', line_width=2, line_dash='15 50', line_dash_offset=-10)
 angle_glyph3=LabelSet(x='x', y='y',text='t',text_color='black',
     text_font_size="15pt", source=AlphaPos)
 fig3.add_layout(angle_glyph3)
 fig3.grid.visible = False
 fig3.axis.visible = False
 fig3.toolbar_location = None
+
+fig3.line(x=[-46.3,0.685],y=[18.98,1.88],color="black",line_width=1.5)
+fig3.line(x=[-46,-44],y=[16.33,21.6],color="black",line_width=1.5)
+fig3.line(x=[-1,2],y=[-2.67,5.3],color="black",line_width=1.5)
+
+#for i in range(0,11):
+#    X.append(-3*cos(i*alpha/10.0))
+#    Y.append(3*sin(i*alpha/10.0))
+#AngleMarkerSource.data=dict(x=X,y=Y)
+
+fig3.line(x=[-10*cos(i*alpha/10.0) for i in range(0,11)],y=[10*sin(i*alpha/10.0) for i in range(0,11)],color="black",line_width=2)
+
+
 
 fig4 = figure(x_range=(-10,10), y_range=(-5,5), height=220, width=400, tools="", match_aspect=True)
 fig4.ellipse(x=[-5,-5],y=[0,0],width=[4,6],height=[4,6],fill_alpha=[0,0],line_color='black',line_width=3)
@@ -168,6 +181,7 @@ fig4.add_layout(r_lables)
 fig4.grid.visible = False
 fig4.axis.visible = False
 fig4.toolbar_location = None
+
 
 
 # put the figures in a list for easy access in functions
