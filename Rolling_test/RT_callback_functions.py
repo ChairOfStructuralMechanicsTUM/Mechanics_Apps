@@ -11,7 +11,8 @@ from RT_global_variables import (
         glob_values, glob_callback_id,
         wall_source, ramp_source, AngleMarkerSource,
         glob_fun_handles,
-        rampLength, rampAddLength
+        rampLength, rampAddLength,
+        TX0, TY0
         )
 from RT_buttons import (
         start_button, reset_button, mode_selection,
@@ -79,17 +80,17 @@ def changeObject2(attr,old,new):
 ###############################################################################
 def changeRadius0(attr,old,new):
     changeObject(0,object_select0.value,new,ri_slider0.value,1.0)
-    ri_slider0.end = new
+    ri_slider0.end   = new
     ri_slider0.value = min(ri_slider0.value,new)
 
 def changeRadius1(attr,old,new):
     changeObject(1,object_select1.value,new,ri_slider1.value,1.0)
-    ri_slider1.end = new
+    ri_slider1.end   = new
     ri_slider1.value = min(ri_slider0.value,new)
 
 def changeRadius2(attr,old,new):
     changeObject(2,object_select2.value,new,ri_slider2.value,1.0)
-    ri_slider2.end = new
+    ri_slider2.end   = new
     ri_slider2.value = min(ri_slider2.value,new)
 
 ###############################################################################
@@ -116,13 +117,13 @@ def changeAlpha(attr,old,new):
         X.append(-3*cos(i*alpha/10.0))
         Y.append(3*sin(i*alpha/10.0))
     AngleMarkerSource.data=dict(x=X,y=Y)
-    COS    = cos(alpha)
-    SIN    = sin(alpha)
-    offset = -rampLength*COS
-    H      = rampLength*SIN
-    glob_values.update(dict(alpha=alpha, SIN=SIN, COS=COS, offset=offset, H=H)) #      /output
-    ramp_source.data = dict(x=[offset-rampAddLength*COS,0],y=[H+rampAddLength*SIN,0])
-    wall_source.data = dict(x=[offset-rampAddLength*COS,offset-rampAddLength*COS],y=[H+rampAddLength*SIN,0])
+    COS  =  cos(alpha)
+    SIN  =  sin(alpha)
+    TX1  =  -rampLength*COS
+    TY1  =  rampLength*SIN
+    glob_values.update(dict(alpha=alpha, SIN=SIN, COS=COS, TX1=TX1, TY1=TY1)) #      /output
+    ramp_source.data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0])
+    wall_source.data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0])
     reset()
     
 
@@ -176,7 +177,7 @@ def evolve():
     # if an object has reached the end of the ramp then stop the simulation
     ind_x_max = np.argmax(x_coords)
     ind_y_max = np.argmax(y_coords)
-    if (x_coords[ind_x_max]>0 or y_coords[ind_y_max]<0):
+    if (x_coords[ind_x_max]>TX0 or y_coords[ind_y_max]<TY0):
         # in mode "one" (active==0) the simulation is stopped after one of the objects reached the end of the ramp
         # in mode "all" (active==1) the simulation is stopped after all objects reached the end of the ramp 
         #               -> (only one fig in use anymore at ending time, one "True" <==> sum==1))
@@ -189,7 +190,7 @@ def evolve():
         plot_num = ind_x_max if x_coords[ind_x_max]>0 else ind_y_max
         fig_in_use[plot_num] = False
         # change the corresponding CDS to display the time only in this plot
-        time_display[plot_num].data=dict(x=[-10],y=[20],t=[str(glob_values["t"])+" s"])
+        time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=[str(glob_values["t"])+" s"])
     # if all simulations have finished, disable the start button
     if (not any(fig_in_use)):
         start_button.disabled = True

@@ -8,11 +8,11 @@ from RT_global_variables import glob_SphereXLines, glob_SphereYLines, glob_value
 def createSphere(r,sphere_data,sphere_lines_data):
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
-    load_vals = ["SIN", "COS", "offset", "H"]
-    SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
-    # find the centre, knowing that it touches the ramp at (offset,H)
-    newX = offset+r*SIN
-    newY = H+r*COS
+    load_vals = ["SIN", "COS", "TX1", "TY1"]
+    SIN, COS, TX1, TY1 = [glob_values.get(val) for val in load_vals]
+    # find the centre, knowing that it touches the ramp at (TX1,TY1)
+    newX = TX1+r*SIN
+    newY = TY1+r*COS
     # draw the sphere in blue
     sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1])
     # use the referece lines to find the current position of the lines
@@ -29,17 +29,17 @@ def createSphere(r,sphere_data,sphere_lines_data):
 def createHollowSphere(r,ri,sphere_data,sphere_lines_data):
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
-    load_vals = ["SIN", "COS", "offset", "H"]
-    SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
+    load_vals = ["SIN", "COS", "TX1", "TY1"]
+    SIN, COS, TX1, TY1 = [glob_values.get(val) for val in load_vals]
     
     if (abs(r-ri)<1e-5):
         # empty data if radius == inner radius (numerically)
         sphere_data.data       = dict(x=[],y=[],w=[],c=[],a=[])
         sphere_lines_data.data = dict(x=[],y=[])
     else:    
-        # find the centre, knowing that it touches the ramp at (offset,H)
-        newX = offset+r*SIN
-        newY = H+r*COS
+        # find the centre, knowing that it touches the ramp at (TX1,TY1)
+        newX = TX1+r*SIN
+        newY = TY1+r*COS
         # draw the sphere in semi-transparent blue
         sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1-ri/r]) # a=[0.4]
         # use the referece lines to find the current position of the lines
@@ -58,31 +58,31 @@ def createHollowSphere(r,ri,sphere_data,sphere_lines_data):
 ###                           Cylinder functions                            ###
 ###############################################################################
 def createCylinder(r, cylinder_data, cylinder_lines_data):
-    load_vals = ["SIN", "COS", "offset", "H"]
-    SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
-    # draw the cylinder around the centre, knowing that it touches the ramp at (offset,H)
-    cylinder_data.data=dict(x=[offset+r*SIN],y=[H+r*COS],w=[2*r],c=["#0065BD"],a=[1])
-    cylinder_lines_data.data=dict(x=[[offset,offset+2*r*SIN],
-        [offset+r*(SIN-COS),offset+r*(SIN+COS)]],
-        y=[[H,H+2*r*COS],[H+r*(COS+SIN),H+r*(COS-SIN)]])
+    load_vals = ["SIN", "COS", "TX1", "TY1"]
+    SIN, COS, TX1, TY1 = [glob_values.get(val) for val in load_vals]
+    # draw the cylinder around the centre, knowing that it touches the ramp at (TX1,TY1)
+    cylinder_data.data=dict(x=[TX1+r*SIN],y=[TY1+r*COS],w=[2*r],c=["#0065BD"],a=[1])
+    cylinder_lines_data.data=dict(x=[[TX1,TX1+2*r*SIN],
+        [TX1+r*(SIN-COS),TX1+r*(SIN+COS)]],
+        y=[[TY1,TY1+2*r*COS],[TY1+r*(COS+SIN),TY1+r*(COS-SIN)]])
 
 
 def createHollowCylinder(r,ri, hollowCylinder_data, hollowCylinder_lines_data):
-    load_vals = ["SIN", "COS", "offset", "H"]
-    SIN, COS, offset, H = [glob_values.get(val) for val in load_vals]
+    load_vals = ["SIN", "COS", "TX1", "TY1"]
+    SIN, COS, TX1, TY1 = [glob_values.get(val) for val in load_vals]
     
     if (abs(r-ri)<1e-5):
         # empty data if radius == inner radius (numerically)
         hollowCylinder_data.data       = dict(x=[],y=[],w=[],c=[],a=[])
         hollowCylinder_lines_data.data = dict(x=[],y=[])
     else:
-        # draw the cylinder around the centre, knowing that it touches the ramp at (offset,H)
-        hollowCylinder_data.data=dict(x=[offset+r*SIN,offset+r*SIN],
-            y=[H+r*COS,H+r*COS],w=[2*r,2*ri],c=["#0065BD","#FFFFFF"],a=[1,1])
-        hollowCylinder_lines_data.data=dict(x=[[offset,offset+(r-ri)*SIN],
-            [offset+(r+ri)*SIN,offset+2*r*SIN],
-            [offset+r*(SIN-COS),offset+r*SIN-ri*COS],
-            [offset+r*(SIN+COS),offset+r*SIN+ri*COS]],
-            y=[[H,H+(r-ri)*COS],[H+(r+ri)*COS,H+2*r*COS],
-            [H+r*(COS+SIN),H+r*COS+ri*SIN],
-            [H+r*(COS-SIN),H+r*COS-ri*SIN]])
+        # draw the cylinder around the centre, knowing that it touches the ramp at (TX1,TY1)
+        hollowCylinder_data.data=dict(x=[TX1+r*SIN,TX1+r*SIN],
+            y=[TY1+r*COS,TY1+r*COS],w=[2*r,2*ri],c=["#0065BD","#FFFFFF"],a=[1,1])
+        hollowCylinder_lines_data.data=dict(x=[[TX1,TX1+(r-ri)*SIN],
+            [TX1+(r+ri)*SIN,TX1+2*r*SIN],
+            [TX1+r*(SIN-COS),TX1+r*SIN-ri*COS],
+            [TX1+r*(SIN+COS),TX1+r*SIN+ri*COS]],
+            y=[[TY1,TY1+(r-ri)*COS],[TY1+(r+ri)*COS,TY1+2*r*COS],
+            [TY1+r*(COS+SIN),TY1+r*COS+ri*SIN],
+            [TY1+r*(COS-SIN),TY1+r*COS-ri*SIN]])

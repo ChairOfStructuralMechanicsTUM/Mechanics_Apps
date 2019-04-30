@@ -15,9 +15,45 @@ rampAddLength = 5  # excess length for better visualization
 # (speeds up calculations)
 SIN           = sin(alpha)
 COS           = cos(alpha)
-offset        = -rampLength*COS
+#offset        = -rampLength*COS
 t             = 0.0
-H             = rampLength*SIN
+#H             = rampLength*SIN
+
+
+###############################################################################
+###               coordinates of the triangle (for reference)               ###
+###############################################################################
+# ramplength L is constant
+# (TX0,TY0), alpha and L are given
+# (TX1,TY1) and (TX2,TY2) are calculated from this
+# aswell as the center of the objects in the creation functions
+
+# (TX2,TY2) stays constant during the whole simulation
+# (TX1,TY1) can change due to a new alpha value
+
+#    (TX1,TY1)
+#        .
+#        .   .
+#        .       .
+#        .           .   L
+#        .               .
+#        .                   .
+#        .                       .
+#        .                      .    .
+#        .                     .  alpha  .
+#        ....................................
+#    (TX2,TY2)                           (TX0,TY0)
+
+TX0 = 0
+TY0 = 0
+
+TX1 = TX0 - COS*rampLength
+TX2 = TX1
+
+TY1 = TY0 + SIN*rampLength
+TY2 = TY0
+
+
 
 SphereXLines = [np.array([]),np.array([])]
 SphereYLines = np.array([])
@@ -35,8 +71,8 @@ fig_data          = [fig0_data,fig1_data,fig2_data]
 fig_lines_data    = [fig0_lines_data,fig1_lines_data,fig2_lines_data]
 
 
-ramp_source       = ColumnDataSource(data = dict(x=[offset-rampAddLength*COS,0],y=[H+rampAddLength*SIN,0]))
-wall_source       = ColumnDataSource(data = dict(x=[offset-rampAddLength*COS,offset-rampAddLength*COS],y=[H+rampAddLength*SIN,0]))
+ramp_source       = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0]))
+wall_source       = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0]))
 AngleMarkerSource = ColumnDataSource(data = dict(x=[],y=[]))
 AlphaPos          = ColumnDataSource(data = dict(x=[],y=[],t=[]))
 
@@ -52,11 +88,11 @@ glob_callback_id  = ColumnDataSource(data = dict(callback_id = [None]))
 glob_SphereXLines = ColumnDataSource(data = dict(SphereXLines = [SphereXLines]))
 glob_SphereYLines = ColumnDataSource(data = dict(SphereYLines = [SphereYLines]))
 
-glob_values = dict(offset = offset,
+glob_values = dict(TX1    = TX1,
                    alpha  = alpha,
                    SIN    = SIN,
                    COS    = COS,
                    g      = g, # could also be constant
                    t      = t,
-                   H      = H)
+                   TY1    = TY1)
 
