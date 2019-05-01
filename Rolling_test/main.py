@@ -3,6 +3,7 @@ from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer, widgetbox
 from bokeh.models import ColumnDataSource, LabelSet, CustomJS
 from bokeh.models.widgets import Paragraph
+#from bokeh.models.ranges import DataRange1d
 from bokeh.io import curdoc
 from math import sin, cos, pi, sqrt, radians
 from os.path import dirname, split, abspath, join
@@ -93,10 +94,6 @@ XStart = TX0-rampLength-maxR-3#-5
 YEnd   = TY0+rampLength*sin(radians(alpha_max))+2*maxR
 #Width  = -255.4*XStart/YEnd #-220.0*XStart/YEnd
 Width = 500
-print(XStart)
-print(YEnd)
-print(Width)
-
 
 ###############################################################################
 ###                              ramp figures                               ###
@@ -150,38 +147,66 @@ fig2.add_layout(time_lable2)
 ###                           annotation figures                            ###
 ###############################################################################
 # sketch of the ramp and objects
-fig3 = figure(title="Annotations", x_range=(-50,5), y_range=(0,25), height=200, width=295, tools="")
-fig3.line(x=[0,-48],y=[0,18],color="black",line_width=2) # ramp
-fig3.line(x=[-48,-48],y=[0,18],color="black",line_width=2) # wall
-fig3.ellipse(x=[-45],y=[19],width=[4],height=[4],fill_color="#0065BD",line_color="#003359",line_width=3)
-fig3.ellipse(x=[-45],y=[19],width=[2.5],height=[4],fill_alpha=[0],line_color="#003359",line_width=3, angle=-0.7)
+# settings for the annotation plot
+a_COS = cos(alpha)
+a_SIN = sin(alpha)
+atx0 = 0
+aty0 = 0
+atx1 = atx0 - 50*a_COS
+aty1 = aty0 + 50*a_SIN
+alx1 = atx1 + 2*a_SIN
+aly1 = aty1 + 2*a_COS
+alx0 = alx1 + 50*a_COS
+aly0 = aly1 - 50*a_SIN
+ou = lambda(x): ((aly1-aty1)/(alx1-atx1)*(x-atx1)+aty1)
+od = lambda(x): ((aly0-aty0)/(alx0-atx0)*(x-atx0)+aty0)
+
+msr4 = 200/295*1.1  # manual scaling ratio
+
+fig3 = figure(title="Annotations", x_range=(-55,5), y_range=(0,25), height=200, width=295, tools="")
+fig3.line(x=[atx0,atx1-5*a_COS],y=[aty0,aty1+5*a_SIN],color="black",line_width=2) # ramp
+fig3.line(x=[atx1-5*a_COS,atx1-5*a_COS],y=[aty0,aty1+5*a_SIN],color="black",line_width=2) # wall
+fig3.ellipse(x=[alx1],y=[aly1],width=[4],height=[4*msr4],fill_color="#0065BD",fill_alpha=[0.2],line_color="#003359",line_alpha=[0.2],line_width=3)
+fig3.ellipse(x=[alx1],y=[aly1],width=[2.5],height=[4*msr4],fill_alpha=[0],line_color="#003359",line_alpha=[0.2],line_width=3, angle=-0.7)
 #fig3.ellipse(x=[0],y=[-1],width=[12], height=[10], fill_alpha=[0], line_color='black', line_width=2, line_dash='15 50', line_dash_offset=-10)
-angle_glyph3=LabelSet(x='x', y='y',text='t',text_color='black',
-    text_font_size="15pt", source=AlphaPos)
+
+# L annotation
+fig3.line(x=[alx1,alx0],y=[aly1,aly0],color="black",line_width=1.5)
+fig3.line(x=[alx1-0.8,alx1+0.9],y=[ou(alx1-0.5),ou(alx1+0.5)],color="black",line_width=1.5)
+fig3.line(x=[alx0-0.5,alx0+1.1],y=[od(alx0-0.5),od(alx0+0.5)],color="black",line_width=1.5)
+
+L_label_source = ColumnDataSource(data=dict(x=[-23],y=[11],t=["L"]))
+L_label = LabelSet(x='x', y='y', text='t', angle=-radians(25),  source=L_label_source, render_mode="css")
+fig3.add_layout(L_label)
+
+# alpha annotation
+fig3.line(x=[TX0-10*cos(i*alpha/10.0) for i in range(0,11)],y=[TY0+10*sin(i*alpha/10.0) for i in range(0,11)],color="black",line_width=2)
+angle_glyph3 = LabelSet(x='x', y='y',text='t',text_color='black',text_font_size="15pt", source=AlphaPos)
 fig3.add_layout(angle_glyph3)
+
 fig3.grid.visible = False
 fig3.axis.visible = False
 fig3.toolbar_location = None
 
-fig3.line(x=[-46.3,0.685],y=[18.98,1.88],color="black",line_width=1.5)
-fig3.line(x=[-46,-44],y=[16.33,21.6],color="black",line_width=1.5)
-fig3.line(x=[-1,2],y=[-2.67,5.3],color="black",line_width=1.5)
+#x_range = DataRange1d(start=-10, end=10, bounds=(-10,10))
+#y_range = DataRange1d(start=-5, end=5, bounds=(-5,5))
 
-#for i in range(0,11):
-#    X.append(-3*cos(i*alpha/10.0))
-#    Y.append(3*sin(i*alpha/10.0))
-#AngleMarkerSource.data=dict(x=X,y=Y)
+#x_range = DataRange1d(bounds=(-10,10))
+#y_range = DataRange1d(bounds=(-5,5))
+f4h  = 200
+f4w  = 295
+msr4 = f4h/f4w*1.1  # manual scaling ratio
 
-fig3.line(x=[TX0-10*cos(i*alpha/10.0) for i in range(0,11)],y=[TY0+10*sin(i*alpha/10.0) for i in range(0,11)],color="black",line_width=2)
-
-
-
-fig4 = figure(x_range=(-10,10), y_range=(-5,5), height=200, width=295, tools="", match_aspect=True)
+fig4 = figure(x_range=(-10,10), y_range=(-5,5), height=f4h, width=f4w, tools="", match_aspect=True)
+#fig4 = figure(x_range=x_range, y_range=y_range, height=f4h, width=f4w, tools="", aspect_scale=f4h/f4w)#, match_aspect=True)
+#fig4 = figure(x_range=x_range, y_range=y_range, height=f4h, width=f4w, tools="")#, match_aspect=True)
 #fig4.ellipse(x=[-5,-5],y=[0,0],width=[4,6],height=[4,6],fill_alpha=[0,0],line_color='black',line_width=3)
-fig4.circle(x=[-5,-5],y=[0,0],radius=[2,3],fill_alpha=[0,0],line_color='black',line_width=3)
-fig4.line(x=[-5,-5],y=[0,3*200/295],line_width=2)
-fig4.line(x=[-5,-3],y=[0,0],line_width=2)
-r_lables_source = ColumnDataSource(data=dict(x=[-4.2,-5.7,1,1],y=[-0.8,1,1,-1],t=["r_i","r","r\\:=\\text{Radius}","r_i=\\text{Inner radius}"]))
+fig4.ellipse(x=[-5,-5],y=[0,0],width=[6,8],height=[6*msr4,8*msr4],fill_alpha=[0,0],line_color='black',line_width=3)
+#fig4.circle(x=[-5,-5],y=[0,0],radius=[2,3],radius_dimension='y',fill_alpha=[0,0],line_color='black',line_width=3)
+fig4.line(x=[-5,-5],y=[0,4*msr4],line_width=2)
+#fig4.line(x=[-5,-5],y=[0,3],line_width=2)
+fig4.line(x=[-5,-2],y=[0,0],line_width=2)
+r_lables_source = ColumnDataSource(data=dict(x=[-4.2,-5.7,0,0],y=[-0.9,1,1,-1],t=["r_i","r","r\\:=\\text{Radius}","r_i=\\text{Inner radius}"]))
 r_lables = LatexLabelSet(x='x', y='y', text='t', source=r_lables_source)
 fig4.add_layout(r_lables)
 fig4.grid.visible = False
@@ -254,5 +279,5 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 curdoc().add_root(column(description,row(column(row(fig0,column(object_select0,radius_slider0,ri_slider0)),
     row(fig1,column(object_select1,radius_slider1,ri_slider1)),
     row(fig2,column(object_select2,radius_slider2,ri_slider2))),Spacer(width=100),
-    column(start_button,reset_button,row(widgetbox(p_mode,width=120),mode_selection),alpha_slider, Spacer(height=20), fig3, Spacer(height=20), fig4))))
+    column(start_button,reset_button,row(widgetbox(p_mode,width=120),mode_selection),alpha_slider, Spacer(height=20), fig3, Spacer(height=40), fig4))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
