@@ -20,11 +20,11 @@ from latex_support import LatexLabelSet, LatexDiv
 ###############################################################################
 from RT_global_variables import (
         glob_SphereXLines, glob_SphereYLines,
-        fig_data, fig_lines_data,
+        fig_data, fig_lines_data, fig_values,
         alpha, alpha_max,
         rampLength, maxR,
-        ramp_source, wall_source,
-        AngleMarkerSource, AlphaPos,
+        ramp_sources, wall_sources,
+        AlphaPos, #AngleMarkerSource, 
         time_display,
         figure_list,
         TX0, TY0
@@ -38,14 +38,15 @@ from RT_buttons import (
         object_select0, object_select1, object_select2,
         radius_slider0, radius_slider1, radius_slider2,
         ri_slider0, ri_slider1, ri_slider2,
-        alpha_slider
+        #alpha_slider,
+        alpha_slider0, alpha_slider1, alpha_slider2
         )
 from RT_callback_functions import (
         start, reset,
         changeObject0, changeObject1, changeObject2, 
         changeRadius0, changeRadius1, changeRadius2, 
         changeWall0, changeWall1, changeWall2,
-        changeAlpha,
+        changeAlpha0, changeAlpha1, changeAlpha2,
         object_select_JS
         )
 
@@ -70,9 +71,9 @@ def init():
     glob_SphereXLines.data = dict(SphereXLines = [SphereXLines])
     glob_SphereYLines.data = dict(SphereYLines = [SphereYLines])
     # create the objects
-    createSphere(2.0,fig_data[0],fig_lines_data[0])
-    createCylinder(2.0,fig_data[1],fig_lines_data[1])
-    createHollowCylinder(2.0,1.5,fig_data[2],fig_lines_data[2])
+    createSphere(2.0,fig_data[0],fig_lines_data[0],fig_values[0])
+    createCylinder(2.0,fig_data[1],fig_lines_data[1],fig_values[1])
+    createHollowCylinder(2.0,1.5,fig_data[2],fig_lines_data[2],fig_values[2])
     
     # create the curve which indicates the angle between the ground and the ramp
     X=[]
@@ -80,7 +81,7 @@ def init():
     for i in range(0,11):
         X.append(TX0-3*cos(i*alpha/10.0))
         Y.append(TY0+3*sin(i*alpha/10.0))
-    AngleMarkerSource.data=dict(x=X,y=Y)
+    #AngleMarkerSource.data=dict(x=X,y=Y)
     AlphaPos.data=dict(x=[-8],y=[-0.1],t=[u"\u03B1"])
     
 
@@ -104,9 +105,9 @@ fig0 = figure(title="Sphere",x_range=(XStart,TX0),y_range=(TY0,YEnd),height=220,
 fig0.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig_data[0])
 fig0.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig_lines_data[0])
-fig0.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
-fig0.line(x='x',y='y',color="black",line_width=2,source=wall_source)
-fig0.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
+fig0.line(x='x',y='y',color="black",line_width=2,source=ramp_sources[0])
+fig0.line(x='x',y='y',color="black",line_width=2,source=wall_sources[0])
+#fig0.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #fig0.grid.visible     = False
 fig0.axis.visible     = False
 fig0.toolbar_location = None
@@ -119,9 +120,9 @@ fig1 = figure(title="Full cylinder",x_range=(XStart,TX0),y_range=(TY0,YEnd),heig
 fig1.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig_data[1])
 fig1.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig_lines_data[1])
-fig1.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
-fig1.line(x='x',y='y',color="black",line_width=2,source=wall_source)
-fig1.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
+fig1.line(x='x',y='y',color="black",line_width=2,source=ramp_sources[1])
+fig1.line(x='x',y='y',color="black",line_width=2,source=wall_sources[1])
+#fig1.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #fig1.grid.visible     = False
 fig1.axis.visible     = False
 fig1.toolbar_location = None
@@ -133,9 +134,9 @@ fig2 = figure(title="Hollow cylinder",x_range=(XStart,TX0),y_range=(TY0,YEnd),he
 fig2.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
     line_color="#003359",line_width=3,source=fig_data[2])
 fig2.multi_line(xs='x',ys='y',color="#003359",line_width=3,source=fig_lines_data[2])
-fig2.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
-fig2.line(x='x',y='y',color="black",line_width=2,source=wall_source)
-fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
+fig2.line(x='x',y='y',color="black",line_width=2,source=ramp_sources[2])
+fig2.line(x='x',y='y',color="black",line_width=2,source=wall_sources[2])
+#fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
 #fig2.grid.visible     = False
 fig2.axis.visible     = False
 fig2.toolbar_location = None
@@ -251,7 +252,10 @@ ri_slider1.on_change('value',changeWall1)
 ri_slider2.on_change('value',changeWall2)
 
 # angle of the ramp
-alpha_slider.on_change('value',changeAlpha)
+#alpha_slider.on_change('value',changeAlpha)
+alpha_slider0.on_change('value',changeAlpha0)
+alpha_slider1.on_change('value',changeAlpha1)
+alpha_slider2.on_change('value',changeAlpha2)
 
 
 ###############################################################################
@@ -276,8 +280,17 @@ description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1180)
 
 ## Send to window
-curdoc().add_root(column(description,row(column(row(fig0,column(object_select0,radius_slider0,ri_slider0)),
-    row(fig1,column(object_select1,radius_slider1,ri_slider1)),
-    row(fig2,column(object_select2,radius_slider2,ri_slider2))),Spacer(width=100),
-    column(start_button,reset_button,row(widgetbox(p_mode,width=120),mode_selection),alpha_slider, Spacer(height=20), fig3, Spacer(height=40), fig4))))
+curdoc().add_root(column(description,row(column(
+    row(fig0,column(object_select0,radius_slider0,ri_slider0,alpha_slider0)),
+    row(fig1,column(object_select1,radius_slider1,ri_slider1,alpha_slider1)),
+    row(fig2,column(object_select2,radius_slider2,ri_slider2,alpha_slider2))),
+    Spacer(width=100),
+    column(start_button,
+           reset_button,
+           row(widgetbox(p_mode,width=120),mode_selection),
+           #alpha_slider,
+           Spacer(height=50),
+           fig3,
+           Spacer(height=40),
+           fig4))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

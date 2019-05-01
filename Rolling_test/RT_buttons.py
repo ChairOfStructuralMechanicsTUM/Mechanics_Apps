@@ -42,4 +42,8 @@ ri_slider1 = Slider(title="Inner radius", value=0.5, start=0.0, end=2.0, step=0.
 ri_slider2 = Slider(title="Inner radius", value=1.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj3"])
 
 # slider for the angle
-alpha_slider = Slider(title=u"\u03B1", value=20.0, start=5.0, end=alpha_max, step=1.0)
+#alpha_slider = Slider(title=u"\u03B1", value=20.0, start=5.0, end=alpha_max, step=1.0)
+
+alpha_slider0 = Slider(title=u"\u03B1", value=20.0, start=5.0, end=alpha_max, step=1.0)
+alpha_slider1 = Slider(title=u"\u03B1", value=20.0, start=5.0, end=alpha_max, step=1.0)
+alpha_slider2 = Slider(title=u"\u03B1", value=20.0, start=5.0, end=alpha_max, step=1.0)

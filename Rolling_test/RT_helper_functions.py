@@ -2,7 +2,7 @@ from __future__ import division # float division only, like in python 3
 import numpy as np
 
 from RT_global_variables import (
-        fig_data, fig_lines_data,
+        fig_data, fig_lines_data, fig_values,
         fig_in_use,
         glob_fun_handles
         )
@@ -11,7 +11,8 @@ from RT_buttons import (
         object_select0, object_select1, object_select2,
         radius_slider0, radius_slider1, radius_slider2,
         ri_slider0, ri_slider1, ri_slider2,
-        alpha_slider
+        #alpha_slider,
+        alpha_slider0, alpha_slider1, alpha_slider2
         )
 from RT_object_movement import (
         moveSphere,
@@ -95,7 +96,9 @@ def disable_all_sliders(d=True):
     ri_slider0.disabled     = d
     ri_slider1.disabled     = d
     ri_slider2.disabled     = d
-    alpha_slider.disabled   = d
+    alpha_slider0.disabled  = d
+    alpha_slider1.disabled  = d
+    alpha_slider2.disabled  = d
     mode_selection.disabled = d
         
         
@@ -103,6 +106,6 @@ def disable_all_sliders(d=True):
 ###                        initial function handles                         ###
 ############################################################################### 
 # name the functions to be used by each figure depending upon their content
-glob_fun_handles[0]=lambda(x):moveSphere(x,2.0,1.0,fig_data[0],fig_lines_data[0])
-glob_fun_handles[1]=lambda(x):moveCylinder(x,2.0,1.0,fig_data[1],fig_lines_data[1])
-glob_fun_handles[2]=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig_data[2],fig_lines_data[2])
+glob_fun_handles[0]=lambda(x):moveSphere(x,2.0,1.0,fig_data[0],fig_lines_data[0],fig_values[0])
+glob_fun_handles[1]=lambda(x):moveCylinder(x,2.0,1.0,fig_data[1],fig_lines_data[1],fig_values[1])
+glob_fun_handles[2]=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig_data[2],fig_lines_data[2],fig_values[2])

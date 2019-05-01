@@ -4,12 +4,12 @@ from math import sin, cos, radians
 import numpy as np
 
 from RT_global_variables import (
-        fig_data, fig_lines_data,
+        fig_data, fig_lines_data, fig_values,
         fig_in_use,
         figure_list,
         time_display,
-        glob_values, glob_callback_id,
-        wall_source, ramp_source, AngleMarkerSource,
+        glob_callback_id, glob_time,
+        wall_sources, ramp_sources, #AngleMarkerSource,
         glob_fun_handles,
         rampLength, rampAddLength,
         TX0, TY0
@@ -39,20 +39,21 @@ def changeObject(FIG,new_object,r,ri,m):
     # save the data concerned in data and line_data
     data      = fig_data[FIG]
     line_data = fig_lines_data[FIG]
+    vals      = fig_values[FIG]
     # depending on the shape specified, create the object and
     # save the new evolution function in the variable func
     if (new_object == "Sphere"):
-        createSphere(r,data,line_data)
-        func=lambda(x):moveSphere(x,r,m,data,line_data)
+        createSphere(r,data,line_data,vals)
+        func=lambda(x):moveSphere(x,r,m,data,line_data,vals)
     elif (new_object =="Hollow cylinder"):
-        createHollowCylinder(r,ri,data,line_data)
-        func=lambda(x):moveHollowCylinder(x,r,m,ri,data,line_data)
+        createHollowCylinder(r,ri,data,line_data,vals)
+        func=lambda(x):moveHollowCylinder(x,r,m,ri,data,line_data,vals)
     elif (new_object == "Hollow sphere"):
-        createHollowSphere(r,ri,data,line_data)
-        func=lambda(x):moveHollowSphere(x,r,m,ri,data,line_data)
+        createHollowSphere(r,ri,data,line_data,vals)
+        func=lambda(x):moveHollowSphere(x,r,m,ri,data,line_data,vals)
     else:
-        createCylinder(r,data,line_data)
-        func=lambda(x):moveCylinder(x,r,m,data,line_data)
+        createCylinder(r,data,line_data,vals)
+        func=lambda(x):moveCylinder(x,r,m,data,line_data,vals)
     
     # check the availability of each plot (existing object, still running or finished)
     check_availability()
@@ -109,23 +110,33 @@ def changeWall2(attr,old,new):
 ###############################################################################
 ###                      slider function for the angle                      ###
 ###############################################################################
-def changeAlpha(attr,old,new):
-    alpha=radians(new)
+def changeAlpha(FIG,new_alpha):
+    alpha=radians(new_alpha)
     X=[]
     Y=[]
     for i in range(0,11):
         X.append(-3*cos(i*alpha/10.0))
         Y.append(3*sin(i*alpha/10.0))
-    AngleMarkerSource.data=dict(x=X,y=Y)
+    #AngleMarkerSource.data=dict(x=X,y=Y)
     COS  =  cos(alpha)
     SIN  =  sin(alpha)
     TX1  =  -rampLength*COS
     TY1  =  rampLength*SIN
-    glob_values.update(dict(alpha=alpha, SIN=SIN, COS=COS, TX1=TX1, TY1=TY1)) #      /output
-    ramp_source.data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0])
-    wall_source.data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0])
+    fig_values[FIG].update(dict(alpha=alpha, SIN=SIN, COS=COS, TX1=TX1, TY1=TY1)) #      /output
+    ramp_sources[FIG].data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0])
+    wall_sources[FIG].data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0])
     reset()
-    
+
+
+def changeAlpha0(attr,old,new):
+    changeAlpha(0,new)
+
+def changeAlpha1(attr,old,new):
+    changeAlpha(1,new)
+
+def changeAlpha2(attr,old,new):
+    changeAlpha(2,new)
+
 
 ###############################################################################
 ###                       start button functionality                        ###
@@ -151,7 +162,7 @@ def start():
 ###                       reset button functionality                        ###
 ###############################################################################
 def reset():
-    glob_values["t"] = 0.0 #      /output
+    glob_time["t"] = 0.0 #      /output
     changeObject(0,object_select0.value,radius_slider0.value,ri_slider0.value,1.0)
     changeObject(1,object_select1.value,radius_slider1.value,ri_slider1.value,1.0)
     changeObject(2,object_select2.value,radius_slider2.value,ri_slider2.value,1.0)
@@ -166,9 +177,9 @@ def reset():
 ###                          evolve one iteration                           ###
 ###############################################################################
 def evolve():
-    t = glob_values["t"] # input/output
+    t = glob_time["t"] # input/output
     t+=0.05
-    glob_values["t"] = t
+    glob_time["t"] = t
     
     # call all necessary functions
     # get new coordinates of objects which are still running
@@ -190,7 +201,7 @@ def evolve():
         plot_num = ind_x_max if x_coords[ind_x_max]>0 else ind_y_max
         fig_in_use[plot_num] = False
         # change the corresponding CDS to display the time only in this plot
-        time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=[str(glob_values["t"])+" s"])
+        time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=[str(glob_time["t"])+" s"])
     # if all simulations have finished, disable the start button
     if (not any(fig_in_use)):
         start_button.disabled = True

@@ -1,15 +1,15 @@
 from __future__ import division # float division only, like in python 3
-from RT_global_variables import glob_SphereXLines, glob_SphereYLines, glob_values
+from RT_global_variables import glob_SphereXLines, glob_SphereYLines
 
 
 ###############################################################################
 ###                            Sphere functions                             ###
 ###############################################################################
-def createSphere(r,sphere_data,sphere_lines_data):
+def createSphere(r,sphere_data,sphere_lines_data,values):
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
     load_vals = ["SIN", "COS", "TX1", "TY1"]
-    SIN, COS, TX1, TY1 = [glob_values.get(val) for val in load_vals]
+    SIN, COS, TX1, TY1 = [values.get(val) for val in load_vals]
     # find the centre, knowing that it touches the ramp at (TX1,TY1)
     newX = TX1+r*SIN
     newY = TY1+r*COS
@@ -26,11 +26,11 @@ def createSphere(r,sphere_data,sphere_lines_data):
     sphere_lines_data.data=dict(x=[X1, X2],y=[Y1,Y2])
 
 
-def createHollowSphere(r,ri,sphere_data,sphere_lines_data):
+def createHollowSphere(r,ri,sphere_data,sphere_lines_data,values):
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
     load_vals = ["SIN", "COS", "TX1", "TY1"]
-    SIN, COS, TX1, TY1 = [glob_values.get(val) for val in load_vals]
+    SIN, COS, TX1, TY1 = [values.get(val) for val in load_vals]
     
     if (abs(r-ri)<1e-5):
         # empty data if radius == inner radius (numerically)
@@ -57,9 +57,9 @@ def createHollowSphere(r,ri,sphere_data,sphere_lines_data):
 ###############################################################################
 ###                           Cylinder functions                            ###
 ###############################################################################
-def createCylinder(r, cylinder_data, cylinder_lines_data):
+def createCylinder(r, cylinder_data, cylinder_lines_data,values):
     load_vals = ["SIN", "COS", "TX1", "TY1"]
-    SIN, COS, TX1, TY1 = [glob_values.get(val) for val in load_vals]
+    SIN, COS, TX1, TY1 = [values.get(val) for val in load_vals]
     # draw the cylinder around the centre, knowing that it touches the ramp at (TX1,TY1)
     cylinder_data.data=dict(x=[TX1+r*SIN],y=[TY1+r*COS],w=[2*r],c=["#0065BD"],a=[1])
     cylinder_lines_data.data=dict(x=[[TX1,TX1+2*r*SIN],
@@ -67,9 +67,9 @@ def createCylinder(r, cylinder_data, cylinder_lines_data):
         y=[[TY1,TY1+2*r*COS],[TY1+r*(COS+SIN),TY1+r*(COS-SIN)]])
 
 
-def createHollowCylinder(r,ri, hollowCylinder_data, hollowCylinder_lines_data):
+def createHollowCylinder(r,ri, hollowCylinder_data, hollowCylinder_lines_data,values):
     load_vals = ["SIN", "COS", "TX1", "TY1"]
-    SIN, COS, TX1, TY1 = [glob_values.get(val) for val in load_vals]
+    SIN, COS, TX1, TY1 = [values.get(val) for val in load_vals]
     
     if (abs(r-ri)<1e-5):
         # empty data if radius == inner radius (numerically)

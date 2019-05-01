@@ -3,14 +3,14 @@ from bokeh.models import ColumnDataSource
 from math import sin, cos, radians
 import numpy as np
 
-# create variables
-g             = 9.81
-alpha         = radians(20)
 # constants
+g             = 9.81
 maxR          = 4.0
 alpha_max     = 25.0
 rampLength    = 50
 rampAddLength = 5  # excess length for better visualization
+# create variables
+alpha         = radians(20)
 # variables created to avoid repeated calculations
 # (speeds up calculations)
 SIN           = sin(alpha)
@@ -66,14 +66,28 @@ fig1_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
 fig1_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 fig2_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
 fig2_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
+
+fig0_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS)
+fig1_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS)
+fig2_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS)
 # put them in a list for easy access in functions
 fig_data          = [fig0_data,fig1_data,fig2_data]
 fig_lines_data    = [fig0_lines_data,fig1_lines_data,fig2_lines_data]
 
+fig_values        = [fig0_values,fig1_values,fig2_values]
 
-ramp_source       = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0]))
-wall_source       = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0]))
-AngleMarkerSource = ColumnDataSource(data = dict(x=[],y=[]))
+
+ramp_source0      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0]))
+wall_source0      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0]))
+ramp_source1      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0]))
+wall_source1      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0]))
+ramp_source2      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0]))
+wall_source2      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0]))
+
+ramp_sources      = [ramp_source0,ramp_source1,ramp_source2]
+wall_sources      = [wall_source0,wall_source1,wall_source2]
+
+#AngleMarkerSource = ColumnDataSource(data = dict(x=[],y=[]))
 AlphaPos          = ColumnDataSource(data = dict(x=[],y=[],t=[]))
 
 time_display      = [ColumnDataSource(data = dict(x=[],y=[],t=[])),
@@ -84,15 +98,19 @@ figure_list       = [None,None,None]
 glob_fun_handles  = [None,None,None]
 
 # global variables
-glob_callback_id  = ColumnDataSource(data = dict(callback_id = [None]))
+glob_callback_id  = ColumnDataSource(data = dict(callback_id  = [None]))
 glob_SphereXLines = ColumnDataSource(data = dict(SphereXLines = [SphereXLines]))
 glob_SphereYLines = ColumnDataSource(data = dict(SphereYLines = [SphereYLines]))
 
-glob_values = dict(TX1    = TX1,
-                   alpha  = alpha,
-                   SIN    = SIN,
-                   COS    = COS,
-                   g      = g, # could also be constant
-                   t      = t,
-                   TY1    = TY1)
+glob_time         = dict(t=t)
 
+
+#
+#glob_values = dict(TX1    = TX1,
+#                   alpha  = alpha,
+#                   SIN    = SIN,
+#                   COS    = COS,
+#                   #g      = g, # could also be constant
+#                   #t      = t,
+#                   TY1    = TY1)
+#
