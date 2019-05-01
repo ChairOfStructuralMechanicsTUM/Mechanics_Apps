@@ -167,7 +167,7 @@ def reset():
 ###############################################################################
 def evolve():
     t = glob_values["t"] # input/output
-    t+=0.01
+    t+=0.05
     glob_values["t"] = t
     
     # call all necessary functions
