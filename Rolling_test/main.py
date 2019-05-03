@@ -142,13 +142,13 @@ aly0 = aly1 - 50*a_SIN
 ou = lambda(x): ((aly1-aty1)/(alx1-atx1)*(x-atx1)+aty1)
 od = lambda(x): ((aly0-aty0)/(alx0-atx0)*(x-atx0)+aty0)
 
-msr4 = 200/295*1.1  # manual scaling ratio
+msr3 = 200/295*1.1  # manual scaling ratio
 
 fig3 = figure(title="Annotations", x_range=(-55,5), y_range=(0,25), height=200, width=295, tools="")
 fig3.line(x=[atx0,atx1-5*a_COS],y=[aty0,aty1+5*a_SIN],color="black",line_width=2) # ramp
 fig3.line(x=[atx1-5*a_COS,atx1-5*a_COS],y=[aty0,aty1+5*a_SIN],color="black",line_width=2) # wall
-fig3.ellipse(x=[alx1],y=[aly1],width=[4],height=[4*msr4],fill_color="#0065BD",fill_alpha=[0.2],line_color="#003359",line_alpha=[0.2],line_width=3)
-fig3.ellipse(x=[alx1],y=[aly1],width=[2.5],height=[4*msr4],fill_alpha=[0],line_color="#003359",line_alpha=[0.2],line_width=3, angle=-0.7)
+fig3.ellipse(x=[alx1],y=[aly1],width=[4],height=[4*msr3],fill_color="#0065BD",fill_alpha=[0.2],line_color="#003359",line_alpha=[0.2],line_width=3)
+fig3.ellipse(x=[alx1],y=[aly1],width=[2.5],height=[4*msr3],fill_alpha=[0],line_color="#003359",line_alpha=[0.2],line_width=3, angle=-0.7)
 
 # L annotation
 fig3.line(x=[alx1,alx0],y=[aly1,aly0],color="black",line_width=1.5)
