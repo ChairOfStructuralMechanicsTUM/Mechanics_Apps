@@ -41,7 +41,7 @@ def createHollowSphere(r,ri,sphere_data,sphere_lines_data,values):
         newX = TX1+r*SIN
         newY = TY1+r*COS
         # draw the sphere in semi-transparent blue
-        sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1-ri/r]) # a=[0.4]
+        sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1-ri/r])
         # use the referece lines to find the current position of the lines
         RCOS = r*COS
         RSIN = r*SIN

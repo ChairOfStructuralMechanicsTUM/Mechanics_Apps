@@ -3,7 +3,6 @@ from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer, widgetbox
 from bokeh.models import ColumnDataSource, LabelSet, CustomJS
 from bokeh.models.widgets import Paragraph
-#from bokeh.models.ranges import DataRange1d
 from bokeh.io import curdoc
 from math import sin, cos, pi, sqrt, radians
 from os.path import dirname, split, abspath, join
@@ -24,7 +23,6 @@ from RT_global_variables import (
         alpha, alpha_max,
         rampLength, maxR,
         ramp_sources, wall_sources,
-        AlphaPos, #AngleMarkerSource, 
         time_display,
         figure_list,
         TX0, TY0
@@ -38,7 +36,6 @@ from RT_buttons import (
         object_select0, object_select1, object_select2,
         radius_slider0, radius_slider1, radius_slider2,
         ri_slider0, ri_slider1, ri_slider2,
-        #alpha_slider,
         alpha_slider0, alpha_slider1, alpha_slider2
         )
 from RT_callback_functions import (
@@ -75,14 +72,6 @@ def init():
     createCylinder(2.0,fig_data[1],fig_lines_data[1],fig_values[1])
     createHollowCylinder(2.0,1.5,fig_data[2],fig_lines_data[2],fig_values[2])
     
-    # create the curve which indicates the angle between the ground and the ramp
-    X=[]
-    Y=[]
-    for i in range(0,11):
-        X.append(TX0-3*cos(i*alpha/10.0))
-        Y.append(TY0+3*sin(i*alpha/10.0))
-    #AngleMarkerSource.data=dict(x=X,y=Y)
-    AlphaPos.data=dict(x=[-8],y=[-0.1],t=[u"\u03B1"])
     
 
 
@@ -90,11 +79,9 @@ def init():
 ###                          general plot settings                          ###
 ###############################################################################
 
-XStart = TX0-rampLength-maxR-3#-5
-#YEnd   = H+2*maxR # start height, but we need height for max alpha
+XStart = TX0-rampLength-maxR-3
 YEnd   = TY0+rampLength*sin(radians(alpha_max))+2*maxR
-#Width  = -255.4*XStart/YEnd #-220.0*XStart/YEnd
-Width = 500
+Width  = 500
 
 ###############################################################################
 ###                              ramp figures                               ###
@@ -107,13 +94,10 @@ fig0.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
 fig0.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig_lines_data[0])
 fig0.line(x='x',y='y',color="black",line_width=2,source=ramp_sources[0])
 fig0.line(x='x',y='y',color="black",line_width=2,source=wall_sources[0])
-#fig0.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-#fig0.grid.visible     = False
 fig0.axis.visible     = False
 fig0.toolbar_location = None
 time_lable0 = LabelSet(x='x', y='y', text='t', source=time_display[0])
 fig0.add_layout(time_lable0)
-#fig0.circle()
 
 
 fig1 = figure(title="Full cylinder",x_range=(XStart,TX0),y_range=(TY0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)
@@ -122,8 +106,6 @@ fig1.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
 fig1.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig_lines_data[1])
 fig1.line(x='x',y='y',color="black",line_width=2,source=ramp_sources[1])
 fig1.line(x='x',y='y',color="black",line_width=2,source=wall_sources[1])
-#fig1.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-#fig1.grid.visible     = False
 fig1.axis.visible     = False
 fig1.toolbar_location = None
 time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display[1])
@@ -136,8 +118,6 @@ fig2.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
 fig2.multi_line(xs='x',ys='y',color="#003359",line_width=3,source=fig_lines_data[2])
 fig2.line(x='x',y='y',color="black",line_width=2,source=ramp_sources[2])
 fig2.line(x='x',y='y',color="black",line_width=2,source=wall_sources[2])
-#fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-#fig2.grid.visible     = False
 fig2.axis.visible     = False
 fig2.toolbar_location = None
 time_lable2 = LabelSet(x='x', y='y', text='t', source=time_display[2])
@@ -169,7 +149,6 @@ fig3.line(x=[atx0,atx1-5*a_COS],y=[aty0,aty1+5*a_SIN],color="black",line_width=2
 fig3.line(x=[atx1-5*a_COS,atx1-5*a_COS],y=[aty0,aty1+5*a_SIN],color="black",line_width=2) # wall
 fig3.ellipse(x=[alx1],y=[aly1],width=[4],height=[4*msr4],fill_color="#0065BD",fill_alpha=[0.2],line_color="#003359",line_alpha=[0.2],line_width=3)
 fig3.ellipse(x=[alx1],y=[aly1],width=[2.5],height=[4*msr4],fill_alpha=[0],line_color="#003359",line_alpha=[0.2],line_width=3, angle=-0.7)
-#fig3.ellipse(x=[0],y=[-1],width=[12], height=[10], fill_alpha=[0], line_color='black', line_width=2, line_dash='15 50', line_dash_offset=-10)
 
 # L annotation
 fig3.line(x=[alx1,alx0],y=[aly1,aly0],color="black",line_width=1.5)
@@ -182,6 +161,7 @@ fig3.add_layout(L_label)
 
 # alpha annotation
 fig3.line(x=[TX0-10*cos(i*alpha/10.0) for i in range(0,11)],y=[TY0+10*sin(i*alpha/10.0) for i in range(0,11)],color="black",line_width=2)
+AlphaPos     = ColumnDataSource(data=dict(x=[-8],y=[-0.1],t=[u"\u03B1"])) # alpha label position
 angle_glyph3 = LabelSet(x='x', y='y',text='t',text_color='black',text_font_size="15pt", source=AlphaPos)
 fig3.add_layout(angle_glyph3)
 
@@ -189,25 +169,18 @@ fig3.grid.visible = False
 fig3.axis.visible = False
 fig3.toolbar_location = None
 
-#x_range = DataRange1d(start=-10, end=10, bounds=(-10,10))
-#y_range = DataRange1d(start=-5, end=5, bounds=(-5,5))
 
-#x_range = DataRange1d(bounds=(-10,10))
-#y_range = DataRange1d(bounds=(-5,5))
+
+# sketch of hollow object
 f4h  = 200
 f4w  = 295
 msr4 = f4h/f4w*1.1  # manual scaling ratio
 
 fig4 = figure(x_range=(-10,10), y_range=(-5,5), height=f4h, width=f4w, tools="", match_aspect=True)
-#fig4 = figure(x_range=x_range, y_range=y_range, height=f4h, width=f4w, tools="", aspect_scale=f4h/f4w)#, match_aspect=True)
-#fig4 = figure(x_range=x_range, y_range=y_range, height=f4h, width=f4w, tools="")#, match_aspect=True)
-#fig4.ellipse(x=[-5,-5],y=[0,0],width=[4,6],height=[4,6],fill_alpha=[0,0],line_color='black',line_width=3)
 fig4.ellipse(x=[-5,-5],y=[0,0],width=[6,8],height=[6*msr4,8*msr4],fill_alpha=[0,0],line_color='black',line_width=3)
-#fig4.circle(x=[-5,-5],y=[0,0],radius=[2,3],radius_dimension='y',fill_alpha=[0,0],line_color='black',line_width=3)
 fig4.line(x=[-5,-5],y=[0,4*msr4],line_width=2)
-#fig4.line(x=[-5,-5],y=[0,3],line_width=2)
 fig4.line(x=[-5,-2],y=[0,0],line_width=2)
-r_lables_source = ColumnDataSource(data=dict(x=[-4.2,-5.7,0,0],y=[-0.9,1,1,-1],t=["r_i","r","r\\:=\\text{Radius}","r_i=\\text{Inner radius}"]))
+r_lables_source = ColumnDataSource(data=dict(x=[-4.2,-5.9,0,0],y=[-0.9,0.9,1,-1],t=["r_i","r","r\\:=\\text{Radius}","r_i=\\text{Inner radius}"]))
 r_lables = LatexLabelSet(x='x', y='y', text='t', source=r_lables_source)
 fig4.add_layout(r_lables)
 fig4.grid.visible = False
@@ -215,14 +188,10 @@ fig4.axis.visible = False
 fig4.toolbar_location = None
 
 
-
 # put the figures in a list for easy access in functions
-#figure_list = [fig0,fig1,fig2]
 figure_list[0] = fig0
 figure_list[1] = fig1
 figure_list[2] = fig2
-
-
 
 
 ###############################################################################
@@ -236,7 +205,6 @@ object_select2.on_change('value',changeObject2)
 object_select0.callback = CustomJS(code=object_select_JS)
 object_select1.callback = CustomJS(code=object_select_JS)
 object_select2.callback = CustomJS(code=object_select_JS)
-
 
 ###############################################################################
 ###                            slider callbacks                             ###
@@ -252,7 +220,6 @@ ri_slider1.on_change('value',changeWall1)
 ri_slider2.on_change('value',changeWall2)
 
 # angle of the ramp
-#alpha_slider.on_change('value',changeAlpha)
 alpha_slider0.on_change('value',changeAlpha0)
 alpha_slider1.on_change('value',changeAlpha1)
 alpha_slider2.on_change('value',changeAlpha2)
@@ -263,7 +230,6 @@ alpha_slider2.on_change('value',changeAlpha2)
 ###############################################################################
 start_button.on_click(start)
 reset_button.on_click(reset)
-
 
 
 ###############################################################################
@@ -288,9 +254,8 @@ curdoc().add_root(column(description,row(column(
     column(start_button,
            reset_button,
            row(widgetbox(p_mode,width=120),mode_selection),
-           #alpha_slider,
-           Spacer(height=50),
+           Spacer(height=80),
            fig3,
-           Spacer(height=40),
+           Spacer(height=50),
            fig4))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

@@ -11,7 +11,6 @@ from RT_buttons import (
         object_select0, object_select1, object_select2,
         radius_slider0, radius_slider1, radius_slider2,
         ri_slider0, ri_slider1, ri_slider2,
-        #alpha_slider,
         alpha_slider0, alpha_slider1, alpha_slider2
         )
 from RT_object_movement import (
@@ -30,8 +29,8 @@ def is_empty(obj):
         return True
 
 def logical_indexing(arr, arr_ind, val):
-    # length arr == length arr_ind
-    # arr[arr_ind] = val
+    # requirement: length arr == length arr_ind
+    # simulates:   arr[arr_ind] = val
     # write val in places in arr where arr_ind is True
     for i in range(len(arr)):
         arr[i] = val if arr_ind[i] else arr[i]

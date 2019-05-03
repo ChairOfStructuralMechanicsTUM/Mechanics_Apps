@@ -40,10 +40,7 @@ def moveHollowSphere(t,r,m,ri,sphere_data,sphere_lines_data,values):
     alpha, SIN, COS, TX1, TY1 = [values.get(val) for val in load_vals]
     
     temp = r*g*SIN*t*t*1.25*(r**3-ri**3)/(r**5-ri**5)
-#    if (abs(r-ri) < 1e-5): # ri close to r
-#        temp = -1000 # out of sight, object doesn't exist
-#    else:
-#        temp = r*g*SIN*t*t*1.25*(r**3-ri**3)/(r**5-ri**5)
+
     # find the rotation of the sphere
     rotation = -temp
     # find the displacement of the point touching the ramp
@@ -94,10 +91,7 @@ def moveHollowCylinder(t,r,m,ri,hollowCylinder_data,hollowCylinder_lines_data,va
     alpha, SIN, COS, TX1, TY1 = [values.get(val) for val in load_vals]
     
     temp = r*g*SIN*t*t/(r*r+ri*ri)
-#    if (abs(r-ri) < 1e-5): # ri close to r
-#        temp = -1000 # out of sight, object doesn't exist
-#    else:
-#        temp = r*g*SIN*t*t/(r*r+ri*ri)
+
     # find the rotation of the cylinder
     rotation = -temp
     # find the displacement of the point touching the ramp

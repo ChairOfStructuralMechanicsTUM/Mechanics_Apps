@@ -11,13 +11,11 @@ rampLength    = 50
 rampAddLength = 5  # excess length for better visualization
 # create variables
 alpha         = radians(20)
+t             = 0.0
 # variables created to avoid repeated calculations
 # (speeds up calculations)
 SIN           = sin(alpha)
 COS           = cos(alpha)
-#offset        = -rampLength*COS
-t             = 0.0
-#H             = rampLength*SIN
 
 
 ###############################################################################
@@ -28,8 +26,8 @@ t             = 0.0
 # (TX1,TY1) and (TX2,TY2) are calculated from this
 # aswell as the center of the objects in the creation functions
 
-# (TX2,TY2) stays constant during the whole simulation
-# (TX1,TY1) can change due to a new alpha value
+# (.,TY2) stays constant during the whole simulation
+# (TX2,.), (TX1,TY1) can change due to a new alpha value
 
 #    (TX1,TY1)
 #        .
@@ -70,10 +68,10 @@ fig2_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 fig0_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS)
 fig1_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS)
 fig2_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS)
+
 # put them in a list for easy access in functions
 fig_data          = [fig0_data,fig1_data,fig2_data]
 fig_lines_data    = [fig0_lines_data,fig1_lines_data,fig2_lines_data]
-
 fig_values        = [fig0_values,fig1_values,fig2_values]
 
 
@@ -86,9 +84,6 @@ wall_source2      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX1-ra
 
 ramp_sources      = [ramp_source0,ramp_source1,ramp_source2]
 wall_sources      = [wall_source0,wall_source1,wall_source2]
-
-#AngleMarkerSource = ColumnDataSource(data = dict(x=[],y=[]))
-AlphaPos          = ColumnDataSource(data = dict(x=[],y=[],t=[]))
 
 time_display      = [ColumnDataSource(data = dict(x=[],y=[],t=[])),
                      ColumnDataSource(data = dict(x=[],y=[],t=[])),
@@ -104,13 +99,3 @@ glob_SphereYLines = ColumnDataSource(data = dict(SphereYLines = [SphereYLines]))
 
 glob_time         = dict(t=t)
 
-
-#
-#glob_values = dict(TX1    = TX1,
-#                   alpha  = alpha,
-#                   SIN    = SIN,
-#                   COS    = COS,
-#                   #g      = g, # could also be constant
-#                   #t      = t,
-#                   TY1    = TY1)
-#

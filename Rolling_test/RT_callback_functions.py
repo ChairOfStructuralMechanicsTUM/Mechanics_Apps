@@ -9,7 +9,7 @@ from RT_global_variables import (
         figure_list,
         time_display,
         glob_callback_id, glob_time,
-        wall_sources, ramp_sources, #AngleMarkerSource,
+        wall_sources, ramp_sources,
         glob_fun_handles,
         rampLength, rampAddLength,
         TX0, TY0
@@ -112,12 +112,6 @@ def changeWall2(attr,old,new):
 ###############################################################################
 def changeAlpha(FIG,new_alpha):
     alpha=radians(new_alpha)
-    X=[]
-    Y=[]
-    for i in range(0,11):
-        X.append(-3*cos(i*alpha/10.0))
-        Y.append(3*sin(i*alpha/10.0))
-    #AngleMarkerSource.data=dict(x=X,y=Y)
     COS  =  cos(alpha)
     SIN  =  sin(alpha)
     TX1  =  -rampLength*COS
@@ -218,7 +212,7 @@ choice = cb_obj.value;
 caller = cb_obj.name;
 
 // extract the number of the name and convert it to integer
-slider_idx = parseInt(caller.match(/\d/g).join("")); //-1; //-1 for starting at 0
+slider_idx = parseInt(caller.match(/\d/g).join(""));
 
 slider_in_question = document.getElementsByClassName("wall_slider")[slider_idx];
 
