@@ -3,7 +3,8 @@
 ############################
 from bokeh.plotting import Figure#, output_file , show
 #from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
-from bokeh.models.glyphs import ImageURL#, Quadratic, Rect, Patch
+from bokeh.models import Arrow, OpenHead, LabelSet
+from bokeh.models.glyphs import ImageURL, Patch#, Quadratic, Rect, Patch
 from bokeh.models.layouts import Spacer
 from bokeh.models.widgets import Paragraph
 from bokeh.layouts import column, row, widgetbox, layout
@@ -26,12 +27,17 @@ from NFR_constants import (
 from NFR_data_sources import (
         rod_source,
         support_source_left, support_source_right,
+        force_point_source, constant_load_source, triangular_load_source,
+        labels_source,
         aux_line
         )
 from NFR_buttons import (
         load_position_slide, load_magnitude_slide, right_support_position_slide,
         radio_button_group, radio_group_left, radio_group_right, radio_group_cross,
         reset_button, dummy_button
+        )
+from NFR_callback_functions import (
+        change_load
         )
 
 
@@ -41,6 +47,12 @@ from NFR_buttons import (
 # NFR_data_sources          ColumnDataSources needed for this program
 # NFR_buttons               Buttons, Sliders, Radio Buttons (baically input widgets)
 # NFR_callback_functions    inner parts, buttons, sliders (etc.) functionality
+
+
+
+
+
+radio_button_group.on_change('active',change_load)
 
 
 
@@ -66,6 +78,22 @@ plot_main.add_glyph(support_source_right,ImageURL(url="sp_img", x='x', y='y', w=
 
 
 plot_main.line(x='x', y='y', source=rod_source, color='#0065BD',line_width=15)
+
+force_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width=2, size=5), 
+                          x_start='xS', x_end='xE', y_start='yS', y_end='yE',
+                          line_width='lW', line_color='lC', source=force_point_source)
+
+plot_main.add_layout(force_arrow_glyph)
+
+# outsource in callback functions
+#labels_source.data = dict(x=[-0.6],y=[0.2],name=['F'])
+main_labels = LabelSet(x='x', y='y', text='name', level='glyph', render_mode='canvas', source=labels_source)
+plot_main.add_layout(main_labels)
+
+constant_load_glyph = Patch(x='x', y='y', fill_color="#0065BD", fill_alpha=0.5)
+triangular_load_glyph = Patch(x='x', y='y', fill_color="#0065BD", fill_alpha=0.5)
+plot_main.add_glyph(constant_load_source, constant_load_glyph)
+plot_main.add_glyph(triangular_load_source, triangular_load_glyph)
 
 
 

@@ -8,6 +8,7 @@
 # rod/beam
 xr_start = 0.0
 xr_end   = 10.0
+y_offset = 0.0
 r_reso   = 100 # resolution, i.e. number of points to draw the rod
 
 # supports
@@ -25,7 +26,7 @@ ysr      = -0.1
 fig_width  = 630
 fig_height = 400
 
-x_range = (xr_start-0.5,xr_end+0.5)
+x_range = (xr_start-1.5,xr_end+0.5)
 
 
 
