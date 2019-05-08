@@ -13,7 +13,7 @@
 - [x] cross-section types of the rod
 
 ## To Do - maths/internal
-- [ ] slider functionality
+- [x] slider functionality
 - [x] radio button group functionality
 - [ ] temperature functionality
 - [x] radio group functionality

@@ -6,13 +6,15 @@ from NFR_constants import (
         xsl, xsr, ysl, ysr, # support coords
         slide_support_img, fixed_support_img # support images
         )
-
 from NFR_data_sources import (
         rod_source,
         support_source_left, support_source_right,
         force_point_source, constant_load_source, triangular_load_source,
         labels_source,
         aux_line
+        )
+from NFR_buttons import (
+        radio_group_right
         )
 
 
@@ -71,6 +73,28 @@ def change_right_support(attr, old, new):
     new_support_img = fixed_support_img if new==0 else slide_support_img
     support_source_right.data = dict(sp_img=[new_support_img], x=[xsr] , y=[ysr])
     # TODO: check again if it is possible to only change sp_img
+
+
+
+
+def change_right_support_position(attr, old, new):
+    support_img = fixed_support_img if radio_group_right.active==0 else slide_support_img
+    #if radio_group_right.active==0
+    support_source_right.data = dict(sp_img=[support_img], x=[new*10/(xr_end-xr_start)-0.33] , y=[ysr])
+    # TODO: check again if it is possible to only change x
+
+
+
+def change_load_position(attr, old, new):
+    # Only for point loads right now
+    # TODO: make it work also for other cases (how?)
+    force_point_source.data = dict(xS=[xr_start-1.0+new], xE=[xr_start+new], yS=[y_offset+0.1], yE=[y_offset+0.1], lW=[2], lC=["#0065BD"])
+    labels_source.data = dict(x=[xr_start-0.6+new],y=[y_offset+0.2],name=['F'])
+
+
+
+
+
 
 
 
