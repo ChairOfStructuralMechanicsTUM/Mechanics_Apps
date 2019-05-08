@@ -16,6 +16,6 @@
 - [ ] slider functionality
 - [x] radio button group functionality
 - [ ] temperature functionality
-- [ ] radio group functionality
+- [x] radio group functionality
 - [ ] reset button functionality
 - [ ] internal calculations

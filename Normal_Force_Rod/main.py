@@ -37,7 +37,8 @@ from NFR_buttons import (
         reset_button, dummy_button
         )
 from NFR_callback_functions import (
-        change_load, change_cross_section
+        change_load, change_cross_section,
+        change_left_support, change_right_support
         )
 
 
@@ -54,7 +55,10 @@ from NFR_callback_functions import (
 
 radio_button_group.on_change('active',change_load)
 
-radio_group_cross.on_change('active', change_cross_section)
+
+radio_group_left.on_change('active',change_left_support)
+radio_group_right.on_change('active',change_right_support)
+radio_group_cross.on_change('active',change_cross_section)
 
 
 

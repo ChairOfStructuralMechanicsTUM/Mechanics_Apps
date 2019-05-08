@@ -27,7 +27,7 @@ right_support_position_slide = LatexSlider(title="\\mathrm{Support \ Position}",
 radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Triangular Load", "Temperature"], active=0, width = 600)
 
 radio_group_left  = RadioGroup(labels=["fixed", "sliding"], active=0, inline=True)
-radio_group_right = RadioGroup(labels=["fixed", "sliding"], active=0, inline=True)
+radio_group_right = RadioGroup(labels=["fixed", "sliding"], active=1, inline=True)
 radio_group_cross = RadioGroup(labels=["constant", "tapered"], active=0, inline=True) # cross-section
 
 # Reset Button

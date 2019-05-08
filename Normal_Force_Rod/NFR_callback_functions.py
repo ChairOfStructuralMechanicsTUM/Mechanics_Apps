@@ -57,6 +57,20 @@ def change_cross_section(attr, old, new):
 
 
 
+def change_left_support(attr, old, new):
+    # new==0 means fixed support image
+    # new==1 means slide support image
+    new_support_img = fixed_support_img if new==0 else slide_support_img
+    support_source_left.data = dict(sp_img=[new_support_img], x=[xsl] , y=[ysl])
+    # TODO: check again if it is possible to only change sp_img
+
+
+def change_right_support(attr, old, new):
+    # new==0 means fixed support image
+    # new==1 means slide support image
+    new_support_img = fixed_support_img if new==0 else slide_support_img
+    support_source_right.data = dict(sp_img=[new_support_img], x=[xsr] , y=[ysr])
+    # TODO: check again if it is possible to only change sp_img
 
 
 
