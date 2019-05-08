@@ -10,7 +10,7 @@
 - [x] force arrow
 - [x] load types graphics
 - [ ] temperature "load" 
-- [ ] cross-section types of the rod
+- [x] cross-section types of the rod
 
 ## To Do - maths/internal
 - [ ] slider functionality

@@ -13,6 +13,7 @@ from NFR_constants import (
 
 # rod
 rod_source = ColumnDataSource(data=dict(x = np.linspace(xr_start,xr_end,r_reso), y = np.ones(r_reso) * y_offset ))
+#rod_source = ColumnDataSource(data=dict(x = [xr_start, xr_end], y = [y_offset, y_offset])) # for patch only, no bending
 
 # Position of supports
 support_source_left  = ColumnDataSource(data=dict(sp_img=[fixed_support_img], x=[xsl] , y=[ysl]))

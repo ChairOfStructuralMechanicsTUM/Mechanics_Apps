@@ -37,7 +37,7 @@ from NFR_buttons import (
         reset_button, dummy_button
         )
 from NFR_callback_functions import (
-        change_load
+        change_load, change_cross_section
         )
 
 
@@ -54,6 +54,7 @@ from NFR_callback_functions import (
 
 radio_button_group.on_change('active',change_load)
 
+radio_group_cross.on_change('active', change_cross_section)
 
 
 
@@ -77,7 +78,10 @@ plot_main.add_glyph(support_source_left,ImageURL(url="sp_img", x='x', y='y', w=0
 plot_main.add_glyph(support_source_right,ImageURL(url="sp_img", x='x', y='y', w=0.66, h=0.4))
 
 
-plot_main.line(x='x', y='y', source=rod_source, color='#0065BD',line_width=15)
+#plot_main.line(x='x', y='y', source=rod_source, color='#0065BD',line_width=15)
+rod_glyph = Patch(x='x', y='y', line_color='#0065BD',line_width=15, fill_color="#0065BD")
+plot_main.add_glyph(rod_source, rod_glyph)
+# patch instead of line to comply with cross-section
 
 force_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width=2, size=5), 
                           x_start='xS', x_end='xE', y_start='yS', y_end='yE',
