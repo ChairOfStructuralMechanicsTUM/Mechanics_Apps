@@ -14,7 +14,8 @@ from NFR_data_sources import (
         aux_line
         )
 from NFR_buttons import (
-        radio_group_right
+        radio_group_left, radio_group_right, radio_group_cross,
+        load_position_slide, right_support_position_slide
         )
 
 
@@ -90,6 +91,17 @@ def change_load_position(attr, old, new):
     # TODO: make it work also for other cases (how?)
     force_point_source.data = dict(xS=[xr_start-1.0+new], xE=[xr_start+new], yS=[y_offset+0.1], yE=[y_offset+0.1], lW=[2], lC=["#0065BD"])
     labels_source.data = dict(x=[xr_start-0.6+new],y=[y_offset+0.2],name=['F'])
+
+
+
+
+def reset():
+    radio_group_left.active = 0
+    radio_group_right.active = 1
+    radio_group_cross.active = 0
+    
+    right_support_position_slide.value = xr_end
+    load_position_slide.value = xr_start
 
 
 

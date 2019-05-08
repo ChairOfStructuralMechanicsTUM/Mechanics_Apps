@@ -39,7 +39,8 @@ from NFR_buttons import (
 from NFR_callback_functions import (
         change_load, change_cross_section,
         change_left_support, change_right_support,
-        change_right_support_position, change_load_position
+        change_right_support_position, change_load_position,
+        reset
         )
 
 
@@ -63,6 +64,8 @@ radio_group_cross.on_change('active',change_cross_section)
 
 load_position_slide.on_change('value',change_load_position)
 right_support_position_slide.on_change('value',change_right_support_position)
+
+reset_button.on_click(reset)
 
 
 

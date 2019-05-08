@@ -17,5 +17,5 @@
 - [x] radio button group functionality
 - [ ] temperature functionality
 - [x] radio group functionality
-- [ ] reset button functionality
+- [x] reset button functionality
 - [ ] internal calculations
