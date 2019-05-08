@@ -27,13 +27,17 @@ from latex_support import LatexSlider, LatexLegend
 
 ###############################################################################
 ###############################################################################
-# Wave Propagation App
-# Bachelor thesis
-# Simon Pleyer (simon.pleyer_at_tum.de)
+# WAVE PROPAGATION APP
+# 
+# Bachelor thesis Nr.71
+# date: 07. Mai 2019
+# author: Simon Pleyer (simon.pleyer_at_tum.de)
 # Python 2.7.15
 # bokeh 1.0.2
 # numpy 1.14.2
 ###############################################################################
+# SHORT DESCRIPTION
+# 
 # This App visualizes the basic wave propagation phenomena in the ground. The
 # soil is modelled as a homogeneous, isotropic, linear-elastic half-space with
 # a vertical harmonically pulsating load on the surface.
@@ -42,18 +46,24 @@ from latex_support import LatexSlider, LatexLegend
 # The plot on the right shows the displacement components of the potentials for 
 # one specific soil particle. 
 ###############################################################################
+# POTENTIAL IMPROVEMENTS AND OPEN ISSUES  
+# 
+# 1. The interval for the calculation in x-dircetion (B=16m) and the distance
+#    between the particles (dx=0.0625m) is fixed. This leads to superposition
+#    of waves and large displacementa at the borders of the interval. The
+#    displacement should be close to zero.
+#    -> chose B and the dx according to Omega und the wavelength of the
+#       Rayleigh wave
+# 2. Three-dimensional wave propagation
+# 3. Excitaion from the ground
+# 4. Multiple soil layers
+# 5. Horizontal excitation
+# 6. Non-harmonic excitations
+# 7. Resize axis ranges of potentials plot automatically
+# 8. Disable RadioButtonGroup (p0 on/off) when play is active
+# 9. Reset RadioButtonGroup (p0 on/off) to p0=1 when reset-button was pressed
 ###############################################################################
-
-
-
-
-
 ###############################################################################
-# open issues #################################################################
-###############################################################################
-# - axis ranges of potentials plot do not resize automatically
-# - disable RadioButtonGroup (p0 on/off) when play is active
-# - reset RadioButtonGroup (p0 on/off) to p0=1 when reset was pressed
 
 
 
@@ -93,6 +103,12 @@ initial_chosen_x = -3
 initial_chosen_z = 2
 global_chosen_x = ColumnDataSource(data = dict(chosen_x = [initial_chosen_x]))
 global_chosen_z = ColumnDataSource(data = dict(chosen_z = [initial_chosen_z]))
+initial_chosen_x_value = -2.1875
+initial_chosen_z_value = 1.9
+global_chosen_x_value = ColumnDataSource(data = 
+                            dict(chosen_x_value = [initial_chosen_x_value]))
+global_chosen_z_value = ColumnDataSource(data = 
+                            dict(chosen_z_value = [initial_chosen_z_value]))
 
 # general parameters
 global_E = ColumnDataSource(data = dict(E = []))
@@ -121,8 +137,8 @@ initial_select_z = np.array([
                     [ 0], [4], [8], [13], [19], [25], [31], [37], [43], 
                     [49], [55], [61], [67], [73], [79]
                     ])
-initial_select_x = [48, 59, 70, 82, 93, 105, 116, 128, 139, 150, 162, 173, 185,
-                   196, 208]
+initial_select_x = [0, 20, 40, 60, 80, 100, 116, 128, 139, 155, 175, 195, 215,
+                   235, 255]                   
 global_select_z = ColumnDataSource(data =dict(select_z = [initial_select_z]))
 global_select_x = ColumnDataSource(data = dict(select_x = [initial_select_x]))
 global_x_short = ColumnDataSource(data = dict(x_short = []))
@@ -209,14 +225,17 @@ rayleigh_data_table = ColumnDataSource(data = {
 
 
 
+
 ###############################################################################
 # output variables ############################################################
 ###############################################################################
 # displacements in particles plot
 global_u = ColumnDataSource(data = 
- dict(u = [np.zeros((len(initial_select_z),len(initial_select_z)),dtype = complex)]))
+ dict(u = [np.zeros((len(initial_select_z),len(initial_select_z)),
+                    dtype = complex)]))
 global_w = ColumnDataSource(data =
- dict(w = [np.zeros((len(initial_select_z),len(initial_select_z)),dtype = complex)]))
+ dict(w = [np.zeros((len(initial_select_z),len(initial_select_z)),
+                    dtype = complex)]))
 
 # displacements plot
 source_line = ColumnDataSource(data = dict( x =[-8,8], y = [0,0]))
@@ -231,6 +250,11 @@ selected_Annulus_source = ColumnDataSource(data =
 # data table containing wavespeed and wavelength and G
 global_parameters_data_table_source = ColumnDataSource(data = 
  dict(lamb_p = [],c_p = [],lamb_s = [],c_s = [],lamb_r = [],c_r = [],my = []))
+
+# data table containing coordinates of chosen x- and z-particle
+global_chosen_particle_data_table_source = ColumnDataSource(data = 
+ dict( chosen_x_value = [initial_chosen_x_value],
+      chosen_z_value = [initial_chosen_z_value]))
 
 # displacement components of potentials
 global_dPhi_dx_vector_source = ColumnDataSource(data = dict(xS = [],zS = [],
@@ -249,8 +273,6 @@ global_w_rayleigh_source = ColumnDataSource(data = dict(xS = [],zS = [],
                                                         xE = [],zE = []))
 global_rayleigh_vector_source = ColumnDataSource(data = dict(xS = [],zS = [],
                                                              xE = [],zE = []))
-
-
 
 # callback 
 t = 0
@@ -275,7 +297,9 @@ def evolve1():
   [x_short] = global_x_short.data['x_short']
   [z_short] = global_z_short.data['z_short']
   [chosen_x] = global_chosen_x.data['chosen_x']
-  [chosen_z] = global_chosen_z.data['chosen_z']  
+  [chosen_z] = global_chosen_z.data['chosen_z']
+  [chosen_x_value] = global_chosen_x_value.data['chosen_x_value']
+  [chosen_z_value] = global_chosen_z_value.data['chosen_z_value']   
   # displacements
   [u_o_short] = global_u_o_short.data['u_o_short']
   [w_o_short] = global_w_o_short.data['w_o_short']
@@ -325,6 +349,9 @@ def evolve1():
   x_annulus = x_short[chosen_x+shift] + u[chosen_z,chosen_x+shift]
   z_annulus = - z_short[chosen_z] - w[chosen_z,chosen_x+shift]
   
+  chosen_x_value = x_short[chosen_x+shift]
+  chosen_z_value = z_short[chosen_z]
+
   # output total displacements plot
   global_particle_source.data = dict(x_coord = x_u_multiline.tolist(),
                                    z_coord = z_w_multiline.tolist())     
@@ -336,7 +363,6 @@ def evolve1():
   else:
     surface_source.data = dict(x = [],
                                y = [])
-
 
   # potentials IFT (omega - t)
   for nzz in range(0,len(z_short)):
@@ -367,6 +393,11 @@ def evolve1():
   u_ueberlager_ende = dPhi_dx - dPsi_y_dz
   w_ueberlager_ende = - dPhi_dz - dPsi_y_dx
   
+  global_chosen_particle_data_table_source.data = dict(chosen_x_value=
+                                                       [chosen_x_value],
+                                                       chosen_z_value=
+                                                       [chosen_z_value])
+
   # output potentials plot
   global_dPhi_dx_vector_source.data = dict(xS=[0],zS=[0],xE=[dPhi_dx],zE=[0])
   global_dPsi_y_dz_vector_source.data = dict(xS=[dPhi_dx],zS=[0],
@@ -393,6 +424,8 @@ def evolve2():
   [z_short] = global_z_short.data['z_short']
   [chosen_x] = global_chosen_x.data['chosen_x']
   [chosen_z] = global_chosen_z.data['chosen_z']
+  [chosen_x_value] = global_chosen_x_value.data['chosen_x_value']
+  [chosen_z_value] = global_chosen_z_value.data['chosen_z_value']   
   # rayleigh parameters
   [k_r] = global_k_r.data['k_r']
   [beta_1] = global_beta_1.data['beta_1']
@@ -449,6 +482,14 @@ def evolve2():
   x_annulus = x_short[chosen_x+shift] + u[chosen_z,chosen_x+shift]
   z_annulus = - z_short[chosen_z] - w[chosen_z,chosen_x+shift]
 
+  chosen_x_value = x_short[chosen_x+shift]
+  chosen_z_value = z_short[chosen_z]
+
+  global_chosen_particle_data_table_source.data = dict(chosen_x_value=
+                                                       [chosen_x_value],
+                                                       chosen_z_value=
+                                                       [chosen_z_value])
+
   # output total displacements plot
   global_particle_source.data = dict(x_coord = x_u_multiline.tolist(),
                                    z_coord = z_w_multiline.tolist())     
@@ -460,8 +501,6 @@ def evolve2():
   else:
     surface_source.data = dict(x = [],
                                y = [])
-
-
 
   # potentials rayleigh equation
   chosen_u_rayleigh = u[chosen_z,chosen_x+shift]
@@ -876,7 +915,8 @@ def change_b(attr,old,new):
   else:
     b_Slider.title='\\text{line load with width}\\ b='
   update_parameters()
-b_Slider = LatexSlider(title='\\text{line load with width}\\ b=',value_unit='\\mathrm{m}',
+b_Slider = LatexSlider(title=
+                '\\text{line load with width}\\ b=',value_unit='\\mathrm{m}',
                        value=initial_b,start=0,end=16,step=0.0625*4)
 b_Slider.on_change('value',change_b)
 
@@ -897,7 +937,7 @@ def change_zrange(attr,old,new):
   global_slider_zrange_active.data = dict(slider_zrange_active=[True])
   global_slider_zrange.data = dict(slider_zrange = [slider_zrange])
   update_parameters()
-zrange_Slider = RangeSlider(title='z-range',
+zrange_Slider = RangeSlider(title='z-interval range in m',
                             value=initial_slider_zrange,
                             start=0,end=200,step=1)
 zrange_Slider.on_change('value',change_zrange)
@@ -916,7 +956,7 @@ def change_x_range(attr,old,new):
   new = tuple(new)  
   global_x_range.data = dict(x_range = [x_range])
   update_parameters()
-x_range_Slider = RangeSlider(title='x-range',
+x_range_Slider = RangeSlider(title='x-interval range in m',
                             value=initial_x_range,
                             start=-8,end=8,step=0.25)
 x_range_Slider.on_change('value',change_x_range)
@@ -927,8 +967,11 @@ def change_chosen_x(attr,old,new):
   chosen_x = new
   global_chosen_x.data = dict(chosen_x = [chosen_x])
   update_parameters()
-chosen_x_Slider = LatexSlider(title='\\text{particle\\ in\\ x-direction:}',
-                              value=initial_chosen_x,start=-((len(initial_select_z)-1)/2),end=((len(initial_select_z)-1)/2),step=1)
+chosen_x_Slider = LatexSlider(title=
+                    '\\text{position\\ of\\ observation\\ point\\ in\\ x:}',
+                              value=initial_chosen_x,
+                              start=-((len(initial_select_z)-1)/2),
+                              end=((len(initial_select_z)-1)/2),step=1)
 chosen_x_Slider.on_change('value',change_chosen_x)
 
 # select z-position of particle for potential displacements
@@ -937,8 +980,10 @@ def change_chosen_z(attr,old,new):
   chosen_z = new
   global_chosen_z.data = dict(chosen_z = [chosen_z])
   update_parameters()
-chosen_z_Slider = LatexSlider(title='\\text{particle\\ in\\ z-direction:}',
-                              value=initial_chosen_z,start=0,end=(len(initial_select_z)-1),step=1)
+chosen_z_Slider = LatexSlider(title=
+                    '\\text{position\\ of\\ observation\\ point\\ in\\ z:}',
+                              value=initial_chosen_z,start=0,
+                              end=(len(initial_select_z)-1),step=1)
 chosen_z_Slider.on_change('value',change_chosen_z)
 
 # disable sliders if play is active
@@ -1022,7 +1067,8 @@ def update_parameters():
   # change x
   x_range_start_index = np.where(x == x_range[0])[0]
   x_range_end_index = np.where(x == x_range[1])[0]
-  select_x = np.linspace(x_range_start_index,x_range_end_index,len(select_z),dtype=int)
+  select_x = np.linspace(x_range_start_index,x_range_end_index,len(select_z),
+                         dtype=int)
   
   # output
   global_E.data = dict(E = [E])
@@ -1064,6 +1110,8 @@ def changeaxisranges():
   p.x_range.end = x_range[1] + 1
   p.y_range.start = - z[-1] - z[-1]/30
   p.y_range.end = z[0] + z[-1]/5
+
+
 
 
 
@@ -1136,8 +1184,9 @@ reset_button.on_click(reset)
 # plot particle and displacements #############################################
 ###############################################################################
 t = Title(text='Total displacement of soil particles')
-p = Plot(title=t,x_range=Range1d(start=-10,end=10),y_range=Range1d(start=-52,end=10),
-       plot_height = 928, plot_width = 800)
+p = Plot(title=t,x_range=Range1d(start=-10,end=10),y_range=Range1d(start=-52,
+                                                                   end=10),
+       plot_height = 989, plot_width = 800)
 p.toolbar.logo=None
 xaxis = LinearAxis()
 xaxis.axis_label = 'x in [m]'
@@ -1184,7 +1233,6 @@ a.tools=[PanTool(), WheelZoomTool(), SaveTool(), BoxZoomTool(), ResetTool()]
 a.xaxis.axis_label = 'x in [m]'
 a.yaxis.axis_label = 'z in [m]'
 a.title.text_font_size = '15pt'
-
 
 dPhi_dx_vector_glyph = Arrow(end=NormalHead(line_color='#0065BD',
                                             fill_color='#0065BD',line_width=2,
@@ -1255,7 +1303,7 @@ a.add_layout(total_rayleigh_vector_glyph)
 ###############################################################################
 # table with wave parameters ##################################################
 ###############################################################################
-table_columns = [TableColumn(field='lamb_p', title='lamb_p [m]'),
+table_parameters_columns = [TableColumn(field='lamb_p', title='lamb_p [m]'),
                  TableColumn(field='c_p', title='c_p [m/s]'),
                  TableColumn(field='lamb_s', title='lamb_s [m]'),
                  TableColumn(field='c_s', title='c_s [m/s]'),
@@ -1264,11 +1312,26 @@ table_columns = [TableColumn(field='lamb_p', title='lamb_p [m]'),
                  TableColumn(field='my', title='G [MN/m^2]'),
                  ]
 parameters_data_table = DataTable(source=global_parameters_data_table_source,
-                                  columns=table_columns,
-                                  header_row = True,
+                                  columns=table_parameters_columns,
+                                  header_row=True,
                                   fit_columns=True,
                                   index_position=None,
-                                  height=50)
+                                  height=50
+                                  )
+
+table_particlepositions_columns = [TableColumn(field='chosen_x_value',
+                    title='coordinate of the observation point in x [m]'),
+                  TableColumn(field='chosen_z_value',
+                    title='coordinate of the observation point in z [m]')
+                  ]
+
+particlepositions_data_table = DataTable(source=global_chosen_particle_data_table_source,
+                                         columns=table_particlepositions_columns,
+                                         header_row=True,
+                                         fit_columns=True,
+                                         index_position=None,
+                                         height=50
+                                         )
 
 
 
@@ -1277,9 +1340,10 @@ parameters_data_table = DataTable(source=global_parameters_data_table_source,
 ###############################################################################
 # descriptions ################################################################
 ###############################################################################
-paragraph =LatexDiv(text='''&nbsp;<span style='color: #0065bd;'>$$\\frac{\\partial \\Phi}{\\partial x}$$</span><span style='color: #a2ad00;'>$$\\frac{\\partial \\Phi}{\\partial z}$$</span><span style='color: #e37222;'>$$\\frac{\\partial \\Psi_{y}}{\\partial z}$$</span><span style='color: #ff0000;'>$$\\frac{\\partial \\Psi_{y}}{\\partial x}$$</span><span style='color: #993366;'>$$\\text{Rayleigh}$$</span><span style='color: #993366;'>$$(p_{0}=0)$$</span><span style='color: #000000;'>$$\\text{total}$$</span>''',width=10, height=15)
+paragraph = LatexDiv(text='''&nbsp;<span style='color: #0065bd;'>$$\\frac{\\partial \\Phi}{\\partial x}$$</span><span style='color: #a2ad00;'>$$\\frac{\\partial \\Phi}{\\partial z}$$</span><span style='color: #e37222;'>$$\\frac{\\partial \\Psi_{y}}{\\partial z}$$</span><span style='color: #ff0000;'>$$\\frac{\\partial \\Psi_{y}}{\\partial x}$$</span><span style='color: #993366;'>$$\\text{Rayleigh}$$</span><span style='color: #993366;'>$$(p_{0}=0)$$</span><span style='color: #000000;'>$$\\text{total}$$</span>''',width=10, height=15)
 description_filename = join(dirname(__file__), 'description.html')
-description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1400)
+description = LatexDiv(text=open(description_filename).read(),
+                       render_as_text=False,width=1400)
 
 
 
@@ -1321,7 +1385,7 @@ doc_layout = layout(children=[column(description,
                                           row(ny_Slider,x_range_Slider),
                                           #Spacer(height=10,width=30),
                                           row(Omega_Slider,zrange_Slider),
-                                          Spacer(height=20,width=30),
+                                          Spacer(height=10,width=30),
                                           row(Spacer(height=5,width=35),
                                               play_pause_button,
                                               Spacer(height=5,width=35),
@@ -1330,8 +1394,9 @@ doc_layout = layout(children=[column(description,
                                               reset_button,
                                               Spacer(height=5,width=35),
                                               p0_RadioButton),
+                                          particlepositions_data_table,
                                           row(chosen_x_Slider,chosen_z_Slider),
-                                          Spacer(height=25,width=30),
+                                          Spacer(height=25,width=30),                                        
                                           parameters_data_table,
                                           row(a,
                                           paragraph)
