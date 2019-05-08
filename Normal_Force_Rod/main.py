@@ -36,66 +36,12 @@ from NFR_buttons import (
 
 
 
-
-
-
-
 ## file description (put -also- in Readme)
 # NFR_constants             global constants, default values, images (ext. source)
 # NFR_data_sources          ColumnDataSources needed for this program
 # NFR_buttons               Buttons, Sliders, Radio Buttons (baically input widgets)
 # NFR_callback_functions    inner parts, buttons, sliders (etc.) functionality
 
-
-
-
-######################################
-#####   GLOBAL BEAM PROPERTIES    ####
-######################################
-#x0 = 0.0                # starting value of rod
-#xf = 10.0               # end value of rod
-#
-#
-#
-################################
-#####       SOURCES         ####
-################################
-## Support Source:
-#slide_support_img = "Normal_Force_Rod/static/images/auflager01.svg"
-#fixed_support_img = "Normal_Force_Rod/static/images/auflager02.svg"
-#
-#support_source1 = ColumnDataSource(data=dict(sp_img=[], x=[] , y=[]))
-#support_source2 = ColumnDataSource(data=dict(sp_img=[], x=[] , y=[]))
-#
-#
-####################################
-#####   SLIDERS AND BUTTONS     ####
-####################################
-#
-#### Sliders and Buttons:
-#
-#p_loc_slide= LatexSlider(title="\\mathrm{Load \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value= 5,start = 0, end = 10, step = 1.0)
-#p_mag_slide = LatexSlider(title="\\mathrm{Load \ Amplitude}", value = 1.0, start=-1.0, end=1.0, step=2.0)
-#sup2_loc_slide = LatexSlider(title="\\mathrm{Support \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=10,start = 0, end = 10, step = 1.0)
-#
-#
-#
-## Button to choose type of load:
-#radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Triangular Load", "Temperature"], active=0, width = 600)
-#
-#radio_group_left = RadioGroup(labels=["fixed", "sliding"], active=0, inline=True)
-#radio_group_right = RadioGroup(labels=["fixed", "sliding"], active=0, inline=True)
-#radio_group_cross = RadioGroup(labels=["constant", "tapered"], active=0, inline=True)
-#
-## Reset Button
-#Reset_button = Button(label="Reset", button_type="success")
-#dummy_button = Button(label="Dummy/Test", button_type="success")
-#
-
-
-#################################
-####       FUNCTIONS         ####
-#################################
 
 
 
@@ -115,30 +61,11 @@ plot_main.title.text_font_size = "13pt"
 plot_main.toolbar.logo = None
 
 
-
-
-
-#######################
-##########  TESTS #
-###################################
-
-#support_source1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
-#support_source2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
-#
-#support_source1.data = dict(sp_img=[fixed_support_img], x= [-0.325], y= [-0.1]) 
-#support_source2.data = dict(sp_img=[slide_support_img], x = [10-0.33] , y = [-0.1])
-#
-
 plot_main.add_glyph(support_source_left,ImageURL(url="sp_img", x='x', y='y', w=0.66, h=0.4))
 plot_main.add_glyph(support_source_right,ImageURL(url="sp_img", x='x', y='y', w=0.66, h=0.4))
 
-#rod_source = ColumnDataSource(data=dict(x = np.linspace(0,10,100), y = np.ones(100) * 0 ))
 
 plot_main.line(x='x', y='y', source=rod_source, color='#0065BD',line_width=15)
-
-
-
-
 
 
 
@@ -165,6 +92,7 @@ plot_normalF.toolbar.logo = None
 
 # evtl. gleichmit scipy und integration rules für beliebiges p
 
+
 ###### PLOT (DEFORMATION):
 # Define plot
 plot_deform = Figure(title="Deformation u(x)", tools="", x_range=x_range, y_range=(-12,12), height=fig_height)
@@ -180,13 +108,7 @@ plot_deform.toolbar.logo = None
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1000)
 
-##### ARRANGE LAYOUT
-#doc_layout = layout(children=[
-#        column(description,
-#               row(column(Spacer(height=20,width=350),widgetbox(radio_button_group), p_loc_slide, p_mag_slide, f2_loc_slide, widgetbox(Show_button), widgetbox(Reset_button)),
-#                   column(plot_main,plot_normalF,plot_deform ) ) ) ] )
 
-#radio_group = 
 
 rt_filename = join(dirname(__file__), "radio_button_title.html")
 rt = LatexDiv(text=open(rt_filename).read())
@@ -194,7 +116,7 @@ rt = LatexDiv(text=open(rt_filename).read())
 p_rt1 = Paragraph(text="""Left support:  """)
 p_rt2 = Paragraph(text="""Right support: """)
 p_rt3 = Paragraph(text="""Cross-section: """)
-#width=200, height=100)
+
 
 #slider_group = widgetbox(p_loc_slide,p_mag_slide,sup2_loc_slide) # together to close....
 simple_button_group = widgetbox([reset_button, dummy_button])
@@ -204,15 +126,9 @@ doc_layout = layout(children=[
                row(column(
                        Spacer(height=20,width=450),
                        widgetbox(radio_button_group),
-                       #widgetbox(radio_group_left), 
-                       #widgetbox(radio_group_right),
-                       #widgetbox(radio_group_cross),
                        row(widgetbox(p_rt1, width=120), widgetbox(radio_group_left)),
                        row(widgetbox(p_rt2, width=120), widgetbox(radio_group_right)), 
                        row(widgetbox(p_rt3, width=120), widgetbox(radio_group_cross)), 
-                       #row(rt, widgetbox(radio_group_left)),
-                       #row(rt, widgetbox(radio_group_right)), 
-                       #row(rt, widgetbox(radio_group_cross)),
                        load_position_slide,
                        load_magnitude_slide,
                        right_support_position_slide,
@@ -221,30 +137,6 @@ doc_layout = layout(children=[
                    column(plot_main,plot_normalF,plot_deform ) ) ) ] )
 
 
-# plots do not show...
-#doc_layout = layout([
-#        [description],
-#        [widgetbox(radio_button_group)],
-#        [rt, widgetbox(radio_group_left)],
-#        [rt, widgetbox(radio_group_right), plot_main],
-#        [rt, widgetbox(radio_group_cross)],
-#        [simple_button_group]
-#        ])
- 
-# wrong layout..
-#doc_layout = layout([
-#        [description],
-#        [
-#        [widgetbox(radio_button_group)],
-#        [widgetbox(radio_group_left)],
-#        [simple_button_group]
-#        ],
-#        [
-#        [plot_main],
-#        [plot_normalF],
-#        [plot_deform]
-#        ],
-#        ])
 
 curdoc().add_root(doc_layout)
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
