@@ -13,7 +13,8 @@ from NFR_data_sources import (
         force_point_source, constant_load_source, triangular_load_source,
         temperature_source,
         labels_source,
-        aux_line
+        aux_line,
+        error_msg, error_msg_frame
         )
 from NFR_buttons import (
         radio_group_left, radio_group_right, radio_group_cross,
@@ -134,7 +135,14 @@ def move_aux_line():
     aux_line.data = dict(x=[[2,2],[4,4]], y=[[1,-1],[1,-1]])
 
 
-
+def show_error(show=True):
+    
+    if show:
+        error_msg.data = dict(x=[2],y=[1.35],name=["Warning! - Kinematic, rod slides away!"])
+        error_msg_frame.data = dict(x=[5], y=[1.5])
+    else:
+        error_msg.data = dict(x=[], y=[], name=[])
+        error_msg_frame.data = dict(x=[], y=[])
 
 
 

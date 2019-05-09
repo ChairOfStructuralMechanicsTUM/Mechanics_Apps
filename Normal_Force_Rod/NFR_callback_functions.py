@@ -20,7 +20,7 @@ from NFR_buttons import (
         load_position_slide
         )
 from NFR_helper_functions import (
-        set_load, set_point_load, set_constant_load
+        set_load, set_point_load, set_constant_load, show_error
         )
 
 
@@ -72,6 +72,11 @@ def change_left_support(attr, old, new):
     new_support_img = fixed_support_img if new==0 else slide_support_img
     support_source_left.data = dict(sp_img=[new_support_img], x=[xsl] , y=[ysl])
     # TODO: check again if it is possible to only change sp_img
+    
+    if radio_group_right.active==1 and new==1: # both slide
+        show_error(True)
+    else:
+        show_error(False)
 
 
 def change_right_support(attr, old, new):
@@ -80,6 +85,11 @@ def change_right_support(attr, old, new):
     new_support_img = fixed_support_img if new==0 else slide_support_img
     support_source_right.data = dict(sp_img=[new_support_img], x=[xsr] , y=[ysr])
     # TODO: check again if it is possible to only change sp_img
+    
+    if radio_group_left.active==1 and new==1: # both slide
+        show_error(True)
+    else:
+        show_error(False)
 
 
 

@@ -41,6 +41,9 @@ labels_source = ColumnDataSource(dict(x=[],y=[],name=[]))
 # line roots<->min<->max
 aux_line = ColumnDataSource(data=dict(x=[2,2], y=[-100,100])) # test, see if it works
 
+# error message window
+error_msg_frame = ColumnDataSource(data=dict(x=[],y=[]))
+error_msg       = ColumnDataSource(data=dict(x=[],y=[],name=[]))
 
 
 ## global variables (dict, list, no CDS)

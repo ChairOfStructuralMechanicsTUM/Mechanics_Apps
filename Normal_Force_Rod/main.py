@@ -4,7 +4,7 @@
 from bokeh.plotting import Figure#, output_file , show
 #from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
 from bokeh.models import Arrow, OpenHead, LabelSet
-from bokeh.models.glyphs import ImageURL, Patch, MultiLine #, Quadratic, Rect, Patch
+from bokeh.models.glyphs import ImageURL, Patch, MultiLine, Rect #, Quadratic, Rect, Patch
 from bokeh.models.layouts import Spacer
 from bokeh.models.widgets import Paragraph
 from bokeh.layouts import column, row, widgetbox, layout
@@ -31,7 +31,8 @@ from NFR_data_sources import (
         force_point_source, constant_load_source, triangular_load_source,
         temperature_source,
         labels_source,
-        aux_line
+        aux_line,
+        error_msg, error_msg_frame
         )
 from NFR_buttons import (
         load_position_slide, #load_magnitude_slide,
@@ -47,7 +48,8 @@ from NFR_callback_functions import (
         )
 from NFR_helper_functions import(
         set_load,
-        move_aux_line # test with multilines
+        move_aux_line, # test with multilines
+        show_error # test TODO: nice graphics/image
         )
 
 
@@ -131,6 +133,11 @@ plot_main.add_glyph(temperature_source, temperature_glyph)
 move_aux_line()
 aux_line_glyph = MultiLine(xs='x', ys='y', line_width=2, line_dash=[1,2], line_color='gray')
 plot_main.add_glyph(aux_line, aux_line_glyph)
+
+error_label = LabelSet(x='x', y='y', text='name', source=error_msg)
+plot_main.add_layout(error_label)
+#show_error()
+plot_main.add_glyph(error_msg_frame,Rect(x="x", y="y", width=8, height=1, angle=0, fill_color='red', fill_alpha=0.2))
 
 
 ###### PLOT (NORMAL FORCE):
