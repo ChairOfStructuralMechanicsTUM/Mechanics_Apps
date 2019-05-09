@@ -32,14 +32,14 @@ from NFR_data_sources import (
         aux_line
         )
 from NFR_buttons import (
-        load_position_slide, load_magnitude_slide, right_support_position_slide,
+        load_position_slide, load_magnitude_slide,
         radio_button_group, radio_group_left, radio_group_right, radio_group_cross,
         reset_button, dummy_button
         )
 from NFR_callback_functions import (
         change_load, change_cross_section,
         change_left_support, change_right_support,
-        change_right_support_position, change_load_position,
+        change_load_position,
         reset
         )
 
@@ -63,7 +63,6 @@ radio_group_right.on_change('active',change_right_support)
 radio_group_cross.on_change('active',change_cross_section)
 
 load_position_slide.on_change('value',change_load_position)
-right_support_position_slide.on_change('value',change_right_support_position)
 
 reset_button.on_click(reset)
 
@@ -174,7 +173,6 @@ doc_layout = layout(children=[
                        row(widgetbox(p_rt3, width=120), widgetbox(radio_group_cross)), 
                        load_position_slide,
                        load_magnitude_slide,
-                       right_support_position_slide,
                        #slider_group,
                        simple_button_group),
                    column(plot_main,plot_normalF,plot_deform ) ) ) ] )

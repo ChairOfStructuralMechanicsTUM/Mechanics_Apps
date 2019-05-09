@@ -2,7 +2,7 @@
 
 ## inner app imports
 from NFR_constants import (
-        xr_start, xr_end, y_offset, r_reso, # rod coords
+        xr_start, xr_end, y_offset, # rod coords
         xsl, xsr, ysl, ysr, # support coords
         slide_support_img, fixed_support_img # support images
         )
@@ -15,7 +15,7 @@ from NFR_data_sources import (
         )
 from NFR_buttons import (
         radio_group_left, radio_group_right, radio_group_cross,
-        load_position_slide, right_support_position_slide
+        load_position_slide
         )
 
 
@@ -78,14 +78,6 @@ def change_right_support(attr, old, new):
 
 
 
-def change_right_support_position(attr, old, new):
-    support_img = fixed_support_img if radio_group_right.active==0 else slide_support_img
-    #if radio_group_right.active==0
-    support_source_right.data = dict(sp_img=[support_img], x=[new*10/(xr_end-xr_start)-0.33] , y=[ysr])
-    # TODO: check again if it is possible to only change x
-
-
-
 def change_load_position(attr, old, new):
     # Only for point loads right now
     # TODO: make it work also for other cases (how?)
@@ -99,8 +91,6 @@ def reset():
     radio_group_left.active = 0
     radio_group_right.active = 1
     radio_group_cross.active = 0
-    
-    right_support_position_slide.value = xr_end
     load_position_slide.value = xr_start
 
 

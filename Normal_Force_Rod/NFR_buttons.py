@@ -19,7 +19,6 @@ from NFR_constants import (
 
 load_position_slide  = LatexSlider(title="\\mathrm{Load \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=xr_start, start=xr_start, end=xr_end, step=1.0)
 load_magnitude_slide = LatexSlider(title="\\mathrm{Load \ Amplitude}", value = 1.0, start=-1.0, end=1.0, step=2.0)
-right_support_position_slide = LatexSlider(title="\\mathrm{Support \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=xr_end, start=xr_start, end=xr_end, step=1.0)
 # TODO: change words from slide to slider
 
 
