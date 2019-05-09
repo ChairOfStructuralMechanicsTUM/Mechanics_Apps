@@ -1,0 +1,142 @@
+from __future__ import division # float division only, like in python 3
+
+## inner app imports
+from NFR_constants import (
+        xr_start, xr_end, y_offset, # rod coords
+        xsl, xsr, ysl, ysr, # support coords
+        slide_support_img, fixed_support_img # support images
+        )
+from NFR_data_sources import (
+        rod_source,
+        support_source_left, support_source_right,
+        force_point_source, constant_load_source, triangular_load_source,
+        temperature_source,
+        labels_source,
+        aux_line
+        )
+from NFR_buttons import (
+        radio_group_left, radio_group_right, radio_group_cross,
+        radio_group_ampl,
+        radio_button_group,
+        load_position_slide
+        )
+
+
+
+def clear_point_load():
+    force_point_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW=[], lC=[])
+def clear_constant_load():
+    constant_load_source.data = dict(x=[], y=[])
+def clear_triangular_load():
+    triangular_load_source.data = dict(x=[], y=[])
+def clear_temperature():
+    temperature_source.data = dict(x=[], y=[])   
+# TODO: check for general CDS clearing    
+
+
+# TODO: maybe variable for arrow length for more general case?
+
+def set_point_load(load_position):
+    labels_source.data = dict(x=[xr_start-0.1+load_position, xr_start-0.05+load_position],y=[y_offset+0.3,y_offset],name=['F','|'])
+    force_point_source.data = dict(xS=[xr_start-0.5+load_position], xE=[xr_start+0.5+load_position], yS=[y_offset+0.2], yE=[y_offset+0.2], lW=[2], lC=["#0065BD"])
+    clear_constant_load()
+    clear_triangular_load()
+    clear_temperature()
+
+
+def set_constant_load(load_position):
+    #labels_source.data = dict(x=[xr_start+1.5,xr_start+4.5,xr_start+7.5],y=[y_offset+0.9,y_offset+0.9,y_offset+0.9],name=['F','F','F'])
+    
+    xS = []
+    xE = []
+    #xM = []
+    # calculate the coordinats for the arrows and labels
+    num_arrows = 3 # amount of arrows
+    part = (load_position-xr_start)/(num_arrows*2+1)
+    local_index = list(range(1,num_arrows*2+1))
+    # arrow start positions (odd)
+    for i in local_index[::2]:
+        xS.append(part*i)
+        #xM.append(part*(i+0.5))
+    for i in local_index[1:][::2]:
+        xE.append(part*i)
+    
+    #labels_source.data = dict(x=xM,y=[y_offset+0.9,y_offset+0.9,y_offset+0.9],name=['F']*num_arrows)
+    labels_source.data = dict(x=[load_position+0.1],y=[y_offset+0.2], name=['p'])
+    
+    force_point_source.data = dict(xS=xS, xE=xE, yS=[y_offset+0.45]*num_arrows, yE=[y_offset+0.45]*num_arrows, lW=[2]*num_arrows, lC=["#0065BD"]*num_arrows)
+    
+    constant_load_source.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+0.2, y_offset+0.7, y_offset+0.7, y_offset+0.2])
+    #triangular_load_source.data = dict(x=[], y=[])
+    clear_triangular_load()
+    clear_temperature()
+
+
+def set_triangular_load(load_position):
+    
+    xS = []
+    xE = []
+    # calculate the coordinats for the arrows and labels
+    num_arrows = 2 # amount of arrows
+    part = 0.5*(load_position-xr_start)/(num_arrows*2+1)
+    local_index = list(range(1,num_arrows*2+1))
+    # arrow start positions (odd)
+    for i in local_index[::2]:
+        xS.append(part*i)
+        #xM.append(part*(i+0.5))
+    for i in local_index[1:][::2]:
+        xE.append(part*i)
+    labels_source.data = dict(x=[load_position+0.1],y=[y_offset+0.2], name=['p'])
+    force_point_source.data = dict(xS=xS, xE=xE, yS=[y_offset+0.45]*num_arrows, yE=[y_offset+0.45]*num_arrows, lW=[2]*num_arrows, lC=["#0065BD"]*num_arrows)
+    triangular_load_source.data = dict(x=[xr_start, xr_start, load_position], y=[y_offset+0.2, y_offset+0.7, y_offset+0.2])
+    clear_constant_load()
+    clear_temperature()
+
+
+def set_temperature(load_position):
+    
+    
+    labels_source.data = dict(x=[(load_position-xr_start)/2],y=[y_offset+0.35], name=['T'])
+    temperature_source.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+0.2, y_offset+0.7, y_offset+0.7, y_offset+0.2])
+    #TODO: nice design for Temperature (hot/cold)
+    clear_point_load()
+    clear_constant_load()
+    clear_triangular_load()
+    
+
+
+
+def set_load(load_type, load_position):
+    if load_type==0:
+        set_point_load(load_position)
+    elif load_type==1:
+        set_constant_load(load_position)
+    elif load_type==2:
+        set_triangular_load(load_position)
+    elif load_type==3:
+        set_temperature(load_position)
+    else:
+        print("How did you get here? [helper_functions, set_load]")
+    
+    
+    #TODO: consider re-structuring with function handles like in rolling test
+    # advantage: calling the functions via list index instead of if-else
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

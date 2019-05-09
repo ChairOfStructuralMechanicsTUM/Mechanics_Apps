@@ -22,12 +22,14 @@ from latex_support import LatexDiv#, LatexLabel, LatexLabelSet, LatexSlider, Lat
 
 ## inner app imports
 from NFR_constants import (
+        xr_start, y_offset,
         fig_height, fig_width, x_range
         )
 from NFR_data_sources import (
         rod_source,
         support_source_left, support_source_right,
         force_point_source, constant_load_source, triangular_load_source,
+        temperature_source,
         labels_source,
         aux_line
         )
@@ -43,6 +45,9 @@ from NFR_callback_functions import (
         change_load_position, change_amplitude,
         reset
         )
+from NFR_helper_functions import(
+        set_load
+        )
 
 
 
@@ -53,6 +58,11 @@ from NFR_callback_functions import (
 # NFR_callback_functions    inner parts, buttons, sliders (etc.) functionality
 
 
+
+def init():
+    set_load(radio_button_group.active, load_position_slide.value)
+    #labels_source.data = dict(x=[xr_start-0.6, xr_start],y=[y_offset+0.3,y_offset],name=['F','|'])
+    #force_point_source.data = dict(xS=[xr_start-0.5], xE=[xr_start+0.5], yS=[y_offset+0.2], yE=[y_offset+0.2], lW=[2], lC=["#0065BD"])
 
 
 
@@ -108,9 +118,10 @@ plot_main.add_layout(main_labels)
 
 constant_load_glyph = Patch(x='x', y='y', fill_color="#0065BD", fill_alpha=0.5)
 triangular_load_glyph = Patch(x='x', y='y', fill_color="#0065BD", fill_alpha=0.5)
+temperature_glyph = Patch(x='x', y='y', fill_color="#0065BD", fill_alpha=0.5)
 plot_main.add_glyph(constant_load_source, constant_load_glyph)
 plot_main.add_glyph(triangular_load_source, triangular_load_glyph)
-
+plot_main.add_glyph(temperature_source, temperature_glyph)
 
 
 
@@ -148,6 +159,11 @@ plot_deform.title.text_font_size = "13pt"
 plot_deform.toolbar.logo = None
 
 
+
+
+init()
+
+
 ##### ADD DESCRIPTION FROM HTML FILE
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1000)
@@ -161,6 +177,7 @@ p_rt1 = Paragraph(text="""Left support:  """)
 p_rt2 = Paragraph(text="""Right support: """)
 p_rt3 = Paragraph(text="""Cross-section: """)
 p_rt4 = Paragraph(text="""Load Amplitude:""")
+
 
 
 #slider_group = widgetbox(p_loc_slide,p_mag_slide,sup2_loc_slide) # together to close....

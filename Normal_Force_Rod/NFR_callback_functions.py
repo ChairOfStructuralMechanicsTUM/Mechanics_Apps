@@ -1,4 +1,4 @@
-
+from __future__ import division # float division only, like in python 3
 
 ## inner app imports
 from NFR_constants import (
@@ -16,7 +16,11 @@ from NFR_data_sources import (
 from NFR_buttons import (
         radio_group_left, radio_group_right, radio_group_cross,
         radio_group_ampl,
+        radio_button_group,
         load_position_slide
+        )
+from NFR_helper_functions import (
+        set_load, set_point_load, set_constant_load
         )
 
 
@@ -25,28 +29,23 @@ from NFR_buttons import (
 
 def change_load(attr, old, new):
     print("DEBUG: change_load, new=",new)
-    if new==0: # point laod
-        labels_source.data = dict(x=[xr_start-0.6],y=[y_offset+0.2],name=['F'])
-        force_point_source.data = dict(xS=[xr_start-1.0], xE=[xr_start], yS=[y_offset+0.1], yE=[y_offset+0.1], lW=[2], lC=["#0065BD"])
-        constant_load_source.data = dict(x=[], y=[])
-        triangular_load_source.data = dict(x=[], y=[])
-    elif new==1: # constant load
-        labels_source.data = dict(x=[xr_start+1.5,xr_start+4.5,xr_start+7.5],y=[y_offset+0.9,y_offset+0.9,y_offset+0.9],name=['F','F','F'])
-        force_point_source.data = dict(xS=[xr_start+1,xr_start+4,xr_start+7], xE=[xr_start+2,xr_start+5,xr_start+8], yS=[y_offset+0.7,y_offset+0.7,y_offset+0.7], yE=[y_offset+0.7,y_offset+0.7,y_offset+0.7], lW=[2,2,2], lC=["#0065BD","#0065BD","#0065BD"])
-        constant_load_source.data = dict(x=[xr_start, xr_start, xr_end, xr_end], y=[y_offset+0.2, y_offset+1.2, y_offset+1.2, y_offset+0.2])
-        triangular_load_source.data = dict(x=[], y=[])
-    elif new==2: # triangular load
-        labels_source.data = dict(x=[],y=[],name=[])
-        force_point_source.data = dict(xS=[xr_start+0.5,xr_start+2], xE=[xr_start+1.5,xr_start+3], yS=[y_offset+0.7,y_offset+0.7], yE=[y_offset+0.7,y_offset+0.7], lW=[2,2], lC=["#0065BD","#0065BD"])
-        constant_load_source.data = dict(x=[], y=[])
-        triangular_load_source.data = dict(x=[xr_start, xr_start, xr_end], y=[y_offset+0.2, y_offset+1.2, y_offset+0.2])
-    elif new==3: # temperature
-        print("Temperature")
-        # do coding
-    else:
-        print("How did you get here?")
-        # raise error or something (plot message on screen via bokeh?)
+    
+    current_position = load_position_slide.value
+    
+    set_load(new,current_position)
+    
 
+
+def change_load_position(attr, old, new):
+    
+    # have to handle distinct cases, otherwise there are ValueErrors for empty lists
+    new_position = new*10/(xr_end-xr_start)
+    
+    current_load = radio_button_group.active
+    
+    set_load(current_load,new_position)
+    
+    
 
 
 
@@ -79,14 +78,6 @@ def change_right_support(attr, old, new):
 
 
 
-def change_load_position(attr, old, new):
-    # Only for point loads right now
-    # TODO: make it work also for other cases (how?)
-    force_point_source.data = dict(xS=[xr_start-1.0+new], xE=[xr_start+new], yS=[y_offset+0.1], yE=[y_offset+0.1], lW=[2], lC=["#0065BD"])
-    labels_source.data = dict(x=[xr_start-0.6+new],y=[y_offset+0.2],name=['F'])
-
-
-
 def change_amplitude(attr, old, new):
     xS_old = force_point_source.data["xS"]
     xE_old = force_point_source.data["xE"]
@@ -100,11 +91,12 @@ def change_amplitude(attr, old, new):
 
 
 def reset():
-    radio_group_left.active = 0
-    radio_group_right.active = 1
-    radio_group_cross.active = 0
-    radio_group_ampl.active = 1
-    load_position_slide.value = xr_start
+    radio_button_group.active = 0
+    radio_group_left.active   = 0
+    radio_group_right.active  = 1
+    radio_group_cross.active  = 0
+    radio_group_ampl.active   = 1
+    load_position_slide.value = (xr_end-xr_start)/2
 
 
 
