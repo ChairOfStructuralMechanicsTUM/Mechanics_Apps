@@ -18,7 +18,7 @@ from NFR_constants import (
 ### Sliders and Buttons:
 
 load_position_slide  = LatexSlider(title="\\mathrm{Load \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=xr_start, start=xr_start, end=xr_end, step=1.0)
-load_magnitude_slide = LatexSlider(title="\\mathrm{Load \ Amplitude}", value = 1.0, start=-1.0, end=1.0, step=2.0)
+#load_magnitude_slide = LatexSlider(title="\\mathrm{Load \ Amplitude}", value = 1.0, start=-1.0, end=1.0, step=2.0)
 # TODO: change words from slide to slider
 
 
@@ -28,6 +28,7 @@ radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Tr
 radio_group_left  = RadioGroup(labels=["fixed", "sliding"], active=0, inline=True)
 radio_group_right = RadioGroup(labels=["fixed", "sliding"], active=1, inline=True)
 radio_group_cross = RadioGroup(labels=["constant", "tapered"], active=0, inline=True) # cross-section
+radio_group_ampl  = RadioGroup(labels=["-1", "+1"], active=1, inline=True) # amplitude
 
 # Reset Button
 reset_button = Button(label="Reset", button_type="success")

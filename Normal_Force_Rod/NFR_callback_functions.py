@@ -15,6 +15,7 @@ from NFR_data_sources import (
         )
 from NFR_buttons import (
         radio_group_left, radio_group_right, radio_group_cross,
+        radio_group_ampl,
         load_position_slide
         )
 
@@ -86,11 +87,23 @@ def change_load_position(attr, old, new):
 
 
 
+def change_amplitude(attr, old, new):
+    xS_old = force_point_source.data["xS"]
+    xE_old = force_point_source.data["xE"]
+    
+    # change direction in x-direction (parallel to rod)
+    force_point_source.data["xS"] = xE_old
+    force_point_source.data["xE"] = xS_old
+    
+    # TODO: this is an example for the TODOS above!
+
+
 
 def reset():
     radio_group_left.active = 0
     radio_group_right.active = 1
     radio_group_cross.active = 0
+    radio_group_ampl.active = 1
     load_position_slide.value = xr_start
 
 

@@ -32,14 +32,15 @@ from NFR_data_sources import (
         aux_line
         )
 from NFR_buttons import (
-        load_position_slide, load_magnitude_slide,
-        radio_button_group, radio_group_left, radio_group_right, radio_group_cross,
+        load_position_slide, #load_magnitude_slide,
+        radio_button_group, radio_group_left, radio_group_right,
+        radio_group_cross, radio_group_ampl,
         reset_button, dummy_button
         )
 from NFR_callback_functions import (
         change_load, change_cross_section,
         change_left_support, change_right_support,
-        change_load_position,
+        change_load_position, change_amplitude,
         reset
         )
 
@@ -61,6 +62,7 @@ radio_button_group.on_change('active',change_load)
 radio_group_left.on_change('active',change_left_support)
 radio_group_right.on_change('active',change_right_support)
 radio_group_cross.on_change('active',change_cross_section)
+radio_group_ampl.on_change('active',change_amplitude)
 
 load_position_slide.on_change('value',change_load_position)
 
@@ -158,6 +160,7 @@ rt = LatexDiv(text=open(rt_filename).read())
 p_rt1 = Paragraph(text="""Left support:  """)
 p_rt2 = Paragraph(text="""Right support: """)
 p_rt3 = Paragraph(text="""Cross-section: """)
+p_rt4 = Paragraph(text="""Load Amplitude:""")
 
 
 #slider_group = widgetbox(p_loc_slide,p_mag_slide,sup2_loc_slide) # together to close....
@@ -171,8 +174,9 @@ doc_layout = layout(children=[
                        row(widgetbox(p_rt1, width=120), widgetbox(radio_group_left)),
                        row(widgetbox(p_rt2, width=120), widgetbox(radio_group_right)), 
                        row(widgetbox(p_rt3, width=120), widgetbox(radio_group_cross)), 
+                       row(widgetbox(p_rt4, width=120), widgetbox(radio_group_ampl)), 
                        load_position_slide,
-                       load_magnitude_slide,
+                       #load_magnitude_slide,
                        #slider_group,
                        simple_button_group),
                    column(plot_main,plot_normalF,plot_deform ) ) ) ] )
