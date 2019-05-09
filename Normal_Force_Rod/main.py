@@ -4,7 +4,7 @@
 from bokeh.plotting import Figure#, output_file , show
 #from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
 from bokeh.models import Arrow, OpenHead, LabelSet
-from bokeh.models.glyphs import ImageURL, Patch#, Quadratic, Rect, Patch
+from bokeh.models.glyphs import ImageURL, Patch, MultiLine #, Quadratic, Rect, Patch
 from bokeh.models.layouts import Spacer
 from bokeh.models.widgets import Paragraph
 from bokeh.layouts import column, row, widgetbox, layout
@@ -46,7 +46,8 @@ from NFR_callback_functions import (
         reset
         )
 from NFR_helper_functions import(
-        set_load
+        set_load,
+        move_aux_line # test with multilines
         )
 
 
@@ -126,7 +127,10 @@ plot_main.add_glyph(constant_load_source, constant_load_glyph)
 plot_main.add_glyph(triangular_load_source, triangular_load_glyph)
 plot_main.add_glyph(temperature_source, temperature_glyph)
 
-
+#plot_main.line(x='x', y='y', source=aux_line, line_width=2, line_dash=[121], color='gray')
+move_aux_line()
+aux_line_glyph = MultiLine(xs='x', ys='y', line_width=2, line_dash=[1,2], line_color='gray')
+plot_main.add_glyph(aux_line, aux_line_glyph)
 
 
 ###### PLOT (NORMAL FORCE):
@@ -139,16 +143,10 @@ plot_normalF.outline_line_color = "Black"
 plot_normalF.title.text_font_size = "13pt"
 plot_normalF.toolbar.logo = None
 
+plot_normalF.line(x=[xr_start,xr_end], y=[0, 0], color='black', line_width=2 ,line_alpha = 0.7)
 
-## const p=2     -2x
-#x = np.linspace(0,10,1000)
-#y = np.ones(1000)*-2*x
-#normalF_source = ColumnDataSource(data=dict(x=[] , y=[]))
-#normalF_source.data = dict(x=x, y=y)
-#
-#plot_normalF.line(x='x', y='y', source=normalF_source, color="#A2AD00",line_width=2)
-
-# evtl. gleichmit scipy und integration rules für beliebiges p
+#aux_line_glyph = MultiLine(xs='x', ys='y', line_width=2, line_dash=[1,2], line_color='gray')
+plot_normalF.add_glyph(aux_line, aux_line_glyph)
 
 
 ###### PLOT (DEFORMATION):
@@ -161,7 +159,9 @@ plot_deform.outline_line_color = "Black"
 plot_deform.title.text_font_size = "13pt"
 plot_deform.toolbar.logo = None
 
+plot_deform.line(x=[xr_start,xr_end], y=[0, 0], color='black', line_width=2 ,line_alpha = 0.7)
 
+plot_deform.add_glyph(aux_line, aux_line_glyph)
 
 
 init()

@@ -130,6 +130,8 @@ def set_load(load_type, load_position):
 
 
 
+def move_aux_line():
+    aux_line.data = dict(x=[[2,2],[4,4]], y=[[1,-1],[1,-1]])
 
 
 

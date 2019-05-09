@@ -27,7 +27,7 @@ ysr      = -0.1
 fig_width  = 630
 fig_height = 400
 
-x_range = (xr_start-1.5,xr_end+0.5)
+x_range = (xr_start-1.5,xr_end+1.5)
 
 
 

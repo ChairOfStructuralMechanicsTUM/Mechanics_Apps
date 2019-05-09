@@ -39,7 +39,7 @@ labels_source = ColumnDataSource(dict(x=[],y=[],name=[]))
 
 
 # line roots<->min<->max
-aux_line = ColumnDataSource(data=dict(x=[], y=[])) # test, see if it works
+aux_line = ColumnDataSource(data=dict(x=[2,2], y=[-100,100])) # test, see if it works
 
 
 
