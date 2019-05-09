@@ -12,8 +12,9 @@ from NFR_constants import (
 
 
 # rod
-rod_source = ColumnDataSource(data=dict(x = np.linspace(xr_start,xr_end,r_reso), y = np.ones(r_reso) * y_offset ))
+#rod_source = ColumnDataSource(data=dict(x = np.linspace(xr_start,xr_end,r_reso), y = np.ones(r_reso) * y_offset))
 #rod_source = ColumnDataSource(data=dict(x = [xr_start, xr_end], y = [y_offset, y_offset])) # for patch only, no bending
+rod_source = ColumnDataSource(data=dict(x=[], y=[]))
 
 # Position of supports
 support_source_left  = ColumnDataSource(data=dict(sp_img=[fixed_support_img], x=[xsl] , y=[ysl]))
@@ -39,5 +40,15 @@ labels_source = ColumnDataSource(dict(x=[],y=[],name=[]))
 
 # line roots<->min<->max
 aux_line = ColumnDataSource(data=dict(x=[], y=[])) # test, see if it works
+
+
+
+## global variables (dict, list, no CDS)
+#global_variables = dict(rod_line_width=2)
+global_variables = dict(y_cross=0.0)
+
+#TODO: maybe move glabal variables also to "constants" and rename it to "variables" or so
+
+
 
 

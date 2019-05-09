@@ -9,6 +9,7 @@
 xr_start = 0.0
 xr_end   = 10.0
 y_offset = 0.0
+#y_cross  = 0.5 # offset for the labels etc. in case of tapared cross-section mode
 r_reso   = 100 # resolution, i.e. number of points to draw the rod
 
 # supports

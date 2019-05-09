@@ -22,11 +22,11 @@ from latex_support import LatexDiv#, LatexLabel, LatexLabelSet, LatexSlider, Lat
 
 ## inner app imports
 from NFR_constants import (
-        xr_start, y_offset,
+        xr_start, xr_end, y_offset,
         fig_height, fig_width, x_range
         )
 from NFR_data_sources import (
-        rod_source,
+        rod_source, global_variables,
         support_source_left, support_source_right,
         force_point_source, constant_load_source, triangular_load_source,
         temperature_source,
@@ -50,6 +50,7 @@ from NFR_helper_functions import(
         )
 
 
+#TODO (final): format code and comments
 
 ## file description (put -also- in Readme)
 # NFR_constants             global constants, default values, images (ext. source)
@@ -63,6 +64,7 @@ def init():
     set_load(radio_button_group.active, load_position_slide.value)
     #labels_source.data = dict(x=[xr_start-0.6, xr_start],y=[y_offset+0.3,y_offset],name=['F','|'])
     #force_point_source.data = dict(xS=[xr_start-0.5], xE=[xr_start+0.5], yS=[y_offset+0.2], yE=[y_offset+0.2], lW=[2], lC=["#0065BD"])
+    rod_source.data = dict(x=[xr_start, xr_start, xr_end, xr_end], y=[y_offset-0.1, y_offset+0.1, y_offset+0.1, y_offset-0.1])
 
 
 
@@ -101,7 +103,8 @@ plot_main.add_glyph(support_source_right,ImageURL(url="sp_img", x='x', y='y', w=
 
 
 #plot_main.line(x='x', y='y', source=rod_source, color='#0065BD',line_width=15)
-rod_glyph = Patch(x='x', y='y', line_color='#0065BD',line_width=15, fill_color="#0065BD")
+#rod_glyph = Patch(x='x', y='y', line_color='#0065BD',line_width=global_variables["rod_line_width"], fill_color="#0065BD")
+rod_glyph = Patch(x='x', y='y', line_color='#0065BD', fill_color="#0065BD")
 plot_main.add_glyph(rod_source, rod_glyph)
 # patch instead of line to comply with cross-section
 
