@@ -22,6 +22,9 @@ from NFR_buttons import (
         radio_button_group,
         load_position_slide
         )
+from NFR_equations import (
+        calcN
+        )
 
 
 
@@ -160,6 +163,14 @@ def show_error(show=True):
         error_msg.data = dict(x=[], y=[], name=[])
         error_msg_frame.data = dict(x=[], y=[])
 
+
+
+def compute_new_scenario():
+    ls_type   = radio_group_left.active
+    rs_type   = radio_group_right.active
+    load_type = radio_button_group.active
+    L1        = load_position_slide.value
+    calcN(ls_type, rs_type, load_type, L1)
 
 
 

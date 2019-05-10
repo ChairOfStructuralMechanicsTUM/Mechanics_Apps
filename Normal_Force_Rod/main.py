@@ -31,6 +31,7 @@ from NFR_data_sources import (
         force_point_source, constant_load_source, triangular_load_source,
         temperature_source,
         labels_source,
+        samplesF, samplesU,
         aux_line,
         error_msg, error_msg_frame
         )
@@ -49,7 +50,8 @@ from NFR_callback_functions import (
 from NFR_helper_functions import(
         set_load,
         move_aux_line, # test with multilines
-        show_error # test TODO: nice graphics/image
+        show_error, # test TODO: nice graphics/image
+        compute_new_scenario
         )
 
 
@@ -68,6 +70,7 @@ def init():
     #labels_source.data = dict(x=[xr_start-0.6, xr_start],y=[y_offset+0.3,y_offset],name=['F','|'])
     #force_point_source.data = dict(xS=[xr_start-0.5], xE=[xr_start+0.5], yS=[y_offset+0.2], yE=[y_offset+0.2], lW=[2], lC=["#0065BD"])
     rod_source.data = dict(x=[xr_start, xr_start, xr_end, xr_end], y=[y_offset-0.1, y_offset+0.1, y_offset+0.1, y_offset-0.1])
+    compute_new_scenario()
 
 
 
@@ -155,6 +158,9 @@ plot_normalF.line(x=[xr_start,xr_end], y=[0, 0], color='black', line_width=2 ,li
 #aux_line_glyph = MultiLine(xs='x', ys='y', line_width=2, line_dash=[1,2], line_color='gray')
 plot_normalF.add_glyph(aux_line, aux_line_glyph)
 
+plot_normalF.line(x='x', y='y', source=samplesF, color="#A2AD00",line_width=2)
+
+
 
 ###### PLOT (DEFORMATION):
 # Define plot
@@ -169,6 +175,8 @@ plot_deform.toolbar.logo = None
 plot_deform.line(x=[xr_start,xr_end], y=[0, 0], color='black', line_width=2 ,line_alpha = 0.7)
 
 plot_deform.add_glyph(aux_line, aux_line_glyph)
+
+plot_deform.line(x='x', y='y', source=samplesU, color="#A2AD00",line_width=2)
 
 
 init()

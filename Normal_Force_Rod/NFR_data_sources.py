@@ -4,9 +4,10 @@ import numpy as np
 
 ## inner app imports
 from NFR_constants import (
-        xr_start, xr_end, y_offset, r_reso, # rod coords
+        xr_start, xr_end, y_offset, #r_reso, # rod coords
         xsl, xsr, ysl, ysr, # support coords
-        slide_support_img, fixed_support_img # support images
+        slide_support_img, fixed_support_img, # support images
+        sol_reso
         )
 
 
@@ -36,6 +37,17 @@ labels_source = ColumnDataSource(dict(x=[],y=[],name=[]))
 # main_labels_source
 # nomral_lab
 #...
+
+
+# discretized solutions for the plots
+x_samples = np.linspace(xr_start,xr_end,sol_reso)
+#samplesF  = ColumnDataSource(dict(x=[], y=[]))
+#samplesU  = ColumnDataSource(dict(x=[], y=[]))
+
+# write x_samples also in y to avoid bokeh warning regarind different length
+samplesF  = ColumnDataSource(dict(x=x_samples, y=x_samples))
+samplesU  = ColumnDataSource(dict(x=x_samples, y=x_samples))
+
 
 
 # line roots<->min<->max

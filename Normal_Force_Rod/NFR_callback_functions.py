@@ -20,7 +20,8 @@ from NFR_buttons import (
         load_position_slide
         )
 from NFR_helper_functions import (
-        set_load, set_point_load, set_constant_load, show_error
+        set_load, set_point_load, set_constant_load, show_error,
+        compute_new_scenario
         )
 
 
@@ -33,6 +34,7 @@ def change_load(attr, old, new):
     current_position = load_position_slide.value
     
     set_load(new,current_position)
+    compute_new_scenario()
     
 
 
@@ -44,6 +46,8 @@ def change_load_position(attr, old, new):
     current_load = radio_button_group.active
     
     set_load(current_load,new_position)
+    
+    compute_new_scenario()
     
     
 
@@ -77,6 +81,8 @@ def change_left_support(attr, old, new):
         show_error(True)
     else:
         show_error(False)
+        
+    compute_new_scenario()
 
 
 def change_right_support(attr, old, new):
@@ -90,6 +96,8 @@ def change_right_support(attr, old, new):
         show_error(True)
     else:
         show_error(False)
+        
+    compute_new_scenario()
 
 
 
@@ -101,6 +109,8 @@ def change_amplitude(attr, old, new):
     # change direction in x-direction (parallel to rod)
     force_point_source.data["xS"] = xE_old
     force_point_source.data["xE"] = xS_old
+    
+    compute_new_scenario()
     
     # TODO: this is an example for the TODOS above!
 
@@ -114,6 +124,7 @@ def reset():
     radio_group_ampl.active   = 1
     load_position_slide.value = (xr_end-xr_start)/2
     set_load(radio_button_group.active,load_position_slide.value)
+    compute_new_scenario()
 
 
 
