@@ -7,14 +7,14 @@ from NFR_constants import (
         slide_support_img, fixed_support_img # support images
         )
 from NFR_data_sources import (
-        rod_source, global_variables,
+        rod_source, #global_variables,
         support_source_left, support_source_right,
         force_point_source, constant_load_source, triangular_load_source,
         labels_source,
         aux_line
         )
 from NFR_buttons import (
-        radio_group_left, radio_group_right, radio_group_cross,
+        radio_group_left, radio_group_right, #radio_group_cross,
         radio_group_ampl,
         radio_button_group,
         load_position_slide
@@ -49,18 +49,18 @@ def change_load_position(attr, old, new):
 
 
 
-def change_cross_section(attr, old, new):
-    if new==0: # constant cross-section
-        #rod_source.data = dict(x = np.linspace(xr_start,xr_end,r_reso), y = np.ones(r_reso) * y_offset )
-        #rod_source.data = dict(x = [xr_start, xr_end], y = [y_offset, y_offset])
-        rod_source.data = dict(x=[xr_start, xr_start, xr_end, xr_end], y=[y_offset-0.1, y_offset+0.1, y_offset+0.1, y_offset-0.1])
-        global_variables["y_cross"] = 0.0
-        set_load(radio_button_group.active,load_position_slide.value)
-    elif new==1: # tapered
-        rod_source.data = dict(x=[xr_start, xr_start, xr_end, xr_end], y=[y_offset-0.1, y_offset+0.4, y_offset+0.1, y_offset-0.1])
-#        global_variables["rod_line_width"] = 20
-        global_variables["y_cross"] = 0.5
-        set_load(radio_button_group.active,load_position_slide.value)
+#def change_cross_section(attr, old, new):
+#    if new==0: # constant cross-section
+#        #rod_source.data = dict(x = np.linspace(xr_start,xr_end,r_reso), y = np.ones(r_reso) * y_offset )
+#        #rod_source.data = dict(x = [xr_start, xr_end], y = [y_offset, y_offset])
+#        rod_source.data = dict(x=[xr_start, xr_start, xr_end, xr_end], y=[y_offset-0.1, y_offset+0.1, y_offset+0.1, y_offset-0.1])
+#        global_variables["y_cross"] = 0.0
+#        set_load(radio_button_group.active,load_position_slide.value)
+#    elif new==1: # tapered
+#        rod_source.data = dict(x=[xr_start, xr_start, xr_end, xr_end], y=[y_offset-0.1, y_offset+0.4, y_offset+0.1, y_offset-0.1])
+##        global_variables["rod_line_width"] = 20
+#        global_variables["y_cross"] = 0.5
+#        set_load(radio_button_group.active,load_position_slide.value)
 
     # TODO: maybe use fill_color, line_width, etc. as variables to change between line and patch
 
@@ -110,7 +110,7 @@ def reset():
     radio_button_group.active = 0
     radio_group_left.active   = 0
     radio_group_right.active  = 1
-    radio_group_cross.active  = 0
+    #radio_group_cross.active  = 0
     radio_group_ampl.active   = 1
     load_position_slide.value = (xr_end-xr_start)/2
     set_load(radio_button_group.active,load_position_slide.value)

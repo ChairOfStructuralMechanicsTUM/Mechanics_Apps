@@ -27,7 +27,7 @@ radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Tr
 
 radio_group_left  = RadioGroup(labels=["fixed", "sliding"], active=0, inline=True)
 radio_group_right = RadioGroup(labels=["fixed", "sliding"], active=1, inline=True)
-radio_group_cross = RadioGroup(labels=["constant", "tapered"], active=0, inline=True) # cross-section
+#radio_group_cross = RadioGroup(labels=["constant", "tapered"], active=0, inline=True) # cross-section
 radio_group_ampl  = RadioGroup(labels=["-1", "+1"], active=1, inline=True) # amplitude
 
 # Reset Button

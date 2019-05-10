@@ -8,7 +8,7 @@ from NFR_constants import (
         slide_support_img, fixed_support_img # support images
         )
 from NFR_data_sources import (
-        rod_source, global_variables,
+        rod_source, #global_variables,
         support_source_left, support_source_right,
         force_point_source, constant_load_source, triangular_load_source,
         temperature_source,
@@ -17,7 +17,7 @@ from NFR_data_sources import (
         error_msg, error_msg_frame
         )
 from NFR_buttons import (
-        radio_group_left, radio_group_right, radio_group_cross,
+        radio_group_left, radio_group_right, #radio_group_cross,
         radio_group_ampl,
         radio_button_group,
         load_position_slide
@@ -42,9 +42,9 @@ def clear_labels():
     
 
 def set_point_load(load_position):
-    y_cross = global_variables["y_cross"]
-    labels_source.data = dict(x=[xr_start-0.1+load_position, xr_start-0.05+load_position],y=[y_offset+0.3+y_cross,y_offset+y_cross],name=['F','|'])
-    force_point_source.data = dict(xS=[xr_start-0.5+load_position], xE=[xr_start+0.5+load_position], yS=[y_offset+0.2+y_cross], yE=[y_offset+0.2+y_cross], lW=[2], lC=["#0065BD"])
+    #y_cross = global_variables["y_cross"]
+    labels_source.data = dict(x=[xr_start-0.1+load_position, xr_start-0.05+load_position],y=[y_offset+0.3,y_offset],name=['F','|'])
+    force_point_source.data = dict(xS=[xr_start-0.5+load_position], xE=[xr_start+0.5+load_position], yS=[y_offset+0.2], yE=[y_offset+0.2], lW=[2], lC=["#0065BD"])
     clear_constant_load()
     clear_triangular_load()
     clear_temperature()
@@ -57,7 +57,7 @@ def set_constant_load(load_position):
         clear_point_load()
     else:
         #labels_source.data = dict(x=[xr_start+1.5,xr_start+4.5,xr_start+7.5],y=[y_offset+0.9,y_offset+0.9,y_offset+0.9],name=['F','F','F'])
-        y_cross = global_variables["y_cross"]
+        #y_cross = global_variables["y_cross"]
         
         xS = []
         xE = []
@@ -74,11 +74,11 @@ def set_constant_load(load_position):
             xE.append(part*i)
         
         #labels_source.data = dict(x=xM,y=[y_offset+0.9,y_offset+0.9,y_offset+0.9],name=['F']*num_arrows)
-        labels_source.data = dict(x=[load_position+0.1],y=[y_offset+0.2+y_cross], name=['p'])
+        labels_source.data = dict(x=[load_position+0.1],y=[y_offset+0.2], name=['p'])
         
-        force_point_source.data = dict(xS=xS, xE=xE, yS=[y_offset+0.45+y_cross]*num_arrows, yE=[y_offset+0.45+y_cross]*num_arrows, lW=[2]*num_arrows, lC=["#0065BD"]*num_arrows)
+        force_point_source.data = dict(xS=xS, xE=xE, yS=[y_offset+0.45]*num_arrows, yE=[y_offset+0.45]*num_arrows, lW=[2]*num_arrows, lC=["#0065BD"]*num_arrows)
         
-        constant_load_source.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+0.2+y_cross, y_offset+0.7+y_cross, y_offset+0.7+y_cross, y_offset+0.2+y_cross])
+        constant_load_source.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+0.2, y_offset+0.7, y_offset+0.7, y_offset+0.2])
         #triangular_load_source.data = dict(x=[], y=[])
     clear_triangular_load()
     clear_temperature()
@@ -90,7 +90,7 @@ def set_triangular_load(load_position):
         clear_labels()
         clear_point_load()
     else:
-        y_cross = global_variables["y_cross"]
+        #y_cross = global_variables["y_cross"]
         
         xS = []
         xE = []
@@ -104,9 +104,9 @@ def set_triangular_load(load_position):
             #xM.append(part*(i+0.5))
         for i in local_index[1:][::2]:
             xE.append(part*i)
-        labels_source.data = dict(x=[load_position+0.1],y=[y_offset+0.2+y_cross], name=['p'])
-        force_point_source.data = dict(xS=xS, xE=xE, yS=[y_offset+0.45+y_cross]*num_arrows, yE=[y_offset+0.45+y_cross]*num_arrows, lW=[2]*num_arrows, lC=["#0065BD"]*num_arrows)
-        triangular_load_source.data = dict(x=[xr_start, xr_start, load_position], y=[y_offset+0.2+y_cross, y_offset+0.7+y_cross, y_offset+0.2+y_cross])
+        labels_source.data = dict(x=[load_position+0.1],y=[y_offset+0.2], name=['p'])
+        force_point_source.data = dict(xS=xS, xE=xE, yS=[y_offset+0.45]*num_arrows, yE=[y_offset+0.45]*num_arrows, lW=[2]*num_arrows, lC=["#0065BD"]*num_arrows)
+        triangular_load_source.data = dict(x=[xr_start, xr_start, load_position], y=[y_offset+0.2, y_offset+0.7, y_offset+0.2])
     clear_constant_load()
     clear_temperature()
 
@@ -116,10 +116,10 @@ def set_temperature(load_position):
         clear_temperature()
         clear_labels()
     else:
-        y_cross = global_variables["y_cross"]
+        #y_cross = global_variables["y_cross"]
         
-        labels_source.data = dict(x=[(load_position-xr_start)/2],y=[y_offset+0.35+y_cross], name=['T'])
-        temperature_source.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+0.2+y_cross, y_offset+0.7+y_cross, y_offset+0.7+y_cross, y_offset+0.2+y_cross])
+        labels_source.data = dict(x=[(load_position-xr_start)/2],y=[y_offset+0.35], name=['T'])
+        temperature_source.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+0.2, y_offset+0.7, y_offset+0.7, y_offset+0.2])
         #TODO: nice design for Temperature (hot/cold)
     clear_point_load()
     clear_constant_load()
