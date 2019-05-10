@@ -32,7 +32,9 @@ def clear_constant_load():
 def clear_triangular_load():
     triangular_load_source.data = dict(x=[], y=[])
 def clear_temperature():
-    temperature_source.data = dict(x=[], y=[])   
+    temperature_source.data = dict(x=[], y=[])
+def clear_labels():
+    labels_source.data = dict(x=[], y=[], name=[])
 # TODO: check for general CDS clearing    
 
 
@@ -49,62 +51,76 @@ def set_point_load(load_position):
 
 
 def set_constant_load(load_position):
-    #labels_source.data = dict(x=[xr_start+1.5,xr_start+4.5,xr_start+7.5],y=[y_offset+0.9,y_offset+0.9,y_offset+0.9],name=['F','F','F'])
-    y_cross = global_variables["y_cross"]
-    
-    xS = []
-    xE = []
-    #xM = []
-    # calculate the coordinats for the arrows and labels
-    num_arrows = 3 # amount of arrows
-    part = (load_position-xr_start)/(num_arrows*2+1)
-    local_index = list(range(1,num_arrows*2+1))
-    # arrow start positions (odd)
-    for i in local_index[::2]:
-        xS.append(part*i)
-        #xM.append(part*(i+0.5))
-    for i in local_index[1:][::2]:
-        xE.append(part*i)
-    
-    #labels_source.data = dict(x=xM,y=[y_offset+0.9,y_offset+0.9,y_offset+0.9],name=['F']*num_arrows)
-    labels_source.data = dict(x=[load_position+0.1],y=[y_offset+0.2+y_cross], name=['p'])
-    
-    force_point_source.data = dict(xS=xS, xE=xE, yS=[y_offset+0.45+y_cross]*num_arrows, yE=[y_offset+0.45+y_cross]*num_arrows, lW=[2]*num_arrows, lC=["#0065BD"]*num_arrows)
-    
-    constant_load_source.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+0.2+y_cross, y_offset+0.7+y_cross, y_offset+0.7+y_cross, y_offset+0.2+y_cross])
-    #triangular_load_source.data = dict(x=[], y=[])
+    if load_position<1e-5: #close to zero
+        clear_constant_load()
+        clear_labels()
+        clear_point_load()
+    else:
+        #labels_source.data = dict(x=[xr_start+1.5,xr_start+4.5,xr_start+7.5],y=[y_offset+0.9,y_offset+0.9,y_offset+0.9],name=['F','F','F'])
+        y_cross = global_variables["y_cross"]
+        
+        xS = []
+        xE = []
+        #xM = []
+        # calculate the coordinats for the arrows and labels
+        num_arrows = 3 # amount of arrows
+        part = (load_position-xr_start)/(num_arrows*2+1)
+        local_index = list(range(1,num_arrows*2+1))
+        # arrow start positions (odd)
+        for i in local_index[::2]:
+            xS.append(part*i)
+            #xM.append(part*(i+0.5))
+        for i in local_index[1:][::2]:
+            xE.append(part*i)
+        
+        #labels_source.data = dict(x=xM,y=[y_offset+0.9,y_offset+0.9,y_offset+0.9],name=['F']*num_arrows)
+        labels_source.data = dict(x=[load_position+0.1],y=[y_offset+0.2+y_cross], name=['p'])
+        
+        force_point_source.data = dict(xS=xS, xE=xE, yS=[y_offset+0.45+y_cross]*num_arrows, yE=[y_offset+0.45+y_cross]*num_arrows, lW=[2]*num_arrows, lC=["#0065BD"]*num_arrows)
+        
+        constant_load_source.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+0.2+y_cross, y_offset+0.7+y_cross, y_offset+0.7+y_cross, y_offset+0.2+y_cross])
+        #triangular_load_source.data = dict(x=[], y=[])
     clear_triangular_load()
     clear_temperature()
 
 
 def set_triangular_load(load_position):
-    y_cross = global_variables["y_cross"]
-    
-    xS = []
-    xE = []
-    # calculate the coordinats for the arrows and labels
-    num_arrows = 2 # amount of arrows
-    part = 0.5*(load_position-xr_start)/(num_arrows*2+1)
-    local_index = list(range(1,num_arrows*2+1))
-    # arrow start positions (odd)
-    for i in local_index[::2]:
-        xS.append(part*i)
-        #xM.append(part*(i+0.5))
-    for i in local_index[1:][::2]:
-        xE.append(part*i)
-    labels_source.data = dict(x=[load_position+0.1],y=[y_offset+0.2+y_cross], name=['p'])
-    force_point_source.data = dict(xS=xS, xE=xE, yS=[y_offset+0.45+y_cross]*num_arrows, yE=[y_offset+0.45+y_cross]*num_arrows, lW=[2]*num_arrows, lC=["#0065BD"]*num_arrows)
-    triangular_load_source.data = dict(x=[xr_start, xr_start, load_position], y=[y_offset+0.2+y_cross, y_offset+0.7+y_cross, y_offset+0.2+y_cross])
+    if load_position<1e-5: #close to zero
+        clear_triangular_load()
+        clear_labels()
+        clear_point_load()
+    else:
+        y_cross = global_variables["y_cross"]
+        
+        xS = []
+        xE = []
+        # calculate the coordinats for the arrows and labels
+        num_arrows = 2 # amount of arrows
+        part = 0.5*(load_position-xr_start)/(num_arrows*2+1)
+        local_index = list(range(1,num_arrows*2+1))
+        # arrow start positions (odd)
+        for i in local_index[::2]:
+            xS.append(part*i)
+            #xM.append(part*(i+0.5))
+        for i in local_index[1:][::2]:
+            xE.append(part*i)
+        labels_source.data = dict(x=[load_position+0.1],y=[y_offset+0.2+y_cross], name=['p'])
+        force_point_source.data = dict(xS=xS, xE=xE, yS=[y_offset+0.45+y_cross]*num_arrows, yE=[y_offset+0.45+y_cross]*num_arrows, lW=[2]*num_arrows, lC=["#0065BD"]*num_arrows)
+        triangular_load_source.data = dict(x=[xr_start, xr_start, load_position], y=[y_offset+0.2+y_cross, y_offset+0.7+y_cross, y_offset+0.2+y_cross])
     clear_constant_load()
     clear_temperature()
 
 
 def set_temperature(load_position):
-    y_cross = global_variables["y_cross"]
-    
-    labels_source.data = dict(x=[(load_position-xr_start)/2],y=[y_offset+0.35+y_cross], name=['T'])
-    temperature_source.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+0.2+y_cross, y_offset+0.7+y_cross, y_offset+0.7+y_cross, y_offset+0.2+y_cross])
-    #TODO: nice design for Temperature (hot/cold)
+    if load_position<1e-5: #close to zero
+        clear_temperature()
+        clear_labels()
+    else:
+        y_cross = global_variables["y_cross"]
+        
+        labels_source.data = dict(x=[(load_position-xr_start)/2],y=[y_offset+0.35+y_cross], name=['T'])
+        temperature_source.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+0.2+y_cross, y_offset+0.7+y_cross, y_offset+0.7+y_cross, y_offset+0.2+y_cross])
+        #TODO: nice design for Temperature (hot/cold)
     clear_point_load()
     clear_constant_load()
     clear_triangular_load()
