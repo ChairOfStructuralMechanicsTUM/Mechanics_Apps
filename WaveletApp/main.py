@@ -388,10 +388,18 @@ choose_SampleFunc_error_filename = join(dirname(__file__), "choose_SampleFunc_er
 user_function_error_filename = join(dirname(__file__), "user_function_error.html")
     
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1250)
-loading = Div(text=open(loading_spinner_filename).read(), render_as_text=False, width=650, height=100)
-choose_WaveLet = Div(text=open(choose_WaveLet_error_filename).read(), render_as_text=False, width=650, height=100)
-choose_SampleFunc = Div(text=open(choose_SampleFunc_error_filename).read(), render_as_text=False, width=650, height=100)
-user_function = Div(text=open(user_function_error_filename).read(), render_as_text=False, width=650, height=100)
+loading = column(Spacer(height=40),
+    Div(text="<center>Calculating wavelet transform...</center>", width=650),
+    Div(text="<div class=\"lds-dual-ring\"></div>", render_as_text=False, width=650, height=100))
+choose_WaveLet = column(Spacer(height=40),
+    Div(text="<center>Please choose a wavelet function &#936;(t)!</center>", width=650),
+    Div(text="<div class=\"lds-ripple\"><div></div><div></div></div>", render_as_text=False, width=650, height=100))
+choose_SampleFunc = column(Spacer(height=40),
+    Div(text="<center>Please choose a sample function f(t)!</center>", width=650),
+    Div(text="<div class=\"lds-ripple\"><div></div><div></div></div>", render_as_text=False, width=650, height=100))
+user_function = column(Spacer(height=40),
+    Div(text="<center>Please enter a valid function!</center>", width=650),
+    Div(text="<div class=\"lds-ripple\"><div></div><div></div></div>", render_as_text=False, width=650, height=100))
 
 
 #################
