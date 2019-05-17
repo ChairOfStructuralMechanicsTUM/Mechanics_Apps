@@ -25,23 +25,38 @@ code {
 <body>
 
 <p>
-This app finds the Wavelet Transform of: Heaviside functions, Rectangular functions, Dirac functions, Trigonometric functions and user defined functions using different two different Wavelet Functions.
+Wavelets can be used as a mathematical tool in order to describe functions complementary to a Fourier-synthesis. In a Fourier-description, each Fourier-series member has its specific frequency without having a spatial localization, whereas a wavelet-based synthesis provides this spatial localization.
+</p>
+<p>
+The Wavelet transform assigns a function $f(t)$ of a real variable $t$ to a function $\mathcal W_f (b,\,a)$, where $\mathcal W_f (b,\,a)$ is the wavelet-transform of $f(t)$.
 </p>
 
-The Wavelet Transform assigns a function $ f(t) $ of a real variable t to a function $ W_{f}(a,b) $. The transformation rule is:
+<p>
+The transformation rule is
 </p>
-$$ W_{f}(a,b) = \mid a \mid^{-\frac{1}{2}} \int_{-\infty}^{\infty} f(t) \: \psi(\frac{t-b}{a}) \: dt$$
-The user is required to input the points in time where the suddun jump happens in a heaviside functions, rectangular function and dirac function along with the desired amplitude. On the other hand, user is asked to input the frequency of the trigonometric function. Please note that user defined functions can be of type:
-<li>Polynomials</li>
-<li>Trigonometric functions ( Combinations of sin and cos )</li>
-<li>Exponential functions</li>
-<li>Combinations of the above mentioned functions</li>
+$$ W_{f}(a,b) = \mid a \mid^{-\frac{1}{2}} \int_{-\infty}^{\infty} f(t) \: \psi(\frac{t-b}{a}) \: dt,$$
+<p>
+where $\psi\left(t\right) \in L_2(\mathbb{R})$ is the wavelet.
 </p>
-
-The scaling parameter $a$ effecting the center-frequency and the bandwidth can be manipulated from small values (good resolution in time domain) to high values (good resolution in frequency domain). Similarly, the shifting parameter $b$ can be varied resulting in a time-shift of the wavelet. For a fixed value of the parameter $a$ the transformation is interpreted as a convolution.
+<p>
+The wavelet-transform $\mathcal W_f (b,\,a)$ contains both, time information and frequency content of $f(t)$. Depending on the value of $a$ those characteristics of $f(t)$ are resolved by $\mathcal W_f (b,\,a)$ . While a small value for $a$ results in a good resolution of the time information and a poor representation of the frequency content, a big value for $a$ leads to a good resolution of the frequency content and thus a bad resolution of the time information. 
 </p>
-
-Finally, the user has the ability to define the desired resolution (number of computations per axis). Please note that high resolution values would lead to higher computational need and hence longer time.
+<p>
+This app visualizes the wavelet-transform of: Heaviside functions, rectangular functions, Dirac functions, trigonometric functions and user defined functions using different two different wavelet functions.
+</p>
+<p>
+<b>Wavelet 1:</b>  $\psi\left(t\right) = t\, e^{-t^2}$
+</p>
+<b>Wavelet 2:</b>  $\psi\left(t\right) = e^{-\frac{t^2}{2}} \, \cos(5\,t)$ 
+</p>
+<p>
+The interactivity parameters are:
+<ul>
+<li>Choosing a function $f(t)$ for which the Wavelet transform should be performed. Please note that user defined functions can be of type: polynomials, trigonometric functions, exponential functions and combinations of those function types.</li>
+<li>Choosing a wavelet (Wavelet 1 or Wavelet 2).</li>
+<li>Visualize the chosen wavelet for values of a (scaling) and b (shifting).</li>
+<li>Define the desired resolution of $\mathcal W_f (b,\,a)$. Please note that high resolution values would lead to higher computation times.</li>
+</ul>
 </p>
 
 </body>                                     
