@@ -2,3 +2,7 @@
 *.pyc
 *~
 *.md#
+*.db
+.vscode/
+server.conf
+server_autorun.cmd

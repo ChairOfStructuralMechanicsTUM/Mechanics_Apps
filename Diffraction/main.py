@@ -5,7 +5,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_div import LatexDiv
+from latex_support import LatexDiv
 
 import numpy as np
 from numpy import pi, cos, sin, sqrt, log10
@@ -18,13 +18,13 @@ from bokeh.models.layouts import Spacer
 from bokeh.plotting import Figure
 from bokeh.models.widgets import Slider, TextInput
 
-from surface3d import Surface3d
-from contour import Contour
-from quiver import Quiver
-from clickInteractor import ClickInteractor
+from diffraction_surface3d import diffraction_Surface3d
+from diffraction_contour import diffraction_Contour
+from diffraction_quiver import diffraction_Quiver
+from diffraction_clickInteractor import diffraction_ClickInteractor
 #from LatexLabel import LatexLabel
 
-from diffraction_grid import Grid
+from diffraction_grid import diffraction_Grid
 from diffraction_computation import compute_wave_max_at_cart
 
 SHOWWARN = False
@@ -39,8 +39,8 @@ x_min, x_max = -5, 5  # x extend of domain, x_max is same as height of barrier
 y_min, y_max = -5, 5  # y extend of domain
 
 # initialize diffraction grids
-contour_grid = Grid(x_min, x_max, nx_contour, y_min, y_max, ny_contour)
-surface_grid = Grid(x_min, x_max, nx_surface, y_min, y_max, ny_surface)
+contour_grid = diffraction_Grid(x_min, x_max, nx_contour, y_min, y_max, ny_contour)
+surface_grid = diffraction_Grid(x_min, x_max, nx_surface, y_min, y_max, ny_surface)
 
 # Wave parameters
 phi0_init = 60  # angle of incident
@@ -83,7 +83,7 @@ plot = Figure(plot_height=550,
               tools=["crosshair, save, tap"])
 
 # create interactor that detects click location in plot
-interactor = ClickInteractor(plot)
+interactor = diffraction_ClickInteractor(plot)
 
 
 def set_parameter_visualization():
@@ -203,13 +203,14 @@ def update_wave_amplitude_at_probe(x,y,t):
     textbox.value = "%.2f dB" % loudness  # write measured value to textbox
 
 
-target_frame_time = 100  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
-frame_end_time = 0
-lagcount = 0
+target_frame_time     = 100  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
+global_frame_end_time = ColumnDataSource(data=dict(val=[0]))
+global_lagcount       = ColumnDataSource(data=dict(val=[0]))
 
 
 def do_time_measurement(frame_no, computation_time):
-    global lagcount, frame_end_time
+    [frame_end_time] = global_frame_end_time.data["val"] # input/output
+    [lagcount]       = global_lagcount.data["val"]       # input/output    
 
     this_frame_end_time = time.time() * 1000  # in ms
     frame_duration = (this_frame_end_time - frame_end_time)
@@ -229,8 +230,10 @@ def do_time_measurement(frame_no, computation_time):
         print "Computation time is much lower than frame time and framerate is below 25Hz. Consider decreasing TARGET_FRAME_TIME to improve user experience!"
 
     frame_end_time = this_frame_end_time
+    global_frame_end_time.data = dict(val=[frame_end_time])
+    global_lagcount.data       = dict(val=[lagcount])
 
-frame_no = 0
+global_frame_no = ColumnDataSource(data=dict(val=[0]))
 
 def update():
     """
@@ -238,7 +241,7 @@ def update():
     :param t: time
     :return:
     """
-    global frame_no  # todo remove global if possible
+    [frame_no] = global_frame_no.data["val"] #input/output
     frame_no += 1
     t = frame_no * target_frame_time / 1000.0
     computation_start_time = time.time()
@@ -260,6 +263,7 @@ def update():
     computation_time = (time.time() - computation_start_time) * 1000
 
     do_time_measurement(frame_no, computation_time)
+    global_frame_no.data = dict(val=[frame_no])
 
 
 def initialize():
@@ -278,13 +282,13 @@ wavelength_slider.on_change('value',set_slider_has_changed)
 interactor.on_click(on_click_change)
 
 # create plots
-surface = Surface3d(x="x", y="y", z="z", color="color", data_source=source_surf, width=500,height=100)  # wave surface
+surface = diffraction_Surface3d(x="x", y="y", z="z", color="color", data_source=source_surf, width=500,height=100)  # wave surface
 # contour plots of wave
-contour_zero = Contour(plot, line_width=2,line_color='black', path_filter = 10)  # zero level
-contour_pos = Contour(plot, line_width=1, line_color='red', path_filter = 10)  # some other levels
-contour_neg = Contour(plot, line_width=1, line_color='blue', path_filter = 10)  # some other levels
+contour_zero = diffraction_Contour(plot, line_width=2,line_color='black', path_filter = 10)  # zero level
+contour_pos  = diffraction_Contour(plot, line_width=1, line_color='red', path_filter = 10)  # some other levels
+contour_neg  = diffraction_Contour(plot, line_width=1, line_color='blue', path_filter = 10)  # some other levels
 
-kvector = Quiver(plot, fix_at_middle=False) # visualization of wave k vector
+kvector = diffraction_Quiver(plot, fix_at_middle=False) # visualization of wave k vector
 plot.line(x=[x_min,0], y=[0,0], line_dash='dashed')
 plot.line(x=[x_max,0], y=[0,0], line_width=10)  # the wall
 plot.line(x='x', y='y', source=source_wavefront)  # wavefront visualization
@@ -292,6 +296,7 @@ plot.patch(x='x', y='y', color='yellow', source=source_light, alpha=.1)  # light
 plot.patch(x='x', y='y', color='red',source=source_reflection, alpha=.1)  # reflection area
 plot.patch(x='x', y='y', color='blue', source=source_shadow, alpha=.1)  # shadow area
 plot.scatter(x='x',y='y', source=source_value_plotter, size=10)  # value probing
+plot.toolbar.logo = None
 
 initialize()
 

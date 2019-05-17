@@ -308,7 +308,7 @@ class Interactor:
         :param callback_function: callback function
         :return:
         """
-        self._pseudo_square.data_source.on_change('selected', callback_function)
+        self._pseudo_square.data_source.selected.on_change('indices', callback_function)
 
     def clicked_point(self):
         """
@@ -316,8 +316,8 @@ class Interactor:
         :return:
         """
         print "HERE"
-        if len(self._pseudo_square.data_source.selected['1d']['indices']) > 0:
-            id = self._pseudo_square.data_source.selected['1d']['indices'][0]
+        if len(self._pseudo_square.data_source.selected.indices) > 0:
+            id = self._pseudo_square.data_source.selected.indices[0]
             x_coor = self._pseudo_square.data_source.data['x'][id]
             y_coor = self._pseudo_square.data_source.data['y'][id]
             return x_coor, y_coor

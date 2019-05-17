@@ -13,16 +13,22 @@ App describtion:
 '''
 ################################# Imports #####################################
 '''
-import numpy as np
+import numpy as np 
 from bokeh.io import curdoc
 from bokeh.plotting import Figure
-import BarChart as BC
+import CAM_BarChart as BC
 from bokeh.layouts import column, row
-from bokeh.models import Button
-from bokeh.models import Div
-from Functions import *
+from bokeh.models import Button, Div, ColumnDataSource
+#from Functions import *
+import CAM_Functions as CAM_fun
 from os.path import dirname, join, split
 from bokeh.events import Pan, PanEnd
+
+'''
+############################## GLobal variables ###############################
+'''
+glob_active   = ColumnDataSource(data=dict(Active=[False])) # play is active
+glob_callback = ColumnDataSource(data=dict(cid=[0])) # callback id
 
 '''
 ######################## Define the plotting space ############################
@@ -40,13 +46,14 @@ playGround = Figure(
                    )
 
 playGround.title.text_font_size = "25px"
-playGround.title.align = "center"
-playGround.grid.visible = False
-playGround.xaxis.visible = False
-playGround.yaxis.visible = False
+playGround.title.align          = "center"
+playGround.grid.visible         = False
+playGround.xaxis.visible        = False
+playGround.yaxis.visible        = False
+playGround.toolbar.logo         = None
 
 # Define the energy bar
-barsFig = BC.BarChart(
+barsFig = BC.CAM_BarChart(
                       ["Wheel",
                       "Rectangular Base",
                       "Whole system"],
@@ -58,14 +65,13 @@ barsFig = BC.BarChart(
 barsFig.Width(300)
 barsFig.Height(500)
 
-rotation_speed_wheel = get_velocity('circle') # rad/sec
-rotation_speed_base  = get_velocity('base') # rad/sec
+rotation_speed_wheel = CAM_fun.get_velocity('circle') # rad/sec
+rotation_speed_base  = CAM_fun.get_velocity('base') # rad/sec
 
 J_circle = 1 # Angular moment of inertia of the wheel
 J_base   = 2 # Angular moment of inertia of the rectangular base
 
 dt = 0.01
-Active = False
 
 '''
 #################### Define the objects to be rotating ########################
@@ -76,7 +82,7 @@ The objects include:
     (2) Rotating rectangle
 '''
 ########################## (1) Rotating circle ################################
-rotatingObject = RotatingObject()
+rotatingObject = CAM_fun.CAM_RotatingObject()
 rotatingObject.construct_circle_source( 
                                        [[0.0,0.0], [0.0,0.0]],
                                        [4.0, 3.0],
@@ -89,7 +95,7 @@ rect_width  = 12
 rect_height = 8
 
 rotatingObject.construct_rectangle_source([0.0,0.0], rect_width, rect_height)
-mouseTouch = MouseTouch([[xMin,xMax],[yMin,yMax]], rotatingObject)
+mouseTouch = CAM_fun.CAM_MouseTouch([[xMin,xMax],[yMin,yMax]], rotatingObject)
 
 '''
 ####################### Define the evolution function #########################
@@ -136,36 +142,40 @@ Include:
     (4) Mouse touch
 '''
 ############################## (1) Reset button ###############################
-periodicCallback = 0
 def Reset():
-    global Active, periodicCallback
-
+    #global Active, periodicCallback
+    [Active]           = glob_active.data["Active"] # input/output
+    [periodicCallback] = glob_callback.data["cid"]  # input/output
     # The preiodic callback has been removed here because when the pause 
     # button is set to False, this reactivates the periodic callback
     if periodicCallback == 0 and Active == True:
-        curdoc().remove_periodic_callback(compute_tranjectory)
+        curdoc().remove_periodic_callback(periodicCallback)
         periodicCallback += 1
         rotatingObject.set_velocity(0)
         
         angle = np.array([0,np.pi/2])
         rotatingObject.update_cross_source( angle )
         rotatingObject.update_rectangle_source( angle=0 ) 
-        update_bars(get_velocity('circle'), get_velocity('base'))
+        update_bars(CAM_fun.get_velocity('circle'), CAM_fun.get_velocity('base'))
         
     else:
         pass
     
-    Active = False
+    #Active = False
+    glob_active.data   = dict(Active=[False])
+    glob_callback.data = dict(cid=[periodicCallback])
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(Reset)
 
 ############################## (2) Pause button ###############################
 def pause ():
-    global Active
+    #global Active
+    [Active]           = glob_active.data["Active"] # input/output
+    [periodicCallback] = glob_callback.data["cid"]  # input/
     # When active pause animation
     if Active == True:
-        curdoc().remove_periodic_callback(compute_tranjectory)
-        Active=False
+        curdoc().remove_periodic_callback(periodicCallback)
+        glob_active.data = dict(Active=[False])
     else:
         pass
 pause_button = Button(label="Pause", button_type="success")
@@ -173,12 +183,15 @@ pause_button.on_click(pause)
 
 ############################## (3) Play button ################################
 def play ():
-    global Active, periodicCallback
+    #global Active, periodicCallback
+    [Active]           = glob_active.data["Active"] # input/output
+    [periodicCallback] = glob_callback.data["cid"]  # input/output
     
     if Active == False:
-        curdoc().add_periodic_callback(compute_tranjectory, 10)
-        Active=True
+        periodicCallback = curdoc().add_periodic_callback(compute_tranjectory, 10)
+        glob_active.data = dict(Active=[True])
         periodicCallback = 0
+        glob_callback.data = dict(cid=[periodicCallback])
     else:
         pass
         

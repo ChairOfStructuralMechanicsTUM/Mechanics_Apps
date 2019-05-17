@@ -6,13 +6,20 @@ Imports
 import numpy as np
 from bokeh.plotting import figure
 from bokeh.io import curdoc
-from Functions import Mode, Structure, SeismicParameters
-import Functions as fc
+from S3S_Functions import S3S_Mode, S3S_Structure, S3S_SeismicParameters
+import S3S_Functions as fc
 from bokeh.models import Button, Toggle, LabelSet
 from bokeh.layouts import column, row
 from bokeh.models.widgets import TextInput, RadioGroup, Div, DataTable, TableColumn
 from os.path import dirname, join, split
 from bokeh.models.layouts import Spacer
+
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexDiv
 
 '''
 ###############################################################################
@@ -21,102 +28,107 @@ Create the plotting domain
 '''
 xmin, xmax = -10,10
 ymin, ymax = 0,10
-time_plot = figure(
+time_plot  = figure(
                       plot_width=400,
                       plot_height=400,
                       x_range=[xmin,xmax], 
                       y_range=[ymin,ymax],
                       
                       title = 'Structure',
-                  )
+                   )
 time_plot.title.text_font_size = "25px"
-time_plot.title.align = "center"
-time_plot.grid.visible=False
-time_plot.xaxis.visible=True
-time_plot.yaxis.visible=True
-time_plot.yaxis.axis_label= "Height [m]"
-time_plot.xaxis.axis_label="Maximum Relative Displacement [mm]"
+time_plot.title.align          = "center"
+time_plot.grid.visible         = False
+time_plot.xaxis.visible        = True
+time_plot.yaxis.visible        = True
+time_plot.toolbar.logo         = None
+time_plot.yaxis.axis_label     = "Height [m]"
+time_plot.xaxis.axis_label     = "Maximum Relative Displacement [mm]"
 
 mode_one = figure(
-                      plot_width=300,
-                      plot_height=400,
-                      x_range=[xmin/2,xmax/2], 
-                      y_range=[ymin,ymax],
-                      tools = '',
-                      title = 'First Mode',
+                      plot_width  = 300,
+                      plot_height = 400,
+                      x_range     = [xmin/2,xmax/2], 
+                      y_range     = [ymin,ymax],
+                      tools       = '',
+                      title       = 'First Mode',
                    )
 mode_one.title.text_font_size = "25px"
-mode_one.title.align = "center"
-mode_one.grid.visible=False
-mode_one.xaxis.visible=True
-mode_one.yaxis.visible=True
-mode_one.yaxis.axis_label= "Height [m]"
-mode_one.xaxis.axis_label= "Normalized Displacement"
+mode_one.title.align          = "center"
+mode_one.grid.visible         = False
+mode_one.xaxis.visible        = True
+mode_one.yaxis.visible        = True
+mode_one.toolbar.logo         = None
+mode_one.yaxis.axis_label     = "Height [m]"
+mode_one.xaxis.axis_label     = "Normalized Displacement"
 
 mode_two = figure(
-                      plot_width=300,
-                      plot_height=400,
-                      x_range=[xmin/2,xmax/2], 
-                      y_range=[ymin,ymax],  
-                      tools = '',
-                      title = 'Second Mode',
+                      plot_width  = 300,
+                      plot_height = 400,
+                      x_range     = [xmin/2,xmax/2], 
+                      y_range     = [ymin,ymax],  
+                      tools       = '',
+                      title       = 'Second Mode',
                    )
 mode_two.title.text_font_size = "25px"
-mode_two.title.align = "center"
-mode_two.grid.visible=False
-mode_two.xaxis.visible=True
-mode_two.yaxis.visible=True
-mode_two.yaxis.axis_label= "Height [m]"
-mode_two.xaxis.axis_label= "Normalized Displacement"
+mode_two.title.align          = "center"
+mode_two.grid.visible         = False
+mode_two.xaxis.visible        = True
+mode_two.yaxis.visible        = True
+mode_two.toolbar.logo         = None
+mode_two.yaxis.axis_label     = "Height [m]"
+mode_two.xaxis.axis_label     = "Normalized Displacement"
 
 mode_three = figure(
-                      plot_width=300,
-                      plot_height=400,
-                      x_range=[xmin/2,xmax/2], 
-                      y_range=[ymin,ymax],
-                      tools = '',
-                      title = 'Third Mode',
+                      plot_width  = 300,
+                      plot_height = 400,
+                      x_range     = [xmin/2,xmax/2], 
+                      y_range     = [ymin,ymax],
+                      tools       = '',
+                      title       = 'Third Mode',
                    )
 mode_three.title.text_font_size = "25px"
-mode_three.title.align = "center"
-mode_three.grid.visible=False
-mode_three.xaxis.visible=True
-mode_three.yaxis.visible=True
-mode_three.yaxis.axis_label= "Height [m]"
-mode_three.xaxis.axis_label= "Normalized Displacement"
+mode_three.title.align          = "center"
+mode_three.grid.visible         = False
+mode_three.xaxis.visible        = True
+mode_three.yaxis.visible        = True
+mode_three.toolbar.logo         = None
+mode_three.yaxis.axis_label     = "Height [m]"
+mode_three.xaxis.axis_label     = "Normalized Displacement"
 
 ERSplot = figure(
-                      plot_width=400,
-                      plot_height=400,
-                      x_range=[0,3.0], 
-                      y_range=[0,3.0],
+                      plot_width  = 400,
+                      plot_height = 400,
+                      x_range     = [0,3.0], 
+                      y_range     = [0,3.0],
                       
-                      title = 'Elastic Response Spectrum',
+                      title       = 'Elastic Response Spectrum',
                    )
 ERSplot.title.text_font_size = "25px"
-ERSplot.title.align = "center"
-ERSplot.grid.visible=True
-ERSplot.xaxis.visible=True
-ERSplot.xaxis.visible=True
-ERSplot.xaxis.axis_label= 'Period [second]'
-ERSplot.yaxis.visible=True
-ERSplot.yaxis.axis_label= "S"u"\u2090 [m/s"u"\u00B2]"
+ERSplot.title.align          = "center"
+ERSplot.grid.visible         = True
+ERSplot.xaxis.visible        = True
+ERSplot.xaxis.visible        = True
+ERSplot.toolbar.logo         = None
+ERSplot.xaxis.axis_label     = 'Period [second]'
+ERSplot.yaxis.visible        = True
+ERSplot.yaxis.axis_label     = "S"u"\u2090 [m/s"u"\u00B2]"
 
 siesmic_input_plot = figure(
-                      plot_width=800,
-                      plot_height=200,
-                      x_range=[0.0,2000], 
-                      y_range=[-1.0,1.0],
-                      tools = '',
-                      title = 'Siesmic Input Signal'
+                      plot_width  = 800,
+                      plot_height = 200,
+                      x_range     = [0.0,2000], 
+                      y_range     = [-1.0,1.0],
+                      tools       = '',
+                      title       = 'Siesmic Input Signal'
                    )
 siesmic_input_plot.title.text_font_size = "25px"
-siesmic_input_plot.title.align = "center"
-siesmic_input_plot.grid.visible=True
-siesmic_input_plot.xaxis.visible=True
-siesmic_input_plot.yaxis.visible=True
-siesmic_input_plot.xaxis.axis_label = 'Time [second]'
-siesmic_input_plot.yaxis.axis_label = 'Acceleration [meter"u"\u00B2/second]'
+siesmic_input_plot.title.align          = "center"
+siesmic_input_plot.grid.visible         = True
+siesmic_input_plot.xaxis.visible        = True
+siesmic_input_plot.yaxis.visible        = True
+siesmic_input_plot.xaxis.axis_label     = 'Time [second]'
+siesmic_input_plot.yaxis.axis_label     = 'Acceleration [meter"u"\u00B2/second]'
 
 Active = True
 
@@ -131,9 +143,9 @@ all of the information
 ###############################################################################
 '''
 ###################### Structure general properties ###########################
-massRatio = np.array([2.0, 1.5, 1.0])  
-stiffnessRatio = np.array([3.0, 2.0, 1.0])
-structure_color  = '#85929E'
+massRatio       = np.array([2.0, 1.5, 1.0])  
+stiffnessRatio  = np.array([3.0, 2.0, 1.0])
+structure_color = '#85929E'
 
 ################################ (1) masses ###################################
 '''
@@ -175,7 +187,7 @@ base =dict(
           )
 
 ############################### Create Structure ##############################
-structure = Structure(masses, massSupports, trussSources, trussLength, base)
+structure = S3S_Structure(masses, massSupports, trussSources, trussLength, base)
 
 structure.update_system([0,0,0])
 
@@ -247,7 +259,7 @@ the modal parametes (here, the eigenfrequencies and the eigenmodes)
 # Construct the modes
 modes = list()
 for i in range(0,3):
-    modes.append( Mode(i, masses, massSupports, trussSources, trussLength, base, frequency=0, modeShape=np.zeros(3)) )
+    modes.append( S3S_Mode(i, masses, massSupports, trussSources, trussLength, base, frequency=0, modeShape=np.zeros(3)) )
 
 # Get the modal parameters
 eigenvalues, eigenvectors = fc.solve_modal_analysis(structure)
@@ -277,7 +289,7 @@ Construct the Elastic Response Spectrum
 '''
 # Construct the siesmic parametes for the building
 # INITIALIZE WITH DEFAULT VALUES
-siesmicParameters = SeismicParameters(a=0.4,gamma=1.0,S=1.0,eta=1.0,beta=2.5,undergroundParamter = 'A-R')
+siesmicParameters = S3S_SeismicParameters(a=0.4,gamma=1.0,S=1.0,eta=1.0,beta=2.5,undergroundParamter = 'A-R')
 #GetMaximumDisplacement(modes,siesmicParameters)
 
 # To construct the ERS plot data source
@@ -343,7 +355,7 @@ def solve_system():
         # Update the location of the mode shapes in the ERS diagram
         mode.modify_location_in_ERS(siesmicParameters)
         
-        maxes = mode.get_maximum_displacement(siesmicParameters) # maxes will be used just to let the function run
+        S3S_maxes = mode.get_maximum_displacement(siesmicParameters) # S3S_maxes will be used just to let the function run
         
         counter += 1
     
@@ -492,7 +504,7 @@ Construct and show the resulting plot
 '''       
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 curdoc().add_root(
                     column(
