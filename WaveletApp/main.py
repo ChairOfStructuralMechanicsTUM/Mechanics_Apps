@@ -48,7 +48,7 @@ plot_Wavelet.add_layout(color_bar, 'right')
 plot_Wavelet_Function = Figure(x_range=(-10, 10), y_range=(-2, 2),
                             x_axis_label='t', y_axis_label = ""u"\u03A8 (t)",
                             tools=toolset,
-                            title="Wavelet function",  width=650, height=300)
+                            title="Wavelet Function",  width=650, height=300)
 # plot_Wavelet_Function.yaxis.axis_label = ""u"\u03A8 (t)" 
 plot_Wavelet_Function.toolbar.logo = None
 
