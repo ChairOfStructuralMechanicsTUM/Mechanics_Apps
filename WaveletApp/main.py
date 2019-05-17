@@ -122,6 +122,8 @@ def update(attr, old, new):
         My_Layout.children[0].children[2].children[1].children[0] = choose_WaveLet  # Choose a sample function warning
         return None
 
+    disable_interactivity(True)
+
     sample_function_id = sample_fun_input_f.value 
     Wavelet_function_id = Wavelet_fun_input.value
     Resolut=int(sympify(Resolution.value.replace(',','.')))
@@ -207,6 +209,7 @@ def update(attr, old, new):
             function_source.data= dict(x=t ,y=user_f)
         except (SyntaxError, TypeError, NameError, ValueError):
             My_Layout.children[0].children[2].children[1].children[0] = user_function   # Choose a valid function warning
+            disable_interactivity(False)
             return None
         
         # Plot user defined function
@@ -219,7 +222,8 @@ def update(attr, old, new):
             a,b,W = Find_Custom_Wavelet_Two(User_Func.value,Resolut)
     
     Plot_WT(a,b,W)
-    My_Layout.children[0].children[2].children[1].children[0] = plot_Wavelet    # Put the "plot_Wavelet" figure back to show the result 
+    My_Layout.children[0].children[2].children[1].children[0] = plot_Wavelet    # Put the "plot_Wavelet" figure back to show the result
+    disable_interactivity(False)
 
 def sample_fun_input_modified(self):
     """
@@ -339,6 +343,22 @@ def param_change(attr,old,new):
         Wavelet_Function_source.data = dict(t=t, y=y)
         plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
 
+def disable_interactivity(flag):
+    """
+    This function enables or disables all interactivities of the app (used e.g. during computation)
+    """
+    sample_fun_input_f.disabled = flag
+    Wavelet_fun_input.disabled = flag
+    T0_input.disabled = flag
+    T1_input.disabled = flag
+    Amp_input.disabled = flag
+    User_Func.disabled = flag
+    Resolution.disabled = flag
+    a_param.disabled = flag
+    b_param.disabled = flag
+    Trigonometric_radio.disabled = flag
+    Frequency_Slider.disabled = flag
+    Calc_button.disabled = flag
 
 ######################
 # Callback behaviour #
