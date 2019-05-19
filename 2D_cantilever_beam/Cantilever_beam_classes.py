@@ -2,7 +2,9 @@ import numpy as np
 import math
 from bokeh.plotting import figure
 
-####### Print solutions for u_y, u_z, sigma_xx and tau_xy to validate calculations   - on=1, off=0 -
+####### Print solutions for u_y, u_z, sigma_xx and tau_xy on console to validate calculations   - on=1, off=0 -
+## If you want to print the solutions, set glPrint to 1. Run the App and set both Forces sliders to the far right (Py=100 and Pz=100). 
+## You will get the properties of the beam and the calculated displacements / stresses printed on the console. (note: location (x,y,z) of calculated values vary) 
 global glPrint
 glPrint = 1
 #######
