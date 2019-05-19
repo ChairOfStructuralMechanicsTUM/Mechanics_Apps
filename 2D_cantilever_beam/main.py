@@ -17,6 +17,7 @@ sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
 
+
 # Define basic beam parameters and loading
 length = 5.0
 height = 1.0
@@ -39,6 +40,7 @@ elementSizeX = length / noElementsX
 elementSizeY = height / noElementsY
 elementSizeZ = thickness / noElementsZ
 amplificationFactor = 100
+
 
 # Cross Section Source:
 CrossSection1 = "2D_cantilever_beam/static/images/Rectangular_with_measure_and_views.png"
