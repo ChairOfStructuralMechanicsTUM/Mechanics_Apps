@@ -6,7 +6,7 @@ from bokeh.plotting import figure
 ## If you want to print the solutions, set glCantileverPrint to 1. Run the App and set both Forces sliders to the far right (Py=100 and Pz=100). 
 ## You will get the properties of the beam and the calculated displacements / stresses printed on the console. (note: location (x,y,z) of calculated values vary) 
 global glCantileverPrint
-glCantileverPrint = 1
+glCantileverPrint = 0
 #######
 
 ## Define element class with node coordinates as data members
