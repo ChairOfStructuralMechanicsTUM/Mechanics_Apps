@@ -3,10 +3,10 @@ import math
 from bokeh.plotting import figure
 
 ####### Print solutions for u_y, u_z, sigma_xx and tau_xy on console to validate calculations   - on=1, off=0 -
-## If you want to print the solutions, set glPrint to 1. Run the App and set both Forces sliders to the far right (Py=100 and Pz=100). 
+## If you want to print the solutions, set glCantileverPrint to 1. Run the App and set both Forces sliders to the far right (Py=100 and Pz=100). 
 ## You will get the properties of the beam and the calculated displacements / stresses printed on the console. (note: location (x,y,z) of calculated values vary) 
-global glPrint
-glPrint = 1
+global glCantileverPrint
+glCantileverPrint = 1
 #######
 
 ## Define element class with node coordinates as data members
@@ -89,7 +89,7 @@ def construct_deformed_beam_centerLine( Py, Pz, E,
         xComponent += xIncrement
 
     ### PRINTSTART
-    if (glPrint == 1): 
+    if (glCantileverPrint == 1): 
         if xComponent > 5.0 and Pz==100.0 and Py==100.0:
             if glCantileverCrossSection == 0:
                 print "Rectangular CS"
@@ -295,7 +295,7 @@ def elements_color_determiner( deformed,
                 strainXXup = calculate_normal_stress(x_pos, y_pos, z_pos, length, height, thickness, glCantileverCrossSection, Py, Pz) 
 
                 ### PRINTSTART
-                if (glPrint == 1): 
+                if (glCantileverPrint == 1): 
                     if (x_pos > 1.45 and x_pos < 1.55 and y_pos > 0.45 and Py==100 and Pz==100):
                         if (glCantileverCrossSection==0):
                             print "Sigma(x=1.5, y=0.5, z=0.5) = ", strainXXup
@@ -519,7 +519,7 @@ def calculate_stresses_xy_element(x_pos, y_pos, length, height, thickness, glCan
         tau_xy.append(-(Py*(-y_pos-float(i)/float(m)*height_of_element/2.0)*(float(i)/float(m)/height_of_element*length_of_element))/(Iz*length_of_element))
 
 ### PRINTSTART
-    if (glPrint == 1): 
+    if (glCantileverPrint == 1): 
         if (Py==100 and Pz==100):
             if(glCantileverCrossSection==3):
                 print "Sigma_xx(x=1.5, y=-0,66, z=0) = ", -1*(sigma_x_l[0])
