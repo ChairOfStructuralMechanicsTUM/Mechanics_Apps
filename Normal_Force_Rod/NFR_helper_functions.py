@@ -13,7 +13,7 @@ from NFR_data_sources import (
         force_point_source, constant_load_source, triangular_load_source,
         temperature_source,
         labels_source,
-        aux_line,
+        aux_line, samplesF,
         error_msg, error_msg_frame
         )
 from NFR_buttons import (
@@ -151,7 +151,17 @@ def set_load(load_type, load_position):
 
 
 def move_aux_line():
-    aux_line.data = dict(x=[[2,2],[4,4]], y=[[1,-1],[1,-1]])
+    x_samples = samplesF.data['x']
+    y_samples = samplesF.data['y']
+    roots     = []
+    
+    for i in range(0,len(y_samples)-1):
+        if y_samples[i]*y_samples[i+1] < 0: # sign changes
+            r = 0.5*(x_samples[i+1]-x_samples[i]) + x_samples[i]
+            roots.append([r,r])
+    
+    aux_line.data = dict(x=roots, y=[[15,-15]]*len(roots))
+
 
 
 def show_error(show=True):
@@ -171,6 +181,9 @@ def compute_new_scenario():
     load_type = radio_button_group.active
     L1        = load_position_slide.value
     calcN(ls_type, rs_type, load_type, L1)
+    move_aux_line()
+
+
 
 
 

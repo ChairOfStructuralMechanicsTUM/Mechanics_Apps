@@ -133,7 +133,7 @@ plot_main.add_glyph(triangular_load_source, triangular_load_glyph)
 plot_main.add_glyph(temperature_source, temperature_glyph)
 
 #plot_main.line(x='x', y='y', source=aux_line, line_width=2, line_dash=[121], color='gray')
-move_aux_line()
+#move_aux_line()
 aux_line_glyph = MultiLine(xs='x', ys='y', line_width=2, line_dash=[1,2], line_color='gray')
 plot_main.add_glyph(aux_line, aux_line_glyph)
 
