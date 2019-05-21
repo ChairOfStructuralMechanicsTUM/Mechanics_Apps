@@ -201,8 +201,10 @@ def evolve():
     #print("DBUG: max_ind", type(max_indices))
     
     for plot_num in max_indices:
-        #print("DBUG: plt_num", plot_num)
+        print("DBUG: plt_num", plot_num)
         #print("DBUG: plt_num", type(plot_num))
+        print("DBUG: max_x", x_coords[plot_num])
+        print("DBUG: max_y", y_coords[plot_num])
         fig_in_use[plot_num] = False
         # change the corresponding CDS to display the time only in this plot
         time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=[str(glob_time["t"])+" s"])
