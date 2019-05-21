@@ -177,25 +177,90 @@ def evolve():
     
     # call all necessary functions
     # get new coordinates of objects which are still running
+    # set them far from the conditions if the corresponding plot has already stopped
     (x_coords,y_coords) = get_coordinates(glob_fun_handles, fig_in_use, t)
     
-    # if an object has reached the end of the ramp then stop the simulation
-    ind_x_max = np.argmax(x_coords)
-    ind_y_max = np.argmax(y_coords)
-    if (x_coords[ind_x_max]>TX0 or y_coords[ind_y_max]<TY0):
-        # in mode "one" (active==0) the simulation is stopped after one of the objects reached the end of the ramp
-        # in mode "all" (active==1) the simulation is stopped after all objects reached the end of the ramp 
-        #               -> (only one fig in use anymore at ending time, one "True" <==> sum==1))
-        # mode "one" is selected -> run until one simulation is finished
-        # mode "all" is selected -> run all simulations till the end
-        if (mode_selection.active==0 or sum(fig_in_use)<=1):
-            start() #equals to stop if it is running
-        
-        # get the index (number of the plot) to know which plot finished the simulation
-        plot_num = ind_x_max if x_coords[ind_x_max]>0 else ind_y_max
+    
+    ## if an object has reached the end of the ramp then stop the simulation
+    
+    # get the max value of each dimension
+    #x_max = np.max(x_coords)
+    #y_max = np.max(y_coords)
+    
+    # create index arrays to see which plots satisfies the stopping criterion
+    ind_x_max = [i for i in range(0,len(x_coords)) if x_coords[i]>TX0]
+    ind_y_max = [i for i in range(0,len(y_coords)) if y_coords[i]<TY0]
+    
+    # find unique indices to avoid stopping the same plot twice
+    max_indices = np.unique(np.concatenate((ind_x_max, ind_y_max)))
+    
+    # convert to int, because numpy sets it to float64 as default
+    max_indices = max_indices.astype(int)
+    
+    #print("DBUG: max_ind", max_indices)
+    #print("DBUG: max_ind", type(max_indices))
+    
+    for plot_num in max_indices:
+        #print("DBUG: plt_num", plot_num)
+        #print("DBUG: plt_num", type(plot_num))
         fig_in_use[plot_num] = False
         # change the corresponding CDS to display the time only in this plot
         time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=[str(glob_time["t"])+" s"])
+        
+        #print("DBUG: fig", fig_in_use)
+        
+    # in mode "one" (active==0) the simulation is stopped after one of the objects reached the end of the ramp
+    # in mode "all" (active==1) the simulation is stopped after all objects reached the end of the ramp 
+    # mode "one" is selected -> run until one simulation is finished
+    # mode "all" is selected -> run all simulations till the end
+    #if (len(max_indices)>0 and (mode_selection.active==0 or sum(fig_in_use)<=1)):
+    #print("DBUG: max_ind", max_indices)
+    if ((len(max_indices)>0 and mode_selection.active==0) or sum(fig_in_use)<1):
+        start() #equals to stop if it is running
+    
+    #ind_x_max = np.argmax(x_coords)
+    #ind_y_max = np.argmax(y_coords)
+#    if (x_max>TX0 or y_max<TY0):
+#        
+#        mx = [i for i in range(0,len(T_Lx)) if T_Lx[i]>4]
+        
+#        # find all indices (number of plot) in case if multiple objects reach the goal simultaneously 
+#        ind_x_max_all = np.argwhere((x_coords == x_max)).flatten()
+#        ind_y_max_all = np.argwhere((y_coords == y_max)).flatten()
+#        
+#        #ind_x_max_all = ind_x_max_all[ind_x_max_all>TX0]
+#        #ind_y_max_all = ind_y_max_all[ind_x_max_all<TY0]
+#        
+#        # find unique indices to avoid testing the same plot twice
+#        max_indices = np.unique(np.concatenate((ind_x_max_all, ind_y_max_all)))
+#        
+#        print("DBUG: max_x", list(ind_x_max_all))
+#        print("DBUG: max_x", x_coords)
+#        print("DBUG: max_y", y_coords)
+#        print("DBUG: max_y", list(ind_x_max_all))
+    
+
+        
+#        for plot_num in max_indices:
+#            fig_in_use[plot_num] = False
+#            # change the corresponding CDS to display the time only in this plot
+#            time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=[str(glob_time["t"])+" s"])
+#            print("DBUG: f_i_u", fig_in_use)
+        
+#        # in mode "one" (active==0) the simulation is stopped after one of the objects reached the end of the ramp
+#        # in mode "all" (active==1) the simulation is stopped after all objects reached the end of the ramp 
+#        #               -> (only one fig in use anymore at ending time, one "True" <==> sum==1))
+#        # mode "one" is selected -> run until one simulation is finished
+#        # mode "all" is selected -> run all simulations till the end
+#        if (mode_selection.active==0 or sum(fig_in_use)<=1):
+#            start() #equals to stop if it is running
+        
+        # get the index (number of the plot) to know which plot finished the simulation
+        #plot_num = ind_x_max if x_coords[ind_x_max]>0 else ind_y_max
+        #fig_in_use[plot_num] = False
+        # change the corresponding CDS to display the time only in this plot
+        #time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=[str(glob_time["t"])+" s"])
+    
     # if all simulations have finished, disable the start button
     if (not any(fig_in_use)):
         start_button.disabled = True
