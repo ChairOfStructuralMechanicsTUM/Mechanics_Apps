@@ -159,15 +159,16 @@ lam_input.on_change('value',change_lam)
 InitialFloor() # call floor definition after defining necessary variables
 
 def stop():
-    global Active
+    global Active, g1BaseOscillator
     if (Active):
-        curdoc().remove_periodic_callback(evolve)
+        curdoc().remove_periodic_callback(g1BaseOscillator)
         Active=False
 
 def play():
-    global Active
+    global Active, g1BaseOscillator
     if (not Active):
-        curdoc().add_periodic_callback(evolve,dt*1000)  # Add a callback to be invoked on a session periodically
+         # Add a callback to be invoked on a session periodically
+        g1BaseOscillator = curdoc().add_periodic_callback(evolve,dt*1000)
         Active=True
 
 def reset():
@@ -204,7 +205,7 @@ fig.ellipse(x='x',y='y',width=2,height=2,source=Wheel_source,line_color="#E37222
 mass.plot(fig)
 
 # Plot Mass-Displacement.vs.Time graph
-p = figure(title="", tools="", y_range=(-5,5), x_range=(0,maxX),height=500)
+p = figure(title="", tools=["ywheel_zoom,xwheel_pan,pan,reset"], y_range=(-5,5), x_range=(0,maxX),height=500)
 p.line(x='t',y='s',source=Position,color="black")
 p.axis.major_label_text_font_size="12pt"
 p.axis.axis_label_text_font_style="normal"
@@ -215,7 +216,7 @@ p.yaxis.axis_label="Displacement [m]"
 
 
 # Define buttons and what happens when clicked
-stop_button = Button(label="Stop", button_type="success",width=100)
+stop_button = Button(label="Pause", button_type="success",width=100)
 stop_button.on_click(stop)
 play_button = Button(label="Play", button_type="success",width=100)
 play_button.on_click(play)
