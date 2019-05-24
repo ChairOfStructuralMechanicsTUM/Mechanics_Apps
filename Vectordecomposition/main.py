@@ -81,6 +81,9 @@ glob_active   = ColumnDataSource(data=dict(Active=[False]))
 V_label_source        = ColumnDataSource(data=dict(x=[50+3],y=[50-3],V1=['V']))
 V1_label_source        = ColumnDataSource(data=dict(x=[],y=[],V=[]))
 V2_label_source        = ColumnDataSource(data=dict(x=[],y=[],V=[]))
+LO1_label_source        = ColumnDataSource(data=dict(x=[0],y=[200],V=['LO1']))
+LO2_label_source        = ColumnDataSource(data=dict(x=[200],y=[0],V=['LO2']))
+
 Resultant_values_source = ColumnDataSource(data=dict(x=[],y=[],names=[]))
 def init ():
     createtwoarrows()
@@ -108,11 +111,11 @@ def changeline():
      ray_source10.data=  dict(x=[(3*-x1)/6], y=[(3*-y1)/6], L=[10],Angle=[180-b])
      ray_source11.data=  dict(x=[(4*-x1)/6], y=[(4*-y1)/6], L=[10],Angle=[180-b])
      ray_source12.data=  dict(x=[(5*-x1)/6], y=[(5*-y1)/6], L=[10],Angle=[180-b])
+     LO1_label_source.data=dict(x=[x1],y=[y1],V=['LO1'])
      
      
      
-     
-     print (ray_source1.data)
+#     print (ray_source1.data)
 def changeline2():
      [theta111 ] = glob_theta1line2.data["val"]
      [theeta1111]=[theta111*(180/pi)]
@@ -135,6 +138,7 @@ def changeline2():
      ray2_source10.data=  dict(x=[(3*-x1)/6], y=[(3*-y1)/6], L=[10],Angle=[(270-(b))])
      ray2_source11.data=  dict(x=[(4*-x1)/6], y=[(4*-y1)/6], L=[10],Angle=[(270-(b))])
      ray2_source12.data=  dict(x=[(5*-x1)/6], y=[(5*-y1)/6], L=[10],Angle=[(270-(b))])
+     LO2_label_source.data=dict(x=[x1],y=[y1],V=['LO2'])
      
      
      
@@ -151,10 +155,13 @@ def createtwocomponnets():
      [theta1 ] = glob_theta1.data["val"]
      [theta11 ] = glob_theta1line1.data["val"] #perpendicular line theta 2
      [theta111 ] = glob_theta1line2.data["val"] #horizantal line theta 1
-     print Vector1
-     print theta1
-     print theta11
-     print theta111
+#     print Vector1
+#     print theta1
+#     print theta11
+#     print theta111
+     z2=round(theta111/pi*180,0)
+     z21=round(theta11/pi*180,0)
+#     print z2,z21
      #Clculate Horizantla component of main vector
      if ( Active):
          V1parallel_line_source.data = dict(x=[],y=[])
@@ -163,40 +170,52 @@ def createtwocomponnets():
          Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
          glob_active.data   = dict(Active=[False])
          show_button.label = 'Show components'
+         value_plot.text=""
+         V1_label_source.data=dict(x=[],y=[],V=[])
+         V2_label_source.data=dict(x=[],y=[],V=[])
+         
      else:
          
-         
-         Rx=Vector1*cos(theta1)
-         Ry=Vector1*sin(theta1)
-         print (Rx)
-         print (Ry)
+       if (z2==z21):
+#            Resultant_values_source.data = dict(x=[50,100,155], y=[160,160,160], names=['Error:', 'Decomposing']) 
+            value_plot.text = "Error decomposing. Chose different angles."
+            V1parallel_line_source.data = dict(x=[],y=[])
+            V2parallel_line_source.data=dict(x=[],y=[])
+       else:
+             
+             Rx=Vector1*cos(theta1)
+             Ry=Vector1*sin(theta1)
+#             print (Rx)
+#             print (Ry)
      #Form two equations
-         a1=cos(theta111)
-         b1=sin(theta11)
-         a2=sin(theta111)
-         b2=cos(theta11)
-         c1= (b2/a1)*a2
-         F1=(b1-c1)
-         Rx1=(Rx/a1)*a2
-         Forcecomponent2=(Ry-Rx1)/F1
-         Forcecomponent1=(Rx-(Forcecomponent2*b2))/a1
-         print (Forcecomponent2)
-         print (Forcecomponent1)
-         xE1=Forcecomponent1*(a1)
-         yE1=Forcecomponent1*(a2)
-         xE2=Forcecomponent2*(b2)
-         yE2=Forcecomponent2*(b1)
+             a1=cos(theta111)
+             b1=sin(theta11)
+             a2=sin(theta111)
+             b2=cos(theta11)
+             c1= (b2/a1)*a2
+             F1=(b1-c1)
+             Rx1=(Rx/a1)*a2
+             Forcecomponent2=(Ry-Rx1)/F1
+             Forcecomponent1=(Rx-(Forcecomponent2*b2))/a1
+#             print (Forcecomponent2)
+#             print (Forcecomponent1)
+             xE1=Forcecomponent1*(a1)
+             yE1=Forcecomponent1*(a2)
+             xE2=Forcecomponent2*(b2)
+             yE2=Forcecomponent2*(b1)
      
-         Vector2_source.data = dict(xS=[0],yS=[0],xE=[xE1],yE=[yE1])
+             Vector2_source.data = dict(xS=[0],yS=[0],xE=[xE1],yE=[yE1])
      
-         Vector3_source.data = dict(xS=[0],yS=[0],xE=[xE2],yE=[yE2])
-         V1parallel_line_source.data = dict(x=[xE2,Rx],y=[yE2,Ry])
-         V2parallel_line_source.data=dict(x=[xE1,Rx],y=[yE1,Ry])
+             Vector3_source.data = dict(xS=[0],yS=[0],xE=[xE2],yE=[yE2])
+             V1parallel_line_source.data = dict(x=[xE2,Rx],y=[yE2,Ry])
+             V2parallel_line_source.data=dict(x=[xE1,Rx],y=[yE1,Ry])
+             V1_label_source.data=dict(x=[xE1+5],y=[yE1],V=['F2'])
+             V2_label_source.data=dict(x=[xE2+5],y=[yE2],V=['F1'])
+#             Resultant_values_source.data = dict(x=[100,140,100,140,155,100,140,100,140], y=[160,160, 140, 140,140,120,120,100,100], names=['|V| = ', round(sqrt(Ry**2.0+Rx**2.0),1), '\\theta = ', round(atan(Ry/Rx)/pi*180,0), '^{\\circ}','F1=',round(Forcecomponent1,1),'F2=',round(Forcecomponent2,1)])
+             value_plot.text = "$$\\begin{aligned} F_1&=" + str(round(Forcecomponent1,1)) + "\\,\\mathrm{N}\\\\ F_2&=" + str(round(Forcecomponent2,1)) + "\\,\\mathrm{N} \\end{aligned}$$"
          
-         
-         
-         glob_active.data = dict(Active=[True])
-         show_button.label = 'Hide components' 
+             glob_active.data = dict(Active=[True])
+             show_button.label = 'Hide components' 
      
      
      
@@ -280,6 +299,7 @@ def reset():
      
      show_button.label = 'Show components'
      AngleVector1Slider.value=45
+     value_plot.text=""
      Vector1Slider.value=70
      LineVector1Slider.value=90
      LineVector2Slider.value=0
@@ -321,6 +341,10 @@ def reset():
      ray2_source10.data=  dict(x=[(3*-200)/6], y=[0], L=[10],Angle=[225])
      ray2_source11.data=  dict(x=[(4*-200/6)], y=[0], L=[10],Angle=[225])
      ray2_source12.data=  dict(x=[(5*-200)/6], y=[0], L=[10],Angle=[225])
+     LO1_label_source.data  =dict(x=[0],y=[200],V=['LO1'])
+    
+     LO2_label_source.data   = dict(x=[200],y=[0],V=['LO2'])
+    
      
      
      
@@ -338,7 +362,10 @@ VectorResultant_glyph = Arrow(end=NormalHead(line_color="#E37222",fill_color="#E
 
 V_label_glyph=LatexLabelSet(x='x', y='y',text='V1',text_font_size="15pt",level='overlay',source=V_label_source)
 V1_label_glyph=LatexLabelSet(x='x', y='y',text='V',text_font_size="15pt",level='overlay',source=V1_label_source)    
-V2_label_glyph=LatexLabelSet(x='x', y='y',text='V',text_font_size="15pt",level='overlay',source=V2_label_source)    
+V2_label_glyph=LatexLabelSet(x='x', y='y',text='V',text_font_size="15pt",level='overlay',source=V2_label_source) 
+LO1_label_glyph=LatexLabelSet(x='x', y='y',text='V',text_font_size="10pt",level='overlay',source=LO1_label_source)    
+LO2_label_glyph=LatexLabelSet(x='x', y='y',text='V',text_font_size="10pt",level='overlay',source=LO2_label_source) 
+   
 p = figure(tools="", x_range=(-200,200), y_range=(-200,200),plot_width=800, plot_height=625)
 Resultant_values_glyph = LatexLabelSet(x='x',y='y',text='names',text_font_size="15pt", text_color="#E37222", level='glyph',source=Resultant_values_source)
 
@@ -365,12 +392,15 @@ p.title.text_font_size="20pt"
 #p.line(x='x',y='y',line_dash='dashed',source= V2parallel_line_source, color="black")
 #p.line(x='x',y='y',line_dash='dashed',source= V1parallel_line_source, color="black")
 p.add_layout(Vector1_glyph)
+p.add_layout(LO1_label_glyph)
+p.add_layout(LO2_label_glyph)
 p.add_layout(Vector2_glyph)
 p.add_layout(VectorResultant_glyph)   
 p.add_layout(V_label_glyph)
 p.add_layout(V1_label_glyph)
 p.add_layout(V2_label_glyph)
 p.add_layout(Resultant_values_glyph)
+value_plot = LatexDiv(text="", render_as_text=False, width=300)
 
 my_line=p.line(x='x', y='y',source=Line_source, color='#0065BD',line_width=3)  
 my_line=p.line(x='x', y='y',source=Line2_source, color='#0065BD',line_width=3)               
@@ -427,6 +457,7 @@ def changetheta1line1(attr,old,new):
     V2_label_source.data=dict(x=[],y=[],V=[])
     Resultant_values_source.data = dict(x=[], y=[], names=[])
     show_button.label = 'Show components'
+    value_plot.text=""
     [Active] = glob_active.data["Active"]
 #    changeline()
 #    createtwocomponnets()
@@ -457,6 +488,7 @@ def changetheta1line2(attr,old,new):
     V2_label_source.data=dict(x=[],y=[],V=[])
     Resultant_values_source.data = dict(x=[], y=[], names=[])
     show_button.label = 'Show components'
+    value_plot.text=""
     [Active] = glob_active.data["Active"]
 #    changeline()
 #    createtwocomponnets()
@@ -497,6 +529,7 @@ def changetheta1(attr,old,new):
     V2_label_source.data=dict(x=[],y=[],V=[])
     Resultant_values_source.data = dict(x=[], y=[], names=[])
     show_button.label = 'Show components'
+    value_plot.text=""
     [Active] = glob_active.data["Active"]
      
     if Active == False:
@@ -519,6 +552,7 @@ def changevectorvalue(attr,old,new):
     Resultant_values_source.data = dict(x=[], y=[], names=[])
     V2_label_source.data=dict(x=[],y=[],V=[])
     show_button.label = 'Show components'
+    value_plot.text=""
     [Active] = glob_active.data["Active"]
      
     if Active == False:
@@ -550,10 +584,10 @@ how_button.on_click(reset)
         
 description_filename = join(dirname(__file__), "description.html")
 
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 ## Send to window
-curdoc().add_root(column(description,column(row(p,column(LineVector1Slider,LineVector2Slider,AngleVector1Slider,Vector1Slider,show_button,how_button)))))
+curdoc().add_root(column(description,column(row(p,column(LineVector1Slider,LineVector2Slider,AngleVector1Slider,Vector1Slider,show_button,how_button,value_plot)))))
       
 curdoc().title = "Vector Decomposition"        
         
