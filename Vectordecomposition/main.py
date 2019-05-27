@@ -163,7 +163,7 @@ def createtwocomponnets():
      z21=round(theta11/pi*180,0)
 #     print z2,z21
      #Clculate Horizantla component of main vector
-     if ( Active):
+     if (Active):
          V1parallel_line_source.data = dict(x=[],y=[])
          V2parallel_line_source.data=dict(x=[],y=[])
          Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
@@ -176,7 +176,7 @@ def createtwocomponnets():
          
      else:
          
-       if (z2==z21):
+       if (z2==z21 or (abs(z2-z21)==180) or (abs(z2-z21)==360) ):
 #            Resultant_values_source.data = dict(x=[50,100,155], y=[160,160,160], names=['Error:', 'Decomposing']) 
             value_plot.text = "Error decomposing. Chose different angles."
             V1parallel_line_source.data = dict(x=[],y=[])
@@ -212,7 +212,7 @@ def createtwocomponnets():
              V1_label_source.data=dict(x=[xE1+5],y=[yE1],V=['F2'])
              V2_label_source.data=dict(x=[xE2+5],y=[yE2],V=['F1'])
 #             Resultant_values_source.data = dict(x=[100,140,100,140,155,100,140,100,140], y=[160,160, 140, 140,140,120,120,100,100], names=['|V| = ', round(sqrt(Ry**2.0+Rx**2.0),1), '\\theta = ', round(atan(Ry/Rx)/pi*180,0), '^{\\circ}','F1=',round(Forcecomponent1,1),'F2=',round(Forcecomponent2,1)])
-             value_plot.text = "$$\\begin{aligned} F_1&=" + str(round(Forcecomponent1,1)) + "\\,\\mathrm{N}\\\\ F_2&=" + str(round(Forcecomponent2,1)) + "\\,\\mathrm{N} \\end{aligned}$$"
+             value_plot.text = "$$\\begin{aligned} F_1&=" + str(round(Forcecomponent2,1)) + "\\,\\mathrm{N}\\\\ F_2&=" + str(round(Forcecomponent1,1)) + "\\,\\mathrm{N} \\end{aligned}$$"
          
              glob_active.data = dict(Active=[True])
              show_button.label = 'Hide components' 
@@ -447,6 +447,7 @@ def changetheta1line1(attr,old,new):
     
     
     changeline()
+    
 #    createtwocomponnets()
     V1parallel_line_source.data = dict(x=[],y=[])
     V2parallel_line_source.data=dict(x=[],y=[])
@@ -459,18 +460,20 @@ def changetheta1line1(attr,old,new):
     show_button.label = 'Show components'
     value_plot.text=""
     [Active] = glob_active.data["Active"]
-#    changeline()
-#    createtwocomponnets()
-     
-    if Active == False:
+###    changeline()
+###    createtwocomponnets()
+##     
+    if Active == True:
+        
         pass
     else:
-        
+#        createtwocomponnets()
+#        show_button.label = 'Hide components'
         
         glob_active.data = dict(Active=[False])
         
         
-#    changeline()
+#     changeline()
 #    createtwocomponnets()
     
     
