@@ -149,7 +149,7 @@ def changeline2():
      
 def createtwocomponnets():
     
-    
+#     print (3)
      [Active] = glob_active.data["Active"]
      [Vector1] = glob_Vector1.data["val"]
      [theta1 ] = glob_theta1.data["val"]
@@ -160,7 +160,9 @@ def createtwocomponnets():
      z21=round(theta11/pi*180,0)
 
      #Clculate Horizantla component of main vector
-     if (Active):
+     if (Active==True):
+#         print (Active)
+#         print (3)
          V1parallel_line_source.data = dict(x=[],y=[])
          V2parallel_line_source.data=dict(x=[],y=[])
          Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
@@ -179,7 +181,7 @@ def createtwocomponnets():
             V1parallel_line_source.data = dict(x=[],y=[])
             V2parallel_line_source.data=dict(x=[],y=[])
        else:
-             
+#             print (4)
              Rx=Vector1*cos(theta1)
              Ry=Vector1*sin(theta1)
 #             print (Rx)
@@ -380,30 +382,37 @@ def changetheta1line1(attr,old,new):
     
     changeline()
     
-#    createtwocomponnets()
-    V1parallel_line_source.data = dict(x=[],y=[])
-    V2parallel_line_source.data=dict(x=[],y=[])
+    if show_button.label == "Hide components":
+#        
+#       createtwocomponnets()
+#       
+#       print (2)
+#    else:
+        glob_active.data = dict(Active=[False])
+        createtwocomponnets()
+#        print(5)
+#    V1parallel_line_source.data = dict(x=[],y=[])
+#    V2parallel_line_source.data=dict(x=[],y=[])
+#    
+#    Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+#    Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+#    V1_label_source.data=dict(x=[],y=[],V=[])
+#    V2_label_source.data=dict(x=[],y=[],V=[])
+#    Resultant_values_source.data = dict(x=[], y=[], names=[])
+#    show_button.label = 'Show components'
+#    value_plot.text=""
     
-    Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-    Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-    V1_label_source.data=dict(x=[],y=[],V=[])
-    V2_label_source.data=dict(x=[],y=[],V=[])
-    Resultant_values_source.data = dict(x=[], y=[], names=[])
-    show_button.label = 'Show components'
-    value_plot.text=""
-   
- 
 ###    changeline()
 #    createtwocomponnets()
 ##     
-    if Active == False:
-        
-        pass
-    else:
-#        createtwocomponnets()
-#        show_button.label = 'Hide components'
-        
-        glob_active.data = dict(Active=[False])
+#    if Active == False:
+#        
+#        pass
+#    else:
+##        createtwocomponnets()
+##        show_button.label = 'Hide components'
+#        
+#        glob_active.data = dict(Active=[False])
 #        
         
 #     changeline()
@@ -416,25 +425,37 @@ def changetheta1line2(attr,old,new):
     
     changeline2()
 #    createtwocomponnets()
-    V1parallel_line_source.data = dict(x=[],y=[])
-    V2parallel_line_source.data=dict(x=[],y=[])
-    Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-    Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-    V1_label_source.data=dict(x=[],y=[],V=[])
-    V2_label_source.data=dict(x=[],y=[],V=[])
-    Resultant_values_source.data = dict(x=[], y=[], names=[])
-    show_button.label = 'Show components'
-    value_plot.text=""
-    [Active] = glob_active.data["Active"]
-#    changeline()
-#    createtwocomponnets()
-     
-    if Active == False:
-        pass
-    else:
-        
-        
+    if show_button.label == "Hide components":
+#        
+#       createtwocomponnets()
+#       
+#       print (2)
+#    else:
         glob_active.data = dict(Active=[False])
+        createtwocomponnets()
+#        print(5)
+    
+    
+    
+#    V1parallel_line_source.data = dict(x=[],y=[])
+#    V2parallel_line_source.data=dict(x=[],y=[])
+#    Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+#    Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+#    V1_label_source.data=dict(x=[],y=[],V=[])
+#    V2_label_source.data=dict(x=[],y=[],V=[])
+#    Resultant_values_source.data = dict(x=[], y=[], names=[])
+#    show_button.label = 'Show components'
+#    value_plot.text=""
+#    [Active] = glob_active.data["Active"]
+##    changeline()
+##    createtwocomponnets()
+#     
+#    if Active == False:
+#        pass
+#    else:
+#        
+#        
+#        glob_active.data = dict(Active=[False])
     
     
     
@@ -457,47 +478,70 @@ def changetheta1(attr,old,new):
     glob_theta1.data = dict(val=[radians(new)]) #      /output
     createtwoarrows()
 #    createtwocomponnets()
-    V1parallel_line_source.data = dict(x=[],y=[])
-    V2parallel_line_source.data=dict(x=[],y=[])
-    Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-    Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-    V1_label_source.data=dict(x=[],y=[],V=[])
-    V2_label_source.data=dict(x=[],y=[],V=[])
-    Resultant_values_source.data = dict(x=[], y=[], names=[])
-    show_button.label = 'Show components'
-    value_plot.text=""
-    [Active] = glob_active.data["Active"]
-     
-    if Active == False:
-        pass
-    else:
-        
-        
+    if show_button.label == "Hide components":
+#        
+#       createtwocomponnets()
+#       
+#       print (2)
+#    else:
         glob_active.data = dict(Active=[False])
+        createtwocomponnets()
+#        print(5)
+    
+    
+    
+#    V1parallel_line_source.data = dict(x=[],y=[])
+#    V2parallel_line_source.data=dict(x=[],y=[])
+#    Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+#    Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+#    V1_label_source.data=dict(x=[],y=[],V=[])
+#    V2_label_source.data=dict(x=[],y=[],V=[])
+#    Resultant_values_source.data = dict(x=[], y=[], names=[])
+#    show_button.label = 'Show components'
+#    value_plot.text=""
+#    [Active] = glob_active.data["Active"]
+#     
+#    if Active == False:
+#        pass
+#    else:
+#        
+#        
+#        glob_active.data = dict(Active=[False])
     
     
 def changevectorvalue(attr,old,new):
     glob_Vector1.data = dict(val=([new]))
     createtwoarrows()
 #    createtwocomponnets()
-    V1parallel_line_source.data = dict(x=[],y=[])
-    V2parallel_line_source.data=dict(x=[],y=[])
-    Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-    Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-    V1_label_source.data=dict(x=[],y=[],V=[])
-    Resultant_values_source.data = dict(x=[], y=[], names=[])
-    V2_label_source.data=dict(x=[],y=[],V=[])
-    show_button.label = 'Show components'
-    value_plot.text=""
-    [Active] = glob_active.data["Active"]
-     
-    if Active == False:
-        pass
-    else:
-        
-        
+    if show_button.label == "Hide components":
+#        
+#       createtwocomponnets()
+#       
+#       print (2)
+#    else:
         glob_active.data = dict(Active=[False])
+        createtwocomponnets()
+#        print(5)
     
+    
+#    V1parallel_line_source.data = dict(x=[],y=[])
+#    V2parallel_line_source.data=dict(x=[],y=[])
+#    Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+#    Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+#    V1_label_source.data=dict(x=[],y=[],V=[])
+#    Resultant_values_source.data = dict(x=[], y=[], names=[])
+#    V2_label_source.data=dict(x=[],y=[],V=[])
+#    show_button.label = 'Show components'
+#    value_plot.text=""
+#    [Active] = glob_active.data["Active"]
+#     
+#    if Active == False:
+#        pass
+#    else:
+#        
+#        
+#        glob_active.data = dict(Active=[False])
+#    
     
     
 
