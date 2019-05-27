@@ -23,7 +23,7 @@ from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, Late
 
 a=(50**2)+(50**2)
 b=sqrt(a)
-#print b
+
 Vector_source         = ColumnDataSource(data=dict(xS=[0], xE=[50], yS=[0],yE=[50]))
 glob_Vector1           = ColumnDataSource(data=dict(val=[70]))
 Vector2_source         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
@@ -78,11 +78,11 @@ glob_theta1            = ColumnDataSource(data=dict(val=[radians(45)]))
 glob_theta1line1       = ColumnDataSource(data=dict(val=[radians(90)]))
 glob_theta1line2       = ColumnDataSource(data=dict(val=[radians(0)]))
 glob_active   = ColumnDataSource(data=dict(Active=[False]))
-V_label_source        = ColumnDataSource(data=dict(x=[50+3],y=[50-3],V1=['V']))
+V_label_source        = ColumnDataSource(data=dict(x=[50+3],y=[50-3],V1=['F']))
 V1_label_source        = ColumnDataSource(data=dict(x=[],y=[],V=[]))
 V2_label_source        = ColumnDataSource(data=dict(x=[],y=[],V=[]))
-LO1_label_source        = ColumnDataSource(data=dict(x=[0],y=[200],V=['LO1']))
-LO2_label_source        = ColumnDataSource(data=dict(x=[200],y=[0],V=['LO2']))
+LO1_label_source        = ColumnDataSource(data=dict(x=[0],y=[200],V=['LOA1']))
+LO2_label_source        = ColumnDataSource(data=dict(x=[200],y=[0],V=['LOA2']))
 
 Resultant_values_source = ColumnDataSource(data=dict(x=[],y=[],names=[]))
 def init ():
@@ -115,7 +115,7 @@ def changeline():
      
      
      
-#     print (ray_source1.data)
+
 def changeline2():
      [theta111 ] = glob_theta1line2.data["val"]
      [theeta1111]=[theta111*(180/pi)]
@@ -145,7 +145,7 @@ def changeline2():
      
      
      
-#     Line_source1.data = dict(x=[((x1/2)-10),x1],y=[y1/2,y1])    
+  
      
 def createtwocomponnets():
     
@@ -155,13 +155,10 @@ def createtwocomponnets():
      [theta1 ] = glob_theta1.data["val"]
      [theta11 ] = glob_theta1line1.data["val"] #perpendicular line theta 2
      [theta111 ] = glob_theta1line2.data["val"] #horizantal line theta 1
-#     print Vector1
-#     print theta1
-#     print theta11
-#     print theta111
+
      z2=round(theta111/pi*180,0)
      z21=round(theta11/pi*180,0)
-#     print z2,z21
+
      #Clculate Horizantla component of main vector
      if (Active):
          V1parallel_line_source.data = dict(x=[],y=[])
@@ -177,7 +174,7 @@ def createtwocomponnets():
      else:
          
        if (z2==z21 or (abs(z2-z21)==180) or (abs(z2-z21)==360) ):
-#            Resultant_values_source.data = dict(x=[50,100,155], y=[160,160,160], names=['Error:', 'Decomposing']) 
+
             value_plot.text = "Error decomposing. Chose different angles."
             V1parallel_line_source.data = dict(x=[],y=[])
             V2parallel_line_source.data=dict(x=[],y=[])
@@ -197,8 +194,7 @@ def createtwocomponnets():
              Rx1=(Rx/a1)*a2
              Forcecomponent2=(Ry-Rx1)/F1
              Forcecomponent1=(Rx-(Forcecomponent2*b2))/a1
-#             print (Forcecomponent2)
-#             print (Forcecomponent1)
+
              xE1=Forcecomponent1*(a1)
              yE1=Forcecomponent1*(a2)
              xE2=Forcecomponent2*(b2)
@@ -211,7 +207,7 @@ def createtwocomponnets():
              V2parallel_line_source.data=dict(x=[xE1,Rx],y=[yE1,Ry])
              V1_label_source.data=dict(x=[xE1+5],y=[yE1],V=['F2'])
              V2_label_source.data=dict(x=[xE2+5],y=[yE2],V=['F1'])
-#             Resultant_values_source.data = dict(x=[100,140,100,140,155,100,140,100,140], y=[160,160, 140, 140,140,120,120,100,100], names=['|V| = ', round(sqrt(Ry**2.0+Rx**2.0),1), '\\theta = ', round(atan(Ry/Rx)/pi*180,0), '^{\\circ}','F1=',round(Forcecomponent1,1),'F2=',round(Forcecomponent2,1)])
+
              value_plot.text = "$$\\begin{aligned} F_1&=" + str(round(Forcecomponent2,1)) + "\\,\\mathrm{N}\\\\ F_2&=" + str(round(Forcecomponent1,1)) + "\\,\\mathrm{N} \\end{aligned}$$"
          
              glob_active.data = dict(Active=[True])
@@ -223,67 +219,14 @@ def createtwocomponnets():
 def createtwoarrows():
     [Vector1] = glob_Vector1.data["val"]
     [theta1 ] = glob_theta1.data["val"]
-#    if (Vector1== 0):
-#        Vector_source.data = dict(xS=[0], xE=[0], yS=[50],yE=[50])
-#    
-#    else:
+
     xE=Vector1*cos(theta1)
     yE=Vector1*sin(theta1)
-#    print xE,yE
-    Vector_source.data = dict(xS=[0],yS=[0],xE=[xE],yE=[yE])
-    V_label_source.data= dict (x=[xE+3],y=[yE-3],V1=['V',])
-#    Vector2_source.data = dict(xS=[0],yS=[0],xE=[xE],yE=[0])
-#    Vector3_source.data = dict(xS=[0],yS=[0],xE=[0],yE=[yE])
 
-#def createarrows():
-#    [Vector1] = glob_Vector1.data["val"]
-#    [theta1 ] = glob_theta1.data["val"]
-#    [Active] = glob_active.data["Active"]
-#    if ( Active):
-#         Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-#         Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-#         V1_label_source.data=dict(x=[],y=[],V=[])
-#         V2_label_source.data=dict(x=[],y=[],V=[])
-#         Resultant_values_source.data = dict(x=[], y=[], names=[])
-#         
-#         glob_active.data   = dict(Active=[False])
-#         show_button.label = 'Show components'
-#    else:
-#        xE=Vector1*cos(theta1)
-#        yE=Vector1*sin(theta1)
-#        z=yE/2
-#        z1=xE/2
-#        z2=round(atan(yE/xE)/pi*180,0)
-#        
-#
-#        Vector2_source.data = dict(xS=[0],yS=[0],xE=[xE],yE=[0])
-#        Vector3_source.data = dict(xS=[0],yS=[0],xE=[0],yE=[yE])
-#        V1_label_source.data=dict(x=[0-20],y=[z],V=['Vy'])
-#        V2_label_source.data=dict(x=[z1],y=[0-20],V=['Vx'])
-#        
-##        if(z2==0  ):
-##            
-##            
-##            Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-##            Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-##            V1_label_source.data=dict(x=[],y=[],V=[])
-##            V2_label_source.data=dict(x=[],y=[],V=[])
-##            Resultant_values_source.data = dict(x=[50,100,155], y=[160,160,160], names=['Error:', 'Parallel','basis']) 
-##        elif (z2==90):
-##           
-##            Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-##            Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-##            V1_label_source.data=dict(x=[],y=[],V=[])
-##            V2_label_source.data=dict(x=[],y=[],V=[])
-##            Resultant_values_source.data = dict(x=[50,100,170], y=[160,160,160], names=['Error:', 'Orthogonal','basis'])
-##            
-##        else:
-#            
-#        Resultant_values_source.data = dict(x=[100,140,100,140,155,100,140,100,140], y=[160,160, 140, 140,140,120,120,100,100], names=['|V| = ', round(sqrt(xE**2.0+yE**2.0),1), '\\theta = ', round(atan(yE/xE)/pi*180,0), '^{\\circ}','Vx=',round(xE,1),'Vy=',round(yE,1)])
-#        
-#        
-#        glob_active.data = dict(Active=[True])
-#        show_button.label = 'Hide components' 
+    Vector_source.data = dict(xS=[0],yS=[0],xE=[xE],yE=[yE])
+    V_label_source.data= dict (x=[xE+3],y=[yE-3],V1=['F',])
+
+
         
 def reset():
      glob_theta1.data = dict(val=[radians(45)])
@@ -348,8 +291,7 @@ def reset():
      
      
      
-#     Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-#     Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+
  
 
 Vector1_glyph = Arrow(end=NormalHead(line_color="#A2AD00",fill_color="#A2AD00", line_width=2,size=15),
@@ -376,21 +318,10 @@ p.line(x='x',y='y',line_dash='dashed',source= V1parallel_line_source, color="bla
               
               
               
-#p.ray(x=[0],y=[0],length=300, angle=0,line_width=10 )
 
-#p.ray(x=[-200],y=[0],length=400, angle=0,line_width=3)
-#p.ray(x=[0],y=[-200],length=400, angle=1.57079632679,line_width=
-#p.ray(x=[0], y=[0], length=[45], angle=[90],
-#      angle_units="deg", color="#FB8072", line_width=2)
-      
-      
-
-#line11=sqrt(line1)
-#p.ray(x=[0],y=[0],length=-300, angle=1.57079632679,line_width=10)
 
 p.title.text_font_size="20pt"
-#p.line(x='x',y='y',line_dash='dashed',source= V2parallel_line_source, color="black")
-#p.line(x='x',y='y',line_dash='dashed',source= V1parallel_line_source, color="black")
+
 p.add_layout(Vector1_glyph)
 p.add_layout(LO1_label_glyph)
 p.add_layout(LO2_label_glyph)
@@ -444,6 +375,7 @@ p.toolbar.logo = None
     
 def changetheta1line1(attr,old,new):
     glob_theta1line1.data=dict(val=[radians(new)])
+    [Active] = glob_active.data["Active"]
     
     
     changeline()
@@ -459,11 +391,12 @@ def changetheta1line1(attr,old,new):
     Resultant_values_source.data = dict(x=[], y=[], names=[])
     show_button.label = 'Show components'
     value_plot.text=""
-    [Active] = glob_active.data["Active"]
+   
+ 
 ###    changeline()
-###    createtwocomponnets()
+#    createtwocomponnets()
 ##     
-    if Active == True:
+    if Active == False:
         
         pass
     else:
@@ -471,7 +404,7 @@ def changetheta1line1(attr,old,new):
 #        show_button.label = 'Hide components'
         
         glob_active.data = dict(Active=[False])
-        
+#        
         
 #     changeline()
 #    createtwocomponnets()
