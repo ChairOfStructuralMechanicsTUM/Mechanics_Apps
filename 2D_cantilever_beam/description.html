@@ -30,6 +30,7 @@ code {
 }
 </style>
 
+
 <h1>Cantilever Beam</h1>
 
 <p>
@@ -42,29 +43,15 @@ Additionaly, a third plot visualizes the normal- and shear stresses along an ele
 </justify>
 </p>
 
-<!-- <p> -->
-<!-- <center> -->
-<!-- <a href="http://www.codecogs.com/eqnedit.php?latex=EI_{y}\frac{\mathrm{d}^{4}&space;u_{z}}{\mathrm{d}&space;x^{4}}=q_{z}" target="_blank"><img src="http://latex.codecogs.com/gif.latex?EI_{y}\frac{\mathrm{d}^{4}&space;u_{z}}{\mathrm{d}&space;x^{4}}=q_{z}" title="EI_{y}\frac{\mathrm{d}^{4} u_{z}}{\mathrm{d} x^{4}}=q_{z}" /></a> -->
-<!-- &nbsp ; &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp -->
-<!-- <a href="http://www.codecogs.com/eqnedit.php?latex=EI_{z}\frac{\mathrm{d}&space;^{4}u_{y}}{\mathrm{d}&space;x^{4}}=q_{y}" target="_blank"><img src="http://latex.codecogs.com/gif.latex?EI_{z}\frac{\mathrm{d}&space;^{4}u_{y}}{\mathrm{d}&space;x^{4}}=q_{y}" title="EI_{z}\frac{\mathrm{d} ^{4}u_{y}}{\mathrm{d} x^{4}}=q_{y}" /></a> -->
-<!-- &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp -->
-<!-- </center> -->
-<!-- </p> -->
-
 The deflection is calculated performing a fourfold integral of the load:
 <br>
-<center>
-<a href="http://www.codecogs.com/eqnedit.php?latex=u_{z}&space;=&space;\frac{1}{EI_{y}}\iiiint&space;q_{z}&space;\,&space;\,&space;dx^{4}\;&space;,\;&space;\;&space;\;&space;\;&space;\;&space;\;&space;\;&space;\;&space;\;&space;u_{y}&space;=&space;\frac{1}{EI_{z}}\iiiint&space;q_{y}&space;\,&space;\,&space;dx^{4}" target="_blank"><img src="http://latex.codecogs.com/svg.latex?u_{z}&space;=&space;\frac{1}{EI_{y}}\iiiint&space;q_{z}&space;\,&space;\,&space;dx^{4}\;&space;,\;&space;\;&space;\;&space;\;&space;\;&space;\;&space;\;&space;\;&space;\;&space;u_{y}&space;=&space;\frac{1}{EI_{z}}\iiiint&space;q_{y}&space;\,&space;\,&space;dx^{4}" title="u_{z} = \frac{1}{EI_{y}}\iiiint q_{z} \, \, dx^{4}\; ,\; \; \; \; \; \; \; \; \; u_{y} = \frac{1}{EI_{z}}\iiiint q_{y} \, \, dx^{4}" /></a>
-&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
-</center>
+$$ u_{z} = \frac{1}{EI_{y}}\int \int \int \int  q_{z} \, \, dx^{4}\; ,\; \; \; \; \; \; \; \; \; u_{y} = \frac{1}{EI_{z}}\int \int \int \int q_{y} \, \, dx^{4} $$ 
 <br>
 and the stresses can be determined with the following stress equation for 2-axial load:
 </p>
 
 <p>
-<center>
-<a href="http://www.codecogs.com/eqnedit.php?latex=\sigma&space;(x,y,z)&space;=&space;\frac{M_{y}(x)\cdot&space;I_{z}-M_z(x)\cdot&space;I_{yz}}{I_{y}&space;\cdot&space;I_z&space;-&space;I_{yz}^2}\cdot&space;z&space;&plus;&space;\frac{M_{z}(x)\cdot&space;I_{y}-M_y(x)\cdot&space;I_{yz}}{I_{y}&space;\cdot&space;I_z&space;-&space;I_{yz}^2}\cdot&space;y" target="_blank"><img src="http://latex.codecogs.com/svg.latex?\sigma&space;(x,y,z)&space;=&space;\frac{M_{y}(x)\cdot&space;I_{z}-M_z(x)\cdot&space;I_{yz}}{I_{y}&space;\cdot&space;I_z&space;-&space;I_{yz}^2}\cdot&space;z&space;&plus;&space;\frac{M_{z}(x)\cdot&space;I_{y}-M_y(x)\cdot&space;I_{yz}}{I_{y}&space;\cdot&space;I_z&space;-&space;I_{yz}^2}\cdot&space;y" title="\sigma (x,y,z) = \frac{M_{y}(x)\cdot I_{z}-M_z(x)\cdot I_{yz}}{I_{y} \cdot I_z - I_{yz}^2}\cdot z + \frac{M_{z}(x)\cdot I_{y}-M_y(x)\cdot I_{yz}}{I_{y} \cdot I_z - I_{yz}^2}\cdot y" /></a>
-</center>
+$$ \sigma (x,y,z) = \frac{M_{y}(x)\cdot I_{z}-M_z(x)\cdot I_{yz}}{I_{y} \cdot I_z - I_{yz}^2}\cdot z + \frac{M_{z}(x)\cdot I_{y}-M_y(x)\cdot I_{yz}}{I_{y} \cdot I_z - I_{yz}^2}\cdot y $$
 </p>
 
 <p> The interactivity parameters are: </p>

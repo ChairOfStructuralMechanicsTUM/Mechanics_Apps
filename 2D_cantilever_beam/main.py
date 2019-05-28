@@ -1095,7 +1095,7 @@ init_data()
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 curdoc().add_root(column(description,row(
     column(plotDefYZ,widgetbox(radio_button_group),Yforce_slider,Zforce_slider,Reset_button),
