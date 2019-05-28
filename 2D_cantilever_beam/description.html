@@ -35,23 +35,26 @@ code {
 
 <p>
 <justify>
-This app visualizes the deformation and normal stresses corresponding to a 3D cantilever beam. The performed computations are based on the Euler-Bernoulli theory.
+This app visualizes the deformation and stresses corresponding to a loaded 3D cantilever beam. The performed computations are based on the Euler-Bernoulli theory.
 <br>
 Two separate 2D plots show the deflection of the beam for both a XY- and a XZ-perspective. The coloring corresponds to the magnitudes of normal stresses. 
 <br>
-Additionaly, a third plot visualizes the normal- and shear stresses along a cutting plane in the XY-plane for z=0.
+Additionaly, a third plot visualizes the normal- and shear stresses along a detached element in the XY-plane for z=0.
 </justify>
 </p>
 
-The deflection is calculated performing a fourfold integral of the load:
+According to the Euler-Bernoulli theory the deflection ($u_z$,$u_y$) is computed performing a fourfold integration over the load ($q_z$,$q_y$) :
 <br>
-$$ u_{z} = \frac{1}{EI_{y}}\int \int \int \int  q_{z} \, \, dx^{4}\; ,\; \; \; \; \; \; \; \; \; u_{y} = \frac{1}{EI_{z}}\int \int \int \int q_{y} \, \, dx^{4} $$ 
+$$ u_{z} = \frac{1}{EI_{y}}\int \int \int \int  q_{z} \, \, dx^{4}\; ,\; \; \; \; \; \; \; \; \; u_{y} = \frac{1}{EI_{z}}\int \int \int \int q_{y} \, \, dx^{4}, $$ 
 <br>
-and the stresses can be determined with the following stress equation for 2-axial load:
+with Youngs Modulus $E$ and second moments of inertia $I_{y}$ and $I_{z}$. 
+<br>
+The stresses $\sigma (x,y,z)$ can be determined with the following stress equation for 2-axial loading:
 </p>
-
 <p>
-$$ \sigma (x,y,z) = \frac{M_{y}(x)\cdot I_{z}-M_z(x)\cdot I_{yz}}{I_{y} \cdot I_z - I_{yz}^2}\cdot z + \frac{M_{z}(x)\cdot I_{y}-M_y(x)\cdot I_{yz}}{I_{y} \cdot I_z - I_{yz}^2}\cdot y $$
+$$ \sigma (x,y,z) = \frac{M_{y}(x)\cdot I_{z}-M_z(x)\cdot I_{yz}}{I_{y} \cdot I_z - I_{yz}^2}\cdot z + \frac{M_{z}(x)\cdot I_{y}-M_y(x)\cdot I_{yz}}{I_{y} \cdot I_z - I_{yz}^2}\cdot y, $$
+<br>
+with moment of deviation $I_{yz}$ and bending moments $M_{y}(x)$ and $M_{z}(x)$.
 </p>
 
 <p> The interactivity parameters are: </p>
@@ -59,13 +62,13 @@ $$ \sigma (x,y,z) = \frac{M_{y}(x)\cdot I_{z}-M_z(x)\cdot I_{yz}}{I_{y} \cdot I_
 <li> Type of cross section: Quadratic, Double-T, Circular, Triangular </li>
 <li> Amplitude of load in y-direction </li>
 <li> Amplitude of load in z-direction </li>
-<li> Show normal stresses / show shear stresses</li>
+<li> Visualization of either normal stresses $\sigma$ or shear stresses $\tau$ along the detached element</li>
 </ul>
 
 <p>Note: </p>
 <ul>
-<li> All available cross sections are symmetrical. Therefore, Iyz will be zero </li>
-<li> Loads will always act on the centroid </li>      
+<li> All available cross sections are symmetrical ($I_{yz}$ equals zero) </li>
+<li> The loads $F_y$ and $F_z$ are applied on the centroid </li>      
 </ul>
 
 
