@@ -933,7 +933,7 @@ plotXYElement = Figure(
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
                        y_range= ( -3,3 ) ,
-                       title = 'Stresses along detached element',
+                       title = 'Stresses along detached Element',
                        tools = ''
                   )
 plotXYElement.xaxis.major_tick_line_color=None
