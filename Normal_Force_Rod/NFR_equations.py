@@ -7,10 +7,6 @@ from NFR_constants import(
 from NFR_data_sources import (
         x_samples ,samplesF, samplesU
         )
-from NFR_buttons import (
-        load_position_slide
-        )
-
 
 # equations for all cases used in the app
 # used to compute the y-coordinates for the plots
@@ -37,100 +33,6 @@ local_samples = dict(x1=[], x2=[], nsx1=0, nsx2=0)
 
 
 
-# delegates to specific cases
-def calcN(ls_type, rs_type, load_type, L1):    
-    ## preparation
-    # set them here to avoid repeated evaluations
-    x1 = x_samples[x_samples<=L1]
-    x2 = x_samples[x_samples>L1]
-    #num_samples_x1 = len(x1)
-    #num_samples_x2 = len(x2)
-    # output for file-global function variables
-    local_samples['x1'] = x1 # samples from [0,L1]
-    local_samples['x2'] = x2 # samples from [L1,L]
-    local_samples['nsx1'] = len(x1) # number of samples in x1 array
-    local_samples['nsx2'] = len(x2) # number of samples in x2 array
-    # TODO: outsource, no need to store the samples every time, only when L1 has changed
-    funN = None # function handle
-    funU = None # function handle
-    
-    ## selecting the correct functions
-    if load_type==0: # point load
-        if ls_type==0: # fixed left support
-            if rs_type==0: # fixed right support
-                funN = calcN_p_ff
-                funU = calcU_p_ff
-            else:          # sliding right support
-                funN = calcN_p_fs
-                funU = calcU_p_fs
-        else:           # sliding left support
-            if rs_type==0: # fixed right support
-                funN = calcN_p_sf
-                funU = calcU_p_sf
-            else:
-                invalid_config()
-                return
-    elif load_type==1: # constant load
-        if ls_type==0: # fixed left support
-            if rs_type==0: # fixed right support
-                funN = calcN_c_ff
-                funU = calcU_c_ff
-            else:          # sliding right support
-                funN = calcN_c_fs
-                funU = calcU_c_fs
-        else:           # sliding left support
-            if rs_type==0: # fixed right support
-                funN = calcN_c_sf
-                funU = calcU_c_sf
-            else:
-                invalid_config()
-                return
-    elif load_type==2: # triangular load
-        if ls_type==0: # fixed left support
-            if rs_type==0: # fixed right support
-                funN = calcN_tri_ff
-                funU = calcU_tri_ff
-            else:          # sliding right support
-                funN = calcN_tri_fs
-                funU = calcU_tri_fs
-        else:           # sliding left support
-            if rs_type==0: # fixed right support
-                funN = calcN_tri_sf
-                funU = calcU_tri_sf
-            else:
-                invalid_config()
-                return
-    elif load_type==3: # temperature
-        if ls_type==0: # fixed left support
-            if rs_type==0: # fixed right support
-                funN = calcN_temp_ff
-                funU = calcU_temp_ff
-            else:          # sliding right support
-                funN = calcN_temp_fs
-                funU = calcU_temp_fs
-        else:           # sliding left support
-            if rs_type==0: # fixed right support
-                funN = calcN_temp_sf
-                funU = calcU_temp_sf
-            else:
-                invalid_config()
-                return
-            
-    #TODO: or at least, if lambda functions won't work, make a list and only
-          # compare the values [1,0,1]
-            
-    (N1,N2) = funN(L1)
-    (U1,U2) = funU(L1)
-    
-    ## combining and storing the results
-    samplesF.data['x'] = x_samples
-    samplesU.data['x'] = x_samples
-    samplesF.data['y'] = np.concatenate((N1,N2))
-    samplesU.data['y'] = np.concatenate((U1,U2))
-    
-#TODO: check if switching to lambda functions reduces code and/or time
-    # or in other words: find a better selection process
-    # need to put the sub-functions in another file most likely
 
 #######################
 ## point_load
@@ -368,3 +270,149 @@ def invalid_config():
     samplesU.data = dict(x=[], y=[])
     
     
+
+
+
+
+
+# dictionary for function handles to avoid large if/else-construct
+# needs to be defined after the functions
+fun_handle = {'Npff': calcN_p_ff, 'Npfs': calcN_p_fs, 'Npsf': calcN_p_sf, 'Npss': invalid_config,
+              'Upff': calcU_p_ff, 'Upfs': calcU_p_fs, 'Upsf': calcU_p_sf, 'Upss': invalid_config,
+              'Ncff': calcN_c_ff, 'Ncfs': calcN_c_fs, 'Ncsf': calcN_c_sf, 'Ncss': invalid_config,
+              'Ucff': calcU_c_ff, 'Ucfs': calcU_c_fs, 'Ucsf': calcU_c_sf, 'Ucss': invalid_config,
+              'Ntriff': calcN_tri_ff, 'Ntrifs': calcN_tri_fs, 'Ntrisf': calcN_tri_sf, 'Ntriss': invalid_config,
+              'Utriff': calcU_tri_ff, 'Utrifs': calcU_tri_fs, 'Utrisf': calcU_tri_sf, 'Utriss': invalid_config,
+              'Ntempff': calcN_temp_ff, 'Ntempfs': calcN_temp_fs, 'Ntempsf': calcN_temp_sf, 'Ntempss': invalid_config,
+              'Utempff': calcU_temp_ff, 'Utempfs': calcU_temp_fs, 'Utempsf': calcU_temp_sf, 'Utempss': invalid_config
+              }
+
+
+
+# delegates to specific cases
+def calcN(ls_type, rs_type, load_type, L1):    
+    ## preparation
+    # set them here to avoid repeated evaluations
+    x1 = x_samples[x_samples<=L1]
+    x2 = x_samples[x_samples>L1]
+    #num_samples_x1 = len(x1)
+    #num_samples_x2 = len(x2)
+    # output for file-global function variables
+    local_samples['x1'] = x1 # samples from [0,L1]
+    local_samples['x2'] = x2 # samples from [L1,L]
+    local_samples['nsx1'] = len(x1) # number of samples in x1 array
+    local_samples['nsx2'] = len(x2) # number of samples in x2 array
+    
+    fun_str = ""
+    
+    # abbreviations for the load types
+    if load_type==0:    # point load
+        fun_str += "p"
+    elif load_type==1:  # constant load
+        fun_str += "c"
+    elif load_type==2:  # triangular load
+        fun_str += "tri"
+    elif load_type==3:  # temperature load
+        fun_str += "temp"
+    
+    # abbreviations for the left support types
+    if ls_type==0:      # fixed left support
+        fun_str += "f"
+    elif ls_type==1:    # sliding left support
+        fun_str += "s"
+    
+    # abbreviations for the right support types
+    if rs_type==0:      # fixed right support
+        fun_str += "f"
+    elif rs_type==1:    # sliding left support
+        fun_str += "s"
+        
+    
+    fun_str_N = "N"+fun_str
+    fun_str_U = "U"+fun_str
+    
+    funN = fun_handle[fun_str_N]
+    funU = fun_handle[fun_str_U]
+    
+    
+#    # TODO: outsource, no need to store the samples every time, only when L1 has changed
+#    funN = None # function handle
+#    funU = None # function handle
+#    
+#    ## selecting the correct functions
+#    if load_type==0: # point load
+#        if ls_type==0: # fixed left support
+#            if rs_type==0: # fixed right support
+#                funN = calcN_p_ff
+#                funU = calcU_p_ff
+#            else:          # sliding right support
+#                funN = calcN_p_fs
+#                funU = calcU_p_fs
+#        else:           # sliding left support
+#            if rs_type==0: # fixed right support
+#                funN = calcN_p_sf
+#                funU = calcU_p_sf
+#            else:
+#                invalid_config()
+#                return
+#    elif load_type==1: # constant load
+#        if ls_type==0: # fixed left support
+#            if rs_type==0: # fixed right support
+#                funN = calcN_c_ff
+#                funU = calcU_c_ff
+#            else:          # sliding right support
+#                funN = calcN_c_fs
+#                funU = calcU_c_fs
+#        else:           # sliding left support
+#            if rs_type==0: # fixed right support
+#                funN = calcN_c_sf
+#                funU = calcU_c_sf
+#            else:
+#                invalid_config()
+#                return
+#    elif load_type==2: # triangular load
+#        if ls_type==0: # fixed left support
+#            if rs_type==0: # fixed right support
+#                funN = calcN_tri_ff
+#                funU = calcU_tri_ff
+#            else:          # sliding right support
+#                funN = calcN_tri_fs
+#                funU = calcU_tri_fs
+#        else:           # sliding left support
+#            if rs_type==0: # fixed right support
+#                funN = calcN_tri_sf
+#                funU = calcU_tri_sf
+#            else:
+#                invalid_config()
+#                return
+#    elif load_type==3: # temperature
+#        if ls_type==0: # fixed left support
+#            if rs_type==0: # fixed right support
+#                funN = calcN_temp_ff
+#                funU = calcU_temp_ff
+#            else:          # sliding right support
+#                funN = calcN_temp_fs
+#                funU = calcU_temp_fs
+#        else:           # sliding left support
+#            if rs_type==0: # fixed right support
+#                funN = calcN_temp_sf
+#                funU = calcU_temp_sf
+#            else:
+#                invalid_config()
+#                return
+#            
+#    #TODO: or at least, if lambda functions won't work, make a list and only
+#          # compare the values [1,0,1] or strings
+#            
+    (N1,N2) = funN(L1)
+    (U1,U2) = funU(L1)
+    
+    ## combining and storing the results
+    samplesF.data['x'] = x_samples
+    samplesU.data['x'] = x_samples
+    samplesF.data['y'] = np.concatenate((N1,N2))
+    samplesU.data['y'] = np.concatenate((U1,U2))
+    
+#TODO: check if switching to lambda functions reduces code and/or time
+    # or in other words: find a better selection process
+    # need to put the sub-functions in another file most likely
