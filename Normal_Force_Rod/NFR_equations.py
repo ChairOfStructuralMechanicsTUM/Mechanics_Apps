@@ -5,7 +5,7 @@ from NFR_constants import(
         F, L, E, A, sigma, p0, T, alpha_T
         )
 from NFR_data_sources import (
-        x_samples ,samplesF, samplesU
+        x_samples ,samplesF, samplesU, global_variables
         )
 
 # equations for all cases used in the app
@@ -18,6 +18,7 @@ from NFR_data_sources import (
 ## file-global variables
 # set them here to avoid repeated evaluations
 # does not work that way :(
+# because only the first initial value stays, no change afterwards
 
 # current load position
 #L1 = load_position_slide.value
@@ -25,6 +26,8 @@ from NFR_data_sources import (
 local_samples = dict(x1=[], x2=[], nsx1=0, nsx2=0)
 #TODO: maybe even dict for all variables? (x1,x2,L1,E,A,...)
 #TODO: would be better in case of FLEA being non-constant
+#TODO: if not needed/wanted, also change global_variables to be called in 
+#      compute_new_scenario and add the input ampl for calcNU -> shorter
 #x1 = x_samples[x_samples<=L1]
 #x2 = x_samples[x_samples>L1]
 #
@@ -41,23 +44,23 @@ local_samples = dict(x1=[], x2=[], nsx1=0, nsx2=0)
 def calcN_p_ff(L1):
     load_vals = ["nsx1", "nsx2"]
     num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 =  F*(1.0-L1/L) * np.ones(num_samples_x1)
-    y2 = -F*(L1/L)     * np.ones(num_samples_x2)
+    y1 =  global_variables["ampl"]*F*(1.0-L1/L) * np.ones(num_samples_x1)
+    y2 = -global_variables["ampl"]*F*(L1/L)     * np.ones(num_samples_x2)
     #print("DEBUG: N_p_ff, y2",y2)
     return (y1,y2)
     
 def calcU_p_ff(L1):
     load_vals = ["x1", "x2"]
     x1, x2 = [local_samples.get(val) for val in load_vals]
-    y1 =  F/(E*A)*(1.0-L1/L) * x1
-    y2 = -F/(E*A)*(L1/L) * x2
+    y1 =  global_variables["ampl"]*F/(E*A)*(1.0-L1/L) * x1
+    y2 = -global_variables["ampl"]*F/(E*A)*(L1/L) * x2
     return (y1,y2)
     
 # left support fixed, right support slides
 def calcN_p_fs(L1):
     load_vals = ["nsx1", "nsx2"]
     num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = F * np.ones(num_samples_x1)
+    y1 = global_variables["ampl"]*F * np.ones(num_samples_x1)
     y2 = sigma * np.ones(num_samples_x2)
     #print("DEBUG: N_p_fs, y2",y2)
     return (y1,y2)
@@ -65,8 +68,8 @@ def calcN_p_fs(L1):
 def calcU_p_fs(L1):
     load_vals = ["x1", "nsx2"]
     x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = F/(E*A) * x1
-    y2 = F/(E*A) * L1 * np.ones(num_samples_x2)
+    y1 = global_variables["ampl"]*F/(E*A) * x1
+    y2 = global_variables["ampl"]*F/(E*A) * L1 * np.ones(num_samples_x2)
     return (y1,y2)
     
 # left support slides, right support fixed
@@ -74,14 +77,14 @@ def calcN_p_sf(L1):
     load_vals = ["nsx1", "nsx2"]
     num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
     y1 = sigma * np.ones(num_samples_x1)
-    y2 = -F    * np.ones(num_samples_x2)
+    y2 = -global_variables["ampl"]*F * np.ones(num_samples_x2)
     return (y1,y2)
 
 def calcU_p_sf(L1):
     load_vals = ["x2","nsx1"]
     x2, num_samples_x1 = [local_samples.get(val) for val in load_vals]
-    y1 =  F/(E*A) * (L-L1) * np.ones(num_samples_x1)
-    y2 = -F/(E*A) * (x2 + (L-L1))
+    y1 =  global_variables["ampl"]*F/(E*A) * (L-L1) * np.ones(num_samples_x1)
+    y2 = -global_variables["ampl"]*F/(E*A) * (x2 + (L-L1))
     return (y1,y2)
 
 
@@ -94,15 +97,15 @@ def calcU_p_sf(L1):
 def calcN_c_ff(L1):
     load_vals = ["x1", "nsx2"]
     x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = L1*p0*(1.0-0.5*L1/L) - p0*x1
-    y2 = -0.5*p0*L1*(L1/L) * np.ones(num_samples_x2)
+    y1 = L1*global_variables["ampl"]*p0*(1.0-0.5*L1/L) - global_variables["ampl"]*p0*x1
+    y2 = -0.5*global_variables["ampl"]*p0*L1*(L1/L) * np.ones(num_samples_x2)
     return (y1,y2)
 
 def calcU_c_ff(L1):
     load_vals = ["x1", "x2"]
     x1, x2 = [local_samples.get(val) for val in load_vals]
-    y1 = p0*L1*(1.0-0.5*L1/L)*x1 - 0.5*p0*x1*x1
-    y2 = -p0*L1*0.5*(L1/L) * (x2 - (L-L1))
+    y1 =  global_variables["ampl"]*p0*L1*(1.0-0.5*L1/L)*x1 - 0.5*global_variables["ampl"]*p0*x1*x1
+    y2 = -global_variables["ampl"]*p0*L1*0.5*(L1/L) * (x2 - (L-L1))
     return (y1,y2)
 
 
@@ -110,15 +113,15 @@ def calcU_c_ff(L1):
 def calcN_c_fs(L1):
     load_vals = ["x1", "nsx2"]
     x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = p0*(L1 - x1/L1)
+    y1 = global_variables["ampl"]*p0*(L1 - x1/L1)
     y2 = sigma * np.ones(num_samples_x2)
     return (y1,y2)
 
 def calcU_c_fs(L1):
     load_vals = ["x1", "nsx2"]
     x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = p0*x1 * (-0.5*x1 + L1)
-    y2 = 0.5*p0*L1*L1 * np.ones(num_samples_x2)
+    y1 = global_variables["ampl"]*p0*x1 * (-0.5*x1 + L1)
+    y2 = 0.5*global_variables["ampl"]*p0*L1*L1 * np.ones(num_samples_x2)
     return (y1,y2)
 
 
@@ -126,15 +129,15 @@ def calcU_c_fs(L1):
 def calcN_c_sf(L1):
     load_vals = ["x1", "nsx2"]
     x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = -p0*x1
-    y2 = -p0*L1 * np.ones(num_samples_x2)
+    y1 = -global_variables["ampl"]*p0*x1
+    y2 = -global_variables["ampl"]*p0*L1 * np.ones(num_samples_x2)
     return (y1,y2)
 
 def calcU_c_sf(L1):
     load_vals = ["x1", "x2","nsx1", "nsx2"]
     x1, x2, num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 =  p0/(E*A) * (-0.5*x1*x1 + L1*L)
-    y2 = -p0*L1/(E*A) * (x2 - (L-L1))
+    y1 =  global_variables["ampl"]*p0/(E*A) * (-0.5*x1*x1 + L1*L)
+    y2 = -global_variables["ampl"]*p0*L1/(E*A) * (x2 - (L-L1))
     return (y1,y2)
 
 
@@ -148,15 +151,15 @@ def calcU_c_sf(L1):
 def calcN_tri_ff(L1):
     load_vals = ["x1", "nsx2"]
     x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = p0*L1*(0.5-L1/(3.0*L)) -(0.5*p0/L1)*x1*x1
-    y2 = -p0*L1*L1/(3*L) * np.ones(num_samples_x2)
+    y1 =  global_variables["ampl"]*p0*L1*(0.5-L1/(3.0*L)) -(0.5*global_variables["ampl"]*p0/L1)*x1*x1
+    y2 = -global_variables["ampl"]*p0*L1*L1/(3*L) * np.ones(num_samples_x2)
     return (y1,y2)
 
 def calcU_tri_ff(L1):
     load_vals = ["x1", "x2"]
     x1, x2 = [local_samples.get(val) for val in load_vals]
-    y1 =  p0*x1*( -1.0/(6.0*L1)*x1*x1 + 0.5*L1 - L1*L1/(3*L))
-    y2 = -p0*L1*(L1/3.0) * ((1.0/L)*x2 -1.0 + L1/L )
+    y1 =  global_variables["ampl"]*p0*x1*( -1.0/(6.0*L1)*x1*x1 + 0.5*L1 - L1*L1/(3*L))
+    y2 = -global_variables["ampl"]*p0*L1*(L1/3.0) * ((1.0/L)*x2 -1.0 + L1/L )
     return (y1,y2)
 
 
@@ -164,15 +167,15 @@ def calcU_tri_ff(L1):
 def calcN_tri_fs(L1):
     load_vals = ["x1", "nsx2"]
     x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = 0.5*p0*(L1 - x1/L1)
+    y1 = 0.5*global_variables["ampl"]*p0*(L1 - x1/L1)
     y2 = sigma * np.ones(num_samples_x2)
     return (y1,y2)
 
 def calcU_tri_fs(L1):
     load_vals = ["x1", "nsx2"]
     x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = 0.5*p0*x1*(L1 - 1.0/(3*L1)*x1*x1 )
-    y2 = L1*p0*L1/3.0 * np.ones(num_samples_x2)
+    y1 = 0.5*global_variables["ampl"]*p0*x1*(L1 - 1.0/(3*L1)*x1*x1 )
+    y2 = L1*global_variables["ampl"]*p0*L1/3.0 * np.ones(num_samples_x2)
     return (y1,y2)
 
 
@@ -180,16 +183,16 @@ def calcU_tri_fs(L1):
 def calcN_tri_sf(L1):
     load_vals = ["x1", "nsx2"]
     x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = -0.5*(p0/L1)*x1*x1
-    y2 = -0.5*p0*L1 * np.ones(num_samples_x2)
+    y1 = -0.5*(global_variables["ampl"]*p0/L1)*x1*x1
+    y2 = -0.5*global_variables["ampl"]*p0*L1 * np.ones(num_samples_x2)
     return (y1,y2)
 
 def calcU_tri_sf(L1):
     load_vals = ["x1", "x2"]
     x1, x2 = [local_samples.get(val) for val in load_vals]
     #y1 = p0/(E*A) * (0.5*L*L1 - L1*L1/3.0 - x1*p0/(sigma*L1)*x1*x1)
-    y1 = p0/(E*A*6.0) * (3.0*L*L1 - 2.0*L1*L1 - x1*p0/(L1)*x1*x1)
-    y2 = 0.5*L1*p0/(E*A) * (-1.0*x2 + (L-L1))
+    y1 = global_variables["ampl"]*p0/(E*A*6.0) * (3.0*L*L1 - 2.0*L1*L1 - x1*global_variables["ampl"]*p0/(L1)*x1*x1)
+    y2 = 0.5*L1*global_variables["ampl"]*p0/(E*A) * (-1.0*x2 + (L-L1))
     return (y1,y2)
 
 
@@ -203,15 +206,15 @@ def calcU_tri_sf(L1):
 def calcN_temp_ff(L1):
     load_vals = ["nsx1", "nsx2"]
     num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = -alpha_T*T*(L1/L)*E*A * np.ones(num_samples_x1)
-    y2 = -alpha_T*T*(L1/L)*E*A * np.ones(num_samples_x2)
+    y1 = -alpha_T*global_variables["ampl"]*T*(L1/L)*E*A * np.ones(num_samples_x1)
+    y2 = -alpha_T*global_variables["ampl"]*T*(L1/L)*E*A * np.ones(num_samples_x2)
     return (y1,y2)
 
 def calcU_temp_ff(L1):
     load_vals = ["x1", "x2"]
     x1, x2 = [local_samples.get(val) for val in load_vals]
-    y1 = alpha_T*T*x1 * (1.0 - E*A*(L1/L))
-    y2 = alpha_T*T*(L1/L) * ((L-L1) - E*A*x2)
+    y1 = alpha_T*global_variables["ampl"]*T*x1 * (1.0 - E*A*(L1/L))
+    y2 = alpha_T*global_variables["ampl"]*T*(L1/L) * ((L-L1) - E*A*x2)
     return (y1,y2)
 
 
@@ -226,8 +229,8 @@ def calcN_temp_fs(L1):
 def calcU_temp_fs(L1):
     load_vals = ["x1", "nsx2"]
     x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = alpha_T*T*x1
-    y2 = alpha_T*T*L1 * np.ones(num_samples_x2)
+    y1 = alpha_T*global_variables["ampl"]*T*x1
+    y2 = alpha_T*global_variables["ampl"]*T*L1 * np.ones(num_samples_x2)
     return (y1,y2)
 
 
@@ -242,7 +245,7 @@ def calcN_temp_sf(L1):
 def calcU_temp_sf(L1):
     load_vals = ["x1", "x2", "nsx1", "nsx2"]
     x1, x2, num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = alpha_T*T*(x1-L1)
+    y1 = alpha_T*global_variables["ampl"]*T*(x1-L1)
     y2 = sigma * np.ones(num_samples_x2)
     return (y1,y2)
 

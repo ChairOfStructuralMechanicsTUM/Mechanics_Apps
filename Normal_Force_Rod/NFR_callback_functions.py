@@ -7,7 +7,7 @@ from NFR_constants import (
         slide_support_img, fixed_support_img # support images
         )
 from NFR_data_sources import (
-        rod_source, #global_variables,
+        rod_source, global_variables,
         support_source_left, support_source_right,
         force_point_source, constant_load_source, triangular_load_source,
         labels_source,
@@ -106,14 +106,15 @@ def change_amplitude(attr, old, new):
     xS_old = force_point_source.data["xS"]
     xE_old = force_point_source.data["xE"]
     
-    # change direction in x-direction (parallel to rod)
+    # change direction of arrows in x-direction (parallel to rod)
     force_point_source.data["xS"] = xE_old
     force_point_source.data["xE"] = xS_old
     
+    # change sign for the calculations
+    global_variables["ampl"] = -global_variables["ampl"]
+    
     compute_new_scenario()
     
-    # TODO: this is an example for the TODOS above!
-
 
 
 def reset():

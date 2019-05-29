@@ -61,6 +61,7 @@ error_msg       = ColumnDataSource(data=dict(x=[],y=[],name=[]))
 ## global variables (dict, list, no CDS)
 #global_variables = dict(rod_line_width=2)
 #global_variables = dict(y_cross=0.0)
+global_variables = dict(ampl=1.0)
 
 #TODO: maybe move glabal variables also to "constants" and rename it to "variables" or so
 
