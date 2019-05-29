@@ -23,7 +23,7 @@ from NFR_buttons import (
         load_position_slide
         )
 from NFR_equations import (
-        calcN
+        calcNU
         )
 
 
@@ -180,14 +180,8 @@ def compute_new_scenario():
     rs_type   = radio_group_right.active
     load_type = radio_button_group.active
     L1        = load_position_slide.value
-    calcN(ls_type, rs_type, load_type, L1)
+    calcNU(ls_type, rs_type, load_type, L1)
     move_aux_line()
-
-
-
-
-
-
 
 
 

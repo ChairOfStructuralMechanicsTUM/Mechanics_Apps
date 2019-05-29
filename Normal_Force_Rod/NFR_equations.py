@@ -58,7 +58,7 @@ def calcN_p_fs(L1):
     load_vals = ["nsx1", "nsx2"]
     num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
     y1 = F * np.ones(num_samples_x1)
-    y2 = sigma * np.ones(num_samples_x1)
+    y2 = sigma * np.ones(num_samples_x2)
     #print("DEBUG: N_p_fs, y2",y2)
     return (y1,y2)
 
@@ -108,9 +108,9 @@ def calcU_c_ff(L1):
 
 # left support fixed, right support slides
 def calcN_c_fs(L1):
-    load_vals = ["nsx1", "nsx2"]
-    num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = p0*L1 * np.ones(num_samples_x1)
+    load_vals = ["x1", "nsx2"]
+    x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
+    y1 = p0*(L1 - x1/L1)
     y2 = sigma * np.ones(num_samples_x2)
     return (y1,y2)
 
@@ -162,9 +162,9 @@ def calcU_tri_ff(L1):
 
 # left support fixed, right support slides
 def calcN_tri_fs(L1):
-    load_vals = ["nsx1", "nsx2"]
-    num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = 0.5*p0*L1 * np.ones(num_samples_x1)
+    load_vals = ["x1", "nsx2"]
+    x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
+    y1 = 0.5*p0*(L1 - x1/L1)
     y2 = sigma * np.ones(num_samples_x2)
     return (y1,y2)
 
@@ -187,7 +187,8 @@ def calcN_tri_sf(L1):
 def calcU_tri_sf(L1):
     load_vals = ["x1", "x2"]
     x1, x2 = [local_samples.get(val) for val in load_vals]
-    y1 = p0/(E*A) * (0.5*L*L1 - L1*L1/3.0 - x1*p0/(sigma*L1)*x1*x1)
+    #y1 = p0/(E*A) * (0.5*L*L1 - L1*L1/3.0 - x1*p0/(sigma*L1)*x1*x1)
+    y1 = p0/(E*A*6.0) * (3.0*L*L1 - 2.0*L1*L1 - x1*p0/(L1)*x1*x1)
     y2 = 0.5*L1*p0/(E*A) * (-1.0*x2 + (L-L1))
     return (y1,y2)
 
@@ -265,7 +266,7 @@ def calcU_temp_sf(L1):
 #    return (y1,y2)    
     
 # empty sources for invalid cases (no plot)
-def invalid_config():
+def invalid_config(L1):
     samplesF.data = dict(x=[], y=[])
     samplesU.data = dict(x=[], y=[])
     
@@ -290,11 +291,12 @@ fun_handle = {'Npff': calcN_p_ff, 'Npfs': calcN_p_fs, 'Npsf': calcN_p_sf, 'Npss'
 
 
 # delegates to specific cases
-def calcN(ls_type, rs_type, load_type, L1):    
+def calcNU(ls_type, rs_type, load_type, L1):    
     ## preparation
     # set them here to avoid repeated evaluations
     x1 = x_samples[x_samples<=L1]
     x2 = x_samples[x_samples>L1]
+    # TODO: build in check for None-type to avoid error message
     #num_samples_x1 = len(x1)
     #num_samples_x2 = len(x2)
     # output for file-global function variables
@@ -302,6 +304,7 @@ def calcN(ls_type, rs_type, load_type, L1):
     local_samples['x2'] = x2 # samples from [L1,L]
     local_samples['nsx1'] = len(x1) # number of samples in x1 array
     local_samples['nsx2'] = len(x2) # number of samples in x2 array
+    #print("DBUG: len x1, x2", len(x1), len(x2))
     
     fun_str = ""
     
