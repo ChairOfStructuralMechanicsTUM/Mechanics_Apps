@@ -145,7 +145,7 @@ plot_main.add_glyph(error_msg_frame,Rect(x="x", y="y", width=8, height=1, angle=
 
 ###### PLOT (NORMAL FORCE):
 # Define plot
-plot_normalF = Figure(title="Normal force N(x)", tools="", x_range=x_range, y_range=(-11,11), height=fig_height)
+plot_normalF = Figure(title="Normal force N(x)", tools="yzoom_in,yzoom_out,reset", x_range=x_range, y_range=(-11,11), height=fig_height)
 # Set properties
 plot_normalF.axis.visible = False
 plot_normalF.outline_line_width = 2
@@ -164,7 +164,7 @@ plot_normalF.line(x='x', y='y', source=samplesF, color="#A2AD00",line_width=2)
 
 ###### PLOT (DEFORMATION):
 # Define plot
-plot_deform = Figure(title="Deformation u(x)", tools="", x_range=x_range, y_range=(-12,12), height=fig_height)
+plot_deform = Figure(title="Deformation u(x)", tools="yzoom_in,yzoom_out,reset", x_range=x_range, y_range=(-12,12), height=fig_height)
 # Set properties
 plot_deform.axis.visible = False
 plot_deform.outline_line_width = 2
