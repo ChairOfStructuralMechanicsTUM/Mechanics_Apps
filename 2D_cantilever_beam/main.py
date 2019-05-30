@@ -43,10 +43,10 @@ amplificationFactor = 100
 
 
 # Cross Section Source:
-CrossSection1 = "2D_cantilever_beam/static/images/Rectangular_with_measure_and_views.png"
-CrossSection2 = "2D_cantilever_beam/static/images/DoubleT_with_measure_and_views.png"
-CrossSection3 = "2D_cantilever_beam/static/images/Circular_with_measure_and_views.png"
-CrossSection4 = "2D_cantilever_beam/static/images/Triangular_with_measure_and_views.png"
+CrossSection1 = "2D_cantilever_beam/static/images/Rectangular.png"
+CrossSection2 = "2D_cantilever_beam/static/images/DoubleT.png"
+CrossSection3 = "2D_cantilever_beam/static/images/Circular.png"
+CrossSection4 = "2D_cantilever_beam/static/images/Triangular.png"
 CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , y=[]))
@@ -1095,9 +1095,15 @@ init_data()
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=950)
 
-curdoc().add_root(column(description,row(
+# add beam definition image
+Scheme = Div( text = "<img src='/2D_cantilever_beam/static/images/3DBeam.png' width=550 height=405>",
+            width = 550,
+            height = 405 )
+
+
+curdoc().add_root(column(row(Spacer(height=650),description, column(Spacer(height=100),Scheme)),row(
     column(plotDefYZ,widgetbox(radio_button_group),Yforce_slider,Zforce_slider,Reset_button),
     column(row(column(plotXYElement,row(Spacer(width=80),radio_button_group2)),column(row(plotDefXY, plotDefXZ),colorBar))))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
