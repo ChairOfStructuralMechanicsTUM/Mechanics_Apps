@@ -9,9 +9,10 @@ maxR          = 4.0
 alpha_max     = 25.0
 rampLength    = 50
 rampAddLength = 5  # excess length for better visualization
+max_samples   = 100
 # create variables
 alpha         = radians(20)
-t             = 0.0
+t             = 0
 # variables created to avoid repeated calculations
 # (speeds up calculations)
 SIN           = sin(alpha)
@@ -58,6 +59,14 @@ SphereYLines = np.array([])
 
 
 # create ColumnDataSources
+
+# displacement, distance traveled
+t_end             = [0.0,0.0,0.0]
+fig0_samples      = []
+fig1_samples      = []
+fig2_samples      = []
+
+
 fig0_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
 fig0_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 fig1_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
@@ -65,14 +74,15 @@ fig1_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 fig2_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
 fig2_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 
-fig0_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS)
-fig1_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS)
-fig2_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS)
+fig0_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS,r=2.0,ri=0.5)
+fig1_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS,r=2.0,ri=0.5)
+fig2_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS,r=2.0,ri=1.5)
 
 # put them in a list for easy access in functions
 fig_data          = [fig0_data,fig1_data,fig2_data]
 fig_lines_data    = [fig0_lines_data,fig1_lines_data,fig2_lines_data]
 fig_values        = [fig0_values,fig1_values,fig2_values]
+fig_samples       = [fig0_samples,fig1_samples,fig2_samples]
 
 
 ramp_source0      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0]))
@@ -97,5 +107,5 @@ glob_callback_id  = ColumnDataSource(data = dict(callback_id  = [None]))
 glob_SphereXLines = ColumnDataSource(data = dict(SphereXLines = [SphereXLines]))
 glob_SphereYLines = ColumnDataSource(data = dict(SphereYLines = [SphereYLines]))
 
-glob_time         = dict(t=t)
+glob_time         = dict(t=t, t_samples = np.linspace(0.0,6.0,max_samples))
 

@@ -46,6 +46,7 @@ from RT_callback_functions import (
         changeAlpha0, changeAlpha1, changeAlpha2,
         object_select_JS
         )
+from RT_helper_functions import get_t_samples
 
 
 ###############################################################################
@@ -68,9 +69,12 @@ def init():
     glob_SphereXLines.data = dict(SphereXLines = [SphereXLines])
     glob_SphereYLines.data = dict(SphereYLines = [SphereYLines])
     # create the objects
-    createSphere(2.0,fig_data[0],fig_lines_data[0],fig_values[0])
-    createCylinder(2.0,fig_data[1],fig_lines_data[1],fig_values[1])
-    createHollowCylinder(2.0,1.5,fig_data[2],fig_lines_data[2],fig_values[2])
+    get_t_samples(0,"Sphere")
+    get_t_samples(1,"Full cylinder")
+    get_t_samples(2,"Hollow cylinder")
+    createSphere        (0,fig_data[0],fig_lines_data[0],fig_values[0])
+    createCylinder      (1,fig_data[1],fig_lines_data[1],fig_values[1])
+    createHollowCylinder(2,fig_data[2],fig_lines_data[2],fig_values[2])
     
     
 

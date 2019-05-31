@@ -2,6 +2,8 @@ from __future__ import division # float division only, like in python 3
 import numpy as np
 
 from RT_global_variables import (
+        rampLength, g, max_samples,
+        t_end, glob_time,
         fig_data, fig_lines_data, fig_values,
         fig_in_use,
         glob_fun_handles
@@ -51,6 +53,39 @@ def get_coordinates(fun_handles, in_execution, t):
         else:
             (x_coords[j], y_coords[j]) = (-50,50)
     return (x_coords, y_coords)
+
+
+###############################################################################
+###                           build time samples                            ###
+###############################################################################
+def get_t_end(FIG,new_object):
+    # calculate the end time when the object hits the end of the ramp
+    load_vals = ["SIN", "r", "ri"]
+    SIN, r, ri = [fig_values[FIG].get(val) for val in load_vals]
+    #SIN   = fig_values[FIG]["SIN"]
+    #r     = fig_values[FIG]["r"]
+    #ri    = fig_values[FIG]["ri"]
+    # ATTENTION: setting ri/r = 0 in case of r==ri is unphysical! 
+    # but it won't get shown in the app, the object vanishes
+    # however, calculations are expected
+    ratio = ri/r if (abs(r-ri)>1e-5) else 0
+    if (new_object == "Sphere"):
+        t_end[FIG] = np.sqrt(14.0*rampLength/(5.0*g*SIN))
+    elif (new_object == "Hollow cylinder"):
+        z = 3.0 + ratio*ratio
+        t_end[FIG] = np.sqrt(z*rampLength/(g*SIN))
+    elif (new_object == "Hollow sphere"):
+        k = 1.0 + 0.4*(1.0 - ratio**5)/(1.0 - ratio**3)
+        t_end[FIG] = np.sqrt(2.0*k*rampLength/(g*SIN)) 
+    else: # cylinder
+        t_end[FIG] = np.sqrt(3.0*rampLength/(g*SIN))
+
+
+def get_t_samples(FIG,new_object):
+    # upate the time samples based on the maximum end time
+    get_t_end(FIG,new_object)
+    glob_time["t_samples"] = np.linspace(0.0,max(t_end),max_samples, endpoint=True)
+
 
 ###############################################################################
 ###                    simulation status (running/done)                     ###
@@ -105,6 +140,6 @@ def disable_all_sliders(d=True):
 ###                        initial function handles                         ###
 ############################################################################### 
 # name the functions to be used by each figure depending upon their content
-glob_fun_handles[0]=lambda(x):moveSphere(x,2.0,1.0,fig_data[0],fig_lines_data[0],fig_values[0])
-glob_fun_handles[1]=lambda(x):moveCylinder(x,2.0,1.0,fig_data[1],fig_lines_data[1],fig_values[1])
-glob_fun_handles[2]=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig_data[2],fig_lines_data[2],fig_values[2])
+glob_fun_handles[0]=lambda(x):moveSphere(0,x,fig_data[0],fig_lines_data[0],fig_values[0])
+glob_fun_handles[1]=lambda(x):moveCylinder(1,x,fig_data[1],fig_lines_data[1],fig_values[1])
+glob_fun_handles[2]=lambda(x):moveHollowCylinder(2,x,fig_data[2],fig_lines_data[2],fig_values[2])

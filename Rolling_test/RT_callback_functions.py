@@ -12,7 +12,7 @@ from RT_global_variables import (
         wall_sources, ramp_sources,
         glob_fun_handles,
         rampLength, rampAddLength,
-        TX0, TY0
+        TX0, TY0, t_end
         )
 from RT_buttons import (
         start_button, reset_button, mode_selection,
@@ -20,7 +20,10 @@ from RT_buttons import (
         radius_slider0, radius_slider1, radius_slider2,
         ri_slider0, ri_slider1, ri_slider2
         )
-from RT_helper_functions import check_availability, get_coordinates, disable_all_sliders
+from RT_helper_functions import (
+        get_t_samples, get_coordinates, 
+        disable_all_sliders, check_availability
+        )
 from RT_object_creation import (
         createSphere, createHollowSphere,
         createCylinder, createHollowCylinder
@@ -36,24 +39,30 @@ from RT_object_movement import (
 # function to change the shape, radius, or mass of the object in figure FIG
 # only indirectly a callback function
 def changeObject(FIG,new_object,r,ri,m):
+    # save the new radius and inner radius
+    fig_values[FIG]["r"]  = r
+    fig_values[FIG]["ri"] = ri
     # save the data concerned in data and line_data
     data      = fig_data[FIG]
     line_data = fig_lines_data[FIG]
     vals      = fig_values[FIG]
     # depending on the shape specified, create the object and
     # save the new evolution function in the variable func
+    get_t_samples(FIG,new_object)
+    #print("DBUG: cO, r", r)
+    #print("DBUG: cO, ri", ri)
     if (new_object == "Sphere"):
-        createSphere(r,data,line_data,vals)
-        func=lambda(x):moveSphere(x,r,m,data,line_data,vals)
-    elif (new_object =="Hollow cylinder"):
-        createHollowCylinder(r,ri,data,line_data,vals)
-        func=lambda(x):moveHollowCylinder(x,r,m,ri,data,line_data,vals)
+        createSphere(FIG,data,line_data,vals)
+        func=lambda(x):moveSphere(FIG,x,data,line_data,vals)
+    elif (new_object == "Hollow cylinder"):
+        createHollowCylinder(FIG,data,line_data,vals)
+        func=lambda(x):moveHollowCylinder(FIG,x,data,line_data,vals)
     elif (new_object == "Hollow sphere"):
-        createHollowSphere(r,ri,data,line_data,vals)
-        func=lambda(x):moveHollowSphere(x,r,m,ri,data,line_data,vals)
+        createHollowSphere(FIG,data,line_data,vals)
+        func=lambda(x):moveHollowSphere(FIG,x,data,line_data,vals)
     else:
-        createCylinder(r,data,line_data,vals)
-        func=lambda(x):moveCylinder(x,r,m,data,line_data,vals)
+        createCylinder(FIG,data,line_data,vals)
+        func=lambda(x):moveCylinder(FIG,x,data,line_data,vals)
     
     # check the availability of each plot (existing object, still running or finished)
     check_availability()
@@ -156,7 +165,7 @@ def start():
 ###                       reset button functionality                        ###
 ###############################################################################
 def reset():
-    glob_time["t"] = 0.0 #      /output
+    glob_time["t"] = 0 #      /output
     changeObject(0,object_select0.value,radius_slider0.value,ri_slider0.value,1.0)
     changeObject(1,object_select1.value,radius_slider1.value,ri_slider1.value,1.0)
     changeObject(2,object_select2.value,radius_slider2.value,ri_slider2.value,1.0)
@@ -172,7 +181,8 @@ def reset():
 ###############################################################################
 def evolve():
     t = glob_time["t"] # input/output
-    t+=0.05
+    #t+=0.05
+    t += 1
     glob_time["t"] = t
     
     # call all necessary functions
@@ -201,13 +211,13 @@ def evolve():
     #print("DBUG: max_ind", type(max_indices))
     
     for plot_num in max_indices:
-        print("DBUG: plt_num", plot_num)
+        #print("DBUG: plt_num", plot_num)
         #print("DBUG: plt_num", type(plot_num))
-        print("DBUG: max_x", x_coords[plot_num])
-        print("DBUG: max_y", y_coords[plot_num])
+        #print("DBUG: max_x", x_coords[plot_num])
+        #print("DBUG: max_y", y_coords[plot_num])
         fig_in_use[plot_num] = False
         # change the corresponding CDS to display the time only in this plot
-        time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=[str(glob_time["t"])+" s"])
+        time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=["%5.3f" % t_end[plot_num] + " s"])
         
         #print("DBUG: fig", fig_in_use)
         
