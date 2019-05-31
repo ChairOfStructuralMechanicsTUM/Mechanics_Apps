@@ -3,6 +3,7 @@ from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer, widgetbox
 from bokeh.models import ColumnDataSource, LabelSet, CustomJS
 from bokeh.models.widgets import Paragraph
+from bokeh.models.glyphs import ImageURL
 from bokeh.io import curdoc
 from math import sin, cos, pi, sqrt, radians
 from os.path import dirname, split, abspath, join
@@ -23,7 +24,7 @@ from RT_global_variables import (
         alpha, alpha_max,
         rampLength, maxR,
         ramp_sources, wall_sources,
-        time_display,
+        time_display, icon_display,
         figure_list,
         TX0, TY0
         )
@@ -101,7 +102,13 @@ fig0.line(x='x',y='y',color="black",line_width=2,source=wall_sources[0])
 fig0.axis.visible     = False
 fig0.toolbar_location = None
 time_lable0 = LabelSet(x='x', y='y', text='t', source=time_display[0])
-fig0.add_layout(time_lable0)
+fig0.add_layout(time_lable0)    
+icon0 = ImageURL(url="img", x="x", y="y", w=10, h=10, anchor="center")
+fig0.add_glyph(icon_display[0], icon0)
+#stest = ColumnDataSource(data = dict(img=["Rolling_test/static/images/first.svg"], x=[-20],y=[20]))
+#image1 = ImageURL(url="img", x="x", y="y", w=10, h=10, anchor="center")
+#fig0.add_glyph(stest, image1)
+
 
 
 fig1 = figure(title="Full cylinder",x_range=(XStart,TX0),y_range=(TY0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)
@@ -114,6 +121,8 @@ fig1.axis.visible     = False
 fig1.toolbar_location = None
 time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display[1])
 fig1.add_layout(time_lable1)
+icon1 = ImageURL(url="img", x="x", y="y", w=10, h=10, anchor="center")
+fig1.add_glyph(icon_display[1], icon1)
 
 
 fig2 = figure(title="Hollow cylinder",x_range=(XStart,TX0),y_range=(TY0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)
@@ -126,7 +135,8 @@ fig2.axis.visible     = False
 fig2.toolbar_location = None
 time_lable2 = LabelSet(x='x', y='y', text='t', source=time_display[2])
 fig2.add_layout(time_lable2)
-
+icon2 = ImageURL(url="img", x="x", y="y", w=10, h=10, anchor="center")
+fig2.add_glyph(icon_display[2], icon2)
 
 ###############################################################################
 ###                           annotation figures                            ###

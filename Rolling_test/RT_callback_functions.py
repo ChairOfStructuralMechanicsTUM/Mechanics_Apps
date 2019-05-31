@@ -7,7 +7,7 @@ from RT_global_variables import (
         fig_data, fig_lines_data, fig_values,
         fig_in_use,
         figure_list,
-        time_display,
+        time_display, icon_display, icons_collection,
         glob_callback_id, glob_time,
         wall_sources, ramp_sources,
         glob_fun_handles,
@@ -173,6 +173,10 @@ def reset():
     time_display[0].data=dict(x=[],y=[],t=[])
     time_display[1].data=dict(x=[],y=[],t=[])
     time_display[2].data=dict(x=[],y=[],t=[])
+    icon_display[0].data=dict(x=[],y=[],img=[])
+    icon_display[1].data=dict(x=[],y=[],img=[])
+    icon_display[2].data=dict(x=[],y=[],img=[])
+    icons_collection[0] = icons_collection[3]
     check_availability()
           
 
@@ -197,9 +201,17 @@ def evolve():
     #x_max = np.max(x_coords)
     #y_max = np.max(y_coords)
     
+    #TX0+fig_values[0]["r"]*fig_values[0]["SIN"]
+    
+    
     # create index arrays to see which plots satisfies the stopping criterion
-    ind_x_max = [i for i in range(0,len(x_coords)) if x_coords[i]>TX0]
-    ind_y_max = [i for i in range(0,len(y_coords)) if y_coords[i]<TY0]
+    #ind_x_max = [i for i in range(0,len(x_coords)) if x_coords[i]>TX0]
+    #ind_y_max = [i for i in range(0,len(y_coords)) if y_coords[i]<TY0]
+    # we need to compare to the actual center and not the end of the ramp/plot
+    # otherwise the same object with greater radius is "further" than the other 
+    ind_x_max = [i for i in range(0,len(x_coords)) if x_coords[i]>=TX0+fig_values[i]["r"]*fig_values[i]["SIN"]]
+    ind_y_max = [i for i in range(0,len(y_coords)) if y_coords[i]<=TY0+fig_values[i]["r"]*fig_values[i]["COS"]]
+    
     
     # find unique indices to avoid stopping the same plot twice
     max_indices = np.unique(np.concatenate((ind_x_max, ind_y_max)))
@@ -209,15 +221,24 @@ def evolve():
     
     #print("DBUG: max_ind", max_indices)
     #print("DBUG: max_ind", type(max_indices))
+    if len(max_indices)>0:
+        print("---start---")
+        for i in range(0,len(max_indices)):
+            print("DBUG: max_indices[i]", max_indices[i])
+        print("---end---")
     
     for plot_num in max_indices:
-        #print("DBUG: plt_num", plot_num)
+        print("DBUG: plt_num", plot_num)
         #print("DBUG: plt_num", type(plot_num))
         #print("DBUG: max_x", x_coords[plot_num])
         #print("DBUG: max_y", y_coords[plot_num])
         fig_in_use[plot_num] = False
         # change the corresponding CDS to display the time only in this plot
         time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=["%5.3f" % t_end[plot_num] + " s"])
+        # show the next icon in all plots that finish simultaneously
+        icon_display[plot_num].data=dict(x=[TX0-20],y=[TY0+20],img=[icons_collection[0]])
+    if len(max_indices)>0 :
+        icons_collection[0] = icons_collection[3-int(sum(fig_in_use))]
         
         #print("DBUG: fig", fig_in_use)
         
@@ -227,6 +248,7 @@ def evolve():
     # mode "all" is selected -> run all simulations till the end
     #if (len(max_indices)>0 and (mode_selection.active==0 or sum(fig_in_use)<=1)):
     #print("DBUG: max_ind", max_indices)
+    #print("DBUG: fig_in_use", sum(fig_in_use))
     if ((len(max_indices)>0 and mode_selection.active==0) or sum(fig_in_use)<1):
         start() #equals to stop if it is running
     
