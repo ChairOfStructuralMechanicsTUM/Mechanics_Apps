@@ -12,7 +12,7 @@ from RT_global_variables import (
         wall_sources, ramp_sources,
         glob_fun_handles,
         rampLength, rampAddLength,
-        TX0, TY0, t_end
+        TX0, TY0, t_end, max_samples
         )
 from RT_buttons import (
         start_button, reset_button, mode_selection,
@@ -298,7 +298,12 @@ def evolve():
     # if all simulations have finished, disable the start button
     if (not any(fig_in_use)):
         start_button.disabled = True
-        
+    
+    # only in special case if boundary check above fail
+    # if this conditions is met, build a buffer like x_coords[i]>=...+buf, buf=1e-6
+    if(t>=max_samples):
+        print("WARNING: simulation exceeded maximum number of provided samples")
+        start() #equals to stop if it is running
 
 
 ###############################################################################
