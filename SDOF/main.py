@@ -192,7 +192,7 @@ def compute_amp_and_phase_angle():
         if D == 0 and beta == 25:
             V = 1000
         else:
-            V = 1 / sqrt( pow(1-pow(beta/25.0,2),2) + pow(2*D*beta/25.0,2) )
+            V = 1.0 / sqrt( pow(1-pow(beta/25.0,2),2) + pow(2*D*beta/25.0,2) )
 
         if D == 0 and beta < 25:
             phi = 0
@@ -201,7 +201,7 @@ def compute_amp_and_phase_angle():
         elif beta == 25:
             phi = 90
         else:
-            phi = atan2( 2*D*beta/25.0, 1-pow(beta/25.0,2) ) * 180.0 / pi
+            phi = atan2( 2.0*D*beta/25.0, 1.0-pow(beta/25.0,2) ) * 180.0 / pi
         amplification_function.patch({ 'V':[(beta,V)] })
         phase_angle.patch({ 'phi':[(beta,phi)] })
     
@@ -210,12 +210,13 @@ def compute_amp_and_phase_angle():
 def plot_current_ratio():
     # extract global variables
     [frequency_ratio_value] = glob_frequency_ratio_value.data["frequency_ratio_value"] # input/
+    [D] = glob_D.data["D"] # input/
     
     
     if D == 0 and frequency_ratio_value == 1:
         V = 1000
     else:
-        V = 1 / sqrt( pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2) )
+        V = 1.0 / sqrt( pow(1.0-pow(frequency_ratio_value,2),2) + pow(2.0*D*frequency_ratio_value,2) )
 
     if D == 0 and frequency_ratio_value < 1:
         phi = 0
@@ -224,7 +225,7 @@ def plot_current_ratio():
     elif D == 0 and frequency_ratio_value > 1:
         phi = 180
     else:
-        phi = atan2( 2*D*frequency_ratio_value, 1-pow(frequency_ratio_value,2) ) * 180 / pi
+        phi = atan2( 2.0*D*frequency_ratio_value, 1.0-pow(frequency_ratio_value,2) ) * 180.0 / pi
 
     current_ratio.data=dict(beta=[frequency_ratio_value],V=[V],phi=[phi])
     
