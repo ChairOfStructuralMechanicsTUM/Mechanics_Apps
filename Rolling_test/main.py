@@ -169,8 +169,8 @@ fig3.line(x=[alx1,alx0],y=[aly1,aly0],color="black",line_width=1.5)
 fig3.line(x=[alx1-0.8,alx1+0.9],y=[ou(alx1-0.5),ou(alx1+0.5)],color="black",line_width=1.5)
 fig3.line(x=[alx0-0.5,alx0+1.1],y=[od(alx0-0.5),od(alx0+0.5)],color="black",line_width=1.5)
 
-L_label_source = ColumnDataSource(data=dict(x=[-23],y=[11],t=["L"]))
-L_label = LabelSet(x='x', y='y', text='t', angle=-radians(25),  source=L_label_source, render_mode="css")
+L_label_source = ColumnDataSource(data=dict(x=[-28],y=[11],t=["L = 50m"]))
+L_label = LabelSet(x='x', y='y', text='t', angle=-radians(26),  source=L_label_source, render_mode="css")
 fig3.add_layout(L_label)
 
 # alpha annotation
