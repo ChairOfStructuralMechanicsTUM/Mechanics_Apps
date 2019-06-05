@@ -161,9 +161,26 @@ def createtwocomponnets():
              if (F22==0 ):
                   Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
                   value_plot.text = "$$\\begin{aligned} F_1&=" + str(F22) + "\\,\\mathrm{N}\\\\ F_2&=" + str(F11) + "\\,\\mathrm{N} \\end{aligned}$$"
+                  Vector2_source.data = dict(xS=[0],yS=[0],xE=[xE1],yE=[yE1])
+                  V2_label_source.data=dict(x=[],y=[],V=[])
+                  V1_label_source.data=dict(x=[xE1+5],y=[yE1],V=['F2'])
+                  glob_active.data = dict(Active=[True])
+                  show_button.label = 'Hide components' 
+                  V1parallel_line_source.data = dict(x=[],y=[])
+                  V2parallel_line_source.data=dict(x=[],y=[])
+                  
+                  
              elif (F11==0 ):
                   value_plot.text = "$$\\begin{aligned} F_1&=" + str(F22) + "\\,\\mathrm{N}\\\\ F_2&=" + str(F11) + "\\,\\mathrm{N} \\end{aligned}$$"
                   Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+                  Vector3_source.data = dict(xS=[0],yS=[0],xE=[xE2],yE=[yE2])
+                  V2_label_source.data=dict(x=[xE2+5],y=[yE2],V=['F1'])
+                  
+                  V1_label_source.data=dict(x=[],y=[],V=[])
+                  glob_active.data = dict(Active=[True])
+                  show_button.label = 'Hide components' 
+                  V1parallel_line_source.data = dict(x=[],y=[])
+                  V2parallel_line_source.data=dict(x=[],y=[])
              else:
                  value_plot.text = "$$\\begin{aligned} F_1&=" + str(F22) + "\\,\\mathrm{N}\\\\ F_2&=" + str(F11) + "\\,\\mathrm{N} \\end{aligned}$$"
                  Vector2_source.data = dict(xS=[0],yS=[0],xE=[xE1],yE=[yE1])
@@ -175,10 +192,8 @@ def createtwocomponnets():
                  
                  V1_label_source.data=dict(x=[xE1+5],y=[yE1],V=['F2'])
                  V2_label_source.data=dict(x=[xE2+5],y=[yE2],V=['F1'])
-#                 
-    
-                 
-             
+ 
+
                  glob_active.data = dict(Active=[True])
                  show_button.label = 'Hide components' 
      
