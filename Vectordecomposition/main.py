@@ -131,6 +131,8 @@ def createtwocomponnets():
             Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
             V1_label_source.data=dict(x=[],y=[],V=[])
             V2_label_source.data=dict(x=[],y=[],V=[])
+            glob_active.data = dict(Active=[True])
+            show_button.label = 'Hide components'
             
        else:
 #             print (4)
