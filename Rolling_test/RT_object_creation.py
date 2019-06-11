@@ -1,17 +1,14 @@
 from __future__ import division # float division only, like in python 3
-from RT_global_variables import (
-        glob_SphereXLines, glob_SphereYLines,
-        glob_time, g, fig_samples
-        )
+from RT_global_variables import glob_SphereXLines, glob_SphereYLines
+
 
 
 ###############################################################################
 ###                            Sphere functions                             ###
 ###############################################################################
-def createSphere(FIG,sphere_data,sphere_lines_data,values):
+def createSphere(sphere_data,sphere_lines_data,values):
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
-    t_samples      = glob_time["t_samples"]                 # input/
     load_vals = ["SIN", "COS", "TX1", "TY1", "r"]
     SIN, COS, TX1, TY1, r = [values.get(val) for val in load_vals]
     
@@ -35,10 +32,9 @@ def createSphere(FIG,sphere_data,sphere_lines_data,values):
     sphere_lines_data.data=dict(x=[X1, X2],y=[Y1,Y2])
 
 
-def createHollowSphere(FIG,sphere_data,sphere_lines_data,values):
+def createHollowSphere(sphere_data,sphere_lines_data,values):
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] # input/
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
-    t_samples      = glob_time["t_samples"]                 # input/
     load_vals = ["SIN", "COS", "TX1", "TY1", "r", "ri"]
     SIN, COS, TX1, TY1, r, ri = [values.get(val) for val in load_vals]
     
@@ -82,8 +78,7 @@ def createHollowSphere(FIG,sphere_data,sphere_lines_data,values):
 ###############################################################################
 ###                           Cylinder functions                            ###
 ###############################################################################
-def createCylinder(FIG,cylinder_data, cylinder_lines_data,values):
-    t_samples = glob_time["t_samples"] # input/
+def createCylinder(cylinder_data, cylinder_lines_data,values):
     load_vals = ["SIN", "COS", "TX1", "TY1", "r"]
     SIN, COS, TX1, TY1, r = [values.get(val) for val in load_vals]
     
@@ -96,8 +91,7 @@ def createCylinder(FIG,cylinder_data, cylinder_lines_data,values):
         y=[[TY1,TY1+2*r*COS],[TY1+r*(COS+SIN),TY1+r*(COS-SIN)]])
 
 
-def createHollowCylinder(FIG,hollowCylinder_data, hollowCylinder_lines_data,values):
-    t_samples = glob_time["t_samples"] # input/
+def createHollowCylinder(hollowCylinder_data, hollowCylinder_lines_data,values):
     load_vals = ["SIN", "COS", "TX1", "TY1", "r", "ri"]
     SIN, COS, TX1, TY1, r, ri = [values.get(val) for val in load_vals]
     

@@ -70,12 +70,15 @@ def init():
     glob_SphereXLines.data = dict(SphereXLines = [SphereXLines])
     glob_SphereYLines.data = dict(SphereYLines = [SphereYLines])
     # create the objects
-    get_t_samples(0,"Sphere")
-    get_t_samples(1,"Full cylinder")
-    get_t_samples(2,"Hollow cylinder")
-    createSphere        (0,fig_data[0],fig_lines_data[0],fig_values[0])
-    createCylinder      (1,fig_data[1],fig_lines_data[1],fig_values[1])
-    createHollowCylinder(2,fig_data[2],fig_lines_data[2],fig_values[2])
+#    get_t_samples(0,"Sphere")
+#    get_t_samples(1,"Full cylinder")
+#    get_t_samples(2,"Hollow cylinder")
+    get_t_samples(0)
+    get_t_samples(1)
+    get_t_samples(2)
+    createSphere        (fig_data[0],fig_lines_data[0],fig_values[0])
+    createCylinder      (fig_data[1],fig_lines_data[1],fig_values[1])
+    createHollowCylinder(fig_data[2],fig_lines_data[2],fig_values[2])
     
     
 

@@ -5,14 +5,14 @@ import numpy as np
 
 from RT_global_variables import (
         fig_data, fig_lines_data, fig_values,
-        fig_in_use, fig_samples, fig_objects,
+        fig_in_use, fig_objects, fig_samples,
         figure_list,
         time_display, icon_display, icons_collection,
         glob_callback_id, glob_time,
         wall_sources, ramp_sources,
         glob_fun_handles,
         rampLength, rampAddLength,
-        TX0, TY0, t_end, max_samples
+        TX0, TY0, t_end, max_samples, buf
         )
 from RT_buttons import (
         start_button, reset_button, mode_selection,
@@ -38,10 +38,11 @@ from RT_object_movement import (
 ###############################################################################
 # function to change the shape, radius, or mass of the object in figure FIG
 # only indirectly a callback function
-def changeObject(FIG,new_object,r,ri,m):
+def changeObject(FIG,new_object,r,ri):
     # save the new radius and inner radius
     fig_values[FIG]["r"]  = r
     fig_values[FIG]["ri"] = ri
+    # relate the object to the correct figure
     fig_objects[FIG] = new_object
     # save the data concerned in data and line_data
     data      = fig_data[FIG]
@@ -49,21 +50,21 @@ def changeObject(FIG,new_object,r,ri,m):
     vals      = fig_values[FIG]
     # depending on the shape specified, create the object and
     # save the new evolution function in the variable func
-    get_t_samples(FIG,new_object)
+    get_t_samples(FIG)
     #print("DBUG: cO, r", r)
     #print("DBUG: cO, ri", ri)
     #print("DBUG: new object:", new_object)
     if (new_object == "Sphere"):
-        createSphere(FIG,data,line_data,vals)
+        createSphere(data,line_data,vals)
         func=lambda(x):moveSphere(FIG,x,data,line_data,vals)
     elif (new_object == "Hollow cylinder"):
-        createHollowCylinder(FIG,data,line_data,vals)
+        createHollowCylinder(data,line_data,vals)
         func=lambda(x):moveHollowCylinder(FIG,x,data,line_data,vals)
     elif (new_object == "Hollow sphere"):
-        createHollowSphere(FIG,data,line_data,vals)
+        createHollowSphere(data,line_data,vals)
         func=lambda(x):moveHollowSphere(FIG,x,data,line_data,vals)
     else:
-        createCylinder(FIG,data,line_data,vals)
+        createCylinder(data,line_data,vals)
         func=lambda(x):moveCylinder(FIG,x,data,line_data,vals)
     
     # check the availability of each plot (existing object, still running or finished)
@@ -84,29 +85,29 @@ def changeObject(FIG,new_object,r,ri,m):
 ###                      functions to change the shape                      ###
 ###############################################################################
 def changeObject0(attr,old,new):
-    changeObject(0,new,radius_slider0.value,ri_slider0.value,1.0)
+    changeObject(0,new,radius_slider0.value,ri_slider0.value)
 
 def changeObject1(attr,old,new):
-    changeObject(1,new,radius_slider1.value,ri_slider1.value,1.0)
+    changeObject(1,new,radius_slider1.value,ri_slider1.value)
 
 def changeObject2(attr,old,new):
-    changeObject(2,new,radius_slider2.value,ri_slider2.value,1.0)
+    changeObject(2,new,radius_slider2.value,ri_slider2.value)
 
 ###############################################################################
 ###                     functions to change the radius                      ###
 ###############################################################################
 def changeRadius0(attr,old,new):
-    changeObject(0,object_select0.value,new,ri_slider0.value,1.0)
+    changeObject(0,object_select0.value,new,ri_slider0.value)
     ri_slider0.end   = new
     ri_slider0.value = min(ri_slider0.value,new)
 
 def changeRadius1(attr,old,new):
-    changeObject(1,object_select1.value,new,ri_slider1.value,1.0)
+    changeObject(1,object_select1.value,new,ri_slider1.value)
     ri_slider1.end   = new
-    ri_slider1.value = min(ri_slider0.value,new)
+    ri_slider1.value = min(ri_slider1.value,new)
 
 def changeRadius2(attr,old,new):
-    changeObject(2,object_select2.value,new,ri_slider2.value,1.0)
+    changeObject(2,object_select2.value,new,ri_slider2.value)
     ri_slider2.end   = new
     ri_slider2.value = min(ri_slider2.value,new)
 
@@ -114,13 +115,13 @@ def changeRadius2(attr,old,new):
 ###          functions to change the inner radius  / wall thickness         ###
 ###############################################################################
 def changeWall0(attr,old,new):
-    changeObject(0,object_select0.value,radius_slider0.value,new,1.0)
+    changeObject(0,object_select0.value,radius_slider0.value,new)
     
 def changeWall1(attr,old,new):
-    changeObject(1,object_select1.value,radius_slider1.value,new,1.0)
+    changeObject(1,object_select1.value,radius_slider1.value,new)
     
 def changeWall2(attr,old,new):
-    changeObject(2,object_select2.value,radius_slider2.value,new,1.0)
+    changeObject(2,object_select2.value,radius_slider2.value,new)
 
 
 ###############################################################################
@@ -173,9 +174,9 @@ def start():
 ###############################################################################
 def reset():
     glob_time["t"] = 0 #      /output
-    changeObject(0,object_select0.value,radius_slider0.value,ri_slider0.value,1.0)
-    changeObject(1,object_select1.value,radius_slider1.value,ri_slider1.value,1.0)
-    changeObject(2,object_select2.value,radius_slider2.value,ri_slider2.value,1.0)
+    changeObject(0,object_select0.value,radius_slider0.value,ri_slider0.value)
+    changeObject(1,object_select1.value,radius_slider1.value,ri_slider1.value)
+    changeObject(2,object_select2.value,radius_slider2.value,ri_slider2.value)
     disable_all_sliders(False)
     time_display[0].data=dict(x=[],y=[],t=[])
     time_display[1].data=dict(x=[],y=[],t=[])
@@ -201,11 +202,16 @@ def evolve():
     #start()
     glob_time["t"] = t
     
-    # only in special case if boundary check above fail
-    # if this conditions is met, build a buffer like x_coords[i]>=...+buf, buf=1e-6
-    if(t==max_samples):
+    # only in special case if boundary checks below fail
+    # if this condition is met, build a bigger buffer like x_coords[i]>=...-buf, buf=1e-8
+    # set buf in RT_global_variables.py
+    if(t>=max_samples):
         print("DBUG: t:", t)
         print("WARNING: simulation exceeded maximum number of provided samples")
+        print("-- [Possible Fix]: adjust buffer size 'buf' in RT_global_variables.py --")
+        print("DBUG: fig_samples[0]", fig_samples[0][max_samples-3:])
+        print("DBUG: fig_samples[1]", fig_samples[1][max_samples-3:])
+        print("DBUG: fig_samples[2]", fig_samples[2][max_samples-3:])
         start() #equals to stop if it is running
         start_button.disabled = True
         return
@@ -230,8 +236,15 @@ def evolve():
     #ind_y_max = [i for i in range(0,len(y_coords)) if y_coords[i]<TY0]
     # we need to compare to the actual center and not the end of the ramp/plot
     # otherwise the same object with greater radius is "further" than the other 
-    ind_x_max = [i for i in range(0,len(x_coords)) if x_coords[i]>=TX0+fig_values[i]["r"]*fig_values[i]["SIN"]]
-    ind_y_max = [i for i in range(0,len(y_coords)) if y_coords[i]<=TY0+fig_values[i]["r"]*fig_values[i]["COS"]]
+    ind_x_max = [i for i in range(0,len(x_coords)) if x_coords[i]>=TX0+fig_values[i]["r"]*fig_values[i]["SIN"] - buf]
+    ind_y_max = [i for i in range(0,len(y_coords)) if y_coords[i]<=TY0+fig_values[i]["r"]*fig_values[i]["COS"] - buf]
+    
+#    if (t>98):
+#        print("DBUG x_coord", x_coords[1])
+#        print("DBUG calc cond", TX0+fig_values[1]["r"]*fig_values[1]["SIN"])
+#        print("DBUG t/f", x_coords[1]>=TX0+fig_values[1]["r"]*fig_values[1]["SIN"])
+#        print("DBUG buf", TX0+fig_values[1]["r"]*fig_values[1]["SIN"] - buf)
+#        print("DBUG t/f buf", x_coords[1]>=TX0+fig_values[1]["r"]*fig_values[1]["SIN"] - buf)
     
     
     # find and sort unique indices to avoid stopping the same plot twice

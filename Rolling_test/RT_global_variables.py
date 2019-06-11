@@ -10,6 +10,7 @@ alpha_max     = 25.0
 rampLength    = 50
 rampAddLength = 5  # excess length for better visualization
 max_samples   = 100
+buf           = 1e-10 # buffer size for stopping criterion
 # create variables
 alpha         = radians(20)
 t             = 0
