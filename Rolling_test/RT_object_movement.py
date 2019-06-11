@@ -12,19 +12,14 @@ def moveSphere(FIG,t,sphere_data,sphere_lines_data,values):
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] # input/
     load_vals = ["alpha", "SIN", "COS", "TX1", "TY1", "r"]
     alpha, SIN, COS, TX1, TY1, r = [values.get(val) for val in load_vals]
+    
     # find the displacement of the point touching the ramp
-    #displacement = g*SIN*t*t*1.25
-    # actual formula (?): # displacement = g*SIN*t*t*5/14   ## 5/14 --> 5/4 --> 1.25
-    #displacement = g*SIN*t*t*5./14 #- r   # -r due to its extension
     displacement = fig_samples[FIG][t]
     # find the rotation of the sphere
-    rotation = -displacement/r
+    rotation     = -displacement/r
     # find the new centre of the sphere
     newX = TX1 + displacement*COS + r*SIN
     newY = TY1 - displacement*SIN + r*COS
-    
-    #newX = TX1 + r*SIN + displacement*COS
-    #          lx1
     
     # update the drawing
     sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1])
@@ -46,18 +41,10 @@ def moveHollowSphere(FIG,t,sphere_data,sphere_lines_data,values):
     load_vals = ["alpha", "SIN", "COS", "TX1", "TY1", "r", "ri"]
     alpha, SIN, COS, TX1, TY1, r, ri = [values.get(val) for val in load_vals]
     
-    #temp = r*g*SIN*t*t*1.25*(r**3-ri**3)/(r**5-ri**5)
-    # actual formula (?): # temp = 5/14*r*g*SIN*t*t*(r**3-ri**3)/(r**5-ri**5)   ## 5/14 --> 5/4 --> 1.25
-    #temp = 5./14*r*g*SIN*t*t*(r**3-ri**3)/(r**5-ri**5)
-    # find the rotation of the sphere
-    #rotation = -temp
     # find the displacement of the point touching the ramp
-    #displacement = temp*r #- r   # -r due to its extension
-    
     displacement = fig_samples[FIG][t]
     # find the rotation of the sphere
-    rotation = -displacement/r
-    
+    rotation     = -displacement/r
     
     # find the new centre of the sphere
     newX = TX1 + displacement*COS + r*SIN
@@ -75,24 +62,17 @@ def moveHollowSphere(FIG,t,sphere_data,sphere_lines_data,values):
     return (newX,newY)
 
 
-
 ###############################################################################
 ###                           Cylinder functions                            ###
 ###############################################################################
 def moveCylinder(FIG,t,cylinder_data, cylinder_lines_data,values):
     load_vals = ["alpha", "SIN", "COS", "TX1", "TY1", "r"]
     alpha, SIN, COS, TX1, TY1, r = [values.get(val) for val in load_vals]
+    
     # find the displacement of the point touching the ramp
-    #displacement = g*SIN*t*t
-    # actual formula (?): # displacement = g*SIN*t*t*1/3
-    #displacement = (g*SIN*t*t)/3. #- r   # -r due to its extension
-    # find the rotation of the cylinder
-    #rotation = -displacement/r
-    
     displacement = fig_samples[FIG][t]
-    # find the rotation of the sphere
-    rotation = -displacement/r
-    
+    # find the rotation of the cylinder
+    rotation     = -displacement/r
     
     # find the new centre of the cylinder
     newX      = TX1 + displacement*COS + r*SIN
@@ -112,19 +92,11 @@ def moveHollowCylinder(FIG,t,hollowCylinder_data,hollowCylinder_lines_data,value
     load_vals = ["alpha", "SIN", "COS", "TX1", "TY1", "r", "ri"]
     alpha, SIN, COS, TX1, TY1, r, ri = [values.get(val) for val in load_vals]
     
-    #temp = r*g*SIN*t*t/(r*r+ri*ri)
-    # actual formula (?): # temp = 1*r*g*SIN*t*t/(3*r*r+ri*ri)
-    #temp = r*g*SIN*t*t/(3.0*r*r+ri*ri)
-    
-    
-    displacement = fig_samples[FIG][t]
-    # find the rotation of the sphere
-    rotation = -displacement/r
-
-    # find the rotation of the cylinder
-    #rotation = -temp
     # find the displacement of the point touching the ramp
-    #displacement = r*temp #- r   # -r due to its extension
+    displacement = fig_samples[FIG][t]
+    # find the rotation of the cylinder
+    rotation     = -displacement/r
+    
     # constants used multiple times calculated in advance to reduce computation time
     cosAR      = cos(alpha-rotation)
     sinAR      = sin(alpha-rotation)

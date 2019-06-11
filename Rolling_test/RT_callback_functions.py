@@ -5,7 +5,7 @@ import numpy as np
 
 from RT_global_variables import (
         fig_data, fig_lines_data, fig_values,
-        fig_in_use, fig_objects, fig_samples,
+        fig_in_use, fig_objects,
         figure_list,
         time_display, icon_display, icons_collection,
         glob_callback_id, glob_time,
@@ -36,7 +36,7 @@ from RT_object_movement import (
 ###############################################################################
 ###         main function for changing the appearance of the plots          ###
 ###############################################################################
-# function to change the shape, radius, or mass of the object in figure FIG
+# function to change the shape, radius or inner radius of the object in figure FIG
 # only indirectly a callback function
 def changeObject(FIG,new_object,r,ri):
     # save the new radius and inner radius
@@ -48,12 +48,12 @@ def changeObject(FIG,new_object,r,ri):
     data      = fig_data[FIG]
     line_data = fig_lines_data[FIG]
     vals      = fig_values[FIG]
+    
+    # update the samples
+    get_t_samples(FIG)
+    
     # depending on the shape specified, create the object and
     # save the new evolution function in the variable func
-    get_t_samples(FIG)
-    #print("DBUG: cO, r", r)
-    #print("DBUG: cO, ri", ri)
-    #print("DBUG: new object:", new_object)
     if (new_object == "Sphere"):
         createSphere(data,line_data,vals)
         func=lambda(x):moveSphere(FIG,x,data,line_data,vals)
@@ -70,11 +70,6 @@ def changeObject(FIG,new_object,r,ri):
     # check the availability of each plot (existing object, still running or finished)
     check_availability()
     
-    #print("DBUG: fig_samples[0]", fig_samples[0][max_samples-3:])
-    #print("DBUG: fig_samples[1]", fig_samples[1][max_samples-3:])
-#    print("DBUG: fig_samples[2]", fig_samples[2])
-#    print("-------")
-
     # save the evolution function to the appropriate function handle
     glob_fun_handles[FIG] = func
     figure_list[FIG].title.text=new_object
@@ -122,7 +117,6 @@ def changeWall1(attr,old,new):
     
 def changeWall2(attr,old,new):
     changeObject(2,object_select2.value,radius_slider2.value,new)
-
 
 ###############################################################################
 ###                      slider function for the angle                      ###
@@ -185,10 +179,6 @@ def reset():
     icon_display[1].data=dict(x=[],y=[],img=[])
     icon_display[2].data=dict(x=[],y=[],img=[])
     icons_collection[0] = icons_collection[3]
-    print("DBUG: icon[0]:", icons_collection[0])
-    print("DBUG: icon[1]:", icons_collection[1])
-    print("DBUG: icon[2]:", icons_collection[2])
-    print("-----------")
     check_availability()
           
 
@@ -197,21 +187,15 @@ def reset():
 ###############################################################################
 def evolve():
     t = glob_time["t"] # input/output
-    #t+=0.05
     t += 1
-    #start()
     glob_time["t"] = t
     
     # only in special case if boundary checks below fail
     # if this condition is met, build a bigger buffer like x_coords[i]>=...-buf, buf=1e-8
     # set buf in RT_global_variables.py
     if(t>=max_samples):
-        print("DBUG: t:", t)
         print("WARNING: simulation exceeded maximum number of provided samples")
         print("-- [Possible Fix]: adjust buffer size 'buf' in RT_global_variables.py --")
-        print("DBUG: fig_samples[0]", fig_samples[0][max_samples-3:])
-        print("DBUG: fig_samples[1]", fig_samples[1][max_samples-3:])
-        print("DBUG: fig_samples[2]", fig_samples[2][max_samples-3:])
         start() #equals to stop if it is running
         start_button.disabled = True
         return
@@ -224,28 +208,11 @@ def evolve():
     
     ## if an object has reached the end of the ramp then stop the simulation
     
-    # get the max value of each dimension
-    #x_max = np.max(x_coords)
-    #y_max = np.max(y_coords)
-    
-    #TX0+fig_values[0]["r"]*fig_values[0]["SIN"]
-    
-    
     # create index arrays to see which plots satisfies the stopping criterion
-    #ind_x_max = [i for i in range(0,len(x_coords)) if x_coords[i]>TX0]
-    #ind_y_max = [i for i in range(0,len(y_coords)) if y_coords[i]<TY0]
     # we need to compare to the actual center and not the end of the ramp/plot
     # otherwise the same object with greater radius is "further" than the other 
     ind_x_max = [i for i in range(0,len(x_coords)) if x_coords[i]>=TX0+fig_values[i]["r"]*fig_values[i]["SIN"] - buf]
     ind_y_max = [i for i in range(0,len(y_coords)) if y_coords[i]<=TY0+fig_values[i]["r"]*fig_values[i]["COS"] - buf]
-    
-#    if (t>98):
-#        print("DBUG x_coord", x_coords[1])
-#        print("DBUG calc cond", TX0+fig_values[1]["r"]*fig_values[1]["SIN"])
-#        print("DBUG t/f", x_coords[1]>=TX0+fig_values[1]["r"]*fig_values[1]["SIN"])
-#        print("DBUG buf", TX0+fig_values[1]["r"]*fig_values[1]["SIN"] - buf)
-#        print("DBUG t/f buf", x_coords[1]>=TX0+fig_values[1]["r"]*fig_values[1]["SIN"] - buf)
-    
     
     # find and sort unique indices to avoid stopping the same plot twice
     max_indices = np.unique(np.concatenate((ind_x_max, ind_y_max)))
@@ -253,92 +220,32 @@ def evolve():
     # convert to int, because numpy sets it to float64 as default
     max_indices = max_indices.astype(int)
     
-    #print("DBUG: max_ind", max_indices)
-    #print("DBUG: max_ind", type(max_indices))
-    if len(max_indices)>0:
-        print("---start---")
-        for i in range(0,len(max_indices)):
-            print("DBUG: max_indices[i]", max_indices[i])
-        print("---end---")
-    
-     # get corresponding end times
+    # get corresponding end times
     t_final = np.array(t_end)[max_indices]
-     # get the winners positions (len(pos) == len(max_indices))
+    # get the winners positions (len(pos) == len(max_indices))
     [t_final,pos] = np.unique(t_final, return_inverse=True)
     assert(len(pos) == len(max_indices))
+    
+    # loop through the plots if multiple simulations fulfill the stopping criterions simultaneously
     for idx, plot_num in enumerate(max_indices):
-        #print("DBUG: plt_num", plot_num)
-        #print("DBUG: plt_num", type(plot_num))
-        #print("DBUG: max_x", x_coords[plot_num])
-        #print("DBUG: max_y", y_coords[plot_num])
         fig_in_use[plot_num] = False
         # change the corresponding CDS to display the time only in this plot
         time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=["%5.3f" % t_end[plot_num] + " s"])
         # show the next icon in all plots that finish simultaneously
         icon_display[plot_num].data=dict(x=[TX0-20],y=[TY0+20],img=[icons_collection[pos[idx]]])
+    # update the order of winner symbols 
     if len(max_indices)>0 :
         icons_collection[0] = icons_collection[3-int(sum(fig_in_use))]
         
-        print("DBUG: fig", fig_in_use)
-        
     # in mode "one" (active==0) the simulation is stopped after one of the objects reached the end of the ramp
     # in mode "all" (active==1) the simulation is stopped after all objects reached the end of the ramp 
-    # mode "one" is selected -> run until one simulation is finished
-    # mode "all" is selected -> run all simulations till the end
-    #if (len(max_indices)>0 and (mode_selection.active==0 or sum(fig_in_use)<=1)):
-    #print("DBUG: max_ind", max_indices)
-    #print("DBUG: fig_in_use", sum(fig_in_use))
     if ((len(max_indices)>0 and mode_selection.active==0) or sum(fig_in_use)<1):
         start() #equals to stop if it is running
-    
-    #ind_x_max = np.argmax(x_coords)
-    #ind_y_max = np.argmax(y_coords)
-#    if (x_max>TX0 or y_max<TY0):
-#        
-#        mx = [i for i in range(0,len(T_Lx)) if T_Lx[i]>4]
-        
-#        # find all indices (number of plot) in case if multiple objects reach the goal simultaneously 
-#        ind_x_max_all = np.argwhere((x_coords == x_max)).flatten()
-#        ind_y_max_all = np.argwhere((y_coords == y_max)).flatten()
-#        
-#        #ind_x_max_all = ind_x_max_all[ind_x_max_all>TX0]
-#        #ind_y_max_all = ind_y_max_all[ind_x_max_all<TY0]
-#        
-#        # find unique indices to avoid testing the same plot twice
-#        max_indices = np.unique(np.concatenate((ind_x_max_all, ind_y_max_all)))
-#        
-#        print("DBUG: max_x", list(ind_x_max_all))
-#        print("DBUG: max_x", x_coords)
-#        print("DBUG: max_y", y_coords)
-#        print("DBUG: max_y", list(ind_x_max_all))
-    
-
-        
-#        for plot_num in max_indices:
-#            fig_in_use[plot_num] = False
-#            # change the corresponding CDS to display the time only in this plot
-#            time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=[str(glob_time["t"])+" s"])
-#            print("DBUG: f_i_u", fig_in_use)
-        
-#        # in mode "one" (active==0) the simulation is stopped after one of the objects reached the end of the ramp
-#        # in mode "all" (active==1) the simulation is stopped after all objects reached the end of the ramp 
-#        #               -> (only one fig in use anymore at ending time, one "True" <==> sum==1))
-#        # mode "one" is selected -> run until one simulation is finished
-#        # mode "all" is selected -> run all simulations till the end
-#        if (mode_selection.active==0 or sum(fig_in_use)<=1):
-#            start() #equals to stop if it is running
-        
-        # get the index (number of the plot) to know which plot finished the simulation
-        #plot_num = ind_x_max if x_coords[ind_x_max]>0 else ind_y_max
-        #fig_in_use[plot_num] = False
-        # change the corresponding CDS to display the time only in this plot
-        #time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=[str(glob_time["t"])+" s"])
     
     # if all simulations have finished, disable the start button
     if (not any(fig_in_use)):
         start_button.disabled = True
     
-
 
 ###############################################################################
 ###                   visability of inner radius sliders                    ###

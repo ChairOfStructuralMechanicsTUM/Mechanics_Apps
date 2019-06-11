@@ -70,18 +70,14 @@ def init():
     glob_SphereXLines.data = dict(SphereXLines = [SphereXLines])
     glob_SphereYLines.data = dict(SphereYLines = [SphereYLines])
     # create the objects
-#    get_t_samples(0,"Sphere")
-#    get_t_samples(1,"Full cylinder")
-#    get_t_samples(2,"Hollow cylinder")
-    get_t_samples(0)
-    get_t_samples(1)
-    get_t_samples(2)
+    get_t_samples(0) # Sphere
+    get_t_samples(1) # Full cylinder
+    get_t_samples(2) # Hollow cylinder
     createSphere        (fig_data[0],fig_lines_data[0],fig_values[0])
     createCylinder      (fig_data[1],fig_lines_data[1],fig_values[1])
     createHollowCylinder(fig_data[2],fig_lines_data[2],fig_values[2])
     
     
-
 
 ###############################################################################
 ###                          general plot settings                          ###
@@ -108,10 +104,6 @@ time_lable0 = LabelSet(x='x', y='y', text='t', source=time_display[0])
 fig0.add_layout(time_lable0)    
 icon0 = ImageURL(url="img", x="x", y="y", w=10, h=10, anchor="center")
 fig0.add_glyph(icon_display[0], icon0)
-#stest = ColumnDataSource(data = dict(img=["Rolling_test/static/images/first.svg"], x=[-20],y=[20]))
-#image1 = ImageURL(url="img", x="x", y="y", w=10, h=10, anchor="center")
-#fig0.add_glyph(stest, image1)
-
 
 
 fig1 = figure(title="Full cylinder",x_range=(XStart,TX0),y_range=(TY0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)

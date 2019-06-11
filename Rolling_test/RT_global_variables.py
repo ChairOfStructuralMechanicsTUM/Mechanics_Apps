@@ -53,13 +53,9 @@ TX2 = TX1
 TY1 = TY0 + SIN*rampLength
 TY2 = TY0
 
-
-
-SphereXLines = [np.array([]),np.array([])]
-SphereYLines = np.array([])
-
-
-# create ColumnDataSources
+###############################################################################
+###                    data sources and global variables                    ###
+###############################################################################
 
 # displacement, distance traveled
 t_end             = [0.0,0.0,0.0]
@@ -67,43 +63,44 @@ fig0_samples      = []
 fig1_samples      = []
 fig2_samples      = []
 
-
+# relate objects to figures
 fig0_object       = "Sphere"
 fig1_object       = "Full cylinder"
 fig2_object       = "Hollow cylinder"
 
-fig_objects       = [fig0_object, fig1_object, fig2_object]
-
-
-
+# plotting data for moving objects
 fig0_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
-fig0_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 fig1_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
-fig1_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 fig2_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
+fig0_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
+fig1_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 fig2_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
+SphereXLines      = [np.array([]),np.array([])]
+SphereYLines      = np.array([])
 
+# values needed for calculations in corresponding plots
 fig0_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS,r=2.0,ri=0.5)
 fig1_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS,r=2.0,ri=0.5)
 fig2_values       = dict(TX1=TX1,TY1=TY1,alpha=alpha,SIN=SIN,COS=COS,r=2.0,ri=1.5)
+
+# plotting data for fixed objects
+ramp_source0      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0]))
+ramp_source1      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0]))
+ramp_source2      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0]))
+wall_source0      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0]))
+wall_source1      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0]))
+wall_source2      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0]))
 
 # put them in a list for easy access in functions
 fig_data          = [fig0_data,fig1_data,fig2_data]
 fig_lines_data    = [fig0_lines_data,fig1_lines_data,fig2_lines_data]
 fig_values        = [fig0_values,fig1_values,fig2_values]
 fig_samples       = [fig0_samples,fig1_samples,fig2_samples]
-
-
-ramp_source0      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0]))
-wall_source0      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0]))
-ramp_source1      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0]))
-wall_source1      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0]))
-ramp_source2      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX0],y=[TY1+rampAddLength*SIN,TY0]))
-wall_source2      = ColumnDataSource(data = dict(x=[TX1-rampAddLength*COS,TX1-rampAddLength*COS],y=[TY1+rampAddLength*SIN,TY0]))
-
+fig_objects       = [fig0_object, fig1_object, fig2_object]
 ramp_sources      = [ramp_source0,ramp_source1,ramp_source2]
 wall_sources      = [wall_source0,wall_source1,wall_source2]
 
+# global variables to stear internal stuff
 time_display      = [ColumnDataSource(data = dict(x=[],y=[],t=[])),
                      ColumnDataSource(data = dict(x=[],y=[],t=[])),
                      ColumnDataSource(data = dict(x=[],y=[],t=[]))]
@@ -111,19 +108,18 @@ fig_in_use        = [True,True,True]  # [True]*len(fig_data)  for more general c
 figure_list       = [None,None,None]
 glob_fun_handles  = [None,None,None]
 
-# global variables
 glob_callback_id  = ColumnDataSource(data = dict(callback_id  = [None]))
 glob_SphereXLines = ColumnDataSource(data = dict(SphereXLines = [SphereXLines]))
 glob_SphereYLines = ColumnDataSource(data = dict(SphereYLines = [SphereYLines]))
 
 glob_time         = dict(t=t, t_samples = np.linspace(0.0,6.0,max_samples))
 
-
 # images/icons
 icon_display      = [ColumnDataSource(data = dict(x=[],y=[],img=[])),
                      ColumnDataSource(data = dict(x=[],y=[],img=[])),
                      ColumnDataSource(data = dict(x=[],y=[],img=[]))]
-# TODO: ../first.svg does not show???
+# bokeh bug?: ../first.svg does not show???
+# user winner.svg for now
 # position 0 is the slot for the next icon to be displayed
 # position 3 is used to reset position 0
 # position 4 and further is not used

@@ -62,9 +62,7 @@ def get_t_end(FIG):
     # calculate the end time when the object hits the end of the ramp
     load_vals = ["SIN", "r", "ri"]
     SIN, r, ri = [fig_values[FIG].get(val) for val in load_vals]
-    #SIN   = fig_values[FIG]["SIN"]
-    #r     = fig_values[FIG]["r"]
-    #ri    = fig_values[FIG]["ri"]
+    
     # ATTENTION: setting ri/r = 0 in case of r==ri is unphysical! 
     # but it won't get shown in the app, the object vanishes
     # however, calculations are expected
@@ -84,7 +82,6 @@ def get_t_end(FIG):
 def get_t_samples(FIG):
     # upate the time samples based on the maximum end time
     get_t_end(FIG)
-    #print("DBUG: t_end", t_end)
     glob_time["t_samples"] = np.linspace(0.0,max(t_end),max_samples, endpoint=True)
     # also update all displacement values
     get_fig_samples()
@@ -99,13 +96,10 @@ def get_fig_samples():
         if (fig_objects[FIG] == "Sphere"):
             fig_samples[FIG] = 5./14*g*SIN*t_samples*t_samples
         elif (fig_objects[FIG] == "Hollow cylinder"):
-            #ratio = ri/r
             z = 3.0 + ratio*ratio
             fig_samples[FIG] =  (g/z)*SIN*t_samples*t_samples
         elif (fig_objects[FIG] == "Hollow sphere"):
-            #ratio = ri/r
-            k = 1.0 + 0.4*(1.0 - ratio**5)/(1.0 - ratio**3)
-            
+            k = 1.0 + 0.4*(1.0 - ratio**5)/(1.0 - ratio**3)            
             fig_samples[FIG] =  0.5*(g/k)*SIN*t_samples*t_samples
         else: # cylinder
             fig_samples[FIG] =  (g/3.0)*SIN*t_samples*t_samples
@@ -125,8 +119,8 @@ def check_availability():
         # concatenate them via sum(.,[])
         data_is_empty[i] = is_empty(sum(fig_data[i].data.values(),[]))
     
-    # simulations can be ended for figures where radius == inner radius
-    # fig_in_use[data_is_empty] = False
+    # simulations can be stopped for figures where radius == inner radius
+    # fig_in_use[data_is_empty] = False # in logical indexing format
     logical_indexing(fig_in_use,data_is_empty,False)
     # the same for the complementary data_is_empty list if we change back the slider
     logical_indexing(fig_in_use,[not i for i in data_is_empty],True)

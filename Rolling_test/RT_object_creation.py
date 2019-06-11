@@ -12,10 +12,6 @@ def createSphere(sphere_data,sphere_lines_data,values):
     load_vals = ["SIN", "COS", "TX1", "TY1", "r"]
     SIN, COS, TX1, TY1, r = [values.get(val) for val in load_vals]
     
-    
-    #fig_samples[FIG] = 5./14*g*SIN*t_samples*t_samples
-    
-    
     # find the centre, knowing that it touches the ramp at (TX1,TY1)
     newX = TX1+r*SIN
     newY = TY1+r*COS
@@ -38,25 +34,11 @@ def createHollowSphere(sphere_data,sphere_lines_data,values):
     load_vals = ["SIN", "COS", "TX1", "TY1", "r", "ri"]
     SIN, COS, TX1, TY1, r, ri = [values.get(val) for val in load_vals]
     
-    #print("DBUG: r", r)
-    #print("DBUG: ri", ri)
     if (abs(r-ri)<1e-5):
         # empty data if radius == inner radius (numerically)
         sphere_data.data       = dict(x=[],y=[],w=[],c=[],a=[])
         sphere_lines_data.data = dict(x=[],y=[])
-        #print("DBUG: hhhhhhhhhhhhhspehre")
     else:
-        
-        #ratio = ri/r
-        #k = 1.0 + 0.4*(1.0 - ratio**5)/(1.0 - ratio**3)
-        
-        #fig_samples[FIG] =  0.5*(g/k)*SIN*t_samples*t_samples
-        #print("enter hs func")
-        #print("DBUG: new samples calc")
-        #print("DBUG: in fig", FIG)
-        #print("DBUG: len samples", len(fig_samples[FIG]))
-        #print("DBUG: len fig_samples", len(fig_samples))
-        #print("exit hs func")
         
         # find the centre, knowing that it touches the ramp at (TX1,TY1)
         newX = TX1+r*SIN
@@ -82,8 +64,6 @@ def createCylinder(cylinder_data, cylinder_lines_data,values):
     load_vals = ["SIN", "COS", "TX1", "TY1", "r"]
     SIN, COS, TX1, TY1, r = [values.get(val) for val in load_vals]
     
-    #fig_samples[FIG] =  (g/3.0)*SIN*t_samples*t_samples
-    
     # draw the cylinder around the centre, knowing that it touches the ramp at (TX1,TY1)
     cylinder_data.data=dict(x=[TX1+r*SIN],y=[TY1+r*COS],w=[2*r],c=["#0065BD"],a=[1])
     cylinder_lines_data.data=dict(x=[[TX1,TX1+2*r*SIN],
@@ -100,10 +80,6 @@ def createHollowCylinder(hollowCylinder_data, hollowCylinder_lines_data,values):
         hollowCylinder_data.data       = dict(x=[],y=[],w=[],c=[],a=[])
         hollowCylinder_lines_data.data = dict(x=[],y=[])
     else:
-        
-        #ratio = ri/r
-        #z = 3.0 + ratio*ratio
-        #fig_samples[FIG] =  (g/z)*SIN*t_samples*t_samples
         
         # draw the cylinder around the centre, knowing that it touches the ramp at (TX1,TY1)
         hollowCylinder_data.data=dict(x=[TX1+r*SIN,TX1+r*SIN],
