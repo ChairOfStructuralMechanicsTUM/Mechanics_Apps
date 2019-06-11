@@ -4,8 +4,8 @@ import numpy as np
 from RT_global_variables import (
         rampLength, g, max_samples,
         t_end, glob_time,
-        fig_data, fig_lines_data, fig_values,
-        fig_in_use,
+        fig_data, fig_lines_data, fig_values, fig_samples,
+        fig_in_use, fig_objects,
         glob_fun_handles
         )
 from RT_buttons import (
@@ -85,6 +85,28 @@ def get_t_samples(FIG,new_object):
     # upate the time samples based on the maximum end time
     get_t_end(FIG,new_object)
     glob_time["t_samples"] = np.linspace(0.0,max(t_end),max_samples, endpoint=True)
+    get_fig_samples() # only if max(t_end) changes -> var t_max_old to avoid call?
+
+
+def get_fig_samples():
+    t_samples = glob_time["t_samples"] # input/
+    load_vals = ["SIN", "r", "ri"]
+    for FIG in range(0,3):
+        SIN, r, ri = [fig_values[FIG].get(val) for val in load_vals]
+        ratio = ri/r if (abs(r-ri)>1e-5) else 0
+        if (fig_objects[FIG] == "Sphere"):
+            fig_samples[FIG] = 5./14*g*SIN*t_samples*t_samples
+        elif (fig_objects[FIG] == "Hollow cylinder"):
+            #ratio = ri/r
+            z = 3.0 + ratio*ratio
+            fig_samples[FIG] =  (g/z)*SIN*t_samples*t_samples
+        elif (fig_objects[FIG] == "Hollow sphere"):
+            #ratio = ri/r
+            k = 1.0 + 0.4*(1.0 - ratio**5)/(1.0 - ratio**3)
+            
+            fig_samples[FIG] =  0.5*(g/k)*SIN*t_samples*t_samples
+        else: # cylinder
+            fig_samples[FIG] =  (g/3.0)*SIN*t_samples*t_samples
 
 
 ###############################################################################

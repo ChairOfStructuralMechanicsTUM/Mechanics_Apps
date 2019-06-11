@@ -5,7 +5,7 @@ import numpy as np
 
 from RT_global_variables import (
         fig_data, fig_lines_data, fig_values,
-        fig_in_use,
+        fig_in_use, fig_samples, fig_objects,
         figure_list,
         time_display, icon_display, icons_collection,
         glob_callback_id, glob_time,
@@ -42,6 +42,7 @@ def changeObject(FIG,new_object,r,ri,m):
     # save the new radius and inner radius
     fig_values[FIG]["r"]  = r
     fig_values[FIG]["ri"] = ri
+    fig_objects[FIG] = new_object
     # save the data concerned in data and line_data
     data      = fig_data[FIG]
     line_data = fig_lines_data[FIG]
@@ -51,6 +52,7 @@ def changeObject(FIG,new_object,r,ri,m):
     get_t_samples(FIG,new_object)
     #print("DBUG: cO, r", r)
     #print("DBUG: cO, ri", ri)
+    #print("DBUG: new object:", new_object)
     if (new_object == "Sphere"):
         createSphere(FIG,data,line_data,vals)
         func=lambda(x):moveSphere(FIG,x,data,line_data,vals)
@@ -66,6 +68,11 @@ def changeObject(FIG,new_object,r,ri,m):
     
     # check the availability of each plot (existing object, still running or finished)
     check_availability()
+    
+    print("DBUG: fig_samples[0]", fig_samples[0][max_samples-3:])
+    print("DBUG: fig_samples[1]", fig_samples[1][max_samples-3:])
+#    print("DBUG: fig_samples[2]", fig_samples[2])
+#    print("-------")
 
     # save the evolution function to the appropriate function handle
     glob_fun_handles[FIG] = func
@@ -177,6 +184,10 @@ def reset():
     icon_display[1].data=dict(x=[],y=[],img=[])
     icon_display[2].data=dict(x=[],y=[],img=[])
     icons_collection[0] = icons_collection[3]
+    print("DBUG: icon[0]:", icons_collection[0])
+    print("DBUG: icon[1]:", icons_collection[1])
+    print("DBUG: icon[2]:", icons_collection[2])
+    print("-----------")
     check_availability()
           
 
@@ -187,7 +198,17 @@ def evolve():
     t = glob_time["t"] # input/output
     #t+=0.05
     t += 1
+    #start()
     glob_time["t"] = t
+    
+    # only in special case if boundary check above fail
+    # if this conditions is met, build a buffer like x_coords[i]>=...+buf, buf=1e-6
+    if(t==max_samples):
+        print("DBUG: t:", t)
+        print("WARNING: simulation exceeded maximum number of provided samples")
+        start() #equals to stop if it is running
+        start_button.disabled = True
+        return
     
     # call all necessary functions
     # get new coordinates of objects which are still running
@@ -228,7 +249,7 @@ def evolve():
         print("---end---")
     
     for plot_num in max_indices:
-        print("DBUG: plt_num", plot_num)
+        #print("DBUG: plt_num", plot_num)
         #print("DBUG: plt_num", type(plot_num))
         #print("DBUG: max_x", x_coords[plot_num])
         #print("DBUG: max_y", y_coords[plot_num])
@@ -240,7 +261,7 @@ def evolve():
     if len(max_indices)>0 :
         icons_collection[0] = icons_collection[3-int(sum(fig_in_use))]
         
-        #print("DBUG: fig", fig_in_use)
+        print("DBUG: fig", fig_in_use)
         
     # in mode "one" (active==0) the simulation is stopped after one of the objects reached the end of the ramp
     # in mode "all" (active==1) the simulation is stopped after all objects reached the end of the ramp 
@@ -299,11 +320,6 @@ def evolve():
     if (not any(fig_in_use)):
         start_button.disabled = True
     
-    # only in special case if boundary check above fail
-    # if this conditions is met, build a buffer like x_coords[i]>=...+buf, buf=1e-6
-    if(t>=max_samples):
-        print("WARNING: simulation exceeded maximum number of provided samples")
-        start() #equals to stop if it is running
 
 
 ###############################################################################

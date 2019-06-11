@@ -67,6 +67,14 @@ fig1_samples      = []
 fig2_samples      = []
 
 
+fig0_object       = "Sphere"
+fig1_object       = "Full cylinder"
+fig2_object       = "Hollow cylinder"
+
+fig_objects       = [fig0_object, fig1_object, fig2_object]
+
+
+
 fig0_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
 fig0_lines_data   = ColumnDataSource(data = dict(x=[],y=[]))
 fig1_data         = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
