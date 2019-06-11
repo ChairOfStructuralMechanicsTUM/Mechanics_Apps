@@ -69,8 +69,8 @@ def changeObject(FIG,new_object,r,ri,m):
     # check the availability of each plot (existing object, still running or finished)
     check_availability()
     
-    print("DBUG: fig_samples[0]", fig_samples[0][max_samples-3:])
-    print("DBUG: fig_samples[1]", fig_samples[1][max_samples-3:])
+    #print("DBUG: fig_samples[0]", fig_samples[0][max_samples-3:])
+    #print("DBUG: fig_samples[1]", fig_samples[1][max_samples-3:])
 #    print("DBUG: fig_samples[2]", fig_samples[2])
 #    print("-------")
 
@@ -234,7 +234,7 @@ def evolve():
     ind_y_max = [i for i in range(0,len(y_coords)) if y_coords[i]<=TY0+fig_values[i]["r"]*fig_values[i]["COS"]]
     
     
-    # find unique indices to avoid stopping the same plot twice
+    # find and sort unique indices to avoid stopping the same plot twice
     max_indices = np.unique(np.concatenate((ind_x_max, ind_y_max)))
     
     # convert to int, because numpy sets it to float64 as default
@@ -248,7 +248,12 @@ def evolve():
             print("DBUG: max_indices[i]", max_indices[i])
         print("---end---")
     
-    for plot_num in max_indices:
+     # get corresponding end times
+    t_final = np.array(t_end)[max_indices]
+     # get the winners positions (len(pos) == len(max_indices))
+    [t_final,pos] = np.unique(t_final, return_inverse=True)
+    assert(len(pos) == len(max_indices))
+    for idx, plot_num in enumerate(max_indices):
         #print("DBUG: plt_num", plot_num)
         #print("DBUG: plt_num", type(plot_num))
         #print("DBUG: max_x", x_coords[plot_num])
@@ -257,7 +262,7 @@ def evolve():
         # change the corresponding CDS to display the time only in this plot
         time_display[plot_num].data=dict(x=[TX0-10],y=[TY0+20],t=["%5.3f" % t_end[plot_num] + " s"])
         # show the next icon in all plots that finish simultaneously
-        icon_display[plot_num].data=dict(x=[TX0-20],y=[TY0+20],img=[icons_collection[0]])
+        icon_display[plot_num].data=dict(x=[TX0-20],y=[TY0+20],img=[icons_collection[pos[idx]]])
     if len(max_indices)>0 :
         icons_collection[0] = icons_collection[3-int(sum(fig_in_use))]
         
