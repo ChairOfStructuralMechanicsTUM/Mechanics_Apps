@@ -178,7 +178,8 @@ def reset():
     icon_display[0].data=dict(x=[],y=[],img=[])
     icon_display[1].data=dict(x=[],y=[],img=[])
     icon_display[2].data=dict(x=[],y=[],img=[])
-    icons_collection[0] = icons_collection[3]
+    icons_collection[:] = np.roll(icons_collection,glob_time["num_rolls"])
+    glob_time["num_rolls"] = 0
     check_availability()
           
 
@@ -235,7 +236,8 @@ def evolve():
         icon_display[plot_num].data=dict(x=[TX0-20],y=[TY0+20],img=[icons_collection[pos[idx]]])
     # update the order of winner symbols 
     if len(max_indices)>0 :
-        icons_collection[0] = icons_collection[3-int(sum(fig_in_use))]
+        glob_time["num_rolls"] += len(t_final)
+        icons_collection[:] = np.roll(icons_collection,-len(t_final))
         
     # in mode "one" (active==0) the simulation is stopped after one of the objects reached the end of the ramp
     # in mode "all" (active==1) the simulation is stopped after all objects reached the end of the ramp 

@@ -112,19 +112,16 @@ glob_callback_id  = ColumnDataSource(data = dict(callback_id  = [None]))
 glob_SphereXLines = ColumnDataSource(data = dict(SphereXLines = [SphereXLines]))
 glob_SphereYLines = ColumnDataSource(data = dict(SphereYLines = [SphereYLines]))
 
-glob_time         = dict(t=t, t_samples = np.linspace(0.0,6.0,max_samples))
+glob_time         = dict(t=t, t_samples = np.linspace(0.0,6.0,max_samples), num_rolls=0)
 
 # images/icons
 icon_display      = [ColumnDataSource(data = dict(x=[],y=[],img=[])),
                      ColumnDataSource(data = dict(x=[],y=[],img=[])),
                      ColumnDataSource(data = dict(x=[],y=[],img=[]))]
-# bokeh bug?: ../first.svg does not show???
-# user winner.svg for now
-# position 0 is the slot for the next icon to be displayed
-# position 3 is used to reset position 0
-# position 4 and further is not used
+### bokeh bug?: ###
+#"Rolling_test/static/images/first.svg" does not show reliably???
+# use winner.svg for now
+###             ###
 icons_collection  = ["Rolling_test/static/images/winner.svg",
                      "Rolling_test/static/images/second.svg",
-                     "Rolling_test/static/images/third.svg",
-                     "Rolling_test/static/images/winner.svg",
-                     "Rolling_test/static/images/first.svg"]
+                     "Rolling_test/static/images/third.svg"]
