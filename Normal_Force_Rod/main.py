@@ -39,12 +39,13 @@ from NFR_buttons import (
         load_position_slide, #load_magnitude_slide,
         radio_button_group, radio_group_left, radio_group_right,
         radio_group_ampl, #radio_group_cross,
-        reset_button, dummy_button
+        reset_button, line_button
         )
 from NFR_callback_functions import (
         change_load, #change_cross_section,
         change_left_support, change_right_support,
         change_load_position, change_amplitude,
+        change_line_visibility,
         reset
         )
 from NFR_helper_functions import(
@@ -60,7 +61,7 @@ from NFR_helper_functions import(
 ## file description (put -also- in Readme)
 # NFR_constants             global constants, default values, images (ext. source)
 # NFR_data_sources          ColumnDataSources needed for this program
-# NFR_buttons               Buttons, Sliders, Radio Buttons (baically input widgets)
+# NFR_buttons               Buttons, Sliders, Radio Buttons (basically input widgets)
 # NFR_callback_functions    inner parts, buttons, sliders (etc.) functionality
 
 
@@ -85,6 +86,8 @@ radio_group_ampl.on_change('active',change_amplitude)
 load_position_slide.on_change('value',change_load_position)
 
 reset_button.on_click(reset)
+
+line_button.on_click(change_line_visibility)
 
 
 
@@ -199,7 +202,7 @@ p_rt4 = Paragraph(text="""Load Amplitude:""")
 
 
 #slider_group = widgetbox(p_loc_slide,p_mag_slide,sup2_loc_slide) # together to close....
-simple_button_group = widgetbox([reset_button, dummy_button])
+simple_button_group = widgetbox([reset_button, line_button])
 
 doc_layout = layout(children=[
         column(description,

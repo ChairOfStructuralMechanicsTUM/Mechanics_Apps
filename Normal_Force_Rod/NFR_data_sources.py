@@ -51,7 +51,7 @@ samplesU  = ColumnDataSource(dict(x=x_samples, y=x_samples))
 
 
 # line roots<->min<->max
-aux_line = ColumnDataSource(data=dict(x=[2,2], y=[-100,100])) # test, see if it works
+aux_line = ColumnDataSource(data=dict(x=[2,2], y=[-100,100]))
 
 # error message window
 error_msg_frame = ColumnDataSource(data=dict(x=[],y=[]))

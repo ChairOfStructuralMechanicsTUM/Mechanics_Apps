@@ -20,7 +20,8 @@ from NFR_buttons import (
         radio_group_left, radio_group_right, #radio_group_cross,
         radio_group_ampl,
         radio_button_group,
-        load_position_slide
+        load_position_slide,
+        line_button
         )
 from NFR_equations import (
         calcNU
@@ -181,7 +182,9 @@ def compute_new_scenario():
     load_type = radio_button_group.active
     L1        = load_position_slide.value
     calcNU(ls_type, rs_type, load_type, L1)
-    move_aux_line()
+    # if the auxiliary line should be shown, the line button shows "Hide line"
+    if line_button.label == "Hide line":
+        move_aux_line()
 
 
 

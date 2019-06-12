@@ -17,11 +17,12 @@ from NFR_buttons import (
         radio_group_left, radio_group_right, #radio_group_cross,
         radio_group_ampl,
         radio_button_group,
-        load_position_slide
+        load_position_slide, 
+        line_button
         )
 from NFR_helper_functions import (
         set_load, set_point_load, set_constant_load, show_error,
-        compute_new_scenario
+        compute_new_scenario, move_aux_line
         )
 
 
@@ -128,7 +129,13 @@ def reset():
     compute_new_scenario()
 
 
-
+def change_line_visibility():
+    if line_button.label == "Show line":
+        move_aux_line()
+        line_button.label = "Hide line"
+    elif line_button.label == "Hide line":
+        aux_line.data = dict(x=[], y=[])
+        line_button.label = "Show line"
 
 
 

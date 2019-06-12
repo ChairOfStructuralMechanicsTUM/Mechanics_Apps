@@ -32,4 +32,4 @@ radio_group_ampl  = RadioGroup(labels=["-1", "+1"], active=1, inline=True) # amp
 
 # Reset Button
 reset_button = Button(label="Reset", button_type="success")
-dummy_button = Button(label="Dummy/Test", button_type="success")
+line_button  = Button(label="Show line", button_type="success")
