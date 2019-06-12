@@ -37,6 +37,8 @@ labels_source = ColumnDataSource(dict(x=[],y=[],name=[]))
 # main_labels_source
 # nomral_lab
 #...
+labels_N      = ColumnDataSource(dict(x=[],y=[],name=[]))
+labels_U      = ColumnDataSource(dict(x=[],y=[],name=[]))
 
 
 # discretized solutions for the plots

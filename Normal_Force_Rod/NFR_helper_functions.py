@@ -12,7 +12,7 @@ from NFR_data_sources import (
         support_source_left, support_source_right,
         force_point_source, constant_load_source, triangular_load_source,
         temperature_source,
-        labels_source,
+        labels_source, labels_N, labels_U,
         aux_line, samplesF,
         error_msg, error_msg_frame
         )
@@ -182,10 +182,43 @@ def compute_new_scenario():
     load_type = radio_button_group.active
     L1        = load_position_slide.value
     calcNU(ls_type, rs_type, load_type, L1)
+    show_special_values()
     # if the auxiliary line should be shown, the line button shows "Hide line"
     if line_button.label == "Hide line":
         move_aux_line()
 
+
+def show_special_values(): #labels
+    # show only for fixed-fixed scenario
+    if (radio_group_left.active == 0 and radio_group_right.active == 0):
+        load_type = radio_button_group.active
+        
+        # for constant and triangular load only for Load Poistion == L
+        if (load_position_slide.value == xr_end):
+            if load_type==1: # constant load
+                labels_N.data = dict(x=[0.0,10.0], y=[2.0,-2.0], name=['N', 'N'])
+                labels_U.data = dict(x=[5.0], y=[10.0], name=['U'])
+            elif load_type==2: # triangular load
+                labels_N.data = dict(x=[0.0,10.0], y=[2.0,-2.0], name=['N', 'N'])
+                labels_U.data = dict(x=[6.0], y=[8.0], name=['U'])
+        
+        # for point load only for Load Position = L/2
+        elif (load_position_slide.value == (xr_end-xr_start)//2):
+            if load_type==0: # point load
+                labels_N.data = dict(x=[0.0,10.0], y=[2.0,-2.0], name=['N', 'N'])
+                labels_U.data = dict(x=[5.0], y=[-5.0], name=['U'])
+        else:
+            labels_N.data = dict(x=[], y=[], name=[])
+            labels_U.data = dict(x=[], y=[], name=[])
+            
+    else:
+        labels_N.data = dict(x=[], y=[], name=[])
+        labels_U.data = dict(x=[], y=[], name=[])
+        #TODO: clear by function 
+
+
+#labels_N.data = dict(x=[0.0,10.0], y=[2.0,2.0], name=['N', 'N'])
+#labels_U.data = dict(x=[5.0], y=[-5.0], name=['U'])
 
 
 

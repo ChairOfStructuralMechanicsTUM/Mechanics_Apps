@@ -30,7 +30,7 @@ from NFR_data_sources import (
         support_source_left, support_source_right,
         force_point_source, constant_load_source, triangular_load_source,
         temperature_source,
-        labels_source,
+        labels_source, labels_N, labels_U,
         samplesF, samplesU,
         aux_line,
         error_msg, error_msg_frame
@@ -164,6 +164,10 @@ plot_normalF.add_glyph(aux_line, aux_line_glyph)
 plot_normalF.line(x='x', y='y', source=samplesF, color="#A2AD00",line_width=2)
 
 
+labels_nF = LabelSet(x='x', y='y', text='name', level='glyph', render_mode='canvas', source=labels_N)
+plot_normalF.add_layout(labels_nF)
+
+
 
 ###### PLOT (DEFORMATION):
 # Define plot
@@ -180,6 +184,10 @@ plot_deform.line(x=[xr_start,xr_end], y=[0, 0], color='black', line_width=2 ,lin
 plot_deform.add_glyph(aux_line, aux_line_glyph)
 
 plot_deform.line(x='x', y='y', source=samplesU, color="#A2AD00",line_width=2)
+
+labels_def = LabelSet(x='x', y='y', text='name', level='glyph', render_mode='canvas', source=labels_U)
+plot_deform.add_layout(labels_def)
+
 
 
 init()
