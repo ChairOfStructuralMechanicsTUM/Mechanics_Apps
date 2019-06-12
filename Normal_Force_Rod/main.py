@@ -33,7 +33,8 @@ from NFR_data_sources import (
         labels_source, labels_N, labels_U,
         samplesF, samplesU,
         aux_line,
-        error_msg, error_msg_frame
+        error_msg, error_msg_frame,
+        temp_pics
         )
 from NFR_buttons import (
         load_position_slide, #load_magnitude_slide,
@@ -134,6 +135,9 @@ temperature_glyph = Patch(x='x', y='y', fill_color="#0065BD", fill_alpha=0.5)
 plot_main.add_glyph(constant_load_source, constant_load_glyph)
 plot_main.add_glyph(triangular_load_source, triangular_load_glyph)
 plot_main.add_glyph(temperature_source, temperature_glyph)
+
+plot_main.add_glyph(temp_pics,ImageURL(url="img", x='x', y='y', w=1.0, h=1.0))
+
 
 #plot_main.line(x='x', y='y', source=aux_line, line_width=2, line_dash=[121], color='gray')
 #move_aux_line()

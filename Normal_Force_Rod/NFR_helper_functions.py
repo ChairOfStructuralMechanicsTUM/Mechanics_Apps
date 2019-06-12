@@ -14,7 +14,8 @@ from NFR_data_sources import (
         temperature_source,
         labels_source, labels_N, labels_U,
         aux_line, samplesF,
-        error_msg, error_msg_frame
+        error_msg, error_msg_frame,
+        temp_pics
         )
 from NFR_buttons import (
         radio_group_left, radio_group_right, #radio_group_cross,
@@ -128,6 +129,13 @@ def set_temperature(load_position):
     clear_point_load()
     clear_constant_load()
     clear_triangular_load()
+    
+    #"Normal_Force_Rod/static/images/snowflake01.svg"
+    xC = [1.2, 4.8, 7.1]
+    yC = [0.0, 0.0, 0.0]
+    temp_pics.data = dict(x=xC, y=yC, img=["Normal_Force_Rod/static/images/snowflake03.svg"]*3)
+    #TODO: find the reason why the pictures don't show...
+    
     
 
 

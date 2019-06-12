@@ -27,6 +27,11 @@ force_point_source     = ColumnDataSource(data=dict(xS=[xr_start-1.0], xE=[xr_st
 constant_load_source   = ColumnDataSource(data=dict(x=[], y=[]))
 triangular_load_source = ColumnDataSource(data=dict(x=[], y=[]))
 temperature_source     = ColumnDataSource(data=dict(x=[], y=[]))
+
+
+temp_pics              = ColumnDataSource(data=dict(x=[], y=[], img=[]))
+
+
 #constant_load_source   = ColumnDataSource(data=dict(x=[xr_start, xr_start, xr_end, xr_end], y=[y_offset+0.2, y_offset+1.2, y_offset+1.2, y_offset+0.2]))
 #triangular_load_source = ColumnDataSource(data=dict(x=[xr_start, xr_start, xr_end], y=[y_offset+0.2, y_offset+1.2, y_offset+0.2]))
 # starting point at lower left of the load
