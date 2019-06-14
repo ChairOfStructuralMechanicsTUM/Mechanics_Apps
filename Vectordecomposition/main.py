@@ -11,7 +11,7 @@ from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, OpenHead, Bu
 from bokeh.io import curdoc
 from numpy import loadtxt
 from os.path import dirname, join, split
-from math import radians, cos, sin, tan, sqrt, atan, pi
+from math import radians, cos, sin, tan, sqrt, atan, pi,degrees
 from bokeh.models.glyphs import Ray
 
 from os.path import dirname, join, split, abspath
@@ -100,12 +100,21 @@ def createtwocomponnets():
      [Active] = glob_active.data["Active"]
      [Vector1] = glob_Vector1.data["val"]
      [theta1 ] = glob_theta1.data["val"]
-     [theta11 ] = glob_theta1line1.data["val"] #perpendicular line theta 2
-     [theta111 ] = glob_theta1line2.data["val"] #horizantal line theta 1
+     [theta11 ] = glob_theta1line1.data["val"] #perpendicular line theta 2 90 Direction 1
+     [theta111 ] = glob_theta1line2.data["val"] #horizantal line theta 1 0 Doretion 2
+     
+#     print(theta11,theta111)
 
      z2=round(theta111/pi*180,0)
      z21=round(theta11/pi*180,0)
-
+#     print(z21,z2)
+#     if ((z2)==90):
+#        
+#         theta111 = radians(91.000001)
+#         glob_theta1line2.data=dict(val=[theta11])
+#     elif (z2==270):
+#         theta111 = radians(271.000001)
+#         glob_theta1line2.data=dict(val=[theta11])
      #Clculate Horizantla component of main vector
      if (Active==True):
 
@@ -138,8 +147,15 @@ def createtwocomponnets():
 #             print (4)
              Rx=Vector1*cos(theta1)
              Ry=Vector1*sin(theta1)
-
+             
      #Form two equations
+             check=degrees(theta111)
+#             print('check',check)
+             if (check==90):
+                 theta111=radians(90.0001)
+             elif(check==270):
+                 theta111=radians(270.0001)
+                 
              a1=cos(theta111)
              b1=sin(theta11)
              a2=sin(theta111)
@@ -148,9 +164,10 @@ def createtwocomponnets():
              F1=(b1-c1)
              Rx1=(Rx/a1)*a2
              Forcecomponent2=(Ry-Rx1)/F1
+#             print(Forcecomponent2)
              Forcecomponent1=(Rx-(Forcecomponent2*b2))/a1
              F22=round(Forcecomponent2,1)
-             
+#             print(Forcecomponent1,Forcecomponent2)
              
              F11=round(Forcecomponent1,1)
             
@@ -159,7 +176,7 @@ def createtwocomponnets():
              xE2=Forcecomponent2*(b2)
              yE2=Forcecomponent2*(b1)
              
-             
+         
              if (F22==0 ):
                   Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
                   value_plot.text = "$$\\begin{aligned} F_1&=" + str(F22) + "\\,\\mathrm{N}\\\\ F_2&=" + str(F11) + "\\,\\mathrm{N} \\end{aligned}$$"
@@ -198,8 +215,8 @@ def createtwocomponnets():
 
                  glob_active.data = dict(Active=[True])
                  show_button.label = 'Hide components' 
-     
-     
+ 
+ 
      
     
 def createtwoarrows():
@@ -218,6 +235,9 @@ def reset():
      glob_theta1.data = dict(val=[radians(45)])
      glob_Vector1.data = dict(val=([70]))
      Vector_source.data = dict(xS=[0], xE=[50], yS=[0],yE=[50])
+     glob_theta1line1.data=dict(val=[radians(90)])
+     glob_theta1line1.data=dict(val=[radians(0)])
+     
      [Active] = glob_active.data["Active"]
      
      if Active == False:
@@ -307,7 +327,7 @@ def changetheta1line1(attr,old,new):
     glob_theta1line1.data=dict(val=[radians(new)])
     [Active] = glob_active.data["Active"]
     
-   
+#    print('Line2',new)
     
     changeline()
     
@@ -321,7 +341,7 @@ def changetheta1line1(attr,old,new):
     
 def changetheta1line2(attr,old,new):
     glob_theta1line2.data=dict(val=[radians(new)])
-
+#    print('Line1',new)
 
     changeline2()
 
