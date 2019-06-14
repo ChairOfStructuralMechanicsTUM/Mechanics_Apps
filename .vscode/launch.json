@@ -69,5 +69,15 @@
             "program": "${file}",
             "console": "externalTerminal"
         }
+
+	{   
+	    "name": "Bokeh App", 
+	    "type": "python", 
+	    "request": "launch", 
+	    "stopOnEntry": false,
+	    "module": "bokeh", 
+	    "args": [ "serve", "--show", "${fileDirname}" ], 
+	    "console": "integratedTerminal",
+	}
     ]
 }
