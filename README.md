@@ -3,7 +3,7 @@ This repository contains the python codes for webbased-visualization for mechani
 It contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Müller, TUM (Technical University of Munich).
 
 ## Overview
-[![bokeh version](https://img.shields.io/badge/mechanic%20apps%7Cbokeh-0.12.16-blue.svg?style=flat)](https://github.com/bokeh/bokeh)  [![Conda fastai version](https://img.shields.io/conda/v/bokeh/bokeh.svg)](https://anaconda.org/bokeh/bokeh)
+[![Conda fastai version](https://img.shields.io/conda/v/bokeh/bokeh.svg)](https://anaconda.org/bokeh/bokeh)
 
 The use of this repository is only suggested for developers. If you are only interested in using the completed apps, please visit the following website: http://www.bm.bgu.tum.de/lehre/interactive-apps/.
 
@@ -73,7 +73,7 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - [ ] 1) Tensile testing/Zugversuch (eb,rr)
 - [ ] 2) Transverse strain/Querdehnung (eb,rr)
 - [ ] 3) Double-supported beam with point load/Balken (ad)
-- [x] 4) Maxwell's reciprocity theorem/Reziprozitaetssatz von Maxwell (ad)
+- [x] 4) Maxwell's reciprocity theorem/Reziprozitaetssatz von Maxwell (ad, me)
 - [x] 5) Buckling/Knickung (ad, me)
 - [ ] 6) Funicular/Seilbahn (br)
 - [ ] 7) Polar moment of inertia/Polares Flaechentraegheitmoments/ ()
@@ -81,8 +81,9 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - [ ] 9) Combined center of mass moment/Zusammenges. Schwerpunktsmoment ()
 - [ ] 10) Maypole/Maibaum ()
 - [x] 11) Vector addition (rem, cfm)
-- [x] 12) Couple-moment (rem, cfm)
+- [ ] 12) Couple-moment (rem, cfm)
 - [ ] 13) Moment is a free vector (rem, cfm)
+- [ ] 14) Balken (ad, sk)
 
 #### Supplementary course/Ergaenzungskurs Technical mechanics (ft, qa, cs):
 - [x] 1) Damped oscillator/Federpendel (eb, qa, ft)
@@ -93,7 +94,7 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - [x] 6) Coriolis force/Drehscheibe-Corioliskraft (eb,ag)
 - [x] 7) Boat with three swimmers/Boot mit drei Schwimmern (ma,ag)
 - [x] 8) Collision/Stoss (ma,ag)
-- [x] 9) Rollercoaster (eb)
+- [ ] 9) Rollercoaster (eb)
 - [x] 10) Stopping distances (eb)
 - [x] 11) Projectiles/Wurfgeschoss (eb)
 - [ ] 12) Rolling Condition/Abrollbedingungen (eb)
@@ -106,8 +107,10 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 
 #### Structural dynamics (mb):
 - [ ] 1) Euler-Bernoulli Vibrations with analytical solutions (me)
-- [ ] 2) 2D cantilever beam (ma, cfm)
-- [x] 3) Seismic example (ma)
+- [ ] 2) 2D cantilever beam (ma, cfm, sk)
+- [x] 3) Seismic three DOF structure (ma)
+- [ ] 4) Shock Response Spectra (rem)
+- [ ] 5) Dynamic seismic three DOF structure (mb, ft)
 
 #### Technical Acoustics II (jf):
 - [x] 1) Diffraction (br)
@@ -115,6 +118,7 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 
 #### Integral transform method (fm, mm):
 - [x] 1) Sampling (br, me)
+- [ ] 2) Wavelet-Transform (kb)
 
 ### Supervisors
 - Francesca Taddei (ft),[@FrancescaTaddei](https://github.com/FrancescaTaddei)

@@ -1,0 +1,5 @@
+# Copy this file and rename it to server_autorun.cmd; then change the path to the Bokeh apps according to your setup
+cd C:\Path\to\Bokeh\apps
+start powershell -ExecutionPolicy Bypass .\bokehrunner.ps1
+start powershell -ExecutionPolicy Bypass .\bokehrunner_math.ps1
+start powershell -ExecutionPolicy Bypass .\bokehrunner_testing.ps1
