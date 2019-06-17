@@ -334,15 +334,15 @@ def param_change(attr,old,new):
     t=np.linspace(-10,10,n)
 
     if (Wavelet_function_id == "Wavelet 1"):
-        y= np.exp(-(((t-b_param.value)/a_param.value)**2)/2) * np.cos(5*((t-b_param.value)/a_param.value))
-        Wavelet_Function_source.data = dict(t=t, y=y)
-        plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
-
-    elif (Wavelet_function_id == "Wavelet 2"):
         y= (t-b_param.value)/a_param.value * np.exp(-((t-b_param.value)/a_param.value)**2)
         Wavelet_Function_source.data = dict(t=t, y=y)
         plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
 
+    elif (Wavelet_function_id == "Wavelet 2"):
+        y= np.exp(-(((t-b_param.value)/a_param.value)**2)/2) * np.cos(5*((t-b_param.value)/a_param.value))
+        Wavelet_Function_source.data = dict(t=t, y=y)
+        plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
+        
 def disable_interactivity(flag):
     """
     This function enables or disables all interactivities of the app (used e.g. during computation)
