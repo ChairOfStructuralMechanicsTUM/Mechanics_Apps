@@ -146,28 +146,23 @@ def createTwoComponents():
          
           if (F22==0 ):
                Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-               value_plot.text = "$$\\begin{aligned} F_1&=" + str(F22) + "\\,\\mathrm{N}\\\\ F_2&=" + str(F11) + "\\,\\mathrm{N} \\end{aligned}$$"
                Vector2_source.data = dict(xS=[0],yS=[0],xE=[xE1],yE=[yE1])
                V2_label_source.data=dict(x=[],y=[],V=[])
                V1_label_source.data=dict(x=[xE1+5],y=[yE1],V=['F2'])
                glob_active.data = dict(Active=[True])
-               show_button.label = 'Hide components' 
                V1parallel_line_source.data = dict(x=[],y=[])
                V2parallel_line_source.data=dict(x=[],y=[])
                
           elif (F11==0 ):
-               value_plot.text = "$$\\begin{aligned} F_1&=" + str(F22) + "\\,\\mathrm{N}\\\\ F_2&=" + str(F11) + "\\,\\mathrm{N} \\end{aligned}$$"
                Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
                Vector3_source.data = dict(xS=[0],yS=[0],xE=[xE2],yE=[yE2])
                V2_label_source.data=dict(x=[xE2+5],y=[yE2],V=['F1'])
                V1_label_source.data=dict(x=[],y=[],V=[])
                glob_active.data = dict(Active=[True])
-               show_button.label = 'Hide components' 
                V1parallel_line_source.data = dict(x=[],y=[])
                V2parallel_line_source.data=dict(x=[],y=[])
 
           else:
-               value_plot.text = "$$\\begin{aligned} F_1&=" + str(F22) + "\\,\\mathrm{N}\\\\ F_2&=" + str(F11) + "\\,\\mathrm{N} \\end{aligned}$$"
                Vector2_source.data = dict(xS=[0],yS=[0],xE=[xE1],yE=[yE1])
                Vector3_source.data = dict(xS=[0],yS=[0],xE=[xE2],yE=[yE2])
                V1parallel_line_source.data = dict(x=[xE2,Rx],y=[yE2,Ry])
@@ -175,7 +170,9 @@ def createTwoComponents():
                V1_label_source.data=dict(x=[xE1+5],y=[yE1],V=['F2'])
                V2_label_source.data=dict(x=[xE2+5],y=[yE2],V=['F1'])
                glob_active.data = dict(Active=[True])
-               show_button.label = 'Hide components'
+
+          show_button.label = 'Hide components'
+          value_plot.text = "$$\\begin{aligned} |F_1|&=" + str(F22) + "\\,\\mathrm{N}\\\\ |F_2|&=" + str(F11) + "\\,\\mathrm{N} \\end{aligned}$$"
     
 def createTwoArrows():
     [Vector1] = glob_Vector1.data["val"]
@@ -298,9 +295,9 @@ def changeVectorValue(attr,old,new):
 
 AngleVector1Slider= LatexSlider(title='\\theta=', value_unit='^{\\circ}', value=45.0, start=0.0, end=360.0, step=5)
 AngleVector1Slider.on_change('value',changeTheta1)
-LineVector1Slider= LatexSlider(title="\\text {Direction 1}", value_unit='^{\\circ}', value=90.0, start=0.0, end=360.0, step=5)
+LineVector1Slider= LatexSlider(title="\\text {Direction 1: } \\alpha_1=", value_unit='^{\\circ}', value=90.0, start=0.0, end=360.0, step=5)
 LineVector1Slider.on_change('value',changeTheta1Line1)
-LineVector2Slider= LatexSlider(title="\\text {Direction 2}", value_unit='^{\\circ}', value=0.0, start=0.0, end=360.0, step=5)
+LineVector2Slider= LatexSlider(title="\\text {Direction 2: } \\alpha_2=", value_unit='^{\\circ}', value=0.0, start=0.0, end=360.0, step=5)
 LineVector2Slider.on_change('value',changeTheta1Line2)     
 
 Vector1Slider = LatexSlider(title="|F|=",value=70,start=0,end=100,step=5)
