@@ -19,12 +19,14 @@ from latex_support import LatexLabelSet, LatexDiv
 ###                            inner app imports                            ###
 ###############################################################################
 from RT_global_variables import (
+        #glob_vars,
         glob_SphereXLines, glob_SphereYLines,
-        fig_data, fig_lines_data, fig_values,
+        #fig_data, fig_lines_data, 
+        fig_values,
         alpha, alpha_max,
         rampLength, maxR,
-        ramp_sources, wall_sources,
-        time_display, icon_display,
+        #ramp_sources, wall_sources,
+        #time_display, icon_display,
         figure_list,
         TX0, TY0
         )
@@ -32,22 +34,28 @@ from RT_object_creation import (
         createSphere,
         createCylinder, createHollowCylinder
         )
-from RT_buttons import (
-        start_button, reset_button, mode_selection,
-        object_select0, object_select1, object_select2,
-        radius_slider0, radius_slider1, radius_slider2,
-        ri_slider0, ri_slider1, ri_slider2,
-        alpha_slider0, alpha_slider1, alpha_slider2
-        )
+#from RT_buttons import (
+#        start_button, reset_button, mode_selection,
+#        object_select0, object_select1, object_select2,
+#        radius_slider0, radius_slider1, radius_slider2,
+#        ri_slider0, ri_slider1, ri_slider2,
+#        alpha_slider0, alpha_slider1, alpha_slider2
+#        )
 from RT_callback_functions import (
-        start, reset,
-        changeObject0, changeObject1, changeObject2, 
-        changeRadius0, changeRadius1, changeRadius2, 
-        changeWall0, changeWall1, changeWall2,
-        changeAlpha0, changeAlpha1, changeAlpha2,
-        object_select_JS
+        all_callback_fcts
+#        start, reset,
+#        changeObject0, changeObject1, changeObject2, 
+#        changeRadius0, changeRadius1, changeRadius2, 
+#        changeWall0, changeWall1, changeWall2,
+#        changeAlpha0, changeAlpha1, changeAlpha2,
+#        object_select_JS
         )
-from RT_helper_functions import get_t_samples
+#from RT_helper_functions import get_t_samples
+
+
+
+my_callback_fcts = all_callback_fcts()
+
 
 
 ###############################################################################
@@ -70,13 +78,12 @@ def init():
     glob_SphereXLines.data = dict(SphereXLines = [SphereXLines])
     glob_SphereYLines.data = dict(SphereYLines = [SphereYLines])
     # create the objects
-    get_t_samples(0) # Sphere
-    get_t_samples(1) # Full cylinder
-    get_t_samples(2) # Hollow cylinder
-    createSphere        (fig_data[0],fig_lines_data[0],fig_values[0])
-    createCylinder      (fig_data[1],fig_lines_data[1],fig_values[1])
-    createHollowCylinder(fig_data[2],fig_lines_data[2],fig_values[2])
-    
+    my_callback_fcts.get_t_samples(0) # Sphere
+    my_callback_fcts.get_t_samples(1) # Full cylinder
+    my_callback_fcts.get_t_samples(2) # Hollow cylinder
+    createSphere        (my_callback_fcts.my_sources.fig_data[0],my_callback_fcts.my_sources.fig_lines_data[0],fig_values[0])
+    createCylinder      (my_callback_fcts.my_sources.fig_data[1],my_callback_fcts.my_sources.fig_lines_data[1],fig_values[1])
+    createHollowCylinder(my_callback_fcts.my_sources.fig_data[2],my_callback_fcts.my_sources.fig_lines_data[2],fig_values[2])
     
 
 ###############################################################################
@@ -94,44 +101,44 @@ Width  = 500
 
 fig0 = figure(title="Sphere",x_range=(XStart,TX0),y_range=(TY0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)
 fig0.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
-    line_color="#003359",line_width=3,source=fig_data[0])
-fig0.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig_lines_data[0])
-fig0.line(x='x',y='y',color="black",line_width=2,source=ramp_sources[0])
-fig0.line(x='x',y='y',color="black",line_width=2,source=wall_sources[0])
+    line_color="#003359",line_width=3,source=my_callback_fcts.my_sources.fig_data[0])
+fig0.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=my_callback_fcts.my_sources.fig_lines_data[0])
+fig0.line(x='x',y='y',color="black",line_width=2,source=my_callback_fcts.my_sources.ramp_sources[0])
+fig0.line(x='x',y='y',color="black",line_width=2,source=my_callback_fcts.my_sources.wall_sources[0])
 fig0.axis.visible     = False
 fig0.toolbar_location = None
-time_lable0 = LabelSet(x='x', y='y', text='t', source=time_display[0])
+time_lable0 = LabelSet(x='x', y='y', text='t', source=my_callback_fcts.my_sources.time_display[0])
 fig0.add_layout(time_lable0)    
 icon0 = ImageURL(url="img", x="x", y="y", w=10, h=10, anchor="center")
-fig0.add_glyph(icon_display[0], icon0)
+fig0.add_glyph(my_callback_fcts.my_sources.icon_display[0], icon0)
 
 
 fig1 = figure(title="Full cylinder",x_range=(XStart,TX0),y_range=(TY0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)
 fig1.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
-    line_color="#003359",line_width=3,source=fig_data[1])
-fig1.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig_lines_data[1])
-fig1.line(x='x',y='y',color="black",line_width=2,source=ramp_sources[1])
-fig1.line(x='x',y='y',color="black",line_width=2,source=wall_sources[1])
+    line_color="#003359",line_width=3,source=my_callback_fcts.my_sources.fig_data[1])
+fig1.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=my_callback_fcts.my_sources.fig_lines_data[1])
+fig1.line(x='x',y='y',color="black",line_width=2,source=my_callback_fcts.my_sources.ramp_sources[1])
+fig1.line(x='x',y='y',color="black",line_width=2,source=my_callback_fcts.my_sources.wall_sources[1])
 fig1.axis.visible     = False
 fig1.toolbar_location = None
-time_lable1 = LabelSet(x='x', y='y', text='t', source=time_display[1])
+time_lable1 = LabelSet(x='x', y='y', text='t', source=my_callback_fcts.my_sources.time_display[1])
 fig1.add_layout(time_lable1)
 icon1 = ImageURL(url="img", x="x", y="y", w=10, h=10, anchor="center")
-fig1.add_glyph(icon_display[1], icon1)
+fig1.add_glyph(my_callback_fcts.my_sources.icon_display[1], icon1)
 
 
 fig2 = figure(title="Hollow cylinder",x_range=(XStart,TX0),y_range=(TY0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)
 fig2.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
-    line_color="#003359",line_width=3,source=fig_data[2])
-fig2.multi_line(xs='x',ys='y',color="#003359",line_width=3,source=fig_lines_data[2])
-fig2.line(x='x',y='y',color="black",line_width=2,source=ramp_sources[2])
-fig2.line(x='x',y='y',color="black",line_width=2,source=wall_sources[2])
+    line_color="#003359",line_width=3,source=my_callback_fcts.my_sources.fig_data[2])
+fig2.multi_line(xs='x',ys='y',color="#003359",line_width=3,source=my_callback_fcts.my_sources.fig_lines_data[2])
+fig2.line(x='x',y='y',color="black",line_width=2,source=my_callback_fcts.my_sources.ramp_sources[2])
+fig2.line(x='x',y='y',color="black",line_width=2,source=my_callback_fcts.my_sources.wall_sources[2])
 fig2.axis.visible     = False
 fig2.toolbar_location = None
-time_lable2 = LabelSet(x='x', y='y', text='t', source=time_display[2])
+time_lable2 = LabelSet(x='x', y='y', text='t', source=my_callback_fcts.my_sources.time_display[2])
 fig2.add_layout(time_lable2)
 icon2 = ImageURL(url="img", x="x", y="y", w=10, h=10, anchor="center")
-fig2.add_glyph(icon_display[2], icon2)
+fig2.add_glyph(my_callback_fcts.my_sources.icon_display[2], icon2)
 
 ###############################################################################
 ###                           annotation figures                            ###
@@ -206,39 +213,39 @@ figure_list[2] = fig2
 ###############################################################################
 ###                           selection callbacks                           ###
 ###############################################################################
-object_select0.on_change('value',changeObject0)
-object_select1.on_change('value',changeObject1)
-object_select2.on_change('value',changeObject2)
+my_callback_fcts.my_sources.object_select0.on_change('value',my_callback_fcts.changeObject0)
+my_callback_fcts.my_sources.object_select1.on_change('value',my_callback_fcts.changeObject1)
+my_callback_fcts.my_sources.object_select2.on_change('value',my_callback_fcts.changeObject2)
 
 # stears visability of inner radius sliders (show only for hollow objects)
-object_select0.callback = CustomJS(code=object_select_JS)
-object_select1.callback = CustomJS(code=object_select_JS)
-object_select2.callback = CustomJS(code=object_select_JS)
+#object_select0.callback = CustomJS(code=my_callback_fcts.object_select_JS)
+#object_select1.callback = CustomJS(code=my_callback_fcts.object_select_JS)
+#object_select2.callback = CustomJS(code=my_callback_fcts.object_select_JS)
 
 ###############################################################################
 ###                            slider callbacks                             ###
 ###############################################################################
 # radius
-radius_slider0.on_change('value',changeRadius0)
-radius_slider1.on_change('value',changeRadius1)
-radius_slider2.on_change('value',changeRadius2)
+my_callback_fcts.my_sources.radius_slider0.on_change('value',my_callback_fcts.changeRadius0)
+my_callback_fcts.my_sources.radius_slider1.on_change('value',my_callback_fcts.changeRadius1)
+my_callback_fcts.my_sources.radius_slider2.on_change('value',my_callback_fcts.changeRadius2)
 
 # inner radius
-ri_slider0.on_change('value',changeWall0)
-ri_slider1.on_change('value',changeWall1)
-ri_slider2.on_change('value',changeWall2)
+my_callback_fcts.my_sources.ri_slider0.on_change('value',my_callback_fcts.changeWall0)
+my_callback_fcts.my_sources.ri_slider1.on_change('value',my_callback_fcts.changeWall1)
+my_callback_fcts.my_sources.ri_slider2.on_change('value',my_callback_fcts.changeWall2)
 
 # angle of the ramp
-alpha_slider0.on_change('value',changeAlpha0)
-alpha_slider1.on_change('value',changeAlpha1)
-alpha_slider2.on_change('value',changeAlpha2)
+my_callback_fcts.my_sources.alpha_slider0.on_change('value',my_callback_fcts.changeAlpha0)
+my_callback_fcts.my_sources.alpha_slider1.on_change('value',my_callback_fcts.changeAlpha1)
+my_callback_fcts.my_sources.alpha_slider2.on_change('value',my_callback_fcts.changeAlpha2)
 
 
 ###############################################################################
 ###                            button callbacks                             ###
 ###############################################################################
-start_button.on_click(start)
-reset_button.on_click(reset)
+my_callback_fcts.my_sources.start_button.on_click(my_callback_fcts.start)
+my_callback_fcts.my_sources.reset_button.on_click(my_callback_fcts.reset)
 
 
 ###############################################################################
@@ -256,13 +263,13 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 
 ## Send to window
 curdoc().add_root(column(description,row(column(
-    row(fig0,column(object_select0,radius_slider0,ri_slider0,alpha_slider0)),
-    row(fig1,column(object_select1,radius_slider1,ri_slider1,alpha_slider1)),
-    row(fig2,column(object_select2,radius_slider2,ri_slider2,alpha_slider2))),
+    row(fig0,column(my_callback_fcts.my_sources.object_select0,my_callback_fcts.my_sources.radius_slider0,my_callback_fcts.my_sources.ri_slider0,my_callback_fcts.my_sources.alpha_slider0)),
+    row(fig1,column(my_callback_fcts.my_sources.object_select1,my_callback_fcts.my_sources.radius_slider1,my_callback_fcts.my_sources.ri_slider1,my_callback_fcts.my_sources.alpha_slider1)),
+    row(fig2,column(my_callback_fcts.my_sources.object_select2,my_callback_fcts.my_sources.radius_slider2,my_callback_fcts.my_sources.ri_slider2,my_callback_fcts.my_sources.alpha_slider2))),
     Spacer(width=100),
-    column(start_button,
-           reset_button,
-           row(widgetbox(p_mode,width=120),mode_selection),
+    column(my_callback_fcts.my_sources.start_button,
+           my_callback_fcts.my_sources.reset_button,
+           row(widgetbox(p_mode,width=120),my_callback_fcts.my_sources.mode_selection),
            Spacer(height=80),
            fig3,
            Spacer(height=50),
