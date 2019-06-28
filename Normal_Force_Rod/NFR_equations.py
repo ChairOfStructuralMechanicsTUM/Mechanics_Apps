@@ -2,7 +2,8 @@ from __future__ import division # float division only, like in python 3
 import numpy as np
 
 from NFR_constants import(
-        F, L, E, A, sigma, p0, T, alpha_T
+        F, L, E, A, sigma, p0, T, alpha_T,
+        xr_end, sol_reso
         )
 from NFR_data_sources import (
         x_samples ,samplesF, samplesU, global_variables
@@ -104,7 +105,8 @@ def calcN_c_ff(L1):
 def calcU_c_ff(L1):
     load_vals = ["x1", "x2"]
     x1, x2 = [local_samples.get(val) for val in load_vals]
-    y1 =  (1./(E*A))*(global_variables["ampl"]*p0*L1*(1.0-0.5*L1/L)*x1 - 0.5*global_variables["ampl"]*p0*x1*x1)
+    #y1 =  (1./(E*A))*(global_variables["ampl"]*p0*L1*(1.0-0.5*L1/L)*x1 - 0.5*global_variables["ampl"]*p0*x1*x1)
+    y1 =  -global_variables["ampl"]*p0*x1*x1/(2.0*E*A) + global_variables["ampl"]*p0*L1/(E*A)*(1.0-L1/(2.0*L))*x1
     y2 = global_variables["ampl"]*p0*L1*0.5*(L1/(L*E*A)) * ((L-L1) - x2)
     return (y1,y2)
 
@@ -191,8 +193,16 @@ def calcU_tri_sf(L1):
     load_vals = ["x1", "x2"]
     x1, x2 = [local_samples.get(val) for val in load_vals]
     #y1 = p0/(E*A) * (0.5*L*L1 - L1*L1/3.0 - x1*p0/(sigma*L1)*x1*x1)
-    y1 = global_variables["ampl"]*p0/(E*A*6.0*L1) * (x1*x1*x1 - 3.0*x1*x1 + 3.0*L - L1)
-    y2 = global_variables["ampl"]*p0*0.5*L1/(E*A) * ((L-L1) - x2)
+    
+    y1 = -global_variables["ampl"]*p0*x1*x1/(2.0*E*A) + global_variables["ampl"]*p0*x1*x1*x1/(6.0*E*A*L1) + global_variables["ampl"]*p0*L1/(2.0*E*A)*(L-L1/3.0)
+    y2 = global_variables["ampl"]*p0*L1/(2.0*E*A)*(L-L1-x2)
+    
+    #y1 = global_variables["ampl"]*p0/(E*A*6.0*L1) * (x1*x1*x1 - 3.0*x1*x1*L1 + 3.0*L - L1)
+    #y2 = global_variables["ampl"]*p0*0.5*L1/(E*A) * ((L-L1) - x2)
+    print("DBUG: comp grenze")
+    print(-global_variables["ampl"]*p0*L1*L1/(2.0*E*A) + global_variables["ampl"]*p0*L1*L1*L1/(6.0*E*A*L1) + global_variables["ampl"]*p0*L1/(2.0*E*A)*(L-L1/3.0))
+    print( global_variables["ampl"]*p0*L1/(2.0*E*A)*(L-L1-0.0))
+    print("--------")
     return (y1,y2)
 
 
@@ -213,8 +223,9 @@ def calcN_temp_ff(L1):
 def calcU_temp_ff(L1):
     load_vals = ["x1", "x2"]
     x1, x2 = [local_samples.get(val) for val in load_vals]
-    y1 = alpha_T*global_variables["ampl"]*T*x1 * (1.0 - (L1/L))
+    y1 = alpha_T*global_variables["ampl"]*T*x1 * (1.0 - (L1/L)) 
     y2 = alpha_T*global_variables["ampl"]*T*(L1/L) * ((L-L1) - x2)
+    #y2 = alpha_T*global_variables["ampl"]*T*L1 * (1.0 - L1/L - x2/L)
     return (y1,y2)
 
 
@@ -305,6 +316,9 @@ def calcNU(ls_type, rs_type, load_type, L1):
     # output for file-global function variables
     local_samples['x1'] = x1 # samples from [0,L1]
     local_samples['x2'] = x2 # samples from [L1,L]
+    #print("DEBUG: first x2:",x2)
+    local_samples['x2'] = np.linspace(0,xr_end-L1,sol_reso-len(x1))
+    #print("DEBUG: second x2:",x2)
     local_samples['nsx1'] = len(x1) # number of samples in x1 array
     local_samples['nsx2'] = len(x2) # number of samples in x2 array
     #print("DBUG: len x1, x2", len(x1), len(x2))
