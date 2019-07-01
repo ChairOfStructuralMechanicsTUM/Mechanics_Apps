@@ -91,25 +91,21 @@ fig_in_use        = [True,True,True]  # [True]*number_of_plots)  for more genera
 figure_list       = [None,None,None]
 glob_fun_handles  = [None,None,None]
 
-# interal CDS, could be replaced by normal dicts
+glob_time         = dict(t=t, t_samples = np.linspace(0.0,6.0,max_samples), num_rolls=0)
 
+# internal CDS, could be replaced by normal dicts
 class fake_CDS:
     def __init__(self):
         self.data = dict()
 
-glob_callback_id = fake_CDS()
+glob_callback_id  = fake_CDS()
 glob_SphereXLines = fake_CDS()
 glob_SphereYLines = fake_CDS()
 
-glob_callback_id.data = dict(callback_id  = [None])
+glob_callback_id.data  = dict(callback_id  = [None])
 glob_SphereXLines.data = dict(SphereXLines = [SphereXLines])
 glob_SphereYLines.data = dict(SphereYLines = [SphereYLines])
 
-#glob_callback_id  = ColumnDataSource(data = dict(callback_id  = [None]))
-#glob_SphereXLines = ColumnDataSource(data = dict(SphereXLines = [SphereXLines]))
-#glob_SphereYLines = ColumnDataSource(data = dict(SphereYLines = [SphereYLines]))
-
-glob_time         = dict(t=t, t_samples = np.linspace(0.0,6.0,max_samples), num_rolls=0)
 
 # images/icons
 
@@ -126,10 +122,11 @@ icons_collection  = ["Rolling_test/static/images/winner.svg",
 ###                    ColumnDataScources (also global)                    ###
 ###############################################################################
 
-# ColumnDataSources (especially the ones needed for plotting in figures)need to
+# ColumnDataSources (especially the ones needed for plotting in figures) need to
 # be defined in a class
 # otherwise they won't get destroyed after reloading the page when the server
-# is still running
+# is still running.
+# Same with Buttons and Sliders.
 # Avoids pending writes error and/or single document error
 
 
@@ -170,8 +167,7 @@ class RT_global_variables:
                              ColumnDataSource(data = dict(x=[],y=[],img=[])),
                              ColumnDataSource(data = dict(x=[],y=[],img=[]))]
         
-        
-        
+            
         ###############################################################################
         ###                                 Buttons                                 ###
         ###############################################################################
@@ -210,6 +206,3 @@ class RT_global_variables:
         self.alpha_slider0 = Slider(title=u"\u03B1 [\u00B0]", value=20.0, start=5.0, end=alpha_max, step=1.0)
         self.alpha_slider1 = Slider(title=u"\u03B1 [\u00B0]", value=20.0, start=5.0, end=alpha_max, step=1.0)
         self.alpha_slider2 = Slider(title=u"\u03B1 [\u00B0]", value=20.0, start=5.0, end=alpha_max, step=1.0)
-
-# create object to use CDSs in other files
-#glob_vars = RT_global_variables()

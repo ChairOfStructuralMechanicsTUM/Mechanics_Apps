@@ -5,30 +5,16 @@ import numpy as np
 
 from RT_global_variables import (
         RT_global_variables,
-        #glob_vars,
-        #fig_data, fig_lines_data
         fig_values,
         fig_in_use, fig_objects,
         figure_list,
-        #time_display, icon_display, 
         icons_collection,
         glob_callback_id, glob_time,
-        #wall_sources, ramp_sources,
         glob_fun_handles,
         rampLength, rampAddLength,
         TX0, TY0, t_end, max_samples, buf
         )
-#from RT_buttons import (
-#        start_button, reset_button, mode_selection,
-#        object_select0, object_select1, object_select2,
-#        radius_slider0, radius_slider1, radius_slider2,
-#        ri_slider0, ri_slider1, ri_slider2
-#        )
-from RT_helper_functions import (
-        #get_t_samples, get_coordinates, 
-        #disable_all_sliders, check_availability,
-        helper_fcts
-        )
+from RT_helper_functions import helper_fcts
 from RT_object_creation import (
         createSphere, createHollowSphere,
         createCylinder, createHollowCylinder
@@ -38,7 +24,7 @@ from RT_object_movement import (
         moveCylinder, moveHollowCylinder
         )
 
-                       #mixin class (see notes)
+                       #mixin class (see RT_helper_functions)
 class all_callback_fcts(helper_fcts):
     def __init__(self):
         self.my_sources = RT_global_variables()
@@ -122,43 +108,43 @@ class all_callback_fcts(helper_fcts):
     ###                      functions to change the shape                      ###
     ###############################################################################
     def changeObject0(self,attr,old,new):
-        self.changeObject(0,new,self.radius_slider0.value,self.ri_slider0.value)
+        self.changeObject(0,new,self.my_sources.radius_slider0.value,self.my_sources.ri_slider0.value)
     
     def changeObject1(self,attr,old,new):
-        self.changeObject(1,new,self.radius_slider1.value,self.ri_slider1.value)
+        self.changeObject(1,new,self.my_sources.radius_slider1.value,self.my_sources.ri_slider1.value)
     
     def changeObject2(self,attr,old,new):
-        self.changeObject(2,new,self.radius_slider2.value,self.ri_slider2.value)
+        self.changeObject(2,new,self.my_sources.radius_slider2.value,self.my_sources.ri_slider2.value)
     
     ###############################################################################
     ###                     functions to change the radius                      ###
     ###############################################################################
     def changeRadius0(self,attr,old,new):
-        self.changeObject(0,self.object_select0.value,new,self.ri_slider0.value)
-        self.ri_slider0.end   = new
-        self.ri_slider0.value = min(self.ri_slider0.value,new)
+        self.changeObject(0,self.my_sources.object_select0.value,new,self.my_sources.ri_slider0.value)
+        self.my_sources.ri_slider0.end   = new
+        self.my_sources.ri_slider0.value = min(self.my_sources.ri_slider0.value,new)
     
     def changeRadius1(self,attr,old,new):
-        self.changeObject(1,self.object_select1.value,new,self.ri_slider1.value)
-        self.ri_slider1.end   = new
-        self.ri_slider1.value = min(self.ri_slider1.value,new)
+        self.changeObject(1,self.my_sources.object_select1.value,new,self.my_sources.ri_slider1.value)
+        self.my_sources.ri_slider1.end   = new
+        self.my_sources.ri_slider1.value = min(self.my_sources.ri_slider1.value,new)
     
     def changeRadius2(self,attr,old,new):
-        self.changeObject(2,self.object_select2.value,new,self.ri_slider2.value)
-        self.ri_slider2.end   = new
-        self.ri_slider2.value = min(self.ri_slider2.value,new)
+        self.changeObject(2,self.my_sources.object_select2.value,new,self.my_sources.ri_slider2.value)
+        self.my_sources.ri_slider2.end   = new
+        self.my_sources.ri_slider2.value = min(self.my_sources.ri_slider2.value,new)
     
     ###############################################################################
     ###          functions to change the inner radius  / wall thickness         ###
     ###############################################################################
     def changeWall0(self,attr,old,new):
-        self.changeObject(0,self.object_select0.value,self.radius_slider0.value,new)
+        self.changeObject(0,self.my_sources.object_select0.value,self.my_sources.radius_slider0.value,new)
         
     def changeWall1(self,attr,old,new):
-        self.changeObject(1,self.object_select1.value,self.radius_slider1.value,new)
+        self.changeObject(1,self.my_sources.object_select1.value,self.my_sources.radius_slider1.value,new)
         
     def changeWall2(self,attr,old,new):
-        self.changeObject(2,self.object_select2.value,self.radius_slider2.value,new)
+        self.changeObject(2,self.my_sources.object_select2.value,self.my_sources.radius_slider2.value,new)
     
     ###############################################################################
     ###                      slider function for the angle                      ###
@@ -191,15 +177,15 @@ class all_callback_fcts(helper_fcts):
     def start(self):
         [callback_id] = glob_callback_id.data["callback_id"] # input/output
         # switch the label
-        if self.start_button.label == "Start":
-            self.start_button.label = "Stop"
-            self.reset_button.disabled = True
+        if self.my_sources.start_button.label == "Start":
+            self.my_sources.start_button.label = "Stop"
+            self.my_sources.reset_button.disabled = True
             # add the call to evolve
             callback_id = curdoc().add_periodic_callback(self.evolve,50)
             glob_callback_id.data = dict(callback_id = [callback_id])
-        elif self.start_button.label == "Stop":
-            self.start_button.label = "Start"
-            self.reset_button.disabled = False
+        elif self.my_sources.start_button.label == "Stop":
+            self.my_sources.start_button.label = "Start"
+            self.my_sources.reset_button.disabled = False
             # remove the call to evolve
             curdoc().remove_periodic_callback(callback_id)
         # disable sliders during simulation
@@ -210,9 +196,9 @@ class all_callback_fcts(helper_fcts):
     ###############################################################################
     def reset(self):
         glob_time["t"] = 0 #      /output
-        self.changeObject(0,self.object_select0.value,self.radius_slider0.value,self.ri_slider0.value)
-        self.changeObject(1,self.object_select1.value,self.radius_slider1.value,self.ri_slider1.value)
-        self.changeObject(2,self.object_select2.value,self.radius_slider2.value,self.ri_slider2.value)
+        self.changeObject(0,self.my_sources.object_select0.value,self.my_sources.radius_slider0.value,self.my_sources.ri_slider0.value)
+        self.changeObject(1,self.my_sources.object_select1.value,self.my_sources.radius_slider1.value,self.my_sources.ri_slider1.value)
+        self.changeObject(2,self.my_sources.object_select2.value,self.my_sources.radius_slider2.value,self.my_sources.ri_slider2.value)
         self.disable_all_sliders(False)
         self.my_sources.time_display[0].data=dict(x=[],y=[],t=[])
         self.my_sources.time_display[1].data=dict(x=[],y=[],t=[])
@@ -240,7 +226,7 @@ class all_callback_fcts(helper_fcts):
             print("WARNING: simulation exceeded maximum number of provided samples")
             print("-- [Possible Fix]: adjust buffer size 'buf' in RT_global_variables.py --")
             self.start() #equals to stop if it is running
-            self.start_button.disabled = True
+            self.my_sources.start_button.disabled = True
             return
         
         # call all necessary functions
@@ -283,34 +269,10 @@ class all_callback_fcts(helper_fcts):
             
         # in mode "one" (active==0) the simulation is stopped after one of the objects reached the end of the ramp
         # in mode "all" (active==1) the simulation is stopped after all objects reached the end of the ramp 
-        if ((len(max_indices)>0 and self.mode_selection.active==0) or sum(fig_in_use)<1):
+        if ((len(max_indices)>0 and self.my_sources.mode_selection.active==0) or sum(fig_in_use)<1):
             self.start() #equals to stop if it is running
         
         # if all simulations have finished, disable the start button
         if (not any(fig_in_use)):
-            self.start_button.disabled = True
+            self.my_sources.start_button.disabled = True
         
-    
-#    ###############################################################################
-#    ###                   visability of inner radius sliders                    ###
-#    ###############################################################################
-#    # hide inner radius slider if full object is selected
-#    # show inner radius slider if hollow object is selected
-#    object_select_JS = """
-#    choice = cb_obj.value;
-#    caller = cb_obj.name;
-#    
-#    // extract the number of the name and convert it to integer
-#    slider_idx = parseInt(caller.match(/\d/g).join(""));
-#    
-#    slider_in_question = document.getElementsByClassName("wall_slider")[slider_idx];
-#    
-#    // if hollow object is selected, show the slider (get rid of hidden)
-#    if(choice.includes("Hollow")){
-#            slider_in_question.className=slider_in_question.className.replace(" hidden","");
-#    }
-#    // if full object is selected, check if slider is hidden; if not, hide it
-#    else if(!slider_in_question.className.includes("hidden")){
-#            slider_in_question.className+=" hidden";
-#    }
-#    """

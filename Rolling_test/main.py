@@ -19,14 +19,10 @@ from latex_support import LatexLabelSet, LatexDiv
 ###                            inner app imports                            ###
 ###############################################################################
 from RT_global_variables import (
-        #glob_vars,
         glob_SphereXLines, glob_SphereYLines,
-        #fig_data, fig_lines_data, 
         fig_values,
         alpha, alpha_max,
         rampLength, maxR,
-        #ramp_sources, wall_sources,
-        #time_display, icon_display,
         figure_list,
         TX0, TY0
         )
@@ -34,24 +30,7 @@ from RT_object_creation import (
         createSphere,
         createCylinder, createHollowCylinder
         )
-#from RT_buttons import (
-#        start_button, reset_button, mode_selection,
-#        object_select0, object_select1, object_select2,
-#        radius_slider0, radius_slider1, radius_slider2,
-#        ri_slider0, ri_slider1, ri_slider2,
-#        alpha_slider0, alpha_slider1, alpha_slider2
-#        )
-from RT_callback_functions import (
-        all_callback_fcts
-#        start, reset,
-#        changeObject0, changeObject1, changeObject2, 
-#        changeRadius0, changeRadius1, changeRadius2, 
-#        changeWall0, changeWall1, changeWall2,
-#        changeAlpha0, changeAlpha1, changeAlpha2,
-#        object_select_JS
-        )
-#from RT_helper_functions import get_t_samples
-
+from RT_callback_functions import all_callback_fcts
 
 
 my_callback_fcts = all_callback_fcts()
@@ -62,6 +41,7 @@ my_callback_fcts = all_callback_fcts()
 ###                            inital appearance                            ###
 ###############################################################################
 def init():
+    my_callback_fcts.reset() # reset in case of a page reload during a run
     [SphereXLines] = glob_SphereXLines.data["SphereXLines"] #      /output
     [SphereYLines] = glob_SphereYLines.data["SphereYLines"] #      /output
     # create the lines on a reference sphere
@@ -218,9 +198,10 @@ my_callback_fcts.my_sources.object_select1.on_change('value',my_callback_fcts.ch
 my_callback_fcts.my_sources.object_select2.on_change('value',my_callback_fcts.changeObject2)
 
 # stears visability of inner radius sliders (show only for hollow objects)
-#object_select0.callback = CustomJS(code=my_callback_fcts.object_select_JS)
-#object_select1.callback = CustomJS(code=my_callback_fcts.object_select_JS)
-#object_select2.callback = CustomJS(code=my_callback_fcts.object_select_JS)
+my_callback_fcts.my_sources.object_select0.callback = CustomJS(code=my_callback_fcts.object_select_JS)
+my_callback_fcts.my_sources.object_select1.callback = CustomJS(code=my_callback_fcts.object_select_JS)
+my_callback_fcts.my_sources.object_select2.callback = CustomJS(code=my_callback_fcts.object_select_JS)
+
 
 ###############################################################################
 ###                            slider callbacks                             ###

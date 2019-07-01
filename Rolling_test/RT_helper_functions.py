@@ -2,26 +2,13 @@ from __future__ import division # float division only, like in python 3
 import numpy as np
 
 from RT_global_variables import (
-        #glob_vars,
         rampLength, g, max_samples,
-        t_end, glob_time,
-        #fig_data, fig_lines_data, 
+        t_end, glob_time, 
         fig_values, fig_samples,
-        fig_in_use, fig_objects,
-        #glob_fun_handles
+        fig_in_use, fig_objects
         )
-#from RT_buttons import (
-#        start_button, mode_selection,
-#        object_select0, object_select1, object_select2,
-#        radius_slider0, radius_slider1, radius_slider2,
-#        ri_slider0, ri_slider1, ri_slider2,
-#        alpha_slider0, alpha_slider1, alpha_slider2
-#        )
-#from RT_object_movement import (
-#        moveSphere,
-#        moveCylinder, moveHollowCylinder
-#        )
 
+# using a mixin class for RT_callback_functions
 class helper_fcts:
     ###############################################################################
     ###                            helper functions                             ###
@@ -130,36 +117,29 @@ class helper_fcts:
         if (all(data_is_empty)):
             # if all datas are empty (radius == inner radius) disable the start button
             # simulation cannot be run without any existing object
-            self.start_button.disabled = True
+            self.my_sources.start_button.disabled = True
         else:
             # if any of the data is not empty, at least one object exists
             # therefore, enable start button
-            self.start_button.disabled = False
+            self.my_sources.start_button.disabled = False
     
     
     ###############################################################################
     ###                 control slider and widget availability                  ###
     ###############################################################################
     def disable_all_sliders(self,d=True):
-        self.object_select0.disabled = d
-        self.object_select1.disabled = d
-        self.object_select2.disabled = d
-        self.radius_slider0.disabled = d
-        self.radius_slider1.disabled = d
-        self.radius_slider2.disabled = d
-        self.ri_slider0.disabled     = d
-        self.ri_slider1.disabled     = d
-        self.ri_slider2.disabled     = d
-        self.alpha_slider0.disabled  = d
-        self.alpha_slider1.disabled  = d
-        self.alpha_slider2.disabled  = d
-        self.mode_selection.disabled = d
+        self.my_sources.object_select0.disabled = d
+        self.my_sources.object_select1.disabled = d
+        self.my_sources.object_select2.disabled = d
+        self.my_sources.radius_slider0.disabled = d
+        self.my_sources.radius_slider1.disabled = d
+        self.my_sources.radius_slider2.disabled = d
+        self.my_sources.ri_slider0.disabled     = d
+        self.my_sources.ri_slider1.disabled     = d
+        self.my_sources.ri_slider2.disabled     = d
+        self.my_sources.alpha_slider0.disabled  = d
+        self.my_sources.alpha_slider1.disabled  = d
+        self.my_sources.alpha_slider2.disabled  = d
+        self.my_sources.mode_selection.disabled = d
         
         
-################################################################################
-####                        initial function handles                         ###
-################################################################################ 
-## name the functions to be used by each figure depending upon their content
-#glob_fun_handles[0]=lambda(x):moveSphere(0,x,glob_vars.fig_data[0],glob_vars.fig_lines_data[0],fig_values[0])
-#glob_fun_handles[1]=lambda(x):moveCylinder(1,x,glob_vars.fig_data[1],glob_vars.fig_lines_data[1],fig_values[1])
-#glob_fun_handles[2]=lambda(x):moveHollowCylinder(2,x,glob_vars.fig_data[2],glob_vars.fig_lines_data[2],fig_values[2])
