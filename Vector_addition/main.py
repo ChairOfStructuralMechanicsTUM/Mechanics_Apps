@@ -1,12 +1,13 @@
 """
-Python Bokeh program which interactively change two vectos and display its sum
+Python Bokeh program which interactively changes two vectos and displays their sum
 
 """
 from bokeh.plotting import figure
-from bokeh.layouts import column, row
+from bokeh.layouts import column, row, Spacer
 from bokeh.models import ColumnDataSource, Arrow, Button, Div, NormalHead
 from bokeh.io import curdoc
 from math import radians, cos, sin, sqrt, atan, pi
+import yaml 
 
 from os.path import dirname, join, split, abspath
 import sys, inspect
@@ -15,6 +16,27 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_support import LatexLabelSet, LatexSlider
 
+std_lang = 'en'
+strings = yaml.safe_load(open('Vector_addition/static/strings.json'))
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode('utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode('utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode('utf-8') )
+language_button = Button(button_type="success")
+language_button.on_click(changeLanguage)
 
 # Initialise Variables
 glob_theta1            = ColumnDataSource(data=dict(val=[radians(50)]))
@@ -30,7 +52,7 @@ V1_label_source        = ColumnDataSource(data=dict(x=[],y=[],V1=[]))
 V2_label_source        = ColumnDataSource(data=dict(x=[],y=[],V2=[]))
 Resultant_label_source = ColumnDataSource(data=dict(x=[],y=[],R=[]))
 Resultant_values_source = ColumnDataSource(data=dict(x=[],y=[],names=[]))
-flags = ColumnDataSource(data=dict(show=[False]))
+flags = ColumnDataSource(data=dict(show=[False],lang=[std_lang]))
 
 # responsible for the display of initial conditions 
 def init ():
@@ -175,14 +197,14 @@ AngleVector2Slider= LatexSlider(title='\\alpha_{V2}=',value_unit='^{\\circ}', va
 AngleVector2Slider.on_change('value',changetheta2)
 
 ###Create Show Resultant Properties Button:
-show_button = Button(label="Show/Hide Length and Direction of Resultant", button_type="success")
+show_button = Button(button_type="success")
 show_button.on_click(ChangeShow)
 
 # add app description
-description_filename = join(dirname(__file__), "description.html")
+description = Div(render_as_text=False, width=1050)
 
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+setDocumentLanguage(std_lang)
 
 ## Send to window
-curdoc().add_root(column(description,column(row(p,column(Vector1Slider,Vector2Slider,AngleVector1Slider,AngleVector2Slider,show_button)))))
-curdoc().title = "Vector Addition"
+curdoc().add_root(column(row(Spacer(width=750),language_button),description,column(row(p,column(Vector1Slider,Vector2Slider,AngleVector1Slider,AngleVector2Slider,show_button)))))
+# curdoc().title = "Vector Addition"

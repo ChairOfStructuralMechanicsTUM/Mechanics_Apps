@@ -3,7 +3,6 @@ This repository contains the python codes for webbased-visualization for mechani
 It contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Müller, TUM (Technical University of Munich).
 
 ## Overview
-[![Conda fastai version](https://img.shields.io/conda/v/bokeh/bokeh.svg)](https://anaconda.org/bokeh/bokeh)
 
 The use of this repository is only suggested for developers. If you are only interested in using the completed apps, please visit the following website: http://www.bm.bgu.tum.de/lehre/interactive-apps/.
 
