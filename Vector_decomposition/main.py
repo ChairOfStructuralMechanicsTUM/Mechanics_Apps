@@ -298,7 +298,7 @@ LineVector1Slider.on_change('value',changeTheta1Line1)
 LineVector2Slider= LatexSlider(title="\\text {Direction 2: } \\alpha_2=", value_unit='^{\\circ}', value=0.0, start=0.0, end=360.0, step=5)
 LineVector2Slider.on_change('value',changeTheta1Line2)     
 
-Vector1Slider = LatexSlider(title="|F|=",value=70,start=0,end=100,step=5)
+Vector1Slider = LatexSlider(title="|F|=", value_unit='N', value=70,start=0,end=100,step=5)
 Vector1Slider.on_change('value',changeVectorValue)
 
 show_button = Button(label="Show components", button_type="success")
