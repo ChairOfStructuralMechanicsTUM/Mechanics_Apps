@@ -1,0 +1,94 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{physics}
+
+\title{Programmieren interaktiver Apps}
+\author{Jakob Schlagintweit }
+\date{Juli 2019}
+
+
+\begin{document}
+
+\maketitle
+\cleardoublepage
+\tableofcontents
+
+\cleardoublepage
+\section{Einleitung}
+
+\subsection{Erdbeben}
+\subsection{Erdbebensichere Gebäude}
+\subsubsection{Tilger}
+\subsubsection{Basisisolierung}
+\cleardoublepage
+\section{Basisisolierung}
+In diesem Abschnitt werden...
+\subsection{"Beschreibung"}
+\subsection{Modell}
+Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenschaften, veranschaulichen und darstellen zu können, verwenden wir Modelle. Sie dienen dazu, die Natur eingeschränkt abzubilden und sie somit "berechenbar" zu machen, da viele Ereignisse zu komplex sind, um sie übersichtlich "darzustellen" (anderes Wort). Man muss sich dabei immer vor Augen halten, was berechnet werden soll, und wie sehr das Modell eingeschränkt ist. Dabei sind einige (Eigenschaften...) mehr oder weniger relevant. Viele physikalische Modelle basieren auf mathematischen Gleichungen, insbesondere Differentialgleichungen. In diesem Fall bezieht man sich auf ...
+\subsubsection{Einmassenschwinger}
+Die Kinematik als Teil der technischen Mechanik beschreibt, wie sich ein Körper bewegt. Hierfür werden die Begriffe Geschwindigkeit \eqref{Geschwindigkeit} und Beschleunigung \eqref{Beschleunigung} eingeführt, welche sich aus der vektoriellen Basisgröße Länge bzw. Verschiebung $\vec{u}$ ableiten lassen.
+
+\begin{subequations}
+    \begin{align}
+        \label{Geschwindigkeit}
+        \vec{\dot u} &= \frac{\partial \vec{u}}{\partial t}
+        \label{Beschleunigung} \\
+        \vec{\ddot u} &= \frac{\partial \vec{\dot u}}{\partial t^2}
+    \end{align}
+\end{subequations}
+
+\\
+
+
+
+Nach dem dritten Newton'schen Axiom ist die Kraft, die auf einen Körper, genauer gesagt auf einen Massenpunkt wirkt, direkt proportional zu seiner Beschleunigung. Das Produkt dieser Beschleunigung mit der Masse ist gleich der auf sie einwirkenden Kraft \eqref{Kraft}. 
+
+\begin{equation}
+\label{Kraft}
+    \vec{F} - m\cdot\vec{\ddot u}&=\vec{0}&=\sum_{i=1}^{n} \vec{F_{i}}\\
+\end{equation}
+
+In diesem Zusammenhang beschreibt der Term $(-m \cdot a)$ den scheinbaren Widerstand der Masse gegen die sie beschleunigende Kraft. Diesen Widerstand nennt man Trägheitskraft. Gleichung \eqref{Kraft} erinnert hierbei stark an die aus der Statik bekannte Gleichgewichtsbedingung. In beschleunigt bewegten Systemen wird zur Aufstellung von Bewegungsgleichungen das d'Alembert'sche Prinzip verwendet. Mit diesem Wissen können wir einen ersten Versuch wagen, ein Modell zu erstellen.
+
+(Bild einmassenschwinger einfügen)
+Nach dem d'Alembert'schen Prinzip muss die Summe aller dynamischen Kräfte gleich $ \vec{0}$ sein.
+Folglich können wir das System freischneiden und das dynamische Kräftegleichgewicht in horizontaler Richtung \eqref{Dynamisches Gleichgewicht} aufstellen. \citep{petersen2017grundlagen} 
+
+
+\begin{subequations}
+    \label{Dynamisches Gleichgewicht}
+    \begin{align}
+    \vec{F_m}+\vec{F_c}+\vec{F_k}&=\vec{F}\\
+    m\cdot\vec{\ddot u}+c\cdot\vec{\dot u}+k\cdot\vec{u}&=\vec{F}
+    \end{align}
+\end{subequations}
+\subsubsection{}
+Jedes Gebäude lässt sich stark vereinfachen. Um die Verformungen, Beschleunigungen und Schnittgrößen zu bestimmen, wird für die Berechnungen (dabei) häufig ein Rahmentragwerk herangezogen. Auf Grundlage des Scherbalkenmodells werden die Massen der Stützen gegenüber den Massen der Decken vernachlässigt, und die Riegel, welche die Geschosse darstellen, als starr angenommen. \citep{MeskourisHinzenButenwegetal.2016}
+\subsection{Berechnungsverfahren} 
+\cleardoublepage
+\section{Implementierung}
+\cleardoublepage
+\section{Beispiel}
+\cleardoublepage
+\section{Ausblick}
+
+
+
+%\begin{figure}[h!]
+%\centering
+%\includegraphics[scale=1.7]{universe}
+%\caption{The Universe}
+%\label{fig:universe}
+%\end{figure}
+
+\cleardoublepage
+\bibliographystyle{plain}
+\cleardoublepage
+\section{Physikalische Größen}
+\cleardoublepage
+\bibliography{Literaturverzeichnis}
+\end{document}
