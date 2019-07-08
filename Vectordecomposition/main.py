@@ -78,8 +78,6 @@ def changeLine2():
   
      
 def createTwoComponents():
-    
-
      [Active] = glob_active.data["Active"]
      [Vector1] = glob_Vector1.data["val"]
      [theta1 ] = glob_theta1.data["val"]
@@ -234,7 +232,7 @@ V2_label_glyph=LatexLabelSet(x='x', y='y',text='V',text_font_size="15pt",level='
 LO1_label_glyph=LatexLabelSet(x='x', y='y',text='V',text_font_size="10pt",level='overlay',source=LO1_label_source)    
 LO2_label_glyph=LatexLabelSet(x='x', y='y',text='V',text_font_size="10pt",level='overlay',source=LO2_label_source) 
    
-p = figure(tools="", x_range=(-200,200), y_range=(-200,200),plot_width=800, plot_height=625)
+p = figure(tools="wheel_zoom,pan,reset", x_range=(-200,200), y_range=(-200,200),plot_width=800, plot_height=625)
 Resultant_values_glyph = LatexLabelSet(x='x',y='y',text='names',text_font_size="15pt", text_color="#E37222", level='glyph',source=Resultant_values_source)
 
 p.line(x='x',y='y',line_dash='dashed',source= V2parallel_line_source, color="black")
