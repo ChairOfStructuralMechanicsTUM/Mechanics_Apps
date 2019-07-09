@@ -27,8 +27,10 @@
 \section{Basisisolierung}
 In diesem Abschnitt werden...
 \subsection{"Beschreibung"}
+\subsubsection{Dämpfung}
+Linear-Viskos
 \subsection{Modell}
-Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenschaften, veranschaulichen und darstellen zu können, verwenden wir Modelle. Sie dienen dazu, die Natur eingeschränkt abzubilden und sie somit "berechenbar" zu machen, da viele Ereignisse zu komplex sind, um sie übersichtlich "darzustellen" (anderes Wort). Man muss sich dabei immer vor Augen halten, was berechnet werden soll, und wie sehr das Modell eingeschränkt ist. Dabei sind einige (Eigenschaften...) mehr oder weniger relevant. Viele physikalische Modelle basieren auf mathematischen Gleichungen, insbesondere Differentialgleichungen. In diesem Fall bezieht man sich auf ...
+Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenschaften, veranschaulichen und darstellen zu können, verwenden wir Modelle. Sie dienen dazu, die Natur eingeschränkt abzubilden und sie somit "berechenbar" zu machen, da viele Ereignisse zu komplex sind, um sie übersichtlich "darzustellen" (anderes Wort). Man muss sich dabei immer vor Augen halten, was berechnet werden soll, und wie sehr das Modell (eingeschränkt) ist. Dabei sind einige (Eigenschaften...) mehr oder weniger relevant. Viele physikalische Modelle basieren auf mathematischen Gleichungen, insbesondere Differentialgleichungen. In diesem Fall bezieht man sich auf ...
 \subsubsection{Einmassenschwinger}
 Die Kinematik als Teil der technischen Mechanik beschreibt, wie sich ein Körper bewegt. Hierfür werden die Begriffe Geschwindigkeit \eqref{Geschwindigkeit} und Beschleunigung \eqref{Beschleunigung} eingeführt, welche sich aus der vektoriellen Basisgröße Länge bzw. Verschiebung $\vec{u}$ ableiten lassen.
 
@@ -66,6 +68,24 @@ Folglich können wir das System freischneiden und das dynamische Kräftegleichge
     m\cdot\vec{\ddot u}+c\cdot\vec{\dot u}+k\cdot\vec{u}&=\vec{F}
     \end{align}
 \end{subequations}
+Demnach entsprechen $\vec{F_m}$ der d'Alembert'schen Trägheitskraft, $\vec{F_c}$ der Dämpfer-kraft, sowie $\vec{F_k}$ der Rückstellkraft der Feder und $\vec{F}$ der äußeren auf das System einwirkenden Kraft. Es ergibt sich die Bewegungsgleichung des Einmassenschwingers. Betrachtet man die einzelnen Terme der Gleichung \eqref{Dynamisches Gleichgewicht} genauer, so erkennt man sofort, dass die Kräfte zeitabhängig sind. Daher handelt es sich hier um eine Differentialgleichung kurz DGL, genauer gesagt um eine lineare inhomogene Differentialgleichung zweiter Ordnung mit konstanten Koeffizienten. In der Regel gibt es für Differentialgleichungen keine allgemeinen analytischen Lösungsansätze, woraufhin man in den meisten Fällen auf numerische, sprich computergestützte, Verfahren zurückgreifen muss. Für diesen Typ DGL allerdings gibt es eine elegante Methode, die ein händisches Lösen ermöglichen. Da die Menge aller  Lösungen einer linearen DGL n-ter Ordnung linear unabhängig sind, ist die Summe und ein skalares Vielfaches einer Lösung widerum eine Lösung. \citep{karpfinger2013hohere} Dies macht man sich zu Nutze und trennt den  Lösungsraum in eine homogene Lösung $L_h$ und in eine partikuläre $L_p$. 
+
+Zunächst betrachten wir die Lösung der Nullfunktion \eqref{homogene DGL}. Unter Verwendung des Ansatzes $u(t)=\mathrm{e}^{\lambda t}$, und indem wir ihn an den entsprechenden Stellen eingesetzten \eqref{homogener ansatz}, lässt sich eine homogene Lösung finden. Diese Idee fußt auf dem Lösungsansatz für gewöhnliche separierbare DGL $\dot x=x$. Vereinfachen lässt sich diese Gleichung durch Kürzen und Ausklammern von $\mathrm{e}^{\lambda t} >0 | \forall \lambda ,t \in \mathbb{R}$. Zu guter Letzt müssen wir die Nullstellen \eqref{Nullstellen} des charakteristischen Polynoms \eqref{charakteristisches Polynom} für $\lambda$ finden.
+\begin{subequations}
+    \begin{align}
+         \label{homogene DGL}
+    m\cdot\ddot u+c\cdot\dot u+k\cdot{u}&=0\\
+    \label{homogener ansatz}
+    m\cdot \lambda^2 \mathrm{e}^{\lambda t}+c\cdot \lambda \mathrm{e}^{\lambda t}+k\cdot \mathrm{e}^{\lambda t}&=0\\
+    \label{charakteristisches Polynom}
+    m\cdot \lambda^2 +c\cdot \lambda +k &=0\\
+    \label{Nullstellen}
+    \Leftrightarrow \lambda_1_,_2&=\mathrm{-\delta \pm{\omega_E \sqrt{D^2-1}}} 
+    \end{align}
+\end{subequations}
+mit $\omega_E^2=\frac{k}{m}$ und $D=\frac{c}{2m\omega_E}$. $D$ beschreibt das Lehr'sche Dämpfungsmaß. Beim Durchführen dieser Rechnung muss eine Fallunterscheidung (getätigt) werden. 
+
+
 \subsubsection{}
 Jedes Gebäude lässt sich stark vereinfachen. Um die Verformungen, Beschleunigungen und Schnittgrößen zu bestimmen, wird für die Berechnungen (dabei) häufig ein Rahmentragwerk herangezogen. Auf Grundlage des Scherbalkenmodells werden die Massen der Stützen gegenüber den Massen der Decken vernachlässigt, und die Riegel, welche die Geschosse darstellen, als starr angenommen. \citep{MeskourisHinzenButenwegetal.2016}
 \subsection{Berechnungsverfahren} 
@@ -92,3 +112,4 @@ Jedes Gebäude lässt sich stark vereinfachen. Um die Verformungen, Beschleunigu
 \cleardoublepage
 \bibliography{Literaturverzeichnis}
 \end{document}
+
