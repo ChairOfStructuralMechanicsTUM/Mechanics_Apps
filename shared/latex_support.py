@@ -41,17 +41,18 @@ export class LatexLabel extends Label
   default_view: LatexLabelView
 """
 
+katex_js = "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.1/katex.min.js"
+katex_css = "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.1/katex.min.css"
+
 
 class LatexDiv(Div):
-    __javascript__ = [
-        "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
-    __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
+    __javascript__ = [katex_js]
+    __css__ = [katex_css]
     __implementation__ = "latex_div.ts"
 
 class LatexSlider(Slider):
-    __javascript__ = [
-        "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
-    __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
+    __javascript__ = [katex_js]
+    __css__ = [katex_css]
     __implementation__ = "latex_slider.ts"
 
     value_unit = String(default='', help="""
@@ -59,8 +60,8 @@ class LatexSlider(Slider):
     """)
 
 class LatexLabelSet(LabelSet):
-    __javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
-    __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
+    __javascript__ = [katex_js]
+    __css__ = [katex_css]
     __implementation__ = "latex_label_set.ts"
 
     display_mode = Bool(default=False, help="""
@@ -77,8 +78,8 @@ class LatexLabel(Label):
     superclass implementation that requires explicitly setting
     `render_mode='css'`).
     """
-    __javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
-    __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
+    __javascript__ = [katex_js]
+    __css__ = [katex_css]
     __implementation__ = LATEX_LABEL_JS_CODE
 
 class LatexLegend(Legend):
@@ -89,8 +90,8 @@ class LatexLegend(Legend):
     Only vertical legends are supported, the `orientation` keyword
     is overwritten.
     """
-    __javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"]
-    __css__ = ["https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"]
+    __javascript__ = [katex_js]
+    __css__ = [katex_css]
     __implementation__ = "latex_legend.ts"
 
     max_label_width = Float(default=0, help="""

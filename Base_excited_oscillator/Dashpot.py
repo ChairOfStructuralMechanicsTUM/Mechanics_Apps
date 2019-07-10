@@ -13,24 +13,28 @@ class Dashpot(object):
         self.origEnd=self.end
         self.startNow=self.start
         self.endNow=self.end
+        
         # find direction along which dashpot lies
         # (not normalised)
         self.direction = self.end-self.start
+        
         # define (normalised) perpendicular vector for spike directions
         perpVect = self.direction.perp()
+        
         # define initial positions of dashpot coordinates
         self.CasingStart=dict(x=[self.end.x-self.direction.x/8.0+perpVect.x/2.0,
             self.start.x+self.direction.x/8.0+perpVect.x/2.0,self.start.x+self.direction.x/8.0-perpVect.x/2.0,
             self.end.x-self.direction.x/8.0-perpVect.x/2.0],y=[self.end.y-self.direction.y/8.0+perpVect.y/2.0,
             self.start.y+self.direction.y/8.0+perpVect.y/2.0,self.start.y+self.direction.y/8.0-perpVect.y/2.0,
-            self.end.y-self.direction.y/8.0-perpVect.y/2.0])
+            self.end.y-self.direction.y/8.0-perpVect.y/2.0])    # damper casing (4 points CCW)
         self.Line1Start=dict(x=[self.start.x,
-            self.start.x+self.direction.x/8.0],y=[self.start.y,self.start.y+self.direction.y/8.0])
+            self.start.x+self.direction.x/8.0],y=[self.start.y,self.start.y+self.direction.y/8.0])  # top vertical line
         self.PistonStart=dict(x=[self.end.x-self.direction.x/2.0+perpVect.x/2.0,
             self.end.x-self.direction.x/2.0-perpVect.x/2.0], y=[self.end.y-self.direction.y/2.0+perpVect.y/2.0,
-            self.end.y-self.direction.y/2.0-perpVect.y/2.0])
+            self.end.y-self.direction.y/2.0-perpVect.y/2.0])    # plunger
         self.Line2Start=dict(x=[self.end.x,
-            self.end.x-self.direction.x/2.0],y=[self.end.y,self.end.y-self.direction.y/2.0])
+            self.end.x-self.direction.x/2.0],y=[self.end.y,self.end.y-self.direction.y/2.0])    # bottom vertical line
+        
         # Create ColumnDataSources with initial positions
         self.Casing = ColumnDataSource(data=self.CasingStart)
         self.Line1 = ColumnDataSource(data=self.Line1Start)
@@ -53,9 +57,9 @@ class Dashpot(object):
         # can't be based on previous as bokeh too slow
         casing=deepcopy(self.CasingStart)
         line1=deepcopy(self.Line1Start)
-        # get displacement of casing
+        # get displacement of casing w.r.t initial position
         displacement=start-self.origStart
-        # displace outside of piston
+        # displace casing and top vertical line points coordinates
         for i in range(0,4):
             casing['x'][i]+=displacement.x
             casing['y'][i]+=displacement.y
@@ -81,16 +85,16 @@ class Dashpot(object):
         self.Line2.data=line2
         
         # calculate change in length
-        #displacement = end-self.end+start-self.start
+        displacement = end-self.end+start-self.start
         
         # save new points
         self.startNow=start.copy()
         self.endNow=end.copy()
         
         # return total displacement (along dashpot)
-        #return displacement.prod_scal(self.direction)
+        return displacement.prod_scal(self.direction)
     
-    ## draw spring on figure
+    ## draw dashpot on figure
     def plot(self,fig,colour="#808080",width=1):
         fig.line(x='x',y='y',color=colour,source=self.Casing,line_width=width)
         fig.line(x='x',y='y',color=colour,source=self.Piston,line_width=width)
@@ -99,39 +103,41 @@ class Dashpot(object):
     
     def assertForces(self,dt,save=True):
         # collect displacement
+        # the scalar product of the displacement vector with dashpotVec produces the magnitude of the
+        # component of displacement vector which lies along initial normalized dashpot vector
         displacement = (self.endNow-self.end+self.startNow-self.start).prod_scal(self.direction)
         if (save):
             self.end=self.endNow
             self.start=self.startNow
-        # calculate the force exerted on/by the spring
+        # calculate the force exerted on/by the dashpot
         F = -self.lam*displacement/dt
-        # apply this force to all connected objects
+        # apply this force to all objects in contact with the dashpot
         for i in range(0,len(self.actsOn)):
             self.actsOn[i][0].applyForce(F*self.out(self.actsOn[i][1]),self)
     
     ## place dashpot in space over a certain time
-    def compressTo(self,start,end,dt):
+    def compressTo(self,start,end):
+        dt=0.03
         # draw dashpot and collect displacement
-        self.draw(start,end)
-        displacement=(self.endNow-self.end+self.startNow-self.start).prod_scal(self.direction)
+        displacement=self.draw(start,end)
         self.end=self.endNow
         self.start=self.startNow
-        # calculate the force exerted on/by the spring
-        F = -self.lam*displacement/dt
+        # calculate the force exerted on/by the dashpot
+        Fd = -self.lam*displacement/dt
         # apply this force to all connected objects
         for i in range(0,len(self.actsOn)):
-            self.actsOn[i][0].applyForce(F*self.out(self.actsOn[i][1]),self)
+            self.actsOn[i][0].applyForce(Fd*self.out(self.actsOn[i][1]),self)
         # return the force
-        return F
+        return Fd
     
     ## if a point (start) is moved then compress dashpot accordingly and calculate resulting force
     def movePoint(self,start,moveVect):
         if (start==self.startNow):
-            self.draw(start+moveVect,self.endNow)
-            #return self.compressTo(start+moveVect,self.end,dt)
+            #self.draw(start+moveVect,self.endNow)
+            return self.compressTo(start+moveVect,self.end)
         else:
-            self.draw(self.startNow,start+moveVect)
-            #return self.compressTo(self.start,start+moveVect,dt)
+            #self.draw(self.startNow,start+moveVect)
+            return self.compressTo(self.start,start+moveVect)
     
     # return outward direction
     def out(self,se):

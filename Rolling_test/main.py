@@ -1,41 +1,49 @@
+from __future__ import division # float division only, like in python 3
 from bokeh.plotting import figure
-from bokeh.layouts import column, row, Spacer
-from bokeh.models import ColumnDataSource, Select, Button, LabelSet, Slider
+from bokeh.layouts import column, row, Spacer, widgetbox
+from bokeh.models import ColumnDataSource, LabelSet, CustomJS
+from bokeh.models.widgets import Paragraph
+from bokeh.models.glyphs import ImageURL
 from bokeh.io import curdoc
 from math import sin, cos, pi, sqrt, radians
-from numpy import *
-from os.path import dirname, join, split
+from os.path import dirname, split, abspath, join
+import numpy as np
 
-# create variables
-maxR=4.0
-g=9.81
-alpha=radians(20)
-# variables created to avoid repeated calculations
-# (speeds up calculations)
-SIN=sin(alpha)
-COS=cos(alpha)
-rampLength=50
-offset=-rampLength*COS
-t=0.0
-H = rampLength*SIN
-SphereXLines=[array([]),array([])]
-SphereYLines=array([])
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexLabelSet, LatexDiv
 
-Active = False
+###############################################################################
+###                            inner app imports                            ###
+###############################################################################
+from RT_global_variables import (
+        glob_SphereXLines, glob_SphereYLines,
+        fig_values,
+        alpha, alpha_max,
+        rampLength, maxR,
+        figure_list,
+        TX0, TY0
+        )
+from RT_object_creation import (
+        createSphere,
+        createCylinder, createHollowCylinder
+        )
+from RT_callback_functions import all_callback_fcts
 
-# create ColumnDataSources
-fig1_data = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
-fig1_lines_data = ColumnDataSource(data = dict(x=[],y=[]))
-fig2_data = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
-fig2_lines_data = ColumnDataSource(data = dict(x=[],y=[]))
-fig3_data = ColumnDataSource(data = dict(x=[],y=[],w=[],c=[],a=[]))
-fig3_lines_data = ColumnDataSource(data = dict(x=[],y=[]))
-ramp_source = ColumnDataSource(data = dict(x=[offset,0],y=[H,0]))
-AngleMarkerSource = ColumnDataSource(data = dict(x=[],y=[]))
-AlphaPos = ColumnDataSource(data = dict(x=[],y=[],t=[]))
 
+my_callback_fcts = all_callback_fcts()
+
+
+
+###############################################################################
+###                            inital appearance                            ###
+###############################################################################
 def init():
-    global SphereXLines, SphereYLines
+    my_callback_fcts.reset() # reset in case of a page reload during a run
+    [SphereXLines] = glob_SphereXLines.data["SphereXLines"] #      /output
+    [SphereYLines] = glob_SphereYLines.data["SphereYLines"] #      /output
     # create the lines on a reference sphere
     X=[[],[]]
     Y=[]
@@ -44,361 +52,207 @@ def init():
         Y.append((1-cos(pi*i/9))-1)
         X[0].append(cos(pi/4.0)*sqrt(1-Y[i]*Y[i]))
         X[1].append(-X[0][i])
-    SphereXLines[0]=array(X[0])
-    SphereXLines[1]=array(X[1])
-    SphereYLines=array(Y)
+    SphereXLines[0] = np.array(X[0])
+    SphereXLines[1] = np.array(X[1])
+    SphereYLines    = np.array(Y)
+    glob_SphereXLines.data = dict(SphereXLines = [SphereXLines])
+    glob_SphereYLines.data = dict(SphereYLines = [SphereYLines])
     # create the objects
-    createSphere(2.0,fig1_data,fig1_lines_data)
-    createCylinder(2.0,fig2_data,fig2_lines_data)
-    createHollowCylinder(2.0,1.5,fig3_data,fig3_lines_data)
-    # create the curve which indicates the angle between the ground and the ramp
-    X=[]
-    Y=[]
-    for i in range(0,11):
-        X.append(-3*cos(i*alpha/10.0))
-        Y.append(3*sin(i*alpha/10.0))
-    AngleMarkerSource.data=dict(x=X,y=Y)
-    AlphaPos.data=dict(x=[-8],y=[-0.1],t=[u"\u03B1"])
-
-def createSphere(r,sphere_data,sphere_lines_data):
-    global offset, SphereXLines, SphereYLines, SIN, COS
-    # find the centre, knowing that it touches the ramp at (offset,H)
-    newX=offset+r*SIN
-    newY=H+r*COS
-    # draw the sphere in blue
-    sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1])
-    # use the referece lines to find the current position of the lines
-    RCOS=r*COS
-    RSIN=r*SIN
-    X1=SphereXLines[0]*RCOS+SphereYLines*RSIN+newX
-    X2=SphereXLines[1]*RCOS+SphereYLines*RSIN+newX
-    Y1=-SphereXLines[0]*RSIN+SphereYLines*RCOS+newY
-    Y2=-SphereXLines[1]*RSIN+SphereYLines*RCOS+newY
-    # draw the lines
-    sphere_lines_data.data=dict(x=[X1, X2],y=[Y1,Y2])
-
-def moveSphere(t,r,m,sphere_data,sphere_lines_data):
-    global g, alpha, offset, SphereXLines, SphereYLines, SIN, COS
-    # find the displacement of the point touching the ramp
-    displacement = g*SIN*t*t*1.25
-    # find the rotation of the sphere
-    rotation = -displacement/r
-    # find the new centre of the sphere
-    newX=displacement*COS+offset+r*SIN
-    newY=H-displacement*SIN+r*COS
-    # update the drawing
-    sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1])
-    # find the new positions of the guidelines from the reference sphere
-    cosAngle=r*cos(alpha-rotation)
-    sinAngle=r*sin(alpha-rotation)
-    X1=SphereXLines[0]*cosAngle+SphereYLines*sinAngle+newX
-    X2=SphereXLines[1]*cosAngle+SphereYLines*sinAngle+newX
-    Y1=-SphereXLines[0]*sinAngle+SphereYLines*cosAngle+newY
-    Y2=-SphereXLines[1]*sinAngle+SphereYLines*cosAngle+newY
+    my_callback_fcts.get_t_samples(0) # Sphere
+    my_callback_fcts.get_t_samples(1) # Full cylinder
+    my_callback_fcts.get_t_samples(2) # Hollow cylinder
+    createSphere        (my_callback_fcts.my_sources.fig_data[0],my_callback_fcts.my_sources.fig_lines_data[0],fig_values[0])
+    createCylinder      (my_callback_fcts.my_sources.fig_data[1],my_callback_fcts.my_sources.fig_lines_data[1],fig_values[1])
+    createHollowCylinder(my_callback_fcts.my_sources.fig_data[2],my_callback_fcts.my_sources.fig_lines_data[2],fig_values[2])
     
-    sphere_lines_data.data=dict(x=[X1, X2],y=[Y1,Y2])
-    return (newX,newY)
 
-def createHollowSphere(r,sphere_data,sphere_lines_data):
-    global offset, SphereXLines, SphereYLines, SIN, COS
-    # find the centre, knowing that it touches the ramp at (offset,H)
-    newX=offset+r*SIN
-    newY=H+r*COS
-    # draw the sphere in semi-transparent blue
-    sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[0.4])
-    # use the referece lines to find the current position of the lines
-    RCOS=r*COS
-    RSIN=r*SIN
-    X1=SphereXLines[0]*RCOS+SphereYLines*RSIN+newX
-    X2=SphereXLines[1]*RCOS+SphereYLines*RSIN+newX
-    Y1=-SphereXLines[0]*RSIN+SphereYLines*RCOS+newY
-    Y2=-SphereXLines[1]*RSIN+SphereYLines*RCOS+newY
-    # draw the lines
-    sphere_lines_data.data=dict(x=[X1, X2],y=[Y1,Y2])
+###############################################################################
+###                          general plot settings                          ###
+###############################################################################
 
-def moveHollowSphere(t,r,m,ri,sphere_data,sphere_lines_data):
-    global g, alpha, offset, SphereXLines, SphereYLines, SIN, COS
-    temp = r*g*SIN*t*t*1.25*(r**3-ri**3)/(r**5-ri**5)
-    # find the rotation of the sphere
-    rotation = -temp
-    # find the displacement of the point touching the ramp
-    displacement = temp*r
-    # find the new centre of the sphere
-    newX=displacement*COS+offset+r*SIN
-    newY=H-displacement*SIN+r*COS
-    # update the drawing
-    sphere_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[0.4])
-    # find the new positions of the guidelines from the reference sphere
-    cosAngle=r*cos(alpha-rotation)
-    sinAngle=r*sin(alpha-rotation)
-    X1=SphereXLines[0]*cosAngle+SphereYLines*sinAngle+newX
-    X2=SphereXLines[1]*cosAngle+SphereYLines*sinAngle+newX
-    Y1=-SphereXLines[0]*sinAngle+SphereYLines*cosAngle+newY
-    Y2=-SphereXLines[1]*sinAngle+SphereYLines*cosAngle+newY
-    sphere_lines_data.data=dict(x=[X1, X2],y=[Y1,Y2])
-    return (newX,newY)
+XStart = TX0-rampLength-maxR-3
+YEnd   = TY0+rampLength*sin(radians(alpha_max))+2*maxR
+Width  = 500
 
-def createCylinder(r, cylinder_data, cylinder_lines_data):
-    global offset, SIN, COS
-    # draw the cylinder around the centre, knowing that it touches the ramp at (offset,H)
-    cylinder_data.data=dict(x=[offset+r*SIN],y=[H+r*COS],w=[2*r],c=["#0065BD"],a=[1])
-    cylinder_lines_data.data=dict(x=[[offset,offset+2*r*SIN],
-        [offset+r*(SIN-COS),offset+r*(SIN+COS)]],
-        y=[[H,H+2*r*COS],[H+r*(COS+SIN),H+r*(COS-SIN)]])
+###############################################################################
+###                              ramp figures                               ###
+###############################################################################
+# draw 3 graphs each containing a ramp, the angle marker, an ellipse, and lines
 
-def moveCylinder(t,r,m, cylinder_data, cylinder_lines_data):
-    global g, alpha, offset, SIN, COS
-    # find the displacement of the point touching the ramp
-    displacement = g*SIN*t*t
-    # find the rotation of the cylinder
-    rotation = -displacement/r
-    # find the new centre of the cylinder
-    newX=displacement*COS+offset+r*SIN
-    newY=H-displacement*SIN+r*COS
-    cosRAngle=r*cos(alpha-rotation)
-    sinRAngle=r*sin(alpha-rotation)
-    # update the drawing
-    cylinder_data.data=dict(x=[newX],y=[newY],w=[2*r],c=["#0065BD"],a=[1])
-    cylinder_lines_data.data=dict(x=[[newX+cosRAngle,newX-cosRAngle],
-        [newX+sinRAngle,newX-sinRAngle]],
-        y=[[newY-sinRAngle,newY+sinRAngle],
-        [newY+cosRAngle,newY-cosRAngle]])
-    return (newX,newY)
+fig0 = figure(title="Sphere",x_range=(XStart,TX0),y_range=(TY0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)
+fig0.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
+    line_color="#003359",line_width=3,source=my_callback_fcts.my_sources.fig_data[0])
+fig0.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=my_callback_fcts.my_sources.fig_lines_data[0])
+fig0.line(x='x',y='y',color="black",line_width=2,source=my_callback_fcts.my_sources.ramp_sources[0])
+fig0.line(x='x',y='y',color="black",line_width=2,source=my_callback_fcts.my_sources.wall_sources[0])
+fig0.axis.visible     = False
+fig0.toolbar_location = None
+time_lable0 = LabelSet(x='x', y='y', text='t', source=my_callback_fcts.my_sources.time_display[0])
+fig0.add_layout(time_lable0)    
+icon0 = ImageURL(url="img", x="x", y="y", w=10, h=10, anchor="center")
+fig0.add_glyph(my_callback_fcts.my_sources.icon_display[0], icon0)
 
-def createHollowCylinder(r,ri, hollowCylinder_data, hollowCylinder_lines_data):
-    global offset, SIN, COS
-    # draw the cylinder around the centre, knowing that it touches the ramp at (offset,H)
-    hollowCylinder_data.data=dict(x=[offset+r*SIN,offset+r*SIN],
-        y=[H+r*COS,H+r*COS],w=[2*r,2*ri],c=["#0065BD","#FFFFFF"],a=[1,1])
-    hollowCylinder_lines_data.data=dict(x=[[offset,offset+(r-ri)*SIN],
-        [offset+(r+ri)*SIN,offset+2*r*SIN],
-        [offset+r*(SIN-COS),offset+r*SIN-ri*COS],
-        [offset+r*(SIN+COS),offset+r*SIN+ri*COS]],
-        y=[[H,H+(r-ri)*COS],[H+(r+ri)*COS,H+2*r*COS],
-        [H+r*(COS+SIN),H+r*COS+ri*SIN],
-        [H+r*(COS-SIN),H+r*COS-ri*SIN]])
 
-def moveHollowCylinder(t,r,m,ri,hollowCylinder_data,hollowCylinder_lines_data):
-    global g, alpha, offset, SIN, COS
-    temp=r*g*SIN*t*t/(r*r+ri*ri)
-    # find the rotation of the cylinder
-    rotation = -temp
-    # find the displacement of the point touching the ramp
-    displacement = r*temp
-    # constants used multiple times calculated in advance to reduce computation time
-    cosAR=cos(alpha-rotation)
-    sinAR=sin(alpha-rotation)
-    cosRAngle=r*cosAR
-    cosRIAngle=ri*cosAR
-    sinRAngle=r*sinAR
-    sinRIAngle=ri*sinAR
-    # find the new centre of the cylinder
-    newX=displacement*COS+offset+r*SIN
-    newY=H-displacement*SIN+r*COS
-    # update the drawing
-    hollowCylinder_data.data=dict(x=[newX,newX],
-        y=[newY,newY],w=[2*r,2*ri],c=["#0065BD","#FFFFFF"],a=[1,1])
-    hollowCylinder_lines_data.data=dict(x=[[newX+cosRAngle,newX+cosRIAngle],
-        [newX-cosRAngle,newX-cosRIAngle],
-        [newX+sinRAngle,newX+sinRIAngle],
-        [newX-sinRAngle,newX-sinRIAngle]],
-        y=[[newY-sinRAngle,newY-sinRIAngle],
-        [newY+sinRAngle,newY+sinRIAngle],
-        [newY+cosRAngle,newY+cosRIAngle],
-        [newY-cosRAngle,newY-cosRIAngle]])
-    return (newX,newY)
-
-## draw 3 graphs each containing a ramp, the angle marker, an ellipse, and lines
-
-XStart=-rampLength-maxR-5
-YEnd=H+2*maxR
-Width=-220.0*XStart/YEnd
-fig1 = figure(title="Kugel (Sphere)",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
+fig1 = figure(title="Full cylinder",x_range=(XStart,TX0),y_range=(TY0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)
 fig1.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
-    line_color="#003359",line_width=3,source=fig1_data)
-fig1.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig1_lines_data)
-fig1.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
-fig1.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-angle_glyph1=LabelSet(x='x', y='y',text='t',text_color='black',
-    text_font_size="15pt", source=AlphaPos)
-fig1.add_layout(angle_glyph1)
+    line_color="#003359",line_width=3,source=my_callback_fcts.my_sources.fig_data[1])
+fig1.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=my_callback_fcts.my_sources.fig_lines_data[1])
+fig1.line(x='x',y='y',color="black",line_width=2,source=my_callback_fcts.my_sources.ramp_sources[1])
+fig1.line(x='x',y='y',color="black",line_width=2,source=my_callback_fcts.my_sources.wall_sources[1])
+fig1.axis.visible     = False
+fig1.toolbar_location = None
+time_lable1 = LabelSet(x='x', y='y', text='t', source=my_callback_fcts.my_sources.time_display[1])
+fig1.add_layout(time_lable1)
+icon1 = ImageURL(url="img", x="x", y="y", w=10, h=10, anchor="center")
+fig1.add_glyph(my_callback_fcts.my_sources.icon_display[1], icon1)
 
-fig2 = figure(title="Vollzylinder (Full cylinder)",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
+
+fig2 = figure(title="Hollow cylinder",x_range=(XStart,TX0),y_range=(TY0,YEnd),height=220,width=int(Width), tools="", match_aspect=True)
 fig2.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
-    line_color="#003359",line_width=3,source=fig2_data)
-fig2.multi_line(xs='x',ys='y',line_color="#003359",line_width=3,source=fig2_lines_data)
-fig2.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
-fig2.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-angle_glyph2=LabelSet(x='x', y='y',text='t',text_color='black',
-    text_font_size="15pt", source=AlphaPos)
-fig2.add_layout(angle_glyph2)
+    line_color="#003359",line_width=3,source=my_callback_fcts.my_sources.fig_data[2])
+fig2.multi_line(xs='x',ys='y',color="#003359",line_width=3,source=my_callback_fcts.my_sources.fig_lines_data[2])
+fig2.line(x='x',y='y',color="black",line_width=2,source=my_callback_fcts.my_sources.ramp_sources[2])
+fig2.line(x='x',y='y',color="black",line_width=2,source=my_callback_fcts.my_sources.wall_sources[2])
+fig2.axis.visible     = False
+fig2.toolbar_location = None
+time_lable2 = LabelSet(x='x', y='y', text='t', source=my_callback_fcts.my_sources.time_display[2])
+fig2.add_layout(time_lable2)
+icon2 = ImageURL(url="img", x="x", y="y", w=10, h=10, anchor="center")
+fig2.add_glyph(my_callback_fcts.my_sources.icon_display[2], icon2)
 
-fig3 = figure(title="Hohlzylinder (Hollow cylinder)",x_range=(XStart,0),y_range=(0,YEnd),height=220,width=int(Width))
-fig3.ellipse(x='x',y='y',width='w',height='w',fill_color='c',fill_alpha='a',
-    line_color="#003359",line_width=3,source=fig3_data)
-fig3.multi_line(xs='x',ys='y',color="#003359",line_width=3,source=fig3_lines_data)
-fig3.line(x='x',y='y',color="black",line_width=2,source=ramp_source)
-fig3.line(x='x',y='y',color="black",line_width=2,source=AngleMarkerSource)
-angle_glyph3=LabelSet(x='x', y='y',text='t',text_color='black',
-    text_font_size="15pt", source=AlphaPos)
+###############################################################################
+###                           annotation figures                            ###
+###############################################################################
+# sketch of the ramp and objects
+# settings for the annotation plot
+a_COS = cos(alpha)
+a_SIN = sin(alpha)
+atx0 = 0
+aty0 = 0
+atx1 = atx0 - 50*a_COS
+aty1 = aty0 + 50*a_SIN
+alx1 = atx1 + 2*a_SIN
+aly1 = aty1 + 2*a_COS
+alx0 = alx1 + 50*a_COS
+aly0 = aly1 - 50*a_SIN
+ou = lambda(x): ((aly1-aty1)/(alx1-atx1)*(x-atx1)+aty1)
+od = lambda(x): ((aly0-aty0)/(alx0-atx0)*(x-atx0)+aty0)
+
+msr3 = 200/295*1.1  # manual scaling ratio
+
+fig3 = figure(title="Annotations", x_range=(-55,5), y_range=(0,25), height=200, width=295, tools="")
+fig3.line(x=[atx0,atx1-5*a_COS],y=[aty0,aty1+5*a_SIN],color="black",line_width=2) # ramp
+fig3.line(x=[atx1-5*a_COS,atx1-5*a_COS],y=[aty0,aty1+5*a_SIN],color="black",line_width=2) # wall
+fig3.ellipse(x=[alx1],y=[aly1],width=[4],height=[4*msr3],fill_color="#0065BD",fill_alpha=[0.2],line_color="#003359",line_alpha=[0.2],line_width=3)
+fig3.ellipse(x=[alx1],y=[aly1],width=[2.5],height=[4*msr3],fill_alpha=[0],line_color="#003359",line_alpha=[0.2],line_width=3, angle=-0.7)
+
+# L annotation
+fig3.line(x=[alx1,alx0],y=[aly1,aly0],color="black",line_width=1.5)
+fig3.line(x=[alx1-0.8,alx1+0.9],y=[ou(alx1-0.5),ou(alx1+0.5)],color="black",line_width=1.5)
+fig3.line(x=[alx0-0.5,alx0+1.1],y=[od(alx0-0.5),od(alx0+0.5)],color="black",line_width=1.5)
+
+L_label_source = ColumnDataSource(data=dict(x=[-28],y=[11],t=["L = 50m"]))
+L_label = LabelSet(x='x', y='y', text='t', angle=-radians(26),  source=L_label_source, render_mode="css")
+fig3.add_layout(L_label)
+
+# alpha annotation
+fig3.line(x=[TX0-10*cos(i*alpha/10.0) for i in range(0,11)],y=[TY0+10*sin(i*alpha/10.0) for i in range(0,11)],color="black",line_width=2)
+AlphaPos     = ColumnDataSource(data=dict(x=[-8],y=[-0.1],t=[u"\u03B1"])) # alpha label position
+angle_glyph3 = LabelSet(x='x', y='y',text='t',text_color='black',text_font_size="15pt", source=AlphaPos)
 fig3.add_layout(angle_glyph3)
 
-# name the functions to be used by each figure depending upon their content
-evolveFunc1=lambda(x):moveSphere(x,2.0,1.0,fig1_data,fig1_lines_data)
-evolveFunc2=lambda(x):moveCylinder(x,2.0,1.0,fig2_data,fig2_lines_data)
-evolveFunc3=lambda(x):moveHollowCylinder(x,2.0,1.0,1.5,fig3_data,fig3_lines_data)
+fig3.grid.visible = False
+fig3.axis.visible = False
+fig3.toolbar_location = None
 
-# function to change the shape, radius, or mass of the object in figure FIG
-def changeObject(FIG,new,r,m):
-    # save the data concerned in data and line_data
-    if (FIG==1):
-        data=fig1_data
-        line_data=fig1_lines_data
-    elif(FIG==2):
-        data=fig2_data
-        line_data=fig2_lines_data
-    else:
-        data=fig3_data
-        line_data=fig3_lines_data
-    # depending on the shape specified, create the object and
-    # save the new evolution function in the variable fund
-    if (new == "Kugel (Sphere)"):
-        createSphere(r,data,line_data)
-        func=lambda(x):moveSphere(x,r,m,data,line_data)
-    elif (new=="Hohlzylinder (Hollow cylinder)"):
-        createHollowCylinder(r,r-0.5,data,line_data)
-        func=lambda(x):moveHollowCylinder(x,r,m,r-0.5,data,line_data)
-    elif (new == "Hohlkugel (Hollow sphere)"):
-        createHollowSphere(r,data,line_data)
-        func=lambda(x):moveHollowSphere(x,r,m,r-0.5,data,line_data)
-    else:
-        createCylinder(r,data,line_data)
-        func=lambda(x):moveCylinder(x,r,m,data,line_data)
-    # save the evolution function to the appropriate function handle
-    if (FIG==1):
-        global evolveFunc1
-        evolveFunc1=func
-        fig1.title.text=new
-    elif(FIG==2):
-        global evolveFunc2
-        evolveFunc2=func
-        fig2.title.text=new
-    else:
-        global evolveFunc3
-        evolveFunc3=func
-        fig3.title.text=new
-    # if a simulation is in progress, restart it
-    global Active,t
-    if (Active):
-        t=0.0
 
-## slider functions
-# functions to change the shape
-def changeObject1(attr,old,new):
-    changeObject(1,new,radius_select1.value,1.0)
 
-def changeObject2(attr,old,new):
-    changeObject(2,new,radius_select2.value,1.0)
+# sketch of hollow object
+f4h  = 200
+f4w  = 295
+msr4 = f4h/f4w*1.1  # manual scaling ratio
 
-def changeObject3(attr,old,new):
-    changeObject(3,new,radius_select3.value,1.0)
+fig4 = figure(x_range=(-10,10), y_range=(-5,5), height=f4h, width=f4w, tools="", match_aspect=True)
+fig4.ellipse(x=[-5,-5],y=[0,0],width=[6,8],height=[6*msr4,8*msr4],fill_alpha=[0,0],line_color='black',line_width=3)
+fig4.line(x=[-5,-5],y=[0,4*msr4],line_width=2)
+fig4.line(x=[-5,-2],y=[0,0],line_width=2)
+r_lables_source = ColumnDataSource(data=dict(x=[-4.2,-5.9,0,0],y=[-0.9,0.9,1,-1],t=["r_i","r","r\\:=\\text{Radius}","r_i=\\text{Inner radius}"]))
+r_lables = LatexLabelSet(x='x', y='y', text='t', source=r_lables_source)
+fig4.add_layout(r_lables)
+fig4.grid.visible = False
+fig4.axis.visible = False
+fig4.toolbar_location = None
 
-# functions to change the radius
-def changeRadius1(attr,old,new):
-    changeObject(1,object_select1.value,new,1.0)
 
-def changeRadius2(attr,old,new):
-    changeObject(2,object_select2.value,new,1.0)
+# put the figures in a list for easy access in functions
+figure_list[0] = fig0
+figure_list[1] = fig1
+figure_list[2] = fig2
 
-def changeRadius3(attr,old,new):
-    changeObject(3,object_select3.value,new,1.0)
 
-# sliders
-object_select1 = Select(title="Object:", value="Kugel (Sphere)",
-    options=["Kugel (Sphere)", "Hohlkugel (Hollow sphere)", "Vollzylinder (Full cylinder)", "Hohlzylinder (Hollow cylinder)"])
-object_select1.on_change('value',changeObject1)
-object_select2 = Select(title="Object:", value="Vollzylinder (Full cylinder)",
-    options=["Kugel (Sphere)", "Hohlkugel (Hollow sphere)", "Vollzylinder (Full cylinder)", "Hohlzylinder (Hollow cylinder)"])
-object_select2.on_change('value',changeObject2)
-object_select3 = Select(title="Object:", value="Hohlzylinder (Hollow cylinder)",
-    options=["Kugel (Sphere)", "Hohlkugel (Hollow sphere)", "Vollzylinder (Full cylinder)", "Hohlzylinder (Hollow cylinder)"])
-object_select3.on_change('value',changeObject3)
-radius_select1 = Slider(title="Radius", value=2.0, start=1.0, end=4.0, step=0.5)
-radius_select1.on_change('value',changeRadius1)
-radius_select2 = Slider(title="Radius", value=2.0, start=1.0, end=4.0, step=0.5)
-radius_select2.on_change('value',changeRadius2)
-radius_select3 = Slider(title="Radius", value=2.0, start=1.0, end=4.0, step=0.5)
-radius_select3.on_change('value',changeRadius3)
+###############################################################################
+###                           selection callbacks                           ###
+###############################################################################
+my_callback_fcts.my_sources.object_select0.on_change('value',my_callback_fcts.changeObject0)
+my_callback_fcts.my_sources.object_select1.on_change('value',my_callback_fcts.changeObject1)
+my_callback_fcts.my_sources.object_select2.on_change('value',my_callback_fcts.changeObject2)
 
-# slider function for the angle
-def changeAlpha(attr,old,new):
-    global alpha, COS, SIN, offset, H, rampLength, ramp_source
-    alpha=radians(new)
-    X=[]
-    Y=[]
-    for i in range(0,11):
-        X.append(-3*cos(i*alpha/10.0))
-        Y.append(3*sin(i*alpha/10.0))
-    AngleMarkerSource.data=dict(x=X,y=Y)
-    COS=cos(alpha)
-    SIN=sin(alpha)
-    offset=-rampLength*COS
-    H = rampLength*SIN
-    ramp_source.data = dict(x=[offset,0],y=[H,0])
-    stop()
+# stears visability of inner radius sliders (show only for hollow objects)
+my_callback_fcts.my_sources.object_select0.callback = CustomJS(code=my_callback_fcts.object_select_JS)
+my_callback_fcts.my_sources.object_select1.callback = CustomJS(code=my_callback_fcts.object_select_JS)
+my_callback_fcts.my_sources.object_select2.callback = CustomJS(code=my_callback_fcts.object_select_JS)
 
-# slider for the angle
-alpha_slider = Slider(title=u"\u03B1", value=20.0, start=5.0, end=25.0, step=1.0)
-alpha_slider.on_change('value',changeAlpha)
 
-def start():
-    global Active, t
-    if (not Active):
-        t = 0
-        # reset the objects' positions
-        changeObject(1,object_select1.value,radius_select1.value,1.0)
-        changeObject(2,object_select2.value,radius_select2.value,1.0)
-        changeObject(3,object_select3.value,radius_select3.value,1.0)
-        # add the call to evolve
-        curdoc().add_periodic_callback(evolve,50)
-        Active = True
+###############################################################################
+###                            slider callbacks                             ###
+###############################################################################
+# radius
+my_callback_fcts.my_sources.radius_slider0.on_change('value',my_callback_fcts.changeRadius0)
+my_callback_fcts.my_sources.radius_slider1.on_change('value',my_callback_fcts.changeRadius1)
+my_callback_fcts.my_sources.radius_slider2.on_change('value',my_callback_fcts.changeRadius2)
 
-def stop():
-    global Active, t
-    # only stop if the call is active
-    if (Active):
-        t = 0
-        curdoc().remove_periodic_callback(evolve)
-        Active = False
-    else:
-        # reset the objects' positions
-        changeObject(1,object_select1.value,radius_select1.value,1.0)
-        changeObject(2,object_select2.value,radius_select2.value,1.0)
-        changeObject(3,object_select3.value,radius_select3.value,1.0)
+# inner radius
+my_callback_fcts.my_sources.ri_slider0.on_change('value',my_callback_fcts.changeWall0)
+my_callback_fcts.my_sources.ri_slider1.on_change('value',my_callback_fcts.changeWall1)
+my_callback_fcts.my_sources.ri_slider2.on_change('value',my_callback_fcts.changeWall2)
 
-def evolve():
-    global t
-    t+=0.01
-    # call all necessary functions
-    (x1,y1)=evolveFunc1(t)
-    (x2,y2)=evolveFunc2(t)
-    (x3,y3)=evolveFunc3(t)
-    # if an object has reached the end of the ramp then stop the simulation
-    if (max(x1,x2,x3)>0 or min(y1,y2,y3)<0):
-        global Active
-        curdoc().remove_periodic_callback(evolve)
-        Active = False
+# angle of the ramp
+my_callback_fcts.my_sources.alpha_slider0.on_change('value',my_callback_fcts.changeAlpha0)
+my_callback_fcts.my_sources.alpha_slider1.on_change('value',my_callback_fcts.changeAlpha1)
+my_callback_fcts.my_sources.alpha_slider2.on_change('value',my_callback_fcts.changeAlpha2)
 
-# create the buttons
-start_button = Button(label="Start", button_type="success")
-start_button.on_click(start)
-stop_button = Button(label="Stop", button_type="success")
-stop_button.on_click(stop)
 
+###############################################################################
+###                            button callbacks                             ###
+###############################################################################
+my_callback_fcts.my_sources.start_button.on_click(my_callback_fcts.start)
+my_callback_fcts.my_sources.reset_button.on_click(my_callback_fcts.reset)
+
+
+###############################################################################
+###                          page styling / layout                          ###
+###############################################################################
+ # initial appearance
 init()
+
+# description of radio button mode choice
+p_mode = Paragraph(text="""Stopping mode: """)
+
+# description of the app
+description_filename = join(dirname(__file__), "description.html")
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1180)
+
 ## Send to window
-curdoc().add_root(row(column(row(fig1,column(object_select1,radius_select1)),
-    row(fig2,column(object_select2,radius_select2)),
-    row(fig3,column(object_select3,radius_select3))),Spacer(width=100),
-    column(start_button,stop_button,alpha_slider)))
+curdoc().add_root(column(description,row(column(
+    row(fig0,column(my_callback_fcts.my_sources.object_select0,my_callback_fcts.my_sources.radius_slider0,my_callback_fcts.my_sources.ri_slider0,my_callback_fcts.my_sources.alpha_slider0)),
+    row(fig1,column(my_callback_fcts.my_sources.object_select1,my_callback_fcts.my_sources.radius_slider1,my_callback_fcts.my_sources.ri_slider1,my_callback_fcts.my_sources.alpha_slider1)),
+    row(fig2,column(my_callback_fcts.my_sources.object_select2,my_callback_fcts.my_sources.radius_slider2,my_callback_fcts.my_sources.ri_slider2,my_callback_fcts.my_sources.alpha_slider2))),
+    Spacer(width=100),
+    column(my_callback_fcts.my_sources.start_button,
+           my_callback_fcts.my_sources.reset_button,
+           row(widgetbox(p_mode,width=120),my_callback_fcts.my_sources.mode_selection),
+           Spacer(height=80),
+           fig3,
+           Spacer(height=50),
+           fig4))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

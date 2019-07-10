@@ -277,7 +277,7 @@ for mode in modes:
     counter += 1
 
 ########################## Output the results #################################
-mode_colors = ['#0000FF','#00FF00','#D4AC0D']
+mode_colors = ['#A2AD00','#E37222','#64A0C8']
 
 fc.plot( mode_one  , modes[2], radius, mode_colors[2])
 fc.plot( mode_two  , modes[1], radius, mode_colors[1])
@@ -296,7 +296,7 @@ siesmicParameters = S3S_SeismicParameters(a=0.4,gamma=1.0,S=1.0,eta=1.0,beta=2.5
 fc.update_ERS_plot_data( siesmicParameters )
 
 # plot the line drawn by the ERS data source
-ERSplot.line(x='x',y='y',source=siesmicParameters.ERSdata)
+ERSplot.line(x='x',y='y',source=siesmicParameters.ERSdata,color='black')
 
 # Allocate each mode in the ERS plot
 counter = 0
