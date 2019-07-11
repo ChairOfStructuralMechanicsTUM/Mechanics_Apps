@@ -30,7 +30,10 @@ In diesem Abschnitt werden...
 \subsubsection{Dämpfung}
 Linear-Viskos
 \subsection{Modell}
-Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenschaften, veranschaulichen und darstellen zu können, verwenden wir Modelle. Sie dienen dazu, die Natur eingeschränkt abzubilden und sie somit "berechenbar" zu machen, da viele Ereignisse zu komplex sind, um sie übersichtlich "darzustellen" (anderes Wort). Man muss sich dabei immer vor Augen halten, was berechnet werden soll, und wie sehr das Modell (eingeschränkt) ist. Dabei sind einige (Eigenschaften...) mehr oder weniger relevant. Viele physikalische Modelle basieren auf mathematischen Gleichungen, insbesondere Differentialgleichungen. In diesem Fall bezieht man sich auf ...
+Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenschaften, veranschaulichen und darstellen zu können, verwenden wir Modelle. Sie dienen dazu, die Natur eingeschränkt abzubilden und sie somit "berechenbar" zu machen, da die Ereignisse meist zu komplex sind, um sie übersichtlich veranschaulichen zu können. Man muss sich dabei immer vor Augen halten, was berechnet werden soll, und wie sehr das Modell (eingeschränkt) ist. Dabei sind einige (Eigenschaften...) mehr oder weniger relevant. Viele physikalische Modelle basieren auf mathematischen Gleichungen, insbesondere Differentialgleichungen. In diesem Fall bezieht man sich auf ...
+
+Zunächst leiten wir uns das Modell anhand eines Einmassenschwingers her, um das Problem zu veranschaulichen.
+\subsubsection{Energiemethoden}
 \subsubsection{Einmassenschwinger}
 Die Kinematik als Teil der technischen Mechanik beschreibt, wie sich ein Körper bewegt. Hierfür werden die Begriffe Geschwindigkeit \eqref{Geschwindigkeit} und Beschleunigung \eqref{Beschleunigung} eingeführt, welche sich aus der vektoriellen Basisgröße Länge bzw. Verschiebung $\vec{u}$ ableiten lassen.
 
@@ -54,7 +57,7 @@ Nach dem dritten Newton'schen Axiom ist die Kraft, die auf einen Körper, genaue
     \vec{F} - m\cdot\vec{\ddot u}&=\vec{0}&=\sum_{i=1}^{n} \vec{F_{i}}\\
 \end{equation}
 
-In diesem Zusammenhang beschreibt der Term $(-m \cdot a)$ den scheinbaren Widerstand der Masse gegen die sie beschleunigende Kraft. Diesen Widerstand nennt man Trägheitskraft. Gleichung \eqref{Kraft} erinnert hierbei stark an die aus der Statik bekannte Gleichgewichtsbedingung. In beschleunigt bewegten Systemen wird zur Aufstellung von Bewegungsgleichungen das d'Alembert'sche Prinzip verwendet. Mit diesem Wissen können wir einen ersten Versuch wagen, ein Modell zu erstellen.
+In diesem Zusammenhang beschreibt der Term $(-m \cdot a)$ den scheinbaren Widerstand der Masse gegen die sie beschleunigende Kraft. Diesen Widerstand nennt man Trägheitskraft. Gleichung \eqref{Kraft} erinnert hierbei stark an die aus der Statik bekannte Gleichgewichtsbedingung. In beschleunigt bewegten Bezugssystemenystemen wird zur Aufstellung von Bewegungsgleichungen das d'Alembert'sche Prinzip verwendet (beschreiben). Mit diesem Wissen können wir einen ersten Versuch wagen, ein Modell zu erstellen.
 
 (Bild einmassenschwinger einfügen)
 Nach dem d'Alembert'schen Prinzip muss die Summe aller dynamischen Kräfte gleich $ \vec{0}$ sein.
@@ -68,7 +71,7 @@ Folglich können wir das System freischneiden und das dynamische Kräftegleichge
     m\cdot\vec{\ddot u}+c\cdot\vec{\dot u}+k\cdot\vec{u}&=\vec{F}
     \end{align}
 \end{subequations}
-Demnach entsprechen $\vec{F_m}$ der d'Alembert'schen Trägheitskraft, $\vec{F_c}$ der Dämpfer-kraft, sowie $\vec{F_k}$ der Rückstellkraft der Feder und $\vec{F}$ der äußeren auf das System einwirkenden Kraft. Es ergibt sich die Bewegungsgleichung des Einmassenschwingers. Betrachtet man die einzelnen Terme der Gleichung \eqref{Dynamisches Gleichgewicht} genauer, so erkennt man sofort, dass die Kräfte zeitabhängig sind. Daher handelt es sich hier um eine Differentialgleichung kurz DGL, genauer gesagt um eine lineare inhomogene Differentialgleichung zweiter Ordnung mit konstanten Koeffizienten. In der Regel gibt es für Differentialgleichungen keine allgemeinen analytischen Lösungsansätze, woraufhin man in den meisten Fällen auf numerische, sprich computergestützte, Verfahren zurückgreifen muss. Für diesen Typ DGL allerdings gibt es eine elegante Methode, die ein händisches Lösen ermöglichen. Da die Menge aller  Lösungen einer linearen DGL n-ter Ordnung linear unabhängig sind, ist die Summe und ein skalares Vielfaches einer Lösung widerum eine Lösung. \citep{karpfinger2013hohere} Dies macht man sich zu Nutze und trennt den  Lösungsraum in eine homogene Lösung $L_h$ und in eine partikuläre $L_p$. 
+Demnach entsprechen $\vec{F_m}$ der d'Alembert'schen Trägheitskraft, $\vec{F_c}$ der Dämpfer-kraft, sowie $\vec{F_k}$ der Rückstellkraft der Feder und $\vec{F}$ der äußeren auf das System einwirkenden Kraft. Es ergibt sich die Bewegungsgleichung des Einmassenschwingers. Betrachtet man die einzelnen Terme der Gleichung \eqref{Dynamisches Gleichgewicht} genauer, so erkennt man sofort, dass die Kräfte zeitabhängig sind. Daher handelt es sich hier um eine Differentialgleichung kurz DGL, genauer gesagt um eine lineare inhomogene Differentialgleichung zweiter Ordnung mit konstanten Koeffizienten. In der Regel gibt es für Differentialgleichungen keine allgemeinen analytischen Lösungsansätze, woraufhin man in den meisten Fällen auf numerische, sprich computergestützte, Verfahren zurückgreifen muss. Für diesen Typ DGL allerdings gibt es eine elegante Methode, die ein händisches Lösen ermöglichen. Da die Menge aller Lösungen einer linearen DGL n-ter Ordnung linear unabhängig sind, ist die Summe und ein skalares Vielfaches einer Lösung widerum eine Lösung. \citep{karpfinger2013hohere} Dies macht man sich zu Nutze und trennt gemäß dem Superpositionsprinzip den Lösungsraum in eine homogene Lösung $L_h$ und in eine partikuläre $L_p$. 
 
 Zunächst betrachten wir die Lösung der Nullfunktion \eqref{homogene DGL}. Unter Verwendung des Ansatzes $u(t)=\mathrm{e}^{\lambda t}$, und indem wir ihn an den entsprechenden Stellen eingesetzten \eqref{homogener ansatz}, lässt sich eine homogene Lösung finden. Diese Idee fußt auf dem Lösungsansatz für gewöhnliche separierbare DGL $\dot x=x$. Vereinfachen lässt sich diese Gleichung durch Kürzen und Ausklammern von $\mathrm{e}^{\lambda t} >0 | \forall \lambda ,t \in \mathbb{R}$. Zu guter Letzt müssen wir die Nullstellen \eqref{Nullstellen} des charakteristischen Polynoms \eqref{charakteristisches Polynom} für $\lambda$ finden.
 \begin{subequations}
@@ -83,7 +86,27 @@ Zunächst betrachten wir die Lösung der Nullfunktion \eqref{homogene DGL}. Unte
     \Leftrightarrow \lambda_1_,_2&=\mathrm{-\delta \pm{\omega_E \sqrt{D^2-1}}} 
     \end{align}
 \end{subequations}
-mit $\omega_E^2=\frac{k}{m}$ und $D=\frac{c}{2m\omega_E}$. $D$ beschreibt das Lehr'sche Dämpfungsmaß. Beim Durchführen dieser Rechnung muss eine Fallunterscheidung (getätigt) werden. 
+mit $\omega_E^2=\frac{k}{m}$ und $D=\frac{c}{2m\omega_E}=\frac{\delta}{\omega_E}$. $D$ beschreibt das Lehr'sche Dämpfungsmaß. Beim Durchführen dieser Rechnung muss eine Fallunterscheidung (getätigt) werden:
+\begin{itemize}
+\item[a)] $D>1$: Aperiodischer Fall
+\item[b)] $D=1$: Aperiodischer Grenzfall
+\item[c)] $D<1$: Quasiperiodischer Fall
+\end{itemize}
+(Quelle Skript TM Ergänzung)
+Unter der Voraussetzung eines visko-elastischen Materialverhaltens und gemäß des Kelvin-Voigt-Modells der Rheologie, liegt in der Baudynamik größtenteils ein Dämpfungsmaß von $D<1$ vor. Für den quasiperiodischen Fall ist die Diskriminante aus Gleichung \eqref{Nullstellen} $<0$, was zur Folge hat, dass die Lösungen des charakteristischen Polynoms nicht reell sind \eqref{komplexe lösung}. Bei (komplexen) $\lambda_1_,_2 \in \mathbb{C}$ spielt es jedoch keine Rolle, welches $\lambda$ bei der weiteren Rechnung verwendet wird, da analog auch mit dem konjugiert Komplexen gearbeitet werden kann. 
+\begin{subequations}
+\begin{align}
+ \label{komplexe lösung}
+    u&=\mathrm{e}^{\lambda t}=\mathrm{e}^{\mathrm{(-\delta +i\overline{\omega_E})t}} 
+    \intertext{Mittels der Euler'schen Formel lässt sich $u$ auch in einer Polardarstellung wiedergeben \eqref{polardarstellung}. Als eine Linearkombination aus Sinus- und Cosinusfunktion wird deutlich, dass die Lösung der DGL die Form einer Schwingung hat.}
+    \label{polardarstellung}
+    &=\mathrm{e}^{\mathrm{-\delta t}} [\cos{(\overline{\omega_E}t)}+i\sin{(\overline{\omega_E}t)}]
+    \intertext{Da man nur an der reellen Lösung Interessiert ist, wählt man nun eine der beiden Lösungen aus, und zerlegt sie in Real- und Imaginärteil \citep{karpfinger2013hohere}. Daraus ergeben sich zwei allgemeine reelle linear unabhängige Lösungen \eqref{polardarstellung getrennt}, deren Koeffizienten $c_1$ und $c_2$ über die Randbedingungen des Anfangswertproblems bestimmt werden müssen.}
+    \label{polardarstellung getrennt}
+    u&=\mathrm{e}^{\mathrm{-\delta t}} [c_1\cos{(\overline{\omega_E}t)}+c_2\sin{(\overline{\omega_E}t)}]
+\end{align}
+\end{subequations}
+
 
 
 \subsubsection{}
@@ -112,4 +135,3 @@ Jedes Gebäude lässt sich stark vereinfachen. Um die Verformungen, Beschleunigu
 \cleardoublepage
 \bibliography{Literaturverzeichnis}
 \end{document}
-
