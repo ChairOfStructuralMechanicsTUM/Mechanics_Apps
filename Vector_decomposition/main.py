@@ -189,7 +189,7 @@ def reset():
      glob_Vector1.data = dict(val=([70]))
      Vector_source.data = dict(xS=[0], xE=[50], yS=[0],yE=[50])
      glob_theta1line1.data=dict(val=[radians(90)])
-     glob_theta1line1.data=dict(val=[radians(0)])
+     glob_theta1line2.data=dict(val=[radians(0)])
      
      [Active] = glob_active.data["Active"]
      
