@@ -62,13 +62,27 @@ class NFR_TriangularLoad(NFR_Shape):
     def draw(self, fig):
         self.drawAPI.drawPatch(fig, self.shape)
 
-
 class NFR_TemperatureLoad(NFR_Shape):
     def __init__(self, DrawAPI, load_position, lb, ub):  # lb = lower boundary, ub = upper boundary
         NFR_Shape.__init__(self, DrawAPI)
         self.shape.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+lb, y_offset+ub, y_offset+ub, y_offset+lb])
     def draw(self, fig):
         self.drawAPI.drawPatch(fig, self.shape)
+
+
+class NFR_Labels(NFR_Shape):
+    def __init__(self, DrawAPI, load_position):
+        NFR_Shape.__init__(self, DrawAPI)
+        self.shape.data = dict(x=[xr_start-0.1+load_position, xr_start-0.05+load_position],y=[y_offset+0.3,y_offset],name=['F','|'])
+    def draw(self, fig):
+        self.drawAPI.drawLabels(fig, self.shape)
+
+
+
+
+
+
+
 
 
 

@@ -1,3 +1,5 @@
+from __future__ import division # float division only, like in python 3
+
 from bokeh.plotting import Figure#, output_file , show
 #from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
 from bokeh.models import Arrow, OpenHead, LabelSet
@@ -25,10 +27,12 @@ from NFR_constants import (
 
 from NFR_Shapes import (
         NFR_Rod, NFR_RodShadow,
-        NFR_ForceArrow, NFR_ConstantLoad, NFR_TriangularLoad, NFR_TemperatureLoad
+        NFR_ForceArrow, NFR_ConstantLoad, NFR_TriangularLoad, NFR_TemperatureLoad,
+        NFR_Labels
         )
 from NFR_DrawAPI import (
-        NFR_BlueRod, NFR_BlackShadowRod, NFR_BlueArrow, NFR_BlueLoad
+        NFR_BlueRod, NFR_BlackShadowRod, NFR_BlueArrow, NFR_BlueLoad,
+        NFR_BlackLabelText
         )
 
 from NFR_GUIControl import NFR_GUIControl
@@ -54,11 +58,16 @@ control = NFR_GUIControl()
 
 
 
-
-force_arrow = NFR_ForceArrow(NFR_BlueArrow(), xr_start-1.0, xr_start, 0.1, 0.1)
+#TODO: set corect initial values
+force_arrow = NFR_ForceArrow(NFR_BlueArrow(), xr_start-0.5, xr_start+0.5, 0.2, 0.2)
 const_load  = NFR_ConstantLoad(NFR_BlueLoad(), control.load_position_slider.value, lb, ub)
 triang_load = NFR_TriangularLoad(NFR_BlueLoad(), control.load_position_slider.value, lb, ub)
-temp_load = NFR_TemperatureLoad(NFR_BlueLoad(), control.load_position_slider.value, lb, ub)
+temp_load   = NFR_TemperatureLoad(NFR_BlueLoad(), control.load_position_slider.value, lb, ub)
+
+labels      = NFR_Labels(NFR_BlackLabelText(), control.load_position_slider.value)
+
+obj_list = [force_arrow, const_load, triang_load, temp_load, labels]
+
 
 
 ########################################
@@ -81,7 +90,7 @@ def change_load(attr, old, new):
     
     #print(const_load.shape.data)
     
-    obj_list = [force_arrow, const_load, triang_load, temp_load]
+    #obj_list = [force_arrow, const_load, triang_load, temp_load]
     set_load(new, current_position, obj_list)
     
     #print(const_load.shape.data)
@@ -97,6 +106,26 @@ def change_load(attr, old, new):
     #const_load.drawAPI.drawPatch(plot_main, const_load.shape, alpha=0.1)
     #print(const_load.shape.data)
     #compute_new_scenario()
+    
+    
+    
+def change_load_position(attr, old, new):
+    
+    # have to handle distinct cases, otherwise there are ValueErrors for empty lists
+    new_position = new*10/(xr_end-xr_start)
+    
+    current_load = control.radio_button_group.active
+    
+    set_load(current_load, new_position, obj_list)
+    refresh_objects(obj_list, plot_main)
+    
+    #compute_new_scenario()
+
+
+
+
+
+
 
 def reset():
     pass
@@ -109,6 +138,8 @@ def reset():
 control.reset_button.on_click(reset)
 
 control.radio_button_group.on_change('active',change_load)
+
+control.load_position_slider.on_change('value',change_load_position)
 
 
 
@@ -185,7 +216,7 @@ doc_layout = layout(children=[
                        #row(widgetbox(p_rt2, width=120), widgetbox(radio_group_right)), 
                        ##row(widgetbox(p_rt3, width=120), widgetbox(radio_group_cross)), 
                        #row(widgetbox(p_rt4, width=120), widgetbox(radio_group_ampl)), 
-                       #load_position_slide,
+                       control.load_position_slider,
                        ##load_magnitude_slide,
                        ##slider_group,
                        #simple_button_group

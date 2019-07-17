@@ -15,8 +15,8 @@ def clear_triangular_load():
     return dict(x=[], y=[])
 def clear_temperature():
     return dict(x=[], y=[])
-#def clear_labels():
-#    labels_source.data = dict(x=[], y=[], name=[])
+def clear_labels():
+    return dict(x=[], y=[], name=[])
 
 
 # TODO: maybe variable for arrow length for more general case?
@@ -24,7 +24,8 @@ def clear_temperature():
 
 def set_point_load(load_position, load_output):
     #y_cross = global_variables["y_cross"]
-    #labels_source.data = dict(x=[xr_start-0.1+load_position, xr_start-0.05+load_position],y=[y_offset+0.3,y_offset],name=['F','|'])
+    # labels
+    load_output[4] = dict(x=[xr_start-0.1+load_position, xr_start-0.05+load_position],y=[y_offset+0.3,y_offset],name=['F','|'])
     
     load_output[0] = dict(xS=[xr_start-0.5+load_position], xE=[xr_start+0.5+load_position], yS=[y_offset+0.2], yE=[y_offset+0.2])
     
@@ -46,7 +47,7 @@ def set_point_load(load_position, load_output):
 def set_constant_load(load_position, load_output):
     if load_position<1e-5: #close to zero
         load_output[1] = clear_constant_load()
-        #clear_labels()
+        load_output[4] = clear_labels()
         load_output[0] = clear_point_load()
     else:
         #labels_source.data = dict(x=[xr_start+1.5,xr_start+4.5,xr_start+7.5],y=[y_offset+0.9,y_offset+0.9,y_offset+0.9],name=['F','F','F'])
@@ -67,7 +68,7 @@ def set_constant_load(load_position, load_output):
             xE.append(part*i)
         
         #labels_source.data = dict(x=xM,y=[y_offset+0.9,y_offset+0.9,y_offset+0.9],name=['F']*num_arrows)
-        #labels_source.data = dict(x=[load_position+0.1],y=[y_offset+0.2], name=['p'])
+        load_output[4] = dict(x=[load_position+0.1],y=[y_offset+0.2], name=['p'])
         
         load_output[0] = dict(xS=xS, xE=xE, yS=[y_offset+0.45]*num_arrows, yE=[y_offset+0.45]*num_arrows)#, lW=[2]*num_arrows, lC=["#0065BD"]*num_arrows)
         
@@ -81,7 +82,7 @@ def set_constant_load(load_position, load_output):
 def set_triangular_load(load_position, load_output):
     if load_position<1e-5: #close to zero
         load_output[2] = clear_triangular_load()
-        #clear_labels()
+        load_output[4] = clear_labels()
         load_output[0] = clear_point_load()
     else:
         #y_cross = global_variables["y_cross"]
@@ -98,7 +99,7 @@ def set_triangular_load(load_position, load_output):
             #xM.append(part*(i+0.5))
         for i in local_index[1:][::2]:
             xE.append(part*i)
-        #labels_source.data = dict(x=[load_position+0.1],y=[y_offset+0.2], name=['p'])
+        load_output[4] = dict(x=[load_position+0.1],y=[y_offset+0.2], name=['p'])
         load_output[0] = dict(xS=xS, xE=xE, yS=[y_offset+0.45]*num_arrows, yE=[y_offset+0.45]*num_arrows)
         load_output[2] =  dict(x=[xr_start, xr_start, load_position], y=[y_offset+lb, y_offset+ub, y_offset+lb])
     load_output[1] = clear_constant_load()
@@ -109,11 +110,11 @@ def set_triangular_load(load_position, load_output):
 def set_temperature(load_position, load_output):
     if load_position<1e-5: #close to zero
         load_output[3] = clear_temperature()
-        #clear_labels()
+        load_output[4] = clear_labels()
     else:
         #y_cross = global_variables["y_cross"]
         
-        #labels_source.data = dict(x=[(load_position-xr_start)/2],y=[y_offset+0.35], name=['T'])
+        load_output[4] = dict(x=[(load_position-xr_start)/2],y=[y_offset+0.35], name=['T'])
         load_output[3] = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+lb, y_offset+ub, y_offset+ub, y_offset+lb])
         #TODO: nice design for Temperature (hot/cold)
     load_output[0] = clear_point_load()
@@ -131,7 +132,7 @@ def set_temperature(load_position, load_output):
     
     
 def set_load(load_type, load_position, obj_list):
-    load_output = [dict()]*4  # num of load types
+    load_output = [dict()]*(4+1)  # num of load types + labels
     # empty dict is not enough, the variables in the CDS have to be set empty
     # => load_ouput has to be filled by the specific functions
     if load_type==0:

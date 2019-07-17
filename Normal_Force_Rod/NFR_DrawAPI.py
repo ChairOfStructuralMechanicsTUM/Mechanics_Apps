@@ -1,7 +1,7 @@
 ## Draw Shapes in Plots
 
 #from bokeh.models import ColumnDataSource
-from bokeh.models import Arrow, OpenHead
+from bokeh.models import Arrow, OpenHead, LabelSet
 from bokeh.models.glyphs import Patch
 
 
@@ -40,4 +40,21 @@ class NFR_BlueLoad(NFR_DrawAPI):
 #        temperature_glyph = Patch(x='x', y='y', fill_color="#0065BD", fill_alpha=0.5)
 #plot_main.add_glyph(constant_load_source, constant_load_glyph)
 
-        
+
+
+
+class NFR_BlackLabelText(NFR_DrawAPI):
+    def drawLabels(self, fig, CDS):
+        #fig.patch(x='x', y='y', source=CDS, line_color='black', fill_color=color, fill_alpha=alpha)
+        labels = LabelSet(x='x', y='y', text='name', level='glyph', render_mode='canvas', source=CDS)
+        fig.add_layout(labels)
+
+
+#main_labels = LabelSet(x='x', y='y', text='name', level='glyph', render_mode='canvas', source=labels_source)
+#plot_main.add_layout(main_labels)
+
+
+
+
+
+
