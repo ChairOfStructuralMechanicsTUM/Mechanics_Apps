@@ -128,18 +128,25 @@ def change_load_position(attr, old, new):
 
 
 def reset():
-    pass
-    #rod.shape.data = dict(x=[8, 8, 9, 9], y=[0, 0.2, 0.2, 0])
-    #rod.drawAPI.drawPatch(plot_main, rod.shape, color="#446511")
-    #refresh_object(rod, plot_main)
+    control.radio_button_group.active = 0
+    control.radio_group_left.active   = 0
+    control.radio_group_right.active  = 1
+    #radio_group_cross.active  = 0
+    control.radio_group_ampl.active   = 1
+    control.load_position_slider.value = (xr_end-xr_start)/2
+    set_load(control.radio_button_group.active,control.load_position_slider.value, obj_list)
+    #compute_new_scenario()
 
 
 
-control.reset_button.on_click(reset)
+
 
 control.radio_button_group.on_change('active',change_load)
 
 control.load_position_slider.on_change('value',change_load_position)
+
+control.reset_button.on_click(reset)
+
 
 
 
@@ -206,16 +213,24 @@ rod_shadow.draw(plot_deform)
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1000)
 
+rt_filename = join(dirname(__file__), "radio_button_title.html")
+rt = LatexDiv(text=open(rt_filename).read())
+
+p_rt1 = Paragraph(text="""Left support:  """)
+p_rt2 = Paragraph(text="""Right support: """)
+#p_rt3 = Paragraph(text="""Cross-section: """)
+p_rt4 = Paragraph(text="""Load Amplitude:""")
+
 
 doc_layout = layout(children=[
         column(description,
                row(column(
                        Spacer(height=20,width=450),
                        widgetbox(control.radio_button_group),
-                       #row(widgetbox(p_rt1, width=120), widgetbox(radio_group_left)),
-                       #row(widgetbox(p_rt2, width=120), widgetbox(radio_group_right)), 
+                       row(widgetbox(p_rt1, width=120), widgetbox(control.radio_group_left)),
+                       row(widgetbox(p_rt2, width=120), widgetbox(control.radio_group_right)), 
                        ##row(widgetbox(p_rt3, width=120), widgetbox(radio_group_cross)), 
-                       #row(widgetbox(p_rt4, width=120), widgetbox(radio_group_ampl)), 
+                       row(widgetbox(p_rt4, width=120), widgetbox(control.radio_group_ampl)), 
                        control.load_position_slider,
                        ##load_magnitude_slide,
                        ##slider_group,
