@@ -3,9 +3,11 @@
 from bokeh.models import ColumnDataSource
 from abc import ABCMeta, abstractmethod
 
+import numpy as np
+
 #from NFR_DrawAPI import NFR_DrawAPI
 from NFR_constants import (
-        xr_start, xr_end, y_offset
+        xr_start, xr_end, y_offset, sol_reso
         )
 
 class NFR_Shape(object):
@@ -78,6 +80,25 @@ class NFR_Labels(NFR_Shape):
         self.drawAPI.drawLabels(fig, self.shape)
 
 
+
+class NFR_GraphN(NFR_Shape):
+    def __init__(self, DrawAPI):
+        NFR_Shape.__init__(self, DrawAPI)
+        #x_samples = np.linspace(xr_start,xr_end,sol_reso)
+        #self.shape.data = dict(x=x_samples, y=x_samples)
+        self.shape.data = dict(x=[], y=[])
+    def draw(self, fig):
+        self.drawAPI.drawGraph(fig, self.shape)
+
+
+class NFR_GraphU(NFR_Shape):
+    def __init__(self, DrawAPI):
+        NFR_Shape.__init__(self, DrawAPI)
+        #x_samples = np.linspace(xr_start,xr_end,sol_reso)
+        #self.shape.data = dict(x=x_samples, y=x_samples)
+        self.shape.data = dict(x=[], y=[])
+    def draw(self, fig):
+        self.drawAPI.drawGraph(fig, self.shape)
 
 
 

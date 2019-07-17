@@ -28,11 +28,13 @@ from NFR_constants import (
 from NFR_Shapes import (
         NFR_Rod, NFR_RodShadow,
         NFR_ForceArrow, NFR_ConstantLoad, NFR_TriangularLoad, NFR_TemperatureLoad,
-        NFR_Labels
+        NFR_Labels,
+        NFR_GraphN, NFR_GraphU
         )
 from NFR_DrawAPI import (
         NFR_BlueRod, NFR_BlackShadowRod, NFR_BlueArrow, NFR_BlueLoad,
-        NFR_BlackLabelText
+        NFR_BlackLabelText,
+        NFR_GreenGraph
         )
 
 from NFR_GUIControl import NFR_GUIControl
@@ -40,7 +42,8 @@ from NFR_GUIControl import NFR_GUIControl
 
 from NFR_helper_functions import (
         set_load, 
-        refresh_objects
+        refresh_objects,
+        compute_new_scenario
         )
 
 
@@ -59,6 +62,7 @@ control = NFR_GUIControl()
 
 
 #TODO: set corect initial values
+# for main plot
 force_arrow = NFR_ForceArrow(NFR_BlueArrow(), xr_start-0.5, xr_start+0.5, 0.2, 0.2)
 const_load  = NFR_ConstantLoad(NFR_BlueLoad(), control.load_position_slider.value, lb, ub)
 triang_load = NFR_TriangularLoad(NFR_BlueLoad(), control.load_position_slider.value, lb, ub)
@@ -67,6 +71,13 @@ temp_load   = NFR_TemperatureLoad(NFR_BlueLoad(), control.load_position_slider.v
 labels      = NFR_Labels(NFR_BlackLabelText(), control.load_position_slider.value)
 
 obj_list = [force_arrow, const_load, triang_load, temp_load, labels]
+
+# for N and U plot
+graph_N  = NFR_GraphN(NFR_GreenGraph())
+graph_U  = NFR_GraphU(NFR_GreenGraph())
+
+
+
 
 
 
@@ -105,7 +116,9 @@ def change_load(attr, old, new):
     
     #const_load.drawAPI.drawPatch(plot_main, const_load.shape, alpha=0.1)
     #print(const_load.shape.data)
-    #compute_new_scenario()
+    compute_new_scenario(control, graph_N, graph_U)
+    graph_N.draw(plot_normalF)
+    graph_U.draw(plot_deform)
     
     
     
@@ -118,12 +131,64 @@ def change_load_position(attr, old, new):
     
     set_load(current_load, new_position, obj_list)
     refresh_objects(obj_list, plot_main)
+    #print("DBUG: change loaod pos")
+    compute_new_scenario(control, graph_N, graph_U)
+    graph_N.draw(plot_normalF)
+    graph_U.draw(plot_deform)
+
+
+
+def change_left_support(attr, old, new):
+    # new==0 means fixed support image
+    # new==1 means slide support image
+#    new_support_img = fixed_support_img if new==0 else slide_support_img
+#    support_source_left.data = dict(sp_img=[new_support_img], x=[xsl] , y=[ysl])
+#    # TODO: check again if it is possible to only change sp_img
+#    
+#    if radio_group_right.active==1 and new==1: # both slide
+#        show_error(True)
+#    else:
+#        show_error(False)
+        
+    compute_new_scenario(control, graph_N, graph_U)
+    graph_N.draw(plot_normalF)
+    graph_U.draw(plot_deform)
+
+
+
+def change_right_support(attr, old, new):
+    # new==0 means fixed support image
+    # new==1 means slide support image
+#    new_support_img = fixed_support_img if new==0 else slide_support_img
+#    support_source_right.data = dict(sp_img=[new_support_img], x=[xsr] , y=[ysr])
+#    # TODO: check again if it is possible to only change sp_img
+#    
+#    if radio_group_left.active==1 and new==1: # both slide
+#        show_error(True)
+#    else:
+#        show_error(False)
+        
+    compute_new_scenario(control, graph_N, graph_U)
+    graph_N.draw(plot_normalF)
+    graph_U.draw(plot_deform)
+
+
+
+
+def change_amplitude(attr, old, new):
+    xS_old = force_arrow.shape.data["xS"]
+    xE_old = force_arrow.shape.data["xE"]
     
-    #compute_new_scenario()
-
-
-
-
+    # change direction of arrows in x-direction (parallel to rod)
+    force_arrow.shape.data["xS"] = xE_old
+    force_arrow.shape.data["xE"] = xS_old
+    
+    # change sign for the calculations
+    #global_variables["ampl"] = -global_variables["ampl"]
+    #print("DBUG: change_ampl")
+    compute_new_scenario(control, graph_N, graph_U)
+    graph_N.draw(plot_normalF)
+    graph_U.draw(plot_deform)
 
 
 
@@ -135,13 +200,19 @@ def reset():
     control.radio_group_ampl.active   = 1
     control.load_position_slider.value = (xr_end-xr_start)/2
     set_load(control.radio_button_group.active,control.load_position_slider.value, obj_list)
-    #compute_new_scenario()
+    compute_new_scenario(control, graph_N, graph_U)
+    graph_N.draw(plot_normalF)
+    graph_U.draw(plot_deform)
 
 
 
 
 
 control.radio_button_group.on_change('active',change_load)
+
+control.radio_group_left.on_change('active',change_left_support)
+control.radio_group_right.on_change('active',change_right_support)
+control.radio_group_ampl.on_change('active',change_amplitude)
 
 control.load_position_slider.on_change('value',change_load_position)
 

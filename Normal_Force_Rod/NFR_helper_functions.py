@@ -1,10 +1,15 @@
 from __future__ import division # float division only, like in python 3
 
 
+import numpy as np
+
 from NFR_constants import (
         xr_start, y_offset,
-        lb, ub
+        lb, ub,
+        xr_end, sol_reso
         )
+
+from NFR_equations import calcNU
 
 
 def clear_point_load():
@@ -159,6 +164,47 @@ def refresh_objects(obj_list,fig):
     # give list of objects and loop over it to draw them
     for obj in obj_list:
         obj.draw(fig)
+
+
+
+
+
+def compute_new_scenario(GUI, graph_obj_N, graph_obj_U):
+    ls_type   = GUI.radio_group_left.active
+    rs_type   = GUI.radio_group_right.active
+    load_type = GUI.radio_button_group.active
+    L1        = GUI.load_position_slider.value
+    #print("DBUG: pos_slider:", L1)
+    ampl      = -1 + 2*GUI.radio_group_ampl.active  # ampl=-1 if active=0, ampl=1 if active=1
+    #print("DBUG: ampl:", ampl)
+    #samples   = calcNU(ls_type, rs_type, load_type, L1, graph_obj_N.shape.data['x'], ampl)
+    #x_samples = np.linspace(xr_start,xr_end,sol_reso)
+    #samples   = calcNU(ls_type, rs_type, load_type, L1, x_samples, ampl)
+    samples   = calcNU(ls_type, rs_type, load_type, L1, ampl)
+#    graph_obj_N.shape.data['x'] = samples['x']
+#    graph_obj_N.shape.data['y'] = samples['yN']
+#    graph_obj_U.shape.data['x'] = samples['x']
+#    graph_obj_U.shape.data['y'] = samples['yU']
+    graph_obj_N.shape.data = dict(x=samples['x'], y=samples['yN'])
+    graph_obj_U.shape.data = dict(x=samples['x'], y=samples['yU'])
     
+    print("in comp...")
+    print("DBUG: yN=",samples['yN'])
+    print("DBUG: yU=",samples['yU'])
+    print("DBUG: CDSyN=",graph_obj_N.shape.data['y'])
+    print("DBUG: CDSyU=",graph_obj_U.shape.data['y'])
+    print("comp fertig...")
+#    show_special_values()
+#    # if the auxiliary line should be shown, the line button shows "Hide line"
+#    if line_button.label == "Hide line":
+#        move_aux_line()
+
+
+
+
+
+
+
+
     
     

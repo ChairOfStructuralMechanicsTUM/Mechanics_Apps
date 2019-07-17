@@ -55,6 +55,9 @@ class NFR_BlackLabelText(NFR_DrawAPI):
 
 
 
+class NFR_GreenGraph(NFR_DrawAPI):
+    def drawGraph(self, fig, CDS):
+        fig.line(x='x', y='y', source=CDS, color="#A2AD00",line_width=2)
 
 
 
