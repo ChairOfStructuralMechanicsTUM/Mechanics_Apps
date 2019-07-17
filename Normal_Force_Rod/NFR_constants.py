@@ -19,6 +19,10 @@ xsr      = xr_end - 0.33
 ysl      = -0.1
 ysr      = -0.1 
 
+# load bounds (coordinates)
+lb       = 0.2   # lower boundary
+ub       = 0.7   # upper boundary
+
 
 ## constants used for the functions
 F        = 1.0

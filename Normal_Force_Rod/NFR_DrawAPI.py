@@ -2,6 +2,7 @@
 
 #from bokeh.models import ColumnDataSource
 from bokeh.models import Arrow, OpenHead
+from bokeh.models.glyphs import Patch
 
 
 from abc import ABCMeta#, abstractmethod
@@ -28,4 +29,15 @@ class NFR_BlueArrow(NFR_DrawAPI):
                        line_width=lw, line_color=color, source=CDS)
         fig.add_layout(arrow_glyph)
         
+class NFR_BlueLoad(NFR_DrawAPI):
+    def drawPatch(self, fig, CDS, color="#0065BD", alpha=0.1): #0.5
+        #fig.patch(x='x', y='y', source=CDS, line_color='black', fill_color=color, fill_alpha=alpha)
+        glyph = Patch(x='x', y='y', fill_color=color, fill_alpha=alpha)
+        fig.add_glyph(CDS, glyph)
+        
+        
+#        
+#        temperature_glyph = Patch(x='x', y='y', fill_color="#0065BD", fill_alpha=0.5)
+#plot_main.add_glyph(constant_load_source, constant_load_glyph)
+
         

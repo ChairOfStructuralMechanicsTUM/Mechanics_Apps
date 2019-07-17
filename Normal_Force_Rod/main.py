@@ -19,14 +19,16 @@ from latex_support import LatexDiv#, LatexLabel, LatexLabelSet, LatexSlider, Lat
 
 from NFR_constants import (
         xr_start, xr_end,
-        x_range, fig_height
+        x_range, fig_height,
+        lb, ub
         )
 
 from NFR_Shapes import (
-        NFR_Rod, NFR_RodShadow, NFR_ForceArrow
+        NFR_Rod, NFR_RodShadow,
+        NFR_ForceArrow, NFR_ConstantLoad, NFR_TriangularLoad, NFR_TemperatureLoad
         )
 from NFR_DrawAPI import (
-        NFR_BlueRod, NFR_BlackShadowRod, NFR_BlueArrow
+        NFR_BlueRod, NFR_BlackShadowRod, NFR_BlueArrow, NFR_BlueLoad
         )
 
 from NFR_GUIControl import NFR_GUIControl
@@ -34,7 +36,7 @@ from NFR_GUIControl import NFR_GUIControl
 
 from NFR_helper_functions import (
         set_load, 
-        refresh_object
+        refresh_objects
         )
 
 
@@ -44,13 +46,19 @@ from NFR_helper_functions import (
 rod = NFR_Rod(NFR_BlueRod())
 rod_shadow = NFR_RodShadow(NFR_BlackShadowRod())
 
-force_arrow = NFR_ForceArrow(NFR_BlueArrow(), xr_start-1.0, xr_start, 0.1, 0.1)
+
 
 
 # buttons, sliders, etc.
 control = NFR_GUIControl()
 
 
+
+
+force_arrow = NFR_ForceArrow(NFR_BlueArrow(), xr_start-1.0, xr_start, 0.1, 0.1)
+const_load  = NFR_ConstantLoad(NFR_BlueLoad(), control.load_position_slider.value, lb, ub)
+triang_load = NFR_TriangularLoad(NFR_BlueLoad(), control.load_position_slider.value, lb, ub)
+temp_load = NFR_TemperatureLoad(NFR_BlueLoad(), control.load_position_slider.value, lb, ub)
 
 
 ########################################
@@ -62,19 +70,39 @@ control = NFR_GUIControl()
 
 def change_load(attr, old, new):
     print("DEBUG: change_load, new=",new)
-    
     current_position = control.load_position_slider.value
     
-    print(force_arrow.shape.data)
-    [force_arrow.shape.data,_,_,_] = set_load(new,current_position)
-    force_arrow.draw(plot_main)
-    print(force_arrow.shape.data)
+#    #print(const_load.shape.data)
+#    [force_arrow.shape.data,
+#     const_load.shape.data,
+#     triang_load.shape.data,
+#     temp_load.shape.data]    =  set_load(new,current_position)
+    
+    
+    #print(const_load.shape.data)
+    
+    obj_list = [force_arrow, const_load, triang_load, temp_load]
+    set_load(new, current_position, obj_list)
+    
+    #print(const_load.shape.data)
+    
+#    force_arrow.draw(plot_main)
+#    const_load.draw(plot_main)
+#    triang_load.draw(plot_main)
+#    temp_load.draw(plot_main)
+    
+    refresh_objects(obj_list, plot_main)
+    
+    
+    #const_load.drawAPI.drawPatch(plot_main, const_load.shape, alpha=0.1)
+    #print(const_load.shape.data)
     #compute_new_scenario()
 
 def reset():
-    rod.shape.data = dict(x=[8, 8, 9, 9], y=[0, 0.2, 0.2, 0])
+    pass
+    #rod.shape.data = dict(x=[8, 8, 9, 9], y=[0, 0.2, 0.2, 0])
     #rod.drawAPI.drawPatch(plot_main, rod.shape, color="#446511")
-    refresh_object(rod, plot_main)
+    #refresh_object(rod, plot_main)
 
 
 
@@ -103,6 +131,7 @@ plot_main.toolbar.logo = None
 #rod.drawAPI.drawPatch(plot_main, rod.shape)
 rod.draw(plot_main)
 force_arrow.draw(plot_main)
+#const_load.draw(plot_main)
 
 
 

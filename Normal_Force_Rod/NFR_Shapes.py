@@ -46,3 +46,38 @@ class NFR_ForceArrow(NFR_Shape):
         self.shape.data = dict(xS=[xs], xE=[xe], yS=[ys+y_offset], yE=[ye+y_offset])
     def draw(self, fig):
         self.drawAPI.drawArrow(fig, self.shape)
+        
+        
+class NFR_ConstantLoad(NFR_Shape):
+    def __init__(self, DrawAPI, load_position, lb, ub):  # lb = lower boundary, ub = upper boundary
+        NFR_Shape.__init__(self, DrawAPI)
+        self.shape.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+lb, y_offset+ub, y_offset+ub, y_offset+lb])
+    def draw(self, fig):
+        self.drawAPI.drawPatch(fig, self.shape)
+        
+class NFR_TriangularLoad(NFR_Shape):
+    def __init__(self, DrawAPI, load_position, lb, ub):  # lb = lower boundary, ub = upper boundary
+        NFR_Shape.__init__(self, DrawAPI)
+        self.shape.data = dict(x=[xr_start, xr_start, load_position], y=[y_offset+lb, y_offset+ub, y_offset+lb])
+    def draw(self, fig):
+        self.drawAPI.drawPatch(fig, self.shape)
+
+
+class NFR_TemperatureLoad(NFR_Shape):
+    def __init__(self, DrawAPI, load_position, lb, ub):  # lb = lower boundary, ub = upper boundary
+        NFR_Shape.__init__(self, DrawAPI)
+        self.shape.data = dict(x=[xr_start, xr_start, load_position, load_position], y=[y_offset+lb, y_offset+ub, y_offset+ub, y_offset+lb])
+    def draw(self, fig):
+        self.drawAPI.drawPatch(fig, self.shape)
+
+
+
+
+
+
+
+
+
+
+
+
