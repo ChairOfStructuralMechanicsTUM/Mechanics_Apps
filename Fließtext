@@ -110,7 +110,9 @@ Unter der Voraussetzung eines visko-elastischen Materialverhaltens und gemäß d
     \Rightarrow u&=\mathrm{e}^{\mathrm{-\delta t}} [c_1\cos{(\overline{\omega_E}t)}+c_2\sin{(\overline{\omega_E}t)}]
 \end{align}
 \end{subequations}
-Zerstückelt man die Lösung, so erhält man als Amplitude der Schwingung $c_1\cos{(\overline{\omega_E}t)}+c_2\sin{(\overline{\omega_E}t)$ einen abklingenden Verlauf der e-Funktion $\mathrm{e}^\mathrm{-\delta t}$. Darstellhaft wurde (Auf Anfangsbeispiel verweisen, und Parameter bestimmen) in (Abbildung xy)...
+Zerstückelt man die Lösung, so erhält man als Amplitude der Schwingung %$c_1\cos{(\overline{\omega_E}t)}+c_2\sin{(\overline{\omega_E}t)$ einen abklingenden Verlauf der e-Funktion $\mathrm{e}^\mathrm{-\delta t}$. Darstellhaft wurde (Auf Anfangsbeispiel verweisen, und Parameter bestimmen) in (Abbildung xy)...
+
+Partikuläre Lösung obwohl nicht gerbaucht?
 %\begin{figure}
     %\centering
    % \includegraphics[width=8.5cm]{Beispiel Einmassenschwinger.png}
@@ -119,7 +121,11 @@ Zerstückelt man die Lösung, so erhält man als Amplitude der Schwingung $c_1\c
 %\end{figure}
 
 \subsubsection{Mehrfreiheitsgradsystem}
-Jedes Gebäude lässt sich stark vereinfachen. Um die Verformungen, Beschleunigungen und Schnittgrößen zu bestimmen, wird für die Berechnungen (dabei) häufig ein Rahmentragwerk herangezogen. Auf Grundlage des Scherbalkenmodells werden die Massen der Stützen gegenüber den Massen der Decken vernachlässigt, und die Riegel, welche die Geschosse darstellen, als starr angenommen. \citep{MeskourisHinzenButenwegetal.2016}
+Jedes Gebäude lässt sich stark vereinfachen. So sind reale Tragwerke kontinuierlich massebelegt, allerdings werden diese Masseverteilungen auf bestimmte Punkte konzentriert. Dabei bieten sich besonders die Stockwerke des Tragwerks als solche Punkte an. (, da sie auf einer Ebene  viel Masse aufweisen.) Wie in jedem anderen Modell auch, sind die Annäherungen umso besser, je mehr Elemente eingeführt werden. Hier ist es allerdings wichtig, die richtige Balance zwischen Rechenaufwand und Genauigkeit zu finden. Wenn wir beim Thema Genauigkeit bleiben, so ist zu erwähnen, dass jede Punktmasse mehrere Freiheitsgrade besitzt. In einem dreidimensionalen Raum hat jedes Element sechs Freiheitsgrade, drei Translations- und drei Rotationsfreiheitsgrade. Betrachtet man das Gebäude in einer Ebene ist das Modell auf eine Rotation und zwei Transtationen beschränkt. Vernachlässigt man dazu auch noch die Drehträgheit und die Vertikale Bewegung, so wie es in den meisten Rechenverfahren üblich ist, steht nur noch die horizontale Bewegung im Fokus. Auf Grundlage des Scheerbalkenmodells, werden die Stäbe des Rahmentragwerks als dehnstarr angenommen. Diese Einschränkung bringt eine Zeitinvarianz der einzelnen Körperpunkte untereinander ins Spiel \citep{petersen2017grundlagen}. Um die Verformungen, Beschleunigungen und Schnittgrößen bestimmen zu können, wird für die Berechnungen (dabei) häufig ein Rahmentragwerk herangezogen.  (werden die Massen der Stützen gegenüber den Massen der Decken vernachlässigt, und die Riegel, welche die Geschosse darstellen, als starr angenommen. \citep{MeskourisHinzenButenwegetal.2016} (Vernachlässigung der Drehträgheit und Vertikalen Bewegung)
+
+
+
+
 \subsection{Berechnungsverfahren} 
 
 \cleardoublepage
