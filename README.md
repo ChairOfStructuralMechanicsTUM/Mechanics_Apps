@@ -1,6 +1,6 @@
 # Mechanics Apps
 This repository contains the python codes for webbased-visualization for mechanics principles, via Bokeh.
-It contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Müller, TUM (Technical University of Munich).
+It contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechanics, Prof. Müller, TUM (Technical University of Munich).
 
 ## Overview
 
