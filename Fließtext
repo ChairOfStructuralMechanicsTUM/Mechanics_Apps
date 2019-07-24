@@ -121,6 +121,7 @@ Partikuläre Lösung obwohl nicht gerbaucht?
 %\end{figure}
 
 \subsubsection{Mehrfreiheitsgradsystem}
+
 Jedes Gebäude lässt sich stark vereinfachen. So sind reale Tragwerke kontinuierlich massebelegt, allerdings werden diese Masseverteilungen auf bestimmte Punkte konzentriert. Dabei bieten sich besonders die Stockwerke des Tragwerks als solche Punkte an. (, da sie auf einer Ebene  viel Masse aufweisen.) Wie in jedem anderen Modell auch, sind die Annäherungen umso besser, je mehr Elemente eingeführt werden. Hier ist es allerdings wichtig, die richtige Balance zwischen Rechenaufwand und Genauigkeit zu finden. Wenn wir beim Thema Genauigkeit bleiben, so ist zu erwähnen, dass jede Punktmasse mehrere Freiheitsgrade besitzt. In einem dreidimensionalen Raum hat jedes Element sechs Freiheitsgrade, drei Translations- und drei Rotationsfreiheitsgrade. Betrachtet man das Gebäude in einer Ebene ist das Modell auf eine Rotation und zwei Transtationen beschränkt. Vernachlässigt man dazu auch noch die Drehträgheit und die Vertikale Bewegung, so wie es in den meisten Rechenverfahren üblich ist, steht nur noch die horizontale Bewegung im Fokus. Auf Grundlage des Scheerbalkenmodells, werden die Stäbe des Rahmentragwerks als dehnstarr angenommen. Diese Einschränkung bringt eine Zeitinvarianz der einzelnen Körperpunkte untereinander ins Spiel \citep{petersen2017grundlagen}.
 (Bild einfügen)
 %(lokales Koordinatensystem evtl bei rechenverfahren) (Um die Verformungen, Beschleunigungen und Schnittgrößen bestimmen zu können, wird für die Berechnungen (dabei) häufig ein Rahmentragwerk herangezogen.  (werden die Massen der Stützen gegenüber den Massen der Decken vernachlässigt, und die Riegel, welche die Geschosse darstellen, als starr angenommen. \citep{MeskourisHinzenButenwegetal.2016} (Vernachlässigung der Drehträgheit und Vertikalen Bewegung))%
@@ -156,9 +157,23 @@ Einsetzen und Umstellen der Gleichung erinnert an ein Eigenwertproblem $(A-\lamb
 Gesucht sind also diejenigen $\omega^2_n$, für die gilt: $det(K-\omega^2_nM)&=0$. Um die dazugehörigen Eigenvektoren $\phi_n$ zu finden, geht man wie folgt vor:
 \begin{itemize}
     \item[1)] Nachdem man  $\omega^2_n$ in $K-\omega^2M = \vec{0}$ eingesetzt hat,
-    \item[2)] Sucht man den Eigenraum $Eig(\omega^2_n) = ker(K-\omega^2_nM)$. Dieser bildet eine Basis aus Eigenvektoren zum zugehörigen Eigenwert.
+    \item[2)] bestimmt man über die Determinante die Lösungen des charakteristischen Polynoms. 
+    \item[3)] Schließlich sucht man den Eigenraum $Eig(\omega^2_n) = ker(K-\omega^2_nM)$. Dieser bildet eine Basis aus Eigenvektoren zum zugehörigen Eigenwert. 
 \end{itemize}
-Da in diesem Fall die algebraischen Vielfachheiten der Eigenwerte jeweils gleich eins sind, sind die dazugehörigen Eigenvektoren zueinander linear unabhängig. 
+Da in diesem Fall die algebraischen Vielfachheiten der Eigenwerte jeweils gleich eins sind, sind die dazugehörigen Eigenvektoren zueinander linear unabhängig. Allerdings ist jedes Vielfaches auch eine Lösung, deshalb normiert man geschickterweise die Vektoren. Führt man die Eigenvektoren zusammen, so erhält man eine orthogonale Matrix $\Phi$ mit der Eigenschaft $\mathrm{\Phi^T} = \mathrm{\Phi^{-1}}$. Diese Matrix ist längenerhaltend und wird modale Matrix genannt. Man verwendet sie, um das lineare Gleichungssystem zu entkoppeln und sukzessive Zeile für Zeile zu lösen.
+
+Bei der Multiplikation von $\Phi$ bzw. $\mathrm{\Phi^T}$ von beiden Seiten \eqref{beidseitig}, die gekoppelte Steifigkeitsmatrix wie eben erwähnt entkoppelt und durch Einführung der Modalkoordinaten diagonalisiert und somit entkoppelt \eqref{modale Steifigkeitsmatrix}. Der Nebeneffekt davon ist, dass Massenmatrix nach der Basistransformation zur Einheitsmatrix wird \eqref{modale Massenmatrix}, wodurch alle modalen Massen der r Modalbeiträge den Betrag eins erhalten \citep{MeskourisHinzenButenwegetal.2016}. 
+\begin{subequations}
+\begin{align}
+    \label{beidseitig}
+    \mathrm{\Phi^T}M\Phi +\mathrm{\Phi^T}K\Phi &=\vec{0}\\
+    \label{modale Steifigkeitsmatrix}
+    \mathrm{\Phi^T}K\Phi &=diag(\omega_n^2)\\
+    \label{modale Massenmatrix}
+    \mathrm{\Phi^T}M\Phi&=E_n
+\end{align}
+\end{subequations}
+
 \subsection{Berechnungsverfahren} 
 
 \cleardoublepage
