@@ -125,7 +125,7 @@ Jedes Gebäude lässt sich stark vereinfachen. So sind reale Tragwerke kontinuie
 (Bild einfügen)
 %(lokales Koordinatensystem evtl bei rechenverfahren) (Um die Verformungen, Beschleunigungen und Schnittgrößen bestimmen zu können, wird für die Berechnungen (dabei) häufig ein Rahmentragwerk herangezogen.  (werden die Massen der Stützen gegenüber den Massen der Decken vernachlässigt, und die Riegel, welche die Geschosse darstellen, als starr angenommen. \citep{MeskourisHinzenButenwegetal.2016} (Vernachlässigung der Drehträgheit und Vertikalen Bewegung))%
 
-Unter all den eben genannten Voraussetzungen und Bedingungen, sind wir nun in der Lage Bewegungsdifferentialgleichungen auch für ein Mehrfreiheitsgradsystem aufzustellen und zu berechnen. Als Hilfe dafür führen wir lokale Koordinatensysteme, deren Ursprung sich an den Punktmassen befinden und deren Achsen entlang zur Federauslenkung ausgerichtet sind, ein. Wie wir später in Abschnitt (2.3) sehen werden, wird für das Berechnungsverfahren nach (DIN EN etc) nach den freien Schwingungen, genauer gesagt deren Eigenformen und -Vektoren, gesucht. Diese findet man, indem man die nichttrivialen Lösungen des Schwingungsgleichungssystems nach dem Nullvektor bestimmt. Um es zu lösen, muss zunächst erst einmal das Gleichungssystem aufgestellt werden. Ein System mit $n$ Freiheitsgraden sieht folgendermaßen aus: 
+Unter all den eben genannten Voraussetzungen und Bedingungen, sind wir nun in der Lage Bewegungsdifferentialgleichungen auch für ein Mehrfreiheitsgradsystem aufzustellen und zu berechnen. Als Hilfe dafür führen wir lokale Koordinatensysteme ein, deren Ursprung sich an den Punktmassen befinden und deren Achsen entlang zur Federauslenkung ausgerichtet sind. Wie wir später in Abschnitt (2.3) sehen werden, wird für das Berechnungsverfahren nach (DIN EN etc) nach den freien Schwingungen, genauer gesagt deren Eigenformen, -Kreisfrequenzen und -Vektoren, gesucht. Diese findet man, indem man die nichttrivialen Lösungen des Schwingungsgleichungssystems nach dem Nullvektor bestimmt. Um es zu lösen, muss zunächst erst einmal das Gleichungssystem aufgestellt werden. Ein System mit $n$ Freiheitsgraden sieht folgendermaßen aus: 
 \begin{equation}
     M \vec{\ddot u} + C \vec{\dot u} + K \vec{u} &=\vec{0}
 \end{equation}
@@ -135,15 +135,30 @@ Im Folgenden betrachten wir das System ohne Dämpfung: %(&=)
 \begin{equation}
     M \vec{\ddot u} + K \vec{u} &=\vec{0}
 \end{equation}
-Analog zum Einmassenschwinger nutzt man einen den exponentiellen Lösungsansatz.
-\begin{equation}
-    \vec{u} &= \mathrm{\vec{\phi}e^{i \omega t}}
-\end{equation}
-\begin{equation}
-    \vec{\ddot u} &= \mathrm{-\omega^2 \vec{\phi}e^{i \omega t}}
-\end{equation}
-
-
+Analog zum Einmassenschwinger nutzt man einen exponentiellen Lösungsansatz.
+\begin{subequations}
+\begin{align}
+     \vec{u} &= \mathrm{\vec{\phi}e^{i \omega t}}\\
+     \vec{\ddot u} &= \mathrm{-\omega^2 \vec{\phi}e^{i \omega t}}
+\end{align}
+\end{subequations}
+Einsetzen und Umstellen der Gleichung erinnert an ein Eigenwertproblem $(A-\lambda E)\vec{v} = \vec{0} $ , bei dem $\omega^2$ und $\vec{\phi}$ als Eigenwerte und -Vektoren gefunden werden müssen. Besagte nichtrivialen Lösungen findet man nur dann, wenn $\vec{\phi} \ne \vec{0}$ \eqref{Eigenwertproblem} oder anders gesagt, wenn die Determinante der Summe aus Massen- und Steifigkeitsmatrix null ergibt \eqref{Determinante}.
+\begin{subequations}
+\begin{align}
+    -\omega^2M\mathrm{\vec{\phi}e^{i \omega t}} + K\mathrm{\vec{\phi}e^{i \omega t}}&=\vec{0}\\
+    \Leftrightarrow (K-\omega^2M)\phi&=\vec{0}\\
+ \label{Eigenwertproblem}
+    \Leftrightarrow (K-\omega^2M)&=\vec{0}\\
+    \label{Determinante}
+    \Rightarrow det(K-\omega^2M)&=0
+\end{align}
+\end{subequations}
+Gesucht sind also diejenigen $\omega^2_n$, für die gilt: $det(K-\omega^2_nM)&=0$. Um die dazugehörigen Eigenvektoren $\phi_n$ zu finden, geht man wie folgt vor:
+\begin{itemize}
+    \item[1)] Nachdem man  $\omega^2_n$ in $K-\omega^2M = \vec{0}$ eingesetzt hat,
+    \item[2)] Sucht man den Eigenraum $Eig(\omega^2_n) = ker(K-\omega^2_nM)$. Dieser bildet eine Basis aus Eigenvektoren zum zugehörigen Eigenwert.
+\end{itemize}
+Da in diesem Fall die algebraischen Vielfachheiten der Eigenwerte jeweils gleich eins sind, sind die dazugehörigen Eigenvektoren zueinander linear unabhängig. 
 \subsection{Berechnungsverfahren} 
 
 \cleardoublepage
