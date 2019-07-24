@@ -105,7 +105,7 @@ Unter der Voraussetzung eines visko-elastischen Materialverhaltens und gemäß d
     \intertext{Mittels der Euler'schen Formel lässt sich $u$ auch in einer Polardarstellung wiedergeben \eqref{polardarstellung}. Als eine Linearkombination aus Sinus- und Cosinusfunktion wird deutlich, dass die Lösung der DGL die Form einer Schwingung hat.}
     \label{polardarstellung}
     &=\mathrm{e}^{\mathrm{-\delta t}} [\cos{(\overline{\omega_E}t)}+i\sin{(\overline{\omega_E}t)}]
-    \intertext{Da man nur an der reellen Lösung interessiert ist, wählt man nun eine der beiden Lösungen aus, und zerlegt sie in Real- und Imaginärteil \citep{karpfinger2013hohere}. Daraus ergeben sich zwei allgemeine reelle linear unabhängige Lösungen \eqref{polardarstellung getrennt}, deren Koeffizienten $c_1$ und $c_2$ über die Randbedingungen des Anfangswertproblems bestimmt werden müssen. In der Regel verwendet man bekannte Werte und deren zugehörigen Zeitpunkte. Oftmals sind es die Anfangsverschiebungen $u(t=0)$ und Anfangsgeschwindigkeiten $\dot u(t=0)$.}
+    \intertext{Da man nur an der reellen Lösung interessiert ist, wählt man nun eine der beiden Lösungen aus, und zerlegt sie in Real- und Imaginärteil \citep{karpfinger2013hohere}. Daraus ergeben sich zwei allgemeine reelle linear unabhängige Lösungen \eqref{polardarstellung getrennt}, deren Koeffizienten $c_1$ und $c_2$ über die Randbedingungen des Anfangswertproblems bestimmt werden müssen. In der Regel verwendet man bekannte Werte und deren zugehörigen Zeitpunkte. Oftmals sind es die Anfangsauslenkungen $u(t=0)$ und -geschwindigkeiten $\dot u(t=0)$.}
     \label{polardarstellung getrennt}
     \Rightarrow u&=\mathrm{e}^{\mathrm{-\delta t}} [c_1\cos{(\overline{\omega_E}t)}+c_2\sin{(\overline{\omega_E}t)}]
 \end{align}
@@ -121,9 +121,27 @@ Partikuläre Lösung obwohl nicht gerbaucht?
 %\end{figure}
 
 \subsubsection{Mehrfreiheitsgradsystem}
-Jedes Gebäude lässt sich stark vereinfachen. So sind reale Tragwerke kontinuierlich massebelegt, allerdings werden diese Masseverteilungen auf bestimmte Punkte konzentriert. Dabei bieten sich besonders die Stockwerke des Tragwerks als solche Punkte an. (, da sie auf einer Ebene  viel Masse aufweisen.) Wie in jedem anderen Modell auch, sind die Annäherungen umso besser, je mehr Elemente eingeführt werden. Hier ist es allerdings wichtig, die richtige Balance zwischen Rechenaufwand und Genauigkeit zu finden. Wenn wir beim Thema Genauigkeit bleiben, so ist zu erwähnen, dass jede Punktmasse mehrere Freiheitsgrade besitzt. In einem dreidimensionalen Raum hat jedes Element sechs Freiheitsgrade, drei Translations- und drei Rotationsfreiheitsgrade. Betrachtet man das Gebäude in einer Ebene ist das Modell auf eine Rotation und zwei Transtationen beschränkt. Vernachlässigt man dazu auch noch die Drehträgheit und die Vertikale Bewegung, so wie es in den meisten Rechenverfahren üblich ist, steht nur noch die horizontale Bewegung im Fokus. Auf Grundlage des Scheerbalkenmodells, werden die Stäbe des Rahmentragwerks als dehnstarr angenommen. Diese Einschränkung bringt eine Zeitinvarianz der einzelnen Körperpunkte untereinander ins Spiel \citep{petersen2017grundlagen}. Um die Verformungen, Beschleunigungen und Schnittgrößen bestimmen zu können, wird für die Berechnungen (dabei) häufig ein Rahmentragwerk herangezogen.  (werden die Massen der Stützen gegenüber den Massen der Decken vernachlässigt, und die Riegel, welche die Geschosse darstellen, als starr angenommen. \citep{MeskourisHinzenButenwegetal.2016} (Vernachlässigung der Drehträgheit und Vertikalen Bewegung)
+Jedes Gebäude lässt sich stark vereinfachen. So sind reale Tragwerke kontinuierlich massebelegt, allerdings werden diese Masseverteilungen auf bestimmte Punkte konzentriert. Dabei bieten sich besonders die Stockwerke des Tragwerks als solche Punkte an. (, da sie auf einer Ebene  viel Masse aufweisen.) Wie in jedem anderen Modell auch, sind die Annäherungen umso besser, je mehr Elemente eingeführt werden. Hier ist es allerdings wichtig, die richtige Balance zwischen Rechenaufwand und Genauigkeit zu finden. Wenn wir beim Thema Genauigkeit bleiben, so ist zu erwähnen, dass jede Punktmasse mehrere Freiheitsgrade besitzt. In einem dreidimensionalen Raum hat jedes Element sechs Freiheitsgrade, drei Translations- und drei Rotationsfreiheitsgrade. Betrachtet man das Gebäude in einer Ebene ist das Modell auf eine Rotation und zwei Transtationen beschränkt. Vernachlässigt man dazu auch noch die Drehträgheit und die Vertikale Bewegung, so wie es in den meisten Rechenverfahren üblich ist, steht nur noch die horizontale Bewegung im Fokus. Auf Grundlage des Scheerbalkenmodells, werden die Stäbe des Rahmentragwerks als dehnstarr angenommen. Diese Einschränkung bringt eine Zeitinvarianz der einzelnen Körperpunkte untereinander ins Spiel \citep{petersen2017grundlagen}.
+(Bild einfügen)
+%(lokales Koordinatensystem evtl bei rechenverfahren) (Um die Verformungen, Beschleunigungen und Schnittgrößen bestimmen zu können, wird für die Berechnungen (dabei) häufig ein Rahmentragwerk herangezogen.  (werden die Massen der Stützen gegenüber den Massen der Decken vernachlässigt, und die Riegel, welche die Geschosse darstellen, als starr angenommen. \citep{MeskourisHinzenButenwegetal.2016} (Vernachlässigung der Drehträgheit und Vertikalen Bewegung))%
 
+Unter all den eben genannten Voraussetzungen und Bedingungen, sind wir nun in der Lage Bewegungsdifferentialgleichungen auch für ein Mehrfreiheitsgradsystem aufzustellen und zu berechnen. Als Hilfe dafür führen wir lokale Koordinatensysteme, deren Ursprung sich an den Punktmassen befinden und deren Achsen entlang zur Federauslenkung ausgerichtet sind, ein. Wie wir später in Abschnitt (2.3) sehen werden, wird für das Berechnungsverfahren nach (DIN EN etc) nach den freien Schwingungen, genauer gesagt deren Eigenformen und -Vektoren, gesucht. Diese findet man, indem man die nichttrivialen Lösungen des Schwingungsgleichungssystems nach dem Nullvektor bestimmt. Um es zu lösen, muss zunächst erst einmal das Gleichungssystem aufgestellt werden. Ein System mit $n$ Freiheitsgraden sieht folgendermaßen aus: 
+\begin{equation}
+    M \vec{\ddot u} + C \vec{\dot u} + K \vec{u} &=\vec{0}
+\end{equation}
+$M$, $C$ und $K$ sind symmetrische reelle Matrizen $M, C, K \in \mathrm{\mathbb{R}^{n x n}}$. Wie in Gleichung \eqref{homogene DGL} entsprechen $M$ der Massenmatrix, $C$ der Dämpfermatrix und $K$ der Steifigkeitsmatrix. Beim (Modalanalytischen-Antwortspektren-Verfahren) wird die Dämpfung zunächst ignoriert, fließt allerdings zu einem späteren Zeitpunkt durch den Rayleigh-Ansatz wieder ein.
 
+Im Folgenden betrachten wir das System ohne Dämpfung: %(&=)
+\begin{equation}
+    M \vec{\ddot u} + K \vec{u} &=\vec{0}
+\end{equation}
+Analog zum Einmassenschwinger nutzt man einen den exponentiellen Lösungsansatz.
+\begin{equation}
+    \vec{u} &= \mathrm{\vec{\phi}e^{i \omega t}}
+\end{equation}
+\begin{equation}
+    \vec{\ddot u} &= \mathrm{-\omega^2 \vec{\phi}e^{i \omega t}}
+\end{equation}
 
 
 \subsection{Berechnungsverfahren} 
