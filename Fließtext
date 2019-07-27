@@ -5,6 +5,7 @@
 \usepackage{mathtools}
 \usepackage{physics}
 \usepackage{geometry}
+\usepackage{german}
  \geometry{
  a4paper,
  total={170mm,257mm},
@@ -33,7 +34,7 @@
 \cleardoublepage
 \section{Basisisolierung}
 In diesem Abschnitt werden...
-\subsection{"Beschreibung"}
+\subsection{Beschreibung}
 \subsubsection{Dämpfung}
 Linear-Viskos
 \subsection{Modell}
@@ -162,7 +163,7 @@ Gesucht sind also diejenigen $\omega^2_n$, für die gilt: $det(K-\omega^2_nM)&=0
 \end{itemize}
 Da in diesem Fall die algebraischen Vielfachheiten der Eigenwerte jeweils gleich eins sind, sind die dazugehörigen Eigenvektoren zueinander linear unabhängig. Allerdings ist jedes Vielfaches auch eine Lösung, deshalb normiert man geschickterweise die Vektoren. Führt man die Eigenvektoren zusammen, so erhält man eine orthogonale Matrix $\Phi$ mit der Eigenschaft $\mathrm{\Phi^T} = \mathrm{\Phi^{-1}}$. Diese Matrix ist längenerhaltend und wird modale Matrix genannt. Man verwendet sie, um das lineare Gleichungssystem zu entkoppeln und sukzessive Zeile für Zeile zu lösen.
 
-Bei der Multiplikation von $\Phi$ bzw. $\mathrm{\Phi^T}$ von beiden Seiten \eqref{beidseitig}, die gekoppelte Steifigkeitsmatrix wie eben erwähnt entkoppelt und durch Einführung der Modalkoordinaten diagonalisiert und somit entkoppelt \eqref{modale Steifigkeitsmatrix}. Der Nebeneffekt davon ist, dass Massenmatrix nach der Basistransformation zur Einheitsmatrix wird \eqref{modale Massenmatrix}, wodurch alle modalen Massen der r Modalbeiträge den Betrag eins erhalten \citep{MeskourisHinzenButenwegetal.2016}. 
+Bei der Multiplikation von $\Phi$ bzw. $\mathrm{\Phi^T}$ von beiden Seiten \eqref{beidseitig} wird die gekoppelte Steifigkeitsmatrix (wie eben erwähnt entkoppelt und) durch Einführung der Modalkoordinaten diagonalisiert und somit entkoppelt \eqref{modale Steifigkeitsmatrix}. Der Nebeneffekt davon ist, dass Massenmatrix nach der Basistransformation zur Einheitsmatrix wird \eqref{modale Massenmatrix}, wodurch alle modalen Massen der r Modalbeiträge den Betrag eins erhalten \citep{MeskourisHinzenButenwegetal.2016}. 
 \begin{subequations}
 \begin{align}
     \label{beidseitig}
@@ -171,6 +172,99 @@ Bei der Multiplikation von $\Phi$ bzw. $\mathrm{\Phi^T}$ von beiden Seiten \eqre
     \mathrm{\Phi^T}K\Phi &=diag(\omega_n^2)\\
     \label{modale Massenmatrix}
     \mathrm{\Phi^T}M\Phi&=E_n
+\end{align}
+\end{subequations}
+
+Im Folgenden wird das Problem anhand eines Beispiels veranschaulicht. Für das System mit drei Freiheitsgraden in (Abbildungxy) wird vorerst die diagonalisierenden Matrix $\Phi$ mittels Eigenwertproblem bestimmt. Der Einfachheit halber sind die Massen \eqref{Massenmatrix} und Steifigkeiten\eqref{Steifigkeitsmatrix} jeweils zueinander identisch: \\ $m = m_i_i$ und $k = k_i_j $
+\begin{subequations}
+\begin{align}
+\label{Massenmatrix}
+      \quad
+M &=\begin{pmatrix} 
+m_1_1 & 0 & 0 \\
+0 & m_2_2 & 0 \\
+0 & 0 & m_3_3\\
+\end{pmatrix}
+\quad&=m\begin{pmatrix} 
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1\\
+\end{pmatrix}
+\\
+\label{Steifigkeitsmatrix}
+\quad
+K&=\begin{pmatrix} 
+k_1_1 & -k_1_2 & 0 \\
+-k_2_1 & k_2_2+k_1_1 & -k_2_3 \\
+0 & -k_3_2 & k_3_3+k_2_2
+\end{pmatrix} 
+\quad
+&=k\begin{pmatrix} 
+1 & -1 & 0 \\
+-1 & 2 & -1 \\
+0 & -1 & 2
+\end{pmatrix} 
+\end{align}
+\end{subequations}
+ Wie vorhin erwähnt, muss bei der Suche nach den Eigenformen die Determinante gebildet werden: 
+ \begin{subequations}
+\begin{align}
+     det(K-\omega^2M)&=0\\
+     \Rightarrow 
+     \quad
+     \begin{vmatrix} 
+1-\omega_1^2 & -1 & 0 \\
+-1 & 2-\omega_2^2 & -1 \\
+0 & -1 & 2-\omega_3^2\\
+\end{vmatrix} 
+&=0\\
+\Leftrightarrow (1-\omega_1^2)(2-\omega_2^2)(2-\omega_3^2)-[(1-\omega_1^2)+(2-\omega_3^2)] &=0\\
+\Leftrightarrow {\omega_1_,_2_,_3}^2&=\begin{cases} 
+0.1981\\ 
+1.5550\\
+3.2470\\
+\end{cases}
+\end{align}
+\end{subequations}
+Zur Kontrolle kann man, wenn $M$ solch eine Gestalt hat, über die Spur der Matrix $K$ überprüfen, ob man sich verrechnet hat. Das schöne daran ist, dass man diese einfach über die Summe der Diagonalelemente der Steifigkeitsmatrix bestimmen kann.
+\begin{subequations}
+\begin{align}
+    \sum \limits_{i=1}^3 k_i_i &= \sum \limits_{i=1}^3 {\omega_i}^2\\
+    1+2+2&=5=0.1981+1.5550+3.2470
+\end{align}
+\end{subequations}
+Mit Hilfe der Eigenfrequenzen werden anschließend die Eigenvektoren gesucht: 
+\begin{subequations}
+\begin{align}
+ Eig(\omega^2_n) &= ker(K-\omega^2_nM)\\
+\Rightarrow Eig(\omega^2_1) 
+\quad&=ker\begin{pmatrix} 
+1-0.1981 & -1 & 0 \\
+-1 & 2-0.1981 & -1 \\
+0 & -1 & 2-0.1981
+\end{pmatrix}
+=\langle  \begin{pmatrix} -0.7370\\-0.5910\\0.3280 \end{pmatrix}\rangle\\
+\Rightarrow Eig(\omega^2_2) 
+\quad&=ker\begin{pmatrix} 
+1-1.5550 & -1 & 0 \\
+-1 & 2-1.5550 & -1 \\
+0 & -1 & 2-1.5550\\
+\end{pmatrix}
+=\langle  \begin{pmatrix} -0.5910\\0.3280\\0.7370 \end{pmatrix}\rangle\\
+\Rightarrow Eig(\omega^2_3) 
+\quad&=ker\begin{pmatrix} 
+1-3.2470 & -1 & 0 \\
+-1 & 2-3.2470 & -1 \\
+0 & -1 & 2-3.2470
+\end{pmatrix}
+=\langle  \begin{pmatrix} 0.3280\\-0.7370\\0.5910
+ \end{pmatrix}\rangle
+ \intertext{mit der modalen Matrix $\Phi$ als Basis bestehend aus den drei linear unabhängigen Eigenvektoren:}
+ \Phi \quad&=\begin{pmatrix} 
+-0.7370 & -0.5910 & 0.3280 \\
+-0.5910 & 0.3280 & -0.7370\\
+0.3280& 0.7370 & 0.5910\\
+\end{pmatrix}
 \end{align}
 \end{subequations}
 
