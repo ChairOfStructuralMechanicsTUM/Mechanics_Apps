@@ -120,6 +120,44 @@ Zerstückelt man die Lösung, so erhält man als Amplitude der Schwingung %$c_1\
   %  \caption{Homogene Lösung}
     %\label{fig:my_label}
 %\end{figure}
+Da man an den Schwingungen des Systems unter externen dynamischen Lasten interessiert ist, wird im Anschluss die Gleichung \eqref{homogene DGL} durch die Störfunktion $F(t)$ erweitert \eqref{Dynamisches Gleichgewicht}. $F(t)$ kann mehrere Formen haben:
+\begin{itemize}
+\item[a)] Transiente Schwingung: ...
+\item[b)] Periodische Schwingung: ...
+\item[c)] Harmonische Schwingung: ...
+\end{itemize}
+Im nachfolgenden Beispiel sei $F(t)$ eine sinusförmige harmonische Schwingung. Mittels des Ansatzes vom Typ der rechten Seite kann man allgemein die Störfunktion bestimmen als:
+\begin{equation}
+    F(t)=F_0\cos{(\Omega t)}
+\end{equation}
+Dieser Ansatz findet Verwendung, wenn man davon ausgeht, dass die partikuläre Lösung von derselben Gestalt ist wie die homogene \cite{karpfinger2013hohere}. Da bei Erdbebenlasten salopp gesagt keine externen Kräfte das System anregen, sondern die erzwungenen Verschiebungen eine Trägheitskraft der Masse induziert, sprechen wir von Fußpunkterregten Lasten. (Bild einfügen Herleitung) Abbildung (xy) soll dabei helfen die Belastung herzuleiten. Die Bewegung des Untergrundes lässt sich beschreiben durch:
+\begin{subequations}
+\begin{align}
+   u_e(t)&=u_e_0\sin{(\Omega t)} \\
+   \Rightarrow \ddot u_e(t)&=-u_e_0 \Omega^2 \sin{(\Omega t )}  
+   \end{align}
+\end{subequations}
+Stellt man das Dynamische Gleichgewicht in vertikaler Richtung \eqref{fußpunkterregte Last} auf, so fällt auf, dass man, anders als bei der krafterregten Schwingung, mit den Relativverschiebungen $u_r$ rechnet. Dennoch haben beide Formen der Anregung viele Gemeinsamkeiten. Aber dazu später mehr. Die Relativverschiebung $u_r$ gibt die Verschiebung zwischen Untergrund und Masse an. 
+\begin{subequations}
+\begin{align}
+    u=u - u_e + u_e &= u_r + u_e\\
+    \label{fußpunkterregte Last}
+    \Rightarrow m[\ddot u_r -u_e_0 \Omega^2 \sin{(\Omega t)}]+ c\dot u_r +k u_r &=0\\
+    \Leftrightarrow m\ddot u_r  + c\dot u_r +k u_r &= u_e_0 \Omega^2 \sin{(\Omega t)}
+    \end{align}
+\end{subequations}
+Mit dem Ansatz $u_r_p = A_r\sin{(\Omega t-\alpha)}$ erhalten wir die allgemeine Lösung für die inhomogene DGL. In diesem Zusammenhang entspricht $A_r$ dem Betrag des Versatzverhältnisses zwischen statischer und erzwungener Auslenkung. Dieses Verhältnis ist bekannt als Vergrößerungsfunktion $V(\eta)$ \eqref{Vergrößerungsfunktion} und ist widerum abhängig vom Verhältnis $\eta$ \eqref{eta} der Erregerfrequenz$\Omega$ zur Eigenfrequenz $\omega_E$.
+\begin{subequations}
+\begin{align}
+\label{eta}
+  \eta&=\frac{\Omega}{\omega_E}\\
+  \label{Vergrößerungsfunktion}
+     V(\eta) &=\abs{\frac{A_r}{u_e_0}} = \frac{\Omega^2 m}{\mathrm{\sqrt{(k-\Omega^2m)^2+\Omega^2c^2}}}\\
+     &=\frac{\eta^2}{\mathrm{\sqrt{(1-\eta^2)^2+(2D\eta)^2}}}
+     \intertext{Beim Argument $\Omega t- \alpha$ der Sinusfunktion beschreibt $\alpha$ den Phasenversatz zwischen Erreger- und Eigenfrequenz.}
+     \alpha &= \mathrm{\arctan{(\frac{2D\eta}{1-\eta^2}})}
+\end{align}
+\end{subequations}
 
 \subsubsection{Mehrfreiheitsgradsystem}
 
