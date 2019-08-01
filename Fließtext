@@ -113,7 +113,7 @@ Unter der Voraussetzung eines visko-elastischen Materialverhaltens und gemäß d
 \end{subequations}
 Zerstückelt man die Lösung, so erhält man als Amplitude der Schwingung %$c_1\cos{(\overline{\omega_E}t)}+c_2\sin{(\overline{\omega_E}t)$ einen abklingenden Verlauf der e-Funktion $\mathrm{e}^\mathrm{-\delta t}$. Darstellhaft wurde (Auf Anfangsbeispiel verweisen, und Parameter bestimmen) in (Abbildung xy)...
 
-Partikuläre Lösung obwohl nicht gerbaucht?
+(Partikuläre Lösung obwohl nicht gerbaucht?)
 %\begin{figure}
     %\centering
    % \includegraphics[width=8.5cm]{Beispiel Einmassenschwinger.png}
@@ -163,7 +163,7 @@ Gesucht sind also diejenigen $\omega^2_n$, für die gilt: $det(K-\omega^2_nM)&=0
 \end{itemize}
 Da in diesem Fall die algebraischen Vielfachheiten der Eigenwerte jeweils gleich eins sind, sind die dazugehörigen Eigenvektoren zueinander linear unabhängig. Allerdings ist jedes Vielfaches auch eine Lösung, deshalb normiert man geschickterweise die Vektoren. Führt man die Eigenvektoren zusammen, so erhält man eine orthogonale Matrix $\Phi$ mit der Eigenschaft $\mathrm{\Phi^T} = \mathrm{\Phi^{-1}}$. Diese Matrix ist längenerhaltend und wird modale Matrix genannt. Man verwendet sie, um das lineare Gleichungssystem zu entkoppeln und sukzessive Zeile für Zeile zu lösen.
 
-Bei der Multiplikation von $\Phi$ bzw. $\mathrm{\Phi^T}$ von beiden Seiten \eqref{beidseitig} wird die gekoppelte Steifigkeitsmatrix (wie eben erwähnt entkoppelt und) durch Einführung der Modalkoordinaten diagonalisiert und somit entkoppelt \eqref{modale Steifigkeitsmatrix}. Der Nebeneffekt davon ist, dass Massenmatrix nach der Basistransformation zur Einheitsmatrix wird \eqref{modale Massenmatrix}, wodurch alle modalen Massen der r Modalbeiträge den Betrag eins erhalten \citep{MeskourisHinzenButenwegetal.2016}. 
+Bei der Multiplikation von $\Phi$ bzw. $\mathrm{\Phi^T}$ von beiden Seiten \eqref{beidseitig} wird die gekoppelte Steifigkeitsmatrix (wie eben erwähnt entkoppelt und) durch Einführung der Modalkoordinaten diagonalisiert und somit entkoppelt \eqref{modale Steifigkeitsmatrix}. Der Nebeneffekt davon ist, dass Massenmatrix nach der Basistransformation zur Einheitsmatrix $E_n$ wird \eqref{modale Massenmatrix}, wodurch alle modalen Massen der r Modalbeiträge den Betrag eins erhalten \citep{MeskourisHinzenButenwegetal.2016}. 
 \begin{subequations}
 \begin{align}
     \label{beidseitig}
@@ -175,7 +175,7 @@ Bei der Multiplikation von $\Phi$ bzw. $\mathrm{\Phi^T}$ von beiden Seiten \eqre
 \end{align}
 \end{subequations}
 
-Im Folgenden wird das Problem anhand eines Beispiels veranschaulicht. Für das System mit drei Freiheitsgraden in (Abbildungxy) wird vorerst die diagonalisierenden Matrix $\Phi$ mittels Eigenwertproblem bestimmt. Der Einfachheit halber sind die Massen \eqref{Massenmatrix} und Steifigkeiten\eqref{Steifigkeitsmatrix} jeweils zueinander identisch: \\ $m = m_i_i$ und $k = k_i_j $
+Im Folgenden wird das Problem anhand eines Beispiels veranschaulicht. Für das System mit drei Freiheitsgraden in (Abbildungxy) wird vorerst die diagonalisierenden Matrix $\Phi$ mittels Eigenwertproblem bestimmt. Der Einfachheit halber sind die Massen \eqref{Massenmatrix} und Steifigkeiten \eqref{Steifigkeitsmatrix} jeweils zueinander identisch: \\ $m = m_i_i$ und $k = k_i_j $
 \begin{subequations}
 \begin{align}
 \label{Massenmatrix}
@@ -226,7 +226,7 @@ k_1_1 & -k_1_2 & 0 \\
 \end{cases}
 \end{align}
 \end{subequations}
-Zur Kontrolle kann man, wenn $M$ solch eine Gestalt hat, über die Spur der Matrix $K$ überprüfen, ob man sich verrechnet hat. Das schöne daran ist, dass man diese einfach über die Summe der Diagonalelemente der Steifigkeitsmatrix bestimmen kann.
+Zur Kontrolle kann man, wenn $M$ solch eine Gestalt hat, über die Spur der Matrix $K$ überprüfen, ob man sich verrechnet hat. Das schöne daran ist, dass man diese einfach über die Summe der Diagonalelemente der Steifigkeitsmatrix bestimmen kann. Nebenbei ist das Produkt der Eigenwerte gleich $det(K)$.
 \begin{subequations}
 \begin{align}
     \sum \limits_{i=1}^3 k_i_i &= \sum \limits_{i=1}^3 {\omega_i}^2\\
@@ -236,7 +236,7 @@ Zur Kontrolle kann man, wenn $M$ solch eine Gestalt hat, über die Spur der Matr
 Mit Hilfe der Eigenfrequenzen werden anschließend die Eigenvektoren gesucht: 
 \begin{subequations}
 \begin{align}
- Eig(\omega^2_n) &= ker(K-\omega^2_nM)\\
+ Eig(\omega^2_i) &= ker(K-\omega^2_iM)\\
 \Rightarrow Eig(\omega^2_1) 
 \quad&=ker\begin{pmatrix} 
 1-0.1981 & -1 & 0 \\
@@ -267,6 +267,17 @@ Mit Hilfe der Eigenfrequenzen werden anschließend die Eigenvektoren gesucht:
 \end{pmatrix}
 \end{align}
 \end{subequations}
+(Eigenformen einfügen Skizze + Beschreibung)
+
+Gerade haben wir über den Einfluss der diagonalisierenden Matrix $\Phi$ auf $M$ und $K$ gesprochen. Aber was geschieht nun mit der Dämpfungsmatrix $D$, wenn man sie mit $\Phi$ transformiert (multipliziert)? Wie auch für $K$ wird auch für $D$ gefordert, dass sie sich durch $\Phi$ diagonalisieren lässt \eqref{Dämpfungsmatrix} \citep{MeskourisHinzenButenwegetal.2016}. 
+\begin{subequations}
+\begin{align}
+   \label{Dämpfungsmatrix}
+\mathrm{\Phi^T}C\Phi&=diag(c_i_i)\\ 
+c_i_i&=2D_i\omega_i
+\end{align}
+\end{subequations}
+
 
 \subsection{Berechnungsverfahren} 
 
@@ -292,4 +303,6 @@ Mit Hilfe der Eigenfrequenzen werden anschließend die Eigenvektoren gesucht:
 \section{Physikalische Größen}
 \cleardoublepage
 \bibliography{Literaturverzeichnis}
+\newpage
+\listoffigures
 \end{document}
