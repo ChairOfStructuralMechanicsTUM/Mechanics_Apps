@@ -35,12 +35,12 @@
 \section{Basisisolierung}
 In diesem Abschnitt werden...
 \subsection{Beschreibung}
-\subsubsection{Dämpfung}
+\subsubsection{Rheologie}
 Linear-Viskos
 \subsection{Modell}
-Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenschaften, veranschaulichen und darstellen zu können, verwenden wir Modelle. Sie dienen dazu, die Natur eingeschränkt abzubilden und sie somit "berechenbar" zu machen, da die Ereignisse meist zu komplex sind, um sie übersichtlich veranschaulichen (anderes Wort) zu können. Man muss sich dabei immer vor Augen halten, was berechnet werden soll, und wie sehr das Modell (eingeschränkt) ist. Dabei sind einige (Eigenschaften...) mehr oder weniger relevant. Viele physikalische Modelle basieren auf mathematischen Gleichungen, insbesondere Differentialgleichungen. In diesem Fall bezieht man sich auf ...
+Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenschaften, veranschaulichend darstellen zu können, verwenden wir Modelle. Sie dienen dazu, die Natur eingeschränkt abzubilden und sie somit "berechenbar" zu machen, da die Ereignisse meist zu komplex sind, um sie übersichtlich veranschaulichen (anderes Wort) zu können. Man muss sich dabei immer vor Augen halten, was berechnet werden soll, und wie sehr das Modell (eingeschränkt) ist. Dabei sind einige (Eigenschaften...) mehr oder weniger relevant. Viele physikalische Modelle basieren auf mathematischen Gleichungen, insbesondere Differentialgleichungen. In diesem Fall bezieht man sich auf ...(Einleitung kacke)
 
-Zunächst leiten wir uns das Modell anhand eines Einmassenschwingers her, um das Problem zu veranschaulichen.
+Zunächst leiten wir uns das Modell anhand eines Einmassenschwingers her. Anschließend wird auf darauf das Mehrfreiheitsgradsystem behandelt und zu guter letzt im Berechnungsverfahren angewandt.
 \subsubsection{Energiemethoden}
 \subsubsection{Einmassenschwinger}
 Die Kinematik als Teil der technischen Mechanik beschreibt, wie sich ein Körper bewegt. Hierfür werden die Begriffe Geschwindigkeit \eqref{Geschwindigkeit} und Beschleunigung \eqref{Beschleunigung} eingeführt, welche sich aus der vektoriellen Basisgröße Länge bzw. Verschiebung $\vec{u}$ ableiten lassen.
@@ -163,7 +163,7 @@ Mit dem Ansatz $u_r_p = A_r\sin{(\Omega t-\alpha)}$ erhalten wir die allgemeine 
     %\caption{Caption}
    % \label{fig:my_label}
 %\end{figure}
-Betrachtet man den Plot der Vergrößerungsfunktion (ABB), so fallen mehrere Phänomene auf. Das offensichtlichste davon sind die lokalen Maxima der Funktion. Diese befinden sich in der Nähe von $\eta = 1$. Im ungedämpften Fall sogar bei exakt eins, wobei sie dort strenggenommen nicht definiert ist. Geht die Erregerfrequenz gegen die Eigenfrequenz des Systems, so tritt Resonanz auf. Für $D=0$ divergiert die Funktion sogar. Im Resonanzfall nimmt die Amplitude in jedem Schwingungszyklus stetig zu, sogar soweit, bis die Konstruktion zum Versagen kommt. Somit wird sofort klar, dass das System erstens ausreichend gedämpft werden (sein?) muss, und zweitens so modifiziert, sodass die Eigenfrequenz weit genug von der Erregerfrequenz entfernt ist.
+Betrachtet man den Plot der Vergrößerungsfunktion (ABB), so fallen mehrere Phänomene auf. Das offensichtlichste davon sind die lokalen Maxima der Funktion. Diese befinden sich in der Nähe von $\eta = 1$. Im ungedämpften Fall sogar bei exakt eins, wobei sie dort strenggenommen nicht definiert ist. Geht die Erregerfrequenz gegen die Eigenfrequenz des Systems, so tritt Resonanz auf. Für $D=0$ divergiert die Funktion sogar. Im Resonanzfall nimmt die Amplitude in jedem Schwingungszyklus stetig zu, sogar soweit, bis die Konstruktion zum Versagen kommt. Somit wird (sofort) klar, dass das System erstens ausreichend gedämpft werden (sein?) muss, und zweitens so modifiziert, sodass die Eigenfrequenz weit genug von der Erregerfrequenz entfernt ist.
 
 Im vergangenen Abschnitt wurden die Grundlagen für die Lösung der Bewegungsgleichung des Einfreiheitsgradsystems anhand des Einmassenschwingers bekannt gemacht. Die allgemeine Lösung der Gleichung setzt sich aus $L_h$ und $L_p$ zusammen und darf aufgrund der Linearität addiert werden. Da in der Baudynamik fast alle Systeme mehr als einen Freiheitsgrad besitzen, wird im Folgenden auch das Mehrfreiheitsgradsystem behandelt. 
 \subsubsection{Mehrfreiheitsgradsystem}
@@ -193,7 +193,7 @@ Einsetzen und Umstellen der Gleichung erinnert an ein Eigenwertproblem $(A-\lamb
 \begin{subequations}
 \begin{align}
     -\omega^2M\mathrm{\vec{\phi}e^{i \omega t}} + K\mathrm{\vec{\phi}e^{i \omega t}}&=\vec{0}\\
-    \Leftrightarrow (K-\omega^2M)\phi&=\vec{0}\\
+    \Leftrightarrow (K-\omega^2M)\vec{\phi}&=\vec{0}\\
  \label{Eigenwertproblem}
     \Leftrightarrow (K-\omega^2M)&=\vec{0}\\
     \label{Determinante}
