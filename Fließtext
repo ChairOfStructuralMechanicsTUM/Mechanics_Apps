@@ -113,7 +113,6 @@ Unter der Voraussetzung eines visko-elastischen Materialverhaltens und gemäß d
 \end{subequations}
 Zerstückelt man die Lösung, so erhält man als Amplitude der Schwingung %$c_1\cos{(\overline{\omega_E}t)}+c_2\sin{(\overline{\omega_E}t)$ einen abklingenden Verlauf der e-Funktion $\mathrm{e}^\mathrm{-\delta t}$. Darstellhaft wurde (Auf Anfangsbeispiel verweisen, und Parameter bestimmen) in (Abbildung xy)...
 
-(Partikuläre Lösung obwohl nicht gerbaucht?)
 %\begin{figure}
     %\centering
    % \includegraphics[width=8.5cm]{Beispiel Einmassenschwinger.png}
@@ -130,7 +129,7 @@ Im nachfolgenden Beispiel sei $F(t)$ eine sinusförmige harmonische Schwingung. 
 \begin{equation}
     F(t)=F_0\cos{(\Omega t)}
 \end{equation}
-Dieser Ansatz findet Verwendung, wenn man davon ausgeht, dass die partikuläre Lösung von derselben Gestalt ist wie die homogene \cite{karpfinger2013hohere}. Da bei Erdbebenlasten salopp gesagt keine externen Kräfte das System anregen, sondern die erzwungenen Verschiebungen eine Trägheitskraft der Masse induziert, sprechen wir von Fußpunkterregten Lasten. (Bild einfügen Herleitung) Abbildung (xy) soll dabei helfen die Belastung herzuleiten. Die Bewegung des Untergrundes lässt sich beschreiben durch:
+Dieser Ansatz findet Verwendung, wenn man davon ausgeht, dass die partikuläre Lösung $L_p$ von derselben Gestalt ist wie die homogene \cite{karpfinger2013hohere}. Da bei Erdbebenlasten salopp gesagt keine externen Kräfte das System anregen, sondern die erzwungenen Verschiebungen eine Trägheitskraft der Masse induziert, sprechen wir von Fußpunkterregten Lasten. (Bild einfügen Herleitung) Abbildung (xy) soll dabei helfen die Belastung herzuleiten. Die Bewegung des Untergrundes lässt sich beschreiben durch:
 \begin{subequations}
 \begin{align}
    u_e(t)&=u_e_0\sin{(\Omega t)} \\
@@ -143,10 +142,10 @@ Stellt man das Dynamische Gleichgewicht in vertikaler Richtung \eqref{fußpunkte
     u=u - u_e + u_e &= u_r + u_e\\
     \label{fußpunkterregte Last}
     \Rightarrow m[\ddot u_r -u_e_0 \Omega^2 \sin{(\Omega t)}]+ c\dot u_r +k u_r &=0\\
-    \Leftrightarrow m\ddot u_r  + c\dot u_r +k u_r &= u_e_0 \Omega^2 \sin{(\Omega t)}
+    \Leftrightarrow m\ddot u_r  + c\dot u_r +k u_r &= u_e_0 \Omega^2 m\sin{(\Omega t)}
     \end{align}
 \end{subequations}
-Mit dem Ansatz $u_r_p = A_r\sin{(\Omega t-\alpha)}$ erhalten wir die allgemeine Lösung für die inhomogene DGL. In diesem Zusammenhang entspricht $A_r$ dem Betrag des Versatzverhältnisses zwischen statischer und erzwungener Auslenkung. Dieses Verhältnis ist bekannt als Vergrößerungsfunktion $V(\eta)$ \eqref{Vergrößerungsfunktion} und ist widerum abhängig vom Verhältnis $\eta$ \eqref{eta} der Erregerfrequenz$\Omega$ zur Eigenfrequenz $\omega_E$.
+Mit dem Ansatz $u_r_p = A_r\sin{(\Omega t-\alpha)}$ erhalten wir die allgemeine Lösung für die inhomogene DGL. In diesem Zusammenhang entspricht $A_r$ dem Betrag des Versatzverhältnisses zwischen statischer und erzwungener Auslenkung. Dieses Verhältnis ist bekannt als Vergrößerungsfunktion $V(\eta)$ \eqref{Vergrößerungsfunktion} und ist widerum abhängig vom Verhältnis $\eta$ \eqref{eta} der Erregerfrequenz $\Omega$ zur Eigenfrequenz $\omega_E$.
 \begin{subequations}
 \begin{align}
 \label{eta}
@@ -154,11 +153,19 @@ Mit dem Ansatz $u_r_p = A_r\sin{(\Omega t-\alpha)}$ erhalten wir die allgemeine 
   \label{Vergrößerungsfunktion}
      V(\eta) &=\abs{\frac{A_r}{u_e_0}} = \frac{\Omega^2 m}{\mathrm{\sqrt{(k-\Omega^2m)^2+\Omega^2c^2}}}\\
      &=\frac{\eta^2}{\mathrm{\sqrt{(1-\eta^2)^2+(2D\eta)^2}}}
-     \intertext{Beim Argument $\Omega t- \alpha$ der Sinusfunktion beschreibt $\alpha$ den Phasenversatz zwischen Erreger- und Eigenfrequenz.}
+     \intertext{Beim Argument $\Omega t- \alpha$ der Sinusfunktion beschreibt $\alpha$ den Phasenversatz zwischen Erreger- und Eigenfrequenz. Er beschreibt, inwiefern das System der Anregung nachfolgt. Bei hochfrequenten Anregungen bleibt die Masse in Ruhe, bei langsamen Bewegungen hingegen bewegt sie sich wie der Untergrund \citep{EKTM}.}
      \alpha &= \mathrm{\arctan{(\frac{2D\eta}{1-\eta^2}})}
 \end{align}
 \end{subequations}
+%\begin{figure}
+  %  \centering
+  %  \includegraphics{Vergroeßerungsfunktion.png}
+    %\caption{Caption}
+   % \label{fig:my_label}
+%\end{figure}
+Betrachtet man den Plot der Vergrößerungsfunktion (ABB), so fallen mehrere Phänomene auf. Das offensichtlichste davon sind die lokalen Maxima der Funktion. Diese befinden sich in der Nähe von $\eta = 1$. Im ungedämpften Fall sogar bei exakt eins, wobei sie dort strenggenommen nicht definiert ist. Geht die Erregerfrequenz gegen die Eigenfrequenz des Systems, so tritt Resonanz auf. Für $D=0$ divergiert die Funktion sogar. Im Resonanzfall nimmt die Amplitude in jedem Schwingungszyklus stetig zu, sogar soweit, bis die Konstruktion zum Versagen kommt. Somit wird sofort klar, dass das System erstens ausreichend gedämpft werden (sein?) muss, und zweitens so modifiziert, sodass die Eigenfrequenz weit genug von der Erregerfrequenz entfernt ist.
 
+Im vergangenen Abschnitt wurden die Grundlagen für die Lösung der Bewegungsgleichung des Einfreiheitsgradsystems anhand des Einmassenschwingers bekannt gemacht. Die allgemeine Lösung der Gleichung setzt sich aus $L_h$ und $L_p$ zusammen und darf aufgrund der Linearität addiert werden. Da in der Baudynamik fast alle Systeme mehr als einen Freiheitsgrad besitzen, wird im Folgenden auch das Mehrfreiheitsgradsystem behandelt. 
 \subsubsection{Mehrfreiheitsgradsystem}
 
 Jedes Gebäude lässt sich stark vereinfachen. So sind reale Tragwerke kontinuierlich massebelegt, allerdings werden diese Masseverteilungen auf bestimmte Punkte konzentriert. Dabei bieten sich besonders die Stockwerke des Tragwerks als solche Punkte an. (, da sie auf einer Ebene  viel Masse aufweisen.) Wie in jedem anderen Modell auch, sind die Annäherungen umso besser, je mehr Elemente eingeführt werden. Hier ist es allerdings wichtig, die richtige Balance zwischen Rechenaufwand und Genauigkeit zu finden. Wenn wir beim Thema Genauigkeit bleiben, so ist zu erwähnen, dass jede Punktmasse mehrere Freiheitsgrade besitzt. In einem dreidimensionalen Raum hat jedes Element sechs Freiheitsgrade, drei Translations- und drei Rotationsfreiheitsgrade. Betrachtet man das Gebäude in einer Ebene ist das Modell auf eine Rotation und zwei Transtationen beschränkt. Vernachlässigt man dazu auch noch die Drehträgheit und die Vertikale Bewegung, so wie es in den meisten Rechenverfahren üblich ist, steht nur noch die horizontale Bewegung im Fokus. Auf Grundlage des Scheerbalkenmodells, werden die Stäbe des Rahmentragwerks als dehnstarr angenommen. Diese Einschränkung bringt eine Zeitinvarianz der einzelnen Körperpunkte untereinander ins Spiel \citep{petersen2017grundlagen}.
