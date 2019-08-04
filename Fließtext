@@ -364,6 +364,21 @@ T_D[s] & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}2,0} & 2,0 \\ \hline
 \caption{Bodenklassen}
 \label{Bodenklassen}
 \end{table}
+\subsubsection{Für Termin: Formeln}
+Maximale Trägheitskraft:
+\begin{subequations}
+\begin{align}
+    max(H) &= H_E = mS_a(T_1)\\
+    \intertext{$\vec{v(t)}$ als entkoppelte modale Ordinaten}
+    \underline M\vec{\ddot v}+ \underline D\vec{\dot v} +\underline K\vec{v} &=\underline F(t)\\
+    \intertext{modaler Lastvektor}
+    \underline F &= -\underline A^T \underline m \vec{\ddot{y_F}} = -\underline A^T \underline m \underline I \vec{\ddot{y_F}}\\
+    \intertext{effektive Modale Massen}
+    H_E_;_j  = \sum \limits_{i=1}^n H_E_;_k_,_j = \frac{L_j}{M_j}S_a(T_j)\cdot \sum \limits_{i=1}^n m_k a_k_j \\
+    = \frac{L_j^2}{M_j}S_a(T_j)\\
+    = m_e_j S_a(T_j)
+    \end{align}
+\end{subequations}
 
 \cleardoublepage
 \section{Implementierung}
