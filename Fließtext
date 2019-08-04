@@ -7,6 +7,9 @@
 \usepackage{geometry}
 \usepackage{german}
 \usepackage{colortbl}
+\usepackage{enumitem}
+
+\usepackage[onehalfspacing]{setspace}
 \usepackage[table,xcdraw]{xcolor}
  \geometry{
  a4paper,
@@ -14,6 +17,7 @@
  left=20mm,
  top=20mm,
  }
+              								
 \fontsize=12pt
 \title{Programmieren interaktiver Apps}
 \author{Jakob Schlagintweit }
@@ -28,8 +32,10 @@
 
 \cleardoublepage
 \section{Einleitung}
-
+In dieser Arbeit..
+Zahlen Fakten
 \subsection{Erdbeben}
+
 \subsection{Erdbebensichere Gebäude}
 \subsubsection{Tilger}
 \subsubsection{Basisisolierung}
@@ -329,7 +335,24 @@ c_i_i&=2D_i\omega_i
 \subsection{Antwortsprektrum-Verfahren} 
 Nachdem nun alle theoretischen Voraussetzungen für die Berechnung von Schwingungen unter Erdbebenlasten bekannt sind, machen wir uns in Kürze an die gängigen praktischen Methoden. Allem voraus ist das Antwortspektrum-Verfahren. Gegenüber von   
 \subsubsection{Antwortspektrum}
-Die größte baupraktische Bedeutung kommt dem Antwortspektrum-Verfahren zu. Es handelt sich um ein Näherungsverfahren, insbesondere dann, wenn es von einem inelastischen Beschleunigungsspektrum ausgeht \citep{petersen2017grundlagen}. Ein bedeutender Vorteil des Verfahrens ist, dass es sowohl für Ein- als auch Mehrfreiheitsgradsysteme Anwendung findet. Hierbei bietet sich besonders ein Vergleich zwischen Gebäuden mit und ohne Basisisolierung an. Grundlage dieses Verfahrens bietet das Antwortspektrum, eine statistisch ermittelte Hüllkurve mehrerer Messungen und Abschätzungen von Erdbebenereignissen unter Berücksichtugung verschiedenster Parameter. Gemäß des Euro-Code 8 DIN EN 1998 (2010-12) werden neben den Baugrund- und Duktilitätsklassen auch Bedeutungs- und Verhaltensbeiwert sowie die Dämpfung einbezogen. Im folgenden wird der Pool an Parametern genauer betrachtet.
+Die größte baupraktische Bedeutung kommt dem Antwortspektrum-Verfahren zu. Es handelt sich um ein Näherungsverfahren, insbesondere dann, wenn es von einem inelastischen Beschleunigungsspektrum ausgeht \citep{petersen2017grundlagen}. Ein bedeutender Vorteil des Verfahrens ist, dass es sowohl für Ein- als auch Mehrfreiheitsgradsysteme Anwendung findet. Hierbei bietet sich besonders ein Vergleich zwischen Gebäuden mit und ohne Basisisolierung an. Grundlage dieses Verfahrens bietet das Antwortspektrum, eine statistisch ermittelte Hüllkurve mehrerer Messungen und Abschätzungen von Erdbebenereignissen unter Berücksichtugung verschiedenster Parameter. Es beruht auf einem Gefährdungsniveau, das einer mittleren Wiederkehrperiode von 475 Jahren entspricht. Dem entspricht eine Eintreffens- oder Überschreitungswahrscheinlichkeit von 0,1 in 50 Jahren \citep{petersen2017grundlagen}. Man unterteilt es in vier Intervalle: 
+%\begin{itemize}
+   % \item [$0\leq T \leq T_B$:]  $S_a(T) = a_g\gamma S [1+\frac{T}{T_B}(\eta \beta_0 -1)]$ horizontal\\$S_a(T) = a_g\gamma S [1+\frac{T}{T_B}(S\eta \beta_0 -1)]$ vertikal
+   % \item [$T_B\leq T \leq T_C$:] $S_a(T) = a_g\gamma S \eta \beta_0$
+   % \item [$T_C\leq T \leq T_D$:] $S_a(T) = a_g\gamma S \eta \beta_0\frac{T_C}{T}$
+   % \item [$T_D\leq T$:] $S_a(T) = a_g\gamma S \eta \beta_0\frac{T_C\cdot T_D}{T^2}$\\$a_g = a_g_R$ horizontal \\$a_g = 0,5\cdot a_g_R$ vertikal
+%\end{itemize}
+\begin{subequations}
+\begin{align}
+    0\leq T \leq T_B &:S_a(T) = a_g\gamma S [1+\frac{T}{T_B}(\eta \beta_0 -1)]\text{horizontal}  \\
+    &:S_a(T) = a_g\gamma S [1+\frac{T}{T_B}(S\eta \beta_0 -1)] \text{vertikal}\\
+    T_B\leq T \leq T_C &:S_a(T) = a_g\gamma S \eta \beta_0\\
+    T_C\leq T \leq T_D &:S_a(T) = a_g\gamma S \eta \beta_0\frac{T_C}{T}\\
+    T_D\leq T &:S_a(T) = a_g\gamma S \eta \beta_0\frac{T_C\cdot T_D}{T^2}
+\end{align}
+\end{subequations}
+Die Kontrollperioden $T_B$, $T_C$ und $T_D$ sind die Grenzen der Abschnitte. Die größten Antwortbeschleunigungen treten im Spektralplateau auf...
+Gemäß des Euro-Code 8 DIN EN 1998 (2010-12) werden neben den Baugrund- und Duktilitätsklassen auch Bedeutungs- und Verhaltensbeiwert sowie die Dämpfung einbezogen. Im folgenden wird der Pool an Parametern genauer betrachtet.
 
 Die Baugrundklasse beschreibt die Beschaffenheit der oberflächennahen Bodenschichten und des geologischen Untergrundes, und deren Einfluss auf die Erdbebeneinwurkung. Dies erfolgt durch die Einstufung in eine der drei Baugrundklassen A, B, C und eine der drei geologischen Untergrundklassen R, S, T  \citep{petersen2017grundlagen}. Quantitativ unterscheidet man die Baugrundklassen über deren Schwerwellengeschwindigkeit $v_s$ in:
 \begin{itemize}
@@ -364,6 +387,11 @@ T_D[s] & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}2,0} & 2,0 \\ \hline
 \caption{Bodenklassen}
 \label{Bodenklassen}
 \end{table}
+
+Bedeutungsklassen werden durch die Bedeutung des Einsturzes eines Bauwerks für menschliches Leben, die öffentliche Sicherheit und den Schutz der Bevölkerung nach einem Beben eingeführt und definiert. Jeder Bedeutungsklasse entspricht ein Bedeutungsbeiwert, der widerum einer kürzeren oder längeren angenommenen Wiederkehrperiode eines Bebens entspricht \citep{petersen2017grundlagen}.
+
+
+\newpage
 \subsubsection{Für Termin: Formeln}
 Maximale Trägheitskraft:
 \begin{subequations}
@@ -399,8 +427,8 @@ Maximale Trägheitskraft:
 \cleardoublepage
 \bibliographystyle{plain}
 \cleardoublepage
-\section{Physikalische Größen}
-\cleardoublepage
+%\section{Physikalische Größen}
+%\cleardoublepage
 \bibliography{Literaturverzeichnis}
 \newpage
 \listoffigures
