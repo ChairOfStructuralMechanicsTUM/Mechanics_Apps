@@ -20,7 +20,7 @@
               								
 \fontsize=12pt
 \title{Programmieren interaktiver Apps}
-\author{Jakob Schlagintweit }
+\author{Jakob Schlagintweit}
 \date{Juli 2019}
 
 
@@ -31,25 +31,35 @@
 \tableofcontents
 
 \cleardoublepage
+\setcounter{page}{1}
 \section{Einleitung}
 In dieser Arbeit..
 Zahlen Fakten
-\subsection{Erdbeben}
+\subsection{Motivation}
+Zu den gefährlichsten Naturkatastrophen zählen zweifelsohne Erdbeben.
+häufigkeit
+schäden
+tote
+skalen
+beschreibung
 
-\subsection{Erdbebensichere Gebäude}
-\subsubsection{Tilger}
-\subsubsection{Basisisolierung}
+\subsection{Ziel der Arbeit}
+Um den Studierenden der Technischen Universität München bau-mechanische Prinzipien zu veranschaulichen, werden von (Lehrstuhlmitarbeitern) und Absolventen stetig neue interaktive Apps am Lehrstuhl für Baumechanik der TUM veröffentlicht. Diese sind größtenteils auf der offiziellen Website des Lehrstuhls öffentlich zugänglich. Das bedeutet, dass nicht nur Studierende, sondern auch (Außenstehende) darauf zugreifen können. Hauptsächlich werden die Apps in den Vorlesungen und Kursen des Lehrstuhls zu Lehrzwecken ergänzend verwendet, auch in den zugehörigen Skripten lassen sich Links zu den jeweiligen Apps finden. Sie visualisieren vereinfacht mechanische Prinzipien der Baubrange mit Beispielen aus der Praxis und helfen dadurch den behandelten Stoff zu verstehen. Aus pädagogischer Sicht schaffen sie visuelle Vorstellungen der Probleme und durch deren Interaktivität soll der Lernprozess zusätzlich induktiv gestärkt/gefestigt werden. Aufgebaut sind die Apps alle gleich. (Das physikalische Prinzip wird in einem kurzen Einführungstext beschrieben und über Regler oder Eingabefeldern ist der (Anwender) in der Lage Parameter wie Massen, Steifigkeiten (etc.) einzugeben. Die App zeigt auf Grundlage dieser die Ergebnisse und gibt sie dem Anwender zurück.) (Beispiel)
+
+Im Zuge dieser Arbeit soll eine App zum Thema Basisisolierung entwickelt werden. Sie beschreibt deren Einfluss auf das Gebäude sowie dessen Reaktionen auf Erdbebeneinwirkungen und soll Studierende die Wirkungsweise der Basisisolierung nahelegen. Als Beispiel soll ein eingeschossiges Gebäude mit einer Erdbebenlast angeregt werden und ein Vergleich zwischen dem Gebäude mit und ohne Basisisolation  gezogen werden. Der Anwender soll in der Lage sein die Ergebnisse abzuleiten und einen Zusammenhang herzustellen. Außerdem soll deutlich gemacht werden, dass es Möglichkeiten gibt, erdbebensicher zu bauen( und soll die Chancen aufzeigen.)
+\subsection{Struktur der Arbeit}
+In einem kurzen Überblick über diese Arbeit 
 \cleardoublepage
 \section{Basisisolierung}
 In diesem Abschnitt werden...
 \subsection{Beschreibung}
-\subsubsection{Rheologie}
+Anwendungsbereich für Bauingenieure
+
 Linear-Viskos
 \subsection{Modell}
 Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenschaften, veranschaulichend darstellen zu können, verwenden wir Modelle. Sie dienen dazu, die Natur eingeschränkt abzubilden und sie somit "berechenbar" zu machen, da die Ereignisse meist zu komplex sind, um sie übersichtlich veranschaulichen (anderes Wort) zu können. Man muss sich dabei immer vor Augen halten, was berechnet werden soll, und wie sehr das Modell (eingeschränkt) ist. Dabei sind einige (Eigenschaften...) mehr oder weniger relevant. Viele physikalische Modelle basieren auf mathematischen Gleichungen, insbesondere Differentialgleichungen. In diesem Fall bezieht man sich auf ...(Einleitung kacke)
 
 Zunächst leiten wir uns das Modell anhand eines Einmassenschwingers her. Anschließend wird auf darauf das Mehrfreiheitsgradsystem behandelt und zu guter letzt im Berechnungsverfahren angewandt.
-\subsubsection{Energiemethoden}
 \subsubsection{Einmassenschwinger}
 Die Kinematik als Teil der technischen Mechanik beschreibt, wie sich ein Körper bewegt. Hierfür werden die Begriffe Geschwindigkeit \eqref{Geschwindigkeit} und Beschleunigung \eqref{Beschleunigung} eingeführt, welche sich aus der vektoriellen Basisgröße Länge bzw. Verschiebung $\vec{u}$ ableiten lassen.
 
@@ -227,6 +237,7 @@ Bei der Multiplikation von $\Phi$ bzw. $\mathrm{\Phi^T}$ von beiden Seiten \eqre
     \mathrm{\Phi^T}M\Phi&=E_n
 \end{align}
 \end{subequations}
+\subsection{Beispiel}
 
 Im Folgenden wird das Problem anhand eines Beispiels veranschaulicht. Für das System mit drei Freiheitsgraden in (Abbildungxy) wird vorerst die diagonalisierenden Matrix $\Phi$ mittels Eigenwertproblem bestimmt. Der Einfachheit halber sind die Massen \eqref{Massenmatrix} und Steifigkeiten \eqref{Steifigkeitsmatrix} jeweils zueinander identisch: \\ $m = m_i_i$ und $k = k_i_j $
 \begin{subequations}
@@ -410,8 +421,9 @@ Maximale Trägheitskraft:
 
 \cleardoublepage
 \section{Implementierung}
-\cleardoublepage
-\section{Beispiel}
+\subsection{Framework}
+\subsection{Ein- und Ausgabe}
+\Beispiel
 \cleardoublepage
 \section{Ausblick}
 
