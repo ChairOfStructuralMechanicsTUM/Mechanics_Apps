@@ -1,0 +1,159 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Vorpraktikum: Praktikumsbericht}
+\author{Jakob Schlagintweit 03663772 }
+%\date{today}
+%\today
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{german}
+\usepackage{wrapfig}
+\begin{document}
+
+% Titelseite
+\pagestyle{empty}       % keine Seitennummer
+  \parbox{1.5cm}{\resizebox*{110pt}{!}{\includegraphics{TUM_Logo_blau_rgb_2016.png}}}\hspace{310pt}%
+  %\parbox{1.5cm}{\resizebox*{90pt}{!}{\includegraphics{hofer_logo.png}}
+\vspace*{1.5cm}
+\begin{center}
+{\Huge Technische Universit\"at M\"unchen} 
+\\
+\vspace*{1.5cm}
+{\huge \sc{ Fakult\"at f\"ur Maschinenwesen}} 
+\\
+\vspace*{3cm}
+{\Huge {\bf Vorpraktikum}}
+\\
+\vspace*{3cm}
+{\Large Praktikumsbericht}\linebreak \\ 
+{\Large von}\linebreak \\
+{\Large Jakob Schlagintweit 03663772}\\
+\vspace*{1cm}
+20.7.16 - 14.9.2016\\
+hofer powertrain münchen GmbH\\
+Betriebsstätte Garching\\
+Zeppelinstr. 18\\
+85748 Garching-Hochbrück
+
+{\Large 
+%\begin{tabular}{ll}
+%%%%\end{tabular}
+}
+\end{center}
+\newpage    % Seitenwechsel
+
+
+
+\tableofcontents
+\clearpage
+\section{Über den Betrieb}
+Die Hofer Powertrain GmBH mit dem Sitz in München ist Teil einer erfolgreichen, internationalen Unternehmensgruppe mit mehreren Entwicklungsgesellschaften. Als etablierter Partner der Mobilitätsindustrie ist sie im Bereich Motor-, Getriebe-, Triebstrang- und Gesamtfahrzeugentwicklung tätig. 
+Sie ist Systemlieferant für effiziente Antriebslösungen, von konventionell, über hybrid bis voll elektrisch. Als etablierter und unabhängiger Partner der Fahrzeugindustrie liefert hofer powertrain seit über 30 Jahren wegweisende Technologien und Produkte an Unternehmen auf der ganzen Welt. Dies ermöglicht seine erfahrenen Expertenteams, welche sich durch ihre Spezialisierung in der Entwicklung, Industrialisierung und Produktion von Antriebssystemen auszeichnen \cite{www11a}. Mit 16 Standorten von Deutschland über Amerika bis nach Asien ist das Unternehmen weit verbreitet.\\
+Während meines Praktikums am Standort Garching, habe ich in der Abteilung Karosserie- & Blechprototypen folgende Aufgabenbereiche kennengelernt:
+\begin{itemize}
+    \item[F1] Umformende Fertigungsverfahren
+    \item[F2] Spanende Fertigungsverfahren
+    \item[F3] Füge- und Trennverfahren und physikalisch-chemische Behandlung
+\end{itemize}
+Diese Tätigkeiten werden im Folgenden genauer beschrieben.
+\vspace{1cm}
+\section{Tätigkeiten}
+\subsection{Umformende Fertigungsverfahren}
+\subsubsection{Biegen}
+\begin{wrapfigure}{r}{5cm}
+  \includegraphics[width=4.5cm]{Biegen.png}
+  \caption[repetico.de]{Biegen}
+\end{wrapfigure}
+In der Werkstatt mussten wir nahezu tagtäglich Bleche unterschiedlicher Dicke biegen. Unter Biegeumformungen versteht man die plastische Umformung mithilfe von Biegewerkzeugen. Je nach Blechstärke wurde per Hand, maschinell oder mechanisch gebogen. 
+Bleche mit einer Stärke von mindestens 3 mm wurden mit einer Abkantpresse gebogen. Dabei ist zu beachten, dass sich das Werkstück immer ein wenig zurückbiegt. Die Schwierigkeit liegt beim Biegen also darin, den vorgebenen Winkel innerhalb der Toleranz zu erzielen.
+
+\newpage
+\subsubsection{Ziehen}
+\begin{wrapfigure}{r}{4.5cm}
+  \includegraphics[width=4.5cm]{tiefziehen_prinzip.jpg}
+  \caption[alteroller.de]{Tiefziehen}
+\end{wrapfigure}
+Das Ziehen zählt mit zu den bedeutendsten Blechumformverfahren. Im Rahmen meines Praktikums durfte ich das Tiefziehen genauer kennenlernen. Dabei handelt wird ein ebenes Blech so verformt, dass es nach dem Vorgang dauerhaft in der gewünschten Form bleibt. Gewerkstelligt wird dies durch einen Stempel, der an einer Hydraulikpresse befestigt ist. Das Blech wird in ein vorgegebenes Werkzeug, welches zuvor gefräst und eingefettet wurde, gelegt und mit viel Druck umgeformt. Die Blechdicke bleibt trotz der Verformung relativ konstant. 
+%\subsubsection{Drücken}
+\vspace{1cm}
+\subsection{Spanende Fertigungsverfahren}
+\subsubsection{Feilen}
+Das Feilen benutzt man dann, nachdem Werkstücke entgratet wurden. Dabei werden scharfe Splitter und Kanten, welche durch den Bearbeitungsprozess entstehen, entfernt. Dies ist besonders wichtig, damit keine Verletzungen bei der Weiterverarbeitung oder Montage auftreten. Dabei nutzt man meistens Schleifpapier. Beim Feilen wird das Werkstück fest eingespannt und per Hand mit aufeinanderfolgenden gleichbleibenden Bewegungen bearbeitet. Hierbei ist zu beachten, dass man bei der Bearbeitung keinen Bogen macht, da sonst die Gefahr besteht, dass das Werkstück ungleichföhrmig und somit unbrauchbar wird.
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=0.5\textwidth]{feilen.jpg}
+	\caption[hausjournal.net]{Feilen}
+	\label{fig1}
+\end{figure}
+\newpage
+\subsubsection{Sägen}
+\begin{wrapfigure}{r}{4.5cm}
+  \includegraphics[width=3cm]{Bandsaege_fuer_Holz_Hans_Schreiner_HBS400_400V-01.jpg}
+  \caption[holzprofi.com]{Bandsäge}
+\end{wrapfigure}
+Das Sägen zählt zu den spanenden Fertigungsverfahren. Es wird verwendet, um Stangenmaterial, Rohre und Blechteile zu trennen und Konturen auszusägen. Zusätzlich kann das Sägen verwendet werden, um Schlitze einzuschneiden. Bei einer Handbügelsäge muss das Sägeblatt in Vorschubrichtung gespannt sein. Das Sägen per Hand kommt immer dann zum Einsatz, wenn Stellen schwer zugänglich sind, oder es sich um kleine Stücke handelt. Ansonsten wird mit der Bandsägemaschine gearbeitet. Dabei handelt es sich um eine Art endloses Sägeband, das für große und kleine Schnittlängen geeignet ist. Die Dicke des Sägeblattes an sich ist sehr klein, was einen geringen Werkstoffverlust garantiert \citep{dillinger2007fachkunde}. Die gewünschte Präzision wird bei der Bandsägemaschine oft garantiert, da das Stück exakt an einer Linie geführt werden kann.
+\subsubsection{Fräsen}
+\begin{wrapfigure}{l}{4.5cm}
+  \includegraphics[width=4.5cm]{fraesen-bearbeitungsprozess.png}
+  \caption[fraesteile-marktplatz.de]{Fräsen}
+\end{wrapfigure}
+Das Fräsen, als Teil der spanenden Fertigungsverfahren, wird bei der Herstellung von Werkstücken mit geometrischer Gestalt angewandt. Dabei wird Material mit von Rohteilen mit einem Fräskopf abgetragen. Meist werden damit Oberfkächen bearbeitet \citep{www11b}. In der Werkstatt wurde es allerdings fast ausschließlich dafür verwendet, Werkzeuge für andere Fertigungsverfahren herzustellen. Die Vorlage für das gewünschte Teil wird über CAD erstellt.
+Beim Fräsen dreht sich der Bohrer, während das Werkstück eingespannt bleibt.  
+\subsubsection{Drehen}
+\begin{wrapfigure}{r}{5cm}
+  \includegraphics[width=4.55cm]{1DzLzYCF4v3M6bA.jpg}
+  \caption[www.hwk-ufr.de]{Drehen}
+\end{wrapfigure}
+Anders als beim Fräsen dreht sich das Werkstück selbst um die eigene Achse und nicht der Bohrer. Allerdings ist es dem Fräsen sehr ähnlich. Auch hier werden Späne vom Rohmaterial abgetrennt. Dies geschieht durch den Drehmeißel, der an das Material gedrückt wird. Auch dieser kann unterschiedliche Köpfe mit unterschiedlichen Forme haben. Im Zuge meines Pratikums durfte ich das per Hand drehen. Vollautomatisiert war die Drehbank nicht. Gelegentlich das eingespannte Werkstück wurde maschinell rotiert. Auch hier kann eine hohe Genauigkeit erzielt werden, wenn man den Meißel nicht zu tief in das Werkstück schiebt. 
+\subsubsection{Gewindescheiden von Hand}
+\begin{wrapfigure}{r}{5cm}
+  \includegraphics[width=5cm]{00-gewinde_schneiden_in_pom-thumb.jpg}
+  \caption[www.diybook.at]{Gewindeschneiden}
+\end{wrapfigure}
+Um ein Gewinde zu schneiden, braucht man Bohrungen mit einem bestimmten Durchmesser. Das entsprechende Gewinde für die Größe der Bohrung kann anhand einer Tabelle abgelesen werden. Beim Gewindeschneiden per Hand ist zu beachten, dass man senkrecht zur Bohrung steht, da das Gewinde sonst schief und unbrauchbar wird. Bei diesem Vorgang habe ich den Schneider stets eingeölt, was ein leichteres durchdringen gewährleistet hat.
+\subsubsection{Bohren}
+\begin{wrapfigure}{l}{5cm}
+  \includegraphics[width=5cm]{kunststoffbearbeitung-bohren-1030x686.jpg}
+  \caption[www.polymehr.com]{Bohren}
+\end{wrapfigure}
+Bevor ein Loch in ein Werkstück gebohrt werden kann, wird die Mittelpunkt der Bohrung zu erst markiert. Dies geschieht durch einen Hammer und einen Körner. Durch die Körnung hat der Bohrer einen Ansatzpunkt bekommen. Danach wird der Bohrer in die Bohrmaschine gespannt und so ausgerichtet, dass er exakt über der Körnung liegt. Die Drehzahl ist dabei auch entscheidend. Grundsätzlich gilt hier: Kleinere Bohrer brauchen eine höhere Drehzahl, große eine niedrige.
+\subsubsection{Senken}
+Ähnlich wie beim Bohren, wird beim Senken ein Profil in der Bohrung erzeugt. Häufig wird das Senken allerdings auch zum Entgraten von Bohrungen angewandt.
+\subsubsection{Schleifen}
+Wie oben erwähnt kann das Schleifen unter anderem dazu verwendet werden, um scharfe Kanten zu entgraten und Verletzungen durch Schnitte zu verhindern. Geschleift wird entweder manuell mit Schleifpapier, oder an einem Schleifgerät. Während des Praktikums wurden der Großteil aller Werkstücke auf verschiedenste Arten geschliffen. Am häufigsten kam dabei der Bandschleißer zum Einsatz. Ähnlich wie beim Sägen war das Schleifpapier endlos und man musste das Stück an das laufende Schleifband halten. Ebenfals häufig zum Einsatz kam ein Winkelschleifer, der auch dabei verwendet wurde, dickere Metallblöcke zu durchtrennen.
+Gemeinsam haben diese Verfahren alle, dass das Metallstück durch die raue Oberfläche des Schleifers abgetragen wird.
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=0.5\textwidth]{1200px-Unbestimmte_Schneide.png}
+	\caption[wikipedia.org]{Schleifen}
+	\label{fig1}
+\end{figure}
+\subsection{Füge- und Trennverfahren und physikalisch-chemische Behandlung}
+\subsubsection{Schweißen}
+Beim Schweißen werden zwei separate Werkstücke zusammengefügt und dauerhaft verbunden. Meistens geschieht dies durch Hitze und zusätzlichem geschmolzenem Material. Man Unterscheidet dabei in Licht-\newline bogen-,Widerstands-, und Schutzgasschweißen.
+\subsubsection{Lichtbogenschweißen}
+\begin{wrapfigure}{r}{5cm}
+  \includegraphics[width=5cm]{GTAW-de.png}
+  \caption[wikipedia.org]{Lichtbogenschweißen}
+\end{wrapfigure}
+Beim Lichtbogenschweißen verbindet, wie der Name sagt, ein Lichtbogen, welcher durch einen Spannungsunterschied erzeugt wird, das Werkstück mit der Stabelektrode, sodass der Stromkreis geschlossen ist. Dabei entsteht so viel Hitze, dass das Werkstück und ein Draht, welcher in den Lichtbogen gehalten wird, zum Schmelzen gebracht wird. Das Resultat sind zwei verbundene Werkstücke und eine Schweißnaht.
+\subsubsection{Widerstandsschweißen}
+Beim Widerstandschweißen werden zwei Kupferelektroden zusammengepresst. Dazwischen befinden sich die zwei Werkstücke, die zusammengefügt werden sollen. Auch hier wird ein Stormkreis geschlossen und durch den hohen Widerstand der Werkstücke entsteht Hitze, die beide Werkstücke am Kontaktpunkt verbinden lässt. 
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=0.3\textwidth]{csm_IMGP4899_sw_04_eafa4d4823.jpg}
+	\caption[www.harms-wende.de]{Widerstandsschweißen}
+	\label{fig1}
+\end{figure}
+\subsubsection{Schutzgasschweißen}
+Ein Problem beim Lichtbogenschweißen: Bei den hohen Temperaturen reagieren Sauerstoff und Stickstoff aus der Umgebungsluft mit dem Schweißgut und vermindern dadurch die Qualität der Schweißnaht. Um solche Einflüsse auszuschalten, schirmt man beim Schutzgasschweißen die Schweißstelle mit einem mit Metallen nicht reagierenden Schutzgas ab. Das Metallschutzgasschweißen (MSG), ist ein Lichtbogenschweißverfahren, bei dem der abschmelzende Schweißdraht von einem Motor kontinuierlich nachgeführt wird. Gleichzeitig mit dem Drahtvorschub wird die Schweißstelle mit dem aus einer Düse strömenden Schutz- oder Mischgas geschützt \citep{www11c}.
+\section{Reflexion}
+In den 8 Wochen meines Praktikums bei hofer powertrain habe ich einiges gelernt und konnte viele Einblicke in die Produktion werfen. Wenn man als Außenstehender das fertige Produkt sieht, dann ahnt man gar nicht, welche und wie viele Schritte hierfür nötig sind. Fast immer war für das Endprodukt eine Kombination aus fast all diesen Fertigungsverfahren nötig. Bei all meinen Aktivitäten in der Werkstatt war Schutzkleidung anzulegen und das Angenehme meiner Arbeit war, war dass man mir als Praktikant viel Zeit gab Aufgaben zu lösen und ich bei Problemen immer um Hilfe bitten konnte.   
+
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{references}
+\listoffigures
+\end{document}
