@@ -33,10 +33,8 @@
 \cleardoublepage
 \setcounter{page}{1}
 \section{Einleitung}
-In dieser Arbeit..
-Zahlen Fakten
 \subsection{Motivation}
-Zu den gefährlichsten Naturkatastrophen zählen zweifelsohne Erdbeben.
+Zu den gefährlichsten Naturkatastrophen zählen zweifelsohne Erdbeben. Mit über xy registrierten Erdbeben pro Jahr  
 häufigkeit
 schäden
 tote
@@ -46,16 +44,23 @@ beschreibung
 \subsection{Ziel der Arbeit}
 Um den Studierenden der Technischen Universität München bau-mechanische Prinzipien zu veranschaulichen, werden von (Lehrstuhlmitarbeitern) und Absolventen stetig neue interaktive Apps am Lehrstuhl für Baumechanik der TUM veröffentlicht. Diese sind größtenteils auf der offiziellen Website des Lehrstuhls öffentlich zugänglich. Das bedeutet, dass nicht nur Studierende, sondern auch (Außenstehende) darauf zugreifen können. Hauptsächlich werden die Apps in den Vorlesungen und Kursen des Lehrstuhls zu Lehrzwecken ergänzend verwendet, auch in den zugehörigen Skripten lassen sich Links zu den jeweiligen Apps finden. Sie visualisieren vereinfacht mechanische Prinzipien der Baubrange mit Beispielen aus der Praxis und helfen dadurch den behandelten Stoff zu verstehen. Aus pädagogischer Sicht schaffen sie visuelle Vorstellungen der Probleme und durch deren Interaktivität soll der Lernprozess zusätzlich induktiv gestärkt/gefestigt werden. Aufgebaut sind die Apps alle gleich. (Das physikalische Prinzip wird in einem kurzen Einführungstext beschrieben und über Regler oder Eingabefeldern ist der (Anwender) in der Lage Parameter wie Massen, Steifigkeiten (etc.) einzugeben. Die App zeigt auf Grundlage dieser die Ergebnisse und gibt sie dem Anwender zurück.) (Beispiel)
 
-Im Zuge dieser Arbeit soll eine App zum Thema Basisisolierung entwickelt werden. Sie beschreibt deren Einfluss auf das Gebäude sowie dessen Reaktionen auf Erdbebeneinwirkungen und soll Studierende die Wirkungsweise der Basisisolierung nahelegen. Als Beispiel soll ein eingeschossiges Gebäude mit einer Erdbebenlast angeregt werden und ein Vergleich zwischen dem Gebäude mit und ohne Basisisolation  gezogen werden. Der Anwender soll in der Lage sein die Ergebnisse abzuleiten und einen Zusammenhang herzustellen. Außerdem soll deutlich gemacht werden, dass es Möglichkeiten gibt, erdbebensicher zu bauen( und soll die Chancen aufzeigen.)
+Im Zuge dieser Arbeit soll eine App zum Thema Basisisolierung entwickelt werden. Sie beschreibt deren Einfluss auf das Gebäude sowie dessen Reaktionen auf Erdbebeneinwirkungen und soll Studierende die Wirkungsweise der Basisisolierung nahelegen. Als Beispiel soll ein eingeschossiges Gebäude mit einer Erdbebenlast angeregt werden und ein Vergleich zwischen dem Gebäude mit und ohne Basisisolation  gezogen werden. Der Anwender soll in der Lage sein die Ergebnisse abzuleiten und einen Zusammenhang herzustellen. Außerdem soll deutlich gemacht werden, dass es Möglichkeiten gibt, erdbebensicher zu bauen( und die Chancen als auch die Risiken aufzeigen.)
 \subsection{Struktur der Arbeit}
 In einem kurzen Überblick über diese Arbeit 
 \cleardoublepage
 \section{Basisisolierung}
-In diesem Abschnitt werden...
-\subsection{Beschreibung}
-Anwendungsbereich für Bauingenieure
+\subsection{Anwendungsbereich für Bauingenieure}
+Erdbebenschutzssysteme sind besondere Vorrichtungen, um Bauwerke und Anlagen aller Art vor den zerstörerischen Wirkungen von Erdbeben zu schützen. Im günstigen Fall können Bauwerke während des Bebens im elastischen Zustand verbleiben und das Erdbeben weitgehend unbeschadet überstehen. Schutzsysteme dürfen während eines Bebens per se nicht zerstört werden, sondern müssen für Nachbeben erhalten bleiben. Sie müssen aufgrund der langen Wiederkehrperioden mittlelschwerer und schwerer Erdbeben grundsätzlich langlebig, robust und wartungsfrei ausgelegt werden \citep{petersen2017grundlagen}. Man unterscheidet dabei in aktive, passive und semiaktive Systeme. Aktiven Systemen  bedarf es an äußeren Energieversorgungen. Das Gebäude registriert via Sensoren seine Reaktion auf das Beben und errechnet mithilfe einer Software die Aktion der mechanischen Schutzsysteme. In der Regel wirken Hydraulikzylinder den ausgelösten Massenkräften durch das Beben gegen. Im Gegensatz zu den aktiven Systemen, wir das passive nicht extern mit Energie versorgt. Es verändert die mechanischen Schwingungseigenschaften des Systems und reduziert dadurch die Erdbebeneinwirkung auf das Gebäude. Von semiaktiven Schutzsystemen spricht man, wenn lediglich die Dämpfungseigenschaften ohne externe Energiezufuhr verändert werden kann \citep{petersen2017grundlagen}. 
 
-Linear-Viskos
+Die am häufigsten verwendete Klasse der Schutzsysteme ist in der Praxis die passive. (warum) Hierfür gibt es vier Wirkungsmechanismen, die im Folgenden besprochen werden.
+\subsubsection{Dämpferelemente}
+Wird eine schwingungsfähiges System ausgelenkt und anschließend frei gegeben, stellen sich Schwingungen ein, die nach einer gewissen Zeit abklingen und zur Ruhe kommen. Dafür sorgt ein Dämpfer, der die kinetische Energie in jedem Schwingzyklus in Wärmeenergie umwandelt. Dieser Mechanismus wird im Fachjargon als Dissipation bezeichnet. Verantwortlich sind dafür überwiegend Reibungsvorgänge im Bauwerk, aber auch die Interaktion zwischen Baugrund und -werk kann das System ausbremsen. Selbst die Bewegung des Systems in seinem umgebenden Medium trägt zu dessen Dämpfung bei. Da in allen Reibungsvorgängen Energie in Wärme umgewandelt wird, und diese nach dem zweiten Hauptsatz der Thermodynamik entlang eines negativen Temperaturgradienten fließt, wird dem offenen System nach und nach irreversibel Energie entzogen. Abbildung xy (Bild) zeigt ...
+\subsubsection{Shocktransmitter}
+
+\subsubsection{Schwingungsdämpfer}
+
+\subsubsection{Basisisolation}
+
 \subsection{Modell}
 Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenschaften, veranschaulichend darstellen zu können, verwenden wir Modelle. Sie dienen dazu, die Natur eingeschränkt abzubilden und sie somit "berechenbar" zu machen, da die Ereignisse meist zu komplex sind, um sie übersichtlich veranschaulichen (anderes Wort) zu können. Man muss sich dabei immer vor Augen halten, was berechnet werden soll, und wie sehr das Modell (eingeschränkt) ist. Dabei sind einige (Eigenschaften...) mehr oder weniger relevant. Viele physikalische Modelle basieren auf mathematischen Gleichungen, insbesondere Differentialgleichungen. In diesem Fall bezieht man sich auf ...(Einleitung kacke)
 
