@@ -427,7 +427,26 @@ Maximale Trägheitskraft:
 \cleardoublepage
 \section{Implementierung}
 \subsection{Framework}
-\subsection{Ein- und Ausgabe}
+\subsubsection{Matlab}
+\subsubsection{Bokeh}
+\subsubsection{Github}
+\subsubsection{Python}
+
+\subsection{Programmentwicklung}
+Bevor ein näherer Einblick in die App gegeben werden kann ist noch zu erwähnen, dass jedes Programm in seiner Grobstruktur in etwa ähnlich aufgebaut ist und folgende Schritte unumgänglich sind.
+\begin{itemize}
+    \item[1)] Erstellen des Quell-Codes\\
+    Zunächst muss der Quell-Text erstellt und gegebenenfalls überarbeitet werden. Der Großteil der Arbeit findet in diesem Schritt statt. Der Programmierer macht sich über das Problem und dessen Lösung Gedanken und programmiert dementsprechend. Im Allgemeinen werden die Variablen,welche im Code verwendet werden, deklariert und definiert. Außerdem wird hier die Struktur des Programmes bestimmt.
+    \item[2)] Compilieren\\
+    Beim Compilieren wird der Quelltext in Maschinensprache übersetzt. Während dieses Prozesses werden sämtliche Fehler vom Compiler gefunden, seien es Syntax- oder Semanitk-Fehler. Ein Programm besteht aus einer Folge von Zeichen, die nach bestimmter, für die jeweilige Programmiersprache charakteristischen Vorschriften verknüpft werden. Die Verknüpfungsregeln für ein Programm bezeichnet man als Syntax der Programmiersprache. Sie kann man durch die Begriffe wie Ausdruck, Prozedur, Anweisungen usw. beschreiben. Jedes Programm besteht aus Zeichen, die der Benutzer mit Hilfe eines Editier-Programms eingeben muss. Jedes dieser Zeichen wird im Inneren des Rechners durch bestimmte Bitmuster kodiert. Diese Zeichen werden nach bestimmten, für die Programmiersprache typische Regeln zu einem Programm verknüpft \citep{IT2}.  Die Syntax beschreibt somit die 'Grammatik' des Codes. Bei der syntakitschen Analyse der Compilierung wird überprüft, ob diese korrekt eingehalten wurde. Findet der Compiler Fehler, so wird die Übersetzung abgebrochen und eine Fehlermeldung ausgegeben. Dementsprechend muss der Code korrigiert und erneut compiliert werden, bis dieser einwandfrei funktioniert.
+    \item[3)] Linken des Programmes\\ 
+    Hier werden alle Bestandteile des Programms zsuammengebunden. Wenn alle nötigen Fehler gefunden wurden, entsteht ein ausführbares Programm. Andernfalls müssen eventuell noch Linker-Einstellungen angepasst und neu gelinkt werden, oder es sind Fehler in der Quelldatei zu korrigieren \citep{IT2}.
+    \item[4)] Starten des Programmes\\
+    Beim Ablauf des Programmes können ebenfalls Fehler auftreten, dann muss erneut korrigiert, compiliert und gelinkt werden \citep{IT2}.
+\end{itemize}
+Abbildung (xyx) zeigt zusammengefasst den Prozess der Programmentwicklung.
+\subsubsection{App-Umgebung}
+\subsubsection{Ein- und Ausgabe}
 \Beispiel
 \cleardoublepage
 \section{Ausblick}
