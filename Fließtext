@@ -8,6 +8,7 @@
 \usepackage{german}
 \usepackage{colortbl}
 \usepackage{enumitem}
+\usepackage[framed, numbered]{matlab-prettifier}
 
 \usepackage[onehalfspacing]{setspace}
 \usepackage[table,xcdraw]{xcolor}
@@ -189,7 +190,7 @@ Mit dem Ansatz $u_r_p = A_r\sin{(\Omega t-\alpha)}$ erhalten wir die allgemeine 
 Betrachtet man den Plot der Vergrößerungsfunktion (ABB), so fallen mehrere Phänomene auf. Das offensichtlichste davon sind die lokalen Maxima der Funktion. Diese befinden sich in der Nähe von $\eta = 1$. Im ungedämpften Fall sogar bei exakt eins, wobei sie dort strenggenommen nicht definiert ist. Geht die Erregerfrequenz gegen die Eigenfrequenz des Systems, so tritt Resonanz auf. Für $D=0$ divergiert die Funktion sogar. Im Resonanzfall nimmt die Amplitude in jedem Schwingungszyklus stetig zu, sogar soweit, bis die Konstruktion zum Versagen kommt. Somit wird (sofort) klar, dass das System erstens ausreichend gedämpft werden (sein?) muss, und zweitens so modifiziert, sodass die Eigenfrequenz weit genug von der Erregerfrequenz entfernt ist.
 
 Im vergangenen Abschnitt wurden die Grundlagen für die Lösung der Bewegungsgleichung des Einfreiheitsgradsystems anhand des Einmassenschwingers bekannt gemacht. Die allgemeine Lösung der Gleichung setzt sich aus $L_h$ und $L_p$ zusammen und darf aufgrund der Linearität addiert werden. Da in der Baudynamik fast alle Systeme mehr als einen Freiheitsgrad besitzen, wird im Folgenden auch das Mehrfreiheitsgradsystem behandelt. 
-\subsubsection{Mehrfreiheitsgradsystem}
+\subsubsection{Mehrfreiheitsgradsystem} \label{Mehrfreiheitsgradsystem}
 
 Jedes Gebäude lässt sich stark vereinfachen. So sind reale Tragwerke kontinuierlich massebelegt, allerdings werden diese Masseverteilungen auf bestimmte Punkte konzentriert. Dabei bieten sich besonders die Stockwerke des Tragwerks als solche Punkte an. (, da sie auf einer Ebene  viel Masse aufweisen.) Wie in jedem anderen Modell auch, sind die Annäherungen umso besser, je mehr Elemente eingeführt werden. Hier ist es allerdings wichtig, die richtige Balance zwischen Rechenaufwand und Genauigkeit zu finden. Wenn wir beim Thema Genauigkeit bleiben, so ist zu erwähnen, dass jede Punktmasse mehrere Freiheitsgrade besitzt. In einem dreidimensionalen Raum hat jedes Element sechs Freiheitsgrade, drei Translations- und drei Rotationsfreiheitsgrade. Betrachtet man das Gebäude in einer Ebene ist das Modell auf eine Rotation und zwei Transtationen beschränkt. Vernachlässigt man dazu auch noch die Drehträgheit und die Vertikale Bewegung, so wie es in den meisten Rechenverfahren üblich ist, steht nur noch die horizontale Bewegung im Fokus. Auf Grundlage des Scheerbalkenmodells, werden die Stäbe des Rahmentragwerks als dehnstarr angenommen. Diese Einschränkung bringt eine Zeitinvarianz der einzelnen Körperpunkte untereinander ins Spiel \citep{petersen2017grundlagen}.
 (Bild einfügen)
@@ -242,7 +243,7 @@ Bei der Multiplikation von $\Phi$ bzw. $\mathrm{\Phi^T}$ von beiden Seiten \eqre
     \mathrm{\Phi^T}M\Phi&=E_n
 \end{align}
 \end{subequations}
-\subsection{Beispiel}
+\subsection{Beispiel: Mehrfreiheitsgradsystem} \label{Beispiel Mehrfreiheitsgradsystem}
 
 Im Folgenden wird das Problem anhand eines Beispiels veranschaulicht. Für das System mit drei Freiheitsgraden in (Abbildungxy) wird vorerst die diagonalisierenden Matrix $\Phi$ mittels Eigenwertproblem bestimmt. Der Einfachheit halber sind die Massen \eqref{Massenmatrix} und Steifigkeiten \eqref{Steifigkeitsmatrix} jeweils zueinander identisch: \\ $m = m_i_i$ und $k = k_i_j $
 \begin{subequations}
@@ -336,7 +337,9 @@ Mit Hilfe der Eigenfrequenzen werden anschließend die Eigenvektoren gesucht:
 \end{pmatrix}
 \end{align}
 \end{subequations}
-(Eigenformen einfügen Skizze + Beschreibung)
+(Eigenformen einfügen Skizze + Beschreibung)\\
+Das Beispiel wurde mit Hilfe von Matlab \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab} berechnet. $B$ beschreibt hierbei die Basis aus Eigenvektoren und $D$ die diagonalisierende Matrix.
+\lstinputlisting[style=Matlab-editor,caption = {Berechnung der Eigenfrequenzen- und Perioden in Matlab},label = {Berechnung der Eigenfrequenzen- und Perioden in Matlab},basicstyle=\mlttfamily\scriptsice]{Latex_Beispiel_Eigenwerte.m}
 
 Gerade haben wir über den Einfluss der diagonalisierenden Matrix $\Phi$ auf $M$ und $K$ gesprochen. Aber was geschieht nun mit der Dämpfungsmatrix $D$, wenn man sie mit $\Phi$ transformiert (multipliziert)? Wie auch für $K$ wird auch für $D$ gefordert, dass sie sich durch $\Phi$ diagonalisieren lässt \eqref{Dämpfungsmatrix} \citep{MeskourisHinzenButenwegetal.2016}. 
 \begin{subequations}
@@ -360,8 +363,7 @@ Die größte baupraktische Bedeutung kommt dem Antwortspektrum-Verfahren zu. Es 
 %\end{itemize}
 \begin{subequations}
 \begin{align}
-    0\leq T \leq T_B &:S_a(T) = a_g\gamma S [1+\frac{T}{T_B}(\eta \beta_0 -1)]\text{horizontal}  \\
-    &:S_a(T) = a_g\gamma S [1+\frac{T}{T_B}(S\eta \beta_0 -1)] \text{vertikal}\\
+    0\leq T \leq T_B &:S_a(T) = a_g\gamma S [1+\frac{T}{T_B}(\eta \beta_0 -1)]  \\
     T_B\leq T \leq T_C &:S_a(T) = a_g\gamma S \eta \beta_0\\
     T_C\leq T \leq T_D &:S_a(T) = a_g\gamma S \eta \beta_0\frac{T_C}{T}\\
     T_D\leq T &:S_a(T) = a_g\gamma S \eta \beta_0\frac{T_C\cdot T_D}{T^2}
@@ -406,6 +408,39 @@ T_D[s] & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}2,0} & 2,0 \\ \hline
 
 Bedeutungsklassen werden durch die Bedeutung des Einsturzes eines Bauwerks für menschliches Leben, die öffentliche Sicherheit und den Schutz der Bevölkerung nach einem Beben eingeführt und definiert. Jeder Bedeutungsklasse entspricht ein Bedeutungsbeiwert, der widerum einer kürzeren oder längeren angenommenen Wiederkehrperiode eines Bebens entspricht \citep{petersen2017grundlagen}.
 
+\subsubsection{Beispiel: Erdbebenbeanspruchung eines Gebäudes mit und ohne Basisisolierung}
+In diesen Beispiel soll ein Vergleich zwischen einem Gebäude mit und ohne Basisisolierung gezogen werden. Beide Gebäude bestehen aus nur einem Geschoss. Die Gebäudedecken und - Fundamente entsprechen den zusammengeführten Punktmassen. Die Wände bleiben in diesem Beispiel, wie in \ref{Mehrfreiheitsgradsystem} beschrieben masselos. Da bei einem Gebäude ohne Basisisolierung das Fundament an den Boden gekoppelt ist, bewegt es sich bei einem Beben wie der Baugrund. Daher lässt sich dieses Gebäude in ein Einfreiheitsgradsystem zusammenfassen. Bei dem Gebäude mit Basisisolierung hingegen muss vereinfacht mit einem Zweifreiheitsgradsystem gerechnet werden. Wie in der App soll auch hier mit dem Antwortspektrumverfahren nach DIN EN 1998 (2010-12) gerechnet werden. Das Erdbebenantwortspektrum als elastisches Spektrum $S_e$, wie in Abb xy dargestellt, berücksichtig den Verhaltensbeiwert $q$ vorerst nicht. (Beispiel Quelle \cite{petersen2017grundlagen})
+\\
+(Abb Systeme, Abb Spektrum)
+\\
+Wir beginnen zuerst mit dem Gebäude ohne Basisisolierung. Die generalisierten Federsteigikeiten $k_G$ und Massen $m_G$ werden über die Geometrie und Materialeigenschaften der Stützen bestimmt. Das Dämpfungsmaß $D_G$ ($\xi_G$) ist ebenfalls bekannt:
+\\[0.5cm]
+$m_G = 1.4\cdot 10^6 kg$\\
+$k_G = 85\cdot 10^6 \frac{N}{m}$\\
+$D_G = 0.05$
+\\[0.5cm]
+Daraus ergeben sich die Eigenfrequenzen $\omega_G$ und -Schwingzeiten $T_G$:
+\begin{subequations}
+\begin{align}
+    \omega_G &= \mathrm{\sqrt{\frac{k_G}{m_g}}} = 7.79s^{-1}\\
+    f_G &= \frac{\omega_G}{2\pi} = 1.24 Hz\\
+    T_G &= \frac{1}{f_G}  = 0.81s\\
+    \intertext{Die Antwortbeschleunigung $S_e$ erhält man über das elastische Antwortspektrum aus ABB xy:}
+    S_e(T_G = 0.81s) &=\frac{3.795}{0.81}\frac{m}{s^2} = 4.685 \frac{m}{s^2}\\
+    \intertext{Die zugehörige Massenkraft $F$ erhält man zu:}
+    F &= m_g\cdot S_e(T_G) = 1.4\cdot 10^6 kg \cdot4.685\frac{m}{s^2} = 6559kN\\
+    \intertext{Daraus lässt sich die seitliche elastische Auslenkung $u$ angeben:}
+    u &= \frac{F}{k_g} = \frac{6.559\cdot 10^6 N}{85\cdot 10^6 \frac{N}{m}} = 0.077m
+\end{align}
+\end{subequations}
+Das System mit Basisisolierung hat zusätzlich eine Grundplatte mit der Masse $m_B$, welche auf der Isolierung liegt. Wie eben angesprochen muss hier mit einem Zweifreiheitsgradsystem gerechnet werden. Ein Rechenbeispiel wurde bereits in \ref{Beispiel Mehrfreiheitsgradsystem} behandelt und die Vorgehensweise wird als bekannt angenommen. Die Parameter der Basisisolierung sind ergänzend gegeben:
+\\[0.5cm]
+$m_B = 0.1\cdot 10^6 kg$\\
+$k_B = 10\cdot 10^6 \frac{N}{m}$\\
+$D_B = 0.30$
+\\[0.5cm]
+Das script \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel} liefert $\omega_1_,_2$, $f_1_,_2$ und $T_1_,_2$.
+\lstinputlisting[style=Matlab-editor,caption= {Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel},label={Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel}, basicstyle=\mlttfamily\scriptsice ]{Latex_Beispiel_Basisisiolierung.m}
 
 \newpage
 \subsubsection{Für Termin: Formeln}
@@ -445,6 +480,7 @@ Bevor ein näherer Einblick in die App gegeben werden kann ist noch zu erwähnen
     Beim Ablauf des Programmes können ebenfalls Fehler auftreten, dann muss erneut korrigiert, compiliert und gelinkt werden \citep{IT2}.
 \end{itemize}
 Abbildung (xyx) zeigt zusammengefasst den Prozess der Programmentwicklung.
+
 \subsubsection{App-Umgebung}
 \subsubsection{Ein- und Ausgabe}
 \Beispiel
@@ -468,4 +504,6 @@ Abbildung (xyx) zeigt zusammengefasst den Prozess der Programmentwicklung.
 \bibliography{Literaturverzeichnis}
 \newpage
 \listoffigures
+\newpage
+\lstlistoflistings
 \end{document}
