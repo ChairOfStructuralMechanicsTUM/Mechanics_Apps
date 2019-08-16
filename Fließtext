@@ -9,7 +9,26 @@
 \usepackage{colortbl}
 \usepackage{enumitem}
 \usepackage[framed, numbered]{matlab-prettifier}
-
+\usepackage{scrhack}
+\usepackage[svgnames,table,hyperref]{xcolor}
+\usepackage{courier} 
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{scrlayer-scrpage}  
+\usepackage{natbib}
+\typearea[current]{current}
+\usepackage[centertags]{amsmath} 	
+\renewcommand{\pnumfont}{\normalfont\ttfamily}
+\renewcommand{\headfont}{\normalfont\sffamily}
+\pagestyle{scrheadings}
+\usepackage[
+	format=hang,
+	font={footnotesize, sf},
+	labelfont={bf},
+	margin=0.5cm,
+	aboveskip=5pt,
+	belowskip=5pt
+	]{caption,subcaption}   
 \usepackage[onehalfspacing]{setspace}
 \usepackage[table,xcdraw]{xcolor}
  \geometry{
@@ -19,7 +38,7 @@
  top=20mm,
  }
               								
-\fontsize=12pt
+\fontsize=14 pt
 \title{Programmieren interaktiver Apps}
 \author{Jakob Schlagintweit}
 \date{Juli 2019}
@@ -54,7 +73,7 @@ In einem kurzen Überblick über diese Arbeit
 Erdbebenschutzssysteme sind besondere Vorrichtungen, um Bauwerke und Anlagen aller Art vor den zerstörerischen Wirkungen von Erdbeben zu schützen. Im günstigen Fall können Bauwerke während des Bebens im elastischen Zustand verbleiben und das Erdbeben weitgehend unbeschadet überstehen. Schutzsysteme dürfen während eines Bebens per se nicht zerstört werden, sondern müssen für Nachbeben erhalten bleiben. Sie müssen aufgrund der langen Wiederkehrperioden mittlelschwerer und schwerer Erdbeben grundsätzlich langlebig, robust und wartungsfrei ausgelegt werden \citep{petersen2017grundlagen}. Man unterscheidet dabei in aktive, passive und semiaktive Systeme. Aktiven Systemen  bedarf es an äußeren Energieversorgungen. Das Gebäude registriert via Sensoren seine Reaktion auf das Beben und errechnet mithilfe einer Software die Aktion der mechanischen Schutzsysteme. In der Regel wirken Hydraulikzylinder den ausgelösten Massenkräften durch das Beben gegen. Im Gegensatz zu den aktiven Systemen, wir das passive nicht extern mit Energie versorgt. Es verändert die mechanischen Schwingungseigenschaften des Systems und reduziert dadurch die Erdbebeneinwirkung auf das Gebäude. Von semiaktiven Schutzsystemen spricht man, wenn lediglich die Dämpfungseigenschaften ohne externe Energiezufuhr verändert werden kann \citep{petersen2017grundlagen}. 
 
 Die am häufigsten verwendete Klasse der Schutzsysteme ist in der Praxis die passive. (warum) Hierfür gibt es vier Wirkungsmechanismen, die im Folgenden besprochen werden.
-\subsubsection{Dämpferelemente}
+\subsubsection{Dissipationselemente}
 Wird eine schwingungsfähiges System ausgelenkt und anschließend frei gegeben, stellen sich Schwingungen ein, die nach einer gewissen Zeit abklingen und zur Ruhe kommen. Dafür sorgt ein Dämpfer, der die kinetische Energie in jedem Schwingzyklus in Wärmeenergie umwandelt. Dieser Mechanismus wird im Fachjargon als Dissipation bezeichnet. Verantwortlich sind dafür überwiegend Reibungsvorgänge im Bauwerk, aber auch die Interaktion zwischen Baugrund und -werk kann das System ausbremsen. Selbst die Bewegung des Systems in seinem umgebenden Medium trägt zu dessen Dämpfung bei. Da in allen Reibungsvorgängen Energie in Wärme umgewandelt wird, und diese nach dem zweiten Hauptsatz der Thermodynamik entlang eines negativen Temperaturgradienten fließt, wird dem offenen System nach und nach irreversibel Energie entzogen. Abbildung xy (Bild) zeigt ...
 \subsubsection{Shocktransmitter}
 
@@ -422,26 +441,56 @@ $D_G = 0.05$
 Daraus ergeben sich die Eigenfrequenzen $\omega_G$ und -Schwingzeiten $T_G$:
 \begin{subequations}
 \begin{align}
-    \omega_G &= \mathrm{\sqrt{\frac{k_G}{m_g}}} = 7.79s^{-1}\\
-    f_G &= \frac{\omega_G}{2\pi} = 1.24 Hz\\
-    T_G &= \frac{1}{f_G}  = 0.81s\\
+    \omega_G = \mathrm{\sqrt{\frac{k_G}{m_G}}} = 7.79s^{-1}\\
+    f_G = \frac{\omega_G}{2\pi} = 1.24 Hz\\
+    T_G = \frac{1}{f_G}  = 0.81s\\
     \intertext{Die Antwortbeschleunigung $S_e$ erhält man über das elastische Antwortspektrum aus ABB xy:}
-    S_e(T_G = 0.81s) &=\frac{3.795}{0.81}\frac{m}{s^2} = 4.685 \frac{m}{s^2}\\
+    S_e(T_G = 0.81s) =\frac{3.795}{0.81}\frac{m}{s^2} = 4.685 \frac{m}{s^2}\\
     \intertext{Die zugehörige Massenkraft $F$ erhält man zu:}
-    F &= m_g\cdot S_e(T_G) = 1.4\cdot 10^6 kg \cdot4.685\frac{m}{s^2} = 6559kN\\
+    F = m_g\cdot S_e(T_G) = 1.4\cdot 10^6 kg \cdot4.685\frac{m}{s^2} = 6559kN\\
     \intertext{Daraus lässt sich die seitliche elastische Auslenkung $u$ angeben:}
-    u &= \frac{F}{k_g} = \frac{6.559\cdot 10^6 N}{85\cdot 10^6 \frac{N}{m}} = 0.077m
+    u = \frac{F}{k_g} = \frac{6.559\cdot 10^6 N}{85\cdot 10^6 \frac{N}{m}} = 0.077m
 \end{align}
 \end{subequations}
-Das System mit Basisisolierung hat zusätzlich eine Grundplatte mit der Masse $m_B$, welche auf der Isolierung liegt. Wie eben angesprochen muss hier mit einem Zweifreiheitsgradsystem gerechnet werden. Ein Rechenbeispiel wurde bereits in \ref{Beispiel Mehrfreiheitsgradsystem} behandelt und die Vorgehensweise wird als bekannt angenommen. Die Parameter der Basisisolierung sind ergänzend gegeben:
+Das System mit Basisisolierung hat zusätzlich eine Grundplatte mit der Masse $m_B$, welche auf der Isolierung liegt. Wie eben angesprochen, muss hier mit einem Zweifreiheitsgradsystem gerechnet werden. Ein Rechenbeispiel wurde bereits in \ref{Beispiel Mehrfreiheitsgradsystem} behandelt und die Vorgehensweise wird als bekannt angenommen. Die Parameter der Basisisolierung sind ergänzend gegeben:
 \\[0.5cm]
 $m_B = 0.1\cdot 10^6 kg$\\
 $k_B = 10\cdot 10^6 \frac{N}{m}$\\
 $D_B = 0.30$
 \\[0.5cm]
 Das script \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel} liefert $\omega_1_,_2$, $f_1_,_2$ und $T_1_,_2$.
-\lstinputlisting[style=Matlab-editor,caption= {Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel},label={Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel}, basicstyle=\mlttfamily\scriptsice ]{Latex_Beispiel_Basisisiolierung.m}
+\\[0.5cm]
+$\omega_1 = 2.458 s^{-1}$, $\omega_2 = 31.696 s^{-1}$ \\
+$f_1 = 0.3912$ Hz, $f_2 = 5.045$ Hz\\
+$T_1 = 2.56$ s, $T_2 = 0.198$ s 
+\\[0.5cm]
 
+\lstinputlisting[style=Matlab-editor,caption= {Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel},label={Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel}, basicstyle=\mlttfamily\scriptsice ]{Latex_Beispiel_Basisisiolierung.m}
+Die zugehörigen Eigenformen sind in Abbxy angegeben. In der ersten Eigenform schwingen $m_G$ und $m_B$ gemeinesam zur Seite aus, in der zweiten Eigenfrequenz verlaufen die Schwingungen gegenläufig. Für die Berechnung der Erdbebenbeanspruchung wird vereinfachden nur die erste Eigenform, die der Grundschwingung eines Einfreiheitsgradsystems entspricht, berücksichtigt \citep{petersen2017grundlagen}.
+\begin{subequations}
+\begin{align}
+    S_e(T_1=2.56s) = \frac{7.59}{2.56^2}\frac{m}{s^2} =1.158 \frac{m}{s^2} \\
+    \intertext{Die resultierende Massenkraft des Systems in der ersten Eigenform beträgt nach Gleichung xy:}
+    F_B = \frac{(1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00)^2}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot 1.158 N = 1.736\cdot 10^6N \\
+    F_G = 1.4\cdot 10^6\cdot 1.11 \cdot \frac{1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot 1.158 N = 1.631\cdot 10^6 N \\
+    \intertext{Die Relativverschiebungen gegenüber dem Boden betragen:}
+    u_B = 1.00\cdot \frac{1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot\frac{1.158}{2.458^2}m = 0.174m\\
+    u_G = 1.11\cdot \frac{1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot\frac{1.158}{2.458^2}m = 0.193m\\
+    \intertext{Aus den Verschiebungen lassen sich nun die Relativverschiebungen $\Delta u_B$ zwischen der Gebäudemasse und der Basisisolierung berechnen:}
+    \Delta u_B = u_G - u_B = (0.193 - 0.174)m = 0.019 m 
+\end{align}
+\end{subequations}
+Die Ergebnisse sind in ABB.x veranschaulicht. Stellt man nun die Endergebnisse gegenüber, so erkennt man einen wesentlichen Unterschied. Die Relativverschiebungen zwischen Gebäudemasse und Basisisolierung des Zweifreiheitsgradsystem sind signifikant kleiner als die des Einfreiheitsgradsystems.  
+\begin{itemize}
+    \item [1)]  ohne Basisisiolierung: 0.077 m
+    \item [2)]  mit Basisisiolierung: 0.019 m
+\end{itemize}
+Setzt man die Verschiebungen ins Verhältnis, so wird deutlich, dass die Relativverformung durch die Basisisolation auf ein Viertel reduziert wird $(\frac{0.019}{0.077} = 0.25)$. Dementsprechend gering sind die Beanspruchungen im Falle eines Bebens.
+\begin{itemize}
+    \item [1)]  ohne Basisisiolierung: 6559 kN
+    \item [2)]  mit Basisisiolierung: 1631 kN
+\end{itemize}
+Geringere Kräfte rufen geringere Spannungen hervor, allerdings sind die absoluten Verschiebungen beim Gebäude mit Basisisolierung größer als beim Gebäude ohne. ... Nachteile
 \newpage
 \subsubsection{Für Termin: Formeln}
 Maximale Trägheitskraft:
