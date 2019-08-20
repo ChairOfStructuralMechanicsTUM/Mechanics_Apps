@@ -62,14 +62,17 @@ tote
 skalen
 beschreibung
 
-\subsection{Ziel der Arbeit}
+\subsection{Ziel der Arbeit} \label{1.2}
 Um den Studierenden der Technischen Universität München bau-mechanische Prinzipien zu veranschaulichen, werden von (Lehrstuhlmitarbeitern) und Absolventen stetig neue interaktive Apps am Lehrstuhl für Baumechanik der TUM veröffentlicht. Diese sind größtenteils auf der offiziellen Website des Lehrstuhls öffentlich zugänglich. Das bedeutet, dass nicht nur Studierende, sondern auch (Außenstehende) darauf zugreifen können. Hauptsächlich werden die Apps in den Vorlesungen und Kursen des Lehrstuhls zu Lehrzwecken ergänzend verwendet, auch in den zugehörigen Skripten lassen sich Links zu den jeweiligen Apps finden. Sie visualisieren vereinfacht mechanische Prinzipien der Baubrange mit Beispielen aus der Praxis und helfen dadurch den behandelten Stoff zu verstehen. Aus pädagogischer Sicht schaffen sie visuelle Vorstellungen der Probleme und durch deren Interaktivität soll der Lernprozess zusätzlich induktiv gestärkt/gefestigt werden. Aufgebaut sind die Apps alle gleich. (Das physikalische Prinzip wird in einem kurzen Einführungstext beschrieben und über Regler oder Eingabefeldern ist der (Anwender) in der Lage Parameter wie Massen, Steifigkeiten (etc.) einzugeben. Die App zeigt auf Grundlage dieser die Ergebnisse und gibt sie dem Anwender zurück.) (Beispiel)
 
 Im Zuge dieser Arbeit soll eine App zum Thema Basisisolierung entwickelt werden. Sie beschreibt deren Einfluss auf das Gebäude sowie dessen Reaktionen auf Erdbebeneinwirkungen und soll Studierende die Wirkungsweise der Basisisolierung nahelegen. Als Beispiel soll ein eingeschossiges Gebäude mit einer Erdbebenlast angeregt werden und ein Vergleich zwischen dem Gebäude mit und ohne Basisisolation  gezogen werden. Der Anwender soll in der Lage sein die Ergebnisse abzuleiten und einen Zusammenhang herzustellen. Außerdem soll deutlich gemacht werden, dass es Möglichkeiten gibt, erdbebensicher zu bauen( und die Chancen als auch die Risiken aufzeigen.)
 \subsection{Struktur der Arbeit}
-In einem kurzen Überblick über diese Arbeit 
+Bevor es jedoch los geht, verschaffen wir uns erst einen kurzen Überblick über diese Arbeit. Sie lässt sich im Großen und Ganzen in zwei Kapitel unterteilen. Zum einen werden in \ref{2.2.1} des zweiten Kapitels die baudynamischen Grundlagen anhand des Einmassenschwingers hergeleitet und gelöst. Anschließend wird das Schema mithilfe des Scherbalkenmodells auf ein \ref{Mehrfreiheitsgradsystem} Mehrfreiheitsgradsystem übertragen. Mit diesen mathematischen Grundlagen soll die in \ref{1.2} erörterte Vorstellung der Problematik umgesetzt werden.
+
+Kapitel \ref{Implementierung}, als zweites großes Kapitel, soll der Implementierung der App gewidmet werden. Auf Grundlage des in \ref{Antwortspektrum} vorgestellten Antwortspektren-Verfahrens, soll nach DIN EN 1998 ein Vergleich zwischen Gebäuden mit und ohne Basisisolierung gezogen werden. Dabei soll im Folgenden auf das verwendete Framework und die Programmentwicklung eingegangen werden. 
 \cleardoublepage
 \section{Basisisolierung}
+\label{Kapitel 2}
 \subsection{Anwendungsbereich für Bauingenieure}
 Erdbebenschutzssysteme sind besondere Vorrichtungen, um Bauwerke und Anlagen aller Art vor den zerstörerischen Wirkungen von Erdbeben zu schützen. Im günstigen Fall können Bauwerke während des Bebens im elastischen Zustand verbleiben und das Erdbeben weitgehend unbeschadet überstehen. Schutzsysteme dürfen während eines Bebens per se nicht zerstört werden, sondern müssen für Nachbeben erhalten bleiben. Sie müssen aufgrund der langen Wiederkehrperioden mittlelschwerer und schwerer Erdbeben grundsätzlich langlebig, robust und wartungsfrei ausgelegt werden \citep{petersen2017grundlagen}. Man unterscheidet dabei in aktive, passive und semiaktive Systeme. Aktiven Systemen  bedarf es an äußeren Energieversorgungen. Das Gebäude registriert via Sensoren seine Reaktion auf das Beben und errechnet mithilfe einer Software die Aktion der mechanischen Schutzsysteme. In der Regel wirken Hydraulikzylinder den ausgelösten Massenkräften durch das Beben gegen. Im Gegensatz zu den aktiven Systemen, wir das passive nicht extern mit Energie versorgt. Es verändert die mechanischen Schwingungseigenschaften des Systems und reduziert dadurch die Erdbebeneinwirkung auf das Gebäude. Von semiaktiven Schutzsystemen spricht man, wenn lediglich die Dämpfungseigenschaften ohne externe Energiezufuhr verändert werden kann \citep{petersen2017grundlagen}. 
 
@@ -87,6 +90,7 @@ Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenscha
 
 Zunächst leiten wir uns das Modell anhand eines Einmassenschwingers her. Anschließend wird auf darauf das Mehrfreiheitsgradsystem behandelt und zu guter letzt im Berechnungsverfahren angewandt.
 \subsubsection{Einmassenschwinger}
+\label{2.2.1}
 Die Kinematik als Teil der technischen Mechanik beschreibt, wie sich ein Körper bewegt. Hierfür werden die Begriffe Geschwindigkeit \eqref{Geschwindigkeit} und Beschleunigung \eqref{Beschleunigung} eingeführt, welche sich aus der vektoriellen Basisgröße Länge bzw. Verschiebung $\vec{u}$ ableiten lassen.
 
 \begin{subequations}
@@ -371,7 +375,7 @@ c_i_i&=2D_i\omega_i
 \end{subequations}
 ...
 
-\subsection{Antwortsprektrum-Verfahren} 
+\subsection{Antwortsprektrum-Verfahren} \label{Antwortspektrum}
 Nachdem nun alle theoretischen Voraussetzungen für die Berechnung von Schwingungen unter Erdbebenlasten bekannt sind, machen wir uns in Kürze an die gängigen praktischen Methoden. Allem voraus ist das Antwortspektrum-Verfahren, welches speziell für Erdbebeneinwirkungen entwickelt wurde. Zu finden ist dieses Verfahren im Eurocode 8 - DIN EN 1998 und stützt sich auf das elastische Antwortspektrum, mithilfe dessen man statische Erdbebenersatzlasten (erzeugen) kann. Bevor wir jedoch mit der Berechnung solcher Ersatzlasten beginnen, muss zunächst die Frage geklärt werden, wie sich ein Antwortspektrum zusammensetzt und wie es sich erzeugen lässt.  (Das Gegenüber von)   
 \subsubsection{Antwortspektrum}
 Die größte baupraktische Bedeutung kommt dem Antwortspektrum-Verfahren zu. Es handelt sich um ein Näherungsverfahren, insbesondere dann, wenn es von einem inelastischen Beschleunigungsspektrum ausgeht \citep{petersen2017grundlagen}. Ein bedeutender Vorteil des Verfahrens ist, dass es sowohl für Ein- als auch Mehrfreiheitsgradsysteme Anwendung findet. Hierbei bietet sich besonders ein Vergleich zwischen Gebäuden mit und ohne Basisisolierung an. Grundlage dieses Verfahrens bietet das Antwortspektrum, eine statistisch ermittelte Hüllkurve mehrerer Messungen und Abschätzungen von Erdbebenereignissen unter Berücksichtugung verschiedenster Parameter. Es beruht auf einem Gefährdungsniveau, das einer mittleren Wiederkehrperiode von 475 Jahren entspricht. Dem entspricht eine Eintreffens- oder Überschreitungswahrscheinlichkeit von 10\% in 50 Jahren \citep{petersen2017grundlagen}. Man unterteilt es in vier Intervalle: 
@@ -445,7 +449,7 @@ T_D[s] & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}2,0} & 2,0 \\ \hline
 \label{Bodenklassen}
 \end{table}
 
-Bedeutungsklassen werden durch die Bedeutung des Einsturzes eines Bauwerks für menschliches Leben, die öffentliche Sicherheit und den Schutz der Bevölkerung nach einem Beben eingeführt und definiert. Jeder Bedeutungsklasse entspricht ein Bedeutungsbeiwert, der widerum einer kürzeren oder längeren angenommenen Wiederkehrperiode eines Bebens entspricht \citep{petersen2017grundlagen}. Man differenziert zwischen Klassen von $I$ bis $IV$, beziehungsweise von unbedeutend bis bedeutend. So hat besipielsweise ein Krankenhaus der Klasse $IV$ eine höhere (Schutz-) Priorität als ein Schuppen der Klasse $I$. Das hat mit dem Bedeutungsbeiwert $\gamma_l$ einen direkten Einfluss auf das Spektrum. Dabei dürfen bis zu 40\% bei Bauwerken der Bedeutungskategorie $IV$ und 20\% der Kategorie $I$ addiert bzw. subtrahiert werden.
+Bedeutungsklassen werden durch die Bedeutung des Einsturzes eines Bauwerks für menschliches Leben, die öffentliche Sicherheit und den Schutz der Bevölkerung nach einem Beben eingeführt und definiert. Jeder Bedeutungsklasse entspricht ein Bedeutungsbeiwert, der widerum einer kürzeren oder längeren angenommenen Wiederkehrperiode eines Bebens entspricht \citep{petersen2017grundlagen}. Man differenziert zwischen Klassen von $I$ bis $IV$, beziehungsweise von unbedeutend bis bedeutend. So hat beispielsweise ein Krankenhaus der Klasse $IV$ eine höhere (Schutz-) Priorität als ein Schuppen der Klasse $I$. Das hat mit dem Bedeutungsbeiwert $\gamma_l$ einen direkten Einfluss auf das Spektrum. Dabei dürfen/müssen bis zu 40\% bei Bauwerken der Bedeutungskategorie $IV$ aufaddiert beziehungsweise 20\% der Kategorie $I$ subtrahiert werden.
 
 \begin{table}[h]
 \centering
@@ -468,7 +472,33 @@ IV & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}l@{}}Bauw
 \label{Bedeutungsbeiwerte}
 \end{table}
 
+Um nichtlineare Berechnungen zur Erfassung der Energiedissipation infolge des duktilen Bauwerks- und Bauteilverhaltens zu umgehen, führt man dieses in ein horizontales Bemesseungspektrum für lineare dynamische Strukturberechnungen über \citep{petersen2017grundlagen}. Dieses erhält man, indem man zusätzlich einen Dämpfungskorrekturbeiwert $\eta$ mit einrechnet. $\eta$ ist von $D$ abhängig und ergibt sich zu:
+\begin{subequations}
+\begin{align}
+    \eta &= \mathrm{\sqrt{\frac{10}{5+D}}}\geq0.55\\
+    \eta &= \frac{1}{q}
+\end{align}
+\end{subequations}
+$q$ beschreibt den Verhaltensbeiwert, und setzt bestimmte konstruktive Vorkehrungen vorraus, um die erforderlichen Duktilitätskapazitäten zu gewährleisten. Er soll den Fehler durch die Linearisierung ausgleichen, indem der einheitliche Spektralwert $\beta_0 = 2.5$ um den Faktor $\frac{1}{q}$ abgemindert wird. Der Nachweis der Tragfähigkeit ist explizit zu führen und die der gewählten Duktilitätsklasse entsprechende konstruktive Durchbildung der Bauteile sicherzustellen. Der Sonderfall $q = 1$, mit dem auch in der App gerechnet wird, beschreibt ein linear-elastisches Materialverhalten. Ist der Nachweis für erdbebensichere Konstruktionen erfüllt, so darf ferner vereinfacht gerechnet werden.
+Beispielhaft ist in Abbildung xy ein Bemessungsspektrum unter folgenden Bediungungen dargestellt:
+\\[0.5cm]
+$\eta  =1$\\
+$D = 5\%$
+\\[0.5cm]
+(ABB)
 
+
+\subsubsection{Vorgehensweise}
+Bei der Verwendung des Antwortspektrum-Verfahrens hält man sich meist an das unten genannte Schema:  
+\begin{itemize}
+    \item [1)] Modellierung des Bauwerkes mit seinen Massen, Steifigkeiten und Dämpfungseigenschaften.
+    \item [2)] Berechnung der Eigenformen, -Frequenzen $\omega_E$ und -Schwingzeiten $T_E$
+    \item [3)] Anwendung mit dem elastischen Antwortspektrum
+    \item [4)] Bestimmung der Erdbebenersatzlasten
+    \item [5)] Bestimmung der Verschiebung
+    \item [6)] Bestimmung der Gebäude-Schnittgrößen
+\end{itemize}
+Nachdem nun das....
 \subsubsection{Beispiel: Erdbebenbeanspruchung eines Gebäudes mit und ohne Basisisolierung}
 In diesen Beispiel soll ein Vergleich zwischen einem Gebäude mit und ohne Basisisolierung gezogen werden. Beide Gebäude bestehen aus nur einem Geschoss. Die Gebäudedecken und - Fundamente entsprechen den zusammengeführten Punktmassen. Die Wände bleiben in diesem Beispiel, wie in \ref{Mehrfreiheitsgradsystem} beschrieben masselos. Da bei einem Gebäude ohne Basisisolierung das Fundament an den Boden gekoppelt ist, bewegt es sich bei einem Beben wie der Baugrund. Daher lässt sich dieses Gebäude in ein Einfreiheitsgradsystem zusammenfassen. Bei dem Gebäude mit Basisisolierung hingegen muss vereinfacht mit einem Zweifreiheitsgradsystem gerechnet werden. Wie in der App soll auch hier mit dem Antwortspektrumverfahren nach DIN EN 1998 (2010-12) gerechnet werden. Das Erdbebenantwortspektrum als elastisches Spektrum $S_e$, wie in Abb xy dargestellt, berücksichtig den Verhaltensbeiwert $q$ vorerst nicht. (Beispiel Quelle \cite{petersen2017grundlagen})
 \\
@@ -552,6 +582,7 @@ Maximale Trägheitskraft:
 
 \cleardoublepage
 \section{Implementierung}
+\label{Implementierung}
 \subsection{Framework}
 \subsubsection{Matlab}
 \subsubsection{Bokeh}
