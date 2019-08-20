@@ -445,7 +445,7 @@ T_D[s] & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}2,0} & 2,0 \\ \hline
 \label{Bodenklassen}
 \end{table}
 
-Bedeutungsklassen werden durch die Bedeutung des Einsturzes eines Bauwerks für menschliches Leben, die öffentliche Sicherheit und den Schutz der Bevölkerung nach einem Beben eingeführt und definiert. Jeder Bedeutungsklasse entspricht ein Bedeutungsbeiwert, der widerum einer kürzeren oder längeren angenommenen Wiederkehrperiode eines Bebens entspricht \citep{petersen2017grundlagen}.
+Bedeutungsklassen werden durch die Bedeutung des Einsturzes eines Bauwerks für menschliches Leben, die öffentliche Sicherheit und den Schutz der Bevölkerung nach einem Beben eingeführt und definiert. Jeder Bedeutungsklasse entspricht ein Bedeutungsbeiwert, der widerum einer kürzeren oder längeren angenommenen Wiederkehrperiode eines Bebens entspricht \citep{petersen2017grundlagen}. Man differenziert zwischen Klassen von $I$ bis $IV$, beziehungsweise von unbedeutend bis bedeutend. So hat besipielsweise ein Krankenhaus der Klasse $IV$ eine höhere (Schutz-) Priorität als ein Schuppen der Klasse $I$. Das hat mit dem Bedeutungsbeiwert $\gamma_l$ einen direkten Einfluss auf das Spektrum. Dabei dürfen bis zu 40\% bei Bauwerken der Bedeutungskategorie $IV$ und 20\% der Kategorie $I$ addiert bzw. subtrahiert werden.
 
 \begin{table}[h]
 \centering
@@ -467,6 +467,7 @@ IV & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}l@{}}Bauw
 \caption{Bedeutungsbeiwerte nach DIN EN 1998}
 \label{Bedeutungsbeiwerte}
 \end{table}
+
 
 \subsubsection{Beispiel: Erdbebenbeanspruchung eines Gebäudes mit und ohne Basisisolierung}
 In diesen Beispiel soll ein Vergleich zwischen einem Gebäude mit und ohne Basisisolierung gezogen werden. Beide Gebäude bestehen aus nur einem Geschoss. Die Gebäudedecken und - Fundamente entsprechen den zusammengeführten Punktmassen. Die Wände bleiben in diesem Beispiel, wie in \ref{Mehrfreiheitsgradsystem} beschrieben masselos. Da bei einem Gebäude ohne Basisisolierung das Fundament an den Boden gekoppelt ist, bewegt es sich bei einem Beben wie der Baugrund. Daher lässt sich dieses Gebäude in ein Einfreiheitsgradsystem zusammenfassen. Bei dem Gebäude mit Basisisolierung hingegen muss vereinfacht mit einem Zweifreiheitsgradsystem gerechnet werden. Wie in der App soll auch hier mit dem Antwortspektrumverfahren nach DIN EN 1998 (2010-12) gerechnet werden. Das Erdbebenantwortspektrum als elastisches Spektrum $S_e$, wie in Abb xy dargestellt, berücksichtig den Verhaltensbeiwert $q$ vorerst nicht. (Beispiel Quelle \cite{petersen2017grundlagen})
