@@ -37,6 +37,7 @@
  left=20mm,
  top=20mm,
  }
+ %\setlength\mathindent{0pt}
               								
 \fontsize=14 pt
 \title{Programmieren interaktiver Apps}
@@ -371,9 +372,9 @@ c_i_i&=2D_i\omega_i
 ...
 
 \subsection{Antwortsprektrum-Verfahren} 
-Nachdem nun alle theoretischen Voraussetzungen für die Berechnung von Schwingungen unter Erdbebenlasten bekannt sind, machen wir uns in Kürze an die gängigen praktischen Methoden. Allem voraus ist das Antwortspektrum-Verfahren. Gegenüber von   
+Nachdem nun alle theoretischen Voraussetzungen für die Berechnung von Schwingungen unter Erdbebenlasten bekannt sind, machen wir uns in Kürze an die gängigen praktischen Methoden. Allem voraus ist das Antwortspektrum-Verfahren, welches speziell für Erdbebeneinwirkungen entwickelt wurde. Zu finden ist dieses Verfahren im Eurocode 8 - DIN EN 1998 und stützt sich auf das elastische Antwortspektrum, mithilfe dessen man statische Erdbebenersatzlasten (erzeugen) kann. Bevor wir jedoch mit der Berechnung solcher Ersatzlasten beginnen, muss zunächst die Frage geklärt werden, wie sich ein Antwortspektrum zusammensetzt und wie es sich erzeugen lässt.  (Das Gegenüber von)   
 \subsubsection{Antwortspektrum}
-Die größte baupraktische Bedeutung kommt dem Antwortspektrum-Verfahren zu. Es handelt sich um ein Näherungsverfahren, insbesondere dann, wenn es von einem inelastischen Beschleunigungsspektrum ausgeht \citep{petersen2017grundlagen}. Ein bedeutender Vorteil des Verfahrens ist, dass es sowohl für Ein- als auch Mehrfreiheitsgradsysteme Anwendung findet. Hierbei bietet sich besonders ein Vergleich zwischen Gebäuden mit und ohne Basisisolierung an. Grundlage dieses Verfahrens bietet das Antwortspektrum, eine statistisch ermittelte Hüllkurve mehrerer Messungen und Abschätzungen von Erdbebenereignissen unter Berücksichtugung verschiedenster Parameter. Es beruht auf einem Gefährdungsniveau, das einer mittleren Wiederkehrperiode von 475 Jahren entspricht. Dem entspricht eine Eintreffens- oder Überschreitungswahrscheinlichkeit von 0,1 in 50 Jahren \citep{petersen2017grundlagen}. Man unterteilt es in vier Intervalle: 
+Die größte baupraktische Bedeutung kommt dem Antwortspektrum-Verfahren zu. Es handelt sich um ein Näherungsverfahren, insbesondere dann, wenn es von einem inelastischen Beschleunigungsspektrum ausgeht \citep{petersen2017grundlagen}. Ein bedeutender Vorteil des Verfahrens ist, dass es sowohl für Ein- als auch Mehrfreiheitsgradsysteme Anwendung findet. Hierbei bietet sich besonders ein Vergleich zwischen Gebäuden mit und ohne Basisisolierung an. Grundlage dieses Verfahrens bietet das Antwortspektrum, eine statistisch ermittelte Hüllkurve mehrerer Messungen und Abschätzungen von Erdbebenereignissen unter Berücksichtugung verschiedenster Parameter. Es beruht auf einem Gefährdungsniveau, das einer mittleren Wiederkehrperiode von 475 Jahren entspricht. Dem entspricht eine Eintreffens- oder Überschreitungswahrscheinlichkeit von 10\% in 50 Jahren \citep{petersen2017grundlagen}. Man unterteilt es in vier Intervalle: 
 %\begin{itemize}
    % \item [$0\leq T \leq T_B$:]  $S_a(T) = a_g\gamma S [1+\frac{T}{T_B}(\eta \beta_0 -1)]$ horizontal\\$S_a(T) = a_g\gamma S [1+\frac{T}{T_B}(S\eta \beta_0 -1)]$ vertikal
    % \item [$T_B\leq T \leq T_C$:] $S_a(T) = a_g\gamma S \eta \beta_0$
@@ -388,8 +389,27 @@ Die größte baupraktische Bedeutung kommt dem Antwortspektrum-Verfahren zu. Es 
     T_D\leq T &:S_a(T) = a_g\gamma S \eta \beta_0\frac{T_C\cdot T_D}{T^2}
 \end{align}
 \end{subequations}
-Die Kontrollperioden $T_B$, $T_C$ und $T_D$ sind die Grenzen der Abschnitte. Die größten Antwortbeschleunigungen treten im Spektralplateau auf...
-Gemäß des Euro-Code 8 DIN EN 1998 (2010-12) werden neben den Baugrund- und Duktilitätsklassen auch Bedeutungs- und Verhaltensbeiwert sowie die Dämpfung einbezogen. Im folgenden wird der Pool an Parametern genauer betrachtet.
+Die Kontrollperioden $T_B$, $T_C$ und $T_D$ sind die Grenzen der Abschnitte. Die größten Antwortbeschleunigungen treten im Spektralplateau zwischen $T_B$ und $T_C$ auf \citep{bruestle2002untergrundabhangige,din19981,schwarz2005bauten}. Es wird durch die am Herd abgestrahlten hochfrequenten Signalanteile sowie Wellenabsorption im Untergrund, und durch die Hauptresonanzspitze am tieffrequenten Ende der Übertragungsfunktion bestimmt \citep{petersen2017grundlagen}. Die Eckperiode $T_D$ ergibt sich aus der Magnitude der betrachteten Referenzbeben \citep{bruestle2002untergrundabhangige}. Die erdbenenzonenabhängigen Referenz-Spitzwerte $a_g_R$ sind in Tabelle \ref{Referenzspietzenwerte} angegeben. 
+\begin{table}[h]
+\centering
+\label{Referenzspietzenwerte}
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+\hline
+\rowcolor[HTML]{9B9B9B} 
+Erdbebenzone & \multicolumn{6}{l|}{\cellcolor[HTML]{9B9B9B}Intensität} & a_g_R[\frac{m}{s^2}] \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+0 & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}6.0 - 6.5} & - \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+1 & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}6.5 - 7.0} & 0.4 \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+2 & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}7.0 - 7.5} & 0.6 \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+3 & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}\geq 7.5} & 0.8 \\ \hline
+\end{tabular}
+\caption{Referenzspitzenwerte der Bodenbeschleunigung nach DIN 1998}
+\end{table}
+\\
+Gemäß des Euro-Code 8 DIN EN 1998 (2010-12) werden neben den Baugrund- und (Duktilitätsklassen) auch Bedeutungs- und Verhaltensbeiwert sowie die Dämpfung einbezogen. Im folgenden wird der Pool an Parametern genauer betrachtet.
 
 Die Baugrundklasse beschreibt die Beschaffenheit der oberflächennahen Bodenschichten und des geologischen Untergrundes, und deren Einfluss auf die Erdbebeneinwurkung. Dies erfolgt durch die Einstufung in eine der drei Baugrundklassen A, B, C und eine der drei geologischen Untergrundklassen R, S, T  \citep{petersen2017grundlagen}. Quantitativ unterscheidet man die Baugrundklassen über deren Schwerwellengeschwindigkeit $v_s$ in:
 \begin{itemize}
@@ -421,11 +441,32 @@ T_C[s] & 0,20 & 0,25 & 0,30 & 0,30 & 0,4 & 0,5 & 0,20 \\ \hline
 \rowcolor[HTML]{C0C0C0} 
 T_D[s] & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}2,0} & 2,0 \\ \hline
 \end{tabular}
-\caption{Bodenklassen}
+\caption{Kennwerte zur Beschreibung des Einflusses des Bodesn nach DIN 1998}
 \label{Bodenklassen}
 \end{table}
 
 Bedeutungsklassen werden durch die Bedeutung des Einsturzes eines Bauwerks für menschliches Leben, die öffentliche Sicherheit und den Schutz der Bevölkerung nach einem Beben eingeführt und definiert. Jeder Bedeutungsklasse entspricht ein Bedeutungsbeiwert, der widerum einer kürzeren oder längeren angenommenen Wiederkehrperiode eines Bebens entspricht \citep{petersen2017grundlagen}.
+
+\begin{table}[h]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+\hline
+\rowcolor[HTML]{9B9B9B} 
+Bedeutungskategorie & \multicolumn{6}{l|}{\cellcolor[HTML]{9B9B9B}Bauwerke} & Bedeutungsbeiwert \gamma_l \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+I & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}l@{}}Bauwerke ohne Bedeutung für den Schutz der Allgemeinheit, \\ mit geringem Personenverkehr (z.B. Scheunen, Kulturgewächshäuser, usw.)\end{tabular}} & 0.8 \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+II & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}l@{}}Bauwerke, die nicht zu den anderen Kategorien gehören \\ (z.B. kleinere Wohn- und Bürogebäude, Werkstätten, usw.)\end{tabular}} & 1.0 \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+III & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}l@{}}Bauwerke, von deren Versagen bei Erdbeben eine große Zahl  \\ von Personen betroffen ist \\ (z.B. große Wohnanlagen, Schulen, Versammlungsräume, Kaufhäuser, usw.)\end{tabular}} & 1.2 \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+IV & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}l@{}}Bauwerke, deren Unversehrtheit im Erdbebenfall von hoher \\ Bedeutung für den Schutz der Allgemeinheit ist \\ (z.B. Krankenhäuser, wichtige Einrichtungen des\\  Katastrophenschutzes, der Feuerwehr und der Sicherheitskräfte, usw.)\end{tabular}} & 1.4 \\ \hline
+\end{tabular}%
+}
+\caption{Bedeutungsbeiwerte nach DIN EN 1998}
+\label{Bedeutungsbeiwerte}
+\end{table}
 
 \subsubsection{Beispiel: Erdbebenbeanspruchung eines Gebäudes mit und ohne Basisisolierung}
 In diesen Beispiel soll ein Vergleich zwischen einem Gebäude mit und ohne Basisisolierung gezogen werden. Beide Gebäude bestehen aus nur einem Geschoss. Die Gebäudedecken und - Fundamente entsprechen den zusammengeführten Punktmassen. Die Wände bleiben in diesem Beispiel, wie in \ref{Mehrfreiheitsgradsystem} beschrieben masselos. Da bei einem Gebäude ohne Basisisolierung das Fundament an den Boden gekoppelt ist, bewegt es sich bei einem Beben wie der Baugrund. Daher lässt sich dieses Gebäude in ein Einfreiheitsgradsystem zusammenfassen. Bei dem Gebäude mit Basisisolierung hingegen muss vereinfacht mit einem Zweifreiheitsgradsystem gerechnet werden. Wie in der App soll auch hier mit dem Antwortspektrumverfahren nach DIN EN 1998 (2010-12) gerechnet werden. Das Erdbebenantwortspektrum als elastisches Spektrum $S_e$, wie in Abb xy dargestellt, berücksichtig den Verhaltensbeiwert $q$ vorerst nicht. (Beispiel Quelle \cite{petersen2017grundlagen})
