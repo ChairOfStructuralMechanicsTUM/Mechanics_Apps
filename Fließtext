@@ -62,6 +62,9 @@ tote
 skalen
 beschreibung
 
+Wegener Theorie Plattendrift
+auch in Deutlschand rheingraben
+
 \subsection{Ziel der Arbeit} \label{1.2}
 Um den Studierenden der Technischen Universität München bau-mechanische Prinzipien zu veranschaulichen, werden von (Lehrstuhlmitarbeitern) und Absolventen stetig neue interaktive Apps am Lehrstuhl für Baumechanik der TUM veröffentlicht. Diese sind größtenteils auf der offiziellen Website des Lehrstuhls öffentlich zugänglich. Das bedeutet, dass nicht nur Studierende, sondern auch (Außenstehende) darauf zugreifen können. Hauptsächlich werden die Apps in den Vorlesungen und Kursen des Lehrstuhls zu Lehrzwecken ergänzend verwendet, auch in den zugehörigen Skripten lassen sich Links zu den jeweiligen Apps finden. Sie visualisieren vereinfacht mechanische Prinzipien der Baubrange mit Beispielen aus der Praxis und helfen dadurch den behandelten Stoff zu verstehen. Aus pädagogischer Sicht schaffen sie visuelle Vorstellungen der Probleme und durch deren Interaktivität soll der Lernprozess zusätzlich induktiv gestärkt/gefestigt werden. Aufgebaut sind die Apps alle gleich. (Das physikalische Prinzip wird in einem kurzen Einführungstext beschrieben und über Regler oder Eingabefeldern ist der (Anwender) in der Lage Parameter wie Massen, Steifigkeiten (etc.) einzugeben. Die App zeigt auf Grundlage dieser die Ergebnisse und gibt sie dem Anwender zurück.) (Beispiel)
 
@@ -224,7 +227,7 @@ Unter all den eben genannten Voraussetzungen und Bedingungen, sind wir nun in de
 \begin{equation}
     M \vec{\ddot u} + C \vec{\dot u} + K \vec{u} &=\vec{0}
 \end{equation}
-$M$, $C$ und $K$ sind symmetrische reelle Matrizen $M, C, K \in \mathrm{\mathbb{R}^{n x n}}$. Wie in Gleichung \eqref{homogene DGL} entsprechen $M$ der Massenmatrix, $C$ der Dämpfermatrix und $K$ der Steifigkeitsmatrix. Beim (Modalanalytischen-Antwortspektren-Verfahren) wird die Dämpfung zunächst ignoriert, fließt allerdings zu einem späteren Zeitpunkt durch den Rayleigh-Ansatz wieder ein.
+$M$, $C$ und $K$ sind symmetrische reelle Matrizen $M, C, K \in \mathrm{\mathbb{R}^{n x n}}$. Wie in Gleichung \eqref{homogene DGL} entsprechen $M$ der positiv definiten Massenmatrix, $C$ der Dämpfermatrix und $K$ der Steifigkeitsmatrix. Beim (Modalanalytischen-Antwortspektren-Verfahren) wird die Dämpfung zunächst ignoriert, fließt allerdings zu einem späteren Zeitpunkt durch den Rayleigh-Ansatz wieder ein.
 
 Im Folgenden betrachten wir das System ohne Dämpfung: %(&=)
 \begin{equation}
@@ -393,14 +396,22 @@ Die größte baupraktische Bedeutung kommt dem Antwortspektrum-Verfahren zu. Es 
     T_D\leq T &:S_a(T) = a_g\gamma S \eta \beta_0\frac{T_C\cdot T_D}{T^2}
 \end{align}
 \end{subequations}
-Die Kontrollperioden $T_B$, $T_C$ und $T_D$ sind die Grenzen der Abschnitte. Die größten Antwortbeschleunigungen treten im Spektralplateau zwischen $T_B$ und $T_C$ auf \citep{bruestle2002untergrundabhangige,din19981,schwarz2005bauten}. Es wird durch die am Herd abgestrahlten hochfrequenten Signalanteile sowie Wellenabsorption im Untergrund, und durch die Hauptresonanzspitze am tieffrequenten Ende der Übertragungsfunktion bestimmt \citep{petersen2017grundlagen}. Die Eckperiode $T_D$ ergibt sich aus der Magnitude der betrachteten Referenzbeben \citep{bruestle2002untergrundabhangige}. Die erdbenenzonenabhängigen Referenz-Spitzwerte $a_g_R$ sind in Tabelle \ref{Referenzspietzenwerte} angegeben. 
+Die Kontrollperioden $T_B$, $T_C$ und $T_D$ sind die Grenzen der Abschnitte. Die größten Antwortbeschleunigungen treten im Spektralplateau zwischen $T_B$ und $T_C$ auf \citep{bruestle2002untergrundabhangige,din19981,schwarz2005bauten}. Es wird durch die am Herd abgestrahlten hochfrequenten Signalanteile sowie Wellenabsorption im Untergrund, und durch die Hauptresonanzspitze am tieffrequenten Ende der Übertragungsfunktion bestimmt \citep{petersen2017grundlagen}. Die Eckperiode $T_D$ ergibt sich aus der Magnitude der betrachteten Referenzbeben \citep{bruestle2002untergrundabhangige}. Die erdbenenzonenabhängigen Referenz-Spitzwerte $a_g_R$ sind in Tabelle \ref{Referenzspietzenwerte} angegeben. Der nationale Anhang in Abbildung \ref{https://www.gfz-potsdam.de/din4149_erdbebenzonenabfrage/} der Baunorm DIN EN 1998 teilt Deutschland dabei in vier Erdbebenzonen von $0$ bis $3$ ein. Auffällig hierbei ist, dass besonders die Gebiete um den Rheingraben gefährdet sind. Daher ist dementsprechend erdbebensicher zu planen. Weite Teile Deutschland sind allerdings vor starken Beben sicher. Quantifiziert werden die Beben mittels der EMS, der Europäischen Makroseismischen Skala. Sie dient der Abschätzung der Seismischen Intensität von Beben in europäischen Ländern \citep{ems98_msk}. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics{csm_germ_nad_zonation_localisation_07_ba62d7236f.png}
+    \caption{Erdbebenzonen DIN EN 1998 NA}
+    \label{https://www.gfz-potsdam.de/din4149_erdbebenzonenabfrage/}
+\end{figure}
+
 \begin{table}[h]
 \centering
 \label{Referenzspietzenwerte}
 \begin{tabular}{|l|l|l|l|l|l|l|l|}
 \hline
 \rowcolor[HTML]{9B9B9B} 
-Erdbebenzone & \multicolumn{6}{l|}{\cellcolor[HTML]{9B9B9B}Intensität} & a_g_R[\frac{m}{s^2}] \\ \hline
+Erdbebenzone & \multicolumn{6}{l|}{\cellcolor[HTML]{9B9B9B}Intensität EMS} & a_g_R[\frac{m}{s^2}] \\ \hline
 \rowcolor[HTML]{C0C0C0} 
 0 & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}6.0 - 6.5} & - \\ \hline
 \rowcolor[HTML]{C0C0C0} 
@@ -413,7 +424,7 @@ Erdbebenzone & \multicolumn{6}{l|}{\cellcolor[HTML]{9B9B9B}Intensität} & a_g_R[
 \caption{Referenzspitzenwerte der Bodenbeschleunigung nach DIN 1998}
 \end{table}
 \\
-Gemäß des Euro-Code 8 DIN EN 1998 (2010-12) werden neben den Baugrund- und (Duktilitätsklassen) auch Bedeutungs- und Verhaltensbeiwert sowie die Dämpfung einbezogen. Im folgenden wird der Pool an Parametern genauer betrachtet.
+Gemäß des Euro-Code 8 (DIN EN 1998) (2010-12) werden neben den Baugrund- und (Duktilitätsklassen) auch Bedeutungs- und Verhaltensbeiwert sowie die Dämpfung einbezogen. Im folgenden wird der Pool an Parametern genauer betrachtet.
 
 Die Baugrundklasse beschreibt die Beschaffenheit der oberflächennahen Bodenschichten und des geologischen Untergrundes, und deren Einfluss auf die Erdbebeneinwurkung. Dies erfolgt durch die Einstufung in eine der drei Baugrundklassen A, B, C und eine der drei geologischen Untergrundklassen R, S, T  \citep{petersen2017grundlagen}. Quantitativ unterscheidet man die Baugrundklassen über deren Schwerwellengeschwindigkeit $v_s$ in:
 \begin{itemize}
