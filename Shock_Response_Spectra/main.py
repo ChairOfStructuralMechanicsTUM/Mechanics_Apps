@@ -235,17 +235,19 @@ def change_frequency_ratio(attr,old,new):
 frequency_ratio_input = Slider(title="Impulse duration to natural period ratio", value=glob_vars["TimePeriodRatio"], start=0.1, end=3.0, step=0.1,width=600)
 frequency_ratio_input.on_change('value',change_frequency_ratio)
 
-def pause():
+def play_pause():
     [callback_id] = glob_callback_id.data["callback_id"]
-    curdoc().remove_periodic_callback(callback_id)
-
-def play():
-    [callback_id] = glob_callback_id.data["callback_id"]
-    callback_id = curdoc().add_periodic_callback(evolve,dt*1000)
+    if play_pause_button.label == "Play":
+        callback_id = curdoc().add_periodic_callback(evolve,dt*1000)
+        play_pause_button.label = "Pause" # change label
+    elif play_pause_button.label == "Pause":
+        curdoc().remove_periodic_callback(callback_id)
+        play_pause_button.label = "Play" # change label
     glob_callback_id.data = dict(callback_id = [callback_id])
 
 def reset(): # resets values to initial cofiguration
-    pause()    
+    if play_pause_button.label == "Pause":
+        play_pause()
     glob_vars["t"]=0 #      /output
     displacement.data=dict(t=[0],s=[initial_displacement_value])
     drawing_displacement = -initial_displacement_value * glob_vars["spring"].getSpringConstant
@@ -296,10 +298,8 @@ def updateParameters():
     glob_vars["W"] = W #      /output
     glob_vars["D"] = D #      /output
 
-play_button = Button(label="Play", button_type="success",width=100)
-play_button.on_click(play)
-pause_button = Button(label="Pause", button_type="success",width=100)
-pause_button.on_click(pause)
+play_pause_button = Button(label="Play", button_type="success",width=100)
+play_pause_button.on_click(play_pause)
 reset_button = Button(label="Reset", button_type="success", width=100)
 reset_button.on_click(reset)
 
@@ -373,8 +373,8 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 ## Send to window
 hspace = 20
 curdoc().add_root(column(description,\
-    row(column(row(column(row(column(fig,column(play_button,Spacer(width = 10),\
-    pause_button,column(Spacer(width = 10),reset_button))),column(Force_select,InputForce,parameter_table)),\
+    row(column(row(column(row(column(fig,column(play_pause_button,Spacer(width = 10),\
+    column(Spacer(width = 10),reset_button))),column(Force_select,InputForce,parameter_table)),\
     Spacer(height=10),Displacement)),Spacer(height=hspace)),Spacer(width=30),\
     column(damping_coefficient_input,frequency_ratio_input,Spacer(height=hspace),\
     row(gridplot([Dis_max,Spacer(height=3 *hspace),T_max],ncols=1,plot_width=480,plot_height=420,merge_tools=True,toolbar_location="below"),\
