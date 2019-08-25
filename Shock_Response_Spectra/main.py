@@ -1,13 +1,15 @@
 from __future__ import division
 #Importing spring,damper and mass
-from Spring import *
-from Dashpot import *
-from Mass import *
+from SRS_Spring  import SRS_Spring
+from SRS_Dashpot import SRS_Dashpot
+from SRS_Mass    import SRS_CircularMass
+from SRS_Coord   import SRS_Coord
 #importing plotting objects from bokeh
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer, gridplot
 from bokeh.io import curdoc
-from bokeh.models import Select,Slider, Button, Div, HoverTool, Range1d, Div, Arrow, NormalHead, CDSView, IndexFilter
+from bokeh.models import ColumnDataSource
+from bokeh.models import Select,Slider, Button, Div, HoverTool, Range1d, Arrow, NormalHead, CDSView, IndexFilter
 from bokeh.models.tickers import FixedTicker
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.widgets import DataTable, TableColumn
@@ -51,9 +53,9 @@ def Initialise():
     damping_coeffcient=D*2*sqrt(initial_spring_constant_value*initial_mass_value)
     
     #making mass, spring and damper elements
-    mass = CircularMass(initial_mass_value,0,10,2,2)
-    spring = Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
-    damper = Dashpot((2,.75),(2,8),damping_coeffcient)
+    mass   = SRS_CircularMass(initial_mass_value,0,10,2,2)
+    spring = SRS_Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
+    damper = SRS_Dashpot((2,.75),(2,8),damping_coeffcient)
     
     s=0
     t=0
@@ -178,8 +180,8 @@ InputForce.yaxis.ticker = FixedTicker(ticks=[0,90,180])
 def move_system(disp): # for moving the spring damper mass image according to the displacement of mass
     global mass, spring, damper, Bottom_Line, Linking_Line, force_value
     mass.moveTo((0,10+disp))
-    spring.draw(Coord(-2,.75),Coord(-2,8+disp))
-    damper.draw(Coord(2,.75),Coord(2,8+disp))
+    spring.draw(SRS_Coord(-2,.75),SRS_Coord(-2,8+disp))
+    damper.draw(SRS_Coord(2,.75),SRS_Coord(2,8+disp))
     Bottom_Line.data=dict(x=[-2,2],y=[8+disp, 8+disp])
     Linking_Line.data=dict(x=[0,0],y=[8+disp, 10+disp])
     if force_value > 0:

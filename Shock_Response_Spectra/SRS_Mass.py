@@ -1,24 +1,24 @@
 from bokeh.models import ColumnDataSource
-from Coord import *
+from SRS_Coord import SRS_Coord
 from abc import ABCMeta, abstractmethod
 
-class DiscreteMass(object):
+class SRS_DiscreteMass(object):
     __metaclass__ = ABCMeta
     ## create mass
     @abstractmethod
     def __init__ (self, mass):
         # initialise value
-        self.mass=mass
+        self.mass = mass
         # create vector of external forces (besides gravity) acting on the mass
-        self.nextStepForces=[]
-        self.nextStepObjForces=[]
+        self.nextStepForces    = []
+        self.nextStepObjForces = []
         # initialise velocity
-        self.v=Coord(0,0)
+        self.v = SRS_Coord(0,0)
         #create the (empty) shape
-        self.shape=ColumnDataSource
+        self.shape = ColumnDataSource
     
     def changeMass(self,mass):
-        self.mass=mass
+        self.mass = mass
 
     @property
     def getMass(self):
@@ -34,9 +34,9 @@ class DiscreteMass(object):
 
 ### Types of Masses
 
-class RectangularMass(DiscreteMass):
+class SRS_RectangularMass(SRS_DiscreteMass):
     def __init__ (self, mass, x, y, w, h):
-        DiscreteMass.__init__(self,mass)
+        SRS_DiscreteMass.__init__(self,mass)
         # create ColumnDataSource
         self.shape = ColumnDataSource(data=dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y]))
     
@@ -46,13 +46,13 @@ class RectangularMass(DiscreteMass):
     
     # displace mass to position (used for reset)
     def moveTo(self,x,y,w,h):
-        temp=dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y])
+        temp = dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y])
         # update ColumnDataSource
-        self.shape.data=temp
+        self.shape.data = temp
 
-class CircularMass(DiscreteMass):
+class SRS_CircularMass(SRS_DiscreteMass):
     def __init__ (self, mass, x=0, y=0, w=0, h=0):
-        DiscreteMass.__init__(self,mass)
+        SRS_DiscreteMass.__init__(self,mass)
         # create ColumnDataSource
         self.shape = ColumnDataSource(data=dict(x=[x],y=[y],w=[w],h=[h]))
     
@@ -62,8 +62,8 @@ class CircularMass(DiscreteMass):
     
     # displace mass to position (used for reset)
     def moveTo(self,point):
-        temp=dict(x=[point[0]], y=[point[1]], w=[self.shape.data['w'][0]], h=[self.shape.data['h'][0]])
+        temp = dict(x=[point[0]], y=[point[1]], w=[self.shape.data['w'][0]], h=[self.shape.data['h'][0]])
         # update ColumnDataSource
-        self.shape.data=temp
+        self.shape.data = temp
     def Getmass(self):
         return self.mass
