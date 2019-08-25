@@ -296,16 +296,18 @@ numberPersonsSlider.on_change('value',updateNoPersons)
 #pause_button.on_click(pause)
 
 ########################### Creating play button ##############################
-def play ():
+def play():
     [Active]                  = glob_active.data["Active"] # input/output
     [g1Boatwiththreeswimmers] = glob_callback.data["cid"]  # input/output
     # if inactive, reactivate animation
     if Active == True:
+        jump_button.disabled = True
         g1Boatwiththreeswimmers=curdoc().remove_periodic_callback(g1Boatwiththreeswimmers)
         glob_active.data   = dict(Active=[False])
         glob_callback.data = dict(cid=[g1Boatwiththreeswimmers])
         play_button.label  = "Play"
     else:
+        jump_button.disabled = False
         g1Boatwiththreeswimmers=curdoc().add_periodic_callback(move_boat, 50)
         glob_active.data   = dict(Active=[True])
         glob_callback.data = dict(cid=[g1Boatwiththreeswimmers])
@@ -316,7 +318,7 @@ play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
 
 ########################### Creating reset button #############################
-def reset ():
+def reset():
     #global listSources
     [Active] = glob_active.data["Active"] # input/output
     
@@ -368,7 +370,7 @@ reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(reset)
 
 ########################### Creating jump button ##############################
-def jump ():
+def jump():
     [Active]     = glob_active.data["Active"]   # input/
     [boatSpeed]  = glob_boatSpeed.data["val"]   # input/output
     [listPeople] = glob_listPeople.data["List"] # input/
@@ -376,6 +378,7 @@ def jump ():
     if Active == True:
         counter = 0
         for person in listPeople:
+            #print("DBUG: counter = ", counter)
             if person.jumping == True:
                 pass
             else:
@@ -428,13 +431,15 @@ def jump ():
                              )
                 break
             counter += 1
+            if counter == numberPersonsSlider.value-1: # last person jumped
+                jump_button.disabled = True
         #update_bars()
 
     else:
         pass
     glob_boatSpeed.data = dict(val=[boatSpeed])
 
-jump_button = Button(label="Jump!", button_type="success")
+jump_button = Button(label="Jump!", button_type="success", disabled=True)
 jump_button.on_click(jump)
     
 
