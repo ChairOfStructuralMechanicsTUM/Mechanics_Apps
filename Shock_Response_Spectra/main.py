@@ -6,12 +6,11 @@ from SRS_Mass    import SRS_CircularMass
 from SRS_Coord   import SRS_Coord
 #importing plotting objects from bokeh
 from bokeh.plotting import figure
-from bokeh.layouts import column, row, Spacer, gridplot
-from bokeh.io import curdoc
-from bokeh.models import ColumnDataSource
-from bokeh.models import Select,Slider, Button, Div, HoverTool, Range1d, Arrow, NormalHead#, CDSView, IndexFilter
+from bokeh.layouts  import column, row, Spacer, gridplot
+from bokeh.io       import curdoc
+from bokeh.models   import ColumnDataSource
+from bokeh.models   import Select,Slider, Button, Div, HoverTool, Range1d, Arrow, NormalHead
 from bokeh.models.tickers import FixedTicker
-#from bokeh.models.callbacks import CustomJS
 from bokeh.models.widgets import DataTable, TableColumn
 
 from os.path import dirname, join, split, abspath
@@ -20,14 +19,9 @@ currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv, LatexLabelSet #, LatexLabel
-from math import sqrt, exp, pow, pi, sin #, cos, ceil, pi, atan2, sinh, cosh
+from math  import sqrt, exp, pow, pi, sin #, cos, ceil, pi, atan2, sinh, cosh
 from numpy import convolve, amax, argmax
 
-#ForceInput = "" #this can be rectangular, triangular or sinusoidal
-#h = [] #unit impulse response
-#FI =[] #Input force
-#final = [] #final displacement
-glob_callback_id = ColumnDataSource(data = dict(callback_id = [None]))
 
 # constants
 initial_spring_constant_value = 1.
@@ -38,39 +32,40 @@ Force_duration  = 1 ## input parameters for the analytic solution
 dt = 0.02
 
 # global variables
+glob_callback_id = ColumnDataSource(data = dict(callback_id = [None]))
 glob_vars = dict(
         TimePeriodRatio = 1,
-        mass_value = 1,
-        Te = 1,
-        W = 1,
-        WD = 1,
-        D = 1,
-        h = [], #unit impulse response
-        FI =[], #Input force
-        final = [], #final displacement
-        t = 0,
-        mass = [],
-        spring = [],
-        damper = [],
-        Active = False
+        mass_value      = 1,
+        Te              = 1,
+        W               = 1,
+        WD              = 1,
+        D               = 1,
+        h               = [], #unit impulse response
+        FI              = [], #Input force
+        final           = [], #final displacement
+        t               = 0,
+        mass            = [],
+        spring          = [],
+        damper          = [],
+        Active          = False
         )
 
 
 
 def Initialise():
     load_vals = ["FI", "h"]
-    FI, h = [glob_vars.get(val) for val in load_vals] # input/
+    FI, h     = [glob_vars.get(val) for val in load_vals] # input/
     
     #initial values given
     TimePeriodRatio = 1
     
     #calculating based on initial values
-    Te = Force_duration/TimePeriodRatio   #natural time period
-    W = 2*pi/Te # natural frequency
+    Te         = Force_duration/TimePeriodRatio   #natural time period
+    W          = 2*pi/Te # natural frequency
     mass_value = initial_spring_constant_value /pow(W,2)
-    D = initial_damping_ratio
-    WD = W * sqrt(1-pow(D,2))
-    damping_coeffcient=D*2*sqrt(initial_spring_constant_value*mass_value)
+    D          = initial_damping_ratio
+    WD         = W * sqrt(1-pow(D,2))
+    damping_coeffcient = D*2*sqrt(initial_spring_constant_value*mass_value)
     
     #making mass, spring and damper elements
     mass   = SRS_CircularMass(mass_value,0,10,2,2)
@@ -89,25 +84,25 @@ def Initialise():
         h.append(x) #unit impulse response
     glob_vars["final"] = dt*convolve(FI,h,mode='full') #convolution of input force and unit impulse response
     glob_vars["TimePeriodRatio"] = TimePeriodRatio #      /output
-    glob_vars["mass_value"] = mass_value #      /output
+    glob_vars["mass_value"]      = mass_value #      /output
     glob_vars["Te"] = Te #      /output
     glob_vars["WD"] = WD #      /output
-    glob_vars["W"] = W #      /output
-    glob_vars["D"] = D #      /output
-    glob_vars["t"] = t #      /output
-    glob_vars["mass"] = mass #      /output
+    glob_vars["W"]  = W  #      /output
+    glob_vars["D"]  = D  #      /output
+    glob_vars["t"]  = t  #      /output
+    glob_vars["mass"]   = mass   #      /output
     glob_vars["spring"] = spring #      /output
     glob_vars["damper"] = damper #      /output
     
 Initialise()
 
-Bottom_Line     = ColumnDataSource(data = dict(x=[-2,2],y=[8,8]))
-Linking_Line    = ColumnDataSource(data = dict(x=[0,0],y=[8,10]))
-displacement    = ColumnDataSource(data = dict(t=[0],s=[initial_displacement_value]))
-arrow_line      = ColumnDataSource(data = dict(x1=[0],y1=[15],x2=[0],y2=[12]))
-omega_max       = ColumnDataSource(data = dict(time=[0],omega=[0]))
-t_max           = ColumnDataSource(data = dict(time=[0],tmax=[0]))
-Force_input     = ColumnDataSource(data = dict(beta=[0],phi=[0]))
+Bottom_Line  = ColumnDataSource(data = dict(x=[-2,2],y=[8,8]))
+Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[8,10]))
+displacement = ColumnDataSource(data = dict(t=[0],s=[initial_displacement_value]))
+arrow_line   = ColumnDataSource(data = dict(x1=[0],y1=[15],x2=[0],y2=[12]))
+omega_max    = ColumnDataSource(data = dict(time=[0],omega=[0]))
+t_max        = ColumnDataSource(data = dict(time=[0],tmax=[0]))
+Force_input  = ColumnDataSource(data = dict(beta=[0],phi=[0]))
 
 #Force_input is only for visualisation, FI is used for calculation
 Force_input.stream(dict(beta=[0],phi=[1]))
@@ -119,14 +114,14 @@ Force_input.stream(dict(beta=[2],phi=[0]))
 parameters = ColumnDataSource(data = dict(names1=[u'\u03c9',"Te"],names2=["D",u'\u03c9*'],values1=[round(glob_vars["W"],4),round(glob_vars["Te"],4)],values2=[round(glob_vars["D"],4),round(glob_vars["WD"],4)]))
 
 def evolve():
-    load_vals     = ["FI", "final", "h", "WD", "D", "W", "t"]
+    load_vals = ["FI", "final", "h", "WD", "D", "W", "t"]
     FI, final, h, WD, D, W, t = [glob_vars.get(val) for val in load_vals] # input/
     TimePeriodRatio = glob_vars["TimePeriodRatio"] # input/
     mass = glob_vars["mass"] # input/
     
     #########
     #k = spring.getSpringConstant
-    maximum = 0
+    maximum   = 0
     maximumat = 0
     if(t==0):
         final*=0 # reset the list 
@@ -136,13 +131,13 @@ def evolve():
             h[i] = x
         final = dt*convolve(FI,h,mode='full')
     
-    maximum = amax(final)
+    maximum   = amax(final)
     maximumat = dt*argmax(final)
 
     omega_max.stream(dict(time=[TimePeriodRatio],omega=[maximum]))
     t_max.stream(dict(time=[TimePeriodRatio],tmax=[maximumat]))
     
-    time =int(t/dt)
+    time = int(t/dt)
     try:
         move_system(-final[time])
         displacement.stream(dict(t=[t],s=[final[time]]))
@@ -151,8 +146,8 @@ def evolve():
         play_pause_button.disabled = True # disable play button to avoid the error in the next step
         print("--- WARNING: auto stop due to index time being out of bounds ---")
     t+=dt
-    glob_vars["t"] = t #      /output
-    glob_vars["h"] = h #      /output
+    glob_vars["t"]     = t     #      /output
+    glob_vars["h"]     = h     #      /output
     glob_vars["final"] = final #      /output
 
 title_box = Div(text="""<h2 style="text-align:center;">Shock response spectra </h2>""",width=1000)
@@ -259,10 +254,10 @@ def play_pause():
     glob_callback_id.data = dict(callback_id = [callback_id])
 
 def reset(): # resets values to initial cofiguration
-    play_pause_button.disabled = False # enable play button in case of auto pause (index error)
-    Force_select.disabled = False # enable selection after reset
-    damping_coefficient_input.disabled = False  # enable slider after reset
-    frequency_ratio_input.disabled = False # enable slider after reset
+    play_pause_button.disabled         = False # enable play button in case of auto pause (index error)
+    Force_select.disabled              = False # enable selection after reset
+    damping_coefficient_input.disabled = False # enable slider after reset
+    frequency_ratio_input.disabled     = False # enable slider after reset
     if play_pause_button.label == "Pause":
         play_pause()
     glob_vars["t"]=0 #      /output
@@ -289,16 +284,16 @@ reset_button_p_pa = Button(label="Reset", button_type="success", width=50)
 reset_button_p_pa.on_click(reset_Tmax_plot)
 
 def updateParameters():
-    load_vals = ["FI", "final", "h"]
+    load_vals    = ["FI", "final", "h"]
     FI, final, h = [glob_vars.get(val) for val in load_vals] # input/
-    mass = glob_vars["mass"] # input/output
+    mass   = glob_vars["mass"]   # input/output
     damper = glob_vars["damper"] # input/
     
     Te = Force_duration/glob_vars["TimePeriodRatio"]
-    W = 2*pi/Te
+    W  = 2*pi/Te
     mass_value = initial_spring_constant_value /pow(W,2)
     mass.changeMass(mass_value)
-    D = (float(damper.getDampingCoefficient))/(2*sqrt(initial_spring_constant_value*mass_value))
+    D  = (float(damper.getDampingCoefficient))/(2*sqrt(initial_spring_constant_value*mass_value))
     WD = W * sqrt(1-pow(D,2))  
  
     final *= 0
@@ -312,8 +307,8 @@ def updateParameters():
     glob_vars["mass_value"] = mass_value #      /output
     glob_vars["Te"] = Te #      /output
     glob_vars["WD"] = WD #      /output
-    glob_vars["W"] = W #      /output
-    glob_vars["D"] = D #      /output
+    glob_vars["W"]  = W  #      /output
+    glob_vars["D"]  = D  #      /output
 
 play_pause_button = Button(label="Play", button_type="success",width=100)
 play_pause_button.on_click(play_pause)
@@ -364,7 +359,7 @@ def ChangeForce(forcetype):
             else:
                 FI.append(0)
     glob_vars["final"] = final #      /output
-    glob_vars["FI"] = FI #      /output
+    glob_vars["FI"]    = FI    #      /output
 
 def ForceSelection(attr,old,new):   
     ChangeForce(new)
