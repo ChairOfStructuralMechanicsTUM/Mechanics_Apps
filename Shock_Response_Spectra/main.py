@@ -143,8 +143,13 @@ def evolve():
     t_max.stream(dict(time=[TimePeriodRatio],tmax=[maximumat]))
     
     time =int(t/dt)
-    move_system(-final[time])
-    displacement.stream(dict(t=[t],s=[final[time]]))
+    try:
+        move_system(-final[time])
+        displacement.stream(dict(t=[t],s=[final[time]]))
+    except IndexError:
+        play_pause() # pause the simulation
+        play_pause_button.disabled = True # disable play button to avoid the error in the next step
+        print("--- WARNING: auto stop due to index time being out of bounds ---")
     t+=dt
     glob_vars["t"] = t #      /output
     glob_vars["h"] = h #      /output
@@ -254,6 +259,7 @@ def play_pause():
     glob_callback_id.data = dict(callback_id = [callback_id])
 
 def reset(): # resets values to initial cofiguration
+    play_pause_button.disabled = False # enable play button in case of auto pause (index error)
     Force_select.disabled = False # enable selection after reset
     damping_coefficient_input.disabled = False  # enable slider after reset
     frequency_ratio_input.disabled = False # enable slider after reset
