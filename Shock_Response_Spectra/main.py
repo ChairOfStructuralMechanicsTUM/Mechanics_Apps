@@ -165,6 +165,7 @@ fig.multi_line(xs=[[-2.75,-2],[-1.75,-1.0],[-0.75,0],[.25,1],[1.25,2]],
     line_width=3)
 fig.line(x='x',y='y',source=Bottom_Line,color="black",line_width=3)
 fig.line(x='x',y='y',source=Linking_Line,color="black",line_width=3)
+fig.toolbar.logo = None
 glob_vars["spring"].plot(fig,width=2)
 glob_vars["damper"].plot(fig,width=2)
 glob_vars["mass"].plot(fig)
@@ -183,6 +184,7 @@ Displacement.xaxis.axis_label="Time [s]"
 Displacement.yaxis.axis_label="Displacement [u/(F/k)]"
 Displacement.legend.location="top_right"
 Displacement.legend.click_policy="mute"
+Displacement.toolbar.logo = None
 
 
 #maximum displacement against time of impulse to time period ratio plot
@@ -191,6 +193,7 @@ Dis_max.circle(x='time', y='omega', source=omega_max, color="#a2ad00")
 D_max_Label_source   = ColumnDataSource(data=dict(x=[-0.45,1.7], y=[2.5, -0.4], names=[ "\dfrac{U_{max}}{\dfrac{F}{K}}","\dfrac{T_0}{T_e}"]))
 D_max_label = LatexLabelSet(x='x', y='y', text='names', source=D_max_Label_source, text_color = 'black', level='glyph', x_offset= 0, y_offset=0)
 Dis_max.add_layout(D_max_label)
+Dis_max.toolbar.logo = None
 
 #time at which maximum displacement occurs against duration of impulse ratio plot
 T_max = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=600, height=600)
@@ -198,6 +201,7 @@ T_max.circle(x='time', y='tmax', source=t_max, color="#a2ad00")
 T_max_Label_source   = ColumnDataSource(data=dict(x=[-0.45,1.7], y=[2.5, -0.4], names=["\dfrac{T_{max}}{T_0}", "T_{max}"]))
 T_max_label = LatexLabelSet(x='x', y='y', text='names', source=T_max_Label_source, text_color = 'black', level='glyph', x_offset= 0, y_offset=0)
 T_max.add_layout(T_max_label)
+T_max.toolbar.logo = None
 
 #plotting input force
 InputForce = figure(title="", tools="", x_range=(0,3.0), y_range=(0,2), width=300, height=150)
@@ -205,6 +209,7 @@ InputForce.line(x='beta', y='phi', source=Force_input, color="#a2ad00")
 InputForce.xaxis.axis_label="Time(s)"
 InputForce.yaxis.axis_label="Force(N)"
 InputForce.yaxis.ticker = FixedTicker(ticks=[0,90,180])
+InputForce.toolbar.logo = None
 
 def move_system(disp): # for moving the spring damper mass image according to the displacement of mass
     load_obj = ["mass", "spring", "damper"]
@@ -383,7 +388,7 @@ curdoc().add_root(column(description,\
     column(Spacer(width = 10),reset_button))),column(Force_select,InputForce,parameter_table)),\
     Spacer(height=10),Displacement)),Spacer(height=hspace)),Spacer(width=30),\
     column(damping_coefficient_input,frequency_ratio_input,Spacer(height=hspace),\
-    row(gridplot([Dis_max,Spacer(height=3 *hspace),T_max],ncols=1,plot_width=480,plot_height=420,merge_tools=True,toolbar_location="below"),\
+    row(gridplot([Dis_max,Spacer(height=3 *hspace),T_max],ncols=1,plot_width=480,plot_height=420,merge_tools=True,toolbar_location=""),\
     column(Spacer(height=160),reset_button_p_af,Spacer(height=370),reset_button_p_pa)))\
     ),))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  
