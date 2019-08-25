@@ -39,7 +39,8 @@ class SD_Problem:
         self.reset_button.on_click(self.Reset)
         #self.idealAcc = -self.v**2/40.0
         # checkbox for whether equations as a function of time are visible
-        self.eqVis = checkbox_group = CheckboxGroup(labels=["Show equations as a function of the time"], active=[])
+        #self.eqVis = checkbox_group = CheckboxGroup(labels=["Show equations as a function of the time"], active=[])
+        self.eqVis = CheckboxGroup(labels=["Show equations as a function of the time"], active=[])
         self.eqVis.on_change('active',self.toggleEquation)
         # save space to write equations as a function of time
         self.eqst = Paragraph(text="")
@@ -99,29 +100,41 @@ class SD_Problem:
     
     def test(self):
         # start the simulation
-        print(self.v)
-        if (self.t!=0):
-            # if it is not already at the beginning then reset the setup
-            self.Reset()
-        if (self.va=='v'):
-            # if the first problem is being used
-            try:
-                # replace , with . i.e. change 0,5 to 0.5
-                s=replace(self.UserAcceleration.value,',','.')
-                # convert input to float, if this is not possible then a ValueError is thrown
-                self.a=float(s)
-                # setup the graphs with an initial velocity and acceleration
-                # so the ranges can be set
-                self.Plotter.setup(self.v,self.a)
-                # add the first point
-                self.Plotter.addPointInTime(0)
+        if self.startSim.label == "Start":
+            print(self.v)
+            if (self.t!=0):
+                # if it is not already at the beginning then reset the setup
+                self.Reset()
+            if (self.va=='v'):
+                # if the first problem is being used
+                try:
+                    # replace , with . i.e. change 0,5 to 0.5
+                    s=replace(self.UserAcceleration.value,',','.')
+                    # convert input to float, if this is not possible then a ValueError is thrown
+                    self.a=float(s)
+                    # setup the graphs with an initial velocity and acceleration
+                    # so the ranges can be set
+                    self.Plotter.setup(self.v,self.a)
+                    # add the first point
+                    self.Plotter.addPointInTime(0)
+                    # start the simulation
+                    curdoc().add_periodic_callback(self.vSimulation, 100)
+                except ValueError:
+                    pass
+            elif(self.v!=0):
                 # start the simulation
-                curdoc().add_periodic_callback(self.vSimulation, 100)
-            except ValueError:
-                pass
-        elif(self.v!=0):
-            # start the simulation
-            curdoc().add_periodic_callback(self.aSimulation, 100)
+                curdoc().add_periodic_callback(self.aSimulation, 100)
+            self.startSim.label = "Stop"
+        # stop/pause the simulation
+        elif self.startSim.label == "Stop":
+            if (self.va=='v'):
+                print("DBUG: va")
+                safely_remove_periodic_callback(self.vSimulation)
+            elif(self.v!=0):
+                print("DBUG: v")
+                safely_remove_periodic_callback(self.aSimulation)
+            self.startSim.label = "Start"
+            
     
     def vSimulation(self):
         # update time
@@ -135,12 +148,12 @@ class SD_Problem:
         if (v<=0):
             # place the car with 0 velocity
             self.Vis.move(s,0)
-            curdoc().remove_periodic_callback(self.vSimulation)
+            safely_remove_periodic_callback(self.vSimulation)
         # if the car has hit the wall then stop the simulation
         elif (s>=30):
             # place the car at the wall
             self.Vis.move(30,v)
-            curdoc().remove_periodic_callback(self.vSimulation)
+            safely_remove_periodic_callback(self.vSimulation)
         else:
             # place the car
             self.Vis.move(s,v)
@@ -170,7 +183,7 @@ class SD_Problem:
                 # then the car is placed with 0 velocity
                 self.Vis.move(s,0)
                 # the simulation is stopped
-                curdoc().remove_periodic_callback(self.aSimulation)
+                safely_remove_periodic_callback(self.aSimulation)
                 # and totT is made large enough to break the while loop
                 totT=0.15
             elif (v<0):
@@ -197,17 +210,17 @@ class SD_Problem:
                         v=0
                         # and stop simulation
                         totT=0.15
-                        curdoc().remove_periodic_callback(self.aSimulation)
+                        safely_remove_periodic_callback(self.aSimulation)
                     elif (abs(v-oldv)<0.001):
                         # if acceleration is too slow to see changes stop the simulation
                         totT=0.15
-                        curdoc().remove_periodic_callback(self.aSimulation)
+                        safely_remove_periodic_callback(self.aSimulation)
                     elif (s>=29.99):
                         # if the car has hit the wall then place the car
                         s=30
                         # and stop the simulation
                         totT=0.15
-                        curdoc().remove_periodic_callback(self.aSimulation)
+                        safely_remove_periodic_callback(self.aSimulation)
                 else:
                     # if dt was too large then decrease deplacement step
                     val=val/2.0
@@ -231,7 +244,7 @@ class SD_Problem:
             # if using second model equation is given,
             # move car to start and show v0 (calculated by eval(self.v) as
             # self.v contains an equation as a functin of s which has been defined as 0)
-            s=0
+            #s=0
             self.Vis.move(0,eval(self.v))
         # reset graphs
         self.Plotter.Reset()
@@ -239,9 +252,9 @@ class SD_Problem:
             # remove call which makes car move
             # (if it is not moving then a ValueError is thrown and ignored)
             if (self.va=='v'):
-                curdoc().remove_periodic_callback(self.vSimulation)
+                safely_remove_periodic_callback(self.vSimulation)
             else:
-                curdoc().remove_periodic_callback(self.aSimulation)
+                safely_remove_periodic_callback(self.aSimulation)
         except ValueError:
             pass
     
@@ -317,3 +330,17 @@ class SD_Problem:
             self.UserAcceleration.value=""
             self.UserAcceleration.title=""
             self.UserAcceleration.disabled = True
+            
+            
+# remove the callbacks via try except
+# this way, no value error due to already removed callbacks
+# easiest solution for this amount and complex code
+# maybe needs further investigation
+def safely_remove_periodic_callback(cb):
+    try:
+        curdoc().remove_periodic_callback(cb)
+    except ValueError:
+        #print("--- WARNING: periodic callback was already removed ---")
+        pass
+    
+    
