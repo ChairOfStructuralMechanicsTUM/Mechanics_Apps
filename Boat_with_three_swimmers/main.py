@@ -299,6 +299,7 @@ numberPersonsSlider.on_change('value',updateNoPersons)
 def play():
     [Active]                  = glob_active.data["Active"] # input/output
     [g1Boatwiththreeswimmers] = glob_callback.data["cid"]  # input/output
+    numberPersonsSlider.disabled = True  # disable slider during simulation
     # if inactive, reactivate animation
     if Active == True:
         jump_button.disabled = True
@@ -333,8 +334,9 @@ def reset():
         curdoc().remove_periodic_callback(g1Boatwiththreeswimmers)
         glob_active.data = dict(Active=[False])
 
-    #Reset Play Button
+    #Reset Play Button and enable slider
     play_button.label = "Play"
+    numberPersonsSlider.disabled = False
 
     # Reset the coordinates defining the boat in its source data file
     boatSource.data     = dict(x = boatX, y = boatY)
@@ -378,7 +380,6 @@ def jump():
     if Active == True:
         counter = 0
         for person in listPeople:
-            #print("DBUG: counter = ", counter)
             if person.jumping == True:
                 pass
             else:
