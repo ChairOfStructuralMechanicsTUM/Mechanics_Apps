@@ -22,56 +22,43 @@ from math import sqrt, exp, pow, sin , cos, ceil, pi, atan2, sinh, cosh
 from numpy import convolve, amax, argmax
 import numpy 
 
-## defining global variables required
-initial_spring_constant_value = 1.
-initial_damping_ratio = 0.1
-initial_displacement_value = 0
-TimePeriodRatio = 1
-force_value = 1.
-Force_duration = 1
-ForceInput = ""
-h = [] 
-FI =[]
-final = []
-Te = Force_duration/TimePeriodRatio   
-W = 0
-initial_mass_value = 0
-D = 0
-WD = 0
-s=0
-t=0
-dt=0
-
-mass = CircularMass(initial_mass_value,0,10,2,2)
-spring = Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
-damping_coeffcient=initial_damping_ratio*2*sqrt(initial_spring_constant_value*initial_mass_value)
-damper = Dashpot((2,.75),(2,8),damping_coeffcient)
+ForceInput = "" #this can be rectangular, triangular or sinusoidal
+h = [] #unit impulse response
+FI =[] #Input force
+final = [] #final displacement
+glob_callback_id = ColumnDataSource(data = dict(callback_id = [None]))
 
 def Initialise():
+    global mass, spring, damper
     global initial_spring_constant_value,initial_damping_ratio,initial_displacement_value,TimePeriodRatio
-    global force_value,Force_duration,Te,W,initial_mass_value,D,initial_damping_ratio,WD,W
+    global force_value,Force_duration,Te,W,initial_mass_value,D,initial_damping_ratio,WD
     global s, t, dt, mass, FI, final, h
     
+    #initial values given
     initial_spring_constant_value = 1.
     initial_damping_ratio = 0.1
     initial_displacement_value = 0
     TimePeriodRatio = 1
     force_value = 1.
     Force_duration = 1## input parameters for the analytic solution
-    Te = Force_duration/TimePeriodRatio   
-
-    W = 2*pi/Te
+    
+    #calculating based on initial values
+    Te = Force_duration/TimePeriodRatio   #natural time period
+    W = 2*pi/Te # natural frequency
     initial_mass_value = initial_spring_constant_value /pow(W,2)
     D = initial_damping_ratio
     WD = W * sqrt(1-pow(D,2))
-    mass.changeMass(initial_mass_value)
-    spring.changeSpringConst(initial_spring_constant_value)
     damping_coeffcient=D*2*sqrt(initial_spring_constant_value*initial_mass_value)
-    damper.changeDamperCoeff(damping_coeffcient)
+    
+    #making mass, spring and damper elements
+    mass = CircularMass(initial_mass_value,0,10,2,2)
+    spring = Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
+    damper = Dashpot((2,.75),(2,8),damping_coeffcient)
     
     s=0
     t=0
-    dt=0.02    
+    dt=0.02
+    #initially rectangular impulse is applied    
     for i in range(0,1000,1): # making rectangular function 
         T= i*dt
         if (T<=1):
@@ -79,26 +66,26 @@ def Initialise():
         else:
             FI.append(0)        
         x=(1/(float(mass.Getmass())*WD))*exp(-D*W*T)*sin(WD*T) 
-        h.append(x)
-    final = dt*convolve(FI,h,mode='full')
+        h.append(x) #unit impulse response
+    final = dt*convolve(FI,h,mode='full') #convolution of input force and unit impulse response
     
 Initialise()
 
-Bottom_Line = ColumnDataSource(data = dict(x=[-2,2],y=[8,8]))
-Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[8,10]))
+Bottom_Line     = ColumnDataSource(data = dict(x=[-2,2],y=[8,8]))
+Linking_Line    = ColumnDataSource(data = dict(x=[0,0],y=[8,10]))
+displacement    = ColumnDataSource(data = dict(t=[0],s=[initial_displacement_value]))
+arrow_line      = ColumnDataSource(data = dict(x1=[0],y1=[15],x2=[0],y2=[12]))
+omega_max       = ColumnDataSource(data = dict(time=[0],omega=[0]))
+t_max           = ColumnDataSource(data = dict(time=[0],tmax=[0]))
+Force_input     = ColumnDataSource(data = dict(beta=[0],phi=[0]))
 
-displacement = ColumnDataSource(data = dict(t=[0],s=[initial_displacement_value]))
-
-arrow_line = ColumnDataSource(data = dict(x1=[0],y1=[15],x2=[0],y2=[12]))
-omega_max = ColumnDataSource(data = dict(time=[0],omega=[0]))
-t_max = ColumnDataSource(data = dict(time=[0],tmax=[0]))
-Force_input = ColumnDataSource(data = dict(beta=[0],phi=[0]))
-
+#Force_input is only for visualisation, FI is used for calculation
 Force_input.stream(dict(beta=[0],phi=[1]))
 Force_input.stream(dict(beta=[1],phi=[1]))
 Force_input.stream(dict(beta=[1.0001],phi=[0]))
 Force_input.stream(dict(beta=[2],phi=[0]))
 
+#parameter variable for parameter table
 parameters = ColumnDataSource(data = dict(names1=[u'\u03c9',"Te"],names2=["D",u'\u03c9*'],values1=[round(W,4),round(Te,4)],values2=[round(D,4),round(WD,4)]))
 Active=False
 
@@ -167,16 +154,21 @@ Displacement.legend.location="top_right"
 Displacement.legend.click_policy="mute"
 
 
+#maximum displacement against time of impulse to time period ratio plot
 Dis_max = figure(title="", tools="", x_range=(0,3.0), y_range=(0,4), width=600, height=600)
 Dis_max.circle(x='time', y='omega', source=omega_max, color="#a2ad00")
-Dis_max.xaxis.axis_label="To/Te"
-Dis_max.yaxis.axis_label="w_max/(F/k)"
+D_max_Label_source   = ColumnDataSource(data=dict(x=[-0.45,1.7], y=[2.5, -0.4], names=[ "\dfrac{U_{max}}{\dfrac{F}{K}}","\dfrac{T_0}{T_e}"]))
+D_max_label = LatexLabelSet(x='x', y='y', text='names', source=D_max_Label_source, text_color = 'black', level='glyph', x_offset= 0, y_offset=0)
+Dis_max.add_layout(D_max_label)
 
+#time at which maximum displacement occurs against duration of impulse ratio plot
 T_max = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=600, height=600)
-T_max.circle(x='time', y='tmax', source=t_max, color="#a2ad00")
-T_max.xaxis.axis_label="Tmax to T0 ratio"
-T_max.yaxis.axis_label="t_max"
+T_max.circle(x='time', y='tmax', source=t_max, color="#a2ad00") 
+T_max_Label_source   = ColumnDataSource(data=dict(x=[-0.45,1.7], y=[2.5, -0.4], names=["\dfrac{T_{max}}{T_0}", "T_{max}"]))
+T_max_label = LatexLabelSet(x='x', y='y', text='names', source=T_max_Label_source, text_color = 'black', level='glyph', x_offset= 0, y_offset=0)
+T_max.add_layout(T_max_label)
 
+#plotting input force
 InputForce = figure(title="", tools="", x_range=(0,3.0), y_range=(0,2), width=300, height=150)
 InputForce.line(x='beta', y='phi', source=Force_input, color="#a2ad00")
 InputForce.xaxis.axis_label="Time(s)"
@@ -214,20 +206,17 @@ frequency_ratio_input = Slider(title="Impulse duration to natural period ratio",
 frequency_ratio_input.on_change('value',change_frequency_ratio)
 
 def pause():
-    global Active
-    if (Active):
-        curdoc().remove_periodic_callback(evolve)
-        Active=False
+    [callback_id] = glob_callback_id.data["callback_id"]
+    curdoc().remove_periodic_callback(callback_id)
 
 def play():
-    global Active
-    if (not Active):
-        curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
-        Active=True
+    [callback_id] = glob_callback_id.data["callback_id"]
+    callback_id = curdoc().add_periodic_callback(evolve,dt*1000)
+    glob_callback_id.data = dict(callback_id = [callback_id])
 
 def reset(): # resets values to initial cofiguration
     global displacement, t, s, Bottom_Line, Linking_Line, spring, mass, damper, initial_displacement_value, force_value, damping_coefficient_input
-    pause()
+    pause()    
     t=0
     s=0
     displacement.data=dict(t=[0],s=[initial_displacement_value])
@@ -241,7 +230,6 @@ def reset(): # resets values to initial cofiguration
 
 def reset_OmegaMax_plot():
     global omega_max,time,omega
-    pause()
     time = 0
     omega = 0
     omega_max.data=dict(time=[0],omega=[0])
@@ -249,7 +237,6 @@ def reset_OmegaMax_plot():
 
 def reset_Tmax_plot():
     global t_max,time,tmax
-    pause()
     time = 0
     tmax =0
     t_max.data=dict(time=[0],tmax=[0])
@@ -279,7 +266,6 @@ def updateParameters():
         x=(1/(mass.Getmass()*WD))*exp(-D*W*T)*sin(WD*T) 
         h[i] = x
     final = convolve(FI,h,mode='full')
-
     parameters.data = dict(names1=[u'\u03c9',"Te"],names2=["D",u'\u03c9*'],values1=[round(W,4),round(Te,4)],values2=[round(D,4),round(WD,4)])
 
 play_button = Button(label="Play", button_type="success",width=100)
@@ -358,9 +344,9 @@ hspace = 20
 curdoc().add_root(column(description,\
     row(column(row(column(row(column(fig,column(play_button,Spacer(width = 10),\
     pause_button,column(Spacer(width = 10),reset_button))),column(Force_select,InputForce,parameter_table)),\
-    Spacer(height=10),Displacement)),Spacer(height=hspace)),Spacer(width=10),\
+    Spacer(height=10),Displacement)),Spacer(height=hspace)),Spacer(width=30),\
     column(damping_coefficient_input,frequency_ratio_input,Spacer(height=hspace),\
-    row(gridplot([Dis_max,T_max],ncols=1,plot_width=480,plot_height=420,merge_tools=True,toolbar_location="below"),\
+    row(gridplot([Dis_max,Spacer(height=3 *hspace),T_max],ncols=1,plot_width=480,plot_height=420,merge_tools=True,toolbar_location="below"),\
     column(Spacer(height=160),reset_button_p_af,Spacer(height=370),reset_button_p_pa)))\
     ),))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  
