@@ -1,5 +1,5 @@
 """
-Python Bokeh program which interactively changes two vectos and displays their sum
+Python Bokeh program which interactively changes two vectors and displays their sum
 
 """
 from bokeh.plotting import figure
@@ -9,15 +9,15 @@ from bokeh.io import curdoc
 from math import radians, cos, sin, sqrt, atan, pi
 import yaml 
 
-from os.path import dirname, join, split, abspath
+from os.path import dirname, join, abspath # no split required, managed in strings.json
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
-parentdir = join(dirname(currentdir), "shared/")
+parentdir  = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_support import LatexLabelSet, LatexSlider
 
 std_lang = 'en'
-strings = yaml.safe_load(open('Vector_addition/static/strings.json'))
+strings  = yaml.safe_load(open('Vector_addition/static/strings.json'))
 def changeLanguage():
     [lang] = flags.data["lang"]
     if lang == "en":
@@ -39,20 +39,20 @@ language_button = Button(button_type="success")
 language_button.on_click(changeLanguage)
 
 # Initialise Variables
-glob_theta1            = ColumnDataSource(data=dict(val=[radians(50)]))
-glob_theta2            = ColumnDataSource(data=dict(val=[radians(140)]))
-glob_Vector1           = ColumnDataSource(data=dict(val=[95]))
-glob_Vector2           = ColumnDataSource(data=dict(val=[100]))
-Vector1_source         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
-Vector2_source         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
-VectorResultant_source = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
-V1parallel_line_source = ColumnDataSource(data=dict(x=[],y=[]))
-V2parallel_line_source = ColumnDataSource(data=dict(x=[],y=[]))
-V1_label_source        = ColumnDataSource(data=dict(x=[],y=[],V1=[]))
-V2_label_source        = ColumnDataSource(data=dict(x=[],y=[],V2=[]))
-Resultant_label_source = ColumnDataSource(data=dict(x=[],y=[],R=[]))
+glob_theta1             = ColumnDataSource(data=dict(val=[radians(50)]))
+glob_theta2             = ColumnDataSource(data=dict(val=[radians(140)]))
+glob_Vector1            = ColumnDataSource(data=dict(val=[95]))
+glob_Vector2            = ColumnDataSource(data=dict(val=[100]))
+Vector1_source          = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
+Vector2_source          = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
+VectorResultant_source  = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
+V1parallel_line_source  = ColumnDataSource(data=dict(x=[],y=[]))
+V2parallel_line_source  = ColumnDataSource(data=dict(x=[],y=[]))
+V1_label_source         = ColumnDataSource(data=dict(x=[],y=[],V1=[]))
+V2_label_source         = ColumnDataSource(data=dict(x=[],y=[],V2=[]))
+Resultant_label_source  = ColumnDataSource(data=dict(x=[],y=[],R=[]))
 Resultant_values_source = ColumnDataSource(data=dict(x=[],y=[],names=[]))
-flags = ColumnDataSource(data=dict(show=[False],lang=[std_lang]))
+flags                   = ColumnDataSource(data=dict(show=[False],lang=[std_lang]))
 
 # responsible for the display of initial conditions 
 def init ():
@@ -70,8 +70,8 @@ def updateVector1 ():
     
     else:
     # else the arrow is proportional to the Vector1
-        xE=Vector1*cos(theta1)
-        yE=Vector1*sin(theta1)
+        xE = Vector1*cos(theta1)
+        yE = Vector1*sin(theta1)
         Vector1_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
         V1_label_source.data = dict (x=[xE+3],y=[yE-3],V1=["V_1"])
 
@@ -83,8 +83,8 @@ def updateVector2 ():
         Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
     else:
         # else the arrow is proportional to the Vector1
-        xE=Vector2*cos(theta2)
-        yE=Vector2*sin(theta2)
+        xE = Vector2*cos(theta2)
+        yE = Vector2*sin(theta2)
         Vector2_source.data  = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
         V2_label_source.data = dict (x=[xE+3],y=[yE-3],V2=["V_2"])
 
@@ -93,11 +93,11 @@ def updateResultant():
     [theta2]  = glob_theta2.data["val"]  # input/
     [Vector1] = glob_Vector1.data["val"] # input/
     [Vector2] = glob_Vector2.data["val"] # input/
-    [show] = flags.data["show"]
+    [show]    = flags.data["show"]
     
-    xE=Vector1*cos(theta1)+Vector2*cos(theta2)
-    yE=Vector1*sin(theta1)+Vector2*sin(theta2)
-    R = round(sqrt(xE**2.0+yE**2.0),1)
+    xE = Vector1*cos(theta1)+Vector2*cos(theta2)
+    yE = Vector1*sin(theta1)+Vector2*sin(theta2)
+    R  = round(sqrt(xE**2.0+yE**2.0),1)
     if (abs(R) < 1e-3):
         VectorResultant_source.data = dict(xS=[], yS=[], xE=[], yE=[])
         Resultant_label_source.data = dict(x=[], y=[], R=[])
@@ -130,7 +130,7 @@ def updateResultant():
 
 def ChangeShow():
     [show] = flags.data["show"]
-    flags.data = dict(show=[not show])
+    flags.data["show"] = [not show]
     updateResultant()        
 
 # adding the vectors to the plot
@@ -142,7 +142,7 @@ VectorResultant_glyph = Arrow(end=NormalHead(line_color="#E37222",fill_color="#E
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=VectorResultant_source,line_color="#E37222",line_width=7)
 V1_label_glyph=LatexLabelSet(x='x', y='y',text='V1',text_font_size="15pt",level='overlay',source=V1_label_source)
 V2_label_glyph=LatexLabelSet(x='x', y='y',text='V2',text_font_size="15pt",level='overlay',source=V2_label_source)
-Resultant_label_glyph = LatexLabelSet(x='x',y='y',text='R',text_font_size="15pt",level='overlay',source=Resultant_label_source)
+Resultant_label_glyph  = LatexLabelSet(x='x',y='y',text='R',text_font_size="15pt",level='overlay',source=Resultant_label_source)
 Resultant_values_glyph = LatexLabelSet(x='x',y='y',text='names',text_font_size="15pt", text_color="#E37222", level='glyph',source=Resultant_values_source)
 
 
@@ -188,12 +188,12 @@ def changetheta2(attr,old,new):
 ## Create slider to choose force applied
 Vector1Slider = LatexSlider(title="|V1|=",value=95.0,start=0,end=100,step=5)
 Vector1Slider.on_change('value',changeVector1)
-Vector2Slider= LatexSlider(title="|V2|=", value=100.0, start=0.0, end=100.0, step=5)
+Vector2Slider = LatexSlider(title="|V2|=", value=100.0, start=0.0, end=100.0, step=5)
 Vector2Slider.on_change('value',changeVector2)
 
-AngleVector1Slider= LatexSlider(title='\\alpha_{V1}=', value_unit='^{\\circ}', value=60.0, start=0.0, end=360.0, step=5)
+AngleVector1Slider = LatexSlider(title='\\alpha_{V1}=', value_unit='^{\\circ}', value=60.0, start=0.0, end=360.0, step=5)
 AngleVector1Slider.on_change('value',changetheta1)
-AngleVector2Slider= LatexSlider(title='\\alpha_{V2}=',value_unit='^{\\circ}', value=140.0, start=0.0, end=360.0, step=5)
+AngleVector2Slider = LatexSlider(title='\\alpha_{V2}=',value_unit='^{\\circ}', value=140.0, start=0.0, end=360.0, step=5)
 AngleVector2Slider.on_change('value',changetheta2)
 
 ###Create Show Resultant Properties Button:
@@ -207,4 +207,4 @@ setDocumentLanguage(std_lang)
 
 ## Send to window
 curdoc().add_root(column(row(Spacer(width=750),language_button),description,column(row(p,column(Vector1Slider,Vector2Slider,AngleVector1Slider,AngleVector2Slider,show_button)))))
-# curdoc().title = "Vector Addition"
+#curdoc().title # managed in file "/static/strings.json"
