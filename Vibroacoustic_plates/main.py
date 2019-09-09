@@ -292,11 +292,14 @@ def main( ):
                 "&nbsp;button <i>'Show Input'</i>. <br><br>"
                 "<b>2.</b> On the right, dynamic properties of the plate and of"
                 "&nbsp;its wave types are plotted. These can be studied"
-                "&nbsp;using e.g. the zoom function and saved as .png."
+                "&nbsp;using e.g. the zoom function and saved as .png.<br><br>"
+                "&nbsp;Please refer to the following publication for further explanations and references:<br><br>"
+                "&nbsp;Winter, C.: Frequency Dependent Modeling for the Prediction of the Sound Transmission in Timber Constructions. (2018)."
+
 					   ,
                 render_as_text = False,
                 width = 1000,
-                height = 30 )
+                height = 40 )
     
     Title = Div ( text = "<b><h1> Vibroacoustics of Plates</b><h1>",
                  render_as_text = False,
