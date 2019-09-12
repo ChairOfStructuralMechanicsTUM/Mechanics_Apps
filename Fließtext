@@ -81,13 +81,13 @@ Erdbebenschutzssysteme sind besondere Vorrichtungen, um Bauwerke und Anlagen all
 
 Die am häufigsten verwendete Klasse der Schutzsysteme ist in der Praxis die passive. (warum) Hierfür gibt es vier Wirkungsmechanismen, die im Folgenden besprochen werden.
 \subsubsection{Dissipationselemente}
-Wird eine schwingungsfähiges System ausgelenkt und anschließend frei gegeben, stellen sich Schwingungen ein, die nach einer gewissen Zeit abklingen und zur Ruhe kommen. Dafür sorgt ein Dämpfer, der die kinetische Energie in jedem Schwingzyklus in Wärmeenergie umwandelt. Dieser Mechanismus wird im Fachjargon als Dissipation bezeichnet. Verantwortlich sind dafür überwiegend Reibungsvorgänge im Bauwerk, aber auch die Interaktion zwischen Baugrund und -werk kann das System ausbremsen. Selbst die Bewegung des Systems in seinem umgebenden Medium trägt zu dessen Dämpfung bei. Da in allen Reibungsvorgängen Energie in Wärme umgewandelt wird, und diese nach dem zweiten Hauptsatz der Thermodynamik entlang eines negativen Temperaturgradienten fließt, wird dem offenen System nach und nach irreversibel Energie entzogen. Abbildung xy (Bild) zeigt ...
+\textit{Wird eine schwingungsfähiges System ausgelenkt und anschließend frei gegeben, stellen sich Schwingungen ein, die [nach einer gewissen Zeit][...] abklingen}\citep{petersen2017grundlagen} und zur Ruhe kommen. Dafür sorgt ein Dämpfer, der die kinetische Energie in jedem Schwingzyklus in Wärmeenergie umwandelt. Dieser Mechanismus wird im Fachjargon als Dissipation bezeichnet. \textit{Verantwortlich sind dafür überwiegend Reibungsvorgänge [...] im Bauwerk} \citep{petersen2017grundlagen}, aber auch die Interaktion zwischen Baugrund und -werk kann das System ausbremsen. Selbst die Bewegung des Systems in seinem umgebenden Medium trägt zu dessen Dämpfung bei. Da in allen Reibungsvorgängen Energie in Wärme umgewandelt wird, und diese nach dem zweiten Hauptsatz der Thermodynamik entlang eines negativen Temperaturgradienten fließt, wird dem offenen System nach und nach irreversibel Energie entzogen. Abbildung xy (Bild) zeigt ...
 \subsubsection{Shocktransmitter}
 
 \subsubsection{Schwingungsdämpfer}
-
+Überwiegend horizontale Schwingungen werden durch den so genannten Schwingunsdämpfer, oder auch tuned mass damper (TMD), kompensiert. Als Schwingungsdämpfer ist ein zusätzliches schwingfähiges Masse-Feder-System definiert, das unter anderem Windlasten als auch personeninduzierte Schwingungen von Fußgängerbrücken unterdrücken soll \citep{petersen2017grundlagen}. Im Zusammenhang mit Windlasten finden Schwingungsdämpfer auch in Hochhäusern (ihre) Verwendung. Bekanntestes Beispiel hierfür ist das \textit{Taipei World Financial Center}, bei dem vereinfacht gesagt ein Pendel an den obersten Etagen des Gebäudes montiert ist, und den Turm vor schwereren Schäden bewahren soll. Für Erdbeben hingegen sind TMD-Systeme eher minder geeignet, da, wie in \ref{Mehrfreiheitsgradsystem} beschrieben, oftmals mehrere Eigenformen zur Schwingungsantwort des Gebäudes beitragen, und somit die Effizienz in den meisten Fällen geringer ist, als (bei/für) Windlasten \citep{petersen2017grundlagen}. Dennoch kann durchaus ein Schwingungsdämpfer auch für die Reduktion von Erdbenelasten vorgeschlagen werden \citep{meinhardt2011passive}, allerdings kann dieser unter Umständen auch seine Wirkung verlieren, weil er nur innerhalb eines engen Frequenzbereichs arbeiten kann. Das bedeutet, dass zum Beispiel Beben außerhalb der für die Lage und Konstruktion des Gebäudes statistisch bestimmten Messungen und/oder stoßartige Anregungen, die dem Dämpfer keine Schanze auf einen Einschwingvorgang bietet, verherende Auswirkungen auf das Gebäude haben kann. Daher ist vor allem die Charakteristik des Bebens von Bedeutung \citep{petersen2017grundlagen}. Epfehlenswert hierfür ist die Basisisolierung, in der es im Hauptsächlichen in dieser Arbeit gehen soll. Wie diese funktioniert, wird im Folgenden beschreiben.
 \subsubsection{Basisisolation}
-
+Bei der Basisisolierung wird das Gebäude durch Feder- und Dämpfungselemente zwischen Gründung und Fundament 'schwimmend' gelagert \citep{petersen2017grundlagen}. 
 \subsection{Modell}
 Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenschaften, veranschaulichend darstellen zu können, verwenden wir Modelle. Sie dienen dazu, die Natur eingeschränkt abzubilden und sie somit "berechenbar" zu machen, da die Ereignisse meist zu komplex sind, um sie übersichtlich veranschaulichen (anderes Wort) zu können. Man muss sich dabei immer vor Augen halten, was berechnet werden soll, und wie sehr das Modell (eingeschränkt) ist. Dabei sind einige (Eigenschaften...) mehr oder weniger relevant. Viele physikalische Modelle basieren auf mathematischen Gleichungen, insbesondere Differentialgleichungen. In diesem Fall bezieht man sich auf ...(Einleitung kacke)
 
@@ -597,6 +597,28 @@ Maximale Trägheitskraft:
 \subsection{Framework}
 \subsubsection{Matlab}
 \subsubsection{Bokeh}
+komplett geklaut 
+
+Als Programmierframework verwenden wir die Open-Source-Python-Bibliothek Bokeh [7]. Bokeh ist eine interaktive Visualisierungsbibliothek
+das auf interaktives Plotten in modernen Webbrowsern abzielt. Es hat einen prägnanten Ansatz für die Konstruktion neuartiger Grafiken
+mit leistungsstarker Interaktivität über sehr große oder Streaming-Datasets. Die Bokeh-Bibliothek bietet viele wichtige GUI
+Komponenten zum Erstellen interaktiver Apps, z. B. Schieberegler oder Schaltflächen und bekannte 2D-Plotstile, einschließlich Linie und Streuung
+Grundstücke und vieles mehr. Benutzerdefinierte Erweiterungen können weitere Funktionen enthalten. Beispielsweise kann JavaScript eingebettet werden
+Verwenden Sie das Paket nodejs, um ein 3D-Flächendiagramm zu erstellen. Die Architektur von Bokeh ist so, dass der Code für die Erstellung von Plots,
+Bereiche, Achsen, Glyphen usw. werden in Python geschrieben und dann in ein Format konvertiert, das von der Client-Bibliothek BokehJS verwendet wird.
+Der Anwendungscode wird auf einem Webserver mit einer Bokeh-Installation ausgeführt. Die Übersetzung von Python in den Code, der sein kann
+Der vom Client-Browser verstandene Vorgang wird direkt über das Bokeh-Framework ausgeführt. Sobald der Server in Betrieb ist,
+Ein Bokeh-Server erstellt mithilfe des Anwendungscodes Sitzungen und Dokumente für alle Clients, die über einen Browser eine Verbindung herstellen. Diese
+Das bedeutet, dass Entwickler mit wissenschaftlichem Hintergrund den gesamten Code in Python schreiben können und nicht mit dem Web vertraut sein müssen
+Technologie, während Benutzer auf die Apps zugreifen können, ohne den Code dahinter verstehen zu müssen. Eine breite Palette von Visualisierungen
+Methoden ist in der vorgeschlagenen Umgebung möglich. Dies sollte einen Entwickler nicht daran hindern, die Anwendung einfach zu halten.
+Studenten werden eine Bewerbung nicht verwenden, wenn sie zu lange brauchen, um zu verstehen, was von ihnen erwartet wird.
+Darüber hinaus sollen die Bewerbungen die Studierenden zum Herumspielen motivieren. Daher sofortige Interaktion - ohne Lesen von
+Anweisungen - ist wichtig. Schweitzer und Brown [3] haben bereits beschrieben, wie wichtig die mausgesteuerte Interaktion ist
+(z. B. mit Schiebereglern und Schaltflächen) ist. Der Entwickler sollte den Benutzer daran hindern, die Tastatur zu verwenden. Zu jeder App gehört eine Beschreibung und eine kurze Zusammenfassung der Funktionen der App, z. welche Parameter können sein
+geändert. Die Apps sind über das Internet auf der Website des Lehrstuhls für Strukturmechanik [8] und der Forschungsstelle zugänglich
+Gruppenalgebra [9]. Zusätzlich können Links zu den Apps in die Vorlesungsunterlagen aufgenommen werden, um den Zugriff während des Studiums zu erleichtern.
+Der gesamte Quellcode der Anwendung kann von Github [4] heruntergeladen werden.
 \subsubsection{Github}
 \subsubsection{Python}
 
