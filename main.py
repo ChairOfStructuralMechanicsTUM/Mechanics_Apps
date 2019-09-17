@@ -79,23 +79,6 @@ mode_two.toolbar.logo         = None
 mode_two.yaxis.axis_label     = "Height [m]"
 mode_two.xaxis.axis_label     = "Normalized Displacement"
 
-mode_three = figure(
-                      plot_width  = 300,
-                      plot_height = 400,
-                      x_range     = [xmin/2,xmax/2], 
-                      y_range     = [ymin,ymax],
-                      tools       = '',
-                      title       = 'Third Mode',
-                   )
-mode_three.title.text_font_size = "25px"
-mode_three.title.align          = "center"
-mode_three.grid.visible         = False
-mode_three.xaxis.visible        = True
-mode_three.yaxis.visible        = True
-mode_three.toolbar.logo         = None
-mode_three.yaxis.axis_label     = "Height [m]"
-mode_three.xaxis.axis_label     = "Normalized Displacement"
-
 ERSplot = figure(
                       plot_width  = 400,
                       plot_height = 400,
@@ -143,17 +126,16 @@ all of the information
 ###############################################################################
 '''
 ###################### Structure general properties ###########################
-massRatio       = np.array([2.0, 1.5, 1.0])  
-stiffnessRatio  = np.array([3.0, 2.0, 1.0])
+massRatio       = np.array([1.0, 1.5])  
+stiffnessRatio  = np.array([1.0, 1.5])
 structure_color = '#85929E'
 
 ################################ (1) masses ###################################
 '''
                                  trussLength
                                 <---------->
-                                ====Mass3===
-                                |          |
-                                |          |
+ 
+
                                 ====Mass2===
                                 |          |
                                 |          |
@@ -178,7 +160,7 @@ trussLength = 3.0 # meters
 # Starting amount of bendingStiffness in N*m^2
 bendingStiffness = 1000000
 
-trussSources = fc.construct_truss_sources(masses[0], masses[1], masses[2], trussLength)
+trussSources = fc.construct_truss_sources(masses[0], masses[1], trussLength)
 
 ################################# (3) base ####################################
 base =dict(
@@ -189,7 +171,7 @@ base =dict(
 ############################### Create Structure ##############################
 structure = S3S_Structure(masses, massSupports, trussSources, trussLength, base)
 
-structure.update_system([0,0,0])
+structure.update_system([0,0])
 
 # Construct the mass and stiffness matric, in addition to the lebels to be defined later
 fc.construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRatio, trussLength)
@@ -258,8 +240,8 @@ the modal parametes (here, the eigenfrequencies and the eigenmodes)
 ###################### Solve the eigenvalue problem ###########################
 # Construct the modes
 modes = list()
-for i in range(0,3):
-    modes.append( S3S_Mode(i, masses, massSupports, trussSources, trussLength, base, frequency=0, modeShape=np.zeros(3)) )
+for i in range(0,2):
+    modes.append( S3S_Mode(i, masses, massSupports, trussSources, trussLength, base, frequency=0, modeShape=np.zeros(2)) )
 
 # Get the modal parameters
 eigenvalues, eigenvectors = fc.solve_modal_analysis(structure)
@@ -281,7 +263,6 @@ mode_colors = ['#0000FF','#00FF00','#D4AC0D']
 
 fc.plot( mode_one  , modes[2], radius, mode_colors[2])
 fc.plot( mode_two  , modes[1], radius, mode_colors[1])
-fc.plot( mode_three, modes[0], radius, mode_colors[0])
 '''
 ###############################################################################
 Construct the Elastic Response Spectrum
@@ -467,7 +448,7 @@ def show_def_config(active):
 def show_undef_config(active):
     if active == True:
         def_config_button.active = False
-        structure.update_system( np.zeros(3) )
+        structure.update_system( np.zeros(2) )
 #        structure.update_force_indicator_location()
         
     else:
@@ -484,7 +465,6 @@ columns = [
             TableColumn(field="subject", title="Subject"),
             TableColumn(field="modeOne", title="Mode One"),
             TableColumn(field="modeTwo", title="Mode Two"),
-            TableColumn(field="modeThree", title="Mode Three"),
           ]   
 data_table = DataTable(source=siesmicParameters.informationTable, columns=columns, width=600, height=350)
 data_table_text = Div(text="""<b>Input Data and Results of the Modal Analysis</b> """,width = 600)
@@ -527,8 +507,7 @@ curdoc().add_root(
                                            ),
                                         row(
                                             column(mode_one,modes[2].frequency_text,modes[2].multiplier_text),
-                                            column(mode_two,modes[1].frequency_text,modes[1].multiplier_text),
-                                            column(mode_three,modes[0].frequency_text,modes[0].multiplier_text)
+                                            column(mode_two,modes[1].frequency_text,modes[1].multiplier_text)
                                            )
                                       ),
                                 column(
