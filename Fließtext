@@ -604,6 +604,8 @@ In den vergangenen Abschnitten wurde über die theoretischen Zusammenhänge zwis
 
 Jetzt liegt der Fokus auf dem Programmierteil dieser Arbeit. Bei der Software-Entwicklung ist es üblich, sich ein so genanntes Framework einzurichten, welches an sich kein eigenständiges Programm ist, sondern als modernes Rahmenwerk dienen soll, um dem Programmierenden dabei unterstützt, einen Entwicklungsrahmen für seine Anwendungsprogrammierung zur Verfügung zu stellen, mit dem er die Software-Architektur seines Programms bestimmt. Überwiegend wird es, wie hier auch, in der objektorientierten Programmierung eingesetzt (Quelle:https://www.itwissen.info/Framework-framework.html). Für die Bearbeitung des Themas wird im Wesentlichen auf die folgenden vier Bibliotheken beziehungsweise Programme zurückgegriffen.
 
+Label und Logos einfügen
+
 \subsubsection{Matlab}
 Für die Rechenbeispiele \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab} und \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel} und Abbildung xy wurde das Programm Matlab (link) verwendet. Matlab ist eine kommerzielle Software des US-amerikanischen Unternehmens MathWorks zur Lösung mathematischer Probleme und zur grafischen Darstellung der Ergebnisse. Es ist vor allem für numerische Berechnungen mithilfe von Matrizen ausgelegt. (Quelle: https://de.mathworks.com/help/matlab/index.html?/access/helpdesk/help/techdoc/matlab_oop/bqs290n-1.html=) Hauptsächlich wird Matlab von
 \subsubsection{Bokeh}
@@ -631,6 +633,7 @@ Gruppenalgebra [9]. Zusätzlich können Links zu den Apps in die Vorlesungsunter
 Der gesamte Quellcode der Anwendung kann von Github [4] heruntergeladen werden.
 \subsubsection{Github}
 \subsubsection{Python}
+Die von Guido van Rossum am Centrum Wiskunde & Informatica in Amsterdam zu Beginn der 1990er-Jahre entwickelte Programmiersprache Python wird vor allem bei der objektorientierten sowie funktionalen Programmierung eingesetzt . Allgemein bekannt ist Python für ihre einfache Lesbarkeit und vor allem für ihre klare Syntax. Daher genießt sie einen Ruf als einfache und saubere Programmiersprache mit klarer Struktur. Dem zufolge ist sie weniger Anfällig für Fehler, unter anderem auch deswegen, weil sie im Gegensatz zu anderen Programmiersrpachen wie C oder C++, auf geschweifte Klammern oder Semikola verzichtet. Gekennzeichnet werden beispielsweise Kontrollstrukturen und Code-Blöcke durch Einrückungen. Auch nicht notwendig sind Variablendeclarationen zu Beginn der Programmierung, viel mehr werden sie in den Klassen definiert.  (evtl. Listing Einfügen als Beispiel)(Quelle: https://www.bigdata-insider.de/was-ist-python-a-730480/). 
 
 \subsection{Programmentwicklung}
 Bevor ein näherer Einblick in die App gegeben werden kann ist noch zu erwähnen, dass jedes Programm in seiner Grobstruktur in etwa ähnlich aufgebaut ist und folgende Schritte, wie in \citep{IT2} beschreiben, unumgänglich sind.
@@ -645,8 +648,12 @@ Bevor ein näherer Einblick in die App gegeben werden kann ist noch zu erwähnen
     Beim Ablauf des Programmes können ebenfalls Fehler auftreten, dann muss erneut korrigiert, compiliert und gelinkt werden \citep{IT2}.
 \end{itemize}
 Abbildung (xyx) zeigt zusammengefasst den Prozess der Programmentwicklung.
-
+Python verzichtet auf Kompilieren und Linken.
 \subsubsection{App-Umgebung}
+Anaconda Vs-code
+Für die Programmierung der App wurde die frei zugängliche Open-Source-Distribution Anaconda (https://www.anaconda.com/distribution/) verwendet, die den Quelltext-Editor Visual Studio Code zur Verfügung stellt.
+
+
 \subsubsection{Ein- und Ausgabe}
 \Beispiel
 \cleardoublepage
