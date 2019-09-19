@@ -38,6 +38,7 @@
  top=20mm,
  }
  %\setlength\mathindent{0pt}
+              				
               								
 \fontsize=14 pt
 \title{Programmieren interaktiver Apps}
@@ -649,10 +650,50 @@ Bevor ein näherer Einblick in die App gegeben werden kann ist noch zu erwähnen
 \end{itemize}
 Abbildung (xyx) zeigt zusammengefasst den Prozess der Programmentwicklung.
 Python verzichtet auf Kompilieren und Linken.
-\subsubsection{App-Umgebung}
+
 Anaconda Vs-code
 Für die Programmierung der App wurde die frei zugängliche Open-Source-Distribution Anaconda (https://www.anaconda.com/distribution/) verwendet, die den Quelltext-Editor Visual Studio Code zur Verfügung stellt.
 
+Die App beinhaltet zwei Programm-Codes. Einer davon wird $main.py$ genannt, der andere $s2s-functions.py$. ...
+
+\subsubsection{App-Umgebung: s3s-functions.py}
+$s3s\_functions$ ist in der App ein Unterprogramm, das in $main.py$ aufgerufen wird. Sie definiert die drei Klassen $s3s\_structure$, $s3s\_mode$ und $seismicparameters$. Klassen sind abstrakte Oberbegriffe für die Beschreibung gemeinsamer Strukturen und des Verhaltens von realen Objekten (Quelle:https://www.python-kurs.eu/klassen.php). Bei der Klassifizierung werden im Allgemeinen reale Objekte auf definierte Attribute und Methoden abstrahiert. Sie dient als Bauplan zur Abbildung der Objekte. Beispielhaft ist in \ref{Beispiel Klasse} die Klasse $s3s\_structure$ aufgeführt. Ein Objekt(?) in Python hat immer die Methode $self$. $Self$ wird definiert, um eine Referenz aufzubauen. Ohne $self$ können andere Funktionen im Code nicht auf das Objekt zugreifen, wenn seine müssen. Beim Erzeugen eines Objekts wird für dieses ein eigener Satz von Instanzattributen angelegt. Diese Erzeugung und Initialisierung wird in einer speziellen Methoden durchgeführt, dem Konstruktor. Der Konstruktor wird in Python durch die Kopfzeile $def\_\_init\_\_(self,...)$ gekennzeichnet (Quelle:https://www.hdm-stuttgart.de/~maucher/Python/html/Klassen.html).
+
+\begin{lstlisting}[style=,language = python,frame = single,caption ={Beispiel: Klasse}, label = {Beispiel Klasse},numbers=left] 
+class S3S_Structure:
+
+    def __init__(self, masses, massSupports, trusses, trussLength, base):
+\end{lstlisting}
+
+Bleiben wir gleich beim Beispiel \ref{Beispiel Klasse}. Die Klasse $s3s\_structure$ enthält die Objekte $masses$, $massSupports$, $trusses$, $trussLength$ und $base$.
+\begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_Structure: Objekte} label = {S3S\_Structure: Objekte},numbers=left, firstnumber=4] 
+    
+    masslist = list()
+        for i in range(len(masses)):
+            masslist.append(ColumnDataSource(data=masses[i]))
+        self.masses       = masslist
+        
+        massSupportlist = list()
+        for i in range(len(massSupports)):
+            massSupportlist.append(ColumnDataSource(data=massSupports[i]))
+        self.massSupports = massSupportlist
+        
+        trusslist = list()
+        for i in range(len(trusses)):
+            trusslist.append(ColumnDataSource(data=trusses[i]))
+        self.trusses      = trusslist
+        
+        self.trussLength  = trussLength
+        self.base         = ColumnDataSource(base)
+\end{lstlisting}
+$Masses$ wird als die Liste $masslist$ definiert, welche über eine for-Schleife und dem $append$-Befehl der Liste pro Schleifendurchlauf jeweils ein Element hinzufügt. Nicht zu vergessen ist, dass hier auf Bokehs ColumnDataSource-Objekt zurückgegriffen wurde, welches kurz gesagt eine Zuordnung zwischen Spaltennamen und Datenlisten erstellt, die vor allem bei der Visualisierung verwendet wird. Analog gilt dies auch für die Objekte $massSupports$ und $trusses$(Quelle:https://bokeh.pydata.org/en/latest/docs/user_guide/data.html).
+
+
+
+
+
+
+\subsubsection{App-Umgebung: main.py}
 
 \subsubsection{Ein- und Ausgabe}
 \Beispiel
