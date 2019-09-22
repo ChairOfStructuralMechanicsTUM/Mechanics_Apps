@@ -709,6 +709,11 @@ $Masses$ wird als die Liste $masslist$ definiert, welche über eine for-Schleife
         self.massSupports[1].data['x'] = self.massSupports[1].data['x']*0 + 
         [-self.trussLength/2+displacement[1], self.trussLength/2+displacement[1]]
 
+\end{lstlisting}
+Funktionen werden in Python mit $def$ gekennzeichnet. Allgemein stellt eine Funktion ein Strukturierungselement in einer Programmiersprache dar, um eine Menge von Anweisungen zu gruppieren, damit man sie mehrmals im Programm verwenden kann \citep{function}. Eine dieser Funktionen ist auch in \ref{S3S\_Structure: update-Methode} unter dem Namen $update$ definiert. Die Methode $Update$ aktualisiert das $dict()$ mit den Elementen aus einem anderen Wörterbuchobjekt oder aus einem von Schlüssel / Wert-Paaren durchgeführten Durchlauf \citep{update}. 
+$Dict()$ ist in Python eine integrierte Funktion, die ein Wörterbuchobjekt zurückgibt oder einfach ein Wörterbuch in Python erstellt. Wörterbücher sind veränderbare und ungeordnete Sammlungen von Schlüssel-Wert-Paaren, bei denen Schlüssel eindeutig und hashbar sein müssen \citep{dict}. In \ref{S3S\_Structure: update-Methode} werden dadurch die Positionen und Verschiebungen der Massen und Strukturelemente definiert.
+
+\begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_Structure: Interpolation der Struktur}, label = {S3S\_Structure: Interpolation},numbers=left, firstnumber=80] 
     def update_truss_sources(self):
         noNodes = 10
         
@@ -723,8 +728,7 @@ $Masses$ wird als die Liste $masslist$ definiert, welche über eine for-Schleife
         
         self.trusses[0].data = dict(x=xs, y=ys)
 \end{lstlisting}
-Funktionen werden in Python mit $def$ gekennzeichnet. Allgemein stellt eine Funktion ein Strukturierungselement in einer Programmiersprache dar, um eine Menge von Anweisungen zu gruppieren, damit man sie mehrmals im Programm verwenden kann \citep{function}. Eine dieser Funktionen ist auch in \ref{update-Methode} unter dem Namen $update$ definiert. Die Methode $Update$ aktualisiert das $dict()$ mit den Elementen aus einem anderen Wörterbuchobjekt oder aus einem von Schlüssel / Wert-Paaren durchgeführten Durchlauf \citep{update}. 
-$Dict()$ ist in Python eine integrierte Funktion, die ein Wörterbuchobjekt zurückgibt oder einfach ein Wörterbuch in Python erstellt. Wörterbücher sind veränderbare und ungeordnete Sammlungen von Schlüssel-Wert-Paaren, bei denen Schlüssel eindeutig und hashbar sein müssen \citep{dict}. In \ref{update-Methode} werden dadurch die Positionen und Verschiebungen der Massen und Strukturelemente definiert. 
+Bei den Plots der Struktur und deren Verschiebungen wird zwischen den Stützstellen linear interpoliert. Beispielhaft wurde hier das Strukturelement $truss1$ aus \ref{S3S\_Structure: Interpolation} hervorgehoben. Abbildung \ref{Beispiel: Erzeugte Struktur in der App} zeigt zwei Plots der berechneten Verschiebungen, links die unbelastetet Struktur, rechts die erste und relevanteste Eigenform der Struktur.
 
 %Platzhalter
 \begin{figure}[h!]
@@ -734,8 +738,65 @@ $Dict()$ ist in Python eine integrierte Funktion, die ein Wörterbuchobjekt zur�
   \subfloat[][]{\includegraphics[width=0.4\linewidth]{bokeh_plot (1).png}}
   \caption{Beispiel: Erzeugte Struktur in der App}
 \end{figure}
-\end{document}
 
+Zusammenfassend liefert $s3s\_structure$ Voraussetzungen für die in $main.py$ erzeugten Struktur des zu berechnenden Gebäudes. Weiter geht es nun mit $s3s\_mode$. 
+\begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_mode: }, label = {S3S\_mode: },numbers=left, firstnumber=192] 
+class S3S_Mode( S3S_Structure ):
+    
+    def __init__(self, ID, masses, massSupports, trusses,
+    trussLength, base, frequency, modeShape):
+        S3S_Structure.__init__(self, masses, massSupports, 
+        trusses, trussLength, base)
+        self.id = ID
+        self.frequency = frequency
+        self.modeShape = modeShape
+        self.maxModeShape = np.array([0,0]) 
+        self.locationInERS = ColumnDataSource(data=dict(x=[0],y=[0]))
+        self.participationFactor = 0 
+        
+        self.multiplier_text=LatexDiv(text=
+        "$\\displaystyle\\frac{\\beta S_a(T) }{ \\omega^2}="+ str(0) + "$")
+        self.frequency_text =LatexDiv(text="""<b>Natural Frequency =</b> """)
+    
+    def get_maximum_displacement( self, siesmicParameters ):
+        r = np.ones(2)
+        self.participationFactor = np.dot( self.modeShape, np.dot( self.M, r))
+        period = 2*np.pi / self.frequency
+        Sa = siesmicParameters.get_Sa(period)
+        
+        multiplier = self.participationFactor*Sa*(1/self.frequency**2)
+        
+        self.modify_mode_text( multiplier )
+        
+        self.maxModeShape = multiplier*self.modeShape
+        return self.maxModeShape
+
+    def modify_location_in_ERS( self, siesmicParameters ):
+        period = 2*np.pi / self.frequency
+        Sa = siesmicParameters.get_Sa( period )
+        self.locationInERS.data = dict(x=[period,period,0],y=[0,Sa,Sa])
+        
+    def modify_mode_text(self, multiplier):
+        self.multiplier_text.text = " $\\displaystyle\\frac{\\beta S_a(T)}
+        { \\omega^2} ="+ '{:.3f}'.format(multiplier) + "$"
+        
+    def modify_frequency_text(self):
+        self.frequency_text.text = "$\\text{Natural Frequency} = " + 
+        '{:.3f}'.format(self.frequency) + "\\, \\frac{\\mathrm{rad}}{\\mathrm{s}}$"
+        
+    def normalize_mode_shape(self):
+        m = np.dot(self.modeShape , np.dot(self.M , self.modeShape))
+        if m != 1:
+            self.modeShape = self.modeShape / np.sqrt(m)
+            
+    def normalized_mode_withMax_one(self):
+        maxAmplitude = 0.0
+        for component in self.modeShape:
+            if abs(component) > maxAmplitude:
+                maxAmplitude = abs(component)
+            
+        return self.modeShape / maxAmplitude
+\end{lstlisting}
 
 
 \subsubsection{App-Umgebung: main.py}
