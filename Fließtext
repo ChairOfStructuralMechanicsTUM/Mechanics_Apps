@@ -38,7 +38,6 @@
  top=20mm,
  }
  %\setlength\mathindent{0pt}
-              				
               								
 \fontsize=14 pt
 \title{Programmieren interaktiver Apps}
@@ -92,7 +91,8 @@ Bei der Basisisolierung als das Erdbenenschutzsystem, dem die größte Bedeutung
 
 In Gegenwart dessen stehen allerdings die deutlich erhöhten Verschiebungen des Gebäudes gegenüber dem Baugrund, was besonders bei der Dimensionierung des Gebäudes im Hinblick auf die Nachbargebäude, sowie bei den Versorgungsleitungen problematisch sein kann. Um Brüche der Leitungen zu verhindern, müssen deren Übergänge entsprechend flexibel ausgebildet und geplant werden. Eine Reduzierung der Verschiebungen,ähnlich wie bei \ref{Dissipationselemente}, ( und somit der Energiedissipation,) wird durch zusätzliche Dämpfer- und Reibungselemente gewährleistet. \citep{petersen2017grundlagen}. Außerdem müssen statische Horizontalkräfte, zu denen auch Windlasten zählen, abgetragen werden. Ist dies nicht der Fall, so sollten besondere Aussteifungen und planmäßig vorgesehene Sollbruchstellen (ausgeführt) werden, welche im Falle eines Bebens versagen \citep{petersen2017grundlagen}.
 
-Wie bei den Schwingungsdämpfern (\ref{schwingungsdämpfer}) auch, ist stets darauf zu achten, dass die die Eigenschwingungen des Überbaus und der Basisiolation außreichend von einander getrennt sind, um Resonanzeffekte zu auszuschließen \citep{petersen2017grundlagen}.
+Wie bei den Schwingungsdämpfern auch, ist stets darauf zu achten, dass die die Eigenschwingungen des Überbaus und der Basisiolation außreichend von einander getrennt sind, um Resonanzeffekte zu auszuschließen \citep{petersen2017grundlagen}.
+hier fehlt noch einiges
 
 \subsection{Modell}
 Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenschaften, veranschaulichend darstellen zu können, verwenden wir Modelle. Sie dienen dazu, die Natur eingeschränkt abzubilden und sie somit "berechenbar" zu machen, da die Ereignisse meist zu komplex sind, um sie übersichtlich veranschaulichen (anderes Wort) zu können. Man muss sich dabei immer vor Augen halten, was berechnet werden soll, und wie sehr das Modell (eingeschränkt) ist. Dabei sind einige (Eigenschaften...) mehr oder weniger relevant. Viele physikalische Modelle basieren auf mathematischen Gleichungen, insbesondere Differentialgleichungen. In diesem Fall bezieht man sich auf ...(Einleitung kacke)
@@ -603,16 +603,16 @@ Maximale Trägheitskraft:
 \subsection{Framework}
 In den vergangenen Abschnitten wurde über die theoretischen Zusammenhänge zwischen Erdbeben und deren Einfluss auf die sie einwirkenden Gebäude gesprochen. Welche Konstruktionen ihnen entgegenwirken sollen und wie man in der Praxis (damit) plant. Neben einigen extra für dieses Szenario entwickelten Rechenverfahren sticht vorallem das Antwortspektrum-Verfahren der DIN EN 1998 hervor, welches mit einem Beispiel in \ref{Antwortspektrum} behandlet wurde.
 
-Jetzt liegt der Fokus auf dem Programmierteil dieser Arbeit. Bei der Software-Entwicklung ist es üblich, sich ein so genanntes Framework einzurichten, welches an sich kein eigenständiges Programm ist, sondern als modernes Rahmenwerk dienen soll, um dem Programmierenden dabei unterstützt, einen Entwicklungsrahmen für seine Anwendungsprogrammierung zur Verfügung zu stellen, mit dem er die Software-Architektur seines Programms bestimmt. Überwiegend wird es, wie hier auch, in der objektorientierten Programmierung eingesetzt (Quelle:https://www.itwissen.info/Framework-framework.html). Für die Bearbeitung des Themas wird im Wesentlichen auf die folgenden vier Bibliotheken beziehungsweise Programme zurückgegriffen.
+Jetzt liegt der Fokus auf dem Programmierteil dieser Arbeit. Bei der Software-Entwicklung ist es üblich, sich ein so genanntes Framework einzurichten, welches an sich kein eigenständiges Programm ist, sondern als modernes Rahmenwerk dienen soll, um dem Programmierenden dabei unterstützt, einen Entwicklungsrahmen für seine Anwendungsprogrammierung zur Verfügung zu stellen, mit dem er die Software-Architektur seines Programms bestimmt. Überwiegend wird es, wie hier auch, in der objektorientierten Programmierung eingesetzt \citep{Objektorientierte}. Für die Bearbeitung des Themas wird im Wesentlichen auf die folgenden vier Bibliotheken beziehungsweise Programme zurückgegriffen.
 
 Label und Logos einfügen
 
 \subsubsection{Matlab}
-Für die Rechenbeispiele \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab} und \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel} und Abbildung xy wurde das Programm Matlab (link) verwendet. Matlab ist eine kommerzielle Software des US-amerikanischen Unternehmens MathWorks zur Lösung mathematischer Probleme und zur grafischen Darstellung der Ergebnisse. Es ist vor allem für numerische Berechnungen mithilfe von Matrizen ausgelegt. (Quelle: https://de.mathworks.com/help/matlab/index.html?/access/helpdesk/help/techdoc/matlab_oop/bqs290n-1.html=) Hauptsächlich wird Matlab von
+Für die Rechenbeispiele \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab} und \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel} und Abbildung xy wurde das Programm Matlab \citep{Matlab} verwendet. Matlab ist eine kommerzielle Software des US-amerikanischen Unternehmens MathWorks zur Lösung mathematischer Probleme und zur grafischen Darstellung der Ergebnisse. Es ist vor allem für numerische Berechnungen mithilfe von Matrizen ausgelegt. Hauptsächlich wird Matlab von...
 \subsubsection{Bokeh}
 komplett geklaut 
 
-Als Programmierframework verwenden wir die Open-Source-Python-Bibliothek Bokeh [7]. Bokeh ist eine interaktive Visualisierungsbibliothek
+Als Programmierframework verwenden wir die Open-Source-Python-Bibliothek Bokeh. Bokeh ist eine interaktive Visualisierungsbibliothek
 das auf interaktives Plotten in modernen Webbrowsern abzielt. Es hat einen prägnanten Ansatz für die Konstruktion neuartiger Grafiken
 mit leistungsstarker Interaktivität über sehr große oder Streaming-Datasets. Die Bokeh-Bibliothek bietet viele wichtige GUI
 Komponenten zum Erstellen interaktiver Apps, z. B. Schieberegler oder Schaltflächen und bekannte 2D-Plotstile, einschließlich Linie und Streuung
@@ -634,7 +634,7 @@ Gruppenalgebra [9]. Zusätzlich können Links zu den Apps in die Vorlesungsunter
 Der gesamte Quellcode der Anwendung kann von Github [4] heruntergeladen werden.
 \subsubsection{Github}
 \subsubsection{Python}
-Die von Guido van Rossum am Centrum Wiskunde & Informatica in Amsterdam zu Beginn der 1990er-Jahre entwickelte Programmiersprache Python wird vor allem bei der objektorientierten sowie funktionalen Programmierung eingesetzt . Allgemein bekannt ist Python für ihre einfache Lesbarkeit und vor allem für ihre klare Syntax. Daher genießt sie einen Ruf als einfache und saubere Programmiersprache mit klarer Struktur. Dem zufolge ist sie weniger Anfällig für Fehler, unter anderem auch deswegen, weil sie im Gegensatz zu anderen Programmiersrpachen wie C oder C++, auf geschweifte Klammern oder Semikola verzichtet. Gekennzeichnet werden beispielsweise Kontrollstrukturen und Code-Blöcke durch Einrückungen. Auch nicht notwendig sind Variablendeclarationen zu Beginn der Programmierung, viel mehr werden sie in den Klassen definiert.  (evtl. Listing Einfügen als Beispiel)(Quelle: https://www.bigdata-insider.de/was-ist-python-a-730480/). 
+Die von Guido van Rossum am Centrum Wiskunde & Informatica in Amsterdam zu Beginn der 1990er-Jahre entwickelte Programmiersprache Python wird vor allem bei der objektorientierten sowie funktionalen Programmierung eingesetzt . Allgemein bekannt ist Python für ihre einfache Lesbarkeit und vor allem für ihre klare Syntax. Daher genießt sie einen Ruf als einfache und saubere Programmiersprache mit klarer Struktur. Dem zufolge ist sie weniger Anfällig für Fehler, unter anderem auch deswegen, weil sie im Gegensatz zu anderen Programmiersrpachen wie C oder C++, auf geschweifte Klammern oder Semikola verzichtet. Gekennzeichnet werden beispielsweise Kontrollstrukturen und Code-Blöcke durch Einrückungen. Auch nicht notwendig sind Variablendeclarationen zu Beginn der Programmierung, viel mehr werden sie in den Klassen definiert \citep{Pythoninfo}.  (evtl. Listing Einfügen als Beispiel)
 
 \subsection{Programmentwicklung}
 Bevor ein näherer Einblick in die App gegeben werden kann ist noch zu erwähnen, dass jedes Programm in seiner Grobstruktur in etwa ähnlich aufgebaut ist und folgende Schritte, wie in \citep{IT2} beschreiben, unumgänglich sind.
@@ -652,12 +652,12 @@ Abbildung (xyx) zeigt zusammengefasst den Prozess der Programmentwicklung.
 Python verzichtet auf Kompilieren und Linken.
 
 Anaconda Vs-code
-Für die Programmierung der App wurde die frei zugängliche Open-Source-Distribution Anaconda (https://www.anaconda.com/distribution/) verwendet, die den Quelltext-Editor Visual Studio Code zur Verfügung stellt.
+Für die Programmierung der App wurde die frei zugängliche Open-Source-Distribution Anaconda \citep{Anaconda} verwendet, die den Quelltext-Editor Visual Studio Code zur Verfügung stellt.
 
 Die App beinhaltet zwei Programm-Codes. Einer davon wird $main.py$ genannt, der andere $s2s-functions.py$. ...
 
 \subsubsection{App-Umgebung: s3s-functions.py}
-$s3s\_functions$ ist in der App ein Unterprogramm, das in $main.py$ aufgerufen wird. Sie definiert die drei Klassen $s3s\_structure$, $s3s\_mode$ und $seismicparameters$. Klassen sind abstrakte Oberbegriffe für die Beschreibung gemeinsamer Strukturen und des Verhaltens von realen Objekten (Quelle:https://www.python-kurs.eu/klassen.php). Bei der Klassifizierung werden im Allgemeinen reale Objekte auf definierte Attribute und Methoden abstrahiert. Sie dient als Bauplan zur Abbildung der Objekte. Beispielhaft ist in \ref{Beispiel Klasse} die Klasse $s3s\_structure$ aufgeführt. Ein Objekt(?) in Python hat immer die Methode $self$. $Self$ wird definiert, um eine Referenz aufzubauen. Ohne $self$ können andere Funktionen im Code nicht auf das Objekt zugreifen, wenn seine müssen. Beim Erzeugen eines Objekts wird für dieses ein eigener Satz von Instanzattributen angelegt. Diese Erzeugung und Initialisierung wird in einer speziellen Methoden durchgeführt, dem Konstruktor. Der Konstruktor wird in Python durch die Kopfzeile $def\_\_init\_\_(self,...)$ gekennzeichnet (Quelle:https://www.hdm-stuttgart.de/~maucher/Python/html/Klassen.html).
+$s3s\_functions$ ist in der App ein Unterprogramm, das in $main.py$ aufgerufen wird. Sie definiert die drei Klassen $s3s\_structure$, $s3s\_mode$ und $seismicparameters$. Klassen sind abstrakte Oberbegriffe für die Beschreibung gemeinsamer Strukturen und des Verhaltens von realen Objekten \citep{klassen}. Bei der Klassifizierung werden im Allgemeinen reale Objekte auf definierte Attribute und Methoden abstrahiert. Sie dient als Bauplan zur Abbildung der Objekte. Beispielhaft ist in \ref{Beispiel Klasse} die Klasse $s3s\_structure$ aufgeführt. Ein Objekt(?) in Python hat immer die Methode $self$. $Self$ wird definiert, um eine Referenz aufzubauen. Ohne $self$ können andere Funktionen im Code nicht auf das Objekt zugreifen, wenn seine müssen. Beim Erzeugen eines Objekts wird für dieses ein eigener Satz von Instanzattributen angelegt. Diese Erzeugung und Initialisierung wird in einer speziellen Methode durchgeführt, dem Konstruktor. Der Konstruktor wird in Python durch die Kopfzeile $def\_\_init\_\_(self,...)$ gekennzeichnet \citep{class}.
 
 \begin{lstlisting}[style=,language = python,frame = single,caption ={Beispiel: Klasse}, label = {Beispiel Klasse},numbers=left] 
 class S3S_Structure:
@@ -666,7 +666,7 @@ class S3S_Structure:
 \end{lstlisting}
 
 Bleiben wir gleich beim Beispiel \ref{Beispiel Klasse}. Die Klasse $s3s\_structure$ enthält die Objekte $masses$, $massSupports$, $trusses$, $trussLength$ und $base$.
-\begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_Structure: Objekte} label = {S3S\_Structure: Objekte},numbers=left, firstnumber=4] 
+\begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_Structure: Objekte}, label = {S3S\_Structure: Objekte},numbers=left, firstnumber=4] 
     
     masslist = list()
         for i in range(len(masses)):
@@ -686,10 +686,55 @@ Bleiben wir gleich beim Beispiel \ref{Beispiel Klasse}. Die Klasse $s3s\_structu
         self.trussLength  = trussLength
         self.base         = ColumnDataSource(base)
 \end{lstlisting}
-$Masses$ wird als die Liste $masslist$ definiert, welche über eine for-Schleife und dem $append$-Befehl der Liste pro Schleifendurchlauf jeweils ein Element hinzufügt. Nicht zu vergessen ist, dass hier auf Bokehs ColumnDataSource-Objekt zurückgegriffen wurde, welches kurz gesagt eine Zuordnung zwischen Spaltennamen und Datenlisten erstellt, die vor allem bei der Visualisierung verwendet wird. Analog gilt dies auch für die Objekte $massSupports$ und $trusses$(Quelle:https://bokeh.pydata.org/en/latest/docs/user_guide/data.html).
+$Masses$ wird als die Liste $masslist$ definiert, welche über eine for-Schleife und dem $append$-Befehl der Liste pro Schleifendurchlauf jeweils ein Element hinzufügt. Nicht zu vergessen ist, dass hier auf Bokehs ColumnDataSource-Objekt \citep{Columndata} zurückgegriffen wurde, welches kurz gesagt eine Zuordnung zwischen Spaltennamen und Datenlisten erstellt, die vor allem bei der Visualisierung verwendet wird. Analog gilt dies auch für die Objekte $massSupports$ und $trusses$.
 
+\begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_Structure: update-Methode}, label = {S3S\_Structure: update-Methode},numbers=left, firstnumber=60] 
+ def update_system(self, displacement):
+        self.update_masses(displacement)
+        self.update_mass_indicator_locaiton()
+        self.update_massSupprts(displacement)
+        self.update_stiffness_indicator_locaiton()
+        self.update_truss_sources()
+        #print('truss1 = ',self.trusses[1].data['x'])
+        
+    def update_masses(self, displacement):
+        self.masses[0].data=dict(x=[displacement[0]],y=self.masses[0].data['y'])
+        self.masses[1].data=dict(x=[displacement[1]],y=self.masses[1].data['y'])
+        
+        self.update_mass_indicator_locaiton
 
+    def update_massSupprts(self, displacement):
+        self.massSupports[0].data['x'] = self.massSupports[0].data['x']*0 + 
+        [-self.trussLength/2+displacement[0], self.trussLength/2+displacement[0]]
+        self.massSupports[1].data['x'] = self.massSupports[1].data['x']*0 + 
+        [-self.trussLength/2+displacement[1], self.trussLength/2+displacement[1]]
 
+    def update_truss_sources(self):
+        noNodes = 10
+        
+        # truss1
+        x1 = - self.trussLength/2
+        x2 = self.masses[0].data['x'][0] - self.trussLength/2
+        y1 = 0.0
+        y2 = self.masses[0].data['y'][0]*0.5
+
+        ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
+        xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
+        
+        self.trusses[0].data = dict(x=xs, y=ys)
+\end{lstlisting}
+Funktionen werden in Python mit $def$ gekennzeichnet. Allgemein stellt eine Funktion ein Strukturierungselement in einer Programmiersprache dar, um eine Menge von Anweisungen zu gruppieren, damit man sie mehrmals im Programm verwenden kann \citep{function}. Eine dieser Funktionen ist auch in \ref{update-Methode} unter dem Namen $update$ definiert. Die Methode $Update$ aktualisiert das $dict()$ mit den Elementen aus einem anderen Wörterbuchobjekt oder aus einem von Schlüssel / Wert-Paaren durchgeführten Durchlauf \citep{update}. 
+$Dict()$ ist in Python eine integrierte Funktion, die ein Wörterbuchobjekt zurückgibt oder einfach ein Wörterbuch in Python erstellt. Wörterbücher sind veränderbare und ungeordnete Sammlungen von Schlüssel-Wert-Paaren, bei denen Schlüssel eindeutig und hashbar sein müssen \citep{dict}. In \ref{update-Methode} werden dadurch die Positionen und Verschiebungen der Massen und Strukturelemente definiert. 
+
+%Platzhalter
+\begin{figure}[h!]
+  \centering
+  \subfloat[][]{\includegraphics[width=0.4\linewidth]{bokeh_plot.png}}
+ \qquad
+  \subfloat[][]{\includegraphics[width=0.4\linewidth]{bokeh_plot (1).png}}
+  \caption{Beispiel: Erzeugte Struktur in der App}
+\end{figure}
+\end{document}
 
 
 
