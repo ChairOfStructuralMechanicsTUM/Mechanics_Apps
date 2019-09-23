@@ -66,7 +66,7 @@ Wegener Theorie Plattendrift
 auch in Deutlschand rheingraben
 
 \subsection{Ziel der Arbeit} \label{1.2}
-Um den Studierenden der Technischen Universität München bau-mechanische Prinzipien zu veranschaulichen, werden von wissenschaftlichen Mitarbeitern und Absolventen stetig neue interaktive Apps am Lehrstuhl für Baumechanik der TUM entwickelt. Diese sind größtenteils auf der offiziellen Website des Lehrstuhls für Baumechanik \citep{TUM} öffentlich zugänglich. Das bedeutet, dass nicht nur Studierende, sondern auch Externa darauf zugreifen können. Hauptsächlich werden die Apps in den Vorlesungen und Kursen des Lehrstuhls zu Lehrzwecken ergänzend verwendet, auch in den zugehörigen Skripten lassen sich Links zu den jeweiligen Apps finden. Sie visualisieren vereinfacht mechanische Prinzipien der Baubrange mit Beispielen aus der Praxis und helfen dadurch den behandelten Stoff zu verstehen. Aus pädagogischer Sicht schaffen sie visuelle Vorstellungen der Probleme und durch deren Interaktivität soll der Lernprozess zusätzlich induktiv gefestigt werden. Studien haben gezeigt, dass die Diversifizierung der Medien in der Lehre, insbesondere die Verwendung interaktiver Applikationen, einen großen Einfluss auf die Qualität und das Ergebnis der Kurse hat \citep{kuosa2016interactive}. Als Programmiersprache wird für die objektorientierte Progammierung Python verwendet. Einer von vielen Vorteilen die Python bietet, ist das Zurückgreifen auf einen Webbrowser, unabhängig, welches Gerät, ob Smartphone oder PC. Apps müssen ergo nicht installiert werden und können durch einfaches Klicken auf einen URL-Link, vorausgesetzt es besteht eine Internet-Verbindung, aufgerufen werden. Aufgebaut sind die Apps im Prinzip alle gleich. Das physikalische Prinzip wird in einem kurzen Einführungstext beschrieben und über Regler oder Eingabefeldern ist der Anwender in der Lage, Parameter einzugeben. Die App zeigt auf Grundlage dieser die Ergebnisse und gibt sie dem Anwender zurück. (Beispiel)
+Um den Studierenden der Technischen Universität München bau-mechanische Prinzipien zu veranschaulichen, werden von wissenschaftlichen Mitarbeitern und Absolventen stetig neue interaktive Apps am Lehrstuhl für Baumechanik der TUM entwickelt. Diese sind größtenteils auf der offiziellen Website des Lehrstuhls für Baumechanik \citep{TUMBaumechanik} öffentlich zugänglich. Das bedeutet, dass nicht nur Studierende, sondern auch Externa darauf zugreifen können. Hauptsächlich werden die Apps in den Vorlesungen und Kursen des Lehrstuhls zu Lehrzwecken ergänzend verwendet, auch in den zugehörigen Skripten lassen sich Links zu den jeweiligen Apps finden. Sie visualisieren vereinfacht mechanische Prinzipien der Baubrange mit Beispielen aus der Praxis und helfen dadurch den behandelten Stoff zu verstehen. Aus pädagogischer Sicht schaffen sie visuelle Vorstellungen der Probleme und durch deren Interaktivität soll der Lernprozess zusätzlich induktiv gefestigt werden. Studien haben gezeigt, dass die Diversifizierung der Medien in der Lehre, insbesondere die Verwendung interaktiver Applikationen, einen großen Einfluss auf die Qualität und das Ergebnis der Kurse hat \citep{kuosa2016interactive}. Als Programmiersprache wird für die objektorientierte Progammierung Python verwendet. Einer von vielen Vorteilen die Python bietet, ist das Zurückgreifen auf einen Webbrowser, unabhängig, welches Gerät, ob Smartphone oder PC. Apps müssen ergo nicht installiert werden und können durch einfaches Klicken auf einen URL-Link, vorausgesetzt es besteht eine Internet-Verbindung, aufgerufen werden. Aufgebaut sind die Apps im Prinzip alle gleich. Das physikalische Prinzip wird in einem kurzen Einführungstext beschrieben und über Regler oder Eingabefeldern ist der Anwender in der Lage, Parameter einzugeben. Die App zeigt auf Grundlage dieser die Ergebnisse und gibt sie dem Anwender zurück. (Beispiel)
 
 Im Zuge dieser Arbeit soll eine App zum Thema Basisisolierung entwickelt werden. Sie beschreibt deren Einfluss auf das Gebäude sowie dessen Reaktionen auf Erdbebeneinwirkungen und soll Studierende die Wirkungsweise der Basisisolierung nahelegen. Als Beispiel soll ein eingeschossiges Gebäude mit einer Erdbebenlast angeregt werden und ein Vergleich zwischen dem Gebäude mit und ohne Basisisolation gezogen werden. Der Anwender soll in der Lage sein die Ergebnisse abzuleiten und einen Zusammenhang herzustellen. Außerdem soll deutlich gemacht werden, dass es Möglichkeiten gibt, erdbebensicher zu bauen und die Chancen als auch die Risiken aufzeigen.
 \subsection{Struktur der Arbeit}
@@ -100,7 +100,7 @@ Um reale Phänomene der Physik, oder den anderen Disziplinen der Naturwissenscha
 Zunächst leiten wir uns das Modell anhand eines Einmassenschwingers her. Anschließend wird auf darauf das Mehrfreiheitsgradsystem behandelt und zu guter letzt im Berechnungsverfahren angewandt.
 \subsubsection{Einmassenschwinger}
 \label{2.2.1}
-Die Kinematik als Teil der technischen Mechanik beschreibt, wie sich ein Körper bewegt. Hierfür werden die Begriffe Geschwindigkeit \eqref{Geschwindigkeit} und Beschleunigung \eqref{Beschleunigung} eingeführt, welche sich aus der vektoriellen Basisgröße Länge bzw. Verschiebung $\vec{u}$ ableiten lassen.
+Die Kinematik als Teil der technischen Mechanik beschreibt, wie sich ein Körper bewegt. Hierfür werden die Begriffe Geschwindigkeit \eqref{Geschwindigkeit} und Beschleunigung \eqref{Beschleunigung} eingeführt, welche sich aus der vektoriellen Basisgröße Länge bzw. Verschiebung $\vec{u}$ nach der Zeit $t$ ableiten lassen.
 
 \begin{subequations}
     \begin{align}
@@ -601,43 +601,7 @@ Geringere Kräfte rufen geringere Spannungen hervor, allerdings sind die absolut
 %\cleardoublepage
 \section{Implementierung}
 \label{Implementierung}
-\subsection{Framework}
-In den vergangenen Abschnitten wurde über die theoretischen Zusammenhänge zwischen Erdbeben und deren Einfluss auf die sie einwirkenden Gebäude gesprochen. Welche Konstruktionen ihnen entgegenwirken sollen und wie man in der Praxis (damit) plant. Neben einigen extra für dieses Szenario entwickelten Rechenverfahren sticht vorallem das Antwortspektrum-Verfahren der DIN EN 1998 hervor, welches mit einem Beispiel in \ref{Antwortspektrum} behandlet wurde.
-
-Jetzt liegt der Fokus auf dem Programmierteil dieser Arbeit. Bei der Software-Entwicklung ist es üblich, sich ein so genanntes Framework einzurichten, welches an sich kein eigenständiges Programm ist, sondern als modernes Rahmenwerk dienen soll, um dem Programmierenden dabei unterstützt, einen Entwicklungsrahmen für seine Anwendungsprogrammierung zur Verfügung zu stellen, mit dem er die Software-Architektur seines Programms bestimmt. Überwiegend wird es, wie hier auch, in der objektorientierten Programmierung eingesetzt \citep{Objektorientierte}. Für die Bearbeitung des Themas wird im Wesentlichen auf die folgenden vier Bibliotheken beziehungsweise Programme zurückgegriffen.
-
-Label und Logos einfügen
-
-\subsubsection{Matlab}
-Für die Rechenbeispiele \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab} und \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel} und Abbildung xy wurde das Programm Matlab \citep{Matlab} verwendet. Matlab ist eine kommerzielle Software des US-amerikanischen Unternehmens MathWorks zur Lösung mathematischer Probleme und zur grafischen Darstellung der Ergebnisse. Es ist vor allem für numerische Berechnungen mithilfe von Matrizen ausgelegt. Hauptsächlich wird Matlab von...
-\subsubsection{Bokeh}
-komplett geklaut 
-
-Als Programmierframework verwenden wir die Open-Source-Python-Bibliothek Bokeh. Bokeh ist eine interaktive Visualisierungsbibliothek
-das auf interaktives Plotten in modernen Webbrowsern abzielt. Es hat einen prägnanten Ansatz für die Konstruktion neuartiger Grafiken
-mit leistungsstarker Interaktivität über sehr große oder Streaming-Datasets. Die Bokeh-Bibliothek bietet viele wichtige GUI
-Komponenten zum Erstellen interaktiver Apps, z. B. Schieberegler oder Schaltflächen und bekannte 2D-Plotstile, einschließlich Linie und Streuung
-Grundstücke und vieles mehr. Benutzerdefinierte Erweiterungen können weitere Funktionen enthalten. Beispielsweise kann JavaScript eingebettet werden
-Verwenden Sie das Paket nodejs, um ein 3D-Flächendiagramm zu erstellen. Die Architektur von Bokeh ist so, dass der Code für die Erstellung von Plots,
-Bereiche, Achsen, Glyphen usw. werden in Python geschrieben und dann in ein Format konvertiert, das von der Client-Bibliothek BokehJS verwendet wird.
-Der Anwendungscode wird auf einem Webserver mit einer Bokeh-Installation ausgeführt. Die Übersetzung von Python in den Code, der sein kann
-Der vom Client-Browser verstandene Vorgang wird direkt über das Bokeh-Framework ausgeführt. Sobald der Server in Betrieb ist,
-Ein Bokeh-Server erstellt mithilfe des Anwendungscodes Sitzungen und Dokumente für alle Clients, die über einen Browser eine Verbindung herstellen. Diese
-Das bedeutet, dass Entwickler mit wissenschaftlichem Hintergrund den gesamten Code in Python schreiben können und nicht mit dem Web vertraut sein müssen
-Technologie, während Benutzer auf die Apps zugreifen können, ohne den Code dahinter verstehen zu müssen. Eine breite Palette von Visualisierungen
-Methoden ist in der vorgeschlagenen Umgebung möglich. Dies sollte einen Entwickler nicht daran hindern, die Anwendung einfach zu halten.
-Studenten werden eine Bewerbung nicht verwenden, wenn sie zu lange brauchen, um zu verstehen, was von ihnen erwartet wird.
-Darüber hinaus sollen die Bewerbungen die Studierenden zum Herumspielen motivieren. Daher sofortige Interaktion - ohne Lesen von
-Anweisungen - ist wichtig. Schweitzer und Brown [3] haben bereits beschrieben, wie wichtig die mausgesteuerte Interaktion ist
-(z. B. mit Schiebereglern und Schaltflächen) ist. Der Entwickler sollte den Benutzer daran hindern, die Tastatur zu verwenden. Zu jeder App gehört eine Beschreibung und eine kurze Zusammenfassung der Funktionen der App, z. welche Parameter können sein
-geändert. Die Apps sind über das Internet auf der Website des Lehrstuhls für Strukturmechanik [8] und der Forschungsstelle zugänglich
-Gruppenalgebra [9]. Zusätzlich können Links zu den Apps in die Vorlesungsunterlagen aufgenommen werden, um den Zugriff während des Studiums zu erleichtern.
-Der gesamte Quellcode der Anwendung kann von Github [4] heruntergeladen werden.
-\subsubsection{Github}
-\subsubsection{Python}
-Die von Guido van Rossum am Centrum Wiskunde & Informatica in Amsterdam zu Beginn der 1990er-Jahre entwickelte Programmiersprache Python wird vor allem bei der objektorientierten sowie funktionalen Programmierung eingesetzt . Allgemein bekannt ist Python für ihre einfache Lesbarkeit und vor allem für ihre klare Syntax. Daher genießt sie einen Ruf als einfache und saubere Programmiersprache mit klarer Struktur. Dem zufolge ist sie weniger Anfällig für Fehler, unter anderem auch deswegen, weil sie im Gegensatz zu anderen Programmiersrpachen wie C oder C++, auf geschweifte Klammern oder Semikola verzichtet. Gekennzeichnet werden beispielsweise Kontrollstrukturen und Code-Blöcke durch Einrückungen. Auch nicht notwendig sind Variablendeclarationen zu Beginn der Programmierung, viel mehr werden sie in den Klassen definiert \citep{Pythoninfo}.  (evtl. Listing Einfügen als Beispiel)
-
-\subsection{Programmentwicklung}
+\subsection{Programmentwicklung} \label{Programmentwicklung}
 Bevor ein näherer Einblick in die App gegeben werden kann ist noch zu erwähnen, dass jedes Programm in seiner Grobstruktur in etwa ähnlich aufgebaut ist und folgende Schritte, wie in \citep{IT2} beschreiben, unumgänglich sind.
 \begin{itemize}
     \item[1)] Erstellen des Quell-Codes\\
@@ -650,14 +614,39 @@ Bevor ein näherer Einblick in die App gegeben werden kann ist noch zu erwähnen
     Beim Ablauf des Programmes können ebenfalls Fehler auftreten, dann muss erneut korrigiert, compiliert und gelinkt werden \citep{IT2}.
 \end{itemize}
 Abbildung (xyx) zeigt zusammengefasst den Prozess der Programmentwicklung.
-Python verzichtet auf Kompilieren und Linken.
+\subsection{Framework}
+In den vergangenen Abschnitten wurde über die theoretischen Zusammenhänge zwischen Erdbeben und deren Einfluss auf die sie einwirkenden Gebäude gesprochen. Welche Konstruktionen ihnen entgegenwirken sollen und wie man in der Praxis (damit) plant. Neben einigen extra für dieses Szenario entwickelten Rechenverfahren sticht vorallem das Antwortspektrum-Verfahren der DIN EN 1998 hervor, welches mit einem Beispiel in \ref{Antwortspektrum} behandlet wurde.
 
-Anaconda Vs-code
-Für die Programmierung der App wurde die frei zugängliche Open-Source-Distribution Anaconda \citep{Anaconda} verwendet, die den Quelltext-Editor Visual Studio Code zur Verfügung stellt.
+Jetzt liegt der Fokus auf dem Programmierteil dieser Arbeit. Bei der Software-Entwicklung ist es üblich, sich ein so genanntes Framework einzurichten, welches an sich kein eigenständiges Programm ist, sondern als modernes Rahmenwerk dienen soll, um dem Programmierenden dabei unterstützt, einen Entwicklungsrahmen für seine Anwendungsprogrammierung zur Verfügung zu stellen, mit dem er die Software-Architektur seines Programms bestimmt. Überwiegend wird es, wie hier auch, in der objektorientierten Programmierung eingesetzt \citep{Objektorientierte}. Für die Bearbeitung des Themas wird im Wesentlichen auf die folgenden Programmiersprache und Bibliotheken zurückgegriffen.
 
-Die App beinhaltet zwei Programm-Codes. Einer davon wird $main.py$ genannt, der andere $s2s-functions.py$. ...
+\subsubsection{Python}
+Die von Guido van Rossum am Centrum Wiskunde & Informatica in Amsterdam zu Beginn der 1990er-Jahre entwickelte Programmiersprache Python wird vor allem bei der objektorientierten sowie funktionalen Programmierung eingesetzt. Allgemein bekannt ist Python für ihre einfache Lesbarkeit und vor allem für ihre klare Syntax. Daher genießt sie einen Ruf als einfache und saubere Programmiersprache mit klarer Struktur. Dem zufolge ist sie weniger Anfällig für Fehler, unter anderem auch deswegen, weil sie im Gegensatz zu anderen Programmiersrpachen wie C oder C++, auf geschweifte Klammern oder Semikola verzichtet. (Eben haben wir kurz von der Programmentwicklung gesprochen. Python verzichtet sogar auf das Kompilieren und Linken, was es zusätzlich einfacher macht.) Gekennzeichnet werden beispielsweise Kontrollstrukturen und Code-Blöcke durch Einrückungen. Auch nicht notwendig sind Variablendeclarationen zu Beginn der Programmierung, viel mehr werden sie in den Klassen definiert \citep{Pythoninfo}.  (evtl. Listing Einfügen als Beispiel) Ein weiterer Vorteil von Python ist das Potential  auf externe speziell für die Programmierspache entwickelte Bibliotheken wie Bokeh \citep{Bokeh} zurückgreifen zu können.
 
-\subsubsection{App-Umgebung: s3s-functions.py}
+\subsubsection{Bibliotheken}
+Für die Programmierung der Applikation wurde die frei zugängliche Open-Source-Distribution Anaconda \citep{Anaconda} verwendet, die den Quelltext-Editor Visual Studio Code zur Verfügung stellt.
+
+Als Programmierframework wird am Lerstuhl für Baumechanik der Technischen Universität München die Open-Source-Python-Bibliothek Bokeh verwendet. Bokeh ist eine interaktive Visualisierungsbibliothek, welche auf interaktives Plotten in modernen Webbrowsern abzielt. Es verfügt über einen treffenden Ansatz für die Erstellung neuartiger Grafiken mit leistungsstarker Interaktivität, sowie über sehr große Streaming-Datasets. Als wichtiges Element der Web-Applikationen bietet die Bokeh-Bibliothek viele wichtige GUI-Komponenten wie beispielsweise Schaltflächen und Schieberegler. Seine Architektur ist so gewählt, dass der Code für die Erstellung von Plots, Flächen, Achsen, Glyphen usw. in Python geschrieben werden kann.
+Der Anwendungscode an sich wird auf einem Webserver mit einer Bokeh-Installation ausgeführt \citep{interactiveapps}.
+
+Die Übersetzung von Python in den Code, der sein kann
+Der vom Client-Browser verstandene Vorgang wird direkt über das Bokeh-Framework ausgeführt. Sobald der Server in Betrieb ist,
+Ein Bokeh-Server erstellt mithilfe des Anwendungscodes Sitzungen und Dokumente für alle Clients, die über einen Browser eine Verbindung herstellen. Diese
+Das bedeutet, dass Entwickler mit wissenschaftlichem Hintergrund den gesamten Code in Python schreiben können und nicht mit dem Web vertraut sein müssen
+Technologie, während Benutzer auf die Apps zugreifen können, ohne den Code dahinter verstehen zu müssen. Eine breite Palette von Visualisierungen
+Methoden ist in der vorgeschlagenen Umgebung möglich. Dies sollte einen Entwickler nicht daran hindern, die Anwendung einfach zu halten.
+Studenten werden eine Bewerbung nicht verwenden, wenn sie zu lange brauchen, um zu verstehen, was von ihnen erwartet wird.
+Darüber hinaus sollen die Bewerbungen die Studierenden zum Herumspielen motivieren. Daher sofortige Interaktion - ohne Lesen von
+Anweisungen - ist wichtig. Schweitzer und Brown [3] haben bereits beschrieben, wie wichtig die mausgesteuerte Interaktion ist
+(z. B. mit Schiebereglern und Schaltflächen) ist. Der Entwickler sollte den Benutzer daran hindern, die Tastatur zu verwenden. Zu jeder App gehört eine Beschreibung und eine kurze Zusammenfassung der Funktionen der App, z. welche Parameter können sein
+geändert. Die Apps sind über das Internet auf der Website des Lehrstuhls für Strukturmechanik [8] und der Forschungsstelle zugänglich
+Gruppenalgebra [9]. Zusätzlich können Links zu den Apps in die Vorlesungsunterlagen aufgenommen werden, um den Zugriff während des Studiums zu erleichtern.
+Der gesamte Quellcode der Anwendung kann von Github [4] heruntergeladen werden.
+\subsubsection{Matlab}
+Für die Rechenbeispiele \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab} und \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel} und Abbildung xy wurde das Programm Matlab \citep{Matlab} verwendet. Matlab ist eine kommerzielle Software des US-amerikanischen Unternehmens MathWorks zur Lösung mathematischer Probleme und zur grafischen Darstellung der Ergebnisse. Es ist vor allem für numerische Berechnungen mithilfe von Matrizen ausgelegt. Hauptsächlich wird Matlab von..
+
+\subsection{App-Umgebung: s3s-functions.py}
+\subsubsection{Unterprogramm: s3s-functions.py}
+Die App beinhaltet zwei Programm-Codes. Einer davon wird $main.py$ genannt, der andere $s3s-functions.py$.
 $s3s\_functions$ ist in der App ein Unterprogramm, das in $main.py$ aufgerufen wird. Sie definiert die drei Klassen $s3s\_structure$, $s3s\_mode$ und $s3s\_seismicparameters$. Klassen sind abstrakte Oberbegriffe für die Beschreibung gemeinsamer Strukturen und des Verhaltens von realen Objekten \citep{klassen}. Bei der Klassifizierung werden im Allgemeinen reale Objekte auf definierte Attribute und Methoden abstrahiert. Sie dient als Bauplan zur Abbildung der Objekte. Beispielhaft ist in \ref{Beispiel Klasse} die Klasse $s3s\_structure$ aufgeführt. Ein Objekt(?) in Python hat immer die Methode $self$. $Self$ wird definiert, um eine Referenz aufzubauen. Ohne $self$ können andere Funktionen im Code nicht auf das Objekt zugreifen, wenn sie es müssen. Beim Erzeugen eines Objekts wird für dieses ein eigener Satz von Instanzattributen angelegt. Diese Erzeugung und Initialisierung wird in einer speziellen Methode durchgeführt, dem Konstruktor. Der Konstruktor wird in Python durch die Kopfzeile $def\_\_init\_\_(self,...)$ gekennzeichnet \citep{class}.
 
 \begin{lstlisting}[style=,language = python,frame = single,caption ={Beispiel: Klasse}, label = {Beispiel Klasse},numbers=left] 
@@ -826,9 +815,48 @@ Außerdem erzeugt $self.informationTable$  eine Tabelle, in der unter anderem Ve
                                                           )
                                                 )
 \end{lstlisting}
+Mit der Methode $construct\_truss\_sources$ aus Listing 10 wird beispielhaft für $trussOne$ als Konstruktionselement die Koordinaten der Stützstellen für deren Plots festgelegt. Diese werden in den Listen $x$ und $y$ gespeichert. Der erste Eintrag repräsentiert jeweils die Werte der unteren Stützstelle und der zweite Eintrag die der oberen.
+\begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={S3S\_seismicparameters: construct\_truss\_sources}, label = {S3S\_SeismicSarameters:construct\_truss\_sources},numbers=left, firstnumber=392] 
+    def construct_truss_sources(massOne, massTwo, length):
 
-\subsubsection{App-Umgebung: main.py}
+    trussOne = dict(
+                    x=[massOne['x'][0] - length/2, massOne['x'][0] - length/2],
+                    y=[massOne['y'][0] - length  , massOne['y'][0]           ]
+                     )
+\end{lstlisting}
+Äquivalent dazu werden die weiteren Konstruktionselemente erzeugt und den Listen $trussSources$ und $massSupport$ hinzugefügt. Das gilt sowohl für die weiteren trusses, als auch für die Stockwerke, die durch $masses$ und $massSupports$ definiert sind.
+\begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={S3S\_seismicparameters: solve\_modal\_analysis}, label = {S3S\_SeismicSarameters: solve_modal_analysis},numbers=left, firstnumber=530] 
+  def solve_modal_analysis(structure):
+    eigenvalues, eigenvectors = linalg.eig(structure.K, structure.M)
+    
+    return eigenvalues, eigenvectors
+\end{lstlisting}   
+Listing 11 beschreibt die Lösung des eingangs beschriebenen Eigenwertproblems mit der  
+   
+   
+\subsubsection{Hauptprogramm: main.py}
+Das Hauptprogramm der Applikation wird unter Programmierern in der Regel immer als $main$ bezeichnet und gespeichert. In Python kann auf externe speziell für die Programmierspache entwickelte Bibliotheken zurückgegriffen werden. . So auch im Hauptprogramm
 
+
+\begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={Main: Zugriff auf externe Bibliotheken und Funktionen}, label = {Main: Zugriff auf externe Bibliotheken und Funktionen},numbers=left, firstnumber=1] 
+import numpy as np
+from bokeh.plotting import figure
+from bokeh.io import curdoc
+from S3S_Functions import S3S_Mode, S3S_Structure, S3S_SeismicParameters
+import S3S_Functions as fc
+from bokeh.models import Button, Toggle, LabelSet
+from bokeh.layouts import column, row
+from bokeh.models.widgets import TextInput, RadioGroup, Div, DataTable, TableColumn
+from os.path import dirname, join, split
+from bokeh.models.layouts import Spacer
+
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexDiv
+\end{lstlisting} 
 \subsubsection{Ein- und Ausgabe}
 \Beispiel
 \cleardoublepage
