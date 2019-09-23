@@ -66,13 +66,13 @@ Wegener Theorie Plattendrift
 auch in Deutlschand rheingraben
 
 \subsection{Ziel der Arbeit} \label{1.2}
-Um den Studierenden der Technischen Universität München bau-mechanische Prinzipien zu veranschaulichen, werden von (Lehrstuhlmitarbeitern) und Absolventen stetig neue interaktive Apps am Lehrstuhl für Baumechanik der TUM veröffentlicht. Diese sind größtenteils auf der offiziellen Website des Lehrstuhls öffentlich zugänglich. Das bedeutet, dass nicht nur Studierende, sondern auch (Außenstehende) darauf zugreifen können. Hauptsächlich werden die Apps in den Vorlesungen und Kursen des Lehrstuhls zu Lehrzwecken ergänzend verwendet, auch in den zugehörigen Skripten lassen sich Links zu den jeweiligen Apps finden. Sie visualisieren vereinfacht mechanische Prinzipien der Baubrange mit Beispielen aus der Praxis und helfen dadurch den behandelten Stoff zu verstehen. Aus pädagogischer Sicht schaffen sie visuelle Vorstellungen der Probleme und durch deren Interaktivität soll der Lernprozess zusätzlich induktiv gestärkt/gefestigt werden. Aufgebaut sind die Apps alle gleich. (Das physikalische Prinzip wird in einem kurzen Einführungstext beschrieben und über Regler oder Eingabefeldern ist der (Anwender) in der Lage Parameter wie Massen, Steifigkeiten (etc.) einzugeben. Die App zeigt auf Grundlage dieser die Ergebnisse und gibt sie dem Anwender zurück.) (Beispiel)
+Um den Studierenden der Technischen Universität München bau-mechanische Prinzipien zu veranschaulichen, werden von wissenschaftlichen Mitarbeitern und Absolventen stetig neue interaktive Apps am Lehrstuhl für Baumechanik der TUM entwickelt. Diese sind größtenteils auf der offiziellen Website des Lehrstuhls für Baumechanik \citep{TUM} öffentlich zugänglich. Das bedeutet, dass nicht nur Studierende, sondern auch Externa darauf zugreifen können. Hauptsächlich werden die Apps in den Vorlesungen und Kursen des Lehrstuhls zu Lehrzwecken ergänzend verwendet, auch in den zugehörigen Skripten lassen sich Links zu den jeweiligen Apps finden. Sie visualisieren vereinfacht mechanische Prinzipien der Baubrange mit Beispielen aus der Praxis und helfen dadurch den behandelten Stoff zu verstehen. Aus pädagogischer Sicht schaffen sie visuelle Vorstellungen der Probleme und durch deren Interaktivität soll der Lernprozess zusätzlich induktiv gefestigt werden. Studien haben gezeigt, dass die Diversifizierung der Medien in der Lehre, insbesondere die Verwendung interaktiver Applikationen, einen großen Einfluss auf die Qualität und das Ergebnis der Kurse hat \citep{kuosa2016interactive}. Als Programmiersprache wird für die objektorientierte Progammierung Python verwendet. Einer von vielen Vorteilen die Python bietet, ist das Zurückgreifen auf einen Webbrowser, unabhängig, welches Gerät, ob Smartphone oder PC. Apps müssen ergo nicht installiert werden und können durch einfaches Klicken auf einen URL-Link, vorausgesetzt es besteht eine Internet-Verbindung, aufgerufen werden. Aufgebaut sind die Apps im Prinzip alle gleich. Das physikalische Prinzip wird in einem kurzen Einführungstext beschrieben und über Regler oder Eingabefeldern ist der Anwender in der Lage, Parameter einzugeben. Die App zeigt auf Grundlage dieser die Ergebnisse und gibt sie dem Anwender zurück. (Beispiel)
 
-Im Zuge dieser Arbeit soll eine App zum Thema Basisisolierung entwickelt werden. Sie beschreibt deren Einfluss auf das Gebäude sowie dessen Reaktionen auf Erdbebeneinwirkungen und soll Studierende die Wirkungsweise der Basisisolierung nahelegen. Als Beispiel soll ein eingeschossiges Gebäude mit einer Erdbebenlast angeregt werden und ein Vergleich zwischen dem Gebäude mit und ohne Basisisolation  gezogen werden. Der Anwender soll in der Lage sein die Ergebnisse abzuleiten und einen Zusammenhang herzustellen. Außerdem soll deutlich gemacht werden, dass es Möglichkeiten gibt, erdbebensicher zu bauen( und die Chancen als auch die Risiken aufzeigen.)
+Im Zuge dieser Arbeit soll eine App zum Thema Basisisolierung entwickelt werden. Sie beschreibt deren Einfluss auf das Gebäude sowie dessen Reaktionen auf Erdbebeneinwirkungen und soll Studierende die Wirkungsweise der Basisisolierung nahelegen. Als Beispiel soll ein eingeschossiges Gebäude mit einer Erdbebenlast angeregt werden und ein Vergleich zwischen dem Gebäude mit und ohne Basisisolation gezogen werden. Der Anwender soll in der Lage sein die Ergebnisse abzuleiten und einen Zusammenhang herzustellen. Außerdem soll deutlich gemacht werden, dass es Möglichkeiten gibt, erdbebensicher zu bauen und die Chancen als auch die Risiken aufzeigen.
 \subsection{Struktur der Arbeit}
 Bevor es jedoch los geht, verschaffen wir uns erst einen kurzen Überblick über diese Arbeit. Sie lässt sich im Großen und Ganzen in zwei Kapitel unterteilen. Zum einen werden in \ref{2.2.1} des zweiten Kapitels die baudynamischen Grundlagen anhand des Einmassenschwingers hergeleitet und gelöst. Anschließend wird das Schema mithilfe des Scherbalkenmodells auf ein \ref{Mehrfreiheitsgradsystem} Mehrfreiheitsgradsystem übertragen. Mit diesen mathematischen Grundlagen soll die in \ref{1.2} erörterte Vorstellung der Problematik umgesetzt werden.
 
-Kapitel \ref{Implementierung}, als zweites großes Kapitel, soll der Implementierung der App gewidmet werden. Auf Grundlage des in \ref{Antwortspektrum} vorgestellten Antwortspektren-Verfahrens, soll nach DIN EN 1998 ein Vergleich zwischen Gebäuden mit und ohne Basisisolierung gezogen werden. Dabei soll im Folgenden auf das verwendete Framework und die Programmentwicklung eingegangen werden. 
+Kapitel \ref{Implementierung}, als zweites großes Kapitel, soll der Implementierung der App gewidmet werden. Auf Grundlage des in \ref{Antwortspektrum} vorgestellten Antwortspektren-Verfahrens, soll nach DIN EN 1998 \citep{din19981} ein Vergleich zwischen Gebäuden mit und ohne Basisisolierung gezogen werden. Dabei soll im Folgenden auf das verwendete Framework und die Programmentwicklung eingegangen werden. 
 \cleardoublepage
 \section{Basisisolierung}
 \label{Kapitel 2}
@@ -119,9 +119,9 @@ Nach dem dritten Newton'schen Axiom ist die Kraft, die auf einen Körper, genaue
     \vec{F} - m\cdot\vec{\ddot u}&=\vec{0}&=\sum_{i=1}^{n} \vec{F_{i}}\\
 \end{equation}
 
-In diesem Zusammenhang beschreibt der Term $(-m \cdot a)$ den scheinbaren Widerstand der Masse gegen die sie beschleunigende Kraft. Diesen Widerstand nennt man Trägheitskraft. Gleichung \eqref{Kraft} erinnert hierbei stark an die aus der Statik bekannte Gleichgewichtsbedingung. In beschleunigt bewegten Bezugssystemenystemen wird zur Aufstellung von Bewegungsgleichungen das d'Alembert'sche Prinzip verwendet (beschreiben). Mit diesem Wissen können wir einen ersten Versuch wagen, ein Modell zu erstellen.
+In diesem Zusammenhang beschreibt der Term $(-m \cdot a)$ den scheinbaren Widerstand der Masse $m$ gegen die sie beschleunigende Kraft $F$. Diesen Widerstand nennt man Trägheitskraft. Gleichung \eqref{Kraft} erinnert hierbei stark an die aus der Statik bekannte Gleichgewichtsbedingung. In beschleunigt bewegten Bezugssystemenystemen wird zur Aufstellung von Bewegungsgleichungen das d'Alembert'sche Prinzip verwendet (beschreiben). Mit diesem Wissen können wir einen ersten Versuch wagen, ein Modell zu erstellen.
 
-(Bild einmassenschwinger einfügen)
+Man betrachte folgendes System: (Bild einmassenschwinger einfügen)
 Nach dem d'Alembert'schen Prinzip muss die Summe aller dynamischen Kräfte gleich $ \vec{0}$ sein.
 Folglich können wir das System freischneiden und das dynamische Kräftegleichgewicht in horizontaler Richtung \eqref{Dynamisches Gleichgewicht} aufstellen. \citep{petersen2017grundlagen} 
 
@@ -210,8 +210,9 @@ Mit dem Ansatz $u_r_p = A_r\sin{(\Omega t-\alpha)}$ erhalten wir die allgemeine 
   \label{Vergrößerungsfunktion}
      V(\eta) &=\abs{\frac{A_r}{u_e_0}} = \frac{\Omega^2 m}{\mathrm{\sqrt{(k-\Omega^2m)^2+\Omega^2c^2}}}\\
      &=\frac{\eta^2}{\mathrm{\sqrt{(1-\eta^2)^2+(2D\eta)^2}}}
-     \intertext{Beim Argument $\Omega t- \alpha$ der Sinusfunktion beschreibt $\alpha$ den Phasenversatz zwischen Erreger- und Eigenfrequenz. Er beschreibt, inwiefern das System der Anregung nachfolgt. Bei hochfrequenten Anregungen bleibt die Masse in Ruhe, bei langsamen Bewegungen hingegen bewegt sie sich wie der Untergrund \citep{EKTM}.}
+     \intertext{Beim Argument $\Omega t- \alpha$  der Sinusfunktion beschreibt $\alpha$ \eqref{alpha} den Phasenversatz zwischen Erreger- und Eigenfrequenz. Er beschreibt, inwiefern das System der Anregung nachfolgt. Bei hochfrequenten Anregungen bleibt die Masse in Ruhe, bei langsamen Bewegungen hingegen bewegt sie sich wie der Untergrund \citep{EKTM}.}
      \alpha &= \mathrm{\arctan{(\frac{2D\eta}{1-\eta^2}})}
+     \label{alpha}
 \end{align}
 \end{subequations}
 %\begin{figure}
@@ -220,12 +221,12 @@ Mit dem Ansatz $u_r_p = A_r\sin{(\Omega t-\alpha)}$ erhalten wir die allgemeine 
     %\caption{Caption}
    % \label{fig:my_label}
 %\end{figure}
-Betrachtet man den Plot der Vergrößerungsfunktion (ABB), so fallen mehrere Phänomene auf. Das offensichtlichste davon sind die lokalen Maxima der Funktion. Diese befinden sich in der Nähe von $\eta = 1$. Im ungedämpften Fall sogar bei exakt eins, wobei sie dort strenggenommen nicht definiert ist. Geht die Erregerfrequenz gegen die Eigenfrequenz des Systems, so tritt Resonanz auf. Für $D=0$ divergiert die Funktion sogar. Im Resonanzfall nimmt die Amplitude in jedem Schwingungszyklus stetig zu, sogar soweit, bis die Konstruktion zum Versagen kommt. Somit wird (sofort) klar, dass das System erstens ausreichend gedämpft werden (sein?) muss, und zweitens so modifiziert, sodass die Eigenfrequenz weit genug von der Erregerfrequenz entfernt ist.
+Betrachtet man den Plot der Vergrößerungsfunktion (ABB), so fallen einem mehrere Phänomene auf. Das offensichtlichste davon sind die lokalen Maxima der Funktion. Diese befinden sich in der Nähe von $\eta = 1$. Im ungedämpften Fall sogar bei exakt eins, wobei es dort strenggenommen nicht definiert ist. Geht die Erregerfrequenz gegen die Eigenfrequenz des Systems, so tritt Resonanz auf. Für $D=0$ divergiert die Funktion sogar. Im Resonanzfall nimmt die Amplitude in jedem Schwingungszyklus stetig zu, sogar soweit, bis die Konstruktion zum Versagen kommt. Somit wird (sofort) klar, dass das System erstens ausreichend gedämpft werden (sein?) muss, und zweitens so modifiziert, sodass die Eigenfrequenz weit genug von der Erregerfrequenz entfernt ist.
 
 Im vergangenen Abschnitt wurden die Grundlagen für die Lösung der Bewegungsgleichung des Einfreiheitsgradsystems anhand des Einmassenschwingers bekannt gemacht. Die allgemeine Lösung der Gleichung setzt sich aus $L_h$ und $L_p$ zusammen und darf aufgrund der Linearität addiert werden. Da in der Baudynamik fast alle Systeme mehr als einen Freiheitsgrad besitzen, wird im Folgenden auch das Mehrfreiheitsgradsystem behandelt. 
 \subsubsection{Mehrfreiheitsgradsystem} \label{Mehrfreiheitsgradsystem}
 
-Jedes Gebäude lässt sich stark vereinfachen. So sind reale Tragwerke kontinuierlich massebelegt, allerdings werden diese Masseverteilungen auf bestimmte Punkte konzentriert. Dabei bieten sich besonders die Stockwerke des Tragwerks als solche Punkte an. (, da sie auf einer Ebene  viel Masse aufweisen.) Wie in jedem anderen Modell auch, sind die Annäherungen umso besser, je mehr Elemente eingeführt werden. Hier ist es allerdings wichtig, die richtige Balance zwischen Rechenaufwand und Genauigkeit zu finden. Wenn wir beim Thema Genauigkeit bleiben, so ist zu erwähnen, dass jede Punktmasse mehrere Freiheitsgrade besitzt. In einem dreidimensionalen Raum hat jedes Element sechs Freiheitsgrade, drei Translations- und drei Rotationsfreiheitsgrade. Betrachtet man das Gebäude in einer Ebene ist das Modell auf eine Rotation und zwei Transtationen beschränkt. Vernachlässigt man dazu auch noch die Drehträgheit und die Vertikale Bewegung, so wie es in den meisten Rechenverfahren üblich ist, steht nur noch die horizontale Bewegung im Fokus. Auf Grundlage des Scheerbalkenmodells, werden die Stäbe des Rahmentragwerks als dehnstarr angenommen. Diese Einschränkung bringt eine Zeitinvarianz der einzelnen Körperpunkte untereinander ins Spiel \citep{petersen2017grundlagen}.
+Jedes Gebäude lässt sich stark vereinfachen. So sind reale Tragwerke kontinuierlich massebelegt, allerdings werden diese Masseverteilungen auf bestimmte Punkte konzentriert. Dabei bieten sich besonders die Stockwerke des Tragwerks als solche Punkte an. (, da sie auf einer Ebene  viel Masse aufweisen.) Wie in jedem anderen Modell auch, sind die Annäherungen umso besser, je mehr Elemente eingeführt werden. Hier ist es allerdings wichtig, die richtige Balance zwischen Rechenaufwand und Genauigkeit zu finden. Wenn wir beim Thema Genauigkeit bleiben, so ist ebenfalls zu erwähnen, dass jede Punktmasse mehrere Freiheitsgrade besitzt. In einem dreidimensionalen Raum hat jedes Element sechs Freiheitsgrade, drei Translations- und drei Rotationsfreiheitsgrade. Betrachtet man das Gebäude in einer Ebene ist das Modell auf eine Rotation und zwei Transtationen beschränkt. Vernachlässigt man dazu auch noch die Drehträgheit und die Vertikale Bewegung, so wie es in den meisten Rechenverfahren üblich ist, steht nur noch die horizontale Bewegung im Fokus. Auf Grundlage des Scheerbalkenmodells, werden die Stäbe des Rahmentragwerks als dehnstarr angenommen. Diese Einschränkung bringt eine Zeitinvarianz der einzelnen Körperpunkte untereinander ins Spiel \citep{petersen2017grundlagen}.
 (Bild einfügen)
 %(lokales Koordinatensystem evtl bei rechenverfahren) (Um die Verformungen, Beschleunigungen und Schnittgrößen bestimmen zu können, wird für die Berechnungen (dabei) häufig ein Rahmentragwerk herangezogen.  (werden die Massen der Stützen gegenüber den Massen der Decken vernachlässigt, und die Riegel, welche die Geschosse darstellen, als starr angenommen. \citep{MeskourisHinzenButenwegetal.2016} (Vernachlässigung der Drehträgheit und Vertikalen Bewegung))%
 
@@ -259,9 +260,9 @@ Einsetzen und Umstellen der Gleichung erinnert an ein Eigenwertproblem $(A-\lamb
 \end{subequations}
 Gesucht sind also diejenigen $\omega^2_n$, für die gilt: $det(K-\omega^2_nM)&=0$. Um die dazugehörigen Eigenvektoren $\phi_n$ zu finden, geht man wie folgt vor:
 \begin{itemize}
-    \item[1)] Nachdem man  $\omega^2_n$ in $K-\omega^2M = \vec{0}$ eingesetzt hat,
-    \item[2)] bestimmt man über die Determinante die Lösungen des charakteristischen Polynoms. 
-    \item[3)] Schließlich sucht man den Eigenraum $Eig(\omega^2_n) = ker(K-\omega^2_nM)$. Dieser bildet eine Basis aus Eigenvektoren zum zugehörigen Eigenwert. 
+    \item[1)] Setze $\omega^2_n$ in $K-\omega^2M = \vec{0}$ ein
+    \item[2)] Bestimme über die Determinante die Lösungen des charakteristischen Polynoms 
+    \item[3)] Finde eine Basis aus Eigenvektoren zu zugehörigen Eigenwert: $Eig(\omega^2_n) = ker(K-\omega^2_nM)$
 \end{itemize}
 Da in diesem Fall die algebraischen Vielfachheiten der Eigenwerte jeweils gleich eins sind, sind die dazugehörigen Eigenvektoren zueinander linear unabhängig. Allerdings ist jedes Vielfaches auch eine Lösung, deshalb normiert man geschickterweise die Vektoren. Führt man die Eigenvektoren zusammen, so erhält man eine orthogonale Matrix $\Phi$ mit der Eigenschaft $\mathrm{\Phi^T} = \mathrm{\Phi^{-1}}$. Diese Matrix ist längenerhaltend und wird modale Matrix genannt. Man verwendet sie, um das lineare Gleichungssystem zu entkoppeln und sukzessive Zeile für Zeile zu lösen.
 
@@ -462,7 +463,7 @@ T_C[s] & 0,20 & 0,25 & 0,30 & 0,30 & 0,4 & 0,5 & 0,20 \\ \hline
 \rowcolor[HTML]{C0C0C0} 
 T_D[s] & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}2,0} & 2,0 \\ \hline
 \end{tabular}
-\caption{Kennwerte zur Beschreibung des Einflusses des Bodesn nach DIN 1998}
+\caption{Kennwerte zur Beschreibung des Einflusses des Bodens nach DIN 1998}
 \label{Bodenklassen}
 \end{table}
 
@@ -503,7 +504,7 @@ $\eta  =1$\\
 $D = 5\%$
 \\[0.5cm]
 (ABB)
-
+Überleitung
 
 \subsubsection{Vorgehensweise}
 Bei der Verwendung des Antwortspektrum-Verfahrens hält man sich meist an das unten genannte Schema:  
@@ -517,7 +518,7 @@ Bei der Verwendung des Antwortspektrum-Verfahrens hält man sich meist an das un
 \end{itemize}
 Nachdem nun das....
 \subsubsection{Beispiel: Erdbebenbeanspruchung eines Gebäudes mit und ohne Basisisolierung} \label{Beispiel Berechnung}
-In diesen Beispiel soll ein Vergleich zwischen einem Gebäude mit und ohne Basisisolierung gezogen werden. Beide Gebäude bestehen aus nur einem Geschoss. Die Gebäudedecken und - Fundamente entsprechen den zusammengeführten Punktmassen. Die Wände bleiben in diesem Beispiel, wie in \ref{Mehrfreiheitsgradsystem} beschrieben masselos. Da bei einem Gebäude ohne Basisisolierung das Fundament an den Boden gekoppelt ist, bewegt es sich bei einem Beben wie der Baugrund. Daher lässt sich dieses Gebäude in ein Einfreiheitsgradsystem zusammenfassen. Bei dem Gebäude mit Basisisolierung hingegen muss vereinfacht mit einem Zweifreiheitsgradsystem gerechnet werden. Wie in der App soll auch hier mit dem Antwortspektrumverfahren nach DIN EN 1998 (2010-12) gerechnet werden. Das Erdbebenantwortspektrum als elastisches Spektrum $S_e$, wie in Abb xy dargestellt, berücksichtig den Verhaltensbeiwert $q$ vorerst nicht. (Beispiel Quelle \cite{petersen2017grundlagen})
+In diesen Beispiel soll ein Vergleich zwischen einem Gebäude mit und ohne Basisisolierung gezogen werden. Beide Gebäude bestehen aus nur einem Geschoss. Die Gebäudedecken und - Fundamente entsprechen den zusammengeführten Punktmassen. Die Wände bleiben in diesem Beispiel, wie in \ref{Mehrfreiheitsgradsystem} beschrieben masselos. Da bei einem Gebäude ohne Basisisolierung das Fundament an den Boden gekoppelt ist, bewegt es sich bei einem Beben wie der Baugrund. Daher lässt sich dieses Gebäude in ein Einfreiheitsgradsystem zusammenfassen. Bei dem Gebäude mit Basisisolierung hingegen muss vereinfacht mit einem Zweifreiheitsgradsystem gerechnet werden. Wie in der App, soll auch hier mit dem Antwortspektrumverfahren nach DIN EN 1998 (2010-12) gearbeitet werden. Das Erdbebenantwortspektrum als elastisches Spektrum $S_e$, wie in Abb xy dargestellt, berücksichtig den Verhaltensbeiwert $q$ vorerst nicht \cite{petersen2017grundlagen}.
 \\
 (Abb Systeme, Abb Spektrum)
 \\
@@ -547,7 +548,7 @@ $m_B = 0.1\cdot 10^6 kg$\\
 $k_B = 10\cdot 10^6 \frac{N}{m}$\\
 $D_B = 0.30$
 \\[0.5cm]
-Das script \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel} liefert $\omega_1_,_2$, $f_1_,_2$ und $T_1_,_2$.
+Das Matlab-script \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel} liefert $\omega_1_,_2$, $f_1_,_2$ und $T_1_,_2$.
 \\[0.5cm]
 $\omega_1 = 2.458 s^{-1}$, $\omega_2 = 31.696 s^{-1}$ \\
 $f_1 = 0.3912$ Hz, $f_2 = 5.045$ Hz\\
@@ -555,21 +556,21 @@ $T_1 = 2.56$ s, $T_2 = 0.198$ s
 \\[0.5cm]
 
 \lstinputlisting[style=Matlab-editor,caption= {Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel},label={Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel}, basicstyle=\mlttfamily\scriptsice ]{Latex_Beispiel_Basisisiolierung.m}
-Die zugehörigen Eigenformen sind in Abbxy angegeben. In der ersten Eigenform schwingen $m_G$ und $m_B$ gemeinesam zur Seite aus, in der zweiten Eigenfrequenz verlaufen die Schwingungen gegenläufig. Für die Berechnung der Erdbebenbeanspruchung wird vereinfachden nur die erste Eigenform, die der Grundschwingung eines Einfreiheitsgradsystems entspricht, berücksichtigt \citep{petersen2017grundlagen}.
+Die zugehörigen Eigenformen sind in Abbxy angegeben. In der ersten Eigenform schwingen $m_G$ und $m_B$ gemeinesam zur Seite aus, in der zweiten Eigenfrequenz verlaufen die Schwingungen gegenläufig. Für die Berechnung der Erdbebenbeanspruchung wird vereinfachend nur die erste Eigenform, die der Grundschwingung eines Einfreiheitsgradsystems entspricht, berücksichtigt \citep{petersen2017grundlagen}.
 \begin{subequations}
 \begin{align}
     S_e(T_1=2.56s) = \frac{7.59}{2.56^2}\frac{m}{s^2} =1.158 \frac{m}{s^2} \\
-    \intertext{Die resultierende Massenkraft des Systems in der ersten Eigenform beträgt nach Gleichung xy:}
-    F_B = \frac{(1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00)^2}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot 1.158 N = 1.736\cdot 10^6N \\
-    F_G = 1.4\cdot 10^6\cdot 1.11 \cdot \frac{1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot 1.158 N = 1.631\cdot 10^6 N \\
-    \intertext{Die Relativverschiebungen gegenüber dem Boden betragen:}
+    \intertext{Die resultierende Massenkräfte $F_B$ und $F_G$ des Systems in der ersten Eigenform beträgt nach Gleichungen \eqref{F_B} und \eqref{F_G}:}
+    F_B = \frac{(1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00)^2}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot 1.158 N = 1.736\cdot 10^6N \\ \label{F_B}
+    F_G = 1.4\cdot 10^6\cdot 1.11 \cdot \frac{1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot 1.158 N = 1.631\cdot 10^6 N \\ \label{F_G}
+    \intertext{Die Relativverschiebungen $u_B$ und $u_G$ gegenüber dem Boden betragen:}
     u_B = 1.00\cdot \frac{1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot\frac{1.158}{2.458^2}m = 0.174m\\
     u_G = 1.11\cdot \frac{1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot\frac{1.158}{2.458^2}m = 0.193m\\
     \intertext{Aus den Verschiebungen lassen sich nun die Relativverschiebungen $\Delta u_B$ zwischen der Gebäudemasse und der Basisisolierung berechnen:}
     \Delta u_B = u_G - u_B = (0.193 - 0.174)m = 0.019 m 
 \end{align}
 \end{subequations}
-Die Ergebnisse sind in ABB.x veranschaulicht. Stellt man nun die Endergebnisse gegenüber, so erkennt man einen wesentlichen Unterschied. Die Relativverschiebungen zwischen Gebäudemasse und Basisisolierung des Zweifreiheitsgradsystem sind signifikant kleiner als die des Einfreiheitsgradsystems.  
+Die Ergebnisse sind in ABB.x veranschaulicht. Stellt man nun die Endergebnisse gegenüber, so erkennt man einen wesentlichen Unterschied. Die Relativverschiebungen zwischen Gebäudemasse $m_G$ und Basisisolierung $m_B$ des Zweifreiheitsgradsystem sind signifikant kleiner als die des Einfreiheitsgradsystems.  
 \begin{itemize}
     \item [1)]  ohne Basisisiolierung: 0.077 m
     \item [2)]  mit Basisisiolierung: 0.019 m
@@ -581,23 +582,23 @@ Setzt man die Verschiebungen ins Verhältnis, so wird deutlich, dass die Relativ
 \end{itemize}
 Geringere Kräfte rufen geringere Spannungen hervor, allerdings sind die absoluten Verschiebungen beim Gebäude mit Basisisolierung größer als beim Gebäude ohne. ... Nachteile
 \newpage
-\subsubsection{Für Termin: Formeln}
-Maximale Trägheitskraft:
-\begin{subequations}
-\begin{align}
-    max(H) &= H_E = mS_a(T_1)\\
-    \intertext{$\vec{v(t)}$ als entkoppelte modale Ordinaten}
-    \underline M\vec{\ddot v}+ \underline D\vec{\dot v} +\underline K\vec{v} &=\underline F(t)\\
-    \intertext{modaler Lastvektor}
-    \underline F &= -\underline A^T \underline m \vec{\ddot{y_F}} = -\underline A^T \underline m \underline I \vec{\ddot{y_F}}\\
-    \intertext{effektive Modale Massen}
-    H_E_;_j  = \sum \limits_{i=1}^n H_E_;_k_,_j = \frac{L_j}{M_j}S_a(T_j)\cdot \sum \limits_{i=1}^n m_k a_k_j \\
-    = \frac{L_j^2}{M_j}S_a(T_j)\\
-    = m_e_j S_a(T_j)
-    \end{align}
-\end{subequations}
+%\subsubsection{Für Termin: Formeln}
+%Maximale Trägheitskraft:
+%\begin{subequations}
+%\begin{align}
+ %   max(H) &= H_E = mS_a(T_1)\\
+  %  \intertext{$\vec{v(t)}$ als entkoppelte modale Ordinaten}
+   % \underline M\vec{\ddot v}+ \underline D\vec{\dot v} +\underline K\vec{v} &=\underline F(t)\\
+    %\intertext{modaler Lastvektor}
+    %\underline F &= -\underline A^T \underline m \vec{\ddot{y_F}} = -\underline A^T \underline m \underline I \vec{\ddot{y_F}}\\
+    %\intertext{effektive Modale Massen}
+    %H_E_;_j  = \sum \limits_{i=1}^n H_E_;_k_,_j = \frac{L_j}{M_j}S_a(T_j)\cdot \sum \limits_{i=1}^n m_k a_k_j \\
+    %= \frac{L_j^2}{M_j}S_a(T_j)\\
+    %= m_e_j S_a(T_j)
+    %\end{align}
+%\end{subequations}
 
-\cleardoublepage
+%\cleardoublepage
 \section{Implementierung}
 \label{Implementierung}
 \subsection{Framework}
@@ -657,7 +658,7 @@ Für die Programmierung der App wurde die frei zugängliche Open-Source-Distribu
 Die App beinhaltet zwei Programm-Codes. Einer davon wird $main.py$ genannt, der andere $s2s-functions.py$. ...
 
 \subsubsection{App-Umgebung: s3s-functions.py}
-$s3s\_functions$ ist in der App ein Unterprogramm, das in $main.py$ aufgerufen wird. Sie definiert die drei Klassen $s3s\_structure$, $s3s\_mode$ und $seismicparameters$. Klassen sind abstrakte Oberbegriffe für die Beschreibung gemeinsamer Strukturen und des Verhaltens von realen Objekten \citep{klassen}. Bei der Klassifizierung werden im Allgemeinen reale Objekte auf definierte Attribute und Methoden abstrahiert. Sie dient als Bauplan zur Abbildung der Objekte. Beispielhaft ist in \ref{Beispiel Klasse} die Klasse $s3s\_structure$ aufgeführt. Ein Objekt(?) in Python hat immer die Methode $self$. $Self$ wird definiert, um eine Referenz aufzubauen. Ohne $self$ können andere Funktionen im Code nicht auf das Objekt zugreifen, wenn seine müssen. Beim Erzeugen eines Objekts wird für dieses ein eigener Satz von Instanzattributen angelegt. Diese Erzeugung und Initialisierung wird in einer speziellen Methode durchgeführt, dem Konstruktor. Der Konstruktor wird in Python durch die Kopfzeile $def\_\_init\_\_(self,...)$ gekennzeichnet \citep{class}.
+$s3s\_functions$ ist in der App ein Unterprogramm, das in $main.py$ aufgerufen wird. Sie definiert die drei Klassen $s3s\_structure$, $s3s\_mode$ und $s3s\_seismicparameters$. Klassen sind abstrakte Oberbegriffe für die Beschreibung gemeinsamer Strukturen und des Verhaltens von realen Objekten \citep{klassen}. Bei der Klassifizierung werden im Allgemeinen reale Objekte auf definierte Attribute und Methoden abstrahiert. Sie dient als Bauplan zur Abbildung der Objekte. Beispielhaft ist in \ref{Beispiel Klasse} die Klasse $s3s\_structure$ aufgeführt. Ein Objekt(?) in Python hat immer die Methode $self$. $Self$ wird definiert, um eine Referenz aufzubauen. Ohne $self$ können andere Funktionen im Code nicht auf das Objekt zugreifen, wenn sie es müssen. Beim Erzeugen eines Objekts wird für dieses ein eigener Satz von Instanzattributen angelegt. Diese Erzeugung und Initialisierung wird in einer speziellen Methode durchgeführt, dem Konstruktor. Der Konstruktor wird in Python durch die Kopfzeile $def\_\_init\_\_(self,...)$ gekennzeichnet \citep{class}.
 
 \begin{lstlisting}[style=,language = python,frame = single,caption ={Beispiel: Klasse}, label = {Beispiel Klasse},numbers=left] 
 class S3S_Structure:
@@ -688,7 +689,7 @@ Bleiben wir gleich beim Beispiel \ref{Beispiel Klasse}. Die Klasse $s3s\_structu
 \end{lstlisting}
 $Masses$ wird als die Liste $masslist$ definiert, welche über eine for-Schleife und dem $append$-Befehl der Liste pro Schleifendurchlauf jeweils ein Element hinzufügt. Nicht zu vergessen ist, dass hier auf Bokehs ColumnDataSource-Objekt \citep{Columndata} zurückgegriffen wurde, welches kurz gesagt eine Zuordnung zwischen Spaltennamen und Datenlisten erstellt, die vor allem bei der Visualisierung verwendet wird. Analog gilt dies auch für die Objekte $massSupports$ und $trusses$.
 
-\begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_Structure: update-Methode}, label = {S3S\_Structure: update-Methode},numbers=left, firstnumber=60] 
+\begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_Structure: update-Methode}, label = {S3S\_Structure:update-Methode},numbers=left, firstnumber=60] 
  def update_system(self, displacement):
         self.update_masses(displacement)
         self.update_mass_indicator_locaiton()
@@ -710,7 +711,7 @@ $Masses$ wird als die Liste $masslist$ definiert, welche über eine for-Schleife
         [-self.trussLength/2+displacement[1], self.trussLength/2+displacement[1]]
 
 \end{lstlisting}
-Funktionen werden in Python mit $def$ gekennzeichnet. Allgemein stellt eine Funktion ein Strukturierungselement in einer Programmiersprache dar, um eine Menge von Anweisungen zu gruppieren, damit man sie mehrmals im Programm verwenden kann \citep{function}. Eine dieser Funktionen ist auch in \ref{S3S\_Structure: update-Methode} unter dem Namen $update$ definiert. Die Methode $Update$ aktualisiert das $dict()$ mit den Elementen aus einem anderen Wörterbuchobjekt oder aus einem von Schlüssel / Wert-Paaren durchgeführten Durchlauf \citep{update}. 
+Funktionen werden in Python mit $def$ gekennzeichnet. Allgemein stellt eine Funktion ein Strukturierungselement in einer Programmiersprache dar, um eine Menge von Anweisungen zu gruppieren, damit man sie mehrmals im Programm verwenden kann \citep{function}. Eine dieser Funktionen ist auch in \ref{S3S\_Structure:update-Methode} unter dem Namen $update$ definiert. Die Methode $Update$ aktualisiert das $dict()$ mit den Elementen aus einem anderen Wörterbuchobjekt oder aus einem von Schlüssel / Wert-Paaren durchgeführten Durchlauf \citep{update}. 
 $Dict()$ ist in Python eine integrierte Funktion, die ein Wörterbuchobjekt zurückgibt oder einfach ein Wörterbuch in Python erstellt. Wörterbücher sind veränderbare und ungeordnete Sammlungen von Schlüssel-Wert-Paaren, bei denen Schlüssel eindeutig und hashbar sein müssen \citep{dict}. In \ref{S3S\_Structure: update-Methode} werden dadurch die Positionen und Verschiebungen der Massen und Strukturelemente definiert.
 
 \begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_Structure: Interpolation der Struktur}, label = {S3S\_Structure: Interpolation},numbers=left, firstnumber=80] 
@@ -797,7 +798,34 @@ class S3S_Mode( S3S_Structure ):
             
         return self.modeShape / maxAmplitude
 \end{lstlisting}
+....
 
+Der nachfolgende Code enthält die Klasse $S3S\_SeismicParameters$. Darin werden die Vorraussetzungen für die Erzeugung des elastischen Antwortspektrums geschaffen. Parameter wie die erdbebenzonenabhängigen Referenzspitzerte $a$, Bedeutungsbeiwerte $\gamma$, einheitlicher Spektralwert $\beta_0$ und die Kennwerte zur Beschreibung des Einflusses des Bodens aus Tabelle \ref{Bodenklassen} werden hier definiert.
+\begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={S3S\_SeismicParameters: \_\_init\_\_ }, label = {S3S\_SeismicSarameters: },numbers=left, firstnumber=243] 
+class S3S_SeismicParameters():
+    
+    def __init__(self,a,gamma,S,eta,beta,undergroundParamter):
+        self.a = a
+        self.gamma = gamma
+        self.S = 0 # default value, will be changed by determine_periods_and_S()
+        self.eta = eta
+        self.beta = beta
+        self.undergroundParamter = undergroundParamter
+\end{lstlisting}
+Außerdem erzeugt $self.informationTable$  eine Tabelle, in der unter anderem Verschiebungen, Kräfte und modale Massenanteile der Schwingungsmoden aufgeführt sind.
+\begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={S3S\_seismicparameters: InformationTable}, label = {S3S\_SeismicSarameters: InformationTable},numbers=left, firstnumber=262] 
+        self.informationTable = ColumnDataSource(
+                                                 data=dict(
+                                                           subject=['Period [second]',"Participation Factor ("u"\u03b2)","Modal Mass ("u"\u03b1)",
+                                                                    "Spectral Acceleration [m/s"u"\u00B2]",'Total Force [N]',
+                                                                    'First Storey Max. Displacement [mm]','Second Storey Max. Displacement [mm]',
+                                                                    'First Storey Total Force [N]',
+                                                                    'Second Storey Total Force [N]'],
+                                                            modeOne  =[0,0,0,0,0,0,0,0,0,0,0],
+                                                            modeTwo  =[0,0,0,0,0,0,0,0,0,0,0]
+                                                          )
+                                                )
+\end{lstlisting}
 
 \subsubsection{App-Umgebung: main.py}
 
