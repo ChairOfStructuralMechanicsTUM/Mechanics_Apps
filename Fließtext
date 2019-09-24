@@ -215,11 +215,11 @@ Mit dem Ansatz $u_r_p = A_r\sin{(\Omega t-\alpha)}$ erhalten wir die allgemeine 
      \label{alpha}
 \end{align}
 \end{subequations}
-%\begin{figure}
-  %  \centering
-  %  \includegraphics{Vergroeßerungsfunktion.png}
-    %\caption{Caption}
-   % \label{fig:my_label}
+%\begin{figure}[h]
+    %\centering
+   % \includegraphics{Vergroeßerungsfunktion.png}
+   % \caption{Vergrößerungsfunktion}
+  %  \label{Vergrößerungsfunktion}
 %\end{figure}
 Betrachtet man den Plot der Vergrößerungsfunktion (ABB), so fallen einem mehrere Phänomene auf. Das offensichtlichste davon sind die lokalen Maxima der Funktion. Diese befinden sich in der Nähe von $\eta = 1$. Im ungedämpften Fall sogar bei exakt eins, wobei es dort strenggenommen nicht definiert ist. Geht die Erregerfrequenz gegen die Eigenfrequenz des Systems, so tritt Resonanz auf. Für $D=0$ divergiert die Funktion sogar. Im Resonanzfall nimmt die Amplitude in jedem Schwingungszyklus stetig zu, sogar soweit, bis die Konstruktion zum Versagen kommt. Somit wird (sofort) klar, dass das System erstens ausreichend gedämpft werden (sein?) muss, und zweitens so modifiziert, sodass die Eigenfrequenz weit genug von der Erregerfrequenz entfernt ist.
 
@@ -408,8 +408,8 @@ Die Kontrollperioden $T_B$, $T_C$ und $T_D$ sind die Grenzen der Abschnitte. Die
 \begin{figure}[h]
     \centering
     \includegraphics{csm_germ_nad_zonation_localisation_07_ba62d7236f.png}
-    \caption{Erdbebenzonen DIN EN 1998 NA}
-    \label{https://www.gfz-potsdam.de/din4149_erdbebenzonenabfrage/}
+    \caption{Erdbebenzonen DIN EN 1998 NA \citep{gfz}}
+    \label{gfzpotsdam}
 \end{figure}
 
 \begin{table}[h]
@@ -620,34 +620,23 @@ In den vergangenen Abschnitten wurde über die theoretischen Zusammenhänge zwis
 Jetzt liegt der Fokus auf dem Programmierteil dieser Arbeit. Bei der Software-Entwicklung ist es üblich, sich ein so genanntes Framework einzurichten, welches an sich kein eigenständiges Programm ist, sondern als modernes Rahmenwerk dienen soll, um dem Programmierenden dabei unterstützt, einen Entwicklungsrahmen für seine Anwendungsprogrammierung zur Verfügung zu stellen, mit dem er die Software-Architektur seines Programms bestimmt. Überwiegend wird es, wie hier auch, in der objektorientierten Programmierung eingesetzt \citep{Objektorientierte}. Für die Bearbeitung des Themas wird im Wesentlichen auf die folgenden Programmiersprache und Bibliotheken zurückgegriffen.
 
 \subsubsection{Python}
-Die von Guido van Rossum am Centrum Wiskunde & Informatica in Amsterdam zu Beginn der 1990er-Jahre entwickelte Programmiersprache Python wird vor allem bei der objektorientierten sowie funktionalen Programmierung eingesetzt. Allgemein bekannt ist Python für ihre einfache Lesbarkeit und vor allem für ihre klare Syntax. Daher genießt sie einen Ruf als einfache und saubere Programmiersprache mit klarer Struktur. Dem zufolge ist sie weniger Anfällig für Fehler, unter anderem auch deswegen, weil sie im Gegensatz zu anderen Programmiersrpachen wie C oder C++, auf geschweifte Klammern oder Semikola verzichtet. (Eben haben wir kurz von der Programmentwicklung gesprochen. Python verzichtet sogar auf das Kompilieren und Linken, was es zusätzlich einfacher macht.) Gekennzeichnet werden beispielsweise Kontrollstrukturen und Code-Blöcke durch Einrückungen. Auch nicht notwendig sind Variablendeclarationen zu Beginn der Programmierung, viel mehr werden sie in den Klassen definiert \citep{Pythoninfo}.  (evtl. Listing Einfügen als Beispiel) Ein weiterer Vorteil von Python ist das Potential  auf externe speziell für die Programmierspache entwickelte Bibliotheken wie Bokeh \citep{Bokeh} zurückgreifen zu können.
+Die von Guido van Rossum am Centrum Wiskunde & Informatica in Amsterdam zu Beginn der 1990er-Jahre entwickelte Programmiersprache Python wird vor allem bei der objektorientierten sowie funktionalen Programmierung eingesetzt \citep{Pythoninfo}. Allgemein bekannt ist Python für ihre einfache Lesbarkeit und vor allem für ihre klare Syntax. Daher genießt sie einen Ruf als einfache und saubere Programmiersprache mit klarer Struktur. Dem zufolge ist sie weniger Anfällig für Fehler, unter anderem auch deswegen, weil sie im Gegensatz zu anderen Programmiersrpachen wie C oder C++, auf geschweifte Klammern oder Semikola und sogar auf das Kompilieren sowie Linken komplett verzichtet. Gekennzeichnet werden beispielsweise Kontrollstrukturen und Code-Blöcke durch Einrückungen. Auch nicht notwendig sind Variablendeclarationen zu Beginn der Programmierung, viel mehr werden sie in den Klassen definiert \citep{Pythoninfo}.  (evtl. Listing Einfügen als Beispiel) Ein weiterer Vorteil von Python ist das Potential  auf externe speziell für die Programmierspache entwickelte Bibliotheken wie Bokeh \citep{Bokeh} zurückgreifen zu können.
+
+Für die Programmierung der Applikation wurde die frei zugängliche Open-Source-Distribution Anaconda \citep{Anaconda} verwendet, die den Quelltext-Editor Visual Studio Code zur Verfügung stellt. Ein Vorteil von VS Code sind die Git-Extensions, die einem helfen seine Repository ohne Terminal zu verwenden \citep{vs}. Github \citep{github} ist eine Code-Hosting-Plattform für die Versionskontrolle und Zusammenarbeit an gemeinsamen Projekten. Für die Arbeit am Lehrstuhl für Baumechanik wurde eine eigene Ripository erstellt. Hierauf haben alle Wissenschaftlichen Mitarbeiter und Absolventen Zugang. Um ohne Fremdeinwirkung arbeiten zu können, erstellt man einen eigenen Branch, bei dem alle Dateien aus dem Master-Branch kopiert werden. Für die Entwicklung der Applikation bietet es sich somit an, einen eigenen Branch zu erstellen, um bestehende Dateien nicht zu beschädigen oder gar zu löschen.  
 
 \subsubsection{Bibliotheken}
-Für die Programmierung der Applikation wurde die frei zugängliche Open-Source-Distribution Anaconda \citep{Anaconda} verwendet, die den Quelltext-Editor Visual Studio Code zur Verfügung stellt.
-
-Als Programmierframework wird am Lerstuhl für Baumechanik der Technischen Universität München die Open-Source-Python-Bibliothek Bokeh verwendet. Bokeh ist eine interaktive Visualisierungsbibliothek, welche auf interaktives Plotten in modernen Webbrowsern abzielt. Es verfügt über einen treffenden Ansatz für die Erstellung neuartiger Grafiken mit leistungsstarker Interaktivität, sowie über sehr große Streaming-Datasets. Als wichtiges Element der Web-Applikationen bietet die Bokeh-Bibliothek viele wichtige GUI-Komponenten wie beispielsweise Schaltflächen und Schieberegler. Seine Architektur ist so gewählt, dass der Code für die Erstellung von Plots, Flächen, Achsen, Glyphen usw. in Python geschrieben werden kann.
+Als Programmierframework wird am Lerstuhl für Baumechanik der Technischen Universität München die Open-Source-Python-Bibliothek Bokeh verwendet. Bokeh ist eine interaktive Visualisierungsbibliothek, welche auf interaktives Plotten in modernen Webbrowsern abzielt. Es verfügt über einen treffenden Ansatz für die Erstellung neuartiger Grafiken mit leistungsstarker Interaktivität, sowie über sehr große Streaming-Datasets. Als wichtiges Element der Web-Applikationen bietet die Bokeh-Bibliothek viele wichtige GUI-Komponenten wie beispielsweise Schaltflächen und Schieberegler. Seine Architektur ist so gewählt, dass der Code für die Erstellung von Plots, Flächen, Achsen, Glyphen usw. in Python geschrieben werden kann. Außerdem bietet Bokeh eine breit gefächertes Angebot an Visualisierungsmöglichkeiten sowie Vorschläge und Beispiele für die einzelnen Methoden. Durch seine Vielzahl an Darstellungsmöglichkeiten und Farbkombinationen stehen dem App-Entwickler viele Möglichkeiten offen.
 Der Anwendungscode an sich wird auf einem Webserver mit einer Bokeh-Installation ausgeführt \citep{interactiveapps}.
+Sobald der Server in Betrieb ist, erstellt er mithilfe der Anwendunsgcodes Sitzungen und Dokumente für alle Clients, die über einen Browser eine Verbindung herstellen. Das bietet den Vorteil, dass Entwickler mit wissenschaftlichem Hintergrund den gesamten Code in Python schreiben können, ohne mit dem Web vertraut sein zu müssen. Für den Anwender, in diesem Fall die Studierenden, sollte die Applikation, sowohl möglichst einfach zu bedienen, als auch optisch ansprechend sein, um für eine lange Verweilzeit zu motivieren. 
 
-Die Übersetzung von Python in den Code, der sein kann
-Der vom Client-Browser verstandene Vorgang wird direkt über das Bokeh-Framework ausgeführt. Sobald der Server in Betrieb ist,
-Ein Bokeh-Server erstellt mithilfe des Anwendungscodes Sitzungen und Dokumente für alle Clients, die über einen Browser eine Verbindung herstellen. Diese
-Das bedeutet, dass Entwickler mit wissenschaftlichem Hintergrund den gesamten Code in Python schreiben können und nicht mit dem Web vertraut sein müssen
-Technologie, während Benutzer auf die Apps zugreifen können, ohne den Code dahinter verstehen zu müssen. Eine breite Palette von Visualisierungen
-Methoden ist in der vorgeschlagenen Umgebung möglich. Dies sollte einen Entwickler nicht daran hindern, die Anwendung einfach zu halten.
-Studenten werden eine Bewerbung nicht verwenden, wenn sie zu lange brauchen, um zu verstehen, was von ihnen erwartet wird.
-Darüber hinaus sollen die Bewerbungen die Studierenden zum Herumspielen motivieren. Daher sofortige Interaktion - ohne Lesen von
-Anweisungen - ist wichtig. Schweitzer und Brown [3] haben bereits beschrieben, wie wichtig die mausgesteuerte Interaktion ist
-(z. B. mit Schiebereglern und Schaltflächen) ist. Der Entwickler sollte den Benutzer daran hindern, die Tastatur zu verwenden. Zu jeder App gehört eine Beschreibung und eine kurze Zusammenfassung der Funktionen der App, z. welche Parameter können sein
-geändert. Die Apps sind über das Internet auf der Website des Lehrstuhls für Strukturmechanik [8] und der Forschungsstelle zugänglich
-Gruppenalgebra [9]. Zusätzlich können Links zu den Apps in die Vorlesungsunterlagen aufgenommen werden, um den Zugriff während des Studiums zu erleichtern.
-Der gesamte Quellcode der Anwendung kann von Github [4] heruntergeladen werden.
 \subsubsection{Matlab}
-Für die Rechenbeispiele \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab} und \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel} und Abbildung xy wurde das Programm Matlab \citep{Matlab} verwendet. Matlab ist eine kommerzielle Software des US-amerikanischen Unternehmens MathWorks zur Lösung mathematischer Probleme und zur grafischen Darstellung der Ergebnisse. Es ist vor allem für numerische Berechnungen mithilfe von Matrizen ausgelegt. Hauptsächlich wird Matlab von..
+Für die Rechenbeispiele \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab} und \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel} und Abbildung xy wurde das Programm Matlab \citep{Matlab} verwendet. Matlab ist eine kommerzielle Software des US-amerikanischen Unternehmens MathWorks zur Lösung mathematischer Probleme und zur grafischen Darstellung der Ergebnisse. Es ist vor allem für numerische Berechnungen mithilfe von Matrizen ausgelegt. Hauptsächlich wird Matlab von Wissenschaftlern, Ingenieuren und Studierenden verwendet.
 
 \subsection{App-Umgebung: s3s-functions.py}
+Da nun wirklich alle Grundlagen für die Programmierung der Applikation bekannt sind, kann nun über die Umgebung der App gesprochen werden. Die App beinhaltet zwei Programm-Codes. Einer davon wird $main.py$ genannt, der andere $s3s-functions.py$.
+
 \subsubsection{Unterprogramm: s3s-functions.py}
-Die App beinhaltet zwei Programm-Codes. Einer davon wird $main.py$ genannt, der andere $s3s-functions.py$.
-$s3s\_functions$ ist in der App ein Unterprogramm, das in $main.py$ aufgerufen wird. Sie definiert die drei Klassen $s3s\_structure$, $s3s\_mode$ und $s3s\_seismicparameters$. Klassen sind abstrakte Oberbegriffe für die Beschreibung gemeinsamer Strukturen und des Verhaltens von realen Objekten \citep{klassen}. Bei der Klassifizierung werden im Allgemeinen reale Objekte auf definierte Attribute und Methoden abstrahiert. Sie dient als Bauplan zur Abbildung der Objekte. Beispielhaft ist in \ref{Beispiel Klasse} die Klasse $s3s\_structure$ aufgeführt. Ein Objekt(?) in Python hat immer die Methode $self$. $Self$ wird definiert, um eine Referenz aufzubauen. Ohne $self$ können andere Funktionen im Code nicht auf das Objekt zugreifen, wenn sie es müssen. Beim Erzeugen eines Objekts wird für dieses ein eigener Satz von Instanzattributen angelegt. Diese Erzeugung und Initialisierung wird in einer speziellen Methode durchgeführt, dem Konstruktor. Der Konstruktor wird in Python durch die Kopfzeile $def\_\_init\_\_(self,...)$ gekennzeichnet \citep{class}.
+$s3s\_functions$ ist ein Unterprogramm, das in $main.py$ aufgerufen wird. Sie definiert die drei Klassen $s3s\_structure$, $s3s\_mode$ und $s3s\_seismicparameters$. Klassen sind abstrakte Oberbegriffe für die Beschreibung gemeinsamer Strukturen und des Verhaltens von realen Objekten \citep{klassen}. Bei der Klassifizierung werden im Allgemeinen reale Objekte auf definierte Attribute und Methoden abstrahiert. Sie dient als Bauplan zur Abbildung der Objekte. Beispielhaft ist in \ref{Beispiel Klasse} die Klasse $s3s\_structure$ aufgeführt. Ein Objekt(?) in Python hat immer die Methode $self$. $Self$ wird definiert, um eine Referenz aufzubauen. Ohne $self$ können andere Funktionen im Code nicht auf das Objekt zugreifen, wenn sie es müssen. Beim Erzeugen eines Objekts wird für dieses ein eigener Satz von Instanzattributen angelegt. Diese Erzeugung und Initialisierung wird in einer speziellen Methode durchgeführt, dem Konstruktor. Der Konstruktor wird in Python durch die Kopfzeile $def\_\_init\_\_(self,...)$ gekennzeichnet \citep{class}.
 
 \begin{lstlisting}[style=,language = python,frame = single,caption ={Beispiel: Klasse}, label = {Beispiel Klasse},numbers=left] 
 class S3S_Structure:
@@ -729,7 +718,7 @@ Bei den Plots der Struktur und deren Verschiebungen wird zwischen den Stützstel
   \caption{Beispiel: Erzeugte Struktur in der App}
 \end{figure}
 
-Zusammenfassend liefert $s3s\_structure$ Voraussetzungen für die in $main.py$ erzeugten Struktur des zu berechnenden Gebäudes. Weiter geht es nun mit $s3s\_mode$. 
+Zusammenfassend liefert $s3s\_structure$ Voraussetzungen für die in $main.py$ erzeugten Struktur des zu berechnenden Gebäudes. Weiter geht es nun mit $s3s\_mode$. Die aus \ref{Mehrfreiheitsgradsystem} bekannte Berechnung der Eigenfrequenzen wird in ...
 \begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_mode: }, label = {S3S\_mode: },numbers=left, firstnumber=192] 
 class S3S_Mode( S3S_Structure ):
     
@@ -747,20 +736,16 @@ class S3S_Mode( S3S_Structure ):
         self.multiplier_text=LatexDiv(text=
         "$\\displaystyle\\frac{\\beta S_a(T) }{ \\omega^2}="+ str(0) + "$")
         self.frequency_text =LatexDiv(text="""<b>Natural Frequency =</b> """)
-    
-    def get_maximum_displacement( self, siesmicParameters ):
-        r = np.ones(2)
-        self.participationFactor = np.dot( self.modeShape, np.dot( self.M, r))
-        period = 2*np.pi / self.frequency
-        Sa = siesmicParameters.get_Sa(period)
-        
-        multiplier = self.participationFactor*Sa*(1/self.frequency**2)
-        
-        self.modify_mode_text( multiplier )
-        
-        self.maxModeShape = multiplier*self.modeShape
-        return self.maxModeShape
+\end{lstlisting}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale = 0.6]{s3smode.PNG}
+    \caption{Plot der Schwingungsmoden}
+    \label{S3smodeplot}
+\end{figure}
 
+
+\begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_mode: }, label = {S3S\_mode: },numbers=left, firstnumber=209] 
     def modify_location_in_ERS( self, siesmicParameters ):
         period = 2*np.pi / self.frequency
         Sa = siesmicParameters.get_Sa( period )
@@ -787,7 +772,8 @@ class S3S_Mode( S3S_Structure ):
             
         return self.modeShape / maxAmplitude
 \end{lstlisting}
-....
+
+
 
 Der nachfolgende Code enthält die Klasse $S3S\_SeismicParameters$. Darin werden die Vorraussetzungen für die Erzeugung des elastischen Antwortspektrums geschaffen. Parameter wie die erdbebenzonenabhängigen Referenzspitzerte $a$, Bedeutungsbeiwerte $\gamma$, einheitlicher Spektralwert $\beta_0$ und die Kennwerte zur Beschreibung des Einflusses des Bodens aus Tabelle \ref{Bodenklassen} werden hier definiert.
 \begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={S3S\_SeismicParameters: \_\_init\_\_ }, label = {S3S\_SeismicSarameters: },numbers=left, firstnumber=243] 
