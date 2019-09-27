@@ -11,7 +11,7 @@
 \usepackage[framed, numbered]{matlab-prettifier}
 \usepackage{scrhack}
 \usepackage[svgnames,table,hyperref]{xcolor}
-\usepackage{courier} 
+%\usepackage{courier} 
 \usepackage{rotating}
 \usepackage{longtable}
 \usepackage{scrlayer-scrpage}  
@@ -39,7 +39,6 @@
  }
  %\setlength\mathindent{0pt}
               								
-\fontsize=14 pt
 \title{Programmieren interaktiver Apps}
 \author{Jakob Schlagintweit}
 \date{Juli 2019}
@@ -55,7 +54,6 @@
 \setcounter{page}{1}
 \section{Einleitung}
 \subsection{Motivation}
-Zu den gefährlichsten Naturkatastrophen zählen zweifelsohne Erdbeben. Mit über xy registrierten Erdbeben pro Jahr  
 häufigkeit
 schäden
 tote
@@ -64,6 +62,9 @@ beschreibung
 
 Wegener Theorie Plattendrift
 auch in Deutlschand rheingraben
+
+Mit mehr als zwei Millionen registrierten Toten im letzten Jahrhundert \citep{bgr} und  finanziellen Schäden in Höhe von knapp sechs Milliarden Euro in den letzten zehn Jahren \cite{bgr,mre}, zählen Erdbeben zweifelsohne zu den gefährlichsten Naturkatastrophen weltweit. Doch das ist nur die Spitze des Eisbergs. Auch sekundäre Effekte von Erdbeben wie Tsunamis richten verherende Schäden an. Eines der jüngsten und bekanntesten Ereignisse spielte sich im Jahr 2011 ab. Das Tōhoku-Erdbeben in Japan forderte geschätzt 19.100 Todesopfer und verursachte eine Flutwelle, die unter anderem für die Reaktorunfälle des Kernkraftwerkes Fukushima Daiichi verantwortlich war \citep{fukushima, tohoku}. Gemeinsam haben Erdbeben und Tsunamis beispielsweise ihren Ursprung. Die Seismologie - die Lehre von den Erdbeben - befasst sich mit der Erforschung geowissenschaftlicher Fragestellungen wie der Entstehung von Beben oder den Strukturen des Erdinneren \citep{bgr}. Verantwortlich für Erdbeben sind  tektonische Spannungen, vulkanische Aktivitäten, der Einsturz von Hohlräumen und menschliche Eingriffe in das Spannungsgefüge der oberen Erdkruste \citep{mre, MeskourisHinzenButenwegetal.2016}. Mit neun von zehn Fällen sind dabei am relevantesten tektonische spannungsinduzierte Beben \citep{mre, MeskourisHinzenButenwegetal.2016}.
+
 
 \subsection{Ziel der Arbeit} \label{1.2}
 Um den Studierenden der Technischen Universität München bau-mechanische Prinzipien zu veranschaulichen, werden von wissenschaftlichen Mitarbeitern und Absolventen stetig neue interaktive Apps am Lehrstuhl für Baumechanik der TUM entwickelt. Diese sind größtenteils auf der offiziellen Website des Lehrstuhls für Baumechanik \citep{TUMBaumechanik} öffentlich zugänglich. Das bedeutet, dass nicht nur Studierende, sondern auch Externa darauf zugreifen können. Hauptsächlich werden die Apps in den Vorlesungen und Kursen des Lehrstuhls zu Lehrzwecken ergänzend verwendet, auch in den zugehörigen Skripten lassen sich Links zu den jeweiligen Apps finden. Sie visualisieren vereinfacht mechanische Prinzipien der Baubrange mit Beispielen aus der Praxis und helfen dadurch den behandelten Stoff zu verstehen. Aus pädagogischer Sicht schaffen sie visuelle Vorstellungen der Probleme und durch deren Interaktivität soll der Lernprozess zusätzlich induktiv gefestigt werden. Studien haben gezeigt, dass die Diversifizierung der Medien in der Lehre, insbesondere die Verwendung interaktiver Applikationen, einen großen Einfluss auf die Qualität und das Ergebnis der Kurse hat \citep{kuosa2016interactive}. Als Programmiersprache wird für die objektorientierte Progammierung Python verwendet. Einer von vielen Vorteilen die Python bietet, ist das Zurückgreifen auf einen Webbrowser, unabhängig, welches Gerät, ob Smartphone oder PC. Apps müssen ergo nicht installiert werden und können durch einfaches Klicken auf einen URL-Link, vorausgesetzt es besteht eine Internet-Verbindung, aufgerufen werden. Aufgebaut sind die Apps im Prinzip alle gleich. Das physikalische Prinzip wird in einem kurzen Einführungstext beschrieben und über Regler oder Eingabefeldern ist der Anwender in der Lage, Parameter einzugeben. Die App zeigt auf Grundlage dieser die Ergebnisse und gibt sie dem Anwender zurück. (Beispiel)
