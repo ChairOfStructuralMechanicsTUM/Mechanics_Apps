@@ -133,7 +133,7 @@ Folglich können wir das System freischneiden und das dynamische Kräftegleichge
 \end{subequations}
 Demnach entsprechen $\vec{F_m}$ der d'Alembert'schen Trägheitskraft, $\vec{F_c}$ der Dämpferkraft, sowie $\vec{F_k}$ der Rückstellkraft der Feder und $\vec{F}$ der äußeren auf das System einwirkenden Kraft. Hieraus resultieren die Bewegungsgleichung des Einmassenschwingers. Betrachtet man die einzelnen Terme der Gleichung \eqref{Dynamisches Gleichgewicht} genauer, so erkennt man sofort, dass die Kräfte zeitabhängig sind. Daher handelt es sich hier um eine Differentialgleichung (DGL), genauer gesagt um eine lineare inhomogene Differentialgleichung zweiter Ordnung mit konstanten Koeffizienten. In der Regel gibt es für Differentialgleichungen keine allgemeinen analytischen Lösungsansätze, woraufhin man in den meisten Fällen auf numerische, sprich computergestützte, Verfahren zurückgreifen muss. Für diesen Typ DGL allerdings gibt es eine elegante Methode, die ein händisches Lösen ermöglicht. Da die Menge aller Lösungen einer linearen DGL n-ter Ordnung linear unabhängig ist, ergibt die Summe und ein skalares Vielfaches einer Lösung widerum eine Lösung \citep{karpfinger2013hohere}. Dies macht man sich zu Nutze und trennt gemäß des Superpositionsprinzips den Lösungsraum in eine homogene Lösung $L_h$ und in eine partikuläre $L_p$. 
 
-Zunächst betrachten wir die Lösung der Nullfunktion \eqref{homogene DGL}. Unter Verwendung des Ansatzes $u(t)=\mathrm{e}^{\lambda t}$, und indem wir ihn an den entsprechenden Stellen einsetzten \eqref{homogener ansatz}, lässt sich eine homogene Lösung finden. Diese Idee fußt auf dem Lösungsansatz für gewöhnliche separierbare DGL $\dot x=x$. Vereinfachen lässt sich diese Gleichung durch Kürzen und Ausklammern von $\mathrm{e}^{\lambda t} >0 | \forall \lambda ,t \in \mathbb{R}$. Zu guter Letzt müssen wir die Nullstellen \eqref{Nullstellen} des charakteristischen Polynoms \eqref{charakteristisches Polynom} für $\lambda$ finden.
+Zunächst betrachten wir die Lösung der Nullfunktion \eqref{homogene DGL}. Unter Verwendung des Ansatzes $u(t)=\mathrm{e}^{\lambda t}$, und indem wir ihn an den entsprechenden Stellen einsetzten \eqref{homogener ansatz}, lässt sich eine homogene Lösung finden. Diese Idee fußt auf dem Lösungsansatz für gewöhnliche separierbare DGL $\dot x=x$. Vereinfachen lässt sich diese Gleichung durch Kürzen und Ausklammern von $\mathrm{e}^{\lambda t} >0 | \forall \lambda ,t \in \mathbb{R}$. Schließlich muss die Nullstellen \eqref{Nullstellen} des charakteristischen Polynoms \eqref{charakteristisches Polynom} für $\lambda$ gefunden werden.
 \begin{subequations}
     \begin{align}
          \label{homogene DGL}
@@ -146,16 +146,16 @@ Zunächst betrachten wir die Lösung der Nullfunktion \eqref{homogene DGL}. Unte
   \Leftrightarrow \mathrm{-\delta \pm{\omega_E \sqrt{D^2-1}}}&= \lambda_1_,_2
     \end{align}
 \end{subequations}
-mit $\omega_E^2=\frac{k}{m}$ und $D=\frac{c}{2m\omega_E}=\frac{\delta}{\omega_E}$. $D$ beschreibt das Lehr'sche Dämpfungsmaß. Beim Durchführen dieser Rechnung muss eine Fallunterscheidung (getätigt) werden \citep{ektm}:
+mit $\omega_E^2=\frac{k}{m}$ und $D=\frac{c}{2m\omega_E}=\frac{\delta}{\omega_E}$. $D$ beschreibt das Lehr'sche Dämpfungsmaß. Beim Durchführen dieser Rechnung muss folgende Fallunterscheidung getätigt werden \citep{ektm}:
 \begin{itemize}
 \item[a)] $D>1$: Aperiodischer Fall
 \item[b)] $D=1$: Aperiodischer Grenzfall
 \item[c)] $D<1$: Quasiperiodischer Fall
 \end{itemize}
-Unter der Voraussetzung eines visko-elastischen Materialverhaltens und gemäß des Kelvin-Voigt-Modells der Rheologie, liegt in der Baudynamik größtenteils ein Dämpfungsmaß von $D<1$ vor. Für den quasiperiodischen Fall ist die Diskriminante aus Gleichung \eqref{Nullstellen} $<0$, was zur Folge hat, dass die Lösungen des charakteristischen Polynoms nicht reell sind \eqref{komplexe lösung}. Bei (komplexen) $\lambda_1_,_2 \in \mathbb{C}$ spielt es jedoch keine Rolle, welches $\lambda$ bei der weiteren Rechnung verwendet wird, da analog auch mit dem konjugiert Komplexen gearbeitet werden kann \citep{karpfinger2013hohere}. 
+Unter der Voraussetzung eines visko-elastischen Materialverhaltens und gemäß des Kelvin-Voigt-Modells der Rheologie, liegt in der Baudynamik größtenteils ein Dämpfungsmaß von $D<1$ vor. Für den quasiperiodischen Fall ist die Diskriminante aus Gleichung \eqref{Nullstellen} $<0$, was zur Folge hat, dass die Lösungen des charakteristischen Polynoms nicht reell sind \eqref{komplexelösung}. Bei komplexen $\lambda_1_,_2 \in \mathbb{C}$ spielt es jedoch keine Rolle, welches $\lambda$ bei der weiteren Rechnung verwendet wird, da analog auch mit dem konjugiert Komplexen gearbeitet werden kann \citep{karpfinger2013hohere}. 
 \begin{subequations}
 \begin{align}
- \label{komplexe lösung}
+ \label{komplexelösung}
     u&=\mathrm{e}^{\lambda t}=\mathrm{e}^{\mathrm{(-\delta +i\overline{\omega_E})t}} 
     \intertext{Mittels der Euler'schen Formel lässt sich $u$ auch in einer Polardarstellung wiedergeben \eqref{polardarstellung}. Als eine Linearkombination aus Sinus- und Cosinusfunktion wird deutlich, dass die Lösung der DGL die Form einer Schwingung hat.}
     \label{polardarstellung}
@@ -175,36 +175,36 @@ Unter der Voraussetzung eines visko-elastischen Materialverhaltens und gemäß d
 %\end{figure}
 Da man an den Schwingungen des Systems unter externen dynamischen Lasten interessiert ist, wird im Anschluss die Gleichung \eqref{homogene DGL} durch die Störfunktion $F(t)$ erweitert \eqref{Dynamisches Gleichgewicht}. $F(t)$ kann mehrere Formen haben:
 \begin{itemize}
-\item[a)] Transiente Schwingung: ...
-\item[b)] Periodische Schwingung: ...
-\item[c)] Harmonische Schwingung: ...
+\item[a)] Transiente Schwingung
+\item[b)] Periodische Schwingung
+\item[c)] Harmonische Schwingung
 \end{itemize}
 Im nachfolgenden Beispiel sei $F(t)$ eine sinusförmige harmonische Schwingung. Mittels des Ansatzes vom Typ der rechten Seite kann man allgemein die Störfunktion bestimmen als:
 \begin{equation}
     F(t)=F_0\cos{(\Omega t)}
 \end{equation}
-Dieser Ansatz findet Verwendung, wenn man davon ausgeht, dass die partikuläre Lösung $L_p$ von derselben Gestalt ist wie die homogene \cite{karpfinger2013hohere}. Da bei Erdbebenlasten salopp gesagt keine externen Kräfte das System anregen, sondern die erzwungenen Verschiebungen eine Trägheitskraft der Masse induziert, sprechen wir von Fußpunkterregten Lasten. (Bild einfügen Herleitung) Abbildung (xy) soll dabei helfen die Belastung herzuleiten. Die Bewegung des Untergrundes lässt sich beschreiben durch:
+Dieser Ansatz findet Verwendung, wenn man davon ausgeht, dass die partikuläre Lösung $L_p$ von derselben Gestalt ist wie die homogene \cite{karpfinger2013hohere}. Da bei Erdbebenlasten keine externen Kräfte das System anregen, sondern die erzwungenen Verschiebungen eine Trägheitskraft der Masse induziert, sprechen wir von Fußpunkterregten Lasten. (Bild einfügen Herleitung) Abbildung (xy) soll dabei helfen die Belastung herzuleiten. Die Bewegung des Untergrundes lässt sich beschreiben durch:
 \begin{subequations}
 \begin{align}
    u_e(t)&=u_e_0\sin{(\Omega t)} \\
    \Rightarrow \ddot u_e(t)&=-u_e_0 \Omega^2 \sin{(\Omega t )}  
    \end{align}
 \end{subequations}
-Stellt man das Dynamische Gleichgewicht in vertikaler Richtung \eqref{fußpunkterregte Last} auf, so fällt auf, dass man, anders als bei der krafterregten Schwingung, mit den Relativverschiebungen $u_r$ rechnet. Dennoch haben beide Formen der Anregung viele Gemeinsamkeiten. Aber dazu später mehr. Die Relativverschiebung $u_r$ gibt die Verschiebung zwischen Untergrund und Masse an. 
+Stellt man das Dynamische Gleichgewicht in vertikaler Richtung \eqref{fußpunkterregteLast} auf, so fällt auf, dass man, anders als bei der krafterregten Schwingung, mit den Relativverschiebungen $u_r$ rechnet. Dennoch haben beide Formen der Anregung viele Gemeinsamkeiten. Die Relativverschiebung $u_r$ gibt die Verschiebung zwischen Untergrund und Masse an. 
 \begin{subequations}
 \begin{align}
     u=u - u_e + u_e &= u_r + u_e\\
-    \label{fußpunkterregte Last}
+    \label{fußpunkterregteLast}
     \Rightarrow m[\ddot u_r -u_e_0 \Omega^2 \sin{(\Omega t)}]+ c\dot u_r +k u_r &=0\\
     \Leftrightarrow m\ddot u_r  + c\dot u_r +k u_r &= u_e_0 \Omega^2 m\sin{(\Omega t)}
     \end{align}
 \end{subequations}
-Mit dem Ansatz $u_r_p = A_r\sin{(\Omega t-\alpha)}$ erhalten wir die allgemeine Lösung für die inhomogene DGL. In diesem Zusammenhang entspricht $A_r$ dem Betrag des Versatzverhältnisses zwischen statischer und erzwungener Auslenkung. Dieses Verhältnis ist bekannt als Vergrößerungsfunktion $V(\eta)$ \eqref{Vergrößerungsfunktion} und ist widerum abhängig vom Verhältnis $\eta$ \eqref{eta} der Erregerfrequenz $\Omega$ zur Eigenfrequenz $\omega_E$.
+Mit dem Ansatz $u_r_p = A_r\sin{(\Omega t-\alpha)}$ erhalten wir die allgemeine Lösung für die inhomogene DGL. In diesem Zusammenhang entspricht $A_r$ dem Betrag des Versatzverhältnisses zwischen statischer und erzwungener Auslenkung. Dieses Verhältnis ist bekannt als Vergrößerungsfunktion $V(\eta)$ \eqref{Vergroßerungsfunktion} und ist widerum abhängig vom Verhältnis $\eta$ \eqref{eta} der Erregerfrequenz $\Omega$ zur Eigenfrequenz $\omega_E$.
 \begin{subequations}
 \begin{align}
 \label{eta}
   \eta&=\frac{\Omega}{\omega_E}\\
-  \label{Vergrößerungsfunktion}
+  \label{Vergroßerungsfunktion}
      V(\eta) &=\abs{\frac{A_r}{u_e_0}} = \frac{\Omega^2 m}{\mathrm{\sqrt{(k-\Omega^2m)^2+\Omega^2c^2}}}\\
      &=\frac{\eta^2}{\mathrm{\sqrt{(1-\eta^2)^2+(2D\eta)^2}}}
      \intertext{Beim Argument $\Omega t- \alpha$  der Sinusfunktion beschreibt $\alpha$ \eqref{alpha} den Phasenversatz zwischen Erreger- und Eigenfrequenz. Außerdem gibt er Auskunft darüüber, inwiefern das System der Anregung nachfolgt. Bei hochfrequenten Anregungen bleibt die Masse in Ruhe, bei langsamen Bewegungen hingegen bewegt sie sich wie der Untergrund \citep{ektm}.}
@@ -218,16 +218,16 @@ Mit dem Ansatz $u_r_p = A_r\sin{(\Omega t-\alpha)}$ erhalten wir die allgemeine 
    % \caption{Vergrößerungsfunktion}
   %  \label{Vergrößerungsfunktion}
 %\end{figure}
-Betrachtet man den Plot der Vergrößerungsfunktion (ABB), so fallen einem mehrere Phänomene auf. Das offensichtlichste davon sind die lokalen Maxima der Funktion. Diese befinden sich in der Nähe von $\eta = 1$. Im ungedämpften Fall sogar bei exakt eins, wobei es dort strenggenommen nicht definiert ist. Geht die Erregerfrequenz gegen die Eigenfrequenz des Systems, so tritt Resonanz auf. Für $D=0$ divergiert die Funktion sogar. Im Resonanzfall nimmt die Amplitude in jedem Schwingungszyklus stetig zu, sogar soweit, bis die Konstruktion zum Versagen kommt. Somit wird (sofort) klar, dass das System erstens ausreichend gedämpft werden (sein?) muss, und zweitens so modifiziert, sodass die Eigenfrequenz weit genug von der Erregerfrequenz entfernt ist.
+Betrachtet man den Plot der Vergrößerungsfunktion (ABB), so fallen mehrere Phänomene auf. Am offensichtlichsten sind die lokalen Maxima der Funktion. Diese befinden sich in der Nähe von $\eta = 1$. Im ungedämpften Fall sogar bei exakt eins, wobei es dort streng genommen nicht definiert ist. Geht die Erregerfrequenz gegen die Eigenfrequenz des Systems, so tritt Resonanz auf. Für $D=0$ divergiert die Funktion sogar. Im Resonanzfall nimmt die Amplitude in jedem Schwingungszyklus stetig zu, soweit, bis die Konstruktion zum Versagen kommt. Somit wird klar, dass das System erstens ausreichend gedämpft sein muss, und zweitens so modifiziert, sodass die Eigenfrequenz weit genug von der Erregerfrequenz entfernt ist.
 
-Im vergangenen Abschnitt wurden die Grundlagen für die Lösung der Bewegungsgleichung des Einfreiheitsgradsystems anhand des Einmassenschwingers bekannt gemacht. Die allgemeine Lösung der Gleichung setzt sich aus $L_h$ und $L_p$ zusammen und darf aufgrund der Linearität addiert werden. Da in der Baudynamik fast alle Systeme mehr als einen Freiheitsgrad besitzen, wird im Folgenden auch das Mehrfreiheitsgradsystem behandelt. 
+Im vergangenen Abschnitt wurden die Grundlagen für die Lösung der Bewegungsgleichung des Einfreiheitsgradsystems anhand des Einmassenschwingers erörtert. Die allgemeine Lösung der Gleichung setzt sich aus $L_h$ und $L_p$ zusammen und darf aufgrund der Linearität addiert werden. Da in der Baudynamik fast alle Systeme mehr als einen Freiheitsgrad besitzen, wird im Folgenden auch das Mehrfreiheitsgradsystem behandelt. 
 \subsubsection{Mehrfreiheitsgradsystem} \label{Mehrfreiheitsgradsystem}
 
-Jedes Gebäude lässt sich stark vereinfachen. So sind reale Tragwerke kontinuierlich massebelegt, allerdings werden diese Masseverteilungen auf bestimmte Punkte konzentriert. Dabei bieten sich besonders die Stockwerke des Tragwerks als solche Punkte an. (, da sie auf einer Ebene  viel Masse aufweisen.) Wie in jedem anderen Modell auch, sind die Annäherungen umso besser, je mehr Elemente eingeführt werden. Hier ist es allerdings wichtig, die richtige Balance zwischen Rechenaufwand und Genauigkeit zu finden. Wenn wir beim Thema Genauigkeit bleiben, so ist ebenfalls zu erwähnen, dass jede Punktmasse mehrere Freiheitsgrade besitzt. In einem dreidimensionalen Raum hat jedes Element sechs Freiheitsgrade, drei Translations- und drei Rotationsfreiheitsgrade. Betrachtet man das Gebäude in einer Ebene ist das Modell auf eine Rotation und zwei Transtationen beschränkt. Vernachlässigt man dazu auch noch die Drehträgheit und die Vertikale Bewegung, so wie es in den meisten Rechenverfahren üblich ist, steht nur noch die horizontale Bewegung im Fokus. Auf Grundlage des Scheerbalkenmodells, werden die Stäbe des Rahmentragwerks als dehnstarr angenommen. Diese Einschränkung bringt eine Zeitinvarianz der einzelnen Körperpunkte untereinander ins Spiel \citep{petersen2017grundlagen}.
+Gebäude lassen sich vereinfacht in Modellen darstellen. So sind reale Tragwerke kontinuierlich massebelegt, allerdings werden diese Masseverteilungen auf bestimmte Punkte konzentriert. Dabei bieten sich besonders die Stockwerke des Tragwerks als solche Punkte an, da sie auf einer Ebene viel Masse aufweisen. Wie in jedem anderen Modell auch, sind die Annäherungen umso besser, je mehr Elemente eingeführt werden. Hier ist es allerdings wichtig, die richtige Balance zwischen Rechenaufwand und Genauigkeit zu finden. Wenn wir beim Thema Genauigkeit bleiben, so ist ebenfalls zu erwähnen, dass jede Punktmasse mehrere Freiheitsgrade besitzt. In einem dreidimensionalen Raum hat jedes Element sechs Freiheitsgrade, drei Translations- und drei Rotationsfreiheitsgrade. Betrachtet man das Gebäude in einer Ebene ist das Modell auf eine Rotation und zwei Transtationen beschränkt. Vernachlässigt man dazu auch noch die Drehträgheit und die vertikale Bewegung, so wie es in den meisten Rechenverfahren üblich ist, steht nur noch die horizontale Bewegung im Fokus. Auf Grundlage des Scheerbalkenmodells, werden die Stäbe des Rahmentragwerks als dehnstarr angenommen. Diese Einschränkung bringt eine Zeitinvarianz der einzelnen Körperpunkte untereinander ins Spiel \citep{petersen2017grundlagen}.
 (Bild einfügen)
 %(lokales Koordinatensystem evtl bei rechenverfahren) (Um die Verformungen, Beschleunigungen und Schnittgrößen bestimmen zu können, wird für die Berechnungen (dabei) häufig ein Rahmentragwerk herangezogen.  (werden die Massen der Stützen gegenüber den Massen der Decken vernachlässigt, und die Riegel, welche die Geschosse darstellen, als starr angenommen. \citep{MeskourisHinzenButenwegetal.2016} (Vernachlässigung der Drehträgheit und Vertikalen Bewegung))%
 
-Unter all den eben genannten Voraussetzungen und Bedingungen, sind wir nun in der Lage Bewegungsdifferentialgleichungen auch für ein Mehrfreiheitsgradsystem aufzustellen und zu berechnen. Als Hilfe dafür führen wir lokale Koordinatensysteme ein, deren Ursprung sich an den Punktmassen befinden und deren Achsen entlang zur Federauslenkung ausgerichtet sind. Wie wir später in Abschnitt (2.3) sehen werden, wird für das Berechnungsverfahren nach DIN EN 1998 nach den freien Schwingungen, genauer gesagt deren Eigenformen, -Kreisfrequenzen und -Vektoren, gesucht. Diese findet man, indem man die nichttrivialen Lösungen des Schwingungsgleichungssystems nach dem Nullvektor bestimmt. Um es zu lösen, muss zunächst erst einmal das Gleichungssystem aufgestellt werden. Ein System mit $n$ Freiheitsgraden sieht folgendermaßen aus: 
+Unter all den eben genannten Voraussetzungen und Bedingungen, ist man nun in der Lage Bewegungsdifferentialgleichungen auch für ein Mehrfreiheitsgradsystem aufzustellen und zu berechnen. Als Hilfe dafür führen wir lokale Koordinatensysteme ein, deren Ursprung sich an den Punktmassen befinden und deren Achsen entlang zur Federauslenkung ausgerichtet sind. Wie wir später in Abschnitt (2.3) sehen werden, wird für das Berechnungsverfahren nach DIN EN 1998 nach den freien Schwingungen, genauer gesagt deren Eigenformen, -Kreisfrequenzen und -Vektoren, gesucht. Diese findet man, indem man die nichttrivialen Lösungen des Schwingungsgleichungssystems nach dem Nullvektor bestimmt. Um es zu lösen, muss zunächst erst einmal das Gleichungssystem aufgestellt werden. Ein System mit $n$ Freiheitsgraden sieht folgendermaßen aus: 
 \begin{equation}
     M \vec{\ddot u} + C \vec{\dot u} + K \vec{u} &=\vec{0}
 \end{equation}
@@ -244,7 +244,7 @@ Analog zum Einmassenschwinger nutzt man einen exponentiellen Lösungsansatz.
      \vec{\ddot u} &= \mathrm{-\omega^2 \vec{\phi}e^{i \omega t}}
 \end{align}
 \end{subequations}
-Einsetzen und Umstellen der Gleichung erinnert an ein Eigenwertproblem $(A-\lambda E)\vec{v} = \vec{0} $ , bei dem $\omega^2$ und $\vec{\phi}$ als Eigenwerte und -Vektoren gefunden werden müssen. Besagte nichtrivialen Lösungen findet man nur dann, wenn $\vec{\phi} \ne \vec{0}$ \eqref{Eigenwertproblem} oder anders gesagt, wenn die Determinante der Summe aus Massen- und Steifigkeitsmatrix null ergibt \eqref{Determinante}.
+Einsetzen und Umstellen der Gleichung erinnert an ein Eigenwertproblem $(A-\lambda E)\vec{v} = \vec{0} $ , bei dem $\omega^2$ und $\vec{\phi}$ als Eigenwerte und -vektoren gefunden werden müssen. Besagte nichtriviale Lösungen findet man nur dann, wenn $\vec{\phi} \ne \vec{0}$ \eqref{Eigenwertproblem} oder anders gesagt, wenn die Determinante der Summe aus Massen- und Steifigkeitsmatrix null ergibt \eqref{Determinante}.
 \begin{subequations}
 \begin{align}
     -\omega^2M\mathrm{\vec{\phi}e^{i \omega t}} + K\mathrm{\vec{\phi}e^{i \omega t}}&=\vec{0}\\
@@ -263,7 +263,7 @@ Gesucht sind also diejenigen $\omega^2_n$, für die gilt: $det(K-\omega^2_nM)&=0
 \end{itemize}
 Da in diesem Fall die algebraischen Vielfachheiten der Eigenwerte jeweils gleich eins sind, sind die dazugehörigen Eigenvektoren zueinander linear unabhängig. Allerdings ist jedes Vielfaches auch eine Lösung, deshalb normiert man geschickterweise die Vektoren. Führt man die Eigenvektoren zusammen, so erhält man eine orthogonale Matrix $\Phi$ mit der Eigenschaft $\mathrm{\Phi^T} = \mathrm{\Phi^{-1}}$. Diese Matrix ist längenerhaltend und wird modale Matrix genannt. Man verwendet sie, um das lineare Gleichungssystem zu entkoppeln und sukzessive Zeile für Zeile zu lösen.
 
-Bei der Multiplikation von $\Phi$ bzw. $\mathrm{\Phi^T}$ von beiden Seiten \eqref{beidseitig} wird die gekoppelte Steifigkeitsmatrix durch Einführung der Modalkoordinaten diagonalisiert und somit entkoppelt \eqref{modale Steifigkeitsmatrix}. Der Nebeneffekt davon ist, dass Massenmatrix nach der Basistransformation zur Einheitsmatrix $E_n$ wird \eqref{modale Massenmatrix}, wodurch alle modalen Massen der r Modalbeiträge den Betrag eins erhalten \citep{MeskourisHinzenButenwegetal.2016}. 
+Bei der Multiplikation von $\Phi$ bzw. $\mathrm{\Phi^T}$ von beiden Seiten \eqref{beidseitig} wird die gekoppelte Steifigkeitsmatrix durch Einführung der Modalkoordinaten diagonalisiert und somit entkoppelt \eqref{modale Steifigkeitsmatrix}. Der Nebeneffekt davon ist, dass die Massenmatrix nach der Basistransformation zur Einheitsmatrix $E_n$ wird \eqref{modale Massenmatrix}, wodurch alle modalen Massen der r Modalbeiträge den Betrag eins erhalten \citep{MeskourisHinzenButenwegetal.2016}. 
 \begin{subequations}
 \begin{align}
     \label{beidseitig}
@@ -291,9 +291,9 @@ m = \sum \limits_{k=1}^n m_k \\
 \epsilon_j = \frac{m_e_j}{m}
 \end{align}
 \end{subequations}
-\subsection{Beispiel: Mehrfreiheitsgradsystem} \label{Beispiel Mehrfreiheitsgradsystem}
+\subsection{Beispiel Mehrfreiheitsgradsystem} \label{Beispiel Mehrfreiheitsgradsystem}
 
-Im Folgenden wird das Problem anhand eines Beispiels veranschaulicht. Für das System mit drei Freiheitsgraden in (Abbildungxy) wird vorerst die diagonalisierenden Matrix $\Phi$ mittels Eigenwertproblem bestimmt. Der Einfachheit halber sind die Massen \eqref{Massenmatrix} und Steifigkeiten \eqref{Steifigkeitsmatrix} jeweils zueinander identisch: \\ $m = m_i_i$ und $k = k_i_j $
+Im Folgenden wird das Problem anhand eines Beispiels veranschaulicht. Für das System mit drei Freiheitsgraden in (Abbildungxy) wird zuerst die diagonalisierende Matrix $\Phi$ mittels Eigenwertproblem bestimmt. Der Einfachheit halber sind die Massen \eqref{Massenmatrix} und Steifigkeiten \eqref{Steifigkeitsmatrix} jeweils zueinander identisch: \\ $m = m_i_i$ und $k = k_i_j $
 \begin{subequations}
 \begin{align}
 \label{Massenmatrix}
@@ -324,7 +324,7 @@ k_1_1 & -k_1_2 & 0 \\
 \end{pmatrix} 
 \end{align}
 \end{subequations}
- Wie vorhin erwähnt, muss bei der Suche nach den Eigenformen die Determinante gebildet werden: 
+ Wie erwähnt, muss bei der Suche nach den Eigenformen die Determinante gebildet werden: 
  \begin{subequations}
 \begin{align}
      det(K-\omega^2M)&=0\\
@@ -344,7 +344,7 @@ k_1_1 & -k_1_2 & 0 \\
 \end{cases}
 \end{align}
 \end{subequations}
-Zur Kontrolle kann man, wenn $M$ solch eine Gestalt hat, über die Spur der Matrix $K$ überprüfen, ob man sich verrechnet hat. Das schöne daran ist, dass man diese einfach über die Summe der Diagonalelemente der Steifigkeitsmatrix bestimmen kann. Nebenbei ist das Produkt der Eigenwerte gleich $det(K)$ \citep{karpfinger2013hohere}.
+Zur Kontrolle kann man, wenn $M$ solch eine Gestalt hat, über die Spur der Matrix $K$ die Rechnung auf Plausibilität prüfen. Diese kann einfach über die Summe der Diagonalelemente der Steifigkeitsmatrix bestimmen kann. Nebenbei ist das Produkt der Eigenwerte gleich $det(K)$ \citep{karpfinger2013hohere}.
 \begin{subequations}
 \begin{align}
     \sum \limits_{i=1}^3 k_i_i &= \sum \limits_{i=1}^3 {\omega_i}^2\\
@@ -377,7 +377,7 @@ Mit Hilfe der Eigenfrequenzen werden anschließend die Eigenvektoren gesucht:
 \end{pmatrix}
 =\langle  \begin{pmatrix} 0.3280\\-0.7370\\0.5910
  \end{pmatrix}\rangle
- \intertext{mit der modalen Matrix $\Phi$ als Basis bestehend aus den drei linear unabhängigen Eigenvektoren:}
+ \intertext{Man erhält die modale Matrix $\Phi$ als Basis bestehend aus den drei linear unabhängigen Eigenvektoren:}
  \Phi \quad&=\begin{pmatrix} 
 -0.7370 & -0.5910 & 0.3280 \\
 -0.5910 & 0.3280 & -0.7370\\
@@ -425,7 +425,7 @@ Dabei stehen sie im Verhältnis zueinander:
 \begin{equation}
     \epsilon_1 :\epsilon_2 :\epsilon_3 = 1:0.082:0.012
 \end{equation}
-Diese Rechnung liefert die Erkenntnis, dass den Hauptanteil der Massenträgheitskraft die erste Eigenform mit einem Modalbeitrag von 91.4\% einnimmt. Die zweite und dritte Eigenform fallen mit 7.5\% und 1.1\% daher kaum ins Gewicht. Die DIN EN 1998 erfordert, bei der Anwendung des Antwortspektren-Verfahrens eine Erfassung von mindestens 90\% der Modalbeiträge. Dazu aber später mehr.
+Diese Rechnung liefert die Erkenntnis, dass den Hauptanteil der Massenträgheitskraft die erste Eigenform mit einem Modalbeitrag von 91.4\% einnimmt. Die zweite und dritte Eigenform fallen mit 7.5\% und 1.1\% daher kaum ins Gewicht. Die DIN EN 1998 erfordert, bei der Anwendung des Antwortspektren-Verfahrens eine Erfassung von mindestens 90\% der Modalbeiträge.
 %Gerade haben wir über den Einfluss der diagonalisierenden Matrix $\Phi$ auf $M$ und $K$ gesprochen. Aber was geschieht nun mit der Dämpfungsmatrix $D$, wenn man sie mit $\Phi$ transformiert (multipliziert)? Wie auch für $K$ wird auch für $D$ gefordert, dass sie sich durch $\Phi$ diagonalisieren lässt \eqref{Dämpfungsmatrix} \citep{MeskourisHinzenButenwegetal.2016}. 
 %\begin{subequations}
 %\begin{align}
@@ -471,7 +471,7 @@ Die größte baupraktische Bedeutung kommt dem Antwortspektrum-Verfahren zu. Es 
     T_D\leq T &:S_a(T) = a_g\gamma S \eta \beta_0\frac{T_C\cdot T_D}{T^2}
 \end{align}
 \end{subequations}
-Die Kontrollperioden $T_B$, $T_C$ und $T_D$ sind die Grenzen der Abschnitte. Die größten Antwortbeschleunigungen treten im Spektralplateau zwischen $T_B$ und $T_C$ auf \citep{bruestle2002untergrundabhangige,din19981,schwarz2005bauten}. Es wird durch die am Herd abgestrahlten hochfrequenten Signalanteile sowie Wellenabsorption im Untergrund, und durch die Hauptresonanzspitze am tieffrequenten Ende der Übertragungsfunktion bestimmt \citep{petersen2017grundlagen}. Die Eckperiode $T_D$ ergibt sich aus der Magnitude der betrachteten Referenzbeben \citep{bruestle2002untergrundabhangige}. Die erdbenenzonenabhängigen Referenz-Spitzwerte $a_g_R$ sind in Tabelle \ref{Referenzspitzenwerte} angegeben. Der nationale Anhang in Abbildung \ref{https://www.gfz-potsdam.de/din4149_erdbebenzonenabfrage/} der Baunorm DIN EN 1998 teilt Deutschland dabei in vier Erdbebenzonen von $0$ bis $3$ ein. Auffällig hierbei ist, dass besonders die Gebiete um den Rheingraben gefährdet sind. Daher ist dementsprechend erdbebensicher zu planen. Weite Teile Deutschland sind allerdings vor starken Beben sicher. Quantifiziert werden die Beben mittels der EMS, der Europäischen Makroseismischen Skala. Sie dient der Abschätzung der Seismischen Intensität von Beben in europäischen Ländern \citep{ems98_msk}. 
+Die Kontrollperioden $T_B$, $T_C$ und $T_D$ sind die Grenzen der Abschnitte. Die größten Antwortbeschleunigungen treten im Spektralplateau zwischen $T_B$ und $T_C$ auf \citep{bruestle2002untergrundabhangige,din19981,schwarz2005bauten}. Es wird durch die am Herd abgestrahlten hochfrequenten Signalanteile sowie Wellenabsorption im Untergrund, und durch die Hauptresonanzspitze am tieffrequenten Ende der Übertragungsfunktion bestimmt \citep{petersen2017grundlagen}. Die Eckperiode $T_D$ ergibt sich aus der Magnitude der betrachteten Referenzbeben \citep{bruestle2002untergrundabhangige}. Die erdbenenzonenabhängigen Referenz-Spitzwerte $a_g_R$ sind in Tabelle \ref{Referenzspitzenwerte} angegeben. Der nationale Anhang in Abbildung \ref{https://www.gfz-potsdam.de/din4149_erdbebenzonenabfrage/} der Baunorm DIN EN 1998 teilt Deutschland dabei in vier Erdbebenzonen von $0$ bis $3$ ein. Auffällig hierbei ist, dass besonders die Gebiete um den Oberrheingraben, die niederrheinische Bucht, sowie der schwäbischen Alb südlich von Stuttgart gefährdet sind \citep{sponheuer1952erdbebenkatalog, heck1980erdbebengebiet, ortlam1981neue, schneider1971seismizitat, sieberg1940beitrage}. Daher ist dementsprechend erdbebensicher zu planen. Weite Teile Deutschland sind allerdings vor starken Beben sicher. Quantifiziert werden die Beben mittels der EMS, der Europäischen Makroseismischen Skala. Sie dient der Abschätzung der Seismischen Intensität von Beben in europäischen Ländern \citep{ems98_msk}. 
 
 \begin{figure}[h]
     \centering
@@ -498,9 +498,9 @@ Erdbebenzone & \multicolumn{6}{l|}{\cellcolor[HTML]{9B9B9B}Intensität EMS} & a_
 \caption{Referenzspitzenwerte der Bodenbeschleunigung nach DIN 1998}
 \end{table}
 \\
-Gemäß des Euro-Code 8 (2010-12) werden neben den Baugrund- und Duktilitätsklassen auch Bedeutungs- und Verhaltensbeiwert sowie die Dämpfung einbezogen. Im folgenden wird der Pool an Parametern genauer betrachtet.
+Gemäß des Euro-Code 8 (2010-12) werden neben den Baugrund- und Duktilitätsklassen auch Bedeutungs- und Verhaltensbeiwert sowie die Dämpfung mit in die Rechnung einbezogen. Im folgenden wird der Pool an Parametern genauer betrachtet.
 
-Die Baugrundklasse beschreibt die Beschaffenheit der oberflächennahen Bodenschichten und des geologischen Untergrundes, und deren Einfluss auf die Erdbebeneinwurkung. Dies erfolgt durch die Einstufung in eine der drei Baugrundklassen A, B, C und eine der drei geologischen Untergrundklassen R, S, T  \citep{petersen2017grundlagen}. Quantitativ unterscheidet man die Baugrundklassen über deren Schwerwellengeschwindigkeit $v_s$ in:
+Die Baugrundklasse beschreibt die Beschaffenheit der oberflächennahen Bodenschichten und des geologischen Untergrundes, und deren Einfluss auf die Erdbebeneinwirkung. Dies erfolgt durch die Einstufung in eine der drei Baugrundklassen A, B, C und eine der drei geologischen Untergrundklassen R, S, T  \citep{petersen2017grundlagen}. Quantitativ unterscheidet man die Baugrundklassen über deren Schwerwellengeschwindigkeit $v_s$ in:
 \begin{itemize}
     \item [A:] (fest) Unverwitterte Festgesteine mit hoher Festigkeit (800 $\frac{m}{s} < v_s$)
     \item [B:] (locker) Mäßig verwitterte Festgesteine, dicht gelagterte Lockergesteine ($350 \frac{m}{s}\leq v_s \leq 800 \frac{m}{s}$)
@@ -534,7 +534,7 @@ T_D[s] & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}2,0} & 2,0 \\ \hline
 \label{Bodenklassen}
 \end{table}
 
-Bedeutungsklassen werden durch die Bedeutung des Einsturzes eines Bauwerks für menschliches Leben, die öffentliche Sicherheit und den Schutz der Bevölkerung nach einem Beben eingeführt und definiert. Jeder Bedeutungsklasse entspricht ein Bedeutungsbeiwert, der widerum einer kürzeren oder längeren angenommenen Wiederkehrperiode eines Bebens entspricht \citep{petersen2017grundlagen}. Man differenziert zwischen Klassen von $I$ bis $IV$, beziehungsweise von unbedeutend bis bedeutend. So hat beispielsweise ein Krankenhaus der Klasse $IV$ eine höhere (Schutz-) Priorität als ein Schuppen der Klasse $I$. Das hat mit dem Bedeutungsbeiwert $\gamma_l$ einen direkten Einfluss auf das Spektrum. Dabei dürfen/müssen bis zu 40\% bei Bauwerken der Bedeutungskategorie $IV$ aufaddiert beziehungsweise 20\% der Kategorie $I$ subtrahiert werden.
+Bedeutungsklassen werden durch die Bedeutung des Einsturzes eines Bauwerks für menschliches Leben, die öffentliche Sicherheit und den Schutz der Bevölkerung nach einem Beben eingeführt und definiert. Jeder Bedeutungsklasse entspricht ein Bedeutungsbeiwert, der widerum einer kürzeren oder längeren angenommenen Wiederkehrperiode eines Bebens entspricht \citep{petersen2017grundlagen}. Man differenziert zwischen den Klassen von $I$ bis $IV$, beziehungsweise von unbedeutend bis bedeutend. So hat beispielsweise ein Krankenhaus der Klasse $IV$ eine höhere (Schutz-) Priorität als ein Schuppen der Klasse $I$. Somit hat der Bedeutungsbeiwert $\gamma_l$ einen direkten Einfluss auf das Spektrum. Dabei dürfen/müssen bis zu 40\% bei Bauwerken der Bedeutungskategorie $IV$ aufaddiert beziehungsweise 20\% der Kategorie $I$ subtrahiert werden.
 
 \begin{table}[h]
 \centering
@@ -557,7 +557,7 @@ IV & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}\begin{tabular}[c]{@{}l@{}}Bauw
 \label{Bedeutungsbeiwerte}
 \end{table}
 
-Um nichtlineare Berechnungen zur Erfassung der Energiedissipation infolge des duktilen Bauwerks- und Bauteilverhaltens zu umgehen, führt man dieses in ein horizontales Bemessungspektrum für lineare dynamische Strukturberechnungen über \citep{petersen2017grundlagen}. Dieses erhält man, indem man zusätzlich einen Dämpfungskorrekturbeiwert $\eta$ mit einrechnet. $\eta$ ist von $D$ abhängig und ergibt sich zu:
+Um nichtlineare Berechnungen zur Erfassung der Energiedissipation infolge des duktilen Bauwerks- und Bauteilverhaltens zu umgehen, führt man dieses in ein horizontales Bemessungspektrum für lineare dynamische Strukturberechnungen über \citep{petersen2017grundlagen}. Dieses erhält man, indem man zusätzlich einen Dämpfungskorrekturbeiwert $\eta$ mit einrechnet. $\eta$ ist hierbei unmittelbar von $D$ abhängig und ergibt sich zu:
 \begin{subequations}
 \begin{align}
     \eta &= \mathrm{\sqrt{\frac{10}{5+D}}}\geq0.55\\
@@ -565,7 +565,7 @@ Um nichtlineare Berechnungen zur Erfassung der Energiedissipation infolge des du
 \end{align}
 \end{subequations}
 $q$ beschreibt den Verhaltensbeiwert, und setzt bestimmte konstruktive Vorkehrungen vorraus, um die erforderlichen Duktilitätskapazitäten zu gewährleisten. Er soll den Fehler durch die Linearisierung ausgleichen, indem der einheitliche Spektralwert $\beta_0 = 2.5$ um den Faktor $\frac{1}{q}$ abgemindert wird. Der Nachweis der Tragfähigkeit ist explizit zu führen und die der gewählten Duktilitätsklasse entsprechende konstruktive Durchbildung der Bauteile sicherzustellen \citep{petersen2017grundlagen}. Der Sonderfall $q = 1$, mit dem auch in der App gerechnet wird, beschreibt ein linear-elastisches Materialverhalten. Ist der Nachweis für erdbebensichere Konstruktionen erfüllt, so darf ferner vereinfacht gerechnet werden.
-Beispielhaft ist in Abbildung xy ein Bemessungsspektrum unter folgenden Bediungungen dargestellt:
+Beispielhaft ist in Abbildung xy ein Bemessungsspektrum unter folgenden Bedingungen dargestellt:
 \\[0.5cm]
 $\eta  =1$\\
 $D = 5\%$
@@ -573,23 +573,21 @@ $D = 5\%$
 (ABB)
 Überleitung
 
-\subsubsection{Vorgehensweise}
+\subsubsection{Beispiel: Erdbebenbeanspruchung eines Gebäudes mit und ohne Basisisolierung} \label{Beispiel Berechnung}
 Bei der Verwendung des Antwortspektrum-Verfahrens hält man sich meist an das unten genannte Schema:  
 \begin{itemize}
     \item [1)] Modellierung des Bauwerkes mit seinen Massen, Steifigkeiten und Dämpfungseigenschaften.
-    \item [2)] Berechnung der Eigenformen, -Frequenzen $\omega_E$ und -Schwingzeiten $T_E$
+    \item [2)] Berechnung der Eigenformen, -frequenzen $\omega_E$ und -schwingzeiten $T_E$
     \item [3)] Anwendung mit dem elastischen Antwortspektrum
     \item [4)] Bestimmung der Erdbebenersatzlasten
     \item [5)] Bestimmung der Verschiebung
     \item [6)] Bestimmung der Gebäude-Schnittgrößen
 \end{itemize}
-Nachdem nun das....
-\subsubsection{Beispiel: Erdbebenbeanspruchung eines Gebäudes mit und ohne Basisisolierung} \label{Beispiel Berechnung}
-In diesem Beispiel \citep{petersen2017grundlagen} soll ein Vergleich zwischen einem Gebäude mit und ohne Basisisolierung gezogen werden. Beide Gebäude bestehen aus nur einem Geschoss. Die Gebäudedecken und - Fundamente entsprechen den zusammengeführten Punktmassen. Die Wände bleiben in diesem Beispiel, wie in \ref{Mehrfreiheitsgradsystem} beschrieben masselos. Da bei einem Gebäude ohne Basisisolierung das Fundament an den Boden gekoppelt ist, bewegt es sich bei einem Beben wie der Baugrund. Daher lässt sich dieses Gebäude in ein Einfreiheitsgradsystem zusammenfassen. Bei dem Gebäude mit Basisisolierung hingegen muss vereinfacht mit einem Zweifreiheitsgradsystem gerechnet werden. Wie in der App, soll auch hier mit dem Antwortspektrumverfahren nach DIN EN 1998 (2010-12) gearbeitet werden. Das Erdbebenantwortspektrum als elastisches Spektrum $S_e$, wie in Abb xy dargestellt, berücksichtig den Verhaltensbeiwert $q$ vorerst nicht \cite{petersen2017grundlagen}.
+In diesem Beispiel \citep{petersen2017grundlagen} soll ein Vergleich zwischen einem Gebäude mit und ohne Basisisolierung gezogen werden. Beide Gebäude bestehen aus nur einem Geschoss. Die Gebäudedecken und - fundamente entsprechen den zusammengeführten Punktmassen. Die Wände bleiben in diesem Beispiel, wie in \ref{Mehrfreiheitsgradsystem} beschrieben, masselos. Da bei einem Gebäude ohne Basisisolierung das Fundament an den Boden gekoppelt ist, bewegt es sich bei einem Beben wie der Baugrund. Daher lässt sich dieses Gebäude in ein Einfreiheitsgradsystem zusammenfassen. Bei dem Gebäude mit Basisisolierung hingegen muss vereinfacht mit einem Zweifreiheitsgradsystem gerechnet werden. Wie in der App, soll auch hier mit dem Antwortspektrumverfahren nach DIN EN 1998 (2010-12) gearbeitet werden. Das Erdbebenantwortspektrum als elastisches Spektrum $S_e$, wie in Abb xy dargestellt, berücksichtig den Verhaltensbeiwert $q$ vorerst nicht \cite{petersen2017grundlagen}.
 \\
 (Abb Systeme, Abb Spektrum)
 \\
-Wir beginnen zuerst mit dem Gebäude ohne Basisisolierung. Die generalisierten Federsteigikeiten $k_G$ und Massen $m_G$ werden über die Geometrie und Materialeigenschaften der Stützen bestimmt. Das Dämpfungsmaß $D_G$ ($\xi_G$) ist ebenfalls bekannt:
+Wir beginnen zuerst mit dem Gebäude ohne Basisisolierung. Die generalisierten Federsteifigkeiten $k_G$ und Massen $m_G$ werden über die Geometrie und Materialeigenschaften der Stützen bestimmt. Das Dämpfungsmaß $D_G$ ($\xi_G$) ist ebenfalls bekannt:
 \\[0.5cm]
 $m_G = 1.4\cdot 10^6 kg$\\
 $k_G = 85\cdot 10^6 \frac{N}{m}$\\
@@ -609,7 +607,7 @@ Daraus ergeben sich die Eigenfrequenzen $\omega_G$ und -Schwingzeiten $T_G$:
     u = \frac{F}{k_g} = \frac{6.559\cdot 10^6 N}{85\cdot 10^6 \frac{N}{m}} = 0.077m
 \end{align}
 \end{subequations}
-Das System mit Basisisolierung hat zusätzlich eine Grundplatte mit der Masse $m_B$, welche auf der Isolierung liegt. Wie eben angesprochen, muss hier mit einem Zweifreiheitsgradsystem gerechnet werden. Ein Rechenbeispiel wurde bereits in \ref{Beispiel Mehrfreiheitsgradsystem} behandelt und die Vorgehensweise wird als bekannt angenommen. Die Parameter der Basisisolierung sind ergänzend gegeben:
+Das System mit Basisisolierung hat zusätzlich eine Grundplatte mit der Masse $m_B$, welche auf der Isolierung liegt. Wie bereits erwähnt, muss hier mit einem Zweifreiheitsgradsystem gerechnet werden. Ein Rechenbeispiel wurde bereits in \ref{Beispiel Mehrfreiheitsgradsystem} behandelt und die Vorgehensweise wird im Folgenden als bekannt angenommen. Die Parameter der Basisisolierung sind ergänzend gegeben:
 \\[0.5cm]
 $m_B = 0.1\cdot 10^6 kg$\\
 $k_B = 10\cdot 10^6 \frac{N}{m}$\\
@@ -627,13 +625,13 @@ Die zugehörigen Eigenformen sind in Abbxy angegeben. In der ersten Eigenform sc
 \begin{subequations}
 \begin{align}
     S_e(T_1=2.56s) = \frac{7.59}{2.56^2}\frac{m}{s^2} =1.158 \frac{m}{s^2} \\
-    \intertext{Die resultierende Massenkräfte $F_B$ und $F_G$ des Systems in der ersten Eigenform beträgt nach Gleichungen \eqref{F_B} und \eqref{F_G}:}
+    \intertext{Die resultierenden Massenkräfte $F_B$ und $F_G$ des Systems in der ersten Eigenform betragen nach Gleichungen \eqref{F_B} und \eqref{F_G}:}
     F_B = \frac{(1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00)^2}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot 1.158 N = 1.736\cdot 10^6N \\ \label{F_B}
     F_G = 1.4\cdot 10^6\cdot 1.11 \cdot \frac{1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot 1.158 N = 1.631\cdot 10^6 N \\ \label{F_G}
     \intertext{Die Relativverschiebungen $u_B$ und $u_G$ gegenüber dem Boden betragen:}
     u_B = 1.00\cdot \frac{1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot\frac{1.158}{2.458^2}m = 0.174m\\
     u_G = 1.11\cdot \frac{1.4\cdot 10^6\cdot 1.11 + 0.1\cdot 10^6 \cdot 1.00}{1.4\cdot 10^6\cdot 1.11^2 + 0.1\cdot 10^6\cdot 1.00^2}\cdot\frac{1.158}{2.458^2}m = 0.193m\\
-    \intertext{Aus den Verschiebungen lassen sich nun die Relativverschiebungen $\Delta u_B$ zwischen der Gebäudemasse und der Basisisolierung berechnen:}
+    \intertext{Aus den Verschiebungen lassen sich nun die Relativverschiebungen $\Delta u_B$ zwischen dem Gebäude und der Basisisolierung berechnen:}
     \Delta u_B = u_G - u_B = (0.193 - 0.174)m = 0.019 m 
 \end{align}
 \end{subequations}
@@ -642,10 +640,10 @@ Die Ergebnisse sind in ABB.x veranschaulicht. Stellt man nun die Endergebnisse g
     \item [1)]  ohne Basisisiolierung: 0.077 m
     \item [2)]  mit Basisisiolierung: 0.019 m
 \end{itemize}
-Setzt man die Verschiebungen ins Verhältnis, so wird deutlich, dass die Relativverformung durch die Basisisolation auf ein Viertel reduziert wird $(\frac{0.019}{0.077} = 0.25)$. Dementsprechend gering sind die Beanspruchungen im Falle eines Bebens.
+Setzt man nun die Verschiebungen ins Verhältnis, so wird deutlich, dass die Relativverformung durch die Basisisolation auf ein Viertel reduziert wird $(\frac{0.019}{0.077} = 0.25)$. Dementsprechend gering sind die Beanspruchungen im Falle eines Bebens.
 \begin{itemize}
-    \item [1)]  ohne Basisisiolierung: 6559 kN
-    \item [2)]  mit Basisisiolierung: 1631 kN
+    \item [1)]  ohne Basisisolierung: 6559 kN
+    \item [2)]  mit Basisisolierung: 1631 kN
 \end{itemize}
 Geringere Kräfte rufen geringere Spannungen hervor, allerdings sind die absoluten Verschiebungen beim Gebäude mit Basisisolierung größer als beim Gebäude ohne. ... Nachteile
 \newpage
@@ -669,22 +667,22 @@ Geringere Kräfte rufen geringere Spannungen hervor, allerdings sind die absolut
 \section{Implementierung}
 \label{Implementierung}
 \subsection{Programmentwicklung} \label{Programmentwicklung}
-Bevor ein näherer Einblick in die App gegeben werden kann ist noch zu erwähnen, dass jedes Programm in seiner Grobstruktur in etwa ähnlich aufgebaut ist und folgende Schritte, wie in \citep{IT2} beschreiben, unumgänglich sind.
+Bevor ein näherer Einblick in die App gegeben werden kann ist noch zu erwähnen, dass jedes Programm in seiner Grobstruktur in etwa ähnlich aufgebaut ist und folgende Schritte für die Programmentwicklung, wie in \citep{IT2} beschrieben, notwendig sind.
 \begin{itemize}
     \item[1)] Erstellen des Quell-Codes\\
     Zunächst muss der Quell-Text erstellt und gegebenenfalls überarbeitet werden. Der Großteil der Arbeit findet in diesem Schritt statt. Der Programmierer macht sich über das Problem und dessen Lösung Gedanken und programmiert dementsprechend. Im Allgemeinen werden die Variablen,welche im Code verwendet werden, deklariert und definiert. Außerdem wird hier die Struktur des Programmes bestimmt.
     \item[2)] Compilieren\\
-    Beim Compilieren wird der Quelltext in Maschinensprache übersetzt. Während dieses Prozesses werden sämtliche Fehler vom Compiler gefunden, seien es Syntax- oder Semanitk-Fehler. Ein Programm besteht aus einer Folge von Zeichen, die nach bestimmter, für die jeweilige Programmiersprache charakteristischen Vorschriften verknüpft werden. Die Verknüpfungsregeln für ein Programm bezeichnet man als Syntax der Programmiersprache. Sie kann man durch die Begriffe wie Ausdruck, Prozedur, Anweisungen usw. beschreiben. Jedes Programm besteht aus Zeichen, die der Benutzer mit Hilfe eines Editier-Programms eingeben muss. Jedes dieser Zeichen wird im Inneren des Rechners durch bestimmte Bitmuster kodiert. Diese Zeichen werden nach bestimmten, für die Programmiersprache typische Regeln zu einem Programm verknüpft \citep{IT2}.  Die Syntax beschreibt somit die 'Grammatik' des Codes. Bei der syntakitschen Analyse der Compilierung wird überprüft, ob diese korrekt eingehalten wurde. Findet der Compiler Fehler, so wird die Übersetzung abgebrochen und eine Fehlermeldung ausgegeben. Dementsprechend muss der Code korrigiert und erneut compiliert werden, bis dieser einwandfrei funktioniert.
+    Beim Compilieren wird der Quelltext in Maschinensprache übersetzt. Während dieses Prozesses werden sämtliche Fehler vom Compiler gefunden, seien es Syntax- oder Semanitk-Fehler. Ein Programm besteht aus einer Folge von Zeichen, die nach bestimmter, für die jeweilige Programmiersprache charakteristischen Vorschriften verknüpft werden. Die Verknüpfungsregeln für ein Programm bezeichnet man als Syntax der Programmiersprache. Sie kann man durch die Begriffe wie Ausdruck, Prozedur, Anweisungen usw. beschreiben. Jedes Programm besteht aus Zeichen, die der Benutzer mit Hilfe eines Editier-Programms eingeben muss. Jedes dieser Zeichen wird im Inneren des Rechners durch bestimmte Bitmuster kodiert. Diese Zeichen werden nach bestimmten, für die Programmiersprache typische Regeln zu einem Programm verknüpft \citep{IT2}.  Die Syntax beschreibt somit die 'Grammatik' des Codes. Bei der syntaktischen Analyse der Compilierung wird überprüft, ob diese korrekt eingehalten wurde. Findet der Compiler Fehler, so wird die Übersetzung abgebrochen und eine Fehlermeldung ausgegeben. Im folgenden Schritt muss der Code korrigiert und erneut compiliert werden, bis dieser einwandfrei funktioniert.
     \item[3)] Linken des Programmes\\ 
-    Hier werden alle Bestandteile des Programms zsuammengebunden. Wenn alle nötigen Fehler gefunden wurden, entsteht ein ausführbares Programm. Andernfalls müssen eventuell noch Linker-Einstellungen angepasst und neu gelinkt werden, oder es sind Fehler in der Quelldatei zu korrigieren \citep{IT2}.
+    Hier werden alle Bestandteile des Programms zusammengebunden. Wenn alle nötigen Fehler gefunden wurden, entsteht ein ausführbares Programm. Andernfalls müssen eventuell noch Linker-Einstellungen angepasst und neu gelinkt werden, oder es sind mögliche Fehler in der Quelldatei zu korrigieren \citep{IT2}.
     \item[4)] Starten des Programmes\\
     Beim Ablauf des Programmes können ebenfalls Fehler auftreten, dann muss erneut korrigiert, compiliert und gelinkt werden \citep{IT2}.
 \end{itemize}
 Abbildung (xyx) zeigt zusammengefasst den Prozess der Programmentwicklung.
 \subsection{Framework}
-In den vergangenen Abschnitten wurde über die theoretischen Zusammenhänge zwischen Erdbeben und deren Einfluss auf die sie einwirkenden Gebäude gesprochen. Welche Konstruktionen ihnen entgegenwirken sollen und wie man in der Praxis (damit) plant. Neben einigen extra für dieses Szenario entwickelten Rechenverfahren sticht vorallem das Antwortspektrum-Verfahren der DIN EN 1998 hervor, welches mit einem Beispiel in \ref{Antwortspektrum} behandlet wurde.
+In den vergangenen Abschnitten wurde über die theoretischen Zusammenhänge zwischen Erdbeben und deren Einfluss auf die Gebäude gesprochen. Welche Konstruktionen ihnen entgegenwirken sollen und wie man in der Praxis planerisch umsetzt. Neben einigen extra für dieses Szenario entwickelten Rechenverfahren sticht vor allem das Antwortspektrum-Verfahren der DIN EN 1998 hervor, welches mit einem Beispiel in \ref{Antwortspektrum} behandelt wurde.
 
-Jetzt liegt der Fokus auf dem Programmierteil dieser Arbeit. Bei der Software-Entwicklung ist es üblich, sich ein so genanntes Framework einzurichten, welches an sich kein eigenständiges Programm ist, sondern als modernes Rahmenwerk dienen soll, um dem Programmierenden dabei unterstützt, einen Entwicklungsrahmen für seine Anwendungsprogrammierung zur Verfügung zu stellen, mit dem er die Software-Architektur seines Programms bestimmt. Überwiegend wird es, wie hier auch, in der objektorientierten Programmierung eingesetzt \citep{Objektorientierte}. Für die Bearbeitung des Themas wird im Wesentlichen auf die folgenden Programmiersprache und Bibliotheken zurückgegriffen.
+Im folgenden Abschnitt dieser Arbeit liegt der Fokus auf der Programmierarbeit und der App-Umgebung (\ref{App-Umgebung}). Bei der Software-Entwicklung ist es üblich, sich ein so genanntes Framework einzurichten, welches an sich kein eigenständiges Programm ist, sondern ein modernes Rahmenwerk darstellt. Es soll den Programmierenden dabei unterstützten, einen Entwicklungsrahmen für seine Anwendungsprogrammierung zur Verfügung zu stellen, mit dem er die Software-Architektur seines Programms bestimmt. Überwiegend wird es, wie hier auch, in der objektorientierten Programmierung eingesetzt \citep{Objektorientierte}. Für die Bearbeitung des Themas wird im Wesentlichen auf die folgenden Programmiersprache und Bibliotheken zurückgegriffen.
 
 \subsubsection{Python}
 Die von Guido van Rossum am Centrum Wiskunde & Informatica in Amsterdam zu Beginn der 1990er-Jahre entwickelte Programmiersprache Python wird vor allem bei der objektorientierten sowie funktionalen Programmierung eingesetzt \citep{Pythoninfo}. Allgemein bekannt ist Python für ihre einfache Lesbarkeit und vor allem für ihre klare Syntax. Daher genießt sie einen Ruf als einfache und saubere Programmiersprache mit klarer Struktur. Dem zufolge ist sie weniger Anfällig für Fehler, unter anderem auch deswegen, weil sie im Gegensatz zu anderen Programmiersrpachen wie C oder C++, auf geschweifte Klammern oder Semikola und sogar auf das Kompilieren sowie Linken komplett verzichtet. Gekennzeichnet werden beispielsweise Kontrollstrukturen und Code-Blöcke durch Einrückungen. Auch nicht notwendig sind Variablendeclarationen zu Beginn der Programmierung, viel mehr werden sie in den Klassen definiert \citep{Pythoninfo}.  (evtl. Listing Einfügen als Beispiel) Ein weiterer Vorteil von Python ist das Potential  auf externe speziell für die Programmierspache entwickelte Bibliotheken wie Bokeh \citep{Bokeh} zurückgreifen zu können.
@@ -699,7 +697,7 @@ Sobald der Server in Betrieb ist, erstellt er mithilfe der Anwendunsgcodes Sitzu
 \subsubsection{Matlab}
 Für die Rechenbeispiele \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab} und \ref{Berechnung der Eigenfrequenzen- und Perioden in Matlab Beispiel} und Abbildung xy wurde das Programm Matlab \citep{Matlab} verwendet. Matlab ist eine kommerzielle Software des US-amerikanischen Unternehmens MathWorks zur Lösung mathematischer Probleme und zur grafischen Darstellung der Ergebnisse. Es ist vor allem für numerische Berechnungen mithilfe von Matrizen ausgelegt. Hauptsächlich wird Matlab von Wissenschaftlern, Ingenieuren und Studierenden verwendet.
 
-\subsection{App-Umgebung: s3s-functions.py}
+\subsection{App-Umgebung} \label{App-Umgebung}
 Da nun wirklich alle Grundlagen für die Programmierung der Applikation bekannt sind, kann nun über die Umgebung der App gesprochen werden. Die App beinhaltet zwei Programm-Codes. Einer davon wird $main.py$ genannt, der andere $s3s-functions.py$.
 
 \subsubsection{Unterprogramm: s3s-functions.py}
@@ -887,7 +885,7 @@ Mit der Methode $construct\_truss\_sources$ aus Listing 10 wird beispielhaft fü
 Listing 11 beschreibt die Lösung des eingangs beschriebenen Eigenwertproblems mit der  
    
    
-\subsubsection{Hauptprogramm: main.py}
+\subsubsection{Hauptprogramm: main.py} \label{App-Umgebungmain}
 Das Hauptprogramm der Applikation wird unter Programmierern in der Regel immer als $main$ bezeichnet und gespeichert. In Python kann auf externe speziell für die Programmierspache entwickelte Bibliotheken zurückgegriffen werden. . So auch im Hauptprogramm
 
 
@@ -910,7 +908,7 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv
 \end{lstlisting} 
-\subsubsection{Ein- und Ausgabe}
+\subsubsection{Ein- und Ausgabe} \label{input&output}
 \Beispiel
 \cleardoublepage
 \section{Ausblick}
