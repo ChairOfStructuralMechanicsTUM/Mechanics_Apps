@@ -74,15 +74,15 @@ Kapitel \ref{Implementierung}, als zweites großes Kapitel, ist der Implementier
 \section{Erdbebensicheres Bauen}
 \label{Kapitel 2}
 \subsection{Erdbeben}
-Um zu verstehen, wie und warum man erdbebensicher baut, wird zuerst einmal das Phänomen Erdbeben an sich kurz erörtert. Erdbeben nimmt man in Formen von Wellen wahr. Damit sich Wellen in einem Medium ausbreiten können, muss das Medium gewisse Eigenschaften aufweisen. Allem voraus ist die Eigenschaft der Elastizität. Der Gesteinsboden oder auch Erde können sich in Folge von Zug- und Druckspannungen verformen \citep{bolt2013erdbeben}. 
+Um zu verstehen, wie und warum man erdbebensicher baut, wird zuerst einmal das Phänomen Erdbeben an sich kurz erörtert. Erdbeben nimmt man in Formen von Wellen wahr. Damit sich Wellen in einem Medium ausbreiten können, muss das Medium gewisse Eigenschaften aufweisen. Allem voraus ist die Eigenschaft der Elastizität. Der Gesteinsboden oder auch Erde können sich in Folge von Zug- und Druckspannungen verformen \citep{bolt2013erdbeben}. Dies gilt allerdings nur für kleine Dehnungen. In den Herdregionen von starken Beben ist diese Annahme in der Regel nicht mehr gültig, da gerade in den weicheren oberen Erdschichten ein nichtlineares Materialverhalten vorzufinden ist. Phänomene wie zum Beispiel die so genannte Bodenverflüssigung, -verdichtung und dynamische Setzungen sind dabei zu beobachten. \citep{MeskourisHinzenButenwegetal.2016}. Um aber die Theorie der Wellenausbreitung zu verstehen, wird jedoch ein linear-elastisches, homogenes sowie isotropes Materialverhalten vorausgesetzt.
 
 Man unterscheidet unter drei Formen elastischer Wellen, die vereint für fühlbare und schadensverursachende Erschütterungen verantwortlich sind. Von diesen drei Wellen breiten sich zwei innerhalb eines Gesteinskörpers aus \citep{bolt2013erdbeben}. Man fasst diese unter dem Begriff Raumwelle zusammen. Primär-Wellen (P-Wellen) äußern sich dadurch, dass sie sich via Kompression und Dilatation durch das Medium fortpflanzen. 
 ABB
 
-Etwas langsamer als P-Wellen breiten sich Sekundär-Wellen (S-Wellen) aus. Chrarkterisiert wird diese Art von Welle durch ihre Art der Ausbreitung in Form einer Scherung. Das Gestein schert dabei vertikal lotrecht zur Ausbreitungsrichtung aus \citep{bolt2013erdbeben}. Die Ausbreitungsgeschwindigkeiten hängen von der Beschaffenheit des Bodens und des Gesteins ab. Dichte und Elastizität sind dafür unter anderem verantwortlich. Grundsätzlich gilt: Je dichter und härter ein Material ist, desto schneller breitet sich Schall in ihm aus.
+Etwas langsamer als P-Wellen breiten sich Sekundär-Wellen (S-Wellen) aus. Chrarkterisiert wird diese Art von Welle durch ihre Art der Ausbreitung in Form einer Scherung. Das Gestein schert dabei vertikal lotrecht zur Ausbreitungsrichtung aus \citep{bolt2013erdbeben,MeskourisHinzenButenwegetal.2016}. Die Ausbreitungsgeschwindigkeiten hängen von der Beschaffenheit des Bodens und des Gesteins ab. Dichte und Elastizität sind dafür unter anderem verantwortlich. Grundsätzlich gilt: Je dichter und härter ein Material ist, desto schneller breitet sich Schall in ihm aus.
 ABB
 
-Der dritte Typ Welle wird Oberflächenwelle genannt. Diese unterscheidet man widerum zwischen Love- und Rayleigh-Welle. Oberflächenwellen haben ihren Namen, da sie auf die Nähe zur Erdoberfläche beschränkt sind. Mit zunehmender Tiefe verringert sich das Maß an Bewegung zügig \citep{bolt2013erdbeben}.
+Der dritte Typ Welle wird Oberflächenwelle genannt. Diese unterscheidet man widerum zwischen Love- und Rayleigh-Welle. Oberflächenwellen haben ihren Namen, da sie auf die Nähe zur Erdoberfläche beschränkt sind. Mit zunehmender Tiefe verringert sich das Maß an Bewegung zügig \citep{bolt2013erdbeben,MeskourisHinzenButenwegetal.2016}.
 
 Die Bewegungsform von Love-Wellen unterscheidet sich kaum von der, der S-Wellen. Auch hier werden schert der Boden aus, allerdings ohne eine Form von Vertialbewegung. Außerdem erfolgt eine seitliche Verschiebung des Mediums, jedoch nicht vertikal, sondern lotrecht horizontal zur Ausbreitungsrichtung. Charakteristische Effekte der Love-Welle bei Erdbeben sind Gebäudeschäden, die durch horizontale Erschütterung der Fundamente hervorgerufen werden \citep{bolt2013erdbeben}.
 ABB
@@ -90,6 +90,51 @@ ABB
 Zu guter letzt gibt es noch die Rayleigh-Wellen, bei der sich die Bodenteilchen vertikal und horizontal planar in einer Ellipsenbahn bewegen.
 ABB
 
+Um Erdbeben einordnen und Quantifizieren zu können, fasst man diese unter dem Begriff der Erdbebenstärke zusammen. Man unterscheidet diese widerum zwischen Intensität und Magnitude. Die von C.F. Richter abgeleitete empirische Beziehung zwischen der Abnahme von Maximalamplituden und deren Entfernung zum Herd, wird unter dem Begriff der Lokalmagnitude ($M_L$) definiert. Sie beschreibt mit der Formel \eqref{gl:Magnitude} die Differenz der Logarithmen aus dem gemessenen Bodenverschiebungen des Erdbebens $A$ und einem Referenzbeben $A_0$ mit festgelegter Entfernung. Diese gilt strenggenommen nur in Kaliforniern. Daher hat man das seismische Herdmoment $M_0$ und damit die Momentenmagnitude $M_W$ \eqref{gl:Momentenmagnitude} eingeführt \citep{MeskourisHinzenButenwegetal.2016}. Das eingangs erwähnte Tohoku-Erdbeben hatte beispielsweise eine Stärke der Größe von ca. $9.1$.
+
+\begin{equation} 
+\label{gl:Magnitude}
+    M_L = \log{A} - \log{A_0}
+\end{equation}
+\begin{equation} \label{gl:Momentenmagnitude}
+    M_W = \frac{\log{M_0}}{1.5} - 6.07
+\end{equation}
+Eine andere Art der Interpretation zur Qualifizierung von Erdbebenschäden ist in der Europäische Makroseismik Skala aufgefasst (EMS 98) \citep{ems98_msk,grunthal2004erdbeben}. Darin wird das Schadensbild eines Bauwerkes einer Amplitude und einer Maximalbeschleunigung zugeordnet. Die auch unter dem Namen Mercalliskala bekannte Klassifizierung beinhaltet 12 Intensitätsstufen, die in Tabelle \ref{EMS} benannt sind \citep{MeskourisHinzenButenwegetal.2016}.
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+\hline
+\rowcolor[HTML]{9B9B9B} 
+Intensität & \multicolumn{6}{l|}{\cellcolor[HTML]{9B9B9B}Beschreibung} & \begin{tabular}[c]{@{}l@{}}Maximale Beschleunigung\\ in Bruchteilen von $g$\end{tabular} \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+I & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}nicht gespürt} &  \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+II & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}kaum gespürt} &  \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+III & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}schwach} &  \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+IV & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}von vielen wahrgenommen} & \textless 3\% \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+V & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}stark} & \textless  3\% \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+VI & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}leichte Schäden} & 3 - 10\% \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+VII & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}Schäden} & 10 - 20\% \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+VIII & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}starke Schäden} & 20 - 40\% \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+IX & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}zerstörend} & 40 - 80\% \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+X & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}vernichtend} & 80 - 150\% \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+XI & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}Katastrophe} & \textgreater 150\% \\ \hline
+\rowcolor[HTML]{C0C0C0} 
+XII & \multicolumn{6}{l|}{\cellcolor[HTML]{C0C0C0}große Katastrophe} & \textgreater 150\% \\ \hline
+\end{tabular}
+\caption{Vereinfachte Fassung der Intensitätseinteilung der EMS \citep{MeskourisHinzenButenwegetal.2016}}
+\label{EMS}
+\end{table}
 
 
 \subsection{Anwendungsbereich für Bauingenieure}
