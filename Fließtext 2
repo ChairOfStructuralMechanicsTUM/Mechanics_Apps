@@ -144,7 +144,7 @@ Die am häufigsten verwendete Klasse der Schutzsysteme ist in der Praxis die pas
 \subsubsection{Dissipationselemente} \label{Dissipationselemente}
 Wird eine schwingungsfähiges System ausgelenkt und anschließend frei gegeben, stellen sich Schwingungen ein, die nach einer gewissen Zeit abklingen \citep{petersen2017grundlagen} und zur Ruhe kommen. Dafür sorgt ein Dämpfer, der die kinetische Energie in jedem Schwingzyklus in Wärmeenergie umwandelt. Dieser Mechanismus wird im Fachjargon als Dissipation bezeichnet. Verantwortlich sind dafür überwiegend Reibungsvorgänge im Bauwerk \citep{petersen2017grundlagen}, aber auch die Interaktion zwischen Baugrund und -werk kann das System ausbremsen. Selbst die Bewegung des Systems in seinem umgebenden Medium trägt zu dessen Dämpfung bei. Da in allen Reibungsvorgängen Energie in Wärme umgewandelt wird, und diese nach dem zweiten Hauptsatz der Thermodynamik entlang eines negativen Temperaturgradienten fließt, wird dem offenen System nach und nach irreversibel Energie entzogen. Abbildung xy (Bild) zeigt ...
 \subsubsection{Shocktransmitter}
-
+Bei plötzlichen Bauwerksbewegungen werden Kräfte durch im bauwerk integrierte Shocktransmitter übertragen. Bei langsamen Beanspruchungen, wie es zum Beispiel bei Temperaturdehnungen der Fall ist, reagiert das System hingegen kaum. Durch die Verstärkung am Bauwerk werden die durch das Erdbeben entstehende Lasten bzw. die Energie gleichmäßiger an möglichst viele Bauwerksstellen verteilt. Hierdurch werden signifikante Energieanhäufungen an vereinzelten Bauwerksstellen vermieden \citep{maurer}.
 \subsubsection{Schwingungsdämpfer} \label{schwingungsdämpfer}
 Überwiegend horizontale Schwingungen werden durch den so genannten Schwingunsdämpfer, oder auch tuned mass damper (TMD), kompensiert. Als Schwingungsdämpfer ist ein zusätzliches schwingfähiges Masse-Feder-System definiert, das unter anderem Windlasten als auch personeninduzierte Schwingungen von Fußgängerbrücken (ABB) unterdrücken soll \citep{petersen2017grundlagen}. Im Zusammenhang mit Windlasten finden Schwingungsdämpfer auch in Hochhäusern Verwendung. Bekanntestes Beispiel hierfür ist das \textit{Taipei World Financial Center} (ABB) in China, bei dem vereinfacht gesagt ein Pendel an den obersten Etagen des Gebäudes montiert ist, und den Turm vor schwereren Schäden bewahren soll. Für Erdbeben hingegen sind TMD-Systeme eher minder geeignet, da, wie später in \ref{Mehrfreiheitsgradsystem} beschrieben, oftmals mehrere Eigenformen zur Schwingungsantwort des Gebäudes beitragen, und somit die Effizienz in den meisten Fällen geringer ist als bei Windlasten \citep{petersen2017grundlagen}. Dennoch kann durchaus ein Schwingungsdämpfer auch für die Reduktion von Erdbebenlasten vorgeschlagen werden \citep{meinhardt2011passive}. Allerdings kann dieser unter Umständen auch seine Wirkung verlieren, weil er nur innerhalb eines engen Frequenzbereichs arbeiten kann. Das bedeutet, dass zum Beispiel Beben außerhalb der für die Lage und Konstruktion des Gebäudes statistisch bestimmten Messungen und/oder stoßartigen Anregungen, die dem Dämpfer gelegentlich keine Chance auf einen Einschwingvorgang bietet, verherende Auswirkungen auf das Gebäude haben können. Hierbei ist vor allem die Charakteristik des Bebens von Bedeutung \citep{petersen2017grundlagen}. Epfehlenswert hierfür ist die Basisisolierung, in der es im Hauptsächlichen in dieser Arbeit gehen soll. Wie diese funktioniert, wird im Folgenden beschreiben.
 \subsubsection{Basisisolation}
@@ -847,7 +847,7 @@ Bei den Plots der Struktur und deren Verschiebungen wird zwischen den Stützstel
 \end{figure}
 
 Zusammenfassend liefert $s3s\_structure$ Voraussetzungen für die in $main.py$ erzeugten Struktur des zu berechnenden Gebäudes. Weiter geht es nun mit $s3s\_mode$. Die aus \ref{Mehrfreiheitsgradsystem} bekannte Berechnung der Eigenfrequenzen wird in ...
-\begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_mode: }, label = {S3S\_mode: },numbers=left, firstnumber=192] 
+\begin{lstlisting}[style=,language = python,frame = single,caption ={S3S\_mode: }, label = {S3S\_mode},numbers=left, firstnumber=192] 
 class S3S_Mode( S3S_Structure ):
     
     def __init__(self, ID, masses, massSupports, trusses,
@@ -969,6 +969,87 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv
 \end{lstlisting} 
+
+In Listing \ref{Main:Plot} wird eine Plot-Umgebung erstellt. Um Ergebnisse oder Objekte in Python plotten zu können, müssen zuerst die Abszissen und Ordinaten definiert werden. In diesem Beispiel wird das Gebäudemodell unter dem Namen $Structure$ in einem Fenster von 400 auf 400 Pixeln im Webbrowser wiedergegeben. Die Symmetrieachse des Gebäudes stimmt dabei mit der Y-Achse überein. Die Dimension der X-Achse ersteckt sich von -10 bis 10 Längeneinheiten, bei der eine Längeneinheit einem Meter entspricht, bei der Y-Achse hingegen wird ein Intervall von null bis zehn geplottet. Allerdings entspricht hier eine Längeneinheit einem Millimeter, um die relativ geringen Verschiebungen deutlich zu kennzeichen.
+
+\begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={Main: Plot-Umgebung}, label = {Main:Plot},numbers=left, firstnumber=29] 
+xmin, xmax = -10,10
+ymin, ymax = 0,10
+time_plot  = figure(
+                      plot_width=400,
+                      plot_height=400,
+                      x_range=[xmin,xmax], 
+                      y_range=[ymin,ymax],
+                      
+                      title = 'Structure',
+                   )
+\end{lstlisting} 
+In Python lassen gibt es einige Möglichkeiten Plots zu visualisieren. Listing \ref{Main:Plotvisualisierung} wird beispielsweise der Titel $Structure$ mittig in Schriftgröße 25 angegeben und die Achsen benannt. Dabei entrspricht die Y-Achse, wie eben erwähnt, der Höhe in Metern, und die X-Achse der maximalen verscheibung in Millimetern. Die Achsen sollen dargestellt werden, ein Gitter jedoch nicht.
+\begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={Main: Plot-Umgebung Visualisierungsmöglichkeiten}, label = {Main:Plotvisualisierung},numbers=left, firstnumber=39] 
+time_plot.title.text_font_size = "25px"
+time_plot.title.align          = "center"
+time_plot.grid.visible         = False
+time_plot.xaxis.visible        = True
+time_plot.yaxis.visible        = True
+time_plot.toolbar.logo         = None
+time_plot.yaxis.axis_label     = "Height [m]"
+time_plot.xaxis.axis_label     = "Maximum Relative Displacement [mm]"
+\end{lstlisting} 
+Ähnlich wurden auch die drei weiteren Plots der Schwingungsmoden und des elastischen Antwortspektrums erstellt. Auf diese werden aber nicht eingehen, da das Vorgehen bekannt ist.
+
+\begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={Main: Allgemeine Strukturparameter}, label = {Main:Strukturparameter},numbers=left, firstnumber=129] 
+massRatio       = np.array([0.1, 14])  
+stiffnessRatio  = np.array([10.0, 85.0])
+structure_color = '#85929E'
+\end{lstlisting}
+ Die allgemeinen Ausgangsparameter der Struktur sind dem Beispiel \ref{Beispiel Berechnung} auf Seite \pageref{Beispiel Berechnung} nachempfunden. Das bedeutet, dass die App beim ersten Durchlauf ohne die Veränderung der Ausgangsparameter exakt dem Beispiel entspricht. Dem Benutzer steht es jedoch frei die Parameter frei zu wählen. In Zeile $129$ der Listing \ref{Main:Strukturparameter} ist beispielhaft das Verhältnis der Massen zwischen Basisisolierung (erster Listeneintrag) und Gebäude (zweiter Listeneintrag) angegeben. Gleiches gilt auch für das Steifigkeitsverhältnis der Strukturelemente (vgl. Z. 130). Die Farbe der Struktur wird eindeutig durch den Farbcode (hier: $#85929E$) definiert.
+
+In den nachfolgenden Abschnitten wird der Code für die Plotts der Struktur erörtert. Um dies zu gewährleisten müssen diese drei Objekte definiert werden:
+\begin{itemize}
+    \item[1)] Masse
+    \item[2)] Balken
+    \item[3)] Basis
+\end{itemize}
+Nun werden die Einzelnen Objekte chronologisch kurz behandelt. Listing \ref{Main:Masse} beinhaltet Definition der Massenelemente. Als Startwert wurde eine Masse in Höhe von $10000 kg$ festgelegt. Diese ist über ein Eingabefenster frei wählbar, während das Massenverhältnis aus Listing \ref{Main:Strukturparameter} fix bleibt. Der Code in Zeile $150$ erzeugt die Objekte $masses$ und $massSupports$ mit den Eigenschaften so, wie sie bereits in $S3S\_Structure$ besprochen wurden (vgl. Seite \pageref{S3S\_mode}). Die Maße der $massSupports$ wurde auf drei Längeneinheiten gesetzt. Repräsentativ für die Massen im Modell sind Kreise mit dem Radius von $0.5$ Längeneinheiten.
+\begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={Main: Definition der Masse}, label = {Main:Masse},numbers=left, firstnumber=146] 
+# Starting amount of mass in kg
+mass = 10000.0
+
+# Data structure which contains the coordinates of the masses and mass supports
+masses, massSupports = fc.construct_masses_and_supports(length = 3.0)
+
+# Radius of the circles that represent the masses
+radius = 0.5
+\end{lstlisting}
+Wichtig für den Plot der Struktur sind neben der Masse auch die Balken, welche sich jeweils auf drei Längeneinheiten erstrecken (blöd). Sie werden zu Beginn mit einer Federsteifigkeit von $1000000 \frac{N}{m^2}$ belegt. Auch diese kann von Anwender frei bestimmt werden, das Verhältnis der Steifigkeiten ist wie bei den Massen unveränderbar.
+\begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={Main: Definition der Balken}, label = {Main:Balken},numbers=left, firstnumber=156] 
+trussLength = 3.0 # meters
+
+# Starting amount of bendingStiffness in N*m^2
+bendingStiffness = 1000000
+
+trussSources = fc.construct_truss_sources(masses[0], masses[1], trussLength)
+\end{lstlisting}
+Die Koordinaten des letzten Objektes $base$ werden in Listing \ref{Main:Basis} angegeben.
+\begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={Main: Definition der Basis}, label = {Main:Basis},numbers=left, firstnumber=164] 
+base =dict(
+       x=[masses[0]['x'][0] - trussLength/2, masses[0]['x'][0] + trussLength/2],
+       y=[masses[0]['y'][0] - trussLength  , masses[0]['y'][0] - trussLength  ]
+          )
+\end{lstlisting}
+Nachdem nun alle drei essentiellen Objekte für die Visualisierung der Struktur definiert wurde, ist man in der Lage diese mit den Befehl $fc.construct_system()$ umzusetzen.
+\begin{lstlisting}[tabsize = 1,language = python,frame = single,caption ={Main: Visualisierung der Struktur}, label = {Main:VisualisierungStruktur},numbers=left, firstnumber=164] 
+structure = S3S_Structure(masses, massSupports, trussSources, trussLength, base)
+
+structure.update_system([0,0])
+
+# Construct the mass and stiffness matric, in addition to the lebels to be defined later
+fc.construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRatio, trussLength)
+\end{lstlisting}
+ABB!!
+
+
+
 \subsubsection{Ein- und Ausgabe} \label{input&output}
 \Beispiel
 \cleardoublepage
