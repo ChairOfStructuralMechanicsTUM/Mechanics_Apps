@@ -129,16 +129,12 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - Franziska Mittermeier (fm)
 - Hannes Englert (he)
 - Corinna Schmausser (cs)
-- Christoph Winter (cw)
 
 ### Developers
 
 Please comply with the [Development Guideline](DevelopmentGuideline.md)
-- Khaled Boulbrachene, kb
 - Matthias Ebert, me, [@m3bert](https://github.com/m3bert)
-- Rishith Ellath Meethal, rem
-- Irfan Haider, ih
-- Sascha Kubisch, sk, [@ga96wec](https://github.com/ga96wec)
+
 
 
 ### Former developers
@@ -150,3 +146,7 @@ Please comply with the [Development Guideline](DevelopmentGuideline.md)
 - Ravil Dorozhinskii, rd
 - Vyshakh Unnikrishnan, vu
 - Carmen Font Mata, cfm 
+- Khaled Boulbrachene, kb
+- Rishith Ellath Meethal, rem
+- Irfan Haider, ih
+- Sascha Kubisch, sk, [@ga96wec](https://github.com/ga96wec)
