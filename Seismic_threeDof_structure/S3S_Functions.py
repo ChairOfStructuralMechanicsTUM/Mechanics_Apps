@@ -392,7 +392,7 @@ def linIntepolate(y1, y2, x1, x2, noNodes, length):
 
     return(nodes)
     
-def construct_truss_sources(massOne, massTwo, massThree, length):
+def construct_truss_sources(massOne, massTwo, length):
     
     # The convention used here is that the first entry of both the x and y vectors
     # represent the lower node and the second represents the upper node
@@ -466,7 +466,7 @@ def construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRati
                            
     structure.K = np.array([
                             [stiffnessRatio[0]+stiffnessRatio[1],         -stiffnessRatio[1]],
-                            [        -stiffnessRatio[1]         ,stiffnessRatio[1]+stiffnessRatio[2]]
+                            [        -stiffnessRatio[1]         ,          stiffnessRatio[1]]
                           ]) * 12 * bendingStiffness / trussLength**3
                         
 def solve_time_domain(structure, siesmicInput):

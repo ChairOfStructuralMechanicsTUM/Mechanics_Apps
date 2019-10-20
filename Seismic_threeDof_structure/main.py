@@ -161,7 +161,7 @@ trussLength = 3.0 # meters
 # Starting amount of bendingStiffness in N*m^2
 bendingStiffness = 1000000
 
-trussSources = fc.construct_truss_sources(masses[0], masses[1], trussLength)
+trussSources = fc.construct_masses_and_supports(masses[0], masses[1], trussLength)
 
 ################################# (3) base ####################################
 base =dict(
