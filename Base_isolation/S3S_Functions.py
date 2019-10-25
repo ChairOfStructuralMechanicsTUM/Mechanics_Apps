@@ -1,4 +1,3 @@
-
 from bokeh.models import ColumnDataSource
 import numpy as np
 from scipy import linalg
@@ -92,10 +91,10 @@ class S3S_Structure:
         noNodes = 10
         
         # truss1
-        x1 = - self.trussLength/2
-        x2 = self.masses[0].data['x'][0] - self.trussLength/2
+        x1 = - self.trussLength/3
+        x2 = self.masses[0].data['x'][0] - self.trussLength/3
         y1 = 0.0
-        y2 = self.masses[0].data['y'][0]*0.5
+        y2 = self.masses[0].data['y'][0] 
 
         ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
         xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
@@ -103,10 +102,10 @@ class S3S_Structure:
         self.trusses[0].data = dict( x=xs, y=ys )
 
         # truss2
-        x1 =   self.trussLength/2
-        x2 = self.masses[0].data['x'][0] + self.trussLength/2
+        x1 =   self.trussLength/3
+        x2 = self.masses[0].data['x'][0] + self.trussLength/3
         y1 = 0.0
-        y2 = self.masses[0].data['y'][0]*0.5 
+        y2 = self.masses[0].data['y'][0] 
 
         xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
         ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
@@ -185,11 +184,11 @@ class S3S_Structure:
         self.maximumDisplacement.data = dict(
                                              storey=["First","Seconds"],
                                              maxDisp=[
-                                                      round(self.masses[0].data['x'][0],2)
+                                                      round(self.masses[0].data['x'][0],2),
                                                       round(self.masses[1].data['x'][0],2)
-                                                      ]
-                                            )
-        
+                                                     ]       
+                                             )
+                                             
 class S3S_Mode( S3S_Structure ):
     
     def __init__(self, ID, masses, massSupports, trusses, trussLength, base, frequency, modeShape):
@@ -267,8 +266,8 @@ class S3S_SeismicParameters():
                                                                     'First Storey Max. Displacement [mm]','Second Storey Max. Displacement [mm]',
                                                                     'First Storey Total Force [N]',
                                                                     'Second Storey Total Force [N]'],
-                                                            modeOne  =[0,0,0,0,0,0,0,0,0,0,0],
-                                                            modeTwo  =[0,0,0,0,0,0,0,0,0,0,0]
+                                                            modeOne  =[0,0,0,0,0,0,0,0,0],
+                                                            modeTwo  =[0,0,0,0,0,0,0,0,0]
                                                           )
                                                 )
         
@@ -276,26 +275,32 @@ class S3S_SeismicParameters():
         if self.undergroundParamter == 'A-R':
             self.periods[0] = 0.05
             self.periods[1] = 0.20
+            self.periods[2] = 2.00
             self.S = 1.00
         elif self.undergroundParamter == 'B-R':
             self.periods[0] = 0.05
             self.periods[1] = 0.25
+            self.periods[2] = 2.00
             self.S = 1.25
         elif self.undergroundParamter == 'C-R':
             self.periods[0] = 0.05
             self.periods[1] = 0.30
+            self.periods[2] = 2.00
             self.S = 1.50
         elif self.undergroundParamter == 'B-T':
             self.periods[0] = 0.10
             self.periods[1] = 0.30
+            self.periods[2] = 2.00
             self.S = 1.00
         elif self.undergroundParamter == 'C-T':
             self.periods[0] = 0.10
             self.periods[1] = 0.40
+            self.periods[2] = 2.00
             self.S = 1.25
         elif self.undergroundParamter == 'C-S':
             self.periods[0] = 0.10
             self.periods[1] = 0.50
+            self.periods[2] = 2.00
             self.S = 0.75
             
     def get_Sa (self, period):
@@ -305,8 +310,8 @@ class S3S_SeismicParameters():
             return self.a * self.gamma * self.S * self.beta / 1 
         elif period >= self.periods[1] and period < self.periods[2]:
             return self.a * self.gamma * self.S * self.beta / 1 * (self.periods[1]/period)
-        #elif (period >= self.periods[2]):
-         #   return self.a * self.gamma * self.S * self.beta / 1 * self.periods[1]*self.periods[2]/period**2
+        elif (period >= self.periods[2]):
+            return self.a * self.gamma * self.S * self.beta / 1 * self.periods[1]*self.periods[2]/period**2
 
     def update_data_table(self, modes):
         
@@ -427,8 +432,8 @@ def construct_masses_and_supports(length):
     masses = list()
     massSupports = list()
     
-    massOne = dict(x=[0.0],y=[1*length])
-    massTwo = dict(x=[0.0],y=[2*length])
+    massOne = dict(x=[0.0],y=[0.5*length])
+    massTwo = dict(x=[0.0],y=[1.5*length])
 
     masses.append(massOne)
     masses.append(massTwo)
@@ -465,7 +470,7 @@ def construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRati
                            
     structure.K = np.array([
                             [stiffnessRatio[0]+stiffnessRatio[1],         -stiffnessRatio[1]        ],
-                            [        -stiffnessRatio[1]         ,stiffnessRatio[1], ],
+                            [        -stiffnessRatio[1]         ,stiffnessRatio[1]                   ],
                           ]) * 12 * bendingStiffness / trussLength**3
                         
 def solve_time_domain(structure, siesmicInput):
@@ -541,12 +546,15 @@ def plot( plot_name, subject, radius, color ):
     plot_name.circle( x='x',y='y',radius=radius,color=color,source=subject.masses[0] )
     plot_name.circle( x='x',y='y',radius=radius,color=color,source=subject.masses[1] )
     
-    plot_name.line( x='x', y='y', color=color, source=subject.trusses[0], line_width=2)
-    plot_name.line( x='x', y='y', color=color, source=subject.trusses[1], line_width=2)
+    plot_name.line( x='x', y='y', color=color, source=subject.trusses[0], line_width=20)
+    plot_name.line( x='x', y='y', color=color, source=subject.trusses[1], line_width=20)
+
+    #plot_name.patch( np.concatenate((subject.trusses[0].data['x'] , subject.trusses[1].data['x'])), np.concatenate((subject.trusses[0].data['y'] , subject.trusses[1].data['y'])), alpha=1.0, color=color, line_width=2)
+
     plot_name.line( x='x', y='y', color=color, source=subject.trusses[2], line_width=2)
     plot_name.line( x='x', y='y', color=color, source=subject.trusses[3], line_width=2)
     
-    plot_name.line( x='x', y='y', source=subject.base, color='#000000', line_width=5 )
+    #plot_name.line( x='x', y='y', source=subject.base, color='#000000', line_width=5 )
     
 def GetMaximumDisplacement( modes, siesmicParameters ):
     
