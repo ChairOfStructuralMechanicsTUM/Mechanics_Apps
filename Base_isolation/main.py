@@ -28,11 +28,11 @@ Create the plotting domain
 ###############################################################################
 '''
 xmin, xmax = -10,10
-ymin, ymax = 0,10
+ymin, ymax = 0,6
 time_plot  = figure(
-                      plot_width=400,
+                      plot_width=300,
                       plot_height=400,
-                      x_range=[xmin,xmax], 
+                      x_range=[xmin/2,xmax/2], 
                       y_range=[ymin,ymax],
                       
                       title = 'Structure',
@@ -127,8 +127,8 @@ all of the information
 ###############################################################################
 '''
 ###################### Structure general properties ###########################
-massRatio       = np.array([1.0, 1.5])  
-stiffnessRatio  = np.array([1.0, 1.5])
+massRatio       = np.array([1.0, 14])  
+stiffnessRatio  = np.array([1.0, 8.5])
 structure_color = '#85929E'
 
 ################################ (1) masses ###################################
@@ -260,10 +260,10 @@ for mode in modes:
     counter += 1
 
 ########################## Output the results #################################
-mode_colors = ['#0000FF','#00FF00','#D4AC0D']
+mode_colors = ['#F4940D','#EFC50B','#D4AC0D']
 
-fc.plot( mode_one  , modes[2], radius, mode_colors[2])
-fc.plot( mode_two  , modes[1], radius, mode_colors[1])
+fc.plot( mode_one  , modes[1], radius, mode_colors[1])
+fc.plot( mode_two  , modes[0], radius, mode_colors[0])
 '''
 ###############################################################################
 Construct the Elastic Response Spectrum
@@ -436,7 +436,7 @@ def show_def_config(active):
         maximumDisp = np.sqrt( maxes[:,0]**2 + maxes[:,1]**2 + maxes[:,2]**2 ) * 1000 # to convert to mm
         structure.update_system( maximumDisp )
         structure.massLocations[:,1] = maximumDisp
-        #plot( time_plot, structure, radius, color)
+        plot( time_plot, structure, radius, color)
         
 #        # Calculate forces
 #        force1 = (12*bendingStiffness*stiffnessRatio[0] / trussLength**3) * structure.masses[0].data['x'][0]
@@ -455,8 +455,8 @@ def show_undef_config(active):
     else:
         pass
 
-def_config_button = Toggle(label="Deformed Configuration", button_type="success",width=25)
-def_config_button.on_click(show_def_config)
+#def_config_button = Toggle(label="Deformed Configuration", button_type="success",width=25)
+#def_config_button.on_click(show_def_config)
 
 undef_config_button = Toggle(label="Undeformed Configuration", button_type="success",width=25)
 undef_config_button.on_click(show_undef_config)
@@ -497,9 +497,9 @@ curdoc().add_root(
                                             column(
                                                    def_undef_choices_text, 
                                                    row(
-                                                       undef_config_button,
-                                                       Spacer(width=180), 
-                                                       def_config_button
+                                                       #undef_config_button,
+                                                       #Spacer(width=180), 
+                                                      #def_config_button
                                                       ),
                                                    mass_input,
                                                    stiffness_input,
@@ -507,8 +507,9 @@ curdoc().add_root(
                                                   )
                                            ),
                                         row(
-                                            column(mode_one,modes[2].frequency_text,modes[2].multiplier_text),
-                                            column(mode_two,modes[1].frequency_text,modes[1].multiplier_text)
+                                            column(mode_one,modes[1].frequency_text,modes[1].multiplier_text),
+                                            column(mode_two,modes[0].frequency_text,modes[0].multiplier_text),
+                                            Spacer(width=180)
                                            )
                                       ),
                                 column(
@@ -522,8 +523,8 @@ curdoc().add_root(
                                        calculate_ERS_button,
                                        data_table_text,
                                        data_table, 
-                                       max_disp_data_table_text,
-                                       max_disp_data_table
+                                       #max_disp_data_table_text,
+                                       #max_disp_data_table
                                       )
                                )
                           )
