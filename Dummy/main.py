@@ -5,6 +5,7 @@ Dummy App - shows some common concepts used in this project
 # general imports
 import numpy as np
 from math import sin, cos, pi, radians
+import sys
 
 # bokeh imports
 from bokeh.io import curdoc
@@ -70,6 +71,10 @@ alpha_input.on_change('value',change_alpha) # callback function called when alph
 # ping pong animation with changing color
 
 #with class
+#TODO: Why does the plot keep slowing down? CDS is only updated, but it stays the same in terms of memory.
+#   already checked: memory size of pp_ball or its CDS does NOT grow
+#   RAM does not grow
+#   speed again after refreshing the window; reset button does not have any effect
 
 # global variables, that are not needed for direct plotting, can be created by dicts (or lists or other Python global scope objects)
 # do not use the keyword global! 
@@ -79,20 +84,23 @@ global_vars = dict(callback_id = None)
 
 # data for the ping pong animation
 #pp_ball = ColumnDataSource(data = dict(x=[], y=[], c=[]))
-pp_ball = DY_ball(1,1)
+pp_ball = DY_ball(2,1)
 
 
 # function called by periodic callback
 def ping_pong():
     [x,_] = pp_ball.get_coords()
-    if x>3.9:
+    if x>3.6:
         pp_ball.change_direction()
-        print(pp_ball)
-    elif x<0.1:
+        #print(pp_ball) # Debug info
+    elif x<0.4:
         pp_ball.change_direction()
 
     pp_ball.add_disp(0.1)
+    new_color = tuple(np.random.random_integers(0,255,(1,3)).flatten()) # random new RGB color
+    pp_ball.set_color(new_color)
     pp_ball.plot(pp_plot)
+    #print(sys.getsizeof(pp_ball))
 
 
 # function called, if the play/pause button is pressed
@@ -116,14 +124,15 @@ def play_pause():
 
 
 def reset():
-    pp_ball.set_coords(0,1)
-    pp_ball.plot(pp_plot)           # maybe we can omit plot here, if we use CDS in the class?
+    pp_ball.set_coords(2,1)
+    pp_ball.plot(pp_plot)
 
 
 
 
 pp_plot = figure(title="Ping Pong", x_range=(-1,5), y_range=(-0.5,2.5), height=300, width=400)
-pp_plot.line(x=[0,0], y=[0,2], line_width=10, color="black")
+pp_plot.line(x=[0,0], y=[0,2], line_width=20, color="black")
+pp_plot.line(x=[4,4], y=[0,2], line_width=20, color="black")
 #pp_plot.toolbar.logo = None
 pp_plot.toolbar_location = None
 pp_plot.axis.visible = False # do not show axis
