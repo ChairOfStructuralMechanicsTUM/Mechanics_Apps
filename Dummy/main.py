@@ -42,7 +42,7 @@ line_coordinates = ColumnDataSource(data = dict(x=[0,length_incl_line],y=[0,0]))
 
 
 # callback function to update line coordinates when changing alpha
-def change_alpha(attr,old,new):  # attr, old, new ALWAYS needed to be interpreted correctly as callback function
+def change_alpha(attr,old,new):  # attr, old, new ALWAYS needed to be interpreted correctly as a callback function for sliders
     # update coordinates of the line to be displayed
     alpha_incl = radians(new)  # read the new value from the slider and transform it from deg to rad
                                # if one needs data from other sliders alpha_input.value would return the current value of the slider alpha_input
@@ -61,11 +61,18 @@ inclination_plot.match_aspect = True # does not work, arc is still wrong; # with
 
 
 
-alpha_input = Slider(title="alpha [°]", value=0.0, start=0.0, end=90.0, step=0.5, width=400)
+alpha_input = Slider(title="alpha [°]", value=0.0, start=0.0, end=90.0, step=0.5, width=400) # build the slider
 alpha_input.on_change('value',change_alpha) # callback function called when alpha is changed in slider
 
 
 #---------------------------------------------------------------------#
+
+
+
+
+                #####################################            
+                #    ping pong animation example    #
+                #####################################      
 
 
 # ping pong animation with changing color
@@ -162,11 +169,19 @@ reset_button.on_click(reset) # calls the function play_plause() as soon as the b
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
+description_filename_animation = join(dirname(__file__), "description_animation.html")
+description_animation = LatexDiv(text=open(description_filename_animation).read(), render_as_text=False, width=1200)
+
+description_filename_end = join(dirname(__file__), "description_end.html")
+description_end = LatexDiv(text=open(description_filename_end).read(), render_as_text=False, width=1200)
+
 
 # send to window
 curdoc().add_root(column(description,
                          inclination_plot,
                          alpha_input,
+                         description_animation,
                          row(pp_plot, column(play_pause_button,
-                                              reset_button)))) # place all objects at their desired position
+                                              reset_button)),
+                         description_end)) # place all objects at their desired position
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

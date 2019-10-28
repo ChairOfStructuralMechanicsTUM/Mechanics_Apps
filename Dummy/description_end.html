@@ -1,0 +1,51 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+
+<p>
+You might have noticed a bit of LaTeX in the descriptions. This is rendered due to a special package which is important in the main file.
+However, currently this only runs up to version 1.0.2 of bokeh. So keep in mind to possibly downgrade the bokeh module if it keeps throwing errors regarding LaTeX.
+</br>
+See the Wiki for more details.
+</p>
+
+<p>
+Last but not least one of the most important parts to actually receive output and being able to look at the figures in your favorite browser lies in the command
+curdoc().add_root(), where you can define the position your objects (figures, sliders, buttons, etc.) by using rows and columns notation. </br>
+Without this last step - opening the window the outside world - all your programming and ideas would just stay imaginary.
+</p>
+
+<p>
+We hope that we covered the most important underlying structure of the apps presented here and that the gained basis for programming in bokeh will lead to magnificent creations. </br>
+Happy coding!
+</p>
+

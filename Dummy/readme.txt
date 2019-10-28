@@ -4,6 +4,7 @@ This app helps you to get familiar with important bokeh features, which are repe
 
 TODO:
 [x] add a variable inclination plot and corresponding slider
-[] add a dynamic visualization and corresponding start/stop button
-[] add description text
+[x] add a dynamic visualization and corresponding start/stop button
+[x] add description text
+[] improve details (text and figures)
 [] hide content (CSS/JS)
