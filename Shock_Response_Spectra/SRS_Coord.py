@@ -1,6 +1,6 @@
 from math import sqrt
 
-class Coord(object):
+class SRS_Coord(object):
     # initialise class
     def __init__(self,x,y):
         self.x=x
@@ -8,7 +8,7 @@ class Coord(object):
     
     # define Coord+Coord
     def __add__(self,A):
-        return Coord(self.x+A.x,self.y+A.y)
+        return SRS_Coord(self.x+A.x,self.y+A.y)
 
     # define Coord+=Coord
     def __iadd__(self,A):
@@ -18,7 +18,7 @@ class Coord(object):
     
     # define Coord-Coord
     def __sub__(self,A):
-        return Coord(self.x-A.x,self.y-A.y)
+        return SRS_Coord(self.x-A.x,self.y-A.y)
     
     # define Coord-=Coord
     def __isub__(self,A):
@@ -28,11 +28,11 @@ class Coord(object):
     
     # define Coord*num
     def __mul__(self,a):
-        return Coord(self.x*a,self.y*a)
+        return SRS_Coord(self.x*a,self.y*a)
     
     # define num*Coord
     def __rmul__(self,a):
-        return Coord(self.x*a,self.y*a)
+        return SRS_Coord(self.x*a,self.y*a)
     
     # define Coord*=num
     def __imul__(self,a):
@@ -42,7 +42,7 @@ class Coord(object):
     
     # define Coord/num
     def __div__(self,a):
-        return Coord(self.x/a,self.y/a)
+        return SRS_Coord(self.x/a,self.y/a)
     
     # define Coord/=num
     def __idiv__(self,a):
@@ -52,7 +52,7 @@ class Coord(object):
     
     # define -Coord
     def __neg__(self):
-        return Coord(-self.x,-self.y)
+        return SRS_Coord(-self.x,-self.y)
     
     # define Coord==Coord
     def __eq__ (self,A):
@@ -73,14 +73,14 @@ class Coord(object):
     
     # function returning the direction
     def direction(self):
-        return Coord(self.x/self.norm(),self.y/self.norm())
+        return SRS_Coord(self.x/self.norm(),self.y/self.norm())
     
     # function returning the perpendicular direction
     def perp(self):
-        return Coord(self.y/self.norm(),-self.x/self.norm())
+        return SRS_Coord(self.y/self.norm(),-self.x/self.norm())
     
     def copy(self):
-        return Coord(self.x,self.y)
+        return SRS_Coord(self.x,self.y)
     
     def prod_scal(self,A):
         return self.x*A.x+self.y*A.y
