@@ -6,5 +6,5 @@ TODO:
 [x] add a variable inclination plot and corresponding slider
 [x] add a dynamic visualization and corresponding start/stop button
 [x] add description text
-[] improve details (text and figures)
+[x] improve details (text and figures)
 [x] hide content (CSS/JS)
