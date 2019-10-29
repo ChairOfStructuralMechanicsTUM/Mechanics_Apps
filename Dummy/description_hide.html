@@ -1,0 +1,62 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+
+<p>
+For this more sophisticated example of hiding a button, we need to dive a bit into CSS and JavaScript, since Bokeh does not offer yet a simple hide functionality.
+</br>
+We need:
+<ul>
+    <li>a (JavaScript) callback function</li>
+    <li>a CSS style file located in /templates/styles.css</li>
+    <li>an html index file located in /templates/index.html</li>
+</ul>
+</p>
+
+
+<p>
+All or the most bokeh models provide a css_classes attribute. </br>
+Unfortunately, simply altering the css_classes attribute via hide_button.css_classes has no effect. That is why we need explicit JavaScript code which changes the
+underlying CSS names of the object in question. </br>
+UPDATE: It seems that now it is in fact possible to change the CSS classes without having to use a JavaScript function.
+A normal callback function programmed in python like in the examples above will do.
+</p>
+
+<p>
+Choose any tag, here "hidden" which should be present in the css_classes. The same tag is used in styles.css, so it is very important to not change this tag!
+</p>
+
+<p>
+Of course we could also add some functionality to the button via callback functions like in the example above. </br>
+For the purpose of providing a short overview we leave it this way without functionality. Nevertheless, feel free to try to expand or interconnect the examples. </br>
+A good "real world" reference of the apps can be considered to be SDOF, since it provides a structure using classes, many sliders, buttons and animations.
+</p>

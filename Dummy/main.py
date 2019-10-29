@@ -5,13 +5,12 @@ Dummy App - shows some common concepts used in this project
 # general imports
 import numpy as np
 from math import sin, cos, pi, radians
-import sys
 
 # bokeh imports
 from bokeh.io import curdoc
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
-from bokeh.models import ColumnDataSource, Slider, Button
+from bokeh.models import ColumnDataSource, Slider, Button, Select, CustomJS
 
 # internal imports
 from DY_ball import DY_ball
@@ -22,7 +21,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_support import LatexDiv
+from latex_support import LatexDiv, LatexSlider
 
 
 #---------------------------------------------------------------------#
@@ -58,10 +57,12 @@ inclination_plot.line(x='x', y='y', source=line_coordinates, color="#a2ad00") # 
 inclination_plot.arc(x=[0], y=[0], radius=[10], start_angle=[0], end_angle=[0.5*pi], line_dash="dashed", color="gray") # TODO: check why the arc is plotted wrong -> aspect ratio
 inclination_plot.toolbar.logo = None # removes the bokeh logo
 inclination_plot.match_aspect = True # does not work, arc is still wrong; # with title it is better -> title counts to hight
+# also: arc grows when using the ywheel_zoom
 
 
 
-alpha_input = Slider(title="alpha [°]", value=0.0, start=0.0, end=90.0, step=0.5, width=400) # build the slider
+#alpha_input = Slider(title="alpha [°]", value=0.0, start=0.0, end=90.0, step=0.5, width=400) # build the slider (without LaTeX)
+alpha_input = LatexSlider(title="\\alpha [°]", value=0.0, start=0.0, end=90.0, step=0.5, width=400) # build the slider (with LaTeX supported)
 alpha_input.on_change('value',change_alpha) # callback function called when alpha is changed in slider
 
 
@@ -90,7 +91,6 @@ global_vars = dict(callback_id = None)
 
 
 # data for the ping pong animation
-#pp_ball = ColumnDataSource(data = dict(x=[], y=[], c=[]))
 pp_ball = DY_ball(2,1)
 
 
@@ -107,7 +107,6 @@ def ping_pong():
     new_color = tuple(np.random.random_integers(0,255,(1,3)).flatten()) # random new RGB color
     pp_ball.set_color(new_color)
     pp_ball.plot(pp_plot)
-    #print(sys.getsizeof(pp_ball))
 
 
 # function called, if the play/pause button is pressed
@@ -130,6 +129,7 @@ def play_pause():
         reset_button.disabled = False
 
 
+# reset functionality
 def reset():
     pp_ball.set_coords(2,1)
     pp_ball.plot(pp_plot)
@@ -137,13 +137,13 @@ def reset():
 
 
 
-pp_plot = figure(title="Ping Pong", x_range=(-1,5), y_range=(-0.5,2.5), height=300, width=400)
+pp_plot = figure(title="Ping Pong", x_range=(-1,5), y_range=(-0.5,2.5), height=300, width=400, tools="")
 pp_plot.line(x=[0,0], y=[0,2], line_width=20, color="black")
 pp_plot.line(x=[4,4], y=[0,2], line_width=20, color="black")
-#pp_plot.toolbar.logo = None
-pp_plot.toolbar_location = None
-pp_plot.axis.visible = False # do not show axis
-pp_plot.grid.visible = False # do not show grid
+#pp_plot.toolbar.logo = None    # we don't need this, if we hide the toolbar
+pp_plot.toolbar_location = None # hide the toolbar
+pp_plot.axis.visible = False    # do not show axis
+pp_plot.grid.visible = False    # do not show grid
 
 pp_ball.plot(pp_plot)
 
@@ -159,18 +159,104 @@ reset_button.on_click(reset) # calls the function play_plause() as soon as the b
 
 
 
+#---------------------------------------------------------------------#
+
+
+
+
+                #################################            
+                #          hide example         #
+                #################################      
+
+
+# CSS and JavaScript needed for this example
+# more sophisticated 
+# /templates/index.html and /templates/styles.css necessary, see description text
+### UPDATE: also possible without JavaScript ###
+
+# real app example: rolling test
+
+# JavaScript callback function
+# not needed anymore, but leaving it for the sake of completeness
+hide_JS = """
+// store the value of the callback object (in our case the Select)
+choice = cb_obj.value;
+
+
+// here we get all elements that containt "button" in their css_classes
+// this is returned by an array
+// since we only have one button with this feature in this example, we can just use the first index
+// otherwise, we would need some more code and css_classes names to get the right index; see the Rolling Test App
+button_in_question = document.getElementsByClassName("button")[0];
+
+
+// if "show" is selected, show the button (get rid of "hidden")
+if(choice.includes("show")){
+    button_in_question.className = button_in_question.className.replace(" hidden", "");
+}
+
+// if "hide" is selected, hide the button (add "hidden" to the css_classes)
+else if(choice.includes("hide")){
+    button_in_question.className += " hidden";
+}
+
+
+// you can debug JavaScript code by printing it to the console via
+//    console.log(variable);
+// when using Firefox, pressing F12 and choosing the console or opening it via Ctrl+Shift+K, you can see the output
+"""
+
+
+# callback function for the selection
+# the button tag is necessary, otherwise it will only work once (one hide, and one show)
+# of course you can name the tag whatever you like, not necessarily "button", but some non-empty string is required
+def change_css_attr(attr, old ,new):
+    # add the tag "hidden" (or whatever word defined in styles.css) to hide the button
+    if new == "hide":
+        hide_button.css_classes = ["button", "hidden"]
+        #hide_button.css_classes = ["hidden"] # only works once
+    # remove the tag "hidden" to display the button; replacing instead of removing is also possible
+    elif new == "show":
+        hide_button.css_classes = ["button"]
+        #hide_button.css_classes = [""] # only works once
+
+
+
+# button to hide
+hide_button = Button(label="hide", button_type="success",width=100, css_classes=["button"])
+
+# selection/dropdown whether to display the button or hide it
+hide_selection = Select(title="display mode:", value="show", name="hs", options=["show", "hide"])
+
+# define the JavaScript code as its callback function
+#hide_selection.callback = CustomJS(code=hide_JS)  # JavaScript callback
+hide_selection.on_change('value', change_css_attr) # Python callback
 
 
 
 
 
 
-# add app description
+
+
+#---------------------------------------------------------------------#
+
+
+
+
+
+
+
+
+# add app description text
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 description_filename_animation = join(dirname(__file__), "description_animation.html")
 description_animation = LatexDiv(text=open(description_filename_animation).read(), render_as_text=False, width=1200)
+
+description_filename_hide = join(dirname(__file__), "description_hide.html")
+description_hide = LatexDiv(text=open(description_filename_hide).read(), render_as_text=False, width=1200)
 
 description_filename_end = join(dirname(__file__), "description_end.html")
 description_end = LatexDiv(text=open(description_filename_end).read(), render_as_text=False, width=1200)
@@ -183,5 +269,7 @@ curdoc().add_root(column(description,
                          description_animation,
                          row(pp_plot, column(play_pause_button,
                                               reset_button)),
+                         description_hide,
+                         row(hide_selection, hide_button),
                          description_end)) # place all objects at their desired position
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
