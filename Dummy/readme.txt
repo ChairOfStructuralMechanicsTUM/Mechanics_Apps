@@ -7,4 +7,4 @@ TODO:
 [x] add a dynamic visualization and corresponding start/stop button
 [x] add description text
 [] improve details (text and figures)
-[] hide content (CSS/JS)
+[x] hide content (CSS/JS)
