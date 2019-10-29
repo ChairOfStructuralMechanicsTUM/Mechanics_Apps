@@ -132,6 +132,7 @@ def play_pause():
 # reset functionality
 def reset():
     pp_ball.set_coords(2,1)
+    pp_ball.set_color((0,0,0))
     pp_ball.plot(pp_plot)
 
 
@@ -223,10 +224,12 @@ def change_css_attr(attr, old ,new):
 
 
 # button to hide
-hide_button = Button(label="hide", button_type="success",width=100, css_classes=["button"])
+hide_button = Button(label="now you see me", button_type="success",width=100, css_classes=["button"])
 
 # selection/dropdown whether to display the button or hide it
-hide_selection = Select(title="display mode:", value="show", name="hs", options=["show", "hide"])
+# value sets the initial choice
+# options sets the list of available options
+hide_selection = Select(title="display mode:", value="show", options=["show", "hide"])
 
 # define the JavaScript code as its callback function
 #hide_selection.callback = CustomJS(code=hide_JS)  # JavaScript callback
