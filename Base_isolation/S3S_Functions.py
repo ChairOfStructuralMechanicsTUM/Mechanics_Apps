@@ -12,7 +12,7 @@ from latex_support import LatexDiv
 
 class S3S_Structure:
     
-    def __init__(self, masses, massSupports, trusses, trussLength, base):
+    def __init__(self, masses, massSupports, trusses, trussLength, base, isolation):
         
         masslist = list()
         for i in range(len(masses)):
@@ -29,6 +29,12 @@ class S3S_Structure:
             trusslist.append( ColumnDataSource(data=trusses[i]) )
         self.trusses      = trusslist
         
+        isolationlist = list()
+        for i in range(len(isolation)):
+            isolationlist.append( ColumnDataSource(data=isolation[i]) )
+        self.isolation      = isolationlist
+
+
         self.trussLength  = trussLength
         self.base         = ColumnDataSource(base)
         
@@ -68,13 +74,14 @@ class S3S_Structure:
                                                    )
                                                     
         self.maximumDisplacement = ColumnDataSource(data=dict(storey=["First","Seconds"],maxDisp=[0.0,0.0]))
-        
+       
     def update_system(self, displacement):
         self.update_masses(displacement)
         self.update_mass_indicator_locaiton()
         self.update_massSupprts(displacement)
         self.update_stiffness_indicator_locaiton()
         self.update_truss_sources()
+        self.update_isolation()
         #print('truss1 = ',self.trusses[1].data['x'])
         
     def update_masses(self, displacement):
@@ -91,8 +98,8 @@ class S3S_Structure:
         noNodes = 10
         
         # truss1
-        x1 = - self.trussLength/3
-        x2 = self.masses[0].data['x'][0] - self.trussLength/3
+        x1 = - self.trussLength/2
+        x2 = self.masses[0].data['x'][0] - self.trussLength/2
         y1 = 0.0
         y2 = self.masses[0].data['y'][0] 
 
@@ -102,8 +109,8 @@ class S3S_Structure:
         self.trusses[0].data = dict( x=xs, y=ys )
 
         # truss2
-        x1 =   self.trussLength/3
-        x2 = self.masses[0].data['x'][0] + self.trussLength/3
+        x1 =   self.trussLength/2
+        x2 = self.masses[0].data['x'][0] + self.trussLength/2
         y1 = 0.0
         y2 = self.masses[0].data['y'][0] 
 
@@ -131,7 +138,29 @@ class S3S_Structure:
         ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
         self.trusses[3].data =dict( x=xs, y=ys )
         
+    def update_isolation(self):
+        noNodes = 10
+        
+        # isolation left
+        x1 = - self.trussLength/2
+        x2 = self.masses[0].data['x'][0] - self.trussLength/2
+        y1 = 0.0
+        y2 = self.masses[0].data['y'][0] 
 
+        ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
+        xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
+        
+        self.isolation[0].data = dict( x=xs, y=ys )
+
+        # isolation right
+        x1 =   self.trussLength/2
+        x2 = self.masses[0].data['x'][0] + self.trussLength/2
+        y1 = 0.0
+        y2 = self.masses[0].data['y'][0] 
+
+        xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
+        ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
+        self.isolation[1].data = dict( x=xs, y=ys )
 
     def update_force_indicator_location(self):
         # first force indicator
@@ -191,8 +220,8 @@ class S3S_Structure:
                                              
 class S3S_Mode( S3S_Structure ):
     
-    def __init__(self, ID, masses, massSupports, trusses, trussLength, base, frequency, modeShape):
-        S3S_Structure.__init__(self, masses, massSupports, trusses, trussLength, base)
+    def __init__(self, ID, masses, massSupports, trusses, trussLength, base, isolation, frequency, modeShape):
+        S3S_Structure.__init__(self, masses, massSupports, trusses, trussLength, base, isolation)
         self.id = ID
         self.frequency = frequency
         self.modeShape = modeShape
@@ -426,7 +455,22 @@ def construct_truss_sources(massOne, massTwo, length):
    
     
     return trussSources    
-     
+def construct_isolation(massOne, massTwo, length):    
+    isolationOne   = dict(
+                        x=[massOne['x'][0] - length/2, massOne['x'][0] - length/2],
+                        y=[massOne['y'][0] - length  , massOne['y'][0]           ]
+                     )
+
+    isolationTwo   = dict(
+                        x=[massOne['x'][0] + length/2, massOne['x'][0] + length/2],
+                        y=[massOne['y'][0] - length  , massOne['y'][0]           ]
+                     ) 
+
+    isolationlist = list()
+    isolationlist.append(isolationOne)            
+    isolationlist.append(isolationTwo)
+
+
 def construct_masses_and_supports(length):
     
     masses = list()
@@ -546,10 +590,12 @@ def plot( plot_name, subject, radius, color ):
     plot_name.circle( x='x',y='y',radius=radius,color=color,source=subject.masses[0] )
     plot_name.circle( x='x',y='y',radius=radius,color=color,source=subject.masses[1] )
     
-    plot_name.line( x='x', y='y', color=color, source=subject.trusses[0], line_width=20)
-    plot_name.line( x='x', y='y', color=color, source=subject.trusses[1], line_width=20)
+    #plot_name.line( x='x', y='y', color=color, source=subject.trusses[0], line_width=20)
+    #plot_name.line( x='x', y='y', color=color, source=subject.trusses[1], line_width=20)
 
-    #plot_name.patch( np.concatenate((subject.trusses[0].data['x'] , subject.trusses[1].data['x'])), np.concatenate((subject.trusses[0].data['y'] , subject.trusses[1].data['y'])), alpha=1.0, color=color, line_width=2)
+
+    #plot_name.patch( np.concatenate((subject.trusses[0].data['x'] , subject.trusses[1].data['x'][::-1])), np.concatenate((subject.trusses[0].data['y'] , subject.trusses[1].data['y'][::-1])), alpha=1.0, color=color, line_width=2)
+    plot_name.patch( np.concatenate((subject.isolation[0].data['x'] , isolation[1].data['x'][::-1])), np.concatenate((subject.isolation[0].data['y'] , subject.isolation[1].data['y'][::-1])), alpha=1.0, color=color, line_width=2)
 
     plot_name.line( x='x', y='y', color=color, source=subject.trusses[2], line_width=2)
     plot_name.line( x='x', y='y', color=color, source=subject.trusses[3], line_width=2)
