@@ -32,7 +32,8 @@ code {
 
 
 <p>
-You might have noticed a bit of LaTeX in the descriptions. This is rendered due to a special package which is important in the main file.
+You might have noticed a bit of LaTeX in the descriptions. This is rendered due to a special package which is imported in the main file.
+It is not only possible to include LaTeX in the description text but also in the title of sliders, or legends and labels of plots.
 However, currently this only runs up to version 1.0.2 of bokeh. So keep in mind to possibly downgrade the bokeh module if it keeps throwing errors regarding LaTeX.
 </br>
 See the Wiki for more details.
@@ -40,12 +41,12 @@ See the Wiki for more details.
 
 <p>
 Last but not least one of the most important parts to actually receive output and being able to look at the figures in your favorite browser lies in the command
-curdoc().add_root(), where you can define the position your objects (figures, sliders, buttons, etc.) by using rows and columns notation. </br>
-Without this last step - opening the window the outside world - all your programming and ideas would just stay imaginary.
+curdoc().add_root(), where you can define the position of your objects (figures, sliders, buttons, etc.) by using rows and columns notation. </br>
+Without this last step - opening the window to the outside world - all your programming and ideas would just stay imaginary.
 </p>
 
 <p>
-We hope that we covered the most important underlying structure of the apps presented here and that the gained basis for programming in bokeh will lead to magnificent creations. </br>
+We hope that we covered the most important underlying structures of the apps presented here and that the gained basis for programming in bokeh will lead to magnificent creations. </br>
 Happy coding!
 </p>
 

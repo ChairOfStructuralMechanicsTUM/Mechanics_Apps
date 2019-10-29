@@ -4,7 +4,6 @@ class concerning ball animations
 
 """
 # general imports
-import sys
 
 # bokeh imports
 from bokeh.models import ColumnDataSource
@@ -69,4 +68,3 @@ class DY_ball(object):
         #fig.circle(x=self.x, y=self.y, color=self.c, size=30) # plotting it this way would not remove the old ball from the plot
         self.update_cds()
         fig.circle(x='x', y='y', color=self.c, source=self.cds, size=30) #changing the color does not work using ColumnDataSource
-        #print(sys.getsizeof(self.cds))
