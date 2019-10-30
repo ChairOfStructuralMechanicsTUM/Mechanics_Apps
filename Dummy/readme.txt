@@ -8,3 +8,7 @@ TODO:
 [x] add description text
 [x] improve details (text and figures)
 [x] hide content (CSS/JS)
+
+<p>
+This dummy app will show you how to program constantly recurring Bokeh models which can be found in most of the apps of this project.
+</p>
