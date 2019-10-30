@@ -505,7 +505,7 @@ description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 # grid plot of phase angle and amplification
-gp = gridplot([p_af,p_pa],ncols=1,plot_width=250,plot_height=250,merge_tools=True,toolbar_location="below",toolbar_options=dict(logo=None))  # for gridpot we need to disable logo again
+gp = gridplot([p_af,p_pa],ncols=1,plot_width=250,plot_height=250,merge_tools=True,toolbar_location="below",toolbar_options=dict(logo=None))  # for gridplot we need to disable logo again
 
 ## Send to window
 hspace = 20
