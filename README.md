@@ -1,6 +1,6 @@
 # Mechanics Apps
 This repository contains the python codes for webbased-visualization for mechanics principles, via Bokeh.
-It contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechanics, Prof. Müller, TUM (Technical University of Munich).
+It contains different prototypes for WebApps for the visualization of mechanics examples for the lectures of the Chair of Structural Mechanics, Prof. Müller, TUM (Technical University of Munich).
 
 ## Overview
 
@@ -64,7 +64,7 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 	- add the app to the file ```appnames.conf```
 	- run `server_autorun.exe` 
 	- Navigate to *Global_IP:Port* in your browser (or the corresponding IP address set in ```server.conf```). For example: *127.0.0.1:5006*
-	- In our case, we use a proxy name for the *IP:Port*, which is *apps.bm.bgu.tum.de:5006* in order to display a more approrpate website name.
+	- In our case, we use a proxy name for the *IP:Port*, which is *apps.bm.bgu.tum.de:5006* in order to display a more appropriate website name.
 
 ### Apps 
 

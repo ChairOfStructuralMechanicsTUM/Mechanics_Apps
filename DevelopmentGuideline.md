@@ -25,7 +25,7 @@ The following points are important for all developers.
 * Don't use ```from ... import *```. It is hard to understand the origin of a function or variable if it is not imported explicitly. Better use ```from ... import foo, bar```.
 
 ## Debugging with Visual Studio Code
-It is possible to debug the bokeh apps using a custom launch configuration in Visual Studio Code. It is pssoble to add breakpoints and monitor your variables in VS Code. You have to add the following code to your `launch.json`:
+It is possible to debug the bokeh apps using a custom launch configuration in Visual Studio Code. It is possible to add breakpoints and monitor your variables in VS Code. You have to add the following code to your `launch.json`:
 
 ```json
 {   
@@ -75,7 +75,7 @@ slider= LatexSlider(title="\\sigma_x=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{
 ```
 
 ### Legend: `LatexLegend`
-`LatexSlider` renders everything provided in the `items` attribute as LaTeX math mode code. Use `max_label_width` to specify the width of the legend box, as the automatic calculation is not yet implementd. Example:
+`LatexLegend` renders everything provided in the `items` attribute as LaTeX math mode code. Use `max_label_width` to specify the width of the legend box, as the automatic calculation is not yet implemented. Example:
 ```python
 legend = LatexLegend(items=[
     ("\\text{Solution part: }\\frac{1}{2}\\cosh(\\lambda\\xi)", [data1]),
