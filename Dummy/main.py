@@ -52,7 +52,7 @@ def change_alpha(attr,old,new):  # attr, old, new ALWAYS needed to be interprete
 
 # inclination figure
 inclination_plot = figure(title="Inclination", x_range=(-1,length_incl_line+1), y_range=(-1,length_incl_line+1), height=400, width=400, \
-    toolbar_location="right", tools=["ywheel_zoom, pan, reset"]) # build the basic skeleton of the figure
+    toolbar_location="right", tools=["ywheel_zoom, pan, reset, save"], output_backend="svg") # build the basic skeleton of the figure
 inclination_plot.line(x='x', y='y', source=line_coordinates, color="#a2ad00") # plot the line based on the coordinates of the ColumnDataSource line_coordinates
 inclination_plot.arc(x=[0], y=[0], radius=[10], start_angle=[0], end_angle=[0.5*pi], line_dash="dashed", color="gray") # TODO: check why the arc is plotted wrong -> aspect ratio
 inclination_plot.toolbar.logo = None # removes the bokeh logo
