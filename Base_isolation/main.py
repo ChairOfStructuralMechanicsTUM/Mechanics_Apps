@@ -170,7 +170,7 @@ base =dict(
           )
 
 ############################### Create Structure ##############################
-structure = S3S_Structure(masses, massSupports, trussSources, trussLength, base)
+structure = S3S_Structure(masses, massSupports, trussSources, trussLength, base, isolation)
 
 structure.update_system([0,0])
 
