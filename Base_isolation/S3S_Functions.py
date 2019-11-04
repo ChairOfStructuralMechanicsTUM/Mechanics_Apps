@@ -30,7 +30,7 @@ class S3S_Structure:
         self.trusses      = trusslist
         
         isolationlist = list()
-        for i in range(len(isolation)):
+        for i in range(len(trusses)):
             isolationlist.append( ColumnDataSource(data=isolation[i]) )
         self.isolation      = isolationlist
 
@@ -595,7 +595,7 @@ def plot( plot_name, subject, radius, color ):
 
 
     #plot_name.patch( np.concatenate((subject.trusses[0].data['x'] , subject.trusses[1].data['x'][::-1])), np.concatenate((subject.trusses[0].data['y'] , subject.trusses[1].data['y'][::-1])), alpha=1.0, color=color, line_width=2)
-    plot_name.patch( np.concatenate((subject.isolation[0].data['x'] , isolation[1].data['x'][::-1])), np.concatenate((subject.isolation[0].data['y'] , subject.isolation[1].data['y'][::-1])), alpha=1.0, color=color, line_width=2)
+    plot_name.patch( np.concatenate((subject.isolation[0].data['x'] , subject.isolation[1].data['x'][::-1])), np.concatenate((subject.isolation[0].data['y'] , subject.isolation[1].data['y'][::-1])), alpha=1.0, color=color, line_width=2)
 
     plot_name.line( x='x', y='y', color=color, source=subject.trusses[2], line_width=2)
     plot_name.line( x='x', y='y', color=color, source=subject.trusses[3], line_width=2)
