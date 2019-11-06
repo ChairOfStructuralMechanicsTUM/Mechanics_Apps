@@ -33,41 +33,41 @@ class S3S_Structure:
         self.base         = ColumnDataSource(base)
         
         # System matrices
-        self.M = np.zeros((2,2))
-        self.C = np.zeros((2,2))
-        self.K = np.zeros((2,2))
+        self.M = np.zeros((3,3))
+        self.C = np.zeros((3,3))
+        self.K = np.zeros((3,3))
         
         # Mass locations
-        self.massLocations = np.zeros((2,2))
+        self.massLocations = np.zeros((3,2))
         
         # Force indicator (forces indicate in the plotting domain the force 
         # carried by each of the truss members besides the location where to
         # display the force values) ((Here default value are given))
         self.forces = ColumnDataSource(
                                        data=dict(
-                                                 x=[0,0],
-                                                 y=[0,0],
-                                                 force=['Force = ','Force = ']
+                                                 x=[0,0,0],
+                                                 y=[0,0,0],
+                                                 force=['Force = ','Force = ','Force = ']
                                                 )
                                       )
                                       
         self.massIndicators = ColumnDataSource(
                                                data=dict(
-                                                         x=[0,0],
-                                                         y=[0,0],
-                                                         mass=['','']
+                                                         x=[0,0,0],
+                                                         y=[0,0,0],
+                                                         mass=['','','']
                                                         )
                                               )
                                                
         self.stiffnessIndicators = ColumnDataSource(
                                                     data=dict(
-                                                              x=[0,0],
-                                                              y=[0,0],
-                                                              stiffness=['','']
+                                                              x=[0,0,0],
+                                                              y=[0,0,0],
+                                                              stiffness=['','','']
                                                              )
                                                    )
                                                     
-        self.maximumDisplacement = ColumnDataSource(data=dict(storey=["First","Seconds"],maxDisp=[0.0,0.0]))
+        self.maximumDisplacement = ColumnDataSource(data=dict(storey=["First","Seconds","Third"],maxDisp=[0.0,0.0,0.0]))
         
     def update_system(self, displacement):
         self.update_masses(displacement)
@@ -80,13 +80,14 @@ class S3S_Structure:
     def update_masses(self, displacement):
         self.masses[0].data = dict(x=[displacement[0]] , y=self.masses[0].data['y'])
         self.masses[1].data = dict(x=[displacement[1]] , y=self.masses[1].data['y'])
-    
+        self.masses[2].data = dict(x=[displacement[2]] , y=self.masses[2].data['y'])
 
         self.update_mass_indicator_locaiton
 
     def update_massSupprts(self, displacement):
         self.massSupports[0].data['x'] = self.massSupports[0].data['x']*0 + [-self.trussLength/2+displacement[0], self.trussLength/2+displacement[0]]
         self.massSupports[1].data['x'] = self.massSupports[1].data['x']*0 + [-self.trussLength/2+displacement[1], self.trussLength/2+displacement[1]]
+        self.massSupports[2].data['x'] = self.massSupports[2].data['x']*0 + [-self.trussLength/2+displacement[2], self.trussLength/2+displacement[2]]
 
     def update_truss_sources(self):
         noNodes = 10
@@ -131,6 +132,26 @@ class S3S_Structure:
         xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
         ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
         self.trusses[3].data =dict( x=xs, y=ys )
+        
+        # truss5 
+        x1 = self.masses[1].data['x'][0] - self.trussLength/2
+        x2 = self.masses[2].data['x'][0] - self.trussLength/2
+        y1 = self.masses[1].data['y'][0]
+        y2 = self.masses[2].data['y'][0]
+        
+        xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
+        ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
+        self.trusses[4].data =dict( x=xs, y=ys )
+        
+        # truss6
+        x1 = self.masses[1].data['x'][0] + self.trussLength/2
+        x2 = self.masses[2].data['x'][0] + self.trussLength/2
+        y1 = self.masses[1].data['y'][0]
+        y2 = self.masses[2].data['y'][0]
+        
+        xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
+        ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
+        self.trusses[5].data =dict( x=xs, y=ys ) 
 
     def update_force_indicator_location(self):
         # first force indicator
@@ -141,8 +162,12 @@ class S3S_Structure:
         x2 = (self.trusses[3].data['x'][0] + self.trusses[3].data['x'][1]) / 2 + 2.5
         y2 = (self.trusses[3].data['y'][1] + self.trusses[3].data['y'][0]) / 2
               
+        # third force indicator
+        x3 = (self.trusses[5].data['x'][0] + self.trusses[5].data['x'][1]) / 2 + 2.5
+        y3 = (self.trusses[5].data['y'][1] + self.trusses[5].data['y'][0]) / 2
+              
         # update the source fle
-        self.forces.data = dict(x=[x1,x2],y=[y1,y2],force=self.forces.data['force'])
+        self.forces.data = dict(x=[x1,x2,x3],y=[y1,y2,y3],force=self.forces.data['force'])
               
 #    def update_force_indicator_value(self, forces):
 #        
@@ -157,7 +182,7 @@ class S3S_Structure:
         for i in self.masses:
             updateLocation.append( i.data['y'][0] + 0.5 )
         self.massIndicators.data = dict(
-                                        x=[self.masses[0].data['x'][0], self.masses[1].data['x'][0]],
+                                        x=[self.masses[0].data['x'][0], self.masses[1].data['x'][0], self.masses[2].data['x'][0]],
                                         y=updateLocation,
                                         mass=self.massIndicators.data['mass']
                                        )
@@ -181,10 +206,11 @@ class S3S_Structure:
         
     def update_maximum_displacement(self):
         self.maximumDisplacement.data = dict(
-                                             storey=["First","Seconds"],
+                                             storey=["First","Seconds","Third"],
                                              maxDisp=[
                                                       round(self.masses[0].data['x'][0],3),
-                                                      round(self.masses[1].data['x'][0],3)
+                                                      round(self.masses[1].data['x'][0],3),
+                                                      round(self.masses[2].data['x'][0],3)
                                                      ]
                                             )
         
@@ -195,7 +221,7 @@ class S3S_Mode( S3S_Structure ):
         self.id = ID
         self.frequency = frequency
         self.modeShape = modeShape
-        self.maxModeShape = np.array([0,0]) # 0 is a default value
+        self.maxModeShape = np.array([0,0,0]) # 0 is a default value
         self.locationInERS = ColumnDataSource(data=dict(x=[0],y=[0])) # with default values
         self.participationFactor = 0 # 0 is a default value
         
@@ -253,7 +279,7 @@ class S3S_SeismicParameters():
         period[1] == TC
         period[2] == TD
         '''
-        self.periods = np.zeros(2) # default value, will be changed by determine_periods_and_S()
+        self.periods = np.zeros(3) # default value, will be changed by determine_periods_and_S()
         self.determine_periods_and_S()
         
         self.ERSdata = ColumnDataSource(data=dict(x=[0],y=[0])) # Elastic Response Spectrum data
@@ -263,10 +289,11 @@ class S3S_SeismicParameters():
                                                            subject=['Period [second]',"Participation Factor ("u"\u03b2)","Modal Mass ("u"\u03b1)",
                                                                     "Spectral Acceleration [m/s"u"\u00B2]",'Total Force [N]',
                                                                     'First Storey Max. Displacement [mm]','Second Storey Max. Displacement [mm]',
-                                                                    'First Storey Total Force [N]',
-                                                                    'Second Storey Total Force [N]'],
-                                                            modeOne  =[0,0,0,0,0,0,0,0,0],
-                                                            modeTwo  =[0,0,0,0,0,0,0,0,0]
+                                                                    'Third Storey Max. Displacement [mm]','First Storey Total Force [N]',
+                                                                    'Second Storey Total Force [N]','Third Storey Total Force [N]'],
+                                                            modeOne  =[0,0,0,0,0,0,0,0,0,0,0],
+                                                            modeTwo  =[0,0,0,0,0,0,0,0,0,0,0],
+                                                            modeThree=[0,0,0,0,0,0,0,0,0,0,0]
                                                           )
                                                 )
         
@@ -314,7 +341,7 @@ class S3S_SeismicParameters():
 
     def update_data_table(self, modes):
         
-        data = np.zeros((9,2))
+        data = np.zeros((11,3))
         
         counter = 2
         for mode in modes:
@@ -336,16 +363,21 @@ class S3S_SeismicParameters():
             # fill-in the First Storey Max. Displacement
             data[5,counter] = round(mode.maxModeShape[0] * 1000 , 3) # to convert to mm
             # fill-in the Second Storey Max. Displacement
-            data[6,counter] = round(mode.maxModeShape[1] * 1000 , 2) # to convert to mm 
+            data[6,counter] = round(mode.maxModeShape[1] * 1000 , 3) # to convert to mm 
+            # fill-in the Third Storey Max. Displacement
+            data[7,counter] = round(mode.maxModeShape[2] * 1000 , 3)# to convert to mm
+            
             
             maxForce = np.dot(mode.K , mode.maxModeShape)
             # fill-in the First Storey Total Force
             data[8,counter] = round(maxForce[0] , 3)
             # fill-in the Second Storey Total Force
             data[9,counter] = round(maxForce[1] , 3)
+            # fill-in the Third Storey Total Force
+            data[10,counter] = round(maxForce[2] , 3)
 
             # fill-in the Total Force
-            data[4,counter] = round(maxForce[0] + maxForce[1] , 3)
+            data[4,counter] = round(maxForce[0] + maxForce[1] + maxForce[2] , 3)
 
             counter -= 1
         
@@ -353,7 +385,8 @@ class S3S_SeismicParameters():
         self.informationTable.data = dict(
                                           subject = self.informationTable.data['subject'],
                                           modeOne = data[:,0],
-                                          modeTwo = data[:,1]
+                                          modeTwo = data[:,1],
+                                          modeThree = data[:,2]
                                          )
 def cubic_N1 (xi):
     #print('xi = ',xi)
@@ -392,7 +425,7 @@ def linIntepolate(y1, y2, x1, x2, noNodes, length):
 
     return(nodes)
     
-def construct_truss_sources(massOne, massTwo, length):
+def construct_truss_sources(massOne, massTwo, massThree, length):
     
     # The convention used here is that the first entry of both the x and y vectors
     # represent the lower node and the second represents the upper node
@@ -414,12 +447,22 @@ def construct_truss_sources(massOne, massTwo, length):
                         x=[massTwo['x'][0] + length/2, massTwo['x'][0] + length/2],
                         y=[massOne['y'][0]           , massTwo['y'][0]           ]
                      )
+    trussFive  = dict(
+                        x=[massThree['x'][0] - length/2, massThree['x'][0] - length/2],
+                        y=[massTwo['y'][0]             , massThree['y'][0]           ]
+                     )
+    trussSix   = dict(
+                        x=[massThree['x'][0] + length/2, massThree['x'][0] + length/2],
+                        y=[massTwo['y'][0]             , massThree['y'][0]           ]
+                     )
                               
     trussSources = list()
     trussSources.append(trussOne)
     trussSources.append(trussTwo)
     trussSources.append(trussThree)
     trussSources.append(trussFour)
+    trussSources.append(trussFive)
+    trussSources.append(trussSix)
     
     return trussSources    
      
@@ -430,9 +473,11 @@ def construct_masses_and_supports(length):
     
     massOne = dict(x=[0.0],y=[1*length])
     massTwo = dict(x=[0.0],y=[2*length])
+    massThree = dict(x=[0.0],y=[3*length])
     
     masses.append(massOne)
     masses.append(massTwo)
+    masses.append(massThree)
     
     massOneSupport = dict(
                             x=[massOne['x'][0] - length/2, massOne['x'][0] + length/2],
@@ -442,9 +487,14 @@ def construct_masses_and_supports(length):
                             x=[massTwo['x'][0] - length/2, massTwo['x'][0] + length/2],
                             y=[massTwo['y'][0]           , massTwo['y'][0]           ]
                          )
+    massThreeSupport = dict(
+                            x=[massThree['x'][0] - length/2, massThree['x'][0] + length/2],
+                            y=[massThree['y'][0]           , massThree['y'][0]           ]
+                           )
                                       
     massSupports.append(massOneSupport)
     massSupports.append(massTwoSupport)
+    massSupports.append(massThreeSupport)
     
     return masses, massSupports
      
@@ -452,21 +502,23 @@ def construct_system(structure, mass, massRatio, bendingStiffness, stiffnessRati
     structure.massIndicators.data = dict(
                                          x=structure.massIndicators.data['x'],
                                          y=structure.massIndicators.data['y'],
-                                         mass=[str(massRatio[0])+'m',str(massRatio[1])+'m']
+                                         mass=[str(massRatio[0])+'m',str(massRatio[1])+'m',str(massRatio[2])+'m']
                                         )
     
     structure.stiffnessIndicators.data = dict(
                                      x=structure.stiffnessIndicators.data['x'],
                                      y=structure.stiffnessIndicators.data['y'],
-                                     stiffness=[str(stiffnessRatio[0])+'EI',str(stiffnessRatio[1])+'EI']
+                                     stiffness=[str(stiffnessRatio[0])+'EI',str(stiffnessRatio[1])+'EI',str(stiffnessRatio[2])+'EI']
                                     )
     
-    structure.M = np.array([[massRatio[0],      0            ],
-                            [      0      ,massRatio[1]      ]]) * mass
+    structure.M = np.array([[massRatio[0],      0      ,     0       ],
+                            [      0      ,massRatio[1],     0       ],
+                            [      0      ,      0      ,massRatio[2]]]) * mass
                            
     structure.K = np.array([
-                            [stiffnessRatio[0]+stiffnessRatio[1],         -stiffnessRatio[1]],
-                            [        -stiffnessRatio[1]         ,          stiffnessRatio[1]]
+                            [stiffnessRatio[0]+stiffnessRatio[1],         -stiffnessRatio[1]        ,         0         ],
+                            [        -stiffnessRatio[1]         ,stiffnessRatio[1]+stiffnessRatio[2], -stiffnessRatio[2]],
+                            [                0                  ,         -stiffnessRatio[2]        ,  stiffnessRatio[2]]
                           ]) * 12 * bendingStiffness / trussLength**3
                         
 def solve_time_domain(structure, siesmicInput):
@@ -500,8 +552,8 @@ def solve_time_domain(structure, siesmicInput):
     for i in range(N):
         t[i] = i*0.01
 
-    amplitude = np.zeros((2,N))
-    for mass in range(2):
+    amplitude = np.zeros((3,N))
+    for mass in range(3):
         for time in range(N):
             amplitude[mass,time] = np.sin(np.pi*mass*time*0.01)
             
@@ -538,21 +590,25 @@ def solve_modal_analysis(structure):
 def plot( plot_name, subject, radius, color ):
     plot_name.line( x='x', y='y', source=subject.massSupports[0], color=color, line_width=5)
     plot_name.line( x='x', y='y', source=subject.massSupports[1], color=color, line_width=5)
+    plot_name.line( x='x', y='y', source=subject.massSupports[2], color=color, line_width=5)
     
     plot_name.circle( x='x',y='y',radius=radius,color=color,source=subject.masses[0] )
     plot_name.circle( x='x',y='y',radius=radius,color=color,source=subject.masses[1] )
+    plot_name.circle( x='x',y='y',radius=radius,color=color,source=subject.masses[2] )
     
     plot_name.line( x='x', y='y', color=color, source=subject.trusses[0], line_width=2)
     plot_name.line( x='x', y='y', color=color, source=subject.trusses[1], line_width=2)
     plot_name.line( x='x', y='y', color=color, source=subject.trusses[2], line_width=2)
     plot_name.line( x='x', y='y', color=color, source=subject.trusses[3], line_width=2)
+    plot_name.line( x='x', y='y', color=color, source=subject.trusses[4], line_width=2)
+    plot_name.line( x='x', y='y', color=color, source=subject.trusses[5], line_width=2)
     
     plot_name.line( x='x', y='y', source=subject.base, color='#000000', line_width=5 )
     
 def GetMaximumDisplacement( modes, siesmicParameters ):
     
     maximumDisplacement = list()
-    r = np.array([1,1])
+    r = np.array([1,1,1])
     
     beta = list()
     period = list()
