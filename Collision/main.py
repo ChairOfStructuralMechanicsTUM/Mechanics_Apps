@@ -11,11 +11,10 @@ from bokeh.events import Pan
 
 '''
 ###############################################################################
-Global variables as ColumnDataSources
+Global variables
 ###############################################################################
 '''
-glCollisionCr = ColumnDataSource(data=dict(val=[1.0])) # collision parameter
-g1Collision   = ColumnDataSource(data=dict(cid=[None])) # callback id
+glCollision = dict(Crval=1.0, cid=None) # collision parameter and callback id
 
 '''
 ###############################################################################
@@ -175,7 +174,7 @@ through time
 '''
 # Calculate the new location of the two balls
 def compute_trajectory():
-    [glCollisionCr_val] = glCollisionCr.data["val"] # input/
+    glCollisionCr_val = glCollision["Crval"] # input/
     
     # Compute the new position of the circles' center
     particleOne.position[0] += particleOne.velocity[0]*dt
@@ -314,10 +313,10 @@ Add the interactive functionalities
 '''
 ########################### Creating reset button #############################
 def Reset():
-    [g1Collision_id] = g1Collision.data["cid"] # input/
+    glCollision_id = glCollision["cid"] # input/
     if curdoc().session_callbacks:
-        for c in curdoc().session_callbacks:
-            curdoc().remove_periodic_callback(g1Collision_id)
+        #for c in curdoc().session_callbacks:
+        curdoc().remove_periodic_callback(glCollision_id)
     
     # Return the solider to their default values
     ballOneVelocityDirSlider.value = dirOne
@@ -348,9 +347,9 @@ reset_button.on_click(Reset)
 
 ########################### Creating play-pause button ##############################
 def playpause():
-    [g1Collision_id] = g1Collision.data["cid"] # input/output
+    glCollision_id = glCollision["cid"] # input/output
     if playpause_button.label == "Play":
-        g1Collision_id = curdoc().add_periodic_callback(compute_trajectory, 10)
+        glCollision_id = curdoc().add_periodic_callback(compute_trajectory, 10)
         playpause_button.label = "Pause"
         ballOneVelocityDirSlider.disabled = True
         ballOneVelocityMagSlider.disabled = True
@@ -359,8 +358,8 @@ def playpause():
        # crSlider.disabled = True  # We can leave the Cr Slider enabled while the app is running, changing Cr on the fly is anice feature and has no impact on performance
         crSlider.disabled = True
     else: # "Pause"
-        for c in curdoc().session_callbacks:
-            curdoc().remove_periodic_callback(g1Collision_id)
+        #for c in curdoc().session_callbacks:
+        curdoc().remove_periodic_callback(glCollision_id)
         playpause_button.label = "Play"
 
         #update sliders
@@ -373,10 +372,9 @@ def playpause():
         ballOneVelocityMagSlider.disabled = False
         ballTwoVelocityDirSlider.disabled = False
         ballTwoVelocityMagSlider.disabled = False
-       # crSlider.disabled = False # The slider has not to be enabled again, if it did not get disabled in line 349
         crSlider.disabled = False
        
-    g1Collision.data = dict(cid=[g1Collision_id])
+    glCollision['cid'] = glCollision_id
 
 playpause_button = Button(label="Play", button_type="success")
 playpause_button.on_click(playpause)
@@ -487,7 +485,7 @@ ballTwoVelocityMagSlider.on_change('value',update_ballTwo_VelocityMag)
 
 ################# Creating coefficient of restitution slider ##################
 def update_Cr_value(attr,old,new):
-    glCollisionCr.data = dict(val=[new]) #      /output
+    glCollision['Crval'] = new #      /output
 
 crSlider = Slider(
                    title=u" Coefficient of Restitution ",
