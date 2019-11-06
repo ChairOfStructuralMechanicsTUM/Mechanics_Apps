@@ -313,7 +313,6 @@ def play():
         glob_active.data   = dict(Active=[True])
         glob_callback.data = dict(cid=[g1Boatwiththreeswimmers])
         play_button.label  = "Pause"
-    #update_bars()
 
 play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
@@ -430,11 +429,13 @@ def jump():
                               color="#005293",
                               source=listSources[counter]
                              )
+                
+                # if nobody is on the boat anymore, disable the jump button
+                if people_still_onboard == 0:
+                    jump_button.disabled = True
+                
                 break
             counter += 1
-            if counter == numberPersonsSlider.value-1: # last person jumped
-                jump_button.disabled = True
-        #update_bars()
 
     else:
         pass
