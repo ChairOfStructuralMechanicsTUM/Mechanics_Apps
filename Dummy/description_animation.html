@@ -43,11 +43,11 @@ Another important remark at this place is the following: Keep an eye on Pythons 
 Just make sure to create new ColumnDataSources whenever refreshing the page. This means, do not use the same ColumnDataSource over several Python files. </br>
 In the codes example you will see that the ColumnDataSource for the coordinates of the ball is defined in the class. Yet, the class is build in the main file.
 Therefore, after refreshing the page, the object will be built completely new too! 
-One could also think of a sepearte file which lists all the ColumnDataSources and importing it to the files where needed. However, Python will "remember" these definitions
-in its cache and the app won't be able to start up again, since there arises a definition conflict now. To avoid this, only define ColumnDataSources in the main file or 
-within classes in other files, which are being built in the main. This way, when leaving/refreshing the page, the class and also its ColumnDataSource will be destroyed,
-making room for the new ColumnDataSources. </br>
-Don't worry, if you didn't understand what I was trying to tell here. Again, just keep trying out new scenarios and sooner or later you will stumble accross this problem.
+One could also think of a separate file which lists all the ColumnDataSources and importing it to the files where needed. However, Python will "remember" these definitions
+in its cache and the app won't be able to start up again, since there arises a definition conflict now. <br> 
+To avoid this, <strong>only define ColumnDataSources in the main file</strong> or within classes in other files, which are being built in the main. This way, 
+when leaving/refreshing the page, the class and also its ColumnDataSource will be destroyed, making room for the new ColumnDataSources. </br>
+Don't worry, if you didn't understand what we were trying to tell here. Again, just keep trying out new scenarios and sooner or later you will stumble accross this problem.
 A detailed description regarding this topic can also be found in the Wiki/Guidelines.
 </p>
 
