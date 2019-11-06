@@ -41,7 +41,7 @@ scene.xaxis.visible        = False
 scene.yaxis.visible        = False
 scene.toolbar.logo         = None
 
-bar_chart_data = {'objects':{'boat':600,'swimmer1':150}}
+### bar_chart_data = {'objects':{'boat':600,'swimmer1':150}}
 
 velocity_diagram = figure(
                             title="Velocity Diagram",
