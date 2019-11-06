@@ -340,9 +340,9 @@ class S3S_SeismicParameters():
             
             maxForce = np.dot(mode.K , mode.maxModeShape)
             # fill-in the First Storey Total Force
-            data[8,counter] = round(maxForce[0] , 3)
+            data[7,counter] = round(maxForce[0] , 3)
             # fill-in the Second Storey Total Force
-            data[9,counter] = round(maxForce[1] , 3)
+            data[8,counter] = round(maxForce[1] , 3)
 
             # fill-in the Total Force
             data[4,counter] = round(maxForce[0] + maxForce[1] , 3)

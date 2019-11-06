@@ -162,6 +162,7 @@ trussLength = 3.0 # meters
 bendingStiffness = 1000000
 
 trussSources = fc.construct_truss_sources(masses[0], masses[1], trussLength)
+isolation = fc.construct_isolation(masses[0], masses[1], trussLength)
 
 ################################# (3) base ####################################
 base =dict(
@@ -242,7 +243,7 @@ the modal parametes (here, the eigenfrequencies and the eigenmodes)
 # Construct the modes
 modes = list()
 for i in range(0,2):
-    modes.append( S3S_Mode(i, masses, massSupports, trussSources, trussLength, base, frequency=0, modeShape=np.zeros(2)) )
+    modes.append( S3S_Mode(i, masses, massSupports, trussSources, trussLength, base, isolation, frequency=0, modeShape=np.zeros(2)) )
 
 # Get the modal parameters
 eigenvalues, eigenvectors = fc.solve_modal_analysis(structure)
@@ -466,9 +467,11 @@ columns = [
             TableColumn(field="subject", title="Subject"),
             TableColumn(field="modeOne", title="Mode One"),
             TableColumn(field="modeTwo", title="Mode Two"),
+            TableColumn(field="iso", title="Ohne Iso"),
           ]   
 data_table = DataTable(source=siesmicParameters.informationTable, columns=columns, width=600, height=350)
 data_table_text = Div(text="""<b>Input Data and Results of the Modal Analysis</b> """,width = 600)
+
 
 ##################################### (7) #####################################
 columns = [

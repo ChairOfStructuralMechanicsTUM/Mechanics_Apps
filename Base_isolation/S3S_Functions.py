@@ -30,11 +30,11 @@ class S3S_Structure:
         self.trusses      = trusslist
         
         isolationlist = list()
-        for i in range(len(trusses)):
+        for i in range(len(isolation)):
             isolationlist.append( ColumnDataSource(data=isolation[i]) )
         self.isolation      = isolationlist
 
-
+        self.trusses_patch = ColumnDataSource(data=dict(x=np.concatenate((self.trusses[0].data['x'] , self.trusses[1].data['x'][::-1])), y=np.concatenate((self.trusses[0].data['y'] , self.trusses[1].data['y'][::-1])) ))
         self.trussLength  = trussLength
         self.base         = ColumnDataSource(base)
         
@@ -101,9 +101,9 @@ class S3S_Structure:
         x1 = - self.trussLength/2
         x2 = self.masses[0].data['x'][0] - self.trussLength/2
         y1 = 0.0
-        y2 = self.masses[0].data['y'][0] 
+        y2 = self.masses[0].data['y'][0] - self.trussLength/2
 
-        ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
+        ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength/3)
         xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
         
         self.trusses[0].data = dict( x=xs, y=ys )
@@ -112,10 +112,10 @@ class S3S_Structure:
         x1 =   self.trussLength/2
         x2 = self.masses[0].data['x'][0] + self.trussLength/2
         y1 = 0.0
-        y2 = self.masses[0].data['y'][0] 
+        y2 = self.masses[0].data['y'][0] - self.trussLength/2
 
         xs = cubicInterpolate(x1,x2,y1,y2,noNodes,self.trussLength)
-        ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
+        ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength/3)
         self.trusses[1].data = dict( x=xs, y=ys )
         
         # truss3
@@ -138,11 +138,13 @@ class S3S_Structure:
         ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
         self.trusses[3].data =dict( x=xs, y=ys )
         
+        self.trusses_patch.data['x'] = np.concatenate((self.trusses[0].data['x'] , self.trusses[1].data['x'][::-1]))
+        self.trusses_patch.data['y'] = np.concatenate((self.trusses[0].data['y'] , self.trusses[1].data['y'][::-1]))
     def update_isolation(self):
         noNodes = 10
         
         # isolation left
-        x1 = - self.trussLength/2
+        x1 = - self.trussLength
         x2 = self.masses[0].data['x'][0] - self.trussLength/2
         y1 = 0.0
         y2 = self.masses[0].data['y'][0] 
@@ -268,7 +270,10 @@ class S3S_Mode( S3S_Structure ):
                 maxAmplitude = abs(component)
             
         return self.modeShape / maxAmplitude
-        
+
+
+
+
 class S3S_SeismicParameters():
     
     def __init__(self,a,gamma,S,eta,beta,undergroundParamter):
@@ -296,7 +301,8 @@ class S3S_SeismicParameters():
                                                                     'First Storey Total Force [N]',
                                                                     'Second Storey Total Force [N]'],
                                                             modeOne  =[0,0,0,0,0,0,0,0,0],
-                                                            modeTwo  =[0,0,0,0,0,0,0,0,0]
+                                                            modeTwo  =[0,0,0,0,0,0,0,0,0],
+                                                            iso      =[0,'-','-',0,0,'-',0,'-',0]
                                                           )
                                                 )
         
@@ -341,12 +347,15 @@ class S3S_SeismicParameters():
             return self.a * self.gamma * self.S * self.beta / 1 * (self.periods[1]/period)
         elif (period >= self.periods[2]):
             return self.a * self.gamma * self.S * self.beta / 1 * self.periods[1]*self.periods[2]/period**2
+    
+    
+
 
     def update_data_table(self, modes):
         
-        data = np.zeros((11,3))
+        data = np.zeros((9,3))
         
-        counter = 2
+        counter = 1
         for mode in modes:
             # fill-in the period
             data[0,counter] = round(2*np.pi / mode.frequency , 2)
@@ -372,9 +381,9 @@ class S3S_SeismicParameters():
             
             maxForce = np.dot(mode.K , mode.maxModeShape)
             # fill-in the First Storey Total Force
-            data[8,counter] = round(maxForce[0] , 2)
+            data[7,counter] = round(maxForce[0] , 2)
             # fill-in the Second Storey Total Force
-            data[9,counter] = round(maxForce[1] , 2)
+            data[8,counter] = round(maxForce[1] , 2)
 
             # fill-in the Total Force
             data[4,counter] = round(maxForce[0] + maxForce[1] , 2)
@@ -431,12 +440,12 @@ def construct_truss_sources(massOne, massTwo, length):
 
     trussOne   = dict(
                         x=[massOne['x'][0] - length/2, massOne['x'][0] - length/2],
-                        y=[massOne['y'][0] - length  , massOne['y'][0]           ]
+                        y=[massOne['y'][0] - length  , massOne['y'][0] - length*2/3]
                      )
 
     trussTwo   = dict(
                         x=[massOne['x'][0] + length/2, massOne['x'][0] + length/2],
-                        y=[massOne['y'][0] - length  , massOne['y'][0]           ]
+                        y=[massOne['y'][0] - length  , massOne['y'][0] - length*2/3]
                      )
     trussThree = dict(
                         x=[massTwo['x'][0] - length/2, massTwo['x'][0] - length/2],
@@ -469,15 +478,15 @@ def construct_isolation(massOne, massTwo, length):
     isolationlist = list()
     isolationlist.append(isolationOne)            
     isolationlist.append(isolationTwo)
-
+    return isolationlist 
 
 def construct_masses_and_supports(length):
     
     masses = list()
     massSupports = list()
     
-    massOne = dict(x=[0.0],y=[0.5*length])
-    massTwo = dict(x=[0.0],y=[1.5*length])
+    massOne = dict(x=[0.0],y=[length/3])
+    massTwo = dict(x=[0.0],y=[length*4/3])
 
     masses.append(massOne)
     masses.append(massTwo)
@@ -584,21 +593,27 @@ def solve_modal_analysis(structure):
     return eigenvalues, eigenvectors
     
 def plot( plot_name, subject, radius, color ):
-    plot_name.line( x='x', y='y', source=subject.massSupports[0], color=color, line_width=5)
-    plot_name.line( x='x', y='y', source=subject.massSupports[1], color=color, line_width=5)
-    
-    plot_name.circle( x='x',y='y',radius=radius,color=color,source=subject.masses[0] )
-    plot_name.circle( x='x',y='y',radius=radius,color=color,source=subject.masses[1] )
-    
-    #plot_name.line( x='x', y='y', color=color, source=subject.trusses[0], line_width=20)
-    #plot_name.line( x='x', y='y', color=color, source=subject.trusses[1], line_width=20)
 
+    #plot_name.line( x='x', y='y', color='#AEACAC', source=subject.trusses[0], line_width=39 , alpha=1)
+    #plot_name.line( x='x', y='y', color='#AEACAC', source=subject.trusses[1], line_width=39 , alpha=1)
+    plot_name.patch( x='x', y='y', source=subject.trusses_patch , color='#AEACAC' , alpha=1)
 
+    plot_name.line( x='x', y='y', source=subject.massSupports[0], color='#484848', line_width=5)
+    plot_name.line( x='x', y='y', source=subject.massSupports[1], color='#484848', line_width=5)
+    
+    plot_name.circle( x='x',y='y',radius=radius,color='#484848',source=subject.masses[0] )
+    plot_name.circle( x='x',y='y',radius=radius,color='#484848',source=subject.masses[1] )
+
+    #cds = ColumnDataSource(data=dict(x = np.concatenate((subject.trusses[0].data['x'] , subject.trusses[1].data['x'][::-1])) , y  = np.concatenate((subject.trusses[0].data['y'] , subject.trusses[1].data['y'][::-1]))))
+    #print 
     #plot_name.patch( np.concatenate((subject.trusses[0].data['x'] , subject.trusses[1].data['x'][::-1])), np.concatenate((subject.trusses[0].data['y'] , subject.trusses[1].data['y'][::-1])), alpha=1.0, color=color, line_width=2)
-    plot_name.patch( np.concatenate((subject.isolation[0].data['x'] , subject.isolation[1].data['x'][::-1])), np.concatenate((subject.isolation[0].data['y'] , subject.isolation[1].data['y'][::-1])), alpha=1.0, color=color, line_width=2)
+    #plot_name.patch( np.concatenate((subject.isolation[0].data['x'] , subject.isolation[1].data['x'][::-1])), np.concatenate((subject.isolation[0].data['y'] , subject.isolation[1].data['y'][::-1])), alpha=1.0, color=color, line_width=2)
+    #plot_name.patch( x='x', y='y', source=cds, alpha=1.0, color=color, line_width=2)
+    
 
-    plot_name.line( x='x', y='y', color=color, source=subject.trusses[2], line_width=2)
-    plot_name.line( x='x', y='y', color=color, source=subject.trusses[3], line_width=2)
+
+    plot_name.line( x='x', y='y', color='#484848', source=subject.trusses[2], line_width=2)
+    plot_name.line( x='x', y='y', color='#484848', source=subject.trusses[3], line_width=2)
     
     #plot_name.line( x='x', y='y', source=subject.base, color='#000000', line_width=5 )
     
