@@ -476,8 +476,8 @@ columns = [
             TableColumn(field="noiso", title="With Baseisolation"),
             TableColumn(field="iso", title="Without Baseisolation"),
           ]
-#data_table_two = DataTable(source = =siesmicParameters.informationTable_two, columns=columns, width=600, height=350)
-#data_table_text = Div(text="""<b>Comparison</b> """,width = 600)
+data_table_two = DataTable(source = siesmicParameters.informationTable_two, columns=columns, width=600, height=350)
+data_table_text_two = Div(text="""<b>Comparison</b> """,width = 600)
 ##################################### (7) #####################################
 columns = [
             TableColumn(field="storey", title="Storey"),
@@ -531,6 +531,7 @@ curdoc().add_root(
                                        calculate_ERS_button,
                                        data_table_text,
                                        data_table, 
+                                       data_table_text_two,
                                        data_table_two
                                        #max_disp_data_table_text,
                                        #max_disp_data_table
