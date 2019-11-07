@@ -304,10 +304,10 @@ class S3S_SeismicParameters():
                                                             modeTwo  =[0,0,0,0,0,0,0,0,0]
                                                           )
                                                 )
-        self.InformationTable_two = ColumnDataSource(
+        self.informationTable_two = ColumnDataSource(
                                                     data=dict(
                                                                 subject = ['Period [second]', "Spectral Acceleration [m/s"u"\u00B2]",
-                                                                           'Second Storey Max. Displacement [mm]','Total Force [N]']
+                                                                           'Second Storey Max. Displacement [mm]','Total Force [N]'],
                                                                 iso        = [0,0,0,0],
                                                                 noiso      = [0,0,0,0]
                                                                )
@@ -405,24 +405,24 @@ class S3S_SeismicParameters():
 
     def update_data_table_two(self, modes): 
         data = np.zeros((4,2))
-            # fill-in the period
-            data[0,1] = round(2*np.pi / mode.frequency , 2)
-            data[0,0] = round(2*np.pi / sqrt((mass*massRatio[1])/(bendingStiffness*4*stiffnessRatio[1])) , 2)
+        # fill-in the period
+        data[0,1] = round(2*np.pi / mode.frequency , 2)
+        data[0,0] = round(2*np.pi / sqrt((mass*massRatio[1])/(bendingStiffness*4*stiffnessRatio[1])) , 2)
     
 
-            # fill-in the Spectral acceleration
-            data[1,1] = round(self.get_Sa(data[0,1]) , 2)
-            data[1,0] = round(self.get_Sa(data[0,0]) , 2)
+        # fill-in the Spectral acceleration
+        data[1,1] = round(self.get_Sa(data[0,1]) , 2)
+        data[1,0] = round(self.get_Sa(data[0,0]) , 2)
 
-            maxForce = np.dot(mode.K , mode.maxModeShape)
+        maxForce = np.dot(mode.K , mode.maxModeShape)
 
-            # fill-in the Total Force
-            data[2,1] = round(maxForce[0] + maxForce[1] , 2)
-            data[2,0] = round(mass*massRatio[1]*data[1,0] , 2)  
+        # fill-in the Total Force
+        data[2,1] = round(maxForce[0] + maxForce[1] , 2)
+        data[2,0] = round(mass*massRatio[1]*data[1,0] , 2)  
              
-            #  fill-in the Second Storey Max. Displacement
-            data[3,1] = round(mode.maxModeShape[1] * 1000 , 2) # to convert to mm 
-            data[3,0] = round((data[2,0]/bendingStiffness*4*stiffnessRatio[1])* 1000 , 2) # to convert to mm  
+        #  fill-in the Second Storey Max. Displacement
+        data[3,1] = round(mode.maxModeShape[1] * 1000 , 2) # to convert to mm 
+        data[3,0] = round((data[2,0]/bendingStiffness*4*stiffnessRatio[1])* 1000 , 2) # to convert to mm  
 
         self.informationTable_two.data = dict(
                                           subject = self.informationTable.data['subject'],
