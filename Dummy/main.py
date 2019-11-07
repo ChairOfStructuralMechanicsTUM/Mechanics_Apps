@@ -83,6 +83,8 @@ alpha_input.on_change('value',change_alpha) # callback function called when alph
 #   already checked: memory size of pp_ball or its CDS does NOT grow
 #   RAM does not grow
 #   speed again after refreshing the window; reset button does not have any effect
+# SOLUTION: repeated plot calls slow it down, BUT, without repeated plot calls, the color does not change :/
+#  one plot call is enough for cds
 
 # global variables, that are not needed for direct plotting, can be created by dicts (or lists or other Python global scope objects)
 # do not use the keyword global! 
@@ -106,7 +108,7 @@ def ping_pong():
     pp_ball.add_disp(0.1)
     new_color = tuple(np.random.random_integers(0,255,(1,3)).flatten()) # random new RGB color
     pp_ball.set_color(new_color)
-    pp_ball.plot(pp_plot)
+    #pp_ball.plot(pp_plot)
 
 
 # function called, if the play/pause button is pressed
@@ -133,7 +135,7 @@ def play_pause():
 def reset():
     pp_ball.set_coords(2,1)
     pp_ball.set_color((0,0,0))
-    pp_ball.plot(pp_plot)
+    #pp_ball.plot(pp_plot)
 
 
 
@@ -276,3 +278,5 @@ curdoc().add_root(column(description,
                          row(hide_selection, hide_button),
                          description_end)) # place all objects at their desired position
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
+
+

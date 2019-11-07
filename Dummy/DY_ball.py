@@ -7,6 +7,7 @@ class concerning ball animations
 
 # bokeh imports
 from bokeh.models import ColumnDataSource
+from bokeh.colors import RGB
 
 # internal imports
 
@@ -23,7 +24,7 @@ class DY_ball(object):
         self.y = y
         self.c = (0,0,0) # black   RGB color
         self.d = 1       # direction 1 = right, -1 = left
-        self.cds = ColumnDataSource(data = dict(x=[self.x], y=[self.y], c=[self.c]))  # ColumnDataSource to update plot
+        self.cds = ColumnDataSource(data = dict(x=[self.x], y=[self.y], color=[RGB(*self.c)]))  # ColumnDataSource to update plot
 
     # print class information
     def __str__(self):
@@ -38,10 +39,12 @@ class DY_ball(object):
     def set_coords(self,x,y):
         self.x = x
         self.y = y
+        self.update_cds()
     
     # set the color
     def set_color(self,c):
         self.c = c
+        self.update_cds()
 
     # get the coordinates
     def get_coords(self):
@@ -50,6 +53,7 @@ class DY_ball(object):
     # add displacement in x-direction
     def add_disp(self,displ):
         self.x += (displ*self.d)
+        self.update_cds()
 
     def change_direction(self):
         if self.d == 1:    # if right
@@ -60,11 +64,11 @@ class DY_ball(object):
             print("Invalid direction!") 
 
     def update_cds(self):
-        self.cds.data = dict(x=[self.x], y=[self.y], c=[self.c])
+        self.cds.data = dict(x=[self.x], y=[self.y], color=[RGB(*self.c)])  # the * unpacks the tuple self.c, the function RGB takes three inputs
         #self.cds.stream( dict(x=[self.x], y=[self.y], c=[self.c]), rollover=5 ) # use this for "speed effect"
 
     # plot the current configuration
     def plot(self, fig):
         #fig.circle(x=self.x, y=self.y, color=self.c, size=30) # plotting it this way would not remove the old ball from the plot
-        self.update_cds()
-        fig.circle(x='x', y='y', color=self.c, source=self.cds, size=30) #changing the color does not work using ColumnDataSource
+        #self.update_cds()
+        fig.circle(x='x', y='y', color='color', source=self.cds, size=30) #changing the color does not work using ColumnDataSource
