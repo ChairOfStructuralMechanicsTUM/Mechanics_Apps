@@ -1,7 +1,7 @@
 # Normal Force Rod
 
 ## To Do - Text:
-- [ ] English title
+- [x] English title
 - [ ] add description text
 
 ## To Do - Graphics
@@ -14,8 +14,8 @@
 
 ## To Do - maths/internal
 - [x] slider functionality
-- [ ] radio button group functionality
-- [ ] temperature functionality
-- [ ] radio group functionality
+- [x] radio button group functionality
+- [x] temperature functionality
+- [x] radio group functionality
 - [ ] reset button functionality
-- [ ] internal calculations
+- [x] internal calculations

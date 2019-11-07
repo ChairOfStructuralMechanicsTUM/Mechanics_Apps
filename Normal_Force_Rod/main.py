@@ -2,7 +2,7 @@ from __future__ import division # float division only, like in python 3
 
 from bokeh.plotting import Figure#, output_file , show
 #from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, Arrow
-from bokeh.models import Arrow, OpenHead, LabelSet
+from bokeh.models import ColumnDataSource, Arrow, OpenHead, LabelSet
 from bokeh.models.glyphs import ImageURL, Patch, MultiLine, Rect #, Quadratic, Rect, Patch
 from bokeh.models.layouts import Spacer
 from bokeh.models.widgets import Paragraph, Button, CheckboxGroup, RadioButtonGroup, RadioGroup
@@ -28,16 +28,57 @@ from NFR_constants import (
 
 from NFR_beam import NFR_beam
 
+from NFR_equations import calcNU
+
 
 # ----------------------------------------------------------------- #
+
+
+
+def change_load(attr, old, new):
+    # TODO: change graphics
+    
+    compute_new_scenario()
+
+
+
+def change_left_support(attr, old, new):
+    print(new)
+    #beam.set_left_support(5)
+    beam.set_left_support(new)
+    compute_new_scenario()
+
+def change_right_support(attr, old, new):
+    beam.set_right_support(new)
+    compute_new_scenario()
+
+
+def change_amplitude(attr, old, new):
+    # TODO: change force arrows
+
+    compute_new_scenario()
 
 
 
 def change_load_position(attr, old, new):
     beam.move_load(new)
     #beam.plot_label(plot_main)
+    #compute_new_scenario(new)
+    compute_new_scenario()
 
 
+
+
+#def compute_new_scenario(ls_type, rs_type, load_type, load_position, amplitude):
+def compute_new_scenario():
+    ls_tpye = radio_group_left.active
+    rs_type = radio_group_right.active
+    load_type = radio_button_group.active
+    load_position = load_position_slider.value
+    ampl    = -1 + 2*radio_group_ampl.active  # ampl=-1 if active=0, ampl=1 if active=1
+    samples = calcNU(ls_tpye, rs_type, load_type, load_position, ampl)
+    graph_N.data = dict(x=samples['x'], y=samples['yN'])
+    graph_U.data = dict(x=samples['x'], y=samples['yU'])
 
 
 
@@ -57,8 +98,18 @@ line_button  = Button(label="Show line", button_type="success")
 
 
 
+radio_button_group.on_change('active',change_load)
+
+
+radio_group_left.on_change('active', change_left_support)
+radio_group_right.on_change('active', change_right_support)
+radio_group_ampl.on_change('active',change_amplitude)
+
 load_position_slider  = LatexSlider(title="\\mathrm{Load  Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=(xr_end-xr_start)/2, start=xr_start, end=xr_end, step=1.0)
 load_position_slider.on_change('value', change_load_position)
+
+
+
 
 
 
@@ -115,6 +166,16 @@ beam.plot_all(plot_main)
 beam.plot_beam_shadow(plot_normalF)
 beam.plot_beam_shadow(plot_deform)
 
+
+graph_N = ColumnDataSource(data=dict(x=[0], y=[0]))
+graph_U = ColumnDataSource(data=dict(x=[0], y=[0]))
+
+
+
+
+plot_normalF.line(x='x', y='y', source=graph_N, color="#A2AD00",line_width=2)
+
+plot_deform.line(x='x', y='y', source=graph_U, color="#A2AD00",line_width=2)
 
 
 

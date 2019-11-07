@@ -23,12 +23,44 @@ class NFR_beam():
         x_half = (x_end - x_start)*0.5
         self.point_load_source = ColumnDataSource(data=dict(xS=[x_half-0.5], xE=[x_half+0.5], yS=[y_offset+0.3], yE=[y_offset+0.3], lW=[2], lC=["#0065BD"]))
         self.point_load_labels = ColumnDataSource(data=dict(x=[x_half-0.05, x_half-0.05], y=[y_offset+0.4, y_offset+0.1], name=['F','|']))
+
+        # force arrow labels own cds
+
     
     def set_color(self, new_color):
         self.color = new_color
     
     def set_load(self, new_load):
-        self.load = new_load
+        if new_load == 0:
+            self.load = "point"
+        elif new_load == 1:
+            self.load = "constant"
+        elif new_load == 2:
+            self.load = "triangular"
+        elif new_load == 3:
+            self.load = "temperature"
+        else:
+            raise Exception("Error changing the load. No supported type!")
+
+
+
+    def set_left_support(self, support_type):
+        if support_type == 0: # fixed
+            self.support_left.data["sp_img"] = ["Normal_Force_Rod/static/images/fixed_support.svg"]
+        elif support_type == 1: # slide
+            self.support_left.data["sp_img"] = ["Normal_Force_Rod/static/images/slide_support.svg"]
+        else:
+            raise Exception("Error changing the left support. No supported type!")
+
+
+    def set_right_support(self, support_type):
+        if support_type == 0: # fixed
+            self.support_right.data["sp_img"] = ["Normal_Force_Rod/static/images/fixed_support.svg"]
+        elif support_type == 1: # slide
+            self.support_right.data["sp_img"] = ["Normal_Force_Rod/static/images/slide_support.svg"]
+        else:
+            raise Exception("Error changing the right support. No supported type!")
+
 
 
     # change support coordinates
@@ -60,7 +92,7 @@ class NFR_beam():
         fig.patch(x='x', y='y', color=color, source=self.shape, line_width=width, line_alpha=alpha, fill_alpha=alpha)
 
     def plot_supports(self, fig):
-        fig.add_glyph(self.support_left, ImageURL(url="sp_img", x='x', y='y', w=0.8, h=0.5))
+        fig.add_glyph(self.support_left, ImageURL(url="sp_img", x='x', y='y', w=0.66, h=0.4))
         fig.add_glyph(self.support_right,ImageURL(url="sp_img", x='x', y='y', w=0.66, h=0.4))
 
     def plot_label(self, fig):
