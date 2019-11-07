@@ -1,3 +1,5 @@
+from __future__ import division
+
 from bokeh.models import ColumnDataSource
 import numpy as np
 from scipy import linalg
@@ -307,7 +309,7 @@ class S3S_SeismicParameters():
         self.informationTable_two = ColumnDataSource(
                                                     data=dict(
                                                                 subject = ['Period [second]', "Spectral Acceleration [m/s"u"\u00B2]",
-                                                                           'Second Storey Max. Displacement [mm]','Total Force [N]'],
+                                                                           'Total Force [N]','Second Storey Max. Displacement [mm]'],
                                                                 iso        = [0,0,0,0],
                                                                 noiso      = [0,0,0,0]
                                                                )
@@ -403,11 +405,12 @@ class S3S_SeismicParameters():
                                           modeTwo = data[:,1],
                                          )
 
-    def update_data_table_two(self, modes): 
+    def update_data_table_two(self, mode): 
+
         data = np.zeros((4,2))
         # fill-in the period
         data[0,1] = round(2*np.pi / mode.frequency , 2)
-        data[0,0] = round(2*np.pi / sqrt((mass*massRatio[1])/(bendingStiffness*4*stiffnessRatio[1])) , 2)
+        data[0,0] = round(2*np.pi / np.sqrt((mode.K[1,1])/(mode.M[1,1])) , 2)
     
 
         # fill-in the Spectral acceleration
@@ -417,17 +420,17 @@ class S3S_SeismicParameters():
         maxForce = np.dot(mode.K , mode.maxModeShape)
 
         # fill-in the Total Force
-        data[2,1] = round(maxForce[0] + maxForce[1] , 2)
-        data[2,0] = round(mass*massRatio[1]*data[1,0] , 2)  
+        data[2,1] = round(maxForce[1] , 2)
+        data[2,0] = round(mode.M[1,1]*data[1,0] , 2)  
              
         #  fill-in the Second Storey Max. Displacement
-        data[3,1] = round(mode.maxModeShape[1] * 1000 , 2) # to convert to mm 
-        data[3,0] = round((data[2,0]/bendingStiffness*4*stiffnessRatio[1])* 1000 , 2) # to convert to mm  
+        data[3,1] = round(mode.maxModeShape[0] * 1000 , 2) # to convert to mm 
+        data[3,0] = round((data[2,0]/mode.K[1,1])* 1000 , 2) # to convert to mm  
 
         self.informationTable_two.data = dict(
-                                          subject = self.informationTable.data['subject'],
-                                          noiso = data[:,0],    
-                                          iso = data[:,1],
+                                          subject = self.informationTable_two.data['subject'],
+                                          noiso = data[:,1],    
+                                          iso = data[:,0],
                                              )
 def cubic_N1 (xi):
     #print('xi = ',xi)
