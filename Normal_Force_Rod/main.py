@@ -26,8 +26,19 @@ from NFR_constants import (
         )
 
 
+from NFR_beam import NFR_beam
+
 
 # ----------------------------------------------------------------- #
+
+
+
+def change_load_position(attr, old, new):
+    beam.move_load(new)
+    #beam.plot_label(plot_main)
+
+
+
 
 
 
@@ -46,8 +57,8 @@ line_button  = Button(label="Show line", button_type="success")
 
 
 
-load_position_slider  = LatexSlider(title="\\mathrm{Load \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=(xr_end-xr_start)/2, start=xr_start, end=xr_end, step=1.0)
-
+load_position_slider  = LatexSlider(title="\\mathrm{Load  Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=(xr_end-xr_start)/2, start=xr_start, end=xr_end, step=1.0)
+load_position_slider.on_change('value', change_load_position)
 
 
 
@@ -88,6 +99,22 @@ plot_deform.outline_line_width = 2
 plot_deform.outline_line_color = "Black"
 plot_deform.title.text_font_size = "13pt"
 plot_deform.toolbar.logo = None
+
+
+
+beam = NFR_beam(0.0, 10.0, 0.0) # x_start, x_end, y_offset, constant shape
+beam.plot_all(plot_main)
+
+## move support if necessary
+# beam.set_rs_coords(5.0, -0.08)
+# beam.plot_supports(plot_main)
+
+# beam.move_load(5.0)
+# beam.plot_label(plot_main)
+
+beam.plot_beam_shadow(plot_normalF)
+beam.plot_beam_shadow(plot_deform)
+
 
 
 
