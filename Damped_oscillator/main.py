@@ -33,18 +33,28 @@ Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[11,9]))
 Position = ColumnDataSource(data = dict(t=[0],s=[0]))
 
 # global variables
-glob_active   = ColumnDataSource(data=dict(Active=[False]))
-glob_callback = ColumnDataSource(data=dict(cid=[None])) # callback id
-glob_t        = ColumnDataSource(data=dict(t=[t]))
-glob_s        = ColumnDataSource(data=dict(s=[s]))
-glob_mass     = ColumnDataSource(data=dict(m=[mass]))
-glob_spring   = ColumnDataSource(data=dict(s=[spring]))
+#glob_active   = ColumnDataSource(data=dict(Active=[False]))
+#glob_callback = ColumnDataSource(data=dict(cid=[None])) # callback id
+#glob_t        = ColumnDataSource(data=dict(t=[t]))
+#glob_s        = ColumnDataSource(data=dict(s=[s]))
+#glob_mass     = ColumnDataSource(data=dict(m=[mass]))
+#glob_spring   = ColumnDataSource(data=dict(s=[spring]))
 glob_dashpot  = ColumnDataSource(data=dict(d=[dashpot]))
 
+
+glob_vars = dict(Active  = False, # play/simulation active
+                 cid     = None,  # callback id
+                 t       = t,     # time
+                 s       = s,     # posiition
+                 mass    = mass,
+                 spring  = spring,
+                 dashpot = dashpot)
+
+
 def evolve():
-    [t]    = glob_t.data['t']    # input/output
-    [s]    = glob_s.data['s']    # input/output
-    [mass] = glob_mass.data['m'] # input/output
+    t    = glob_vars['t']    # input/output
+    s    = glob_vars['s']    # input/output
+    mass = glob_vars['mass'] # input/output
     mass.FreezeForces()
     disp=mass.evolve(dt)
     s+=disp.y
@@ -52,8 +62,8 @@ def evolve():
     Linking_Line.data=dict(x=[0,0],y=[11+s, 9+s])  #      /output
     t+=dt
     Position.stream(dict(t=[t],s=[s])) #      /output
-    glob_t.data=dict(t=[t])
-    glob_s.data=dict(s=[s])
+    glob_vars['t'] = t
+    glob_vars['s'] = s
 
 title_box = Div(text="""<h2 style="text-align:center;">Spring pendulum</h2>""",width=1000)
 
@@ -90,7 +100,7 @@ p.yaxis.axis_label="Displacement [m]"
 p.toolbar.logo=None
 
 def change_mass(attr,old,new):
-    [mass] = glob_mass.data['m'] # input/output
+    mass = glob_vars['mass'] # input/output
     mass.changeMass(new)
 
 ## Create slider to choose mass of blob
@@ -98,7 +108,7 @@ mass_input = Slider(title="Mass [kg]", value=initial_mass_value, start=0.5, end=
 mass_input.on_change('value',change_mass)
 
 def change_kappa(attr,old,new):
-    [spring] = glob_spring.data['s'] # input/output
+    spring = glob_vars['spring'] # input/output
     spring.changeSpringConst(new)
 
 ## Create slider to choose spring constant
@@ -106,7 +116,7 @@ kappa_input = Slider(title="Spring stiffness [N/m]", value=initial_kappa_value, 
 kappa_input.on_change('value',change_kappa)
 
 def change_lam(attr,old,new):
-    [dashpot] = glob_dashpot.data['d'] # input/output
+    dashpot = glob_vars['dashpot'] # input/output
     dashpot.changeDamperCoeff(new)
 
 ## Create slider to choose damper coefficient
@@ -114,8 +124,8 @@ lam_input = Slider(title="Damping coefficient [Ns/m]", value=initial_lambda_valu
 lam_input.on_change('value',change_lam)
 
 def change_initV(attr,old,new):
-    [mass]   = glob_mass.data['m']        # input/output
-    [Active] = glob_active.data["Active"] # input/
+    mass   = glob_vars['mass']   # input/output
+    Active = glob_vars["Active"] # input/
     if (not Active):
         mass.changeInitV(new)
 
@@ -124,26 +134,30 @@ initV_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_valu
 initV_input.on_change('value',change_initV)
 
 def pause():
-    [g1DampedOscilator] = glob_callback.data["cid"]  # input/
-    [Active]            = glob_active.data["Active"] # input/output
+    g1DampedOscilator = glob_vars["cid"]    # input/
+    Active            = glob_vars["Active"] # input/output
     if (Active):
         curdoc().remove_periodic_callback(g1DampedOscilator)
-        glob_active.data=dict(Active=[False])
+        glob_vars["Active"]  = False
+        play_button.disabled = False
+        initV_input.disabled = False
 
 def play():
-    [Active] = glob_active.data["Active"] # input/output
+    Active = glob_vars["Active"] # input/output
     if (not Active):
-        g1DampedOscilator  = curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
-        glob_callback.data = dict(cid=[g1DampedOscilator]) #      /output
-        glob_active.data   = dict(Active=[True])
+        g1DampedOscilator    = curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
+        glob_vars["cid"]     = g1DampedOscilator #      /output
+        glob_vars["Active"]  = True
+        play_button.disabled = True # disable play button during simulation
+        initV_input.disabled = True # disable initial velocity slider during simulation
 
 def stop():
-    [mass]    = glob_mass.data['m']    # input/output
-    [spring]  = glob_spring.data['s']  # input/output
-    [dashpot] = glob_dashpot.data['d'] # input/output
+    mass    = glob_vars['mass']    # input/output
+    spring  = glob_vars['spring']  # input/output
+    dashpot = glob_vars['dashpot'] # input/output
     pause()
-    glob_t.data=dict(t=[0])                     #      /output
-    glob_s.data=dict(s=[0])                     #      /output
+    glob_vars['t'] = 0                          #      /output
+    glob_vars['s'] = 0                          #      /output
     Position.data=dict(t=[0],s=[0])             #      /output
     Bottom_Line.data = dict(x=[-2,2],y=[11,11]) #      /output
     Linking_Line.data = dict(x=[0,0],y=[11,9])  #      /output
@@ -158,7 +172,7 @@ def stop():
     
 def reset():
     stop()
-    [mass] = glob_mass.data['m'] # input/output
+    mass = glob_vars['mass'] # input/output
     mass_input.value = initial_mass_value
     kappa_input.value = initial_kappa_value
     lam_input.value = initial_lambda_value
