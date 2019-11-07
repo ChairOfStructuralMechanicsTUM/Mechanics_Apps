@@ -343,12 +343,15 @@ def solve_system():
         counter += 1
     
     siesmicParameters.update_data_table(modes)
+    siesmicParameters.update_data_table_two(modes[1])
     # Show the updated deformed configuration whenever the solve system button is pushed
     if ( def_config_button.active ):
         show_def_config(True)
     else:
         pass
+
     
+
 solve_system_button = Button(label="Solve System", button_type="success")
 solve_system_button.on_click(solve_system)
 
