@@ -290,7 +290,7 @@ class S3S_SeismicParameters():
         '''
         self.periods = np.zeros(3) # default value, will be changed by determine_periods_and_S()
         self.determine_periods_and_S()
-        
+
         self.ERSdata = ColumnDataSource(data=dict(x=[0],y=[0])) # Elastic Response Spectrum data
         
         self.informationTable = ColumnDataSource(
@@ -301,11 +301,17 @@ class S3S_SeismicParameters():
                                                                     'First Storey Total Force [N]',
                                                                     'Second Storey Total Force [N]'],
                                                             modeOne  =[0,0,0,0,0,0,0,0,0],
-                                                            modeTwo  =[0,0,0,0,0,0,0,0,0],
-                                                            iso      =[0,'-','-',0,0,'-',0,'-',0]
+                                                            modeTwo  =[0,0,0,0,0,0,0,0,0]
                                                           )
                                                 )
-        
+        self.InformationTable_two = ColumnDataSource(
+                                                    data=dict(
+                                                                subject = ['Period [second]', "Spectral Acceleration [m/s"u"\u00B2]",
+                                                                           'Second Storey Max. Displacement [mm]','Total Force [N]']
+                                                                iso        = [0,0,0,0],
+                                                                noiso      = [0,0,0,0]
+                                                               )
+                                                     )
     def determine_periods_and_S(self):
         if self.undergroundParamter == 'A-R':
             self.periods[0] = 0.05
@@ -396,6 +402,33 @@ class S3S_SeismicParameters():
                                           modeOne = data[:,0],
                                           modeTwo = data[:,1],
                                          )
+
+    def update_data_table_two(self, modes): 
+        data = np.zeros((4,2))
+            # fill-in the period
+            data[0,1] = round(2*np.pi / mode.frequency , 2)
+            data[0,0] = round(2*np.pi / sqrt((mass*massRatio[1])/(bendingStiffness*4*stiffnessRatio[1])) , 2)
+    
+
+            # fill-in the Spectral acceleration
+            data[1,1] = round(self.get_Sa(data[0,1]) , 2)
+            data[1,0] = round(self.get_Sa(data[0,0]) , 2)
+
+            maxForce = np.dot(mode.K , mode.maxModeShape)
+
+            # fill-in the Total Force
+            data[2,1] = round(maxForce[0] + maxForce[1] , 2)
+            data[2,0] = round(mass*massRatio[1]*data[1,0] , 2)  
+             
+            #  fill-in the Second Storey Max. Displacement
+            data[3,1] = round(mode.maxModeShape[1] * 1000 , 2) # to convert to mm 
+            data[3,0] = round((data[2,0]/bendingStiffness*4*stiffnessRatio[1])* 1000 , 2) # to convert to mm  
+
+        self.informationTable_two.data = dict(
+                                          subject = self.informationTable.data['subject'],
+                                          noiso = data[:,0],    
+                                          iso = data[:,1],
+                                             )
 def cubic_N1 (xi):
     #print('xi = ',xi)
     #print('cubic_N1 = ',0.25 * ((1-xi)*(1-xi)) * (2+xi))
