@@ -210,12 +210,12 @@ reset_button.on_click(reset)
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1050)
 
 ## Send to window
 curdoc().add_root(column(description, \
-    row(column(Spacer(height=100),play_pause_button,stop_button,reset_button),Spacer(width=10),fig,p), \
-    row(mass_input,Spacer(width=10),kappa_input), \
+    row(column(Spacer(height=100),play_pause_button,stop_button,reset_button),Spacer(width=20),fig,p), \
+    row(mass_input,Spacer(width=110),kappa_input), \
     Spacer(height=30), \
-    row(lam_input,Spacer(width=10),initV_input)))
+    row(lam_input,Spacer(width=110),initV_input)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
