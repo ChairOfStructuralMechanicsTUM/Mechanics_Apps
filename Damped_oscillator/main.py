@@ -7,7 +7,7 @@ Damped oscillator - shows the motion of a damped oscillator depending on differe
 # bokeh imports
 from bokeh.io import curdoc
 from bokeh.plotting import figure
-from bokeh.models import Slider, Button, Div, HoverTool, Range1d, ColumnDataSource
+from bokeh.models import Button, HoverTool, Range1d, ColumnDataSource
 from bokeh.layouts import column, row, Spacer
 
 # internal imports
@@ -17,7 +17,12 @@ from DO_Mass import DO_CircularMass
 from DO_Coord import DO_Coord
 
 # latex integration
-from os.path import dirname, join, split
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexDiv, LatexSlider
 
 #---------------------------------------------------------------------#
 
@@ -45,7 +50,7 @@ Bottom_Line  = ColumnDataSource(data = dict(x=[-2,2],y=[11,11]))
 Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[11,9]))
 Position     = ColumnDataSource(data = dict(t=[0],s=[0]))
 
-# global variables
+## global variables
 glob_vars = dict(cid     = None,  # callback id
                  t       = t,     # time
                  s       = s,     # posiition
@@ -68,8 +73,6 @@ def evolve():
     Position.stream(dict(t=[t],s=[s])) #      /output
     glob_vars['t'] = t
     glob_vars['s'] = s
-
-title_box = Div(text="""<h2 style="text-align:center;">Spring pendulum</h2>""",width=1000)
 
 ########################
 #  figure definitions  #
@@ -116,7 +119,7 @@ def change_mass(attr,old,new):
     mass.changeMass(new)
 
 ## Create slider to choose mass of blob
-mass_input = Slider(title="Mass [kg]", value=initial_mass_value, start=0.5, end=10.0, step=0.5, width=400)
+mass_input = LatexSlider(title="\\text{Mass } \\left[ \mathrm{kg} \\right]: ", value=initial_mass_value, start=0.5, end=10.0, step=0.5, width=400)
 mass_input.on_change('value',change_mass)
 
 def change_kappa(attr,old,new):
@@ -124,7 +127,7 @@ def change_kappa(attr,old,new):
     spring.changeSpringConst(new)
 
 ## Create slider to choose spring constant
-kappa_input = Slider(title="Spring stiffness [N/m]", value=initial_kappa_value, start=0.0, end=200, step=10,width=400)
+kappa_input = LatexSlider(title="\\text{Spring stiffness } \\left[ \\frac{N}{m} \\right]: ", value=initial_kappa_value, start=0.0, end=200, step=10,width=400)
 kappa_input.on_change('value',change_kappa)
 
 def change_lam(attr,old,new):
@@ -132,7 +135,7 @@ def change_lam(attr,old,new):
     dashpot.changeDamperCoeff(new)
 
 ## Create slider to choose damper coefficient
-lam_input = Slider(title="Damping coefficient [Ns/m]", value=initial_lambda_value, start=0.0, end=60, step=1,width=400)
+lam_input = LatexSlider(title="\\text{Damping coefficient } \\left[ \\frac{Ns}{m} \\right]: ", value=initial_lambda_value, start=0.0, end=60, step=1,width=400)
 lam_input.on_change('value',change_lam)
 
 def change_initV(attr,old,new):
@@ -140,7 +143,7 @@ def change_initV(attr,old,new):
     mass.changeInitV(new)
 
 ## Create slider to choose initial velocity
-initV_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
+initV_input = LatexSlider(title="\\text{Initial velocity } \\left[ \\frac{m}{s} \\right]: ", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
 
 ########################
@@ -207,10 +210,12 @@ reset_button.on_click(reset)
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 ## Send to window
 curdoc().add_root(column(description, \
     row(column(Spacer(height=100),play_pause_button,stop_button,reset_button),Spacer(width=10),fig,p), \
-    row(mass_input,Spacer(width=10),kappa_input),row(lam_input,Spacer(width=10),initV_input)))
+    row(mass_input,Spacer(width=10),kappa_input), \
+    Spacer(height=30), \
+    row(lam_input,Spacer(width=10),initV_input)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
