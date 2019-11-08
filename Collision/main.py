@@ -1,13 +1,23 @@
+"""
+Collision - simulate elastic and inelastic collisions of two masses
+
+"""
+# general imports
 import numpy as np
+from os.path import dirname, join, split
+
+# bokeh imports
 from bokeh.io import curdoc
 from bokeh.plotting import Figure
-import Collision_BarChart as BC
-from bokeh.layouts import column, row, widgetbox
 from bokeh.models import Button, Slider, Arrow, OpenHead, Div, ColumnDataSource
-from bokeh.models.layouts import Spacer
-import Collision_Functions
-from os.path import dirname, join, split
+from bokeh.layouts import column, row, widgetbox, Spacer
 from bokeh.events import Pan
+
+# internal imports
+import Collision_BarChart as BC
+import Collision_Functions
+
+# latex integration
 
 '''
 ###############################################################################
