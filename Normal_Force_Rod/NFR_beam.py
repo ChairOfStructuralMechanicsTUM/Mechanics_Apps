@@ -2,6 +2,9 @@ from bokeh.models import ColumnDataSource, Arrow, OpenHead, LabelSet
 from bokeh.models.glyphs import ImageURL
 
 
+from NFR_constants import lb, ub # lower and upper bound for patches
+
+
 
 class NFR_beam():
     def __init__(self, x_start, x_end, y_offset, cross="constant"):
@@ -24,6 +27,7 @@ class NFR_beam():
         self.point_load_source = ColumnDataSource(data=dict(xS=[x_half-0.5], xE=[x_half+0.5], yS=[y_offset+0.3], yE=[y_offset+0.3], lW=[2], lC=["#0065BD"]))
         self.point_load_labels = ColumnDataSource(data=dict(x=[x_half-0.05, x_half-0.05], y=[y_offset+0.4, y_offset+0.1], name=['F','|']))
 
+        self.constant_load_source = ColumnDataSource(data=dict(x=[x_start, x_start, x_half, x_half], y=[y_offset+lb, y_offset+ub, y_offset+ub, y_offset+lb]))
         # force arrow labels own cds
 
     
@@ -41,6 +45,22 @@ class NFR_beam():
             self.load = "temperature"
         else:
             raise Exception("Error changing the load. No supported type!")
+
+    
+    #def _update_constant_load_source():
+    # 
+
+    def _clear_point_load_source():
+        # test differnt clear functions
+
+        # full clear
+        self.point_load_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW=[], lC=[])
+
+        # only make line invisible
+        self.point_load_source.data['lW'] = [0]
+
+        # bokeh intern?
+
 
 
 
@@ -96,11 +116,17 @@ class NFR_beam():
         fig.add_glyph(self.support_right,ImageURL(url="sp_img", x='x', y='y', w=0.66, h=0.4))
 
     def plot_label(self, fig):
-        arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width=2, size=5), 
-                          x_start='xS', x_end='xE', y_start='yS', y_end='yE',
-                          line_width='lW', line_color='lC', source=self.point_load_source)
-        
-        labels = LabelSet(x='x', y='y', text='name', level='glyph', render_mode='canvas', source=self.point_load_labels)
+        print(self.load)
+        # better to plot each time (may be slow) AND: other labels stay! and alpha becomes worse
+        # or better to set the other sources to zero?  (in _update_loads)
+        if self.load == "point":
+            arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width=2, size=5), 
+                            x_start='xS', x_end='xE', y_start='yS', y_end='yE',
+                            line_width='lW', line_color='lC', source=self.point_load_source)
+            
+            labels = LabelSet(x='x', y='y', text='name', level='glyph', render_mode='canvas', source=self.point_load_labels)
 
-        fig.add_layout(arrow_glyph)
-        fig.add_layout(labels)
+            fig.add_layout(arrow_glyph)
+            fig.add_layout(labels)
+        elif self.load == "constant":
+            fig.patch(x='x', y='y', fill_alpha=0.5, source=self.constant_load_source)

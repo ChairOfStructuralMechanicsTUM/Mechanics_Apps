@@ -37,7 +37,10 @@ from NFR_equations import calcNU
 
 def change_load(attr, old, new):
     # TODO: change graphics
-    
+
+    beam.set_load(new)
+    beam.plot_label(plot_main)
+
     compute_new_scenario()
 
 
@@ -76,6 +79,7 @@ def compute_new_scenario():
     load_type = radio_button_group.active
     load_position = load_position_slider.value
     ampl    = -1 + 2*radio_group_ampl.active  # ampl=-1 if active=0, ampl=1 if active=1
+    print("in main:", load_type)
     samples = calcNU(ls_tpye, rs_type, load_type, load_position, ampl)
     graph_N.data = dict(x=samples['x'], y=samples['yN'])
     graph_U.data = dict(x=samples['x'], y=samples['yU'])
