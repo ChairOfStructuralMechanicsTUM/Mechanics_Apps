@@ -1,12 +1,25 @@
+"""
+Damped oscillator - shows the motion of a damped oscillator depending on different parameters
+
+"""
+# general imports
+
+# bokeh imports
+from bokeh.io import curdoc
+from bokeh.plotting import figure
+from bokeh.models import Slider, Button, Div, HoverTool, Range1d, ColumnDataSource
+from bokeh.layouts import column, row, Spacer
+
+# internal imports
 from DO_Spring import DO_Spring
 from DO_Dashpot import DO_Dashpot
-from DO_Mass import DO_CircularMass#, Mass, RectangularMass
+from DO_Mass import DO_CircularMass
 from DO_Coord import DO_Coord
-from bokeh.plotting import figure
-from bokeh.layouts import column, row, Spacer
-from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div, HoverTool, Range1d,ColumnDataSource
+
+# latex integration
 from os.path import dirname, join, split
+
+#---------------------------------------------------------------------#
 
 # z = lam/(2*sqrt(k*m))
 # z = 1 => crit damped
@@ -14,34 +27,25 @@ from os.path import dirname, join, split
 # z < 1 => under damped
 
 ## initial values
-initial_mass_value = 8
-initial_kappa_value = 50
-initial_lambda_value = 2
+initial_mass_value     = 8
+initial_kappa_value    = 50
+initial_lambda_value   = 2
 initial_velocity_value = 0
-s=0
-t=0
-dt=0.03
+s  = 0
+t  = 0
+dt = 0.03
 
 mass = DO_CircularMass(initial_mass_value,0,9,2,2)
 mass.changeInitV(initial_velocity_value)
-spring = DO_Spring((-2,18),(-2,11),7,initial_kappa_value)
+spring  = DO_Spring((-2,18),(-2,11),7,initial_kappa_value)
 dashpot = DO_Dashpot((2,18),(2,11),initial_lambda_value)
 mass.linkObj(spring,(-2,11))
 mass.linkObj(dashpot,(2,11))
-Bottom_Line = ColumnDataSource(data = dict(x=[-2,2],y=[11,11]))
+Bottom_Line  = ColumnDataSource(data = dict(x=[-2,2],y=[11,11]))
 Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[11,9]))
-Position = ColumnDataSource(data = dict(t=[0],s=[0]))
+Position     = ColumnDataSource(data = dict(t=[0],s=[0]))
 
 # global variables
-#glob_active   = ColumnDataSource(data=dict(Active=[False]))
-#glob_callback = ColumnDataSource(data=dict(cid=[None])) # callback id
-#glob_t        = ColumnDataSource(data=dict(t=[t]))
-#glob_s        = ColumnDataSource(data=dict(s=[s]))
-#glob_mass     = ColumnDataSource(data=dict(m=[mass]))
-#glob_spring   = ColumnDataSource(data=dict(s=[spring]))
-glob_dashpot  = ColumnDataSource(data=dict(d=[dashpot]))
-
-
 glob_vars = dict(cid     = None,  # callback id
                  t       = t,     # time
                  s       = s,     # posiition
@@ -50,23 +54,28 @@ glob_vars = dict(cid     = None,  # callback id
                  dashpot = dashpot)
 
 
+# callback function when simulation is running
 def evolve():
     t    = glob_vars['t']    # input/output
     s    = glob_vars['s']    # input/output
     mass = glob_vars['mass'] # input/output
     mass.FreezeForces()
-    disp=mass.evolve(dt)
-    s+=disp.y
-    Bottom_Line.data=dict(x=[-2,2],y=[11+s, s+11]) #      /output
-    Linking_Line.data=dict(x=[0,0],y=[11+s, 9+s])  #      /output
-    t+=dt
+    disp = mass.evolve(dt)
+    s += disp.y
+    Bottom_Line.data  = dict(x=[-2,2],y=[11+s, s+11]) #      /output
+    Linking_Line.data = dict(x=[0,0],y=[11+s, 9+s])   #      /output
+    t += dt
     Position.stream(dict(t=[t],s=[s])) #      /output
     glob_vars['t'] = t
     glob_vars['s'] = s
 
 title_box = Div(text="""<h2 style="text-align:center;">Spring pendulum</h2>""",width=1000)
 
-# drawing
+########################
+#  figure definitions  #
+########################
+
+# drawing of the oscillator / SDOF system
 fig = figure(title="", tools="", x_range=(-7,7), y_range=(0,20),width=350,height=500)
 fig.title.text_font_size="20pt"
 fig.axis.visible = False
@@ -86,7 +95,7 @@ fig.line(x='x',y='y',source=Bottom_Line,color="black",line_width=3)
 fig.line(x='x',y='y',source=Linking_Line,color="black",line_width=3)
 mass.plot(fig)
 
-# plot
+# plot - displacement vs. time
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
 p = figure(title="", y_range=(-5,5), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=500, \
     toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
@@ -97,6 +106,10 @@ p.axis.axis_label_text_font_size="14pt"
 p.xaxis.axis_label="Time [s]"
 p.yaxis.axis_label="Displacement [m]"
 p.toolbar.logo=None
+
+########################
+#  slider definitions  #
+########################
 
 def change_mass(attr,old,new):
     mass = glob_vars['mass'] # input/output
@@ -130,6 +143,9 @@ def change_initV(attr,old,new):
 initV_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
 
+########################
+#  button definitions  #
+########################
 
 def play_pause():
     if play_pause_button.label == "Play":
@@ -183,6 +199,11 @@ stop_button = Button(label="Stop", button_type="success", width=100)
 stop_button.on_click(stop)
 reset_button = Button(label="Reset", button_type="success",width=100)
 reset_button.on_click(reset)
+
+
+########################
+#  layout definitions  #
+########################
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
