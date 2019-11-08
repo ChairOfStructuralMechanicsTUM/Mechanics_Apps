@@ -42,8 +42,7 @@ Position = ColumnDataSource(data = dict(t=[0],s=[0]))
 glob_dashpot  = ColumnDataSource(data=dict(d=[dashpot]))
 
 
-glob_vars = dict(Active  = False, # play/simulation active
-                 cid     = None,  # callback id
+glob_vars = dict(cid     = None,  # callback id
                  t       = t,     # time
                  s       = s,     # posiition
                  mass    = mass,
@@ -125,37 +124,31 @@ lam_input.on_change('value',change_lam)
 
 def change_initV(attr,old,new):
     mass   = glob_vars['mass']   # input/output
-    Active = glob_vars["Active"] # input/
-    if (not Active):
-        mass.changeInitV(new)
+    mass.changeInitV(new)
 
 ## Create slider to choose initial velocity
 initV_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initV_input.on_change('value',change_initV)
 
-def pause():
-    g1DampedOscilator = glob_vars["cid"]    # input/
-    Active            = glob_vars["Active"] # input/output
-    if (Active):
-        curdoc().remove_periodic_callback(g1DampedOscilator)
-        glob_vars["Active"]  = False
-        play_button.disabled = False
-        initV_input.disabled = False
 
-def play():
-    Active = glob_vars["Active"] # input/output
-    if (not Active):
-        g1DampedOscilator    = curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
-        glob_vars["cid"]     = g1DampedOscilator #      /output
-        glob_vars["Active"]  = True
-        play_button.disabled = True # disable play button during simulation
+def play_pause():
+    if play_pause_button.label == "Play":
+        glob_vars["cid"] = curdoc().add_periodic_callback(evolve,dt*1000)
+        play_pause_button.label = "Pause"
         initV_input.disabled = True # disable initial velocity slider during simulation
+    elif play_pause_button.label == "Pause":
+        curdoc().remove_periodic_callback(glob_vars["cid"])
+        play_pause_button.label = "Play"
+
 
 def stop():
     mass    = glob_vars['mass']    # input/output
     spring  = glob_vars['spring']  # input/output
     dashpot = glob_vars['dashpot'] # input/output
-    pause()
+    # if stop is pressed before pause, i.e. while the callback is still in use
+    if curdoc().session_callbacks:
+        curdoc().remove_periodic_callback(glob_vars["cid"])
+        play_pause_button.label = "Play"
     glob_vars['t'] = 0                          #      /output
     glob_vars['s'] = 0                          #      /output
     Position.data=dict(t=[0],s=[0])             #      /output
@@ -169,6 +162,7 @@ def stop():
     mass.changeInitV(initV_input.value)
     mass.nextStepForces=[]
     mass.nextStepObjForces=[]
+    initV_input.disabled = False # enable initial velocity slider after the simulation
     
 def reset():
     stop()
@@ -183,10 +177,8 @@ def reset():
     #reset_button = selenium.find_element_by_class_name('bk-tool-icon-reset')
     #click_element_at_position(selenium, reset_button, 10, 10)
 
-play_button = Button(label="Play", button_type="success",width=100)
-play_button.on_click(play)
-pause_button = Button(label="Pause", button_type="success",width=100)
-pause_button.on_click(pause)
+play_pause_button = Button(label="Play", button_type="success",width=100)
+play_pause_button.on_click(play_pause)
 stop_button = Button(label="Stop", button_type="success", width=100)
 stop_button.on_click(stop)
 reset_button = Button(label="Reset", button_type="success",width=100)
@@ -198,6 +190,6 @@ description = Div(text=open(description_filename).read(), render_as_text=False, 
 
 ## Send to window
 curdoc().add_root(column(description, \
-    row(column(Spacer(height=100),play_button,pause_button,stop_button,reset_button),Spacer(width=10),fig,p), \
+    row(column(Spacer(height=100),play_pause_button,stop_button,reset_button),Spacer(width=10),fig,p), \
     row(mass_input,Spacer(width=10),kappa_input),row(lam_input,Spacer(width=10),initV_input)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
