@@ -1,25 +1,33 @@
+"""
+Boat with three swimmers - presents the principle of conservation of momentum
+
+"""
+# general imports
 import numpy as np
-from bokeh.plotting import figure
+from os.path import dirname, join, split
+
+# bokeh imports
 from bokeh.io import curdoc
-from bokeh.plotting import ColumnDataSource
-from bokeh.models import Button, Slider, Div
+from bokeh.plotting import figure
+from bokeh.models import ColumnDataSource, Button, Slider, Div
+from bokeh.layouts import column, row, Spacer
+
+# internal imports
 from BwtS_Person import create_people
 from BwtS_Person import create_arrows_velocityDiagram, reset_arrows_velocityDiagram, modify_swimmer_arrows
-from bokeh.layouts import column, row
-#import BwtS_BarChart as BC
-from os.path import dirname, join, split
-from bokeh.models.layouts import Spacer
-#from bokeh.models import Arrow, OpenHead
+
+# latex integration
+
+#---------------------------------------------------------------------#
 
 '''
 ###############################################################################
-Global variables as ColumnDataSources
+Global variables 
 ###############################################################################
 '''
-glob_active     = ColumnDataSource(data=dict(Active=[False]))
-glob_callback   = ColumnDataSource(data=dict(cid=[None])) # callback id
-glob_boatSpeed  = ColumnDataSource(data=dict(val=[0]))
-glob_listPeople = ColumnDataSource(data=dict(List=[None]))
+
+# simulatin active, callback id, boat speed, list of people
+glob_vars = dict(Active=False, cid=None, boatSpeed=0, listPeople=[])
 
 '''
 ###############################################################################
@@ -41,7 +49,6 @@ scene.xaxis.visible        = False
 scene.yaxis.visible        = False
 scene.toolbar.logo         = None
 
-### bar_chart_data = {'objects':{'boat':600,'swimmer1':150}}
 
 velocity_diagram = figure(
                             title="Velocity Diagram",
@@ -90,7 +97,7 @@ boatY = np.array( [
                        initBoatCGy - 1.0
                   ] )                # constant
 startBoatSpeed = 2.0                 # constant
-glob_boatSpeed.data = dict(val=[startBoatSpeed])
+glob_vars["boatSpeed"] = startBoatSpeed
 boatColor  = '#DAD7CB'
 boatSource = ColumnDataSource(data=dict(x = boatX,
                                         y = boatY,
@@ -147,7 +154,7 @@ for person in listPeople:
     listXCoords.append(person.standingPosition[0])
     listYCoords.append(person.standingPosition[1])
     #listSources.append(ColumnDataSource(data=person.jumpingPath))
-glob_listPeople.data = dict(List=[listPeople]) #      /output
+glob_vars["listPeople"] = listPeople #      /output
     
 swimmers_colors = ['#E37222','#A2AD00','#64A0C8','#FFDC00','#C4071B']
     
@@ -172,8 +179,8 @@ through time
 '''
 def move_boat():
     #global listSources
-    [boatSpeed]  = glob_boatSpeed.data["val"]   # input/
-    [listPeople] = glob_listPeople.data["List"] # input/output
+    boatSpeed  = glob_vars["boatSpeed"]  # input/
+    listPeople = glob_vars["listPeople"] # input/output
     
     # Making the boat move
     dx = np.ones(4)*dt*boatSpeed
@@ -222,7 +229,7 @@ def move_boat():
                                  y=newListYCoords,
                                  c=newListColor
                             )
-    glob_listPeople.data = dict(List=[listPeople])
+    glob_vars["listPeople"] = listPeople
     
 '''
 ###############################################################################
@@ -231,8 +238,8 @@ Add the interactive functionalities
 '''
 ##################### Creating numberPeopleSlider slider ######################
 def updateNoPersons(attr,old,new):
-    [Active]    = glob_active.data["Active"] # input/
-    [boatSpeed] = glob_boatSpeed.data["val"] # input/
+    Active    = glob_vars["Active"]    # input/
+    boatSpeed = glob_vars["boatSpeed"] # input/
     
     # If the boat is moving, new people connot be added
     if Active == False:    
@@ -265,8 +272,8 @@ def updateNoPersons(attr,old,new):
             listYCoords.append(person.currentPosition[1])
             listColors.append(swimmers_colors[counter])
             counter += 1
-        personSource.data    = dict(x=listXCoords, y=listYCoords,c=listColors) #      /output
-        glob_listPeople.data = dict(List=[listPeople])                         #      /output
+        personSource.data       = dict(x=listXCoords, y=listYCoords,c=listColors) #      /output
+        glob_vars["listPeople"] = listPeople                                      #      /output
             
         reset_arrows_velocityDiagram( boatArrows_sources, swimmerArrows_sources, boatSpeed )
             
@@ -297,22 +304,22 @@ numberPersonsSlider.on_change('value',updateNoPersons)
 
 ########################### Creating play button ##############################
 def play():
-    [Active]                  = glob_active.data["Active"] # input/output
-    [g1Boatwiththreeswimmers] = glob_callback.data["cid"]  # input/output
+    Active                  = glob_vars["Active"] # input/output
+    g1Boatwiththreeswimmers = glob_vars["cid"]    # input/output
     numberPersonsSlider.disabled = True  # disable slider during simulation
     # if inactive, reactivate animation
     if Active == True:
         jump_button.disabled = True
         g1Boatwiththreeswimmers=curdoc().remove_periodic_callback(g1Boatwiththreeswimmers)
-        glob_active.data   = dict(Active=[False])
-        glob_callback.data = dict(cid=[g1Boatwiththreeswimmers])
+        glob_vars["Active"] = False
+        glob_vars["cid"]    = g1Boatwiththreeswimmers
         play_button.label  = "Play"
     else:
         jump_button.disabled = False
         g1Boatwiththreeswimmers=curdoc().add_periodic_callback(move_boat, 50)
-        glob_active.data   = dict(Active=[True])
-        glob_callback.data = dict(cid=[g1Boatwiththreeswimmers])
-        play_button.label  = "Pause"
+        glob_vars["Active"] = True
+        glob_vars["cid"]    = g1Boatwiththreeswimmers
+        play_button.label   = "Pause"
 
 play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
@@ -320,7 +327,7 @@ play_button.on_click(play)
 ########################### Creating reset button #############################
 def reset():
     #global listSources
-    [Active] = glob_active.data["Active"] # input/output
+    Active = glob_vars["Active"] # input/output
     
     for element in listSources:
         element.data = dict(x=[],y=[])
@@ -329,17 +336,17 @@ def reset():
     if Active == False:
         pass
     else:
-        [g1Boatwiththreeswimmers] = glob_callback.data["cid"]  # input/
+        g1Boatwiththreeswimmers = glob_vars["cid"]  # input/
         curdoc().remove_periodic_callback(g1Boatwiththreeswimmers)
-        glob_active.data = dict(Active=[False])
+        glob_vars["Active"] = False
 
     #Reset Play Button and enable slider
     play_button.label = "Play"
     numberPersonsSlider.disabled = False
 
     # Reset the coordinates defining the boat in its source data file
-    boatSource.data     = dict(x = boatX, y = boatY)
-    glob_boatSpeed.data = dict(val=[startBoatSpeed]) #      /output
+    boatSource.data        = dict(x = boatX, y = boatY)
+    glob_vars["boatSpeed"] = startBoatSpeed #      /output
     
     reset_arrows_velocityDiagram( boatArrows_sources, swimmerArrows_sources, startBoatSpeed )
     
@@ -364,17 +371,17 @@ def reset():
         listYCoords.append(person.currentPosition[1])
         listColors.append(swimmers_colors[counter])
         counter += 1
-    personSource.data    = dict(x=listXCoords, y=listYCoords,c=listColors) #      /output
-    glob_listPeople.data = dict(List=[listPeople])                         #      /output
+    personSource.data       = dict(x=listXCoords, y=listYCoords,c=listColors) #      /output
+    glob_vars["listPeople"] = listPeople                                      #      /output
         
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(reset)
 
 ########################### Creating jump button ##############################
 def jump():
-    [Active]     = glob_active.data["Active"]   # input/
-    [boatSpeed]  = glob_boatSpeed.data["val"]   # input/output
-    [listPeople] = glob_listPeople.data["List"] # input/
+    Active     = glob_vars["Active"]      # input/
+    boatSpeed  = glob_vars["boatSpeed"]   # input/output
+    listPeople = glob_vars["listPeople"]  # input/
     
     if Active == True:
         counter = 0
@@ -439,7 +446,7 @@ def jump():
 
     else:
         pass
-    glob_boatSpeed.data = dict(val=[boatSpeed])
+    glob_vars["boatSpeed"] = boatSpeed
 
 jump_button = Button(label="Jump!", button_type="success", disabled=True)
 jump_button.on_click(jump)
