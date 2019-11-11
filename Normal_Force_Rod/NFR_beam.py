@@ -179,87 +179,109 @@ class NFR_beam():
 
         LP = self.load_position
 
-        self.constant_load_source.data=dict(x=[xr_start, xr_start, LP, LP], y=[y_offset+lb, y_offset+ub, y_offset+ub, y_offset+lb])
+        if LP < 1e-5: #close to zero
+            self._clear_source(self.constant_load_source)
+            self._clear_source(self.arrow_source)
+            self._clear_source(self.point_load_source) # since for point loads 0 is allowed
+            self._clear_source(self.load_labels)
+        else:
+
+            self.constant_load_source.data=dict(x=[xr_start, xr_start, LP, LP], y=[y_offset+lb, y_offset+ub, y_offset+ub, y_offset+lb])
 
 
-        self.load_labels.data = dict(x=[LP+0.1], y=[y_offset+0.2], name=['p'])
+            self.load_labels.data = dict(x=[LP+0.1], y=[y_offset+0.2], name=['p'])
 
-        xS = []
-        xE = []
-        # calculate the coordinats for the arrows and labels
-        num_arrows = 3 # amount of arrows
-        part = (LP-xr_start)/(num_arrows*2+1)
-        local_index = list(range(1,num_arrows*2+1))
-        # arrow start positions (odd)
-        for i in local_index[::2]:
-            xS.append(part*i)
-            #xM.append(part*(i+0.5))
-        # arrow end positions (even)
-        for i in local_index[1:][::2]:
-            xE.append(part*i)
+            xS = []
+            xE = []
+            # calculate the coordinats for the arrows and labels
+            num_arrows = 3 # amount of arrows
+            part = (LP-xr_start)/(num_arrows*2+1)
+            local_index = list(range(1,num_arrows*2+1))
+            # arrow start positions (odd)
+            for i in local_index[::2]:
+                xS.append(part*i)
+                #xM.append(part*(i+0.5))
+            # arrow end positions (even)
+            for i in local_index[1:][::2]:
+                xE.append(part*i)
 
-        yS = [y_offset+0.45]*num_arrows
-        yE = [y_offset+0.45]*num_arrows
+            yS = [y_offset+0.45]*num_arrows
+            yE = [y_offset+0.45]*num_arrows
 
-        tmp_update_dict = dict(xS=xS, xE=xE, yS=yS, yE=yE, lW=[2]*num_arrows, lC=[color_arrow]*num_arrows)
+            tmp_update_dict = dict(xS=xS, xE=xE, yS=yS, yE=yE, lW=[2]*num_arrows, lC=[color_arrow]*num_arrows)
 
-        self.arrow_source.stream(tmp_update_dict,num_arrows)
-        self._update_load_direction()
+            self.arrow_source.stream(tmp_update_dict,num_arrows)
+            self._update_load_direction()
 
-        self._clear_source(self.point_load_source)
-        self._clear_source(self.triangular_load_source)
-        self._clear_source(self.temperature_load_source)
+            self._clear_source(self.point_load_source)
+            self._clear_source(self.triangular_load_source)
+            self._clear_source(self.temperature_load_source)
 
     def _set_triangular_load(self):
 
         LP = self.load_position
 
-        self.triangular_load_source.data=dict(x=[xr_start, xr_start, LP], y=[y_offset+lb, y_offset+ub, y_offset+lb])
+        if LP < 1e-5: #close to zero
+            self._clear_source(self.triangular_load_source)
+            self._clear_source(self.arrow_source)
+            self._clear_source(self.point_load_source) # since for point loads 0 is allowed
+            self._clear_source(self.load_labels)
+        else:
 
 
-        self.load_labels.data = dict(x=[LP+0.1], y=[y_offset+0.2], name=['p'])
+            self.triangular_load_source.data=dict(x=[xr_start, xr_start, LP], y=[y_offset+lb, y_offset+ub, y_offset+lb])
 
-        xS = []
-        xE = []
-        # calculate the coordinats for the arrows and labels
-        num_arrows = 2 # amount of arrows
-        part = 0.5*(LP-xr_start)/(num_arrows*2+1)
-        local_index = list(range(1,num_arrows*2+1))
-        # arrow start positions (odd)
-        for i in local_index[::2]:
-            xS.append(part*i)
-            #xM.append(part*(i+0.5))
-        # arrow end positions (even)
-        for i in local_index[1:][::2]:
-            xE.append(part*i)
 
-        yS = [y_offset+0.45]*num_arrows
-        yE = [y_offset+0.45]*num_arrows
+            self.load_labels.data = dict(x=[LP+0.1], y=[y_offset+0.2], name=['p'])
 
-        tmp_update_dict = dict(xS=xS, xE=xE, yS=yS, yE=yE, lW=[2]*num_arrows, lC=[color_arrow]*num_arrows)
+            xS = []
+            xE = []
+            # calculate the coordinats for the arrows and labels
+            num_arrows = 2 # amount of arrows
+            part = 0.5*(LP-xr_start)/(num_arrows*2+1)
+            local_index = list(range(1,num_arrows*2+1))
+            # arrow start positions (odd)
+            for i in local_index[::2]:
+                xS.append(part*i)
+                #xM.append(part*(i+0.5))
+            # arrow end positions (even)
+            for i in local_index[1:][::2]:
+                xE.append(part*i)
 
-        self.arrow_source.stream(tmp_update_dict,num_arrows)
-        self._update_load_direction()
+            yS = [y_offset+0.45]*num_arrows
+            yE = [y_offset+0.45]*num_arrows
 
-        self._clear_source(self.point_load_source)
-        self._clear_source(self.constant_load_source)
-        self._clear_source(self.temperature_load_source)
+            tmp_update_dict = dict(xS=xS, xE=xE, yS=yS, yE=yE, lW=[2]*num_arrows, lC=[color_arrow]*num_arrows)
+
+            self.arrow_source.stream(tmp_update_dict,num_arrows)
+            self._update_load_direction()
+
+            self._clear_source(self.point_load_source)
+            self._clear_source(self.constant_load_source)
+            self._clear_source(self.temperature_load_source)
 
 
     def _set_temperature_load(self):
 
         LP = self.load_position
 
-        self.temperature_load_source.data=dict(x=[xr_start, xr_start, LP, LP], y=[y_offset+lb, y_offset+ub, y_offset+ub, y_offset+lb])
+        if LP < 1e-5: #close to zero
+            self._clear_source(self.temperature_load_source)
+            self._clear_source(self.point_load_source) # since for point loads 0 is allowed
+            self._clear_source(self.load_labels)
+        else:
 
 
-        self.load_labels.data = dict(x=[LP+0.1], y=[y_offset+0.2], name=['T'])
+            self.temperature_load_source.data=dict(x=[xr_start, xr_start, LP, LP], y=[y_offset+lb, y_offset+ub, y_offset+ub, y_offset+lb])
 
-       
-        self._clear_source(self.point_load_source)
-        self._clear_source(self.constant_load_source)
-        self._clear_source(self.triangular_load_source)
-        self._clear_source(self.arrow_source)
+
+            self.load_labels.data = dict(x=[LP+0.1], y=[y_offset+0.2], name=['T'])
+
+        
+            self._clear_source(self.point_load_source)
+            self._clear_source(self.constant_load_source)
+            self._clear_source(self.triangular_load_source)
+            self._clear_source(self.arrow_source)
 
 
 
