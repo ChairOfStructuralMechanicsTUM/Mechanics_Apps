@@ -61,7 +61,6 @@ def change_right_support(attr, old, new):
 
 
 def change_amplitude(attr, old, new):
-    # TODO: change force arrows
     #beam.change_load_direction()
     beam.set_load_direction(new)
     compute_new_scenario()
@@ -100,6 +99,51 @@ def compute_new_scenario():
     graph_N.data = dict(x=samples['x'], y=samples['yN'])
     graph_U.data = dict(x=samples['x'], y=samples['yU'])
 
+    # if the auxiliary line should be shown, the line button shows "Hide line"
+    if line_button.label == "Hide line":
+        move_aux_line()
+
+
+
+
+def reset():
+    radio_button_group.active = initial_load
+    radio_group_left.active = 0
+    radio_group_right.active = 1
+    radio_group_ampl.active = 1
+    load_position_slider.value = initial_load_position
+    # possibly set the values in beam correspondingly - # ok no, happens automatically
+    # setting the values via their attributes seems to call the callback functions as well
+    compute_new_scenario()
+
+aux_line = ColumnDataSource(data=dict(x=[], y=[]))
+
+def move_aux_line():
+    x_samples = graph_N.data['x']
+    y_samples = graph_N.data['y']
+    roots     = []
+
+    #print(x_samples)
+    #print(y_samples)
+
+    for i in range(0,len(y_samples)-1):
+        if y_samples[i]*y_samples[i+1] < 0: # sign changes
+            r = 0.5*(x_samples[i+1]-x_samples[i]) + x_samples[i]
+            roots.append([r,r])
+
+    aux_line.data = dict(x=roots, y=[[15,-15]]*len(roots))
+    #print(aux_line.data)
+
+
+def change_line_visibility():
+    if line_button.label == "Show line":
+        move_aux_line()
+        line_button.label = "Hide line"
+    elif line_button.label == "Hide line":
+        aux_line.data = dict(x=[], y=[])
+        line_button.label = "Show line"
+
+
 
 
 
@@ -114,7 +158,10 @@ radio_group_ampl  = RadioGroup(labels=["-1", "+1"], active=1, inline=True) # amp
 
 # Reset Button
 reset_button = Button(label="Reset", button_type="success")
+reset_button.on_click(reset)
+
 line_button  = Button(label="Show line", button_type="success")
+line_button.on_click(change_line_visibility)
 
 
 
@@ -199,6 +246,11 @@ compute_new_scenario()
 plot_normalF.line(x='x', y='y', source=graph_N, color="#A2AD00",line_width=2)
 
 plot_deform.line(x='x', y='y', source=graph_U, color="#A2AD00",line_width=2)
+
+aux_line_glyph = MultiLine(xs='x', ys='y', line_width=2, line_dash=[1,2], line_color='gray')
+plot_main.add_glyph(aux_line, aux_line_glyph)
+plot_normalF.add_glyph(aux_line, aux_line_glyph)
+plot_deform.add_glyph(aux_line, aux_line_glyph)
 
 
 
