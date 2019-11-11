@@ -8,7 +8,7 @@
 - [x] add rod in plots
 - [x] spacing of the radio buttons
 - [x] force arrow
-- [ ] load types graphics
+- [x] load types graphics
 - [ ] temperature "load" 
 - [ ] cross-section types of the rod
 

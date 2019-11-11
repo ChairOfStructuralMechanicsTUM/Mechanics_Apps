@@ -1,3 +1,7 @@
+"""
+App Name - does this and that
+
+"""
 from __future__ import division # float division only, like in python 3
 
 from bokeh.plotting import Figure#, output_file , show
@@ -22,7 +26,8 @@ from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, Late
 from NFR_constants import (
         xr_start, xr_end,
         x_range, fig_height,
-        lb, ub
+        lb, ub, 
+        initial_load, initial_load_position
         )
 
 
@@ -36,10 +41,9 @@ from NFR_equations import calcNU
 
 
 def change_load(attr, old, new):
-    # TODO: change graphics
 
     beam.set_load(new)
-    beam.plot_label(plot_main)
+    #beam.plot_label(plot_main)
 
     compute_new_scenario()
 
@@ -58,13 +62,24 @@ def change_right_support(attr, old, new):
 
 def change_amplitude(attr, old, new):
     # TODO: change force arrows
-
+    #beam.change_load_direction()
+    beam.set_load_direction(new)
     compute_new_scenario()
 
 
 
 def change_load_position(attr, old, new):
+    #beam.move_load(new)
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! #
+    # # this is equivalent to 
+    # beam.set_load_position(new)
+    # beam.move_load()
+
+    # this
     beam.move_load(new)
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! #
+
     #beam.plot_label(plot_main)
     #compute_new_scenario(new)
     compute_new_scenario()
@@ -79,7 +94,8 @@ def compute_new_scenario():
     load_type = radio_button_group.active
     load_position = load_position_slider.value
     ampl    = -1 + 2*radio_group_ampl.active  # ampl=-1 if active=0, ampl=1 if active=1
-    print("in main:", load_type)
+    #print("in main:", load_type)
+    print(beam)
     samples = calcNU(ls_tpye, rs_type, load_type, load_position, ampl)
     graph_N.data = dict(x=samples['x'], y=samples['yN'])
     graph_U.data = dict(x=samples['x'], y=samples['yU'])
@@ -87,7 +103,7 @@ def compute_new_scenario():
 
 
 
-radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Triangular Load", "Temperature"], active=0, width = 600)
+radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Triangular Load", "Temperature"], active=initial_load, width = 600)
 
 
 
@@ -109,7 +125,7 @@ radio_group_left.on_change('active', change_left_support)
 radio_group_right.on_change('active', change_right_support)
 radio_group_ampl.on_change('active',change_amplitude)
 
-load_position_slider  = LatexSlider(title="\\mathrm{Load  Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=(xr_end-xr_start)/2, start=xr_start, end=xr_end, step=1.0)
+load_position_slider  = LatexSlider(title="\\mathrm{Load \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=initial_load_position, start=xr_start, end=xr_end, step=1.0)
 load_position_slider.on_change('value', change_load_position)
 
 
@@ -170,11 +186,14 @@ beam.plot_all(plot_main)
 beam.plot_beam_shadow(plot_normalF)
 beam.plot_beam_shadow(plot_deform)
 
+#print(beam) # debug info
+
 
 graph_N = ColumnDataSource(data=dict(x=[0], y=[0]))
 graph_U = ColumnDataSource(data=dict(x=[0], y=[0]))
 
 
+compute_new_scenario()
 
 
 plot_normalF.line(x='x', y='y', source=graph_N, color="#A2AD00",line_width=2)

@@ -42,6 +42,15 @@ fig_height = 400
 
 x_range = (xr_start-1.5,xr_end+1.5)
 
+#TODO: define default arrow color here!
+# also initial load position etc.
+color_rod   = "#0065BD"
+color_arrow = "#0065BD"
+
+
+# initial slider settings:
+initial_load = 0
+initial_load_position = 0.5*(xr_end - xr_start)
 
 
 
