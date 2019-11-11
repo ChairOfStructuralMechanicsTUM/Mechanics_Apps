@@ -38,7 +38,16 @@ class NFR_beam():
         # self.support_left  = "Normal_Force_Rod/static/images/fixed_support.svg"
         # self.support_right = "Normal_Force_Rod/static/images/slide_support.svg"
 
-        self.load = "point"
+
+        # loads as dictionary mapping
+        self.load = {
+            0:  ["point", self._set_point_load],
+            1:  ["constant", self._set_constant_load],
+            2:  ["triangular", self._set_triangular_load],
+            3:  ["temperature", self._set_temperature_load]
+        }
+        self.load_key = initial_load
+        #self.load = "point"
         self.load_position = initial_load_position
         self.load_direction = "ltr" # left to right
 
@@ -73,7 +82,7 @@ class NFR_beam():
         tmp_str = "Beam:\n"
         tmp_str += "  length: " + str(abs(xr_end - xr_start)) + "\n"
         tmp_str += "  color:  " + self.color + "\n"
-        tmp_str += "  load:   " + self.load + " at x=" + str(self.load_position) + "\n"
+        tmp_str += "  load:   " + self.load[self.load_key][0] + " at x=" + str(self.load_position) + "\n"
         return tmp_str
 
     
@@ -81,24 +90,38 @@ class NFR_beam():
         self.color = new_color
     
     def set_load(self, new_load):
-        if new_load == 0:
-            self.load = "point"
-            self._set_point_load()
-        elif new_load == 1:
-            self.load = "constant"
-            self._set_constant_load()
-            #self._clear_point_load_source()
-            #self.point_load_labels.data = dict(x=[0.1], y=[0.2], name=['p'])
-        elif new_load == 2:
-            self.load = "triangular"
-            self._set_triangular_load()
-        elif new_load == 3:
-            self.load = "temperature"
-            self._set_temperature_load()
-        else:
-            raise Exception("Error changing the load. No supported type!")
+        # if new_load == 0:
+        #     self.load = "point"
+        #     self._set_point_load()
+        # elif new_load == 1:
+        #     self.load = "constant"
+        #     self._set_constant_load()
+        #     #self._clear_point_load_source()
+        #     #self.point_load_labels.data = dict(x=[0.1], y=[0.2], name=['p'])
+        # elif new_load == 2:
+        #     self.load = "triangular"
+        #     self._set_triangular_load()
+        # elif new_load == 3:
+        #     self.load = "temperature"
+        #     self._set_temperature_load()
+        # else:
+        #     raise Exception("Error changing the load. No supported type!")
 
-        self._update_load_direction()
+        # call the function matching to the load
+        self.load_key = new_load
+
+        try:
+            self.load[new_load][1]()
+        except KeyError as k_error:
+            print("KeyError! - undefined key "+str(k_error))
+            print("The available keys are ")
+            for k, v in self.load.items():
+                print(str(k) + ": " + v[0])
+
+
+        # problem: arrows showing to the right are visible for a short period of time when rtl!
+        # # # # self._update_load_direction()
+        # solution: put the call in the specific set functions themselves
 
     #def change_load_direction(self):
     def _update_load_direction(self):
@@ -121,20 +144,21 @@ class NFR_beam():
         else:
             raise Exception("Error changing the load. No supported direction!")
 
-        self.set_load(self.load)
+        self.set_load(self.load_key)
 
 
     def set_load_position(self, new_pos):
         self.load_position = new_pos
+        self.set_load(self.load_key)
 
 
     # update the ColumnDataSources based on the applied load
-    def _update_sources(self):
-        if self.load == "point":
-            self._set_constant_load()
+    # def _update_sources(self):
+    #     if self.load == "point":
+    #         self._set_constant_load()
 
-    def _clear_point_load_source(self):
-        return dict(xS=[], xE=[], yS=[], yE=[])
+    # def _clear_point_load_source(self):
+    #     return dict(xS=[], xE=[], yS=[], yE=[])
 
     def _set_point_load(self):
         LP = self.load_position
@@ -142,6 +166,8 @@ class NFR_beam():
         self.point_load_source.data=dict(xS=[xr_start-0.5+LP], xE=[xr_start+0.5+LP], yS=[y_offset+0.3], yE=[y_offset+0.3], lW=[2], lC=[color_arrow])
 
         self.load_labels.data=dict(x=[xr_start-0.1+LP, xr_start-0.05+LP], y=[y_offset+0.4, y_offset+0.1], name=['F','|'])
+
+        self._update_load_direction()
 
         self._clear_source(self.constant_load_source)
         self._clear_source(self.triangular_load_source)
@@ -178,6 +204,7 @@ class NFR_beam():
         tmp_update_dict = dict(xS=xS, xE=xE, yS=yS, yE=yE, lW=[2]*num_arrows, lC=[color_arrow]*num_arrows)
 
         self.arrow_source.stream(tmp_update_dict,num_arrows)
+        self._update_load_direction()
 
         self._clear_source(self.point_load_source)
         self._clear_source(self.triangular_load_source)
@@ -212,6 +239,7 @@ class NFR_beam():
         tmp_update_dict = dict(xS=xS, xE=xE, yS=yS, yE=yE, lW=[2]*num_arrows, lC=[color_arrow]*num_arrows)
 
         self.arrow_source.stream(tmp_update_dict,num_arrows)
+        self._update_load_direction()
 
         self._clear_source(self.point_load_source)
         self._clear_source(self.constant_load_source)
@@ -290,20 +318,26 @@ class NFR_beam():
 
         if x is not None:
             self.set_load_position(x)
+        else:
+            self.set_load(self.load_key)
         # self.point_load_source.data['xS'] = [x - 0.5]
         # self.point_load_source.data['xE'] = [x + 0.5]
 
         # self.point_load_labels.data['x'] = [x - 0.05, x - 0.05]
 
         # or update all sources at once? 
-        if self.load == "point":
-            self._set_point_load()
-        elif self.load == "constant":
-            self._set_constant_load()
-        elif self.load == "triangular":
-            self._set_triangular_load()
-        elif self.load == "temperature":
-            self._set_temperature_load()
+      
+        #self.load[self.load_key][1]()
+        #self.set_load(self.load_key)
+
+        # if self.load == "point":
+        #     self._set_point_load()
+        # elif self.load == "constant":
+        #     self._set_constant_load()
+        # elif self.load == "triangular":
+        #     self._set_triangular_load()
+        # elif self.load == "temperature":
+        #     self._set_temperature_load()
 
     
     

@@ -125,7 +125,7 @@ radio_group_left.on_change('active', change_left_support)
 radio_group_right.on_change('active', change_right_support)
 radio_group_ampl.on_change('active',change_amplitude)
 
-load_position_slider  = LatexSlider(title="\\mathrm{Load \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=initial_load_position, start=xr_start, end=xr_end, step=1.0)
+load_position_slider  = LatexSlider(title="\\mathrm{Load \ Position:}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=initial_load_position, start=xr_start, end=xr_end, step=1.0)
 load_position_slider.on_change('value', change_load_position)
 
 
