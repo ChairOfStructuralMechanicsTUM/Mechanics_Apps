@@ -38,7 +38,8 @@ from NFR_equations import calcNU
 
 # ----------------------------------------------------------------- #
 
-
+error_msg_frame = ColumnDataSource(data=dict(x=[],y=[]))
+error_msg       = ColumnDataSource(data=dict(x=[],y=[],name=[]))
 
 def change_load(attr, old, new):
 
@@ -53,11 +54,33 @@ def change_left_support(attr, old, new):
     print(new)
     #beam.set_left_support(5)
     beam.set_left_support(new)
+
+    if radio_group_right.active==1 and new==1: # both slide
+        show_error(True)
+    else:
+        show_error(False)
+        compute_new_scenario()
+
     compute_new_scenario()
 
 def change_right_support(attr, old, new):
     beam.set_right_support(new)
-    compute_new_scenario()
+
+    if radio_group_left.active==1 and new==1: # both slide
+        show_error(True)
+    else:
+        show_error(False)
+        compute_new_scenario()
+
+
+def show_error(show=True):
+
+    if show:
+        error_msg.data = dict(x=[2],y=[1.35],name=["Warning! - Kinematic, rod slides away!"])
+        error_msg_frame.data = dict(x=[5], y=[1.5])
+    else:
+        error_msg.data = dict(x=[], y=[], name=[])
+        error_msg_frame.data = dict(x=[], y=[])
 
 
 def change_amplitude(attr, old, new):
@@ -252,6 +275,10 @@ plot_main.add_glyph(aux_line, aux_line_glyph)
 plot_normalF.add_glyph(aux_line, aux_line_glyph)
 plot_deform.add_glyph(aux_line, aux_line_glyph)
 
+
+error_label = LabelSet(x='x', y='y', text='name', source=error_msg)
+plot_main.add_layout(error_label)
+plot_main.add_glyph(error_msg_frame,Rect(x="x", y="y", width=8, height=1, angle=0, fill_color='red', fill_alpha=0.2))
 
 
 
