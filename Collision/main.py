@@ -4,13 +4,12 @@ Collision - simulate elastic and inelastic collisions of two masses
 """
 # general imports
 import numpy as np
-#from os.path import dirname, join, split
 
 # bokeh imports
 from bokeh.io import curdoc
 from bokeh.plotting import Figure
-from bokeh.models import Button, Slider, Arrow, OpenHead, Div, ColumnDataSource, Range1d
-from bokeh.models.tools import WheelZoomTool, ZoomInTool, ZoomOutTool, ResetTool, BoxZoomTool
+from bokeh.models import Button, Slider, Arrow, OpenHead, Div, ColumnDataSource
+from bokeh.models.tools import ResetTool, BoxZoomTool
 from bokeh.layouts import column, row, widgetbox, Spacer
 from bokeh.events import Pan
 
@@ -24,7 +23,7 @@ from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
-sys.path.insert(0,parentdir) 
+sys.path.insert(0,parentdir)
 from latex_support import LatexSlider
 
 '''
@@ -162,13 +161,8 @@ barsFig = BC.Collision_BarChart(
 barsFig.Width(300)
 barsFig.Height(650)
 barsFig.values='timing'
-# TODO: choose the most fitting tools
-barsFig.fig.add_tools(WheelZoomTool(dimensions="height")) # recommended
-barsFig.fig.add_tools(ZoomInTool(dimensions="height"))  #
-barsFig.fig.add_tools(ZoomOutTool(dimensions="height")) # not so good here, zooms in/out the middle part
-barsFig.fig.add_tools(BoxZoomTool())  # recommended
-barsFig.fig.add_tools(ResetTool())    # recommended
-#barsFig.fig.y_range = Range1d(0,50) # fix range for zoom # does not matter, wheel zoom area = mouse location
+barsFig.fig.add_tools(BoxZoomTool())
+barsFig.fig.add_tools(ResetTool())
 
 
 def update_bars():
@@ -424,7 +418,7 @@ def update_ballOne_VelocityDir(attr,old,new):
     particleOne.update_velocity(newVelocityVectorOne[0], newVelocityVectorOne[1])
     
 ballOneVelocityDirSlider = LatexSlider(
-                                  title="\\text{Green Ball Velocity Direction (deg):} ",
+                                  title="\\text{Green Ball Velocity Direction [deg]:} ",
                                   value=dirOne , start=0, end=360, step=1.0, width=slider_width
                                  )
 ballOneVelocityDirSlider.on_change('value',update_ballOne_VelocityDir)
@@ -476,7 +470,7 @@ def update_ballTwo_VelocityDir(attr,old,new):
     particleTwo.update_velocity(newVelocityVectorTwo[0],newVelocityVectorTwo[1])
     
 ballTwoVelocityDirSlider = LatexSlider(  
-                                  title="\\text{Orange Ball Velocity Direction (deg):}",
+                                  title="\\text{Orange Ball Velocity Direction [deg]:}",
                                   value=dirTwo, start=0, end=360, step=1.0, width=slider_width
                                  )
 ballTwoVelocityDirSlider.on_change('value',update_ballTwo_VelocityDir)
@@ -515,7 +509,7 @@ def update_Cr_value(attr,old,new):
 
 crSlider = LatexSlider(
                    title="\\text{Coefficient of Restitution:}",
-                   value=1, start=0, end=1, step=0.1,width=530
+                   value=1, start=0, end=1, step=0.1,width=2*slider_width+10
                   )
 crSlider.on_change('value',update_Cr_value)
 
@@ -535,7 +529,7 @@ Add all the components together and initiate the app
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
-description = Div(text=open(description_filename).read(), render_as_text=False, width=970)
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1000)
 
 area_image = Div(text="""
 <h2>
@@ -546,14 +540,13 @@ Particles' Parameters:
 </p>
 """, render_as_text=False, width=450)
 
-#buttons = widgetbox(reset_button, play_button, pause_button,width=150)
 
 curdoc().add_root(
     column(
         description,
         row(
             playGround,
-            Spacer(width=100),
+            Spacer(width=130),
             barsFig.getFig()
         ),
         row(
