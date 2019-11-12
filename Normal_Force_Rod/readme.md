@@ -19,3 +19,4 @@
 - [x] radio group functionality
 - [x] reset button functionality
 - [x] internal calculations
+- [ ] catch zero division errors
