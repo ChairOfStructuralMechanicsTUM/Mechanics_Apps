@@ -38,7 +38,7 @@ sigma    = 0.0
 
 ## figure settings
 fig_width  = 630
-fig_height = 400
+fig_height = 300
 
 x_range = (xr_start-1.5,xr_end+1.5)
 

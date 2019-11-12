@@ -206,7 +206,7 @@ load_position_slider.on_change('value', change_load_position)
 
 ###### MAIN PLOT (SUPPORT AND LOAD):
 # Define plot:
-plot_main = Figure(title="Rod with Supports and Load", tools="", x_range=x_range, y_range=(-2.5,2.5), height=fig_height)
+plot_main = Figure(title="Rod with Supports and Load", tools="", x_range=x_range, y_range=(-1.5,2.5), height=fig_height)
 # Set properties
 plot_main.axis.visible = False
 plot_main.outline_line_width = 2
