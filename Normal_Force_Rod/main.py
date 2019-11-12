@@ -9,7 +9,7 @@ from __future__ import division # float division only, like in python 3
 from bokeh.io             import curdoc
 from bokeh.plotting       import Figure
 from bokeh.models         import ColumnDataSource, LabelSet #Arrow, OpenHead
-from bokeh.models.glyphs  import MultiLine, Rect #ImageURL, Patch, 
+from bokeh.models.glyphs  import MultiLine, Rect ,ImageURL #, Patch, 
 from bokeh.models.layouts import Spacer
 from bokeh.models.widgets import Paragraph, Button, RadioButtonGroup, RadioGroup #CheckboxGroup
 from bokeh.layouts        import column, row, widgetbox, layout
@@ -43,8 +43,6 @@ error_msg_frame = ColumnDataSource(data=dict(x=[],y=[]))          # error messag
 error_msg       = ColumnDataSource(data=dict(x=[],y=[],name=[]))  # error message position
 graph_N         = ColumnDataSource(data=dict(x=[0], y=[0]))       # data for force plot
 graph_U         = ColumnDataSource(data=dict(x=[0], y=[0]))       # data for deformation plot
-
-
 
 
 
@@ -246,6 +244,24 @@ load_position_slider.on_change('value', change_load_position)
 reset_button.on_click(reset)
 line_button.on_click(change_line_visibility)
 
+
+
+
+
+sf1 = "Normal_Force_Rod/static/images/snowflake01.svg"
+sf2 = "Normal_Force_Rod/static/images/snowflake02.svg"
+sf3 = "Normal_Force_Rod/static/images/snowflake03.svg"
+
+cds_t1 = ColumnDataSource(data=dict(x=[0.4],y=[1.1], img=[sf1]))
+cds_t2 = ColumnDataSource(data=dict(x=[3.4],y=[1.2], img=[sf2]))
+cds_t3 = ColumnDataSource(data=dict(x=[7.4],y=[-0.7], img=[sf3]))
+
+
+
+
+plot_main.add_glyph(cds_t1, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
+plot_main.add_glyph(cds_t2, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
+plot_main.add_glyph(cds_t3, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
 
 
 
