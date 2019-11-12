@@ -4,7 +4,7 @@ Collision - simulate elastic and inelastic collisions of two masses
 """
 # general imports
 import numpy as np
-from os.path import dirname, join, split
+#from os.path import dirname, join, split
 
 # bokeh imports
 from bokeh.io import curdoc
@@ -20,6 +20,12 @@ import Collision_Functions
 
 # latex integration
 # TODO: latex slider; show both versions: with text and with symboles (which can be explained in div)
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexSlider
 
 '''
 ###############################################################################
@@ -27,6 +33,7 @@ Global variables
 ###############################################################################
 '''
 glCollision = dict(Crval=1.0, cid=None) # collision parameter and callback id
+slider_width = 300 # constant width for velocity sliders
 
 '''
 ###############################################################################
@@ -416,9 +423,9 @@ def update_ballOne_VelocityDir(attr,old,new):
         
     particleOne.update_velocity(newVelocityVectorOne[0], newVelocityVectorOne[1])
     
-ballOneVelocityDirSlider = Slider(
-                                  title=u" Green Ball Velocity Direction (deg) ",
-                                  value=dirOne , start=0, end=360, step=1.0, width=260
+ballOneVelocityDirSlider = LatexSlider(
+                                  title="\\text{Green Ball Velocity Direction (deg):} ",
+                                  value=dirOne , start=0, end=360, step=1.0, width=slider_width
                                  )
 ballOneVelocityDirSlider.on_change('value',update_ballOne_VelocityDir)
 
@@ -444,9 +451,9 @@ def update_ballOne_VelocityMag(attr,old,new):
 
     update_bars()
    
-ballOneVelocityMagSlider = Slider(
-                                  title=u" Green Ball Velocity Magnitude (m/s) ",
-                                  value=magOne, start=0, end=5, step=0.1, width=260
+ballOneVelocityMagSlider = LatexSlider(
+                                  title="\\text{Green Ball Velocity Magnitude} \\left[ \\frac{m}{s} \\right] :",
+                                  value=magOne, start=0, end=5, step=0.1, width=slider_width
                                  )
 ballOneVelocityMagSlider.on_change('value',update_ballOne_VelocityMag)
 
@@ -468,9 +475,9 @@ def update_ballTwo_VelocityDir(attr,old,new):
         
     particleTwo.update_velocity(newVelocityVectorTwo[0],newVelocityVectorTwo[1])
     
-ballTwoVelocityDirSlider = Slider(  
-                                  title=u" Orange Ball Velocity Direction (deg) ",
-                                  value=dirTwo, start=0, end=360, step=1.0, width=260
+ballTwoVelocityDirSlider = LatexSlider(  
+                                  title="\\text{Orange Ball Velocity Direction (deg):}",
+                                  value=dirTwo, start=0, end=360, step=1.0, width=slider_width
                                  )
 ballTwoVelocityDirSlider.on_change('value',update_ballTwo_VelocityDir)
 
@@ -496,9 +503,9 @@ def update_ballTwo_VelocityMag(attr,old,new):
 
     update_bars()
     
-ballTwoVelocityMagSlider = Slider(
-                                  title=u" Orange Ball Velocity Magnitude (m/s) ",
-                                  value=magTwo, start=0, end=5, step=0.1, width=260
+ballTwoVelocityMagSlider = LatexSlider(
+                                  title="\\text{Orange Ball Velocity Magnitude} \\left[ \\frac{m}{s} \\right] : ",
+                                  value=magTwo, start=0, end=5, step=0.1, width=slider_width
                                  )
 ballTwoVelocityMagSlider.on_change('value',update_ballTwo_VelocityMag)
 
@@ -506,8 +513,8 @@ ballTwoVelocityMagSlider.on_change('value',update_ballTwo_VelocityMag)
 def update_Cr_value(attr,old,new):
     glCollision['Crval'] = new #      /output
 
-crSlider = Slider(
-                   title=u" Coefficient of Restitution ",
+crSlider = LatexSlider(
+                   title="\\text{Coefficient of Restitution:}",
                    value=1, start=0, end=1, step=0.1,width=530
                   )
 crSlider.on_change('value',update_Cr_value)
@@ -546,6 +553,7 @@ curdoc().add_root(
         description,
         row(
             playGround,
+            Spacer(width=100),
             barsFig.getFig()
         ),
         row(
@@ -560,12 +568,12 @@ curdoc().add_root(
                     ballOneVelocityDirSlider,
                     Spacer(width=10),
                     ballOneVelocityMagSlider,
-                ),
+                ), Spacer(height=20), 
                 row(
                     ballTwoVelocityDirSlider,
                     Spacer(width=10),
                     ballTwoVelocityMagSlider
-                ),
+                ), Spacer(height=20),
                 crSlider,
             )
         )
