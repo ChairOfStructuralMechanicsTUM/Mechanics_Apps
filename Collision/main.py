@@ -9,7 +9,8 @@ from os.path import dirname, join, split
 # bokeh imports
 from bokeh.io import curdoc
 from bokeh.plotting import Figure
-from bokeh.models import Button, Slider, Arrow, OpenHead, Div, ColumnDataSource
+from bokeh.models import Button, Slider, Arrow, OpenHead, Div, ColumnDataSource, Range1d
+from bokeh.models.tools import WheelZoomTool, ZoomInTool, ZoomOutTool, ResetTool, BoxZoomTool
 from bokeh.layouts import column, row, widgetbox, Spacer
 from bokeh.events import Pan
 
@@ -18,6 +19,7 @@ import Collision_BarChart as BC
 import Collision_Functions
 
 # latex integration
+# TODO: latex slider; show both versions: with text and with symboles (which can be explained in div)
 
 '''
 ###############################################################################
@@ -153,6 +155,13 @@ barsFig = BC.Collision_BarChart(
 barsFig.Width(300)
 barsFig.Height(650)
 barsFig.values='timing'
+# TODO: choose the most fitting tools
+barsFig.fig.add_tools(WheelZoomTool(dimensions="height")) # recommended
+barsFig.fig.add_tools(ZoomInTool(dimensions="height"))  #
+barsFig.fig.add_tools(ZoomOutTool(dimensions="height")) # not so good here, zooms in/out the middle part
+barsFig.fig.add_tools(BoxZoomTool())  # recommended
+barsFig.fig.add_tools(ResetTool())    # recommended
+#barsFig.fig.y_range = Range1d(0,50) # fix range for zoom # does not matter, wheel zoom area = mouse location
 
 
 def update_bars():
