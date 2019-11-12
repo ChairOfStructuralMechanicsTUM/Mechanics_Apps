@@ -33,7 +33,7 @@ glob_active   = ColumnDataSource(data=dict(Active=[False]))
 glob_done     = ColumnDataSource(data=dict(Done=[False]))
 glob_callback = ColumnDataSource(data=dict(cid=[None]))
 
-def init ():
+def init():
     updateTargetArrow()
 
 
@@ -82,7 +82,8 @@ def updateTargetArrow():
         direction_arrow.data = dict(xS=[x_0], yS=[y_0], xE=[xE+x_0], yE=[yE+y_0])
         # the dotted line is calculated from cos and sin as numerical errors
         # mean that a solution using tan does not lie on the direction arrow
-        aim_line.data = dict(x=[x_0,100*xE],y=[y_0,y_0+100*yE])
+        aim_line.data = dict(x=[x_0,x_0+100*xE],y=[y_0,y_0+100*yE])
+        
 
 
 def evolve():
@@ -128,8 +129,8 @@ arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
 p.add_layout(arrow_glyph)
 
 monkey          = Projectiles_Drawable(p, "Images/monkey.png")
-monkey_init_pos = (180, 70)
-monkey.draw_at(x=monkey_init_pos[0], y=monkey_init_pos[1], w=20, h=20)
+monkey_init_pos = (180, 68.8)
+monkey.draw_at(x=monkey_init_pos[0], y=monkey_init_pos[1], w=20, h=25)
 
 branch          = Projectiles_Drawable(p, "Images/branch.png")
 branch_init_pos = (150, 70)
@@ -140,9 +141,9 @@ banana_init_pos = (8, 10)
 banana.draw_at(x=banana_init_pos[0], y=banana_init_pos[1], w=5, h=5)
 
 cannon          = Projectiles_Drawable(p, "Images/cannon.png")
-cannon.draw_at(x=2.8, y=3.0, h=10, w=10, pad_fraction=.25)
+cannon.draw_at(x=1.8, y=4.7, h=9, w=10, pad_fraction=.25)
 base            = Projectiles_Drawable(p, "Images/base.png")
-base.draw_at(x=0, y=0, w=10, h=10)
+base.draw_at(x=0, y=0, w=10, h=6)
 
 p.background_fill_color = PlanetHue["Earth"]
 p.grid.visible = False
@@ -228,16 +229,16 @@ def changeHeight(attr,old,new):
         height_slider.value = old
     else:
         # else change height and update drawings
-        Reset()
+        #Reset()
         height = new
         base.move_to((None, height))
-        cannon.move_to((None, height + 0.5))
+        cannon.move_to((None, height + 2.3))
         banana.move_to((None, 10 + height))
         y_0+=(height-old)
-        updateTargetArrow()
         hill_source.data = dict(x=[0, 30, 30],y=[height, height, 0])
         glob_height.data = dict(val=[height])
         glob_y0.data     = dict(val=[y_0])
+        updateTargetArrow()
 
 
 height_slider = Slider(title="Height of base (m)",value=0.0,start=0,end=60,step=5)

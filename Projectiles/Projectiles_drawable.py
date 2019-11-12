@@ -116,7 +116,6 @@ class Projectiles_Drawable:
         # cos(theta) and sin(theta) do not vary over loop so they are calculated in advance
         cos_theta = cos(angle)
         sin_theta = sin(angle)
-        theta = angle
         # fill new_img with rotated img
         for i in range(0, self.orig_size[0]):
             Y = i - center[0]
