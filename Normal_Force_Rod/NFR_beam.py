@@ -32,8 +32,9 @@ class NFR_beam():
         #   cross       cross-section (constant or tapered)
         
         # beam structure
-        self.shape = ColumnDataSource(data=dict(x=[xr_start, xr_end],y=[y_offset, y_offset]))
         self.color = color_rod
+        #self.shape = ColumnDataSource(data=dict(x=[xr_start, xr_end],y=[y_offset, y_offset],color=[self.color]))
+        self.shape = ColumnDataSource(data=dict(x=[xr_start, xr_end],y=[y_offset, y_offset]))
         self.support_left  = ColumnDataSource(data=dict(sp_img=[fixed_support_img], x=[xsl] , y=[ysl]))
         self.support_right = ColumnDataSource(data=dict(sp_img=[slide_support_img], x=[xsr] , y=[ysr]))
 

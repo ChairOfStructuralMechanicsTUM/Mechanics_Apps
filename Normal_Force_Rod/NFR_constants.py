@@ -73,8 +73,8 @@ initial_load_position = 0.5*(xr_end - xr_start) # for th slider
 ##################################
 
 # images/graphics from external sources
-slide_support_img = "Normal_Force_Rod/static/images/auflager01.svg"
-fixed_support_img = "Normal_Force_Rod/static/images/auflager02.svg"
+slide_support_img = "Normal_Force_Rod/static/images/slide_support.svg"
+fixed_support_img = "Normal_Force_Rod/static/images/fixed_support.svg"
 
 
 

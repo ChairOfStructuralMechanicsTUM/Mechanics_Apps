@@ -19,6 +19,7 @@ from NFR_beam      import NFR_beam
 from NFR_equations import calcNU
 from NFR_constants import (
         xr_start, xr_end,
+        color_rod, 
         x_range, fig_height,
         #lb, ub, 
         initial_load, initial_load_position
@@ -78,6 +79,20 @@ def change_right_support(attr, old, new):
 
 def change_amplitude(attr, old, new):
     beam.set_load_direction(new)
+
+
+    #### changing colors in patches via ColumnDataSource does not seem to work
+    # # print(radio_button_group.active)
+    # # print(new)
+    # # if radio_button_group.active == 3: # temperature
+    # #     if new == 0: #-1
+    # #         beam.set_color("red") # change to TUM hex
+    # #     elif new == 1: #+1
+    # #         beam.set_color(color_rod)
+
+    # # print(beam.color)
+    # # print(" ---- ")
+
     compute_new_scenario()
 
 
@@ -264,6 +279,23 @@ plot_main.add_glyph(cds_t2, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
 plot_main.add_glyph(cds_t3, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
 
 
+fi1 = "Normal_Force_Rod/static/images/fire01.svg"
+fi2 = "Normal_Force_Rod/static/images/fire02.svg"
+fi3 = "Normal_Force_Rod/static/images/fire03.svg"
+
+cds_ht1 = ColumnDataSource(data=dict(x=[0.4],y=[-0.6], img=[fi1]))
+cds_ht2 = ColumnDataSource(data=dict(x=[3.4],y=[-0.7], img=[fi2]))
+cds_ht3 = ColumnDataSource(data=dict(x=[7.4],y=[0.7], img=[fi3]))
+
+plot_main.add_glyph(cds_ht1, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
+plot_main.add_glyph(cds_ht2, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
+plot_main.add_glyph(cds_ht3, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
+
+#cds_col_test = ColumnDataSource(data=dict(x=[2,7], y=[1,1], col=["yellow", "yellow"]))
+#cds_col_test_circ = ColumnDataSource(data=dict(x=[2,7], y=[1,1], col=["yellow", "yellow"]))
+
+#plot_main.patch(x='x', y='y', fill_color='col', source=cds_col_test)
+#plot_main.circle(x='x', y='y', color='col', source=cds_col_test_circ)
 
 ##################################
 #           Build beam           #
