@@ -135,8 +135,10 @@ alx1 = atx1 + 2*a_SIN
 aly1 = aty1 + 2*a_COS
 alx0 = alx1 + 50*a_COS
 aly0 = aly1 - 50*a_SIN
-ou = lambda(x): ((aly1-aty1)/(alx1-atx1)*(x-atx1)+aty1)
-od = lambda(x): ((aly0-aty0)/(alx0-atx0)*(x-atx0)+aty0)
+# ou = lambda(x): ((aly1-aty1)/(alx1-atx1)*(x-atx1)+aty1)
+# od = lambda(x): ((aly0-aty0)/(alx0-atx0)*(x-atx0)+aty0)
+ou = lambda x: ((aly1-aty1)/(alx1-atx1)*(x-atx1)+aty1)
+od = lambda x: ((aly0-aty0)/(alx0-atx0)*(x-atx0)+aty0)
 
 msr3 = 200/295*1.1  # manual scaling ratio
 

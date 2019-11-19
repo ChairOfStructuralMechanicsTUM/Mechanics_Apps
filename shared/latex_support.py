@@ -80,7 +80,8 @@ class LatexLabel(Label):
     """
     __javascript__ = [katex_js]
     __css__ = [katex_css]
-    __implementation__ = LATEX_LABEL_JS_CODE
+    #__implementation__ = LATEX_LABEL_JS_CODE
+    __implementation__ = "latex_label.ts"
 
 class LatexLegend(Legend):
     """
@@ -94,6 +95,8 @@ class LatexLegend(Legend):
     __css__ = [katex_css]
     __implementation__ = "latex_legend.ts"
 
-    max_label_width = Float(default=0, help="""
-        Maximum width of the legend box. Automatic calculation of the width is not supported yet.
-        """)
+  # width calculations seem to work now
+  # also width is not assignable anymore to the legend box (read only)
+    # max_label_width = Float(default=0, help="""
+    #     Maximum width of the legend box. Automatic calculation of the width is not supported yet.
+    #     """)

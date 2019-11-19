@@ -57,9 +57,9 @@ class all_callback_fcts(helper_fcts):
         ###                        initial function handles                         ###
         ############################################################################### 
         # name the functions to be used by each figure depending upon their content
-        glob_fun_handles[0]=lambda(x):moveSphere(0,x,self.my_sources.fig_data[0],self.my_sources.fig_lines_data[0],fig_values[0])
-        glob_fun_handles[1]=lambda(x):moveCylinder(1,x,self.my_sources.fig_data[1],self.my_sources.fig_lines_data[1],fig_values[1])
-        glob_fun_handles[2]=lambda(x):moveHollowCylinder(2,x,self.my_sources.fig_data[2],self.my_sources.fig_lines_data[2],fig_values[2])
+        glob_fun_handles[0]=lambda x:moveSphere(0,x,self.my_sources.fig_data[0],self.my_sources.fig_lines_data[0],fig_values[0])
+        glob_fun_handles[1]=lambda x:moveCylinder(1,x,self.my_sources.fig_data[1],self.my_sources.fig_lines_data[1],fig_values[1])
+        glob_fun_handles[2]=lambda x:moveHollowCylinder(2,x,self.my_sources.fig_data[2],self.my_sources.fig_lines_data[2],fig_values[2])
     
     ###############################################################################
     ###         main function for changing the appearance of the plots          ###
@@ -84,16 +84,16 @@ class all_callback_fcts(helper_fcts):
         # save the new evolution function in the variable func
         if (new_object == "Sphere"):
             createSphere(data,line_data,vals)
-            func=lambda(x):moveSphere(FIG,x,data,line_data,vals)
+            func=lambda x:moveSphere(FIG,x,data,line_data,vals)
         elif (new_object == "Hollow cylinder"):
             createHollowCylinder(data,line_data,vals)
-            func=lambda(x):moveHollowCylinder(FIG,x,data,line_data,vals)
+            func=lambda x:moveHollowCylinder(FIG,x,data,line_data,vals)
         elif (new_object == "Hollow sphere"):
             createHollowSphere(data,line_data,vals)
-            func=lambda(x):moveHollowSphere(FIG,x,data,line_data,vals)
+            func=lambda x:moveHollowSphere(FIG,x,data,line_data,vals)
         else:
             createCylinder(data,line_data,vals)
-            func=lambda(x):moveCylinder(FIG,x,data,line_data,vals)
+            func=lambda x:moveCylinder(FIG,x,data,line_data,vals)
         
         # check the availability of each plot (existing object, still running or finished)
         self.check_availability(self.my_sources.fig_data)
