@@ -5,7 +5,7 @@ import { GlyphRendererView } from "models/renderers/glyph_renderer"
 import { every } from "core/util/array"
 import { Context2d } from "core/util/canvas"
 import { div, display } from "core/dom"
-import {BBox} from "core/util/bbox"
+import { BBox } from "core/util/bbox"
 
 
 
