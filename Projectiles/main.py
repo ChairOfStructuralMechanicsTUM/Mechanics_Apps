@@ -77,13 +77,15 @@ def updateTargetArrow():
         # define xE and yE so that the aim line is updated even if speed = 0
         xE=10*cos(theta)
         yE=10*sin(theta)
-        direction_arrow.data = dict(xS=[],yS=[],xE=[],yE=[])
+        #direction_arrow.data = dict(xS=[],yS=[],xE=[],yE=[])
+        direction_arrow.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=1)
         aim_line.data = dict(x=[x_0,x_0+100*xE],y=[y_0,y_0+100*yE])
     else:
         # else the arrow is proportional to the speed
         xE=speed*cos(theta)
         yE=speed*sin(theta)
-        direction_arrow.data = dict(xS=[x_0], yS=[y_0], xE=[xE+x_0], yE=[yE+y_0])
+        #direction_arrow.data = dict(xS=[x_0], yS=[y_0], xE=[xE+x_0], yE=[yE+y_0])
+        direction_arrow.stream(dict(xS=[x_0], yS=[y_0], xE=[xE+x_0], yE=[yE+y_0]), rollover=1)
         # the dotted line is calculated from cos and sin as numerical errors
         # mean that a solution using tan does not lie on the direction arrow
         aim_line.data = dict(x=[x_0,x_0+100*xE],y=[y_0,y_0+100*yE])
@@ -178,10 +180,12 @@ def changeTheta(attr,old,new):
     [theta]  = glob_theta.data["val"]     # input/output
     # if it has been modified during the simulation
     # move back == deactivated (does not exist in bokeh)
+    print(Active)
     if (Active and theta!=radians(new)):
         angle_slider.value=old
     else:
         # else update angle and update images
+        print( " jaaaaaa")
         glob_theta.data = dict(val=[radians(new)])
         rotateCannon(radians(30-new))
         updateTargetArrow()
