@@ -1,6 +1,7 @@
 from bokeh.models import ColumnDataSource
 import os
-from scipy import ndimage
+#from scipy import ndimage 
+import imageio
 import numpy as np
 from math import ceil, floor, cos, sin
 
@@ -20,7 +21,7 @@ class Projectiles_Drawable:
         self.filepath = filepath
 
     def replace_image(self, new_filepath):
-        print "replacing image"
+        print("replacing image")
         self.filepath = new_filepath
         x, y, w, h = self.draw_data.data['xS'][0],self.draw_data.data['yS'][0], self.draw_data.data['w'][0], self.draw_data.data['h'][0],
         self.draw_at(x, y, w, h)
@@ -60,7 +61,9 @@ class Projectiles_Drawable:
         dir = os.path.dirname(__file__)
         absolute_filepath = os.path.join(dir, self.filepath)
         # upload file
-        img = ndimage.imread(absolute_filepath)
+        # img = ndimage.imread(absolute_filepath)
+        img = imageio.imread(absolute_filepath)
+        
         # convert file to bokeh readable image
         img = self.__convertForBokeh(img)
         # pad image so rotation can occur within frame

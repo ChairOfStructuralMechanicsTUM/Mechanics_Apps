@@ -74,7 +74,11 @@ def updateTargetArrow():
     [y_0]   = glob_y0.data["val"]    # input/
     # if speed = 0 then there is no arrow
     if (speed == 0):
+        # define xE and yE so that the aim line is updated even if speed = 0
+        xE=10*cos(theta)
+        yE=10*sin(theta)
         direction_arrow.data = dict(xS=[],yS=[],xE=[],yE=[])
+        aim_line.data = dict(x=[x_0,x_0+100*xE],y=[y_0,y_0+100*yE])
     else:
         # else the arrow is proportional to the speed
         xE=speed*cos(theta)
@@ -83,7 +87,7 @@ def updateTargetArrow():
         # the dotted line is calculated from cos and sin as numerical errors
         # mean that a solution using tan does not lie on the direction arrow
         aim_line.data = dict(x=[x_0,x_0+100*xE],y=[y_0,y_0+100*yE])
-        
+        print(x_0, y_0, xE, yE)
 
 
 def evolve():
@@ -124,7 +128,7 @@ p = figure(tools="",x_range=(0,200),y_range=(0,100),width=900,height=450)
 p.line(x='x',y='y',line_dash='dashed',source=aim_line,color="black")
 p.line(x='x',y='y',source=hill_source,color="black")
 arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=direction_arrow,
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=direction_arrow,
     line_color="black",line_width=3)
 p.add_layout(arrow_glyph)
 
