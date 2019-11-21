@@ -762,7 +762,7 @@ dummy_shear_1 = figure1.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alph
 legend1 = LatexLegend(items=[
     ("\\text{Normal Stresses}\\ \\sigma_x, \\sigma_z", [dummy_normal_1]),
     ("\\text{Shear Stresses}\\ \\tau_{xz}", [dummy_shear_1]),
-], location='top_left', label_width = 220)
+], location='top_left', max_label_width = 220)
 figure1.add_layout(legend1)
 
 
@@ -866,7 +866,7 @@ dummy_shear_3 = figure3.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alph
 legend3 = LatexLegend(items=[
     ("\\text{Normal Stresses}\\ \\sigma_x, \\sigma_z", [dummy_normal_3]),
     ("\\text{Shear Stresses}\\ \\tau_{xz}", [dummy_shear_3]),
-], location='top_left', label_width = 220)
+], location='top_left', max_label_width = 220)
 figure3.add_layout(legend3)
 
 ### All figures, Turn off grids: 
