@@ -1,7 +1,7 @@
 
 import { Legend, LegendView } from "models/annotations/legend"
 import { GlyphRendererView } from "models/renderers/glyph_renderer"
-//import * as p from "core/properties"
+import * as p from "core/properties"
 import { every } from "core/util/array"
 import { Context2d } from "core/util/canvas"
 import { div, display } from "core/dom"
@@ -72,7 +72,16 @@ render(): void {
 
   protected _draw_legend_box(ctx: Context2d, bbox: BBox): void {
     ctx.beginPath()
-    ctx.rect(bbox.x, bbox.y, bbox.width, bbox.height)
+
+    // if a max_label_width is defined use this width instead of
+    // the standard width, which is not set correctly when using LaTeX
+    if (this.model.max_label_width > 0){
+      ctx.rect(bbox.x, bbox.y, this.model.max_label_width, bbox.height)  
+    }
+    else{
+      ctx.rect(bbox.x, bbox.y, bbox.width, bbox.height)
+    }
+
     this.visuals.background_fill.set_value(ctx)
     ctx.fill()
     if (this.visuals.border_line.doit) {
@@ -181,8 +190,10 @@ render(): void {
 
 
 export namespace LatexLegend {
-    export interface Attrs extends Legend.Attrs { }
-    export interface Props extends Legend.Props { }
+    export type Attrs = p.AttrsOf<Props>
+    export type Props = Legend.Props & { 
+      max_label_width: p.Property<number>      
+    }
 }
 
 export interface LatexLegend extends LatexLegend.Attrs { }
@@ -199,9 +210,9 @@ export class LatexLegend extends Legend {
         this.prototype.type = "LatexLegend"
         this.prototype.default_view = LatexLegendView
 
-        // this.define({
-        //     max_label_width: [p.Number, 0],
-        // })
+        this.define<LatexLegend.Props>({
+            max_label_width: [p.Number, 0],
+        })
     }
 }
 

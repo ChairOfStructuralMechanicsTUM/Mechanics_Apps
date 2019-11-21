@@ -56,8 +56,6 @@ class LatexLegend(Legend):
     __css__ = [katex_css]
     __implementation__ = "latex_legend.ts"
 
-  # width calculations seem to work now
-  # also width is not assignable anymore to the legend box (read only)
-    # max_label_width = Float(default=0, help="""
-    #     Maximum width of the legend box. Automatic calculation of the width is not supported yet.
-    #     """)
+    max_label_width = Float(default=0, help="""
+        Maximum width of the legend box. Automatic calculation of the width is not supported yet.
+        """)
