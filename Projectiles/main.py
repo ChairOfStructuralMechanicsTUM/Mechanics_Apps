@@ -8,6 +8,13 @@ from math import radians, cos, sin
 from os.path import dirname, join, split
 from Projectiles_drawable import Projectiles_Drawable
 
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexDiv, LatexSlider
+
 # initialise variables
 aim_line      = ColumnDataSource(data=dict(x=[],y=[]))
 hill_source   = ColumnDataSource(data=dict(x=[],y=[]))
@@ -77,19 +84,16 @@ def updateTargetArrow():
         # define xE and yE so that the aim line is updated even if speed = 0
         xE=10*cos(theta)
         yE=10*sin(theta)
-        #direction_arrow.data = dict(xS=[],yS=[],xE=[],yE=[])
-        direction_arrow.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=1)
+        direction_arrow.stream(dict(xS=[0],yS=[0],xE=[0],yE=[0]), rollover=1)
         aim_line.data = dict(x=[x_0,x_0+100*xE],y=[y_0,y_0+100*yE])
     else:
         # else the arrow is proportional to the speed
         xE=speed*cos(theta)
         yE=speed*sin(theta)
-        #direction_arrow.data = dict(xS=[x_0], yS=[y_0], xE=[xE+x_0], yE=[yE+y_0])
         direction_arrow.stream(dict(xS=[x_0], yS=[y_0], xE=[xE+x_0], yE=[yE+y_0]), rollover=1)
         # the dotted line is calculated from cos and sin as numerical errors
         # mean that a solution using tan does not lie on the direction arrow
         aim_line.data = dict(x=[x_0,x_0+100*xE],y=[y_0,y_0+100*yE])
-        print(x_0, y_0, xE, yE)
 
 
 def evolve():
@@ -180,21 +184,18 @@ def changeTheta(attr,old,new):
     [theta]  = glob_theta.data["val"]     # input/output
     # if it has been modified during the simulation
     # move back == deactivated (does not exist in bokeh)
-    print(Active)
     if (Active and theta!=radians(new)):
         angle_slider.value=old
     else:
         # else update angle and update images
-        print( " jaaaaaa")
         glob_theta.data = dict(val=[radians(new)])
         rotateCannon(radians(30-new))
         updateTargetArrow()
 
 
 # angle increment is large to prevent lag
-angle_slider = Slider(title=u"Angle \u0398 (\u00B0)",value=30,start=0,end=65,step=5)
+angle_slider = LatexSlider(title="\\text{Angle \u0398} \\left[ \\mathrm{°} \\right]: ", value=30, start=0, end=65, step=5)
 angle_slider.on_change('value',changeTheta)
-
 
 def changeSpeed(attr,old,new):
     [Active] = glob_active.data["Active"] # input/
@@ -209,9 +210,8 @@ def changeSpeed(attr,old,new):
         updateTargetArrow()
 
 
-speed_slider = Slider(title="Velocity (m/s)", value=50, start=0, end=120, step=5)
+speed_slider = LatexSlider(title="\\text{Velocity} \\left[ \\frac{\\mathrm{m}}{\\mathrm{s}} \\right]: ", value=50, start=0, end=120, step=5)
 speed_slider.on_change('value', changeSpeed)
-
 
 # mass is not necessary but function is needed to protect the integrity of the simulation
 def massCheck(attr, old, new):
@@ -223,8 +223,8 @@ def massCheck(attr, old, new):
         glob_mass.data = dict(val=[new])
 
 
-mass_slider = Slider(title="Mass (kg)",value=0.7,start=0,end=2,step=0.1)
-mass_slider.on_change('value',massCheck)
+mass_slider = LatexSlider(title="\\text{Mass} \\left[ \\mathrm{kg} \\right]: ", value=0.7, start=0, end=2, step=0.1)
+mass_slider.on_change('value', massCheck)
 
 
 def changeHeight(attr,old,new):
@@ -249,9 +249,8 @@ def changeHeight(attr,old,new):
         updateTargetArrow()
 
 
-height_slider = Slider(title="Height of base (m)",value=0.0,start=0,end=60,step=5)
-height_slider.on_change('value',changeHeight)
-
+height_slider = LatexSlider(title="\\text{Height of base} \\left[ \\mathrm{m} \\right]: ", value=0.0, start=0, end=60, step=5)
+height_slider.on_change('value', changeHeight)
 
 def changeGrav(attr,old,new):
     [Active] = glob_active.data["Active"] # input/
@@ -268,7 +267,7 @@ def changeGrav(attr,old,new):
         Reset()
 
 grav_select = Select(title="Planet:", value="Earth",
-    options=["Space", "Mercury", "Venus", "Earth", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"])
+    options=["Space", "Mercury", "Venus", "Earth", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"], css_classes=['b_play'])
 grav_select.on_change('value',changeGrav)
 
 def Fire():
