@@ -30,11 +30,51 @@ from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, Late
 # ----------------------------------------------------------------- #
 
 ###############################
+#          Constants          #
+###############################
+# you may also define constants directly in main if they are only used here
+# though defining them in an extra file is recommended for possible extensions
+max_x = 5
+
+
+###############################
+#       Global Variables      #
+###############################
+# file-global variables (only "global" in this file!)
+# see mutable objections in Python (e.g. lists and dictionaries)
+global_vars = dict(callback_id=None)
+
+
+###############################
 #      ColumnDataSources      #
 ###############################
+# define your ColumnDataSources here for a better overview of which data influences plots
+# they don't have to be filled but at least defined (and later filled in callback or helper functions)
 cds_support_left  = ColumnDataSource(data=dict(sp_img=[fixed_support_img], x=[xsl] , y=[ysl]))
 cds_support_right = ColumnDataSource(data=dict(sp_img=[slide_support_img], x=[xsr] , y=[ysr]))
 
+
+
+################################
+#      Callback Functions      #
+################################
+
+
+def pp_button_cb_fun():
+    # define functionality
+    pass
+
+
+
+
+################################
+#       Helper Functions       #
+################################
+# if a callback function might get to large or if several callback functions partly do the same
+# outsource it to helper functions
+
+def some_helper_fun():
+    print("hello, I'm here to help")
 
 
 
@@ -47,7 +87,7 @@ cds_support_right = ColumnDataSource(data=dict(sp_img=[slide_support_img], x=[xs
 # the shown attributes should always be set
 # if no tool is needed set tools="" or toolbar_location=None
 # for more attributes have a look at the bokeh documentation
-figure_name = figure(title="Example Figure", x_range=(-1,5), y_range=(-0.5,2.5), height=300, width=400, tools="pan, wheel_zoom, reset")
+figure_name = figure(title="Example Figure", x_range=(-1,max_x), y_range=(-0.5,2.5), height=300, width=400, tools="pan, wheel_zoom, reset")
 figure_name.toolbar.logo = None # do not display the bokeh logo
 
 
@@ -57,6 +97,28 @@ figure_name.toolbar.logo = None # do not display the bokeh logo
 # width and height could also be set using constants defined in TA_constants.py and imported here in main.py
 figure_name.add_glyph(cds_support_left,  ImageURL(url="sp_img", x='x', y='y', w=0.66, h=0.4, anchor="center"))
 figure_name.add_glyph(cds_support_right, ImageURL(url="sp_img", x='x', y='y', w=support_width, h=support_height, anchor="center"))
+
+
+
+
+
+###################################
+#       Buttons and Sliders       #
+###################################
+# or in general widgets
+
+def play_pause():
+    if play_pause_button.label == "Play":
+        global_vars["callback_id"] = curdoc().add_periodic_callback(pp_button_cb_fun,100)
+        play_pause_button.label = "Pause"
+    elif play_pause_button.label == "Pause":
+        curdoc().remove_periodic_callback(global_vars["callback_id"])
+        play_pause_button.label = "Play"
+
+
+play_pause_button = Button(label="Play", button_type="success", width=100)
+play_pause_button.on_click(play_pause) 
+
 
 
 
@@ -70,7 +132,7 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 
 curdoc().add_root(column(
     description,
-    figure_name
+    row(figure_name, play_pause_button)
 ))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 
