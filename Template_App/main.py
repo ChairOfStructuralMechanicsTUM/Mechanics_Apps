@@ -13,6 +13,7 @@ from bokeh.models.widgets import Paragraph, Button, RadioButtonGroup, RadioGroup
 from bokeh.layouts        import column, row, widgetbox, layout, Spacer
 
 # internal imports
+from TA_costum_class import TA_example_class
 from TA_constants import (
     slide_support_img, fixed_support_img,  # support images
     xsl, ysl, xsr, ysr,                    # support coordinates
@@ -135,6 +136,32 @@ play_pause_button.on_click(play_pause)
 example_slider = LatexSlider(title="\\text{example}=", value_unit="\\frac{Sv}{m \\cdot kg}", value=initial_value, start=start_value, end=end_value, step=0.5, width=400)
 example_slider.on_change('value',slider_cb_fun) # callback function is called when value changes
 
+
+
+##################################
+#         Costum Objects         #
+##################################
+
+# build a new object
+my_object = TA_example_class(42)
+
+# printing the objects yields the output defined in the __str__ function
+print(my_object)
+
+# changing the string
+my_object.set_string("This is cool!")
+
+# check if the new string has been set correctly
+print(my_object)
+
+# plot a line in the test figure
+my_object.plot_line(figure_name)
+
+# you can also use this object in above callback/helper functions
+# since it is mutable and therefore file global
+
+
+# for other real application classes see 
 
 
 ###################################
