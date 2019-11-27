@@ -168,14 +168,14 @@ my_object.plot_line(figure_name)
 
 # for other real application classes see SDOF
 
-# plus separate linking lines that would also need ColumnDataSource in real applications
+# separate linking lines that would also need ColumnDataSource in real applications
 figure_name.line(x=[0,4], y=[1.5,1.5], color="black", line_width=2)
 figure_name.line(x=[2,2], y=[1.5,2.0], color="black", line_width=2)
 figure_name.line(x=[0,4], y=[0.3,0.3], color="black", line_width=3)
 # replace numbers by constants
 mass   = TA_CircularMass(8,2,2,0.8,0.5)
 spring = TA_Spring((0,.3),(0,1.5),1,1,50,0.25)
-damper = TA_Dashpot((4,.3),(4,1.5),1.5)
+damper = TA_Dashpot((4,.3),(4,1.5),0.5,1.5)
 mass.plot(figure_name)
 spring.plot(figure_name)
 damper.plot(figure_name)

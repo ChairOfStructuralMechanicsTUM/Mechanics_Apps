@@ -3,7 +3,7 @@ from TA_Coord import TA_Coord
 from copy import deepcopy
 
 class TA_Dashpot(object):
-    def __init__(self,start,end,damping_constant=1.0):
+    def __init__(self,start,end,w,damping_constant=1.0):
         start = TA_Coord(start[0],start[1])
         end   = TA_Coord(end[0],end[1])
         # define dashpot constant
@@ -13,11 +13,14 @@ class TA_Dashpot(object):
         self.end       = end
         self.origStart = start
         self.origEnd   = end
+        # define width
+        self.width = w
         # find direction along which dashpot lies
         # (not normalised)
         self.direction = end-start
         # define (normalised) perpendicular vector for spike directions
         perpVect = self.direction.perp()
+        perpVect *= self.width
         self.CasingStart = dict(x=[end.x-self.direction.x/8.0+perpVect.x/2.0,
             start.x+self.direction.x/8.0+perpVect.x/2.0,start.x+self.direction.x/8.0-perpVect.x/2.0,
             end.x-self.direction.x/8.0-perpVect.x/2.0],y=[end.y-self.direction.y/8.0+perpVect.y/2.0,
