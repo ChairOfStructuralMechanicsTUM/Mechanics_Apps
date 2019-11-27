@@ -59,7 +59,7 @@ class TA_example_class():
     # use an underscore _ at the beginning of the function name to indicate that
     # this function is only to be used inside the class (no private keyword in Python)
     def _update_cds(self):
-        self.test_cds.data = dict(x=[0,4], y=[1,1]) # direct update
+        self.test_cds.data = dict(x=[1,3], y=[1,0.5]) # direct update
         #self.test_cds.stream(dict(x=[0,4], y=[1,1]),rollover=2) # or stream and rollover with size of the columns
 
 

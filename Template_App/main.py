@@ -22,6 +22,11 @@ from TA_constants import (
     button_width                           # button settings
 )
 
+from TA_Spring import TA_Spring
+from TA_Mass import TA_CircularMass
+from TA_Dashpot import TA_Dashpot
+from TA_Coord import TA_Coord
+
 # latex integration
 from os.path import dirname, join, split, abspath
 import sys, inspect
@@ -161,7 +166,20 @@ my_object.plot_line(figure_name)
 # since it is mutable and therefore file global
 
 
-# for other real application classes see 
+# for other real application classes see SDOF
+
+# plus separate linking lines that would also need ColumnDataSource in real applications
+figure_name.line(x=[0,4], y=[1.5,1.5], color="black", line_width=2)
+figure_name.line(x=[2,2], y=[1.5,2.0], color="black", line_width=2)
+figure_name.line(x=[0,4], y=[0.3,0.3], color="black", line_width=3)
+# replace numbers by constants
+mass   = TA_CircularMass(8,2,2,0.8,0.5)
+spring = TA_Spring((0,.3),(0,1.5),1,50,0.25)
+damper = TA_Dashpot((4,.3),(4,1.5),1.5)
+mass.plot(figure_name)
+spring.plot(figure_name)
+damper.plot(figure_name)
+
 
 
 ###################################

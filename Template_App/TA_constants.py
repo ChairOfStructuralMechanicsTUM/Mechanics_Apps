@@ -12,8 +12,8 @@ Template App - constants used throughout all files
 # supports
 xsl      = 0
 xsr      = 4
-ysl      = 0
-ysr      = 0
+ysl      = -0.2
+ysr      = -0.2
 
 
 ###################################
