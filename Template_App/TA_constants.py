@@ -15,10 +15,6 @@ xsr      = 4
 ysl      = 0
 ysr      = 0
 
-# load patch bounds
-lb       = 0.2   # lower boundary
-ub       = 0.7   # upper boundary
-
 
 ###################################
 #         figure settings         #
@@ -45,8 +41,9 @@ support_height = 0.4
 ###################################
 
 # initial settings
-initial_position = 0.0
-initial_velocity = 0.0
+initial_value = 2.0
+start_value   = 0.0
+end_value     = 5.0
 
 # default sizes
 button_width = 100
