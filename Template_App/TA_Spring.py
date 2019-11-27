@@ -4,13 +4,15 @@ from TA_Coord import TA_Coord
 
 class TA_Spring(object):
     ## create spring
-    def __init__(self,start,end,x0,spring_constant=50.0,spacing = 1.0):
+    def __init__(self,start,end,x0,w,spring_constant=50.0,spacing = 1.0):
         start = TA_Coord(start[0],start[1])
         end   = TA_Coord(end[0],end[1])
         # define spring constant
         self.spring_constant = spring_constant
         # define rest length
         self.length = x0
+        # define width
+        self.width = w
         # define the number of coils with respect to the relaxed position of the spring
         self.nCoils = int(floor(self.length/spacing))
         # Create ColumnDataSource
@@ -30,6 +32,8 @@ class TA_Spring(object):
         self.direction = TA_Coord(direction.x/length,direction.y/length)
         # define (normalised) perpendicular vector for spike directions
         perpVect = TA_Coord(direction.y/length,-direction.x/length)
+        # scale it with the width
+        perpVect *= 0.5*self.width
         # create values to help with loop
         Pos    = dict(x=[],y=[])
         Zero   = TA_Coord(0,0)
