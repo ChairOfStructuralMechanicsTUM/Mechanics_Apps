@@ -146,6 +146,9 @@ example_slider.on_change('value',slider_cb_fun) # callback function is called wh
 radio_group_01  = RadioGroup(labels=["1", "2"], active=0, inline=True)
 radio_group_02  = RadioGroup(labels=["3", "4"])
 
+radio_button_group = RadioButtonGroup(labels=["Item 1", "Item 2", "Item 3"], active=0, width = 200)
+
+
 ##################################
 #         Costum Objects         #
 ##################################
@@ -202,7 +205,8 @@ curdoc().add_root(column(
     row(figure_name, Spacer(width=100), column(play_pause_button, 
                                                example_slider,
                                                radio_group_01,
-                                               radio_group_02))
+                                               radio_group_02,
+                                               radio_button_group))
 ))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 
