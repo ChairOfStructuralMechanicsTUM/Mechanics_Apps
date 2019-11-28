@@ -7,10 +7,10 @@ import numpy as np
 # bokeh imports
 from bokeh.io             import curdoc
 from bokeh.plotting       import figure
-from bokeh.models         import ColumnDataSource, LabelSet, Arrow, OpenHead
-from bokeh.models.glyphs  import MultiLine, Rect, ImageURL #, Patch, 
-from bokeh.models.widgets import Paragraph, Button, RadioButtonGroup, RadioGroup #CheckboxGroup
-from bokeh.layouts        import column, row, widgetbox, layout, Spacer
+from bokeh.models         import ColumnDataSource, Arrow, OpenHead
+from bokeh.models.glyphs  import ImageURL
+from bokeh.models.widgets import Button, RadioButtonGroup, RadioGroup
+from bokeh.layouts        import column, row, Spacer
 
 # internal imports
 from TA_costum_class import TA_example_class
@@ -141,11 +141,14 @@ example_slider = LatexSlider(title="\\text{example}=", value_unit="\\frac{Sv}{m 
 example_slider.on_change('value',slider_cb_fun) # callback function is called when value changes
 
 
+# radio button: round and only one active selection per group allowed
 # active=0 to select the the first button by default
 # inline=True to place the buttons horizontally
 radio_group_01  = RadioGroup(labels=["1", "2"], active=0, inline=True)
 radio_group_02  = RadioGroup(labels=["3", "4"])
 
+
+# radio button group: buttons that are merged next to each other, only one active selection per group allowed
 radio_button_group = RadioButtonGroup(labels=["Item 1", "Item 2", "Item 3"], active=0, width = 200)
 
 
