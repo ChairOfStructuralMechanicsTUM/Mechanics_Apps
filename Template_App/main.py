@@ -141,6 +141,10 @@ example_slider = LatexSlider(title="\\text{example}=", value_unit="\\frac{Sv}{m 
 example_slider.on_change('value',slider_cb_fun) # callback function is called when value changes
 
 
+# active=0 to select the the first button by default
+# inline=True to place the buttons horizontally
+radio_group_01  = RadioGroup(labels=["1", "2"], active=0, inline=True)
+radio_group_02  = RadioGroup(labels=["3", "4"])
 
 ##################################
 #         Costum Objects         #
@@ -196,7 +200,9 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 curdoc().add_root(column(
     description,
     row(figure_name, Spacer(width=100), column(play_pause_button, 
-                                               example_slider))
+                                               example_slider,
+                                               radio_group_01,
+                                               radio_group_02))
 ))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 
