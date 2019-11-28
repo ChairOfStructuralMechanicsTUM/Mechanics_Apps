@@ -191,11 +191,12 @@ damper.plot(figure_name)
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1000)
 
-
+# to keep track of the final page layout it is suggested to more or less use the same layout in your curdoc code
+# add additional spacers to move your objects to the desired locations
 curdoc().add_root(column(
     description,
-    row(figure_name, column(play_pause_button, 
-                            example_slider))
+    row(figure_name, Spacer(width=100), column(play_pause_button, 
+                                               example_slider))
 ))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 
