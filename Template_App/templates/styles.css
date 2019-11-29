@@ -1,0 +1,4 @@
+div.bk.slider.hidden{ /* the element class */
+    /* visibility: hidden; */  /* only hides without new alignment */
+    display: none !important; /* hides and adjusts spacing; but !important is considered bad practice */
+}

@@ -36,25 +36,25 @@ from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, Late
 
 # ----------------------------------------------------------------- #
 
-###############################
-#          Constants          #
-###############################
+###################################
+#            Constants            #
+###################################
 # you may also define constants directly in main if they are only used here
 # though defining them in an extra file is recommended for possible extensions
 max_x = 5
 
 
-###############################
-#       Global Variables      #
-###############################
+###################################
+#         Global Variables        #
+###################################
 # file-global variables (only "global" in this file!)
 # see mutable objections in Python (e.g. lists and dictionaries)
 global_vars = dict(callback_id=None)
 
 
-###############################
-#      ColumnDataSources      #
-###############################
+###################################
+#        ColumnDataSources        #
+###################################
 # define your ColumnDataSources here for a better overview of which data influences plots
 # they don't have to be filled but at least defined (and later filled in callback or helper functions)
 cds_support_left  = ColumnDataSource(data=dict(sp_img=[fixed_support_img], x=[xsl] , y=[ysl]))
@@ -62,9 +62,9 @@ cds_support_right = ColumnDataSource(data=dict(sp_img=[slide_support_img], x=[xs
 
 
 
-################################
-#      Callback Functions      #
-################################
+##################################
+#       Callback Functions       #
+##################################
 
 
 def pp_button_cb_fun():
@@ -88,9 +88,18 @@ def slider_cb_fun(attr,old,new):
         some_helper_fun() # call helper function
 
 
-################################
-#       Helper Functions       #
-################################
+# a more detailed example of hiding models can be found in the Dummy App
+def radio_cb_fun(attr,old,new):
+    if new==0: # show slider
+        example_slider.css_classes = ["slider"]
+    elif new==1: # hide slider
+        example_slider.css_classes = ["slider", "hidden"]
+
+
+
+##################################
+#        Helper Functions        #
+##################################
 # if a callback function might get to large or if several callback functions partly do the same
 # outsource it to helper functions
 
@@ -137,7 +146,8 @@ play_pause_button.on_click(play_pause)
 
 # the attribute "value_unit" only exists in the costum LatexSlider class
 # for a default bokeh slider use Slider
-example_slider = LatexSlider(title="\\text{example}=", value_unit="\\frac{Sv}{m \\cdot kg}", value=initial_value, start=start_value, end=end_value, step=0.5, width=400)
+# use the css_classes to reference this object in /templates/styles.css
+example_slider = LatexSlider(title="\\text{example}=", value_unit="\\frac{Sv}{m \\cdot kg}", value=initial_value, start=start_value, end=end_value, step=0.5, width=400, css_classes=["slider"])
 example_slider.on_change('value',slider_cb_fun) # callback function is called when value changes
 
 
@@ -146,6 +156,7 @@ example_slider.on_change('value',slider_cb_fun) # callback function is called wh
 # inline=True to place the buttons horizontally
 radio_group_01  = RadioGroup(labels=["1", "2"], active=0, inline=True)
 radio_group_02  = RadioGroup(labels=["3", "4"])
+radio_group_01.on_change("active",radio_cb_fun)
 
 
 # radio button group: buttons that are merged next to each other, only one active selection per group allowed
