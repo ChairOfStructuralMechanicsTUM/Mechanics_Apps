@@ -138,21 +138,21 @@ arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=3,size=10),
     line_color="black",line_width=3)
 p.add_layout(arrow_glyph)
 
-monkey          = Projectiles_Drawable(p, "Images/monkey.png")
+monkey          = Projectiles_Drawable(p, "static/images/monkey.png")
 monkey_init_pos = (180, 68.8)
 monkey.draw_at(x=monkey_init_pos[0], y=monkey_init_pos[1], w=20, h=25)
 
-branch          = Projectiles_Drawable(p, "Images/branch.png")
+branch          = Projectiles_Drawable(p, "static/images/branch.png")
 branch_init_pos = (150, 70)
 branch.draw_at(x=branch_init_pos[0], y=branch_init_pos[1], w=50, h=25)
 
-banana          = Projectiles_Drawable(p, "Images/banana.png")
+banana          = Projectiles_Drawable(p, "static/images/banana.png")
 banana_init_pos = (8, 10)
 banana.draw_at(x=banana_init_pos[0], y=banana_init_pos[1], w=5, h=5)
 
-cannon          = Projectiles_Drawable(p, "Images/cannon.png")
+cannon          = Projectiles_Drawable(p, "static/images/cannon.png")
 cannon.draw_at(x=1.8, y=4.7, h=9, w=10, pad_fraction=.25)
-base            = Projectiles_Drawable(p, "Images/base.png")
+base            = Projectiles_Drawable(p, "static/images/base.png")
 base.draw_at(x=0, y=0, w=10, h=6)
 
 p.background_fill_color = PlanetHue["Earth"]
