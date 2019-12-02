@@ -13,7 +13,7 @@ from bokeh.models.widgets import Button, RadioButtonGroup, RadioGroup
 from bokeh.layouts        import column, row, Spacer
 
 # internal imports
-from TA_costum_class import TA_example_class
+from TA_custom_class import TA_example_class
 from TA_constants import (
     slide_support_img, fixed_support_img,  # support images
     xsl, ysl, xsr, ysr,                    # support coordinates
