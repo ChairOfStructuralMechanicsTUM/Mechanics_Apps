@@ -27,18 +27,28 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
+
+from MC_constants import (
+    initial_MohrNx, initial_MohrNxz, initial_MohrNz, initial_MohrP_Angle,
+    initial_Neta, initial_Nzeta, initial_Nzetaeta,
+    initial_centreX, initial_radius, initial_rleft_z
+)
+
 ### Initial Values
-radius = 10
-centreX = 10
-glMohrNx =0
-glMohrNz =0
-glMohrNxz =0
-glMohrP_Angle = 0*(pi/180)
-Neta =0 
-Nzeta =0 
-Nzetaeta =0  
+radius = initial_radius
+centreX = initial_centreX
+glMohrNx = initial_MohrNx
+glMohrNz = initial_MohrNz
+glMohrNxz = initial_MohrNxz
+glMohrP_Angle = initial_MohrP_Angle
+Neta = initial_Neta 
+Nzeta = initial_Nzeta
+Nzetaeta = initial_Nzetaeta
 rleft_x = centreX-radius
-rleft_z=0
+rleft_z= initial_rleft_z
+
+
+
 
 global glMohrChangeShow
 glMohrChangeShow  = -1
@@ -165,11 +175,11 @@ def reset():
     global glMohrP_Angle
     alpha = 0
     glMohrP_Angle = 0*(pi/180)
-    radius = 10
-    centreX = 10
-    glMohrNx =0
-    glMohrNz =0
-    glMohrNxz =0
+    radius = initial_radius
+    centreX = initial_centreX
+    glMohrNx = initial_MohrNx
+    glMohrNz = initial_MohrNz
+    glMohrNxz = initial_MohrNxz
     
     ### Calculations
     radius    = float(sqrt(pow(((glMohrNx-glMohrNz)/2),2)+pow(glMohrNxz,2)))
