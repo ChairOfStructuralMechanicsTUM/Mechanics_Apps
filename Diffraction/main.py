@@ -1,5 +1,28 @@
-from __future__ import division
+"""
+Diffraction - visualizes the effect of wave diffraction at a wall
+"""
+# general imports
+import numpy as np
+from numpy import pi, cos, sin, sqrt, log10
+import time
 
+# bokeh imports
+from bokeh.io                    import curdoc
+from bokeh.models                import ColumnDataSource, Div
+from bokeh.layouts               import widgetbox, row, column
+from bokeh.models.layouts        import Spacer
+from bokeh.plotting              import Figure
+from bokeh.models.widgets        import Slider, TextInput
+
+# internal imports
+from diffraction_surface3d       import diffraction_Surface3d
+from diffraction_contour         import diffraction_Contour
+from diffraction_quiver          import diffraction_Quiver
+from diffraction_clickInteractor import diffraction_ClickInteractor
+from diffraction_grid            import diffraction_Grid
+from diffraction_computation     import compute_wave_max_at_cart
+
+# latex integration
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
@@ -7,27 +30,9 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv
 
-import numpy as np
-from numpy import pi, cos, sin, sqrt, log10
-import time
+# ----------------------------------------------------------------- #
 
-from bokeh.io import curdoc
-from bokeh.models import ColumnDataSource, Div
-from bokeh.layouts import widgetbox, row, column
-from bokeh.models.layouts import Spacer
-from bokeh.plotting import Figure
-from bokeh.models.widgets import Slider, TextInput
-
-from diffraction_surface3d import diffraction_Surface3d
-from diffraction_contour import diffraction_Contour
-from diffraction_quiver import diffraction_Quiver
-from diffraction_clickInteractor import diffraction_ClickInteractor
-#from LatexLabel import LatexLabel
-
-from diffraction_grid import diffraction_Grid
-from diffraction_computation import compute_wave_max_at_cart
-
-SHOWWARN = False
+SHOWWARN  = False
 SHOWDEBUG = False
 
 # number of gridpoints in x and y direction
@@ -77,7 +82,7 @@ source_shadow = ColumnDataSource(data=dict(x=[], y=[]))
 phi0_slider = Slider(title=u"Angle of incidence \u03C6\u2080 [\u00B0]", name='angle of incidence', value=phi0_init, start=0, end=180, step=10) #
 # slider for setting wavelength
 wavelength_slider = Slider(title=u"Dimensionless wavelength w.r.t. height of barrier [\u03BB/h]", name='wavelength', value=wavelength_init, start=0.4, end=2, step=0.1)
-# textbox for displaying dB value at proble location
+# textbox for displaying dB value at probe location
 textbox = TextInput(title="Noise probe (in contour plot)", name='noise probe', placeholder="pick a location for probe")
 
 # Generate a Figure container for the field
