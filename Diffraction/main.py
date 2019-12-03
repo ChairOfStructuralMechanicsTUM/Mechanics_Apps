@@ -310,7 +310,7 @@ initialize()
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
-description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1130)
 
 # add area image
 area_image = Div(text="""
