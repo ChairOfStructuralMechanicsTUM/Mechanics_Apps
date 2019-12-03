@@ -47,11 +47,18 @@ phi0_init = 60  # angle of incident
 c = 3  # speed of sound - fictive value used in order to decrease speed of animation - does not affect amplitudes
 wavelength_init = 1  # wavelength
 
+# constant target time
+target_frame_time = 100  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
+
+# global variables
+# check if a slider has changed
+global_checker = dict(SliderHasChanged=False)
+# variables for time measurements
+global_time_check = dict(frame_end_time=0, lagcount=0, frame_no=0)
+
 # data sources
 # data source for surface plot
 source_surf = ColumnDataSource(data=dict(x=[], y=[], z=[], color=[]))
-# global variable that is set if a slider is changed
-source_checker = ColumnDataSource(data=dict(SliderHasChanged=[False]))
 # defines wavefront of plane wave
 source_wavefront = ColumnDataSource(data=dict(x=[], y=[]))
 # visualization of click location
@@ -128,7 +135,7 @@ def set_slider_has_changed(attr, old, new):
     :return:
     """
     set_parameter_visualization()
-    source_checker.data = dict(SliderHasChanged=[True])
+    global_checker["SliderHasChanged"] = True
 
 
 def slider_has_changed():
@@ -136,7 +143,7 @@ def slider_has_changed():
     returns true, if any slider has been changed since the last call of update(t)
     :return: bool
     """
-    return source_checker.data['SliderHasChanged'][0]
+    return global_checker["SliderHasChanged"]
 
 
 def on_click_change(attr,old,new):
@@ -177,7 +184,7 @@ def update_wave_amplitude_on_grids(t):
     """
     if slider_has_changed():
         update_fresnel_on_grids()
-        source_checker.data = dict(SliderHasChanged=[False])
+        global_checker["SliderHasChanged"] = False
 
     # Surf Mesh
     p_surf = surface_grid.compute_wave_amplitude(t)
@@ -203,14 +210,9 @@ def update_wave_amplitude_at_probe(x,y,t):
     textbox.value = "%.2f dB" % loudness  # write measured value to textbox
 
 
-target_frame_time     = 100  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
-global_frame_end_time = ColumnDataSource(data=dict(val=[0]))
-global_lagcount       = ColumnDataSource(data=dict(val=[0]))
-
-
 def do_time_measurement(frame_no, computation_time):
-    [frame_end_time] = global_frame_end_time.data["val"] # input/output
-    [lagcount]       = global_lagcount.data["val"]       # input/output    
+    frame_end_time = global_time_check["frame_end_time"] # input/output
+    lagcount       = global_time_check["lagcount"]       # input/output    
 
     this_frame_end_time = time.time() * 1000  # in ms
     frame_duration = (this_frame_end_time - frame_end_time)
@@ -230,10 +232,9 @@ def do_time_measurement(frame_no, computation_time):
         print("Computation time is much lower than frame time and framerate is below 25Hz. Consider decreasing TARGET_FRAME_TIME to improve user experience!")
 
     frame_end_time = this_frame_end_time
-    global_frame_end_time.data = dict(val=[frame_end_time])
-    global_lagcount.data       = dict(val=[lagcount])
+    global_time_check["frame_end_time"] = frame_end_time
+    global_time_check["lagcount"]       = lagcount
 
-global_frame_no = ColumnDataSource(data=dict(val=[0]))
 
 def update():
     """
@@ -241,7 +242,7 @@ def update():
     :param t: time
     :return:
     """
-    [frame_no] = global_frame_no.data["val"] #input/output
+    frame_no = global_time_check["frame_no"] #input/output
     frame_no += 1
     t = frame_no * target_frame_time / 1000.0
     computation_start_time = time.time()
@@ -263,7 +264,7 @@ def update():
     computation_time = (time.time() - computation_start_time) * 1000
 
     do_time_measurement(frame_no, computation_time)
-    global_frame_no.data = dict(val=[frame_no])
+    global_time_check["frame_no"] = frame_no
 
 
 def initialize():
@@ -272,7 +273,7 @@ def initialize():
     :return:
     """
     set_parameter_visualization()
-    source_checker.data = dict(SliderHasChanged=[True])
+    global_checker["SliderHasChanged"] = True
     update()
 
 
