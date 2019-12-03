@@ -216,18 +216,18 @@ def do_time_measurement(frame_no, computation_time):
     frame_duration = (this_frame_end_time - frame_end_time)
 
     if ((frame_duration > 1.5 * target_frame_time) or (computation_time > target_frame_time)) and SHOWWARN:
-        print " "
-        print "high lag observed for frame %s. Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (
-        frame_no, target_frame_time, frame_duration, computation_time)
+        print(" ")
+        print("high lag observed for frame {:d}. Frame Target: {:f} ms, Frame Real: {:f} ms, Computation: {:f} ms".format(
+        frame_no, target_frame_time, frame_duration, computation_time))
         lagcount += 1
         lagfraction = lagcount / (frame_no + 1)
         if lagfraction > 0.1 and frame_no > 100:
-            print "WARNING! more than 10% of the frames are lost. Consider increasing TARGET_FRAME_TIME to avoid lags!"
+            print("WARNING! more than 10% of the frames are lost. Consider increasing TARGET_FRAME_TIME to avoid lags!")
     if (computation_time < .5 * target_frame_time) and (target_frame_time > 40) and SHOWDEBUG:
-        print " "
-        print "Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (
-        target_frame_time, frame_duration, computation_time)
-        print "Computation time is much lower than frame time and framerate is below 25Hz. Consider decreasing TARGET_FRAME_TIME to improve user experience!"
+        print(" ")
+        print("Frame Target: {:f} ms, Frame Real: {:f} ms, Computation: {:f} ms".format(
+        target_frame_time, frame_duration, computation_time))
+        print("Computation time is much lower than frame time and framerate is below 25Hz. Consider decreasing TARGET_FRAME_TIME to improve user experience!")
 
     frame_end_time = this_frame_end_time
     global_frame_end_time.data = dict(val=[frame_end_time])
@@ -282,6 +282,7 @@ wavelength_slider.on_change('value',set_slider_has_changed)
 interactor.on_click(on_click_change)
 
 # create plots
+#REMARK: color might not be used from internal vis.js and has no effect - colormap always according to z! see https://github.com/bokeh/bokeh/issues/7814
 surface = diffraction_Surface3d(x="x", y="y", z="z", color="color", data_source=source_surf, width=500,height=100)  # wave surface
 # contour plots of wave
 contour_zero = diffraction_Contour(plot, line_width=2,line_color='black', path_filter = 10)  # zero level
