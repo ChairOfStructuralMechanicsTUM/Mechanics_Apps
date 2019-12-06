@@ -23,7 +23,7 @@ from MC_constants import (
 )
 
 from MC_figure_sources import fig1, fig2, fig3
-from MC_helper_functions import calculate_radius_and_center
+from MC_helper_functions import calculate_radius_and_center, clear_arrow_source, clear_rect_source
 
 ### Initial Values
 radius = initial_radius
@@ -50,18 +50,6 @@ f3 = fig3()
 #     rleft_x_temp = centreX_temp - radius_temp # not always needed
 #     return [radius_temp, centreX_temp, rleft_x_temp]
 
-def clear_arrow_source(source_list):
-    empty_dict = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    for cds in source_list:
-        ro = len(cds.data["xS"])
-        cds.stream(empty_dict, rollover=-ro)
-
-def clear_rect_source(source_list):
-    empty_dict = dict(x=[], y=[], w=[], h=[], angle=[])
-    for cds in source_list:
-        ro = len(cds.data["x"])
-        cds.stream(empty_dict, rollover=-ro)
-       
 def reset():
     Normal_X_slider.disabled      = False
     Normal_Z_slider.disabled      = False
