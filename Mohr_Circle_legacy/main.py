@@ -23,6 +23,7 @@ from MC_constants import (
 )
 
 from MC_figure_sources import fig1, fig2, fig3
+from MC_helper_functions import calculate_radius_and_center
 
 ### Initial Values
 radius = initial_radius
@@ -43,11 +44,11 @@ f1 = fig1()
 f2 = fig2()
 f3 = fig3()
 
-def calculate_radius_and_center():
-    radius_temp  = float(sqrt(pow(((global_vars["MohrNx"]-global_vars["MohrNz"])/2),2)+pow(global_vars["MohrNxz"],2)))
-    centreX_temp = float((global_vars["MohrNx"]+global_vars["MohrNz"])/2)
-    rleft_x_temp = centreX_temp - radius_temp # not always needed
-    return [radius_temp, centreX_temp, rleft_x_temp]
+# def calculate_radius_and_center():
+#     radius_temp  = float(sqrt(pow(((global_vars["MohrNx"]-global_vars["MohrNz"])/2),2)+pow(global_vars["MohrNxz"],2)))
+#     centreX_temp = float((global_vars["MohrNx"]+global_vars["MohrNz"])/2)
+#     rleft_x_temp = centreX_temp - radius_temp # not always needed
+#     return [radius_temp, centreX_temp, rleft_x_temp]
 
 def clear_arrow_source(source_list):
     empty_dict = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -77,7 +78,7 @@ def reset():
     global_vars["MohrNxz"] = initial_MohrNxz
     
     ### Calculations
-    [radius, centreX, _] = calculate_radius_and_center()
+    [radius, centreX, _] = calculate_radius_and_center(global_vars)
     Normal_X_slider.value=0
     Normal_Z_slider.value=0
     Tangential_XZ_slider.value=0
@@ -113,7 +114,7 @@ def show():
     MohrChangeShow = global_vars["MohrChangeShow"]
     
     if MohrChangeShow == 1:
-        [radius, centreX, rleft_x] = calculate_radius_and_center()
+        [radius, centreX, rleft_x] = calculate_radius_and_center(global_vars)
         rright_x = centreX+radius
 
         ## Print Labels for principal stress and direction
@@ -146,7 +147,7 @@ def draw():
     global_vars["MohrChangeShow"]  = 1
 
     ## Calculations
-    [radius, centreX, _] = calculate_radius_and_center()
+    [radius, centreX, _] = calculate_radius_and_center(global_vars)
     Neta      = float(((MohrNx+MohrNz)/2)-(((MohrNx-MohrNz)/2)*cos(2*MohrP_Angle))-MohrNxz*sin(2*MohrP_Angle))
     Nzetaeta  = float((-(((MohrNx-MohrNz)/2)*sin(2*MohrP_Angle)))+MohrNxz*cos(2*MohrP_Angle))
 
@@ -185,11 +186,7 @@ def draw():
         f1.NxP_rect_source.data  = dict(x=[(25-MohrNx*0.75)/2],  y=[0], w=[MohrNx*0.75-1.5], h = [13], angle=[0])
         f1.NxN_rect_source.data  = dict(x=[(-25+MohrNx*0.75)/2], y=[0], w=[MohrNx*0.75-1.5], h = [13], angle=[0])
     elif(MohrNx*0.75==0):
-        # f1.NxP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        # f1.NxN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
         clear_arrow_source( [f1.NxP_arrow_source, f1.NxN_arrow_source] )
-        # f1.NxP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-        # f1.NxN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
         clear_rect_source( [f1.NxP_rect_source, f1.NxN_rect_source] )
     else:
         f1.NxP_arrow_source.data  = dict(xS=[12.5],  xE=[12.5+MohrNx*0.75],  yS=[0], yE=[0], lW = [2])
@@ -206,11 +203,7 @@ def draw():
         f1.NzP_rect_source.data  = dict(x=[0], y=[(25-new)/2],  w=[13], h = [new-1.5], angle=[0])
         f1.NzN_rect_source.data  = dict(x=[0], y=[(-25+new)/2], w=[13], h = [new-1.5], angle=[0])   
     elif (new==0):
-        #f1.NzP_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        #f1.NzN_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
         clear_arrow_source( [f1.NzP_arrow_source, f1.NzN_arrow_source] )
-        # f1.NzP_rect_source.data   = dict(x=[], y=[], w=[], h = [], angle=[])
-        # f1.NzN_rect_source.data   = dict(x=[], y=[], w=[], h = [], angle=[])
         clear_rect_source( [f1.NzP_rect_source, f1.NzN_rect_source] )
     else:
         f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new], lW = [2])
@@ -245,7 +238,8 @@ def draw():
     f3.Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[-MohrP_Angle],size = [75])
 
     ChangeRotatingPlane_Forces()
-    ChangeMohrCircle()
+    f2.ChangeMohrCircle(global_vars)
+    f3.move_labels(MohrP_Angle)
 
 def NormalForceX_init(attr,old,new):
    ## Figure 1, Present the Normal Forces while Draw-Button wasn't yet activated:  
@@ -316,7 +310,7 @@ def changePlaneAngle(attr,old,new):
         MohrP_Angle = -new*(pi/180)
 
         ## Paint Rotating Plane red if angle=alpha_0
-        [radius, centreX, rleft_x] = calculate_radius_and_center()
+        [radius, centreX, rleft_x] = calculate_radius_and_center(global_vars)
         alpha_0=180*atan(MohrNxz/(MohrNz+(-rleft_x+0.00001)))/(pi)
         alpha_0=int(alpha_0+0.5)
         
@@ -336,46 +330,11 @@ def changePlaneAngle(attr,old,new):
         f3.Rotating_Axis_Y_source.data = dict(xS=[0], yS=[0], xE=[-25*sin(-MohrP_Angle)],  yE=[-25*cos(-MohrP_Angle)])
         
         global_vars["MohrP_Angle"] = -MohrP_Angle   #      /output
-        ChangeMohrCircle()
+        f2.ChangeMohrCircle(global_vars)
+        f3.move_labels(-MohrP_Angle)
         ChangeRotatingPlane_Forces()
 
-                 
-def ChangeMohrCircle():
-    MohrNx  = global_vars["MohrNx"]
-    MohrNz  = global_vars["MohrNz"]
-    MohrNxz = global_vars["MohrNxz"]
-    MohrP_Angle = global_vars["MohrP_Angle"]
 
-    [radius, centreX, rleft_x] = calculate_radius_and_center()
-    rleft_z = 0
-    
-    f2.Mohr_Circle_source.data        = dict(x=[centreX], y=[0], radius=[radius])   
-    f2.OriginalPlane_line_source.data = dict(x=[rleft_x,MohrNz,MohrNz], y=[rleft_z,MohrNxz,0])
-  
-    ## Calculate forces in rotated element
-    Nzeta     = float(((MohrNx+MohrNz)/2)+(((MohrNx-MohrNz)/2)*cos(2*MohrP_Angle))+MohrNxz*sin(2*MohrP_Angle))
-    Neta      = float(((MohrNx+MohrNz)/2)-(((MohrNx-MohrNz)/2)*cos(2*MohrP_Angle))-MohrNxz*sin(2*MohrP_Angle))
-    Nzetaeta  = float((-(((MohrNx-MohrNz)/2)*sin(2*MohrP_Angle)))+MohrNxz*cos(2*MohrP_Angle))
-
-    if MohrP_Angle == 0:
-        Nzeta    = MohrNx
-        Neta     = MohrNz
-        Nzetaeta = MohrNxz
-    if MohrP_Angle == (pi/2):
-        Nzeta    = MohrNz
-        Neta     = MohrNx
-        Nzetaeta = -MohrNxz
-
-    f2.Newplane_line_source.data       = dict(x=[rleft_x,Neta], y=[rleft_z,Nzetaeta])
-
-    f2.Moving_Label_source.data = dict(x=[MohrNx,MohrNz,0.0, 0.0, Neta,Nzeta,MohrNz,Neta],
-                                            y=[0.0,0.0,MohrNxz, Nzetaeta,0.0,0.0,MohrNxz,Nzetaeta],
-                                            names=['\\sigma_x','\\sigma_z','\\tau_{xz}','\\tau_{\\overline{xz}}','\\sigma_{\\overline{z}}','\\sigma_{\\overline{x}}',"A","B"])
-    
-    f3.Moving_Label_source.data = dict(x=[(25+2.5)*cos(-MohrP_Angle)-1,(-25-2.5)*sin(MohrP_Angle)-1],y=[(25+2.5)*sin(-MohrP_Angle)-1,(-25-2.5)*cos(MohrP_Angle)-1], 
-                                        names = ['\\overline{x}', '\\overline{z}'])
-
-    
 def ChangeRotatingPlane_Forces():
     MohrNx  = global_vars["MohrNx"]
     MohrNz  = global_vars["MohrNz"]
@@ -389,7 +348,7 @@ def ChangeRotatingPlane_Forces():
     MohrP_Angle = -MohrP_Angle
 
     ## Set Nzetaeta=0 if angle-slider is set to principal direction
-    [radius, centreX, rleft_x] = calculate_radius_and_center()
+    [radius, centreX, rleft_x] = calculate_radius_and_center(global_vars)
 
     alpha_0 = 180*atan(MohrNxz/(MohrNz+(-rleft_x+0.00001)))/(pi)
     alpha_0 = int(alpha_0+0.5)
