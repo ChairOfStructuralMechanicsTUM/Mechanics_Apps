@@ -73,6 +73,11 @@ Nxz2_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
 Nxz3_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
 Nxz4_rect_source = ColumnDataSource(data=dict(x=[], y=[], w=[], h=[], angle=[]))
 
+
+# Nxz_arrow_sources = [Nxz1_arrow_source, Nxz2_arrow_source, Nxz3_arrow_source, Nxz4_arrow_source]
+# Nxz_rect_sources = [Nxz1_rect_source, Nxz2_rect_source, Nxz3_rect_source, Nxz4_rect_source ]
+
+
 ### Figure 2, Mohr Circle:
 Mohr_Circle_source = ColumnDataSource(data=dict(x=[], y=[], radius=[]))
 Wedge_source       = ColumnDataSource(data=dict(x=[], y=[],radius=[], sA=[], eA=[]))
@@ -114,36 +119,26 @@ Figure3Perm_Label_source   = ColumnDataSource(data=dict(x=[22,1], y=[-5, -27], n
 Figure3Moving_Label_source = ColumnDataSource(data=dict(x=[], y=[], names =[]))
 
 
-###Initial Calculations and Value settings
-def init():
+def calculate_radius_and_center():
+    radius_temp  = float(sqrt(pow(((global_vars["MohrNx"]-global_vars["MohrNz"])/2),2)+pow(global_vars["MohrNxz"],2)))
+    centreX_temp = float((global_vars["MohrNx"]+global_vars["MohrNz"])/2)
+    rleft_x_temp = centreX_temp - radius_temp # not always needed
+    return [radius_temp, centreX_temp, rleft_x_temp]
 
-    Normal_X_slider.value=0
-    Normal_Z_slider.value=0
-    Tangential_XZ_slider.value=0
-    Plane_Angle_slider.value=0
 
-    ## Figure 1: Set values for arrows
-    NxP_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    NxN_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    NzP_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    NzN_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    Nxz1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    Nxz2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    Nxz3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    Nxz4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    ##Figure 1, Set Rectangles:
-    NxP_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-    NxN_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-    NzP_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-    NxN_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-    Nxz1_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
-    Nxz2_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
-    Nxz3_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
-    Nxz4_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
-    
+def clear_arrow_source(source_list):
+    empty_dict = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    for cds in source_list:
+        ro = len(cds.data["xS"])
+        cds.stream(empty_dict, rollover=-ro)
 
-    
-    
+def clear_rect_source(source_list):
+    empty_dict = dict(x=[], y=[], w=[], h=[], angle=[])
+    for cds in source_list:
+        ro = len(cds.data["x"])
+        cds.stream(empty_dict, rollover=-ro)
+
+       
 
 def reset():
 
@@ -164,32 +159,25 @@ def reset():
     global_vars["MohrNxz"] = initial_MohrNxz
     
     ### Calculations
-    radius    = float(sqrt(pow(((global_vars["MohrNx"]-global_vars["MohrNz"])/2),2)+pow(global_vars["MohrNxz"],2)))
-    centreX   = float((global_vars["MohrNx"]+global_vars["MohrNz"])/2)
+    [radius, centreX, _] = calculate_radius_and_center()
 
     Normal_X_slider.value=0
     Normal_Z_slider.value=0
     Tangential_XZ_slider.value=0
     Plane_Angle_slider.value=0
 
+# Nxz_arrow_sources = [Nxz1_arrow_source, Nxz2_arrow_source, Nxz3_arrow_source, Nxz4_arrow_source]
+# Nxz_rect_sources = [Nxz1_rect_source, Nxz2_rect_source, Nxz3_rect_source, Nxz4_rect_source ]
+
+
     ### Figure 1, Reset values for arrows:
-    NxP_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    NxN_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    NzP_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    NzN_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    Nxz1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    Nxz2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    Nxz3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    Nxz4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    sources_to_reset = [NxP_arrow_source, NxN_arrow_source, NzP_arrow_source, NzN_arrow_source,
+                        Nxz1_arrow_source, Nxz2_arrow_source, Nxz3_arrow_source, Nxz4_arrow_source]
+    clear_arrow_source(sources_to_reset)
     ## Figure 1, Reset Rectangles:
-    NxP_rect_source.data   = dict(x=[], y=[], w=[], h=[], angle=[])
-    NxN_rect_source.data   = dict(x=[], y=[], w=[], h=[], angle=[])
-    NzP_rect_source.data   = dict(x=[], y=[], w=[], h=[], angle=[])
-    NzN_rect_source.data   = dict(x=[], y=[], w=[], h=[], angle=[])
-    Nxz1_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-    Nxz2_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-    Nxz3_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-    Nxz4_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
+    sources_to_reset = [NxP_rect_source, NxN_rect_source, NzP_rect_source, NzN_rect_source, 
+                        Nxz1_rect_source, Nxz2_rect_source, Nxz3_rect_source, Nxz4_rect_source]
+    clear_rect_source(sources_to_reset)
     
     ### Figure 2, Reset Circle:
     Mohr_Circle_source.data          = dict(x=[centreX], y=[0], radius=[radius])
@@ -204,32 +192,18 @@ def reset():
     Rotating_Plane_source.data     = dict(x=[], y=[],angle =[],size = [])
     Rotating_Plane_red_source.data = dict(x=[], y=[],angle =[],size = [])
     ## Figure 3, Reset arrows:
-    NzetaP_arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    NzetaN_arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    NetaP_arrow_source.data     = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    NetaN_arrow_source.data     = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    Nzetaeta1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    Nzetaeta2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    Nzetaeta3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    Nzetaeta4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    sources_to_reset = [NzetaP_arrow_source, NzetaN_arrow_source, NetaP_arrow_source, NetaN_arrow_source,
+                        Nzetaeta1_arrow_source, Nzetaeta2_arrow_source, Nzetaeta3_arrow_source, Nzetaeta4_arrow_source]
+    clear_arrow_source(sources_to_reset)
     ## Figure 3, Reset rectangles:
-    NzetaP_rect_source.data    = dict(x=[], y=[], w=[], h=[], angle=[])
-    NzetaN_rect_source.data    = dict(x=[], y=[], w=[], h=[], angle=[])
-    NetaP_rect_source.data     = dict(x=[], y=[], w=[], h=[], angle=[])
-    NetaN_rect_source.data     = dict(x=[], y=[], w=[], h=[], angle=[])
-    Nzetaeta1_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
-    Nzetaeta2_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
-    Nzetaeta3_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
-    Nzetaeta4_rect_source.data = dict(x=[], y=[], w=[], h=[], angle=[])
+    sources_to_reset = [NzetaP_rect_source, NzetaN_rect_source, NetaP_rect_source, NetaN_rect_source,
+                        Nzetaeta1_rect_source, Nzetaeta2_rect_source, Nzetaeta3_rect_source, Nzetaeta4_rect_source]
+    clear_rect_source(sources_to_reset)    
     ## Figure 3, Reset rotating axis:
     Rotating_Axis_X_source.data=dict(xS=[], yS=[], xE=[], yE=[])
     Rotating_Axis_Y_source.data=dict(xS=[], yS=[], xE=[], yE=[])
     Figure3Moving_Label_source.data=dict(x=[], y=[], names =[])
     
-
-
-
-
 
 
     
@@ -242,9 +216,7 @@ def show():
     MohrChangeShow = global_vars["MohrChangeShow"]
     
     if MohrChangeShow == 1:
-        radius   = float(sqrt(pow(((MohrNx-MohrNz)/2),2)+pow(MohrNxz,2)))
-        centreX  = float((MohrNx+MohrNz)/2)
-        rleft_x  = centreX-radius
+        [radius, centreX, rleft_x] = calculate_radius_and_center()
         rright_x = centreX+radius
 
         ## Print Labels for principal stress and direction
@@ -283,8 +255,7 @@ def draw():
     global_vars["MohrChangeShow"]  = 1
 
     ## Calculations
-    radius    = float(sqrt(pow(((MohrNx-MohrNz)/2),2)+pow(MohrNxz,2)))
-    centreX   = float((MohrNx+MohrNz)/2)
+    [radius, centreX, _] = calculate_radius_and_center()
     Neta      = float(((MohrNx+MohrNz)/2)-(((MohrNx-MohrNz)/2)*cos(2*MohrP_Angle))-MohrNxz*sin(2*MohrP_Angle))
     Nzetaeta  = float((-(((MohrNx-MohrNz)/2)*sin(2*MohrP_Angle)))+MohrNxz*cos(2*MohrP_Angle))
 
@@ -366,15 +337,8 @@ def draw():
     new = MohrNxz
     new=new*0.75        
     if(new==0):
-        Nxz1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        Nxz2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        Nxz3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        Nxz4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])    
-         
-        Nxz1_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-        Nxz2_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-        Nxz3_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-        Nxz4_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
+        clear_arrow_source( [Nxz1_arrow_source, Nxz2_arrow_source, Nxz3_arrow_source, Nxz4_arrow_source] )
+        clear_rect_source( [Nxz1_rect_source, Nxz2_rect_source, Nxz3_rect_source, Nxz4_rect_source] )
     else:     
         Nxz1_arrow_source.data = dict(xS=[9],       xE=[9],        yS=[0-(new/2)], yE=[0+(new/2)], lW = [2])
         Nxz2_arrow_source.data = dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2])
@@ -418,12 +382,8 @@ def NormalForceX_init(attr,old,new):
             NxP_rect_source.data  = dict(x=[(25-new)/2],  y=[0], w=[new-1.5], h = [13], angle=[0])
             NxN_rect_source.data  = dict(x=[(-25+new)/2], y=[0], w=[new-1.5], h = [13], angle=[0]) 
         elif(new==0):
-            NxP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-            NxN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-     
-            NxP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-            NxN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-
+            clear_arrow_source( [NxP_arrow_source, NxN_arrow_source] )
+            clear_rect_source( [NxP_rect_source, NxN_rect_source] )
         else:
             NxP_arrow_source.data  = dict(xS=[12.5],  xE=[12.5+new],  yS=[0], yE=[0], lW = [2])
             NxN_arrow_source.data  = dict(xS=[-12.5], xE=[-12.5-new], yS=[0], yE=[0], lW = [2])
@@ -447,11 +407,8 @@ def NormalForceZ_init(attr,old,new):
             NzP_rect_source.data  = dict(x=[0], y=[(25-new)/2],  w=[13], h = [new-1.5], angle=[0])
             NzN_rect_source.data  = dict(x=[0], y=[(-25+new)/2], w=[13], h = [new-1.5], angle=[0])   
         elif (new==0):
-            NzP_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-            NzN_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-
-            NzP_rect_source.data   = dict(x=[], y=[], w=[], h = [], angle=[])
-            NzN_rect_source.data   = dict(x=[], y=[], w=[], h = [], angle=[])
+            clear_arrow_source( [NzP_arrow_source, NzN_arrow_source] )
+            clear_rect_source( [NzP_rect_source, NzN_rect_source] )
         else:
             NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new],  lW = [2])
             NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2])
@@ -475,16 +432,8 @@ def TangentialXZ_init(attr,old,new):
         new=new*0.75
             
         if(new==0):
-            Nxz1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-            Nxz2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-            Nxz3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-            Nxz4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])    
-         
-            Nxz1_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-            Nxz2_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-            Nxz3_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-            Nxz4_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
-    
+            clear_arrow_source( [Nxz1_arrow_source, Nxz2_arrow_source, Nxz3_arrow_source, Nxz4_arrow_source] )    
+            clear_rect_source( [Nxz1_rect_source, Nxz2_rect_source, Nxz3_rect_source, Nxz4_rect_source] )
         else:     
             Nxz1_arrow_source.data = dict(xS=[9],       xE=[9],        yS=[0-(new/2)], yE=[0+(new/2)], lW = [2])
             Nxz2_arrow_source.data = dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2])
@@ -509,9 +458,7 @@ def changePlaneAngle(attr,old,new):
 
 
         ## Paint Rotating Plane red if angle=alpha_0
-        radius = float(sqrt(pow(((MohrNx-MohrNz)/2),2)+pow(MohrNxz,2)))
-        centreX = float((MohrNx+MohrNz)/2)
-        rleft_x=centreX-radius
+        [radius, centreX, rleft_x] = calculate_radius_and_center()
         alpha_0=180*atan(MohrNxz/(MohrNz+(-rleft_x+0.00001)))/(pi)
         alpha_0=int(alpha_0+0.5)
         
@@ -544,11 +491,8 @@ def ChangeMohrCircle():
 
     MohrP_Angle = global_vars["MohrP_Angle"]
 
-
-    radius  = float(sqrt(pow(((MohrNx-MohrNz)/2),2)+pow(MohrNxz,2)))
-    centreX = float((MohrNx+MohrNz)/2)
+    [radius, centreX, rleft_x] = calculate_radius_and_center()
     rleft_z = 0
-    rleft_x = centreX-radius
     
     Mohr_Circle_source.data        = dict(x=[centreX], y=[0], radius=[radius])   
     OriginalPlane_line_source.data = dict(x=[rleft_x,MohrNz,MohrNz], y=[rleft_z,MohrNxz,0])
@@ -596,9 +540,7 @@ def ChangeRotatingPlane_Forces():
     MohrP_Angle = -MohrP_Angle
 
     ## Set Nzetaeta=0 if angle-slider is set to principal direction
-    radius  = float(sqrt(pow(((MohrNx-MohrNz)/2),2)+pow(MohrNxz,2)))
-    centreX = float((MohrNx+MohrNz)/2)
-    rleft_x = centreX-radius
+    [radius, centreX, rleft_x] = calculate_radius_and_center()
 
     alpha_0 = 180*atan(MohrNxz/(MohrNz+(-rleft_x+0.00001)))/(pi)
     alpha_0 = int(alpha_0+0.5)
@@ -630,12 +572,8 @@ def ChangeRotatingPlane_Forces():
         NzetaN_rect_source.data  = dict(x=[(-12.5*cos(MohrP_Angle)+(-12.5-Nzeta)*cos(MohrP_Angle))/2], y=[((-12.5*sin(MohrP_Angle))+(-((12.5+Nzeta)*sin(MohrP_Angle))))/2], w=[Nzeta+1.5], h = [13], angle=[MohrP_Angle])
 
     elif Nzeta==0:
-        NzetaP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        NzetaN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        
-        NzetaP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-        NzetaN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-
+        clear_arrow_source( [NzetaP_arrow_source, NzetaN_arrow_source] )
+        clear_rect_source( [NzetaP_rect_source, NzetaN_rect_source] )
     else:
         NzetaP_arrow_source.data = dict(xS=[(12.5-Nzeta)*cos(MohrP_Angle)],  xE=[12.5*cos(MohrP_Angle)],   yS=[0+((12.5-Nzeta)*sin(MohrP_Angle))],   yE=[0+(12.5*sin(MohrP_Angle))], lW = [2])
         NzetaN_arrow_source.data = dict(xS=[(-12.5+Nzeta)*cos(MohrP_Angle)], xE=[-12.5 *cos(MohrP_Angle)], yS=[(0-((12.5-Nzeta)*sin(MohrP_Angle)))], yE=[0-(12.5*sin(MohrP_Angle))], lW = [2])
@@ -652,12 +590,8 @@ def ChangeRotatingPlane_Forces():
         NetaN_rect_source.data  = dict(x=[(12.5*sin(MohrP_Angle)+(12.5+Neta)*sin(MohrP_Angle))/2],               y=[(-(12.5*cos(MohrP_Angle))+-((12.5+Neta)*cos(MohrP_Angle)))/2],             h=[Neta+1.5], w = [13], angle=[MohrP_Angle])
 
     elif Neta==0:
-        NetaP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        NetaN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        
-        NetaP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-        NetaN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-
+        clear_arrow_source( [NetaP_arrow_source, NetaN_arrow_source] )
+        clear_rect_source( [NetaP_rect_source, NetaN_rect_source] )
     else:
         NetaP_arrow_source.data = dict(xS=[(12.5-Neta)*cos((pi/2)+MohrP_Angle)],xE=[12.5*cos((pi/2)+MohrP_Angle)], yS=[((12.5-Neta)*sin((pi/2)+MohrP_Angle))], yE=[0+(12.5*sin((pi/2)+MohrP_Angle))],  lW = [2])
         NetaN_arrow_source.data = dict(xS=[(12.5-Neta)*sin(MohrP_Angle)],xE=[12.5*sin(MohrP_Angle)],               yS=[-(12.5-Neta)*cos(MohrP_Angle)],         yE=[-12.5*cos(MohrP_Angle)],            lW = [2])      
@@ -680,17 +614,8 @@ def ChangeRotatingPlane_Forces():
         Nzetaeta4_rect_source.data  = dict(x=[(9*sin(MohrP_Angle)+((Nzetaeta/2)*cos(MohrP_Angle))+9*sin(MohrP_Angle)-((Nzetaeta/2)*cos(MohrP_Angle)))/2],   y=[((0-9*cos(MohrP_Angle))+((Nzetaeta/2)*sin(MohrP_Angle))+(0-9*cos(MohrP_Angle))-((Nzetaeta/2)*sin(MohrP_Angle)))/2], h=[0.3*Nzetaeta+.5], w = [13], angle=[MohrP_Angle])
 
     elif Nzetaeta==0:
-        Nzetaeta1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        Nzetaeta2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        Nzetaeta3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        Nzetaeta4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-       
-        Nzetaeta1_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-        Nzetaeta2_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-        Nzetaeta3_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-        Nzetaeta4_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-       
-
+        clear_arrow_source( [Nzetaeta1_arrow_source, Nzetaeta2_arrow_source, Nzetaeta3_arrow_source, Nzetaeta4_arrow_source] )
+        clear_rect_source( [Nzetaeta1_rect_source, Nzetaeta2_rect_source, Nzetaeta3_rect_source, Nzetaeta4_rect_source] )
     else:
         Nzetaeta1_arrow_source.data = dict(xS=[9*cos(MohrP_Angle)+((Nzetaeta/2)*sin(MohrP_Angle))],  xE=[9*cos(MohrP_Angle)-((Nzetaeta/2)*sin(MohrP_Angle))],  yS=[(0+9*sin(MohrP_Angle))-((Nzetaeta/2)*cos(MohrP_Angle))], yE=[(0+9*sin(MohrP_Angle))+((Nzetaeta/2)*cos(MohrP_Angle))], lW = [2])
         Nzetaeta2_arrow_source.data = dict(xS=[-9*sin(MohrP_Angle)-((Nzetaeta/2)*cos(MohrP_Angle))], xE=[-9*sin(MohrP_Angle)+((Nzetaeta/2)*cos(MohrP_Angle))], yS=[(0+9*cos(MohrP_Angle))-((Nzetaeta/2)*sin(MohrP_Angle))], yE=[(0+9*cos(MohrP_Angle))+((Nzetaeta/2)*sin(MohrP_Angle))], lW = [2])
@@ -725,14 +650,16 @@ Nxz3_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5
 Nxz4_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nxz4_arrow_source,line_color="#0065BD")
 ### Figure 1, Rectangle glyphs:
-NxP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-NxN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-NzP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-NzN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-Nxz1_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
-Nxz2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
-Nxz3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
-Nxz4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+# NxP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+# NxN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+# NzP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+# NzN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+NNP_rect_glphys = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+# Nxz1_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+# Nxz2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+# Nxz3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+# Nxz4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+Nxz_rect_glyphs = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 
 ### Figure 1, Define Figure and add Geometry:
 figure1 = figure(title="Stress State A", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
@@ -741,27 +668,45 @@ figure1.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=25, y_end=0))
 figure1.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=0, y_end=-25))
-figure1.add_layout(NxP_arrow_glyph)
-figure1.add_layout(NxN_arrow_glyph)
-figure1.add_layout(NzP_arrow_glyph)
-figure1.add_layout(NzN_arrow_glyph)
-figure1.add_layout(Nxz1_arrow_glyph)
-figure1.add_layout(Nxz2_arrow_glyph)
-figure1.add_layout(Nxz3_arrow_glyph)
-figure1.add_layout(Nxz4_arrow_glyph)
+glyphs_to_add = [NxP_arrow_glyph, NxN_arrow_glyph, NzP_arrow_glyph, NzN_arrow_glyph, Nxz1_arrow_glyph, Nxz2_arrow_glyph, Nxz3_arrow_glyph, Nxz4_arrow_glyph]
+
+
+def add_layouts_from_list(fig, layout_list):
+    for tmp_layout in layout_list:
+        fig.add_layout(tmp_layout)
+
+def add_glyphs_from_list(fig, glyph_list, source_list):
+    assert len(glyph_list) == len(source_list), "Lists must have same length!"
+    for i in range(0,len(glyph_list)):
+        fig.add_glyph(source_list[i], glyph_list[i])
+
+add_layouts_from_list(figure1, glyphs_to_add)
+# figure1.add_layout(NxP_arrow_glyph)
+# figure1.add_layout(NxN_arrow_glyph)
+# figure1.add_layout(NzP_arrow_glyph)
+# figure1.add_layout(NzN_arrow_glyph)
+# figure1.add_layout(Nxz1_arrow_glyph)
+# figure1.add_layout(Nxz2_arrow_glyph)
+# figure1.add_layout(Nxz3_arrow_glyph)
+# figure1.add_layout(Nxz4_arrow_glyph)
 
 figure1_labels = LatexLabelSet(x='x', y='y', text='names', level='glyph',
                                 x_offset=0, y_offset=0, source=Figure1Perm_Label_source)
 
 figure1.add_layout(figure1_labels)
-figure1.add_glyph(NxP_rect_source,NxP_rect_glyph)
-figure1.add_glyph(NxN_rect_source,NxN_rect_glyph)
-figure1.add_glyph(NzP_rect_source,NzP_rect_glyph)
-figure1.add_glyph(NzN_rect_source,NzN_rect_glyph)
-figure1.add_glyph(Nxz1_rect_source,Nxz1_rect_glyph)
-figure1.add_glyph(Nxz2_rect_source,Nxz1_rect_glyph)
-figure1.add_glyph(Nxz3_rect_source,Nxz1_rect_glyph)
-figure1.add_glyph(Nxz4_rect_source,Nxz1_rect_glyph)
+
+#glyphs_to_add = [NxP_rect_glyph, NxN_rect_glyph, NzP_rect_glyph, NzN_rect_glyph, Nxz1_rect_glyph, Nxz1_rect_glyph, Nxz1_rect_glyph, Nxz1_rect_glyph]
+glyphs_to_add = [NNP_rect_glphys, NNP_rect_glphys, NNP_rect_glphys, NNP_rect_glphys, Nxz_rect_glyphs, Nxz_rect_glyphs, Nxz_rect_glyphs, Nxz_rect_glyphs]
+glyph_sources = [NxP_rect_source, NxN_rect_source, NzP_rect_source, NzN_rect_source, Nxz1_rect_source, Nxz2_rect_source, Nxz3_rect_source, Nxz4_rect_source]
+add_glyphs_from_list(figure1, glyphs_to_add, glyph_sources)
+# figure1.add_glyph(NxP_rect_source,NxP_rect_glyph)
+# figure1.add_glyph(NxN_rect_source,NxN_rect_glyph)
+# figure1.add_glyph(NzP_rect_source,NzP_rect_glyph)
+# figure1.add_glyph(NzN_rect_source,NzN_rect_glyph)
+# figure1.add_glyph(Nxz1_rect_source,Nxz1_rect_glyph)
+# figure1.add_glyph(Nxz2_rect_source,Nxz1_rect_glyph)
+# figure1.add_glyph(Nxz3_rect_source,Nxz1_rect_glyph)
+# figure1.add_glyph(Nxz4_rect_source,Nxz1_rect_glyph)
 
 # dummy glyphs for the legend entries
 dummy_normal_1 = figure1.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5)
@@ -826,14 +771,16 @@ Nzetaeta3_arrow_glyph= Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, si
 Nzetaeta4_arrow_glyph=Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=Nzetaeta4_arrow_source,line_color="#0065BD")
 ### Figure 3, Rectangle glyphs:
-NzetaP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-NzetaN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-NetaP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-NetaN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-Nzetaeta1_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
-Nzetaeta2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
-Nzetaeta3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
-Nzetaeta4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+#NzetaP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+#NzetaN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+#NetaP_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+#NetaN_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+Neta_rect_glyphs = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+# Nzetaeta1_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+# Nzetaeta2_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+# Nzetaeta3_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+# Nzetaeta4_rect_glyph = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+Ntaeta_rect_glyphs = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 ### Figure 3, Define Figure and add Geometry:
 figure3 = figure(title="Stress State B", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400,)
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
@@ -843,28 +790,40 @@ figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
 figure3_labels = LatexLabelSet(x='x', y='y', text='names', level='glyph', x_offset=5, y_offset=5, source=Figure1Perm_Label_source)
 figure3_labels2 = LatexLabelSet(x='x', y='y', text='names', source=Figure3Moving_Label_source)
 
-figure3.add_layout(figure3_labels)
-figure3.add_layout(figure3_labels2)
-figure3.add_layout(NzetaP_arrow_glyph)
-figure3.add_layout(NzetaN_arrow_glyph)
-figure3.add_layout(NetaP_arrow_glyph)
-figure3.add_layout(NetaN_arrow_glyph)
-figure3.add_layout(Nzetaeta1_arrow_glyph)
-figure3.add_layout(Nzetaeta2_arrow_glyph)
-figure3.add_layout(Nzetaeta3_arrow_glyph)
-figure3.add_layout(Nzetaeta4_arrow_glyph)
-figure3.add_glyph(Rotating_Plane_source,Rotating_Plane_glyph)
-figure3.add_glyph(Rotating_Plane_red_source,Rotating_Plane_red_glyph)
-figure3.add_glyph(NzetaP_rect_source,NzetaP_rect_glyph)
-figure3.add_glyph(NzetaN_rect_source,NzetaN_rect_glyph)
-figure3.add_glyph(NetaP_rect_source,NetaP_rect_glyph)
-figure3.add_glyph(NetaN_rect_source,NetaN_rect_glyph)
-figure3.add_glyph(Nzetaeta1_rect_source,Nzetaeta1_rect_glyph)
-figure3.add_glyph(Nzetaeta2_rect_source,Nzetaeta2_rect_glyph)
-figure3.add_glyph(Nzetaeta3_rect_source,Nzetaeta3_rect_glyph)
-figure3.add_glyph(Nzetaeta4_rect_source,Nzetaeta4_rect_glyph)
-figure3.add_layout(Rotating_Axis_X_glyph)
-figure3.add_layout(Rotating_Axis_Y_glyph)
+# figure3.add_layout(figure3_labels)
+# figure3.add_layout(figure3_labels2)
+# figure3.add_layout(NzetaP_arrow_glyph)
+# figure3.add_layout(NzetaN_arrow_glyph)
+# figure3.add_layout(NetaP_arrow_glyph)
+# figure3.add_layout(NetaN_arrow_glyph)
+# figure3.add_layout(Nzetaeta1_arrow_glyph)
+# figure3.add_layout(Nzetaeta1_arrow_glyph)
+# figure3.add_layout(Nzetaeta3_arrow_glyph)
+# figure3.add_layout(Nzetaeta4_arrow_glyph)
+# figure3.add_glyph(Rotating_Plane_source,Rotating_Plane_glyph)
+# figure3.add_glyph(Rotating_Plane_red_source,Rotating_Plane_red_glyph)
+# figure3.add_glyph(NzetaP_rect_source,NzetaP_rect_glyph)
+# figure3.add_glyph(NzetaN_rect_source,NzetaN_rect_glyph)
+# figure3.add_glyph(NetaP_rect_source,NetaP_rect_glyph)
+# figure3.add_glyph(NetaN_rect_source,NetaN_rect_glyph)
+# figure3.add_glyph(Nzetaeta1_rect_source,Nzetaeta1_rect_glyph)
+# figure3.add_glyph(Nzetaeta2_rect_source,Nzetaeta2_rect_glyph)
+# figure3.add_glyph(Nzetaeta3_rect_source,Nzetaeta3_rect_glyph)
+# figure3.add_glyph(Nzetaeta4_rect_source,Nzetaeta4_rect_glyph)
+# figure3.add_layout(Rotating_Axis_X_glyph)
+# figure3.add_layout(Rotating_Axis_Y_glyph)
+
+glyphs_to_add = [figure3_labels, figure3_labels2, NzetaP_arrow_glyph, NzetaN_arrow_glyph, NetaP_arrow_glyph, NetaN_arrow_glyph,
+                 Nzetaeta1_arrow_glyph, Nzetaeta2_arrow_glyph, Nzetaeta3_arrow_glyph, Nzetaeta4_arrow_glyph, Rotating_Axis_X_glyph, Rotating_Axis_Y_glyph]
+add_layouts_from_list(figure3, glyphs_to_add)
+
+glyphs_to_add = [Rotating_Plane_glyph, Rotating_Plane_red_glyph, Neta_rect_glyphs, Neta_rect_glyphs, Neta_rect_glyphs, Neta_rect_glyphs, #NzetaP_rect_glyph, NzetaN_rect_glyph, NetaP_rect_glyph, NetaN_rect_glyph, 
+                 #Nzetaeta1_rect_glyph, Nzetaeta2_rect_glyph, Nzetaeta3_rect_glyph, Nzetaeta4_rect_glyph]
+                 Ntaeta_rect_glyphs, Ntaeta_rect_glyphs, Ntaeta_rect_glyphs, Ntaeta_rect_glyphs]
+glyph_sources = [Rotating_Plane_source, Rotating_Plane_red_source, NzetaP_rect_source, NzetaN_rect_source, NetaP_rect_source, NetaN_rect_source,
+                 Nzetaeta1_rect_source, Nzetaeta2_rect_source, Nzetaeta3_rect_source, Nzetaeta4_rect_source]
+add_glyphs_from_list(figure3, glyphs_to_add, glyph_sources)
+
 
 # dummy glyphs for the legend entries
 dummy_normal_3 = figure3.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5)
@@ -940,9 +899,6 @@ draw_button.on_click(draw)
 show_button = Button(label="Show/Hide principal stress + direction", button_type="success")
 show_button.on_click(show)
 
-
-### Initialising all column data for the initial plot
-init()
 
 ### Add description from HTML file
 description_filename = join(dirname(__file__), "description.html")
