@@ -36,6 +36,58 @@ class fig1():
         self.Perm_Label_source   = ColumnDataSource(data=dict(x=[22,1], y=[-5, -27], names=['x', 'z']))
 
 
+    def plot_normal_forces_x(self, MohrNx):
+        MohrNx = MohrNx*0.75
+        if(MohrNx<0):
+            self.NxP_arrow_source.data = dict(xS=[12.5-MohrNx],  xE=[12.5],  yS=[0], yE=[0], lW = [2])
+            self.NxN_arrow_source.data = dict(xS=[-12.5+MohrNx], xE=[-12.5], yS=[0], yE=[0], lW = [2]) 
+     
+            self.NxP_rect_source.data  = dict(x=[(25-MohrNx)/2],  y=[0], w=[MohrNx-1.5], h = [13], angle=[0])
+            self.NxN_rect_source.data  = dict(x=[(-25+MohrNx)/2], y=[0], w=[MohrNx-1.5], h = [13], angle=[0]) 
+        elif(MohrNx==0):
+            clear_arrow_source( [self.NxP_arrow_source, self.NxN_arrow_source] )
+            clear_rect_source( [self.NxP_rect_source, self.NxN_rect_source] )
+        else:
+            self.NxP_arrow_source.data  = dict(xS=[12.5],  xE=[12.5+MohrNx],  yS=[0], yE=[0], lW = [2])
+            self.NxN_arrow_source.data  = dict(xS=[-12.5], xE=[-12.5-MohrNx], yS=[0], yE=[0], lW = [2])
+ 
+            self.NxP_rect_source.data   = dict(x=[(25+MohrNx)/2],  y=[0], w=[MohrNx+1.5], h = [13], angle=[0])        
+            self.NxN_rect_source.data   = dict(x=[(-25-MohrNx)/2], y=[0], w=[MohrNx+1.5], h = [13], angle=[0]) 
+
+
+    def plot_normal_forces_z(self, MohrNz):
+        MohrNz=MohrNz*0.75
+        if(MohrNz<0):
+            self.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-MohrNz],  yE=[12.5],  lW = [2])
+            self.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5+MohrNz], yE=[-12.5], lW = [2])
+            self.NzP_rect_source.data  = dict(x=[0], y=[(25-MohrNz)/2],  w=[13], h = [MohrNz-1.5], angle=[0])
+            self.NzN_rect_source.data  = dict(x=[0], y=[(-25+MohrNz)/2], w=[13], h = [MohrNz-1.5], angle=[0])   
+        elif (MohrNz==0):
+            clear_arrow_source( [self.NzP_arrow_source, self.NzN_arrow_source] )
+            clear_rect_source( [self.NzP_rect_source, self.NzN_rect_source] )
+        else:
+            self.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+MohrNz],  lW = [2])
+            self.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-MohrNz], lW = [2])
+            self.NzP_rect_source.data  = dict(x=[0], y=[(25+MohrNz)/2],  w=[13], h = [MohrNz+1.5], angle=[0])
+            self.NzN_rect_source.data  = dict(x=[0], y=[(-25-MohrNz)/2], w=[13], h = [MohrNz+1.5], angle=[0])  
+
+
+    def plot_shear_forces(self, MohrNxz):
+        MohrNxz=MohrNxz*0.75
+        if(MohrNxz==0):
+            clear_arrow_source( [self.Nxz1_arrow_source, self.Nxz2_arrow_source, self.Nxz3_arrow_source, self.Nxz4_arrow_source] )    
+            clear_rect_source( [self.Nxz1_rect_source, self.Nxz2_rect_source, self.Nxz3_rect_source, self.Nxz4_rect_source] )
+        else:     
+            self.Nxz1_arrow_source.data = dict(xS=[9],       xE=[9],        yS=[0-(MohrNxz/2)], yE=[0+(MohrNxz/2)], lW = [2])
+            self.Nxz2_arrow_source.data = dict(xS=[-9],      xE=[-9],       yS=[0+(MohrNxz/2)], yE=[0-(MohrNxz/2)], lW = [2])
+            self.Nxz3_arrow_source.data = dict(xS=[-MohrNxz/2],  xE=[MohrNxz/2],    yS=[9],         yE=[9],         lW = [2])
+            self.Nxz4_arrow_source.data = dict(xS=[(MohrNxz/2)], xE=[-(MohrNxz/2)], yS=[-9],        yE=[-9],        lW = [2]) 
+            self.Nxz1_rect_source.data  = dict(x=[9],  y=[0],  w=[0.3*MohrNxz+0.5], h=[13],          angle=[0])
+            self.Nxz2_rect_source.data  = dict(x=[-9], y=[0],  w=[0.3*MohrNxz+0.5], h=[13],          angle=[0])
+            self.Nxz3_rect_source.data  = dict(x=[0],  y=[9],  w=[13],          h=[0.3*MohrNxz+0.5], angle=[0])
+            self.Nxz4_rect_source.data  = dict(x=[0],  y=[-9], w=[13],          h=[0.3*MohrNxz+0.5], angle=[0]) 
+
+
 
 
 class fig2():

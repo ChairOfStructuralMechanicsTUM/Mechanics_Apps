@@ -226,61 +226,66 @@ def draw():
 def NormalForceX_init(attr,old,new):
    ## Figure 1, Present the Normal Forces while Draw-Button wasn't yet activated:  
         global_vars["MohrNx"] = new 
-        new = new*0.75
-        if(new<0):
-            f1.NxP_arrow_source.data = dict(xS=[12.5-new],  xE=[12.5],  yS=[0], yE=[0], lW = [2])
-            f1.NxN_arrow_source.data = dict(xS=[-12.5+new], xE=[-12.5], yS=[0], yE=[0], lW = [2]) 
+        f1.plot_normal_forces_x(new)
+        # new = new*0.75
+        # if(new<0):
+        #     f1.NxP_arrow_source.data = dict(xS=[12.5-new],  xE=[12.5],  yS=[0], yE=[0], lW = [2])
+        #     f1.NxN_arrow_source.data = dict(xS=[-12.5+new], xE=[-12.5], yS=[0], yE=[0], lW = [2]) 
      
-            f1.NxP_rect_source.data  = dict(x=[(25-new)/2],  y=[0], w=[new-1.5], h = [13], angle=[0])
-            f1.NxN_rect_source.data  = dict(x=[(-25+new)/2], y=[0], w=[new-1.5], h = [13], angle=[0]) 
-        elif(new==0):
-            clear_arrow_source( [f1.NxP_arrow_source, f1.NxN_arrow_source] )
-            clear_rect_source( [f1.NxP_rect_source, f1.NxN_rect_source] )
-        else:
-            f1.NxP_arrow_source.data  = dict(xS=[12.5],  xE=[12.5+new],  yS=[0], yE=[0], lW = [2])
-            f1.NxN_arrow_source.data  = dict(xS=[-12.5], xE=[-12.5-new], yS=[0], yE=[0], lW = [2])
+        #     f1.NxP_rect_source.data  = dict(x=[(25-new)/2],  y=[0], w=[new-1.5], h = [13], angle=[0])
+        #     f1.NxN_rect_source.data  = dict(x=[(-25+new)/2], y=[0], w=[new-1.5], h = [13], angle=[0]) 
+        # elif(new==0):
+        #     clear_arrow_source( [f1.NxP_arrow_source, f1.NxN_arrow_source] )
+        #     clear_rect_source( [f1.NxP_rect_source, f1.NxN_rect_source] )
+        # else:
+        #     f1.NxP_arrow_source.data  = dict(xS=[12.5],  xE=[12.5+new],  yS=[0], yE=[0], lW = [2])
+        #     f1.NxN_arrow_source.data  = dict(xS=[-12.5], xE=[-12.5-new], yS=[0], yE=[0], lW = [2])
  
-            f1.NxP_rect_source.data   = dict(x=[(25+new)/2],  y=[0], w=[new+1.5], h = [13], angle=[0])        
-            f1.NxN_rect_source.data   = dict(x=[(-25-new)/2], y=[0], w=[new+1.5], h = [13], angle=[0]) 
+        #     f1.NxP_rect_source.data   = dict(x=[(25+new)/2],  y=[0], w=[new+1.5], h = [13], angle=[0])        
+        #     f1.NxN_rect_source.data   = dict(x=[(-25-new)/2], y=[0], w=[new+1.5], h = [13], angle=[0]) 
 
 def NormalForceZ_init(attr,old,new):
     ## Figure 1, Present the Normal Forces while draw() hasn't been called yet:
         global_vars["MohrNz"] = new
-        new=new*0.75
-        if(new<0):
-            f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2])
-            f1.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2])
-            f1.NzP_rect_source.data  = dict(x=[0], y=[(25-new)/2],  w=[13], h = [new-1.5], angle=[0])
-            f1.NzN_rect_source.data  = dict(x=[0], y=[(-25+new)/2], w=[13], h = [new-1.5], angle=[0])   
-        elif (new==0):
-            clear_arrow_source( [f1.NzP_arrow_source, f1.NzN_arrow_source] )
-            clear_rect_source( [f1.NzP_rect_source, f1.NzN_rect_source] )
-        else:
-            f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new],  lW = [2])
-            f1.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2])
-            f1.NzP_rect_source.data  = dict(x=[0], y=[(25+new)/2],  w=[13], h = [new+1.5], angle=[0])
-            f1.NzN_rect_source.data  = dict(x=[0], y=[(-25-new)/2], w=[13], h = [new+1.5], angle=[0])   
+        f1.plot_normal_forces_z(new)
+        # new=new*0.75
+        # if(new<0):
+        #     f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2])
+        #     f1.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2])
+        #     f1.NzP_rect_source.data  = dict(x=[0], y=[(25-new)/2],  w=[13], h = [new-1.5], angle=[0])
+        #     f1.NzN_rect_source.data  = dict(x=[0], y=[(-25+new)/2], w=[13], h = [new-1.5], angle=[0])   
+        # elif (new==0):
+        #     clear_arrow_source( [f1.NzP_arrow_source, f1.NzN_arrow_source] )
+        #     clear_rect_source( [f1.NzP_rect_source, f1.NzN_rect_source] )
+        # else:
+        #     f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new],  lW = [2])
+        #     f1.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2])
+        #     f1.NzP_rect_source.data  = dict(x=[0], y=[(25+new)/2],  w=[13], h = [new+1.5], angle=[0])
+        #     f1.NzN_rect_source.data  = dict(x=[0], y=[(-25-new)/2], w=[13], h = [new+1.5], angle=[0])   
 
 def TangentialXZ_init(attr,old,new):
     ## Figure 1, Present the Shear Forces while draw() hasn't yet been called: 
-        global_vars["MohrNxz"] = new
         # Check if MohrNxz is zero to prevent division by zero:
         if new == 0:
             global_vars["MohrNxz"] = 0.00001
+        else:
+            global_vars["MohrNxz"] = new
+
+        f1.plot_shear_forces(global_vars["MohrNxz"])
         
-        new=new*0.75
-        if(new==0):
-            clear_arrow_source( [f1.Nxz1_arrow_source, f1.Nxz2_arrow_source, f1.Nxz3_arrow_source, f1.Nxz4_arrow_source] )    
-            clear_rect_source( [f1.Nxz1_rect_source, f1.Nxz2_rect_source, f1.Nxz3_rect_source, f1.Nxz4_rect_source] )
-        else:     
-            f1.Nxz1_arrow_source.data = dict(xS=[9],       xE=[9],        yS=[0-(new/2)], yE=[0+(new/2)], lW = [2])
-            f1.Nxz2_arrow_source.data = dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2])
-            f1.Nxz3_arrow_source.data = dict(xS=[-new/2],  xE=[new/2],    yS=[9],         yE=[9],         lW = [2])
-            f1.Nxz4_arrow_source.data = dict(xS=[(new/2)], xE=[-(new/2)], yS=[-9],        yE=[-9],        lW = [2]) 
-            f1.Nxz1_rect_source.data  = dict(x=[9],  y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
-            f1.Nxz2_rect_source.data  = dict(x=[-9], y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
-            f1.Nxz3_rect_source.data  = dict(x=[0],  y=[9],  w=[13],          h=[0.3*new+0.5], angle=[0])
-            f1.Nxz4_rect_source.data  = dict(x=[0],  y=[-9], w=[13],          h=[0.3*new+0.5], angle=[0])
+        # new=new*0.75
+        # if(new==0):
+        #     clear_arrow_source( [f1.Nxz1_arrow_source, f1.Nxz2_arrow_source, f1.Nxz3_arrow_source, f1.Nxz4_arrow_source] )    
+        #     clear_rect_source( [f1.Nxz1_rect_source, f1.Nxz2_rect_source, f1.Nxz3_rect_source, f1.Nxz4_rect_source] )
+        # else:     
+        #     f1.Nxz1_arrow_source.data = dict(xS=[9],       xE=[9],        yS=[0-(new/2)], yE=[0+(new/2)], lW = [2])
+        #     f1.Nxz2_arrow_source.data = dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2])
+        #     f1.Nxz3_arrow_source.data = dict(xS=[-new/2],  xE=[new/2],    yS=[9],         yE=[9],         lW = [2])
+        #     f1.Nxz4_arrow_source.data = dict(xS=[(new/2)], xE=[-(new/2)], yS=[-9],        yE=[-9],        lW = [2]) 
+        #     f1.Nxz1_rect_source.data  = dict(x=[9],  y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
+        #     f1.Nxz2_rect_source.data  = dict(x=[-9], y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
+        #     f1.Nxz3_rect_source.data  = dict(x=[0],  y=[9],  w=[13],          h=[0.3*new+0.5], angle=[0])
+        #     f1.Nxz4_rect_source.data  = dict(x=[0],  y=[-9], w=[13],          h=[0.3*new+0.5], angle=[0])
 
         
 def changePlaneAngle(attr,old,new):
