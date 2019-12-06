@@ -1,15 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed,13.06.2018
-
-@author: Sascha Kubisch
-"""
-
-"""
-Python Bokeh program which explains the concept of Mohr's Cirlce interactively
-Old version!
-
-"""
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, layout
 from bokeh.models import ColumnDataSource,Slider,Div,Arrow,OpenHead,NormalHead,LabelSet,Button
@@ -45,7 +33,6 @@ Nzetaeta = initial_Nzetaeta
 rleft_x = centreX-radius
 rleft_z= initial_rleft_z
 
-
 # global variables
 global_vars = dict(MohrNx=initial_MohrNx, MohrNz=initial_MohrNz, MohrNxz=initial_MohrNxz,
                    MohrP_Angle=0, MohrNzeta_zero_angles=[], MohrNeta_zero_angles=[],
@@ -56,14 +43,11 @@ f1 = fig1()
 f2 = fig2()
 f3 = fig3()
 
-
-
 def calculate_radius_and_center():
     radius_temp  = float(sqrt(pow(((global_vars["MohrNx"]-global_vars["MohrNz"])/2),2)+pow(global_vars["MohrNxz"],2)))
     centreX_temp = float((global_vars["MohrNx"]+global_vars["MohrNz"])/2)
     rleft_x_temp = centreX_temp - radius_temp # not always needed
     return [radius_temp, centreX_temp, rleft_x_temp]
-
 
 def clear_arrow_source(source_list):
     empty_dict = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
@@ -76,17 +60,14 @@ def clear_rect_source(source_list):
     for cds in source_list:
         ro = len(cds.data["x"])
         cds.stream(empty_dict, rollover=-ro)
-
        
 def reset():
-
     Normal_X_slider.disabled      = False
     Normal_Z_slider.disabled      = False
     Tangential_XZ_slider.disabled = False
     Plane_Angle_slider.disabled   = True
 
     global_vars["MohrChangeShow"] = -1
-   
     global_vars["alpha"] = 0
     global_vars["MohrP_Angle"] = initial_MohrP_Angle
     radius = initial_radius
@@ -97,7 +78,6 @@ def reset():
     
     ### Calculations
     [radius, centreX, _] = calculate_radius_and_center()
-
     Normal_X_slider.value=0
     Normal_Z_slider.value=0
     Tangential_XZ_slider.value=0
@@ -126,14 +106,10 @@ def reset():
     ## Figure 3, Reset rotating plane and axis:
     f3.reset_rotating_plane()
 
-
-    
 def show():
-
     MohrNx  = global_vars["MohrNx"]
     MohrNz  = global_vars["MohrNz"]
     MohrNxz = global_vars["MohrNxz"]
-
     MohrChangeShow = global_vars["MohrChangeShow"]
     
     if MohrChangeShow == 1:
@@ -151,19 +127,15 @@ def show():
         global_vars["MohrChangeShow"] = MohrChangeShow*-1
 
     elif MohrChangeShow == -1:
-        
         f2.Wedge_source.data                = dict(x=[], y=[],radius=[], sA=[], eA=[])
         f2.Show_Label_source.data    = dict(x=[], y=[], names =[])
         glMohrFigure2_angle_label.text = ''
         global_vars["MohrChangeShow"] = MohrChangeShow*-1
 
-
 def draw():
-
     MohrNx  = global_vars["MohrNx"]
     MohrNz  = global_vars["MohrNz"]
     MohrNxz = global_vars["MohrNxz"]
-
     MohrP_Angle = global_vars["MohrP_Angle"]
 
     Normal_X_slider.disabled      = True
@@ -205,30 +177,25 @@ def draw():
             global_vars["MohrNeta_zero_angles"][count]=Neta_List1[m+180]
             count = count+1
 
-
     ##Figure 1, Draw MohrNx and keep it until reset() ist called:
     
     if(MohrNx*0.75<0):
         f1.NxP_arrow_source.data = dict(xS=[12.5-MohrNx*0.75],  xE=[12.5],  yS=[0], yE=[0], lW = [2])
         f1.NxN_arrow_source.data = dict(xS=[-12.5+MohrNx*0.75], xE=[-12.5], yS=[0], yE=[0], lW = [2]) 
-
         f1.NxP_rect_source.data  = dict(x=[(25-MohrNx*0.75)/2],  y=[0], w=[MohrNx*0.75-1.5], h = [13], angle=[0])
         f1.NxN_rect_source.data  = dict(x=[(-25+MohrNx*0.75)/2], y=[0], w=[MohrNx*0.75-1.5], h = [13], angle=[0])
-        
     elif(MohrNx*0.75==0):
-        f1.NxP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        f1.NxN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-
-        f1.NxP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-        f1.NxN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
-
+        # f1.NxP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        # f1.NxN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        clear_arrow_source( [f1.NxP_arrow_source, f1.NxN_arrow_source] )
+        # f1.NxP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
+        # f1.NxN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
+        clear_rect_source( [f1.NxP_rect_source, f1.NxN_rect_source] )
     else:
         f1.NxP_arrow_source.data  = dict(xS=[12.5],  xE=[12.5+MohrNx*0.75],  yS=[0], yE=[0], lW = [2])
         f1.NxN_arrow_source.data  = dict(xS=[-12.5], xE=[-12.5-MohrNx*0.75], yS=[0], yE=[0], lW = [2])
-
         f1.NxP_rect_source.data   = dict(x=[(25+MohrNx*0.75)/2],  y=[0], w=[MohrNx*0.75+1.5], h = [13], angle=[0])        
         f1.NxN_rect_source.data   = dict(x=[(-25-MohrNx*0.75)/2], y=[0], w=[MohrNx*0.75+1.5], h = [13], angle=[0])  
-    
 
     ##Figure 1, Draw MohrNz and keep it until reset() ist called:
     new = MohrNz
@@ -236,23 +203,21 @@ def draw():
     if(new<0):
         f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2])
         f1.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2])
-
         f1.NzP_rect_source.data  = dict(x=[0], y=[(25-new)/2],  w=[13], h = [new-1.5], angle=[0])
         f1.NzN_rect_source.data  = dict(x=[0], y=[(-25+new)/2], w=[13], h = [new-1.5], angle=[0])   
     elif (new==0):
-        f1.NzP_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        f1.NzN_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-
-        f1.NzP_rect_source.data   = dict(x=[], y=[], w=[], h = [], angle=[])
-        f1.NzN_rect_source.data   = dict(x=[], y=[], w=[], h = [], angle=[])
+        #f1.NzP_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        #f1.NzN_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        clear_arrow_source( [f1.NzP_arrow_source, f1.NzN_arrow_source] )
+        # f1.NzP_rect_source.data   = dict(x=[], y=[], w=[], h = [], angle=[])
+        # f1.NzN_rect_source.data   = dict(x=[], y=[], w=[], h = [], angle=[])
+        clear_rect_source( [f1.NzP_rect_source, f1.NzN_rect_source] )
     else:
         f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new], lW = [2])
         f1.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2])
-
         f1.NzP_rect_source.data  = dict(x=[0], y=[(25+new)/2],  w=[13], h = [new+1.5], angle=[0])
         f1.NzN_rect_source.data  = dict(x=[0], y=[(-25-new)/2], w=[13], h = [new+1.5], angle=[0])   
          
-          
     new = MohrNxz
     new=new*0.75        
     if(new==0):
@@ -263,17 +228,15 @@ def draw():
         f1.Nxz2_arrow_source.data = dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2])
         f1.Nxz3_arrow_source.data = dict(xS=[-new/2],  xE=[new/2],    yS=[9],         yE=[9],         lW = [2])
         f1.Nxz4_arrow_source.data = dict(xS=[(new/2)], xE=[-(new/2)], yS=[-9],        yE=[-9],        lW = [2]) 
-         
+ 
         f1.Nxz1_rect_source.data  = dict(x=[9],  y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
         f1.Nxz2_rect_source.data  = dict(x=[-9], y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
         f1.Nxz3_rect_source.data  = dict(x=[0],  y=[9],  w=[13],          h=[0.3*new+0.5], angle=[0])
         f1.Nxz4_rect_source.data  = dict(x=[0],  y=[-9], w=[13],          h=[0.3*new+0.5], angle=[0])
 
-
     ## Figure 2, draw Mohr-Circle:
     f2.Mohr_Circle_source.data = dict(x=[centreX], y=[0], radius=[radius])
     f2.Wedge_source.data       = dict(x=[], y=[],radius=[], sA=[], eA=[])
-
     f2.Newplane_line_source.data       = dict(x=[rleft_x,Neta,Neta], y=[rleft_z,Nzetaeta,0])
     f2.OriginalPlane_line_source.data  = dict(x=[rleft_x,MohrNz,MohrNz], y=[rleft_z,MohrNxz,0])
     f2.Show_Label_source.data   = dict(x=[],y=[], names =[])
@@ -284,12 +247,8 @@ def draw():
     ChangeRotatingPlane_Forces()
     ChangeMohrCircle()
 
-
 def NormalForceX_init(attr,old,new):
-
    ## Figure 1, Present the Normal Forces while Draw-Button wasn't yet activated:  
-   
-        
         global_vars["MohrNx"] = new 
         new = new*0.75
         if(new<0):
@@ -308,18 +267,13 @@ def NormalForceX_init(attr,old,new):
             f1.NxP_rect_source.data   = dict(x=[(25+new)/2],  y=[0], w=[new+1.5], h = [13], angle=[0])        
             f1.NxN_rect_source.data   = dict(x=[(-25-new)/2], y=[0], w=[new+1.5], h = [13], angle=[0]) 
 
-   
 def NormalForceZ_init(attr,old,new):
-
     ## Figure 1, Present the Normal Forces while draw() hasn't been called yet:
-
-        ## Global change of MohrNz
         global_vars["MohrNz"] = new
         new=new*0.75
         if(new<0):
             f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2])
             f1.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2])
-
             f1.NzP_rect_source.data  = dict(x=[0], y=[(25-new)/2],  w=[13], h = [new-1.5], angle=[0])
             f1.NzN_rect_source.data  = dict(x=[0], y=[(-25+new)/2], w=[13], h = [new-1.5], angle=[0])   
         elif (new==0):
@@ -328,24 +282,17 @@ def NormalForceZ_init(attr,old,new):
         else:
             f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new],  lW = [2])
             f1.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2])
-
             f1.NzP_rect_source.data  = dict(x=[0], y=[(25+new)/2],  w=[13], h = [new+1.5], angle=[0])
             f1.NzN_rect_source.data  = dict(x=[0], y=[(-25-new)/2], w=[13], h = [new+1.5], angle=[0])   
 
-    
 def TangentialXZ_init(attr,old,new):
-
-    ## Figure 1, Present the Shear Forces while draw() hasn't yet been called:
-
-        ## global change of MohrNxz       
+    ## Figure 1, Present the Shear Forces while draw() hasn't yet been called: 
         global_vars["MohrNxz"] = new
-
         # Check if MohrNxz is zero to prevent division by zero:
         if new == 0:
             global_vars["MohrNxz"] = 0.00001
         
         new=new*0.75
-            
         if(new==0):
             clear_arrow_source( [f1.Nxz1_arrow_source, f1.Nxz2_arrow_source, f1.Nxz3_arrow_source, f1.Nxz4_arrow_source] )    
             clear_rect_source( [f1.Nxz1_rect_source, f1.Nxz2_rect_source, f1.Nxz3_rect_source, f1.Nxz4_rect_source] )
@@ -354,7 +301,6 @@ def TangentialXZ_init(attr,old,new):
             f1.Nxz2_arrow_source.data = dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2])
             f1.Nxz3_arrow_source.data = dict(xS=[-new/2],  xE=[new/2],    yS=[9],         yE=[9],         lW = [2])
             f1.Nxz4_arrow_source.data = dict(xS=[(new/2)], xE=[-(new/2)], yS=[-9],        yE=[-9],        lW = [2]) 
-         
             f1.Nxz1_rect_source.data  = dict(x=[9],  y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
             f1.Nxz2_rect_source.data  = dict(x=[-9], y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
             f1.Nxz3_rect_source.data  = dict(x=[0],  y=[9],  w=[13],          h=[0.3*new+0.5], angle=[0])
@@ -362,7 +308,6 @@ def TangentialXZ_init(attr,old,new):
 
         
 def changePlaneAngle(attr,old,new):
-
         MohrNx  = global_vars["MohrNx"]
         MohrNz  = global_vars["MohrNz"]
         MohrNxz = global_vars["MohrNxz"]
@@ -396,11 +341,9 @@ def changePlaneAngle(attr,old,new):
 
                  
 def ChangeMohrCircle():
-    
     MohrNx  = global_vars["MohrNx"]
     MohrNz  = global_vars["MohrNz"]
     MohrNxz = global_vars["MohrNxz"]
-
     MohrP_Angle = global_vars["MohrP_Angle"]
 
     [radius, centreX, rleft_x] = calculate_radius_and_center()
@@ -423,7 +366,6 @@ def ChangeMohrCircle():
         Neta     = MohrNx
         Nzetaeta = -MohrNxz
 
-
     f2.Newplane_line_source.data       = dict(x=[rleft_x,Neta], y=[rleft_z,Nzetaeta])
 
     f2.Moving_Label_source.data = dict(x=[MohrNx,MohrNz,0.0, 0.0, Neta,Nzeta,MohrNz,Neta],
@@ -435,12 +377,9 @@ def ChangeMohrCircle():
 
     
 def ChangeRotatingPlane_Forces():
-    
-
     MohrNx  = global_vars["MohrNx"]
     MohrNz  = global_vars["MohrNz"]
     MohrNxz = global_vars["MohrNxz"]
-
     MohrP_Angle = global_vars["MohrP_Angle"]
 
     Nzeta    = float(float((MohrNx+MohrNz)/2)+(float((MohrNx-MohrNz)/2)*cos(2*MohrP_Angle))+float(MohrNxz*sin(2*MohrP_Angle)))
@@ -471,13 +410,10 @@ def ChangeRotatingPlane_Forces():
             Neta = 0
             break
 
-
     Nzeta = 0.75*Nzeta
     if Nzeta>0:
         f3.NzetaP_arrow_source.data = dict(xS=[12.5*cos(MohrP_Angle)],  xE=[(12.5+Nzeta)*cos(MohrP_Angle)],  yS=[(12.5*sin(MohrP_Angle))],   yE=[(((12.5+Nzeta)*sin(MohrP_Angle)))],   lW = [2])
         f3.NzetaN_arrow_source.data = dict(xS=[-12.5*cos(MohrP_Angle)], xE=[(-12.5-Nzeta)*cos(MohrP_Angle)], yS=[0-(12.5*sin(MohrP_Angle))], yE=[(0-((12.5+Nzeta)*sin(MohrP_Angle)))], lW = [2])
-        
-        
         f3.NzetaP_rect_source.data  = dict(x=[(12.5*cos(MohrP_Angle)+(12.5+Nzeta)*cos(MohrP_Angle))/2],   y=[((12.5*sin(MohrP_Angle))+(((12.5+Nzeta)*sin(MohrP_Angle))))/2],   w=[Nzeta+1.5], h = [13], angle=[MohrP_Angle])
         f3.NzetaN_rect_source.data  = dict(x=[(-12.5*cos(MohrP_Angle)+(-12.5-Nzeta)*cos(MohrP_Angle))/2], y=[((-12.5*sin(MohrP_Angle))+(-((12.5+Nzeta)*sin(MohrP_Angle))))/2], w=[Nzeta+1.5], h = [13], angle=[MohrP_Angle])
 
@@ -487,7 +423,6 @@ def ChangeRotatingPlane_Forces():
     else:
         f3.NzetaP_arrow_source.data = dict(xS=[(12.5-Nzeta)*cos(MohrP_Angle)],  xE=[12.5*cos(MohrP_Angle)],   yS=[0+((12.5-Nzeta)*sin(MohrP_Angle))],   yE=[0+(12.5*sin(MohrP_Angle))], lW = [2])
         f3.NzetaN_arrow_source.data = dict(xS=[(-12.5+Nzeta)*cos(MohrP_Angle)], xE=[-12.5 *cos(MohrP_Angle)], yS=[(0-((12.5-Nzeta)*sin(MohrP_Angle)))], yE=[0-(12.5*sin(MohrP_Angle))], lW = [2])
-        
         f3.NzetaP_rect_source.data  = dict(x=[(12.5*cos(MohrP_Angle)+(12.5-Nzeta)*cos(MohrP_Angle))/2],   y=[((12.5*sin(MohrP_Angle))+(((12.5-Nzeta)*sin(MohrP_Angle))))/2],   w=[Nzeta-1.5], h = [13], angle=[MohrP_Angle])
         f3.NzetaN_rect_source.data  = dict(x=[(-12.5*cos(MohrP_Angle)+(-12.5+Nzeta)*cos(MohrP_Angle))/2], y=[((-12.5*sin(MohrP_Angle))+(-((12.5-Nzeta)*sin(MohrP_Angle))))/2], w=[Nzeta-1.5], h = [13], angle=[MohrP_Angle])
 
@@ -495,7 +430,6 @@ def ChangeRotatingPlane_Forces():
     if Neta>0:
         f3.NetaP_arrow_source.data = dict(xS=[12.5*cos((pi/2)+MohrP_Angle)], xE=[(12.5+Neta)*cos((pi/2)+MohrP_Angle)], yS=[(12.5*sin((pi/2)+MohrP_Angle))], yE=[((12.5+Neta)*sin((pi/2)+MohrP_Angle))], lW = [2])
         f3.NetaN_arrow_source.data = dict(xS=[12.5*sin(MohrP_Angle)],        xE=[(12.5+Neta)*sin(MohrP_Angle)],        yS=[-(12.5*cos(MohrP_Angle))],       yE=[-((12.5+Neta)*cos(MohrP_Angle))],       lW = [2]) 
-        
         f3.NetaP_rect_source.data  = dict(x=[(12.5*cos((pi/2)+MohrP_Angle)+(12.5+Neta)*cos((pi/2)+MohrP_Angle))/2], y=[((12.5*sin((pi/2)+MohrP_Angle))+((12.5+Neta)*sin((pi/2)+MohrP_Angle)))/2], h=[Neta+1.5], w = [13], angle=[MohrP_Angle])
         f3.NetaN_rect_source.data  = dict(x=[(12.5*sin(MohrP_Angle)+(12.5+Neta)*sin(MohrP_Angle))/2],               y=[(-(12.5*cos(MohrP_Angle))+-((12.5+Neta)*cos(MohrP_Angle)))/2],             h=[Neta+1.5], w = [13], angle=[MohrP_Angle])
 
@@ -505,10 +439,8 @@ def ChangeRotatingPlane_Forces():
     else:
         f3.NetaP_arrow_source.data = dict(xS=[(12.5-Neta)*cos((pi/2)+MohrP_Angle)],xE=[12.5*cos((pi/2)+MohrP_Angle)], yS=[((12.5-Neta)*sin((pi/2)+MohrP_Angle))], yE=[0+(12.5*sin((pi/2)+MohrP_Angle))],  lW = [2])
         f3.NetaN_arrow_source.data = dict(xS=[(12.5-Neta)*sin(MohrP_Angle)],xE=[12.5*sin(MohrP_Angle)],               yS=[-(12.5-Neta)*cos(MohrP_Angle)],         yE=[-12.5*cos(MohrP_Angle)],            lW = [2])      
-        
         f3.NetaP_rect_source.data  = dict(x=[((12.5-Neta)*cos((pi/2)+MohrP_Angle)+12.5*cos((pi/2)+MohrP_Angle))/2], y=[(((12.5-Neta)*sin((pi/2)+MohrP_Angle))+0+(12.5*sin((pi/2)+MohrP_Angle)))/2], h=[Neta-1.5], w = [13], angle=[MohrP_Angle])
         f3.NetaN_rect_source.data  = dict(x=[((12.5-Neta)*sin(MohrP_Angle)+12.5*sin(MohrP_Angle))/2],               y=[(-(12.5-Neta)*cos(MohrP_Angle)+-12.5*cos(MohrP_Angle))/2],                   h=[Neta-1.5], w = [13], angle=[MohrP_Angle])
-
 
     Nzetaeta=0.75*Nzetaeta
     if Nzetaeta>0:
@@ -516,13 +448,10 @@ def ChangeRotatingPlane_Forces():
         f3.Nzetaeta2_arrow_source.data = dict(xS=[-9*sin(MohrP_Angle)-((Nzetaeta/2)*cos(MohrP_Angle))], xE=[-9*sin(MohrP_Angle)+((Nzetaeta/2)*cos(MohrP_Angle))], yS=[(0+9*cos(MohrP_Angle))-((Nzetaeta/2)*sin(MohrP_Angle))], yE=[(0+9*cos(MohrP_Angle))+((Nzetaeta/2)*sin(MohrP_Angle))], lW = [2])
         f3.Nzetaeta3_arrow_source.data = dict(xS=[-9*cos(MohrP_Angle)-((Nzetaeta/2)*sin(MohrP_Angle))], xE=[-9*cos(MohrP_Angle)+((Nzetaeta/2)*sin(MohrP_Angle))], yS=[(0-9*sin(MohrP_Angle))+((Nzetaeta/2)*cos(MohrP_Angle))], yE=[(0-9*sin(MohrP_Angle))-((Nzetaeta/2)*cos(MohrP_Angle))], lW = [2])
         f3.Nzetaeta4_arrow_source.data = dict(xS=[9*sin(MohrP_Angle)+((Nzetaeta/2)*cos(MohrP_Angle))],  xE=[9*sin(MohrP_Angle)-((Nzetaeta/2)*cos(MohrP_Angle))],  yS=[(0-9*cos(MohrP_Angle))+((Nzetaeta/2)*sin(MohrP_Angle))], yE=[(0-9*cos(MohrP_Angle))-((Nzetaeta/2)*sin(MohrP_Angle))], lW = [2])
-        
-        
         f3.Nzetaeta1_rect_source.data  = dict(x=[(9*cos(MohrP_Angle)+((Nzetaeta/2)*sin(MohrP_Angle))+9*cos(MohrP_Angle)-((Nzetaeta/2)*sin(MohrP_Angle)))/2],   y=[((0+9*sin(MohrP_Angle))-((Nzetaeta/2)*cos(MohrP_Angle))+(0+9*sin(MohrP_Angle))+((Nzetaeta/2)*cos(MohrP_Angle)))/2], w=[0.3*Nzetaeta+.5], h = [13], angle=[MohrP_Angle])
         f3.Nzetaeta2_rect_source.data  = dict(x=[(-9*sin(MohrP_Angle)-((Nzetaeta/2)*cos(MohrP_Angle))+-9*sin(MohrP_Angle)+((Nzetaeta/2)*cos(MohrP_Angle)))/2], y=[((0+9*cos(MohrP_Angle))-((Nzetaeta/2)*sin(MohrP_Angle))+(0+9*cos(MohrP_Angle))+((Nzetaeta/2)*sin(MohrP_Angle)))/2], h=[0.3*Nzetaeta+.5], w = [13], angle=[MohrP_Angle])
         f3.Nzetaeta3_rect_source.data  = dict(x=[(-9*cos(MohrP_Angle)-((Nzetaeta/2)*sin(MohrP_Angle))-9*cos(MohrP_Angle)+((Nzetaeta/2)*sin(MohrP_Angle)))/2],  y=[((0-9*sin(MohrP_Angle))+((Nzetaeta/2)*cos(MohrP_Angle))+(0-9*sin(MohrP_Angle))-((Nzetaeta/2)*cos(MohrP_Angle)))/2], w=[0.3*Nzetaeta+.5], h = [13], angle=[MohrP_Angle])
         f3.Nzetaeta4_rect_source.data  = dict(x=[(9*sin(MohrP_Angle)+((Nzetaeta/2)*cos(MohrP_Angle))+9*sin(MohrP_Angle)-((Nzetaeta/2)*cos(MohrP_Angle)))/2],   y=[((0-9*cos(MohrP_Angle))+((Nzetaeta/2)*sin(MohrP_Angle))+(0-9*cos(MohrP_Angle))-((Nzetaeta/2)*sin(MohrP_Angle)))/2], h=[0.3*Nzetaeta+.5], w = [13], angle=[MohrP_Angle])
-
     elif Nzetaeta==0:
         clear_arrow_source( [f3.Nzetaeta1_arrow_source, f3.Nzetaeta2_arrow_source, f3.Nzetaeta3_arrow_source, f3.Nzetaeta4_arrow_source] )
         clear_rect_source( [f3.Nzetaeta1_rect_source, f3.Nzetaeta2_rect_source, f3.Nzetaeta3_rect_source, f3.Nzetaeta4_rect_source] )
@@ -531,7 +460,6 @@ def ChangeRotatingPlane_Forces():
         f3.Nzetaeta2_arrow_source.data = dict(xS=[-9*sin(MohrP_Angle)-((Nzetaeta/2)*cos(MohrP_Angle))], xE=[-9*sin(MohrP_Angle)+((Nzetaeta/2)*cos(MohrP_Angle))], yS=[(0+9*cos(MohrP_Angle))-((Nzetaeta/2)*sin(MohrP_Angle))], yE=[(0+9*cos(MohrP_Angle))+((Nzetaeta/2)*sin(MohrP_Angle))], lW = [2])
         f3.Nzetaeta3_arrow_source.data = dict(xS=[-9*cos(MohrP_Angle)-((Nzetaeta/2)*sin(MohrP_Angle))], xE=[-9*cos(MohrP_Angle)+((Nzetaeta/2)*sin(MohrP_Angle))], yS=[(0-9*sin(MohrP_Angle))+((Nzetaeta/2)*cos(MohrP_Angle))], yE=[(0-9*sin(MohrP_Angle))-((Nzetaeta/2)*cos(MohrP_Angle))], lW = [2])
         f3.Nzetaeta4_arrow_source.data = dict(xS=[9*sin(MohrP_Angle)+((Nzetaeta/2)*cos(MohrP_Angle))],  xE=[9*sin(MohrP_Angle)-((Nzetaeta/2)*cos(MohrP_Angle))],  yS=[(0-9*cos(MohrP_Angle))+((Nzetaeta/2)*sin(MohrP_Angle))], yE=[(0-9*cos(MohrP_Angle))-((Nzetaeta/2)*sin(MohrP_Angle))], lW = [2])
-
         f3.Nzetaeta1_rect_source.data  = dict(x=[(9*cos(MohrP_Angle)+((Nzetaeta/2)*sin(MohrP_Angle))+9*cos(MohrP_Angle)-((Nzetaeta/2)*sin(MohrP_Angle)))/2],   y=[((0+9*sin(MohrP_Angle))-((Nzetaeta/2)*cos(MohrP_Angle))+(0+9*sin(MohrP_Angle))+((Nzetaeta/2)*cos(MohrP_Angle)))/2], w=[0.3*Nzetaeta-.5], h = [13], angle=[MohrP_Angle])
         f3.Nzetaeta2_rect_source.data  = dict(x=[(-9*sin(MohrP_Angle)-((Nzetaeta/2)*cos(MohrP_Angle))+-9*sin(MohrP_Angle)+((Nzetaeta/2)*cos(MohrP_Angle)))/2], y=[((0+9*cos(MohrP_Angle))-((Nzetaeta/2)*sin(MohrP_Angle))+(0+9*cos(MohrP_Angle))+((Nzetaeta/2)*sin(MohrP_Angle)))/2], h=[0.3*Nzetaeta-.5], w = [13], angle=[MohrP_Angle])
         f3.Nzetaeta3_rect_source.data  = dict(x=[(-9*cos(MohrP_Angle)-((Nzetaeta/2)*sin(MohrP_Angle))-9*cos(MohrP_Angle)+((Nzetaeta/2)*sin(MohrP_Angle)))/2],  y=[((0-9*sin(MohrP_Angle))+((Nzetaeta/2)*cos(MohrP_Angle))+(0-9*sin(MohrP_Angle))-((Nzetaeta/2)*cos(MohrP_Angle)))/2], w=[0.3*Nzetaeta-.5], h = [13], angle=[MohrP_Angle])
