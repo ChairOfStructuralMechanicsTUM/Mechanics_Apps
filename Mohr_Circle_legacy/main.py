@@ -227,41 +227,11 @@ def NormalForceX_init(attr,old,new):
    ## Figure 1, Present the Normal Forces while Draw-Button wasn't yet activated:  
         global_vars["MohrNx"] = new 
         f1.plot_normal_forces_x(new)
-        # new = new*0.75
-        # if(new<0):
-        #     f1.NxP_arrow_source.data = dict(xS=[12.5-new],  xE=[12.5],  yS=[0], yE=[0], lW = [2])
-        #     f1.NxN_arrow_source.data = dict(xS=[-12.5+new], xE=[-12.5], yS=[0], yE=[0], lW = [2]) 
-     
-        #     f1.NxP_rect_source.data  = dict(x=[(25-new)/2],  y=[0], w=[new-1.5], h = [13], angle=[0])
-        #     f1.NxN_rect_source.data  = dict(x=[(-25+new)/2], y=[0], w=[new-1.5], h = [13], angle=[0]) 
-        # elif(new==0):
-        #     clear_arrow_source( [f1.NxP_arrow_source, f1.NxN_arrow_source] )
-        #     clear_rect_source( [f1.NxP_rect_source, f1.NxN_rect_source] )
-        # else:
-        #     f1.NxP_arrow_source.data  = dict(xS=[12.5],  xE=[12.5+new],  yS=[0], yE=[0], lW = [2])
-        #     f1.NxN_arrow_source.data  = dict(xS=[-12.5], xE=[-12.5-new], yS=[0], yE=[0], lW = [2])
- 
-        #     f1.NxP_rect_source.data   = dict(x=[(25+new)/2],  y=[0], w=[new+1.5], h = [13], angle=[0])        
-        #     f1.NxN_rect_source.data   = dict(x=[(-25-new)/2], y=[0], w=[new+1.5], h = [13], angle=[0]) 
 
 def NormalForceZ_init(attr,old,new):
     ## Figure 1, Present the Normal Forces while draw() hasn't been called yet:
         global_vars["MohrNz"] = new
         f1.plot_normal_forces_z(new)
-        # new=new*0.75
-        # if(new<0):
-        #     f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2])
-        #     f1.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2])
-        #     f1.NzP_rect_source.data  = dict(x=[0], y=[(25-new)/2],  w=[13], h = [new-1.5], angle=[0])
-        #     f1.NzN_rect_source.data  = dict(x=[0], y=[(-25+new)/2], w=[13], h = [new-1.5], angle=[0])   
-        # elif (new==0):
-        #     clear_arrow_source( [f1.NzP_arrow_source, f1.NzN_arrow_source] )
-        #     clear_rect_source( [f1.NzP_rect_source, f1.NzN_rect_source] )
-        # else:
-        #     f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new],  lW = [2])
-        #     f1.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2])
-        #     f1.NzP_rect_source.data  = dict(x=[0], y=[(25+new)/2],  w=[13], h = [new+1.5], angle=[0])
-        #     f1.NzN_rect_source.data  = dict(x=[0], y=[(-25-new)/2], w=[13], h = [new+1.5], angle=[0])   
 
 def TangentialXZ_init(attr,old,new):
     ## Figure 1, Present the Shear Forces while draw() hasn't yet been called: 
@@ -272,22 +242,8 @@ def TangentialXZ_init(attr,old,new):
             global_vars["MohrNxz"] = new
 
         f1.plot_shear_forces(global_vars["MohrNxz"])
-        
-        # new=new*0.75
-        # if(new==0):
-        #     clear_arrow_source( [f1.Nxz1_arrow_source, f1.Nxz2_arrow_source, f1.Nxz3_arrow_source, f1.Nxz4_arrow_source] )    
-        #     clear_rect_source( [f1.Nxz1_rect_source, f1.Nxz2_rect_source, f1.Nxz3_rect_source, f1.Nxz4_rect_source] )
-        # else:     
-        #     f1.Nxz1_arrow_source.data = dict(xS=[9],       xE=[9],        yS=[0-(new/2)], yE=[0+(new/2)], lW = [2])
-        #     f1.Nxz2_arrow_source.data = dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2])
-        #     f1.Nxz3_arrow_source.data = dict(xS=[-new/2],  xE=[new/2],    yS=[9],         yE=[9],         lW = [2])
-        #     f1.Nxz4_arrow_source.data = dict(xS=[(new/2)], xE=[-(new/2)], yS=[-9],        yE=[-9],        lW = [2]) 
-        #     f1.Nxz1_rect_source.data  = dict(x=[9],  y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
-        #     f1.Nxz2_rect_source.data  = dict(x=[-9], y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
-        #     f1.Nxz3_rect_source.data  = dict(x=[0],  y=[9],  w=[13],          h=[0.3*new+0.5], angle=[0])
-        #     f1.Nxz4_rect_source.data  = dict(x=[0],  y=[-9], w=[13],          h=[0.3*new+0.5], angle=[0])
 
-        
+
 def changePlaneAngle(attr,old,new):
         MohrNx  = global_vars["MohrNx"]
         MohrNz  = global_vars["MohrNz"]
@@ -364,11 +320,6 @@ def add_glyphs_from_list(fig, glyph_list, source_list):
 
 add_layouts_from_list(figure1, glyphs_to_add)
 
-figure1_labels = LatexLabelSet(x='x', y='y', text='names', level='glyph',
-                                x_offset=0, y_offset=0, source=f1.Perm_Label_source)
-
-figure1.add_layout(figure1_labels)
-
 glyphs_to_add = [NNP_rect_glphys, NNP_rect_glphys, NNP_rect_glphys, NNP_rect_glphys, Nxz_rect_glyphs, Nxz_rect_glyphs, Nxz_rect_glyphs, Nxz_rect_glyphs]
 glyph_sources = [f1.NxP_rect_source, f1.NxN_rect_source, f1.NzP_rect_source, f1.NzN_rect_source, f1.Nxz1_rect_source, f1.Nxz2_rect_source, f1.Nxz3_rect_source, f1.Nxz4_rect_source]
 add_glyphs_from_list(figure1, glyphs_to_add, glyph_sources)
@@ -382,6 +333,12 @@ legend1 = LatexLegend(items=[
     ("\\text{Shear Stresses}\\ \\tau_{xz}", [dummy_shear_1]),
 ], location='top_left', max_label_width = 220)
 figure1.add_layout(legend1)
+
+# LatexLabelSet has to be added to the layout after LatexLegend! Otherwise the labels won't show.
+figure1_labels = LatexLabelSet(x='x', y='y', text='names', level='glyph',
+                                x_offset=0, y_offset=0, source=f1.Perm_Label_source)
+
+figure1.add_layout(figure1_labels)
 
 
 ### Figure 2: Define Geometry
@@ -448,7 +405,7 @@ figure3_labels = LatexLabelSet(x='x', y='y', text='names', level='glyph', x_offs
 figure3_labels2 = LatexLabelSet(x='x', y='y', text='names', source=f3.Moving_Label_source)
 
 
-glyphs_to_add = [figure3_labels, figure3_labels2, NzetaP_arrow_glyph, NzetaN_arrow_glyph, NetaP_arrow_glyph, NetaN_arrow_glyph,
+glyphs_to_add = [NzetaP_arrow_glyph, NzetaN_arrow_glyph, NetaP_arrow_glyph, NetaN_arrow_glyph,
                  Nzetaeta1_arrow_glyph, Nzetaeta2_arrow_glyph, Nzetaeta3_arrow_glyph, Nzetaeta4_arrow_glyph, Rotating_Axis_X_glyph, Rotating_Axis_Y_glyph]
 add_layouts_from_list(figure3, glyphs_to_add)
 
@@ -468,6 +425,11 @@ legend3 = LatexLegend(items=[
     ("\\text{Shear Stresses}\\ \\tau_{xz}", [dummy_shear_3]),
 ], location='top_left', max_label_width = 220)
 figure3.add_layout(legend3)
+
+# LatexLabelSet has to be added to the layout after LatexLegend! Otherwise the labels won't show.
+figure3.add_layout(figure3_labels)
+figure3.add_layout(figure3_labels2)
+
 
 ### All figures, Turn off grids: 
 def turn_off_grid(fig):
