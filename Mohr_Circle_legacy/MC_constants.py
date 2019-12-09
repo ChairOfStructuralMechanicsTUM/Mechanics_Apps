@@ -32,17 +32,16 @@ c_gray_warm   = "#8f8f8f"
 
 
 ### Initial Values
-initial_radius = 10
-initial_centreX = 10
-initial_MohrNx =0
-initial_MohrNz =0
-initial_MohrNxz =0
-initial_MohrP_Angle = 0#*(pi/180)
-initial_Neta =0 
-initial_Nzeta =0 
-initial_Nzetaeta =0  
-#rleft_x = centreX-radius
-initial_rleft_z=0
+initial_radius      = 10
+initial_centreX     = 10
+initial_MohrNx      = 0
+initial_MohrNz      = 0
+initial_MohrNxz     = 0
+initial_MohrP_Angle = 0
+initial_Neta        = 0 
+initial_Nzeta       = 0 
+initial_Nzetaeta    = 0  
+initial_rleft_z     = 0
 
 
 

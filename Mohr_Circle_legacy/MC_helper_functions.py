@@ -1,5 +1,10 @@
+"""
+Mohr Circle - helper functions for repetitive tasks
+"""
+# general imports
+from math import sqrt, pow
 
-from math import pi,sqrt,pow,sin,cos,atan 
+# ----------------------------------------------------------------- #
 
 
 def clear_arrow_source(source_list):

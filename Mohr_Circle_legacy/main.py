@@ -1,13 +1,32 @@
-from bokeh.plotting import figure
-from bokeh.layouts import column, row, layout
-from bokeh.models import ColumnDataSource,Slider,Div,Arrow,OpenHead,NormalHead,LabelSet,Button
-from bokeh.models.markers import Square,Circle
-from bokeh.models.glyphs import Ellipse,Wedge,Rect
+"""
+Mohr Circle - explains how Mohr's Circle can be used to identify different stresses
+"""
+# general imports
+from math import pi, sin, cos, atan
+
+# bokeh imports
+from bokeh.io             import curdoc
+from bokeh.plotting       import figure
+from bokeh.layouts        import column, row, layout
+from bokeh.models         import ColumnDataSource, Slider, Arrow, OpenHead, NormalHead, Button
+from bokeh.models.markers import Square, Circle
+from bokeh.models.glyphs  import Wedge, Rect
 from bokeh.models.layouts import Spacer
-from bokeh.io import curdoc
 
-from math import pi,sqrt,pow,sin,cos,atan 
+# internal imports
+from MC_figure_sources import fig1, fig2, fig3
+from MC_helper_functions import (
+    calculate_radius_and_center, 
+    clear_arrow_source, clear_rect_source, 
+    add_layouts_from_list, add_glyphs_from_list
+)
+from MC_constants import (
+    initial_MohrNx, initial_MohrNxz, initial_MohrNz, initial_MohrP_Angle,
+    initial_Neta, initial_Nzeta, initial_Nzetaeta,
+    initial_centreX, initial_radius, initial_rleft_z
+)
 
+# latex integration
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
@@ -15,24 +34,17 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
+# ----------------------------------------------------------------- #
 
-from MC_constants import (
-    initial_MohrNx, initial_MohrNxz, initial_MohrNz, initial_MohrP_Angle,
-    initial_Neta, initial_Nzeta, initial_Nzetaeta,
-    initial_centreX, initial_radius, initial_rleft_z
-)
-
-from MC_figure_sources import fig1, fig2, fig3
-from MC_helper_functions import calculate_radius_and_center, clear_arrow_source, clear_rect_source, add_layouts_from_list, add_glyphs_from_list
 
 ### Initial Values
-radius = initial_radius
-centreX = initial_centreX
-Neta = initial_Neta 
-Nzeta = initial_Nzeta
+radius   = initial_radius
+centreX  = initial_centreX
+Neta     = initial_Neta 
+Nzeta    = initial_Nzeta
 Nzetaeta = initial_Nzetaeta
-rleft_x = centreX-radius
-rleft_z= initial_rleft_z
+rleft_x  = centreX-radius
+rleft_z  = initial_rleft_z
 
 # global variables
 global_vars = dict(MohrNx=initial_MohrNx, MohrNz=initial_MohrNz, MohrNxz=initial_MohrNxz,
@@ -49,31 +61,32 @@ def reset():
     Normal_Z_slider.disabled      = False
     Tangential_XZ_slider.disabled = False
     Plane_Angle_slider.disabled   = True
-    draw_button.disabled = False
-    show_button.disabled = True
+    draw_button.disabled          = False
+    show_button.disabled          = True
 
     global_vars["MohrChangeShow"] = -1
-    global_vars["alpha"] = 0
-    global_vars["MohrP_Angle"] = initial_MohrP_Angle
-    radius = initial_radius
+    global_vars["alpha"]          = 0
+    global_vars["MohrP_Angle"]    = initial_MohrP_Angle
+    global_vars["MohrNx"]         = initial_MohrNx
+    global_vars["MohrNz"]         = initial_MohrNz
+    global_vars["MohrNxz"]        = initial_MohrNxz
+        
+    radius  = initial_radius
     centreX = initial_centreX
-    global_vars["MohrNx"] = initial_MohrNx
-    global_vars["MohrNz"] = initial_MohrNz
-    global_vars["MohrNxz"] = initial_MohrNxz
     
     ### Calculations
-    [radius, centreX, _] = calculate_radius_and_center(global_vars)
-    Normal_X_slider.value=0
-    Normal_Z_slider.value=0
-    Tangential_XZ_slider.value=0
-    Plane_Angle_slider.value=0
+    [radius, centreX, _]       = calculate_radius_and_center(global_vars)
+    Normal_X_slider.value      = 0
+    Normal_Z_slider.value      = 0
+    Tangential_XZ_slider.value = 0
+    Plane_Angle_slider.value   = 0
 
     ### Figure 1, Reset values for arrows:
-    sources_to_reset = [f1.NxP_arrow_source, f1.NxN_arrow_source, f1.NzP_arrow_source, f1.NzN_arrow_source,
+    sources_to_reset = [f1.NxP_arrow_source,  f1.NxN_arrow_source,  f1.NzP_arrow_source,  f1.NzN_arrow_source,
                         f1.Nxz1_arrow_source, f1.Nxz2_arrow_source, f1.Nxz3_arrow_source, f1.Nxz4_arrow_source]
     clear_arrow_source(sources_to_reset)
     ## Figure 1, Reset Rectangles:
-    sources_to_reset = [f1.NxP_rect_source, f1.NxN_rect_source, f1.NzP_rect_source, f1.NzN_rect_source, 
+    sources_to_reset = [f1.NxP_rect_source,  f1.NxN_rect_source,  f1.NzP_rect_source,  f1.NzN_rect_source, 
                         f1.Nxz1_rect_source, f1.Nxz2_rect_source, f1.Nxz3_rect_source, f1.Nxz4_rect_source]
     clear_rect_source(sources_to_reset)
     
@@ -81,20 +94,20 @@ def reset():
     f2.reset_circle(centreX, radius, glMohrFigure2_angle_label)
 
     ## Figure 3, Reset arrows:
-    sources_to_reset = [f3.NzetaP_arrow_source, f3.NzetaN_arrow_source, f3.NetaP_arrow_source, f3.NetaN_arrow_source,
+    sources_to_reset = [f3.NzetaP_arrow_source,    f3.NzetaN_arrow_source,    f3.NetaP_arrow_source,     f3.NetaN_arrow_source,
                         f3.Nzetaeta1_arrow_source, f3.Nzetaeta2_arrow_source, f3.Nzetaeta3_arrow_source, f3.Nzetaeta4_arrow_source]
     clear_arrow_source(sources_to_reset)
     ## Figure 3, Reset rectangles:
-    sources_to_reset = [f3.NzetaP_rect_source, f3.NzetaN_rect_source, f3.NetaP_rect_source, f3.NetaN_rect_source,
+    sources_to_reset = [f3.NzetaP_rect_source,    f3.NzetaN_rect_source,    f3.NetaP_rect_source,     f3.NetaN_rect_source,
                         f3.Nzetaeta1_rect_source, f3.Nzetaeta2_rect_source, f3.Nzetaeta3_rect_source, f3.Nzetaeta4_rect_source]
     clear_rect_source(sources_to_reset)    
     ## Figure 3, Reset rotating plane and axis:
     f3.reset_rotating_plane()
 
 def show():
-    MohrNx  = global_vars["MohrNx"]
-    MohrNz  = global_vars["MohrNz"]
-    MohrNxz = global_vars["MohrNxz"]
+    MohrNx         = global_vars["MohrNx"]
+    MohrNz         = global_vars["MohrNz"]
+    MohrNxz        = global_vars["MohrNxz"]
     MohrChangeShow = global_vars["MohrChangeShow"]
     
     if MohrChangeShow == 1:
@@ -102,48 +115,48 @@ def show():
         rright_x = centreX+radius
 
         ## Print Labels for principal stress and direction
-        alpha=180*atan(MohrNxz/(MohrNz+(-rleft_x+0.00001)))/(pi)
-        alpha=int(alpha+0.5)
+        alpha = 180*atan(MohrNxz/(MohrNz+(-rleft_x+0.00001)))/(pi)
+        alpha = int(alpha+0.5)
         f2.Show_Label_source.data = dict(x=[rleft_x,rright_x,centreX],
                                                 y=[0,0,0],
                                                 names=['\\sigma_{II}','\\sigma_{I}','\\sigma_{M}'])
-        f2.Wedge_source.data=dict(x=[rleft_x], y=[0],radius=[radius/2], sA=[atan(MohrNxz/(MohrNz+(-rleft_x+0.00001)))], eA=[0])
+        f2.Wedge_source.data = dict(x=[rleft_x], y=[0],radius=[radius/2], sA=[atan(MohrNxz/(MohrNz+(-rleft_x+0.00001)))], eA=[0])
         glMohrFigure2_angle_label.text = '\\alpha_0=' + str(alpha)
-        global_vars["MohrChangeShow"] = MohrChangeShow*-1
+        global_vars["MohrChangeShow"]  = MohrChangeShow*-1
 
     elif MohrChangeShow == -1:
-        f2.Wedge_source.data                = dict(x=[], y=[],radius=[], sA=[], eA=[])
-        f2.Show_Label_source.data    = dict(x=[], y=[], names =[])
+        f2.Wedge_source.data           = dict(x=[], y=[],radius=[], sA=[], eA=[])
+        f2.Show_Label_source.data      = dict(x=[], y=[], names =[])
         glMohrFigure2_angle_label.text = ''
-        global_vars["MohrChangeShow"] = MohrChangeShow*-1
+        global_vars["MohrChangeShow"]  = MohrChangeShow*-1
 
 def draw():
-    MohrNx  = global_vars["MohrNx"]
-    MohrNz  = global_vars["MohrNz"]
-    MohrNxz = global_vars["MohrNxz"]
+    MohrNx      = global_vars["MohrNx"]
+    MohrNz      = global_vars["MohrNz"]
+    MohrNxz     = global_vars["MohrNxz"]
     MohrP_Angle = global_vars["MohrP_Angle"]
 
-    Normal_X_slider.disabled      = True
-    Normal_Z_slider.disabled      = True
-    Tangential_XZ_slider.disabled = True
-    Plane_Angle_slider.disabled   = False
-    show_button.disabled = False
-    draw_button.disabled = True
+    Normal_X_slider.disabled       = True
+    Normal_Z_slider.disabled       = True
+    Tangential_XZ_slider.disabled  = True
+    Plane_Angle_slider.disabled    = False
+    show_button.disabled           = False
+    draw_button.disabled           = True
 
     global_vars["MohrChangeShow"]  = 1
 
     ## Calculations
     [radius, centreX, _] = calculate_radius_and_center(global_vars)
-    Neta      = float(((MohrNx+MohrNz)/2)-(((MohrNx-MohrNz)/2)*cos(2*MohrP_Angle))-MohrNxz*sin(2*MohrP_Angle))
-    Nzetaeta  = float((-(((MohrNx-MohrNz)/2)*sin(2*MohrP_Angle)))+MohrNxz*cos(2*MohrP_Angle))
+    Neta                 = float(((MohrNx+MohrNz)/2)-(((MohrNx-MohrNz)/2)*cos(2*MohrP_Angle))-MohrNxz*sin(2*MohrP_Angle))
+    Nzetaeta             = float((-(((MohrNx-MohrNz)/2)*sin(2*MohrP_Angle)))+MohrNxz*cos(2*MohrP_Angle))
 
     ## Calculate Angle for which Nzeta or Neta will be zero (sign-change-method):
     NZeta_List0 = [181]*360
     NZeta_List1 = [181]*360
     global_vars["MohrNzeta_zero_angles"] = [181]*360
-    Neta_List0 = [181]*360
-    Neta_List1 = [181]*360
-    global_vars["MohrNeta_zero_angles"] = [181]*360
+    Neta_List0  = [181]*360
+    Neta_List1  = [181]*360
+    global_vars["MohrNeta_zero_angles"]  = [181]*360
 
     ## Nzeta:
     for n in range(-180,180):
@@ -173,7 +186,7 @@ def draw():
         f1.NxN_rect_source.data  = dict(x=[(-25+MohrNx*0.75)/2], y=[0], w=[MohrNx*0.75-1.5], h = [13], angle=[0])
     elif(MohrNx*0.75==0):
         clear_arrow_source( [f1.NxP_arrow_source, f1.NxN_arrow_source] )
-        clear_rect_source( [f1.NxP_rect_source, f1.NxN_rect_source] )
+        clear_rect_source ( [f1.NxP_rect_source,  f1.NxN_rect_source ] )
     else:
         f1.NxP_arrow_source.data  = dict(xS=[12.5],  xE=[12.5+MohrNx*0.75],  yS=[0], yE=[0], lW = [2])
         f1.NxN_arrow_source.data  = dict(xS=[-12.5], xE=[-12.5-MohrNx*0.75], yS=[0], yE=[0], lW = [2])
@@ -182,7 +195,7 @@ def draw():
 
     ##Figure 1, Draw MohrNz and keep it until reset() ist called:
     new = MohrNz
-    new=new*0.75
+    new = new*0.75
     if(new<0):
         f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2])
         f1.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2])
@@ -190,7 +203,7 @@ def draw():
         f1.NzN_rect_source.data  = dict(x=[0], y=[(-25+new)/2], w=[13], h = [new-1.5], angle=[0])   
     elif (new==0):
         clear_arrow_source( [f1.NzP_arrow_source, f1.NzN_arrow_source] )
-        clear_rect_source( [f1.NzP_rect_source, f1.NzN_rect_source] )
+        clear_rect_source ( [f1.NzP_rect_source,  f1.NzN_rect_source ] )
     else:
         f1.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new], lW = [2])
         f1.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2])
@@ -201,7 +214,7 @@ def draw():
     new=new*0.75        
     if(new==0):
         clear_arrow_source( [f1.Nxz1_arrow_source, f1.Nxz2_arrow_source, f1.Nxz3_arrow_source, f1.Nxz4_arrow_source] )
-        clear_rect_source( [f1.Nxz1_rect_source, f1.Nxz2_rect_source, f1.Nxz3_rect_source, f1.Nxz4_rect_source] )
+        clear_rect_source ( [f1.Nxz1_rect_source,  f1.Nxz2_rect_source,  f1.Nxz3_rect_source,  f1.Nxz4_rect_source ] )
     else:     
         f1.Nxz1_arrow_source.data = dict(xS=[9],       xE=[9],        yS=[0-(new/2)], yE=[0+(new/2)], lW = [2])
         f1.Nxz2_arrow_source.data = dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2])
@@ -214,11 +227,11 @@ def draw():
         f1.Nxz4_rect_source.data  = dict(x=[0],  y=[-9], w=[13],          h=[0.3*new+0.5], angle=[0])
 
     ## Figure 2, draw Mohr-Circle:
-    f2.Mohr_Circle_source.data = dict(x=[centreX], y=[0], radius=[radius])
-    f2.Wedge_source.data       = dict(x=[], y=[],radius=[], sA=[], eA=[])
-    f2.Newplane_line_source.data       = dict(x=[rleft_x,Neta,Neta], y=[rleft_z,Nzetaeta,0])
+    f2.Mohr_Circle_source.data         = dict(x=[centreX], y=[0], radius=[radius])
+    f2.Wedge_source.data               = dict(x=[], y=[],radius=[], sA=[], eA=[])
+    f2.Newplane_line_source.data       = dict(x=[rleft_x,Neta,Neta],     y=[rleft_z,Nzetaeta,0])
     f2.OriginalPlane_line_source.data  = dict(x=[rleft_x,MohrNz,MohrNz], y=[rleft_z,MohrNxz,0])
-    f2.Show_Label_source.data   = dict(x=[],y=[], names =[])
+    f2.Show_Label_source.data          = dict(x=[], y=[], names =[])
 
     ## Figure 3, initializing:
     f3.Rotating_Plane_source.data = dict(x=[0], y=[0],angle =[-MohrP_Angle],size = [75])
@@ -253,18 +266,18 @@ def changePlaneAngle(attr,old,new):
 
         ## Paint Rotating Plane red if angle=alpha_0
         [radius, centreX, rleft_x] = calculate_radius_and_center(global_vars)
-        alpha_0=180*atan(MohrNxz/(MohrNz+(-rleft_x+0.00001)))/(pi)
-        alpha_0=int(alpha_0+0.5)
+        alpha_0 = 180*atan(MohrNxz/(MohrNz+(-rleft_x+0.00001)))/(pi)
+        alpha_0 = int(alpha_0+0.5)
         
         alpharepetitions = [-90, -180, 0, 90, 180]
         for n in alpharepetitions:
             if new == alpha_0+n:
                 f3.Rotating_Plane_red_source.data = dict(x=[0], y=[0], angle =[-MohrP_Angle], size = [75])
-                f3.Rotating_Plane_source.data     = dict(x=[],  y=[],  angle =[],         size = []  )
+                f3.Rotating_Plane_source.data     = dict(x=[],  y=[],  angle =[],             size = []  )
                 break
         else:
             f3.Rotating_Plane_source.data     = dict(x=[0], y=[0], angle =[-MohrP_Angle], size = [75])
-            f3.Rotating_Plane_red_source.data = dict(x=[],  y=[],  angle =[],         size = []  )
+            f3.Rotating_Plane_red_source.data = dict(x=[],  y=[],  angle =[],             size = []  )
 
         # Figure 3, Rotate Axis:  
         MohrP_Angle = -MohrP_Angle
@@ -315,7 +328,7 @@ add_glyphs_from_list(figure1, glyphs_to_add, glyph_sources)
 
 # dummy glyphs for the legend entries
 dummy_normal_1 = figure1.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5)
-dummy_shear_1 = figure1.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5)
+dummy_shear_1  = figure1.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5)
 
 legend1 = LatexLegend(items=[
     ("\\text{Normal Stresses}\\ \\sigma_x, \\sigma_z", [dummy_normal_1]),
@@ -332,7 +345,7 @@ figure1.add_layout(figure1_labels)
 
 ### Figure 2: Define Geometry
 Mohr_Circle_glyph = Circle(x='x',y='y',radius='radius', radius_dimension='y', fill_color='#c3c3c3', fill_alpha=0.5)
-Wedge_glyph = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
+Wedge_glyph       = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
 ### Figure 2: Define Figure and add Geometry
 figure2 = figure(title="Mohr's Circle", tools="pan,save,wheel_zoom,reset", x_range=(-25.5,25.5), y_range=(-25.5,25.5),width=400,height=400, toolbar_location="right")
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
@@ -359,30 +372,30 @@ glMohrFigure2_angle_label = LatexLabel(text="",x=20,y=330,render_mode='css',text
 figure2.add_layout(glMohrFigure2_angle_label)
 
 ### Figure 3: Define Geometry
-Rotating_Plane_glyph = Square(x='x',y='y',angle='angle',size='size', fill_color = '#A2AD00', fill_alpha=0.5)
+Rotating_Plane_glyph     = Square(x='x',y='y',angle='angle',size='size', fill_color = '#A2AD00', fill_alpha=0.5)
 Rotating_Plane_red_glyph = Square(x='x',y='y',angle='angle',size='size', fill_color = 'firebrick', fill_alpha=0.5)
 
 Rotating_Axis_X_glyph = Arrow(end=NormalHead(fill_color='#A2AD00', size=15), x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=f3.Rotating_Axis_X_source )
 Rotating_Axis_Y_glyph = Arrow(end=NormalHead(fill_color='#A2AD00', size=15), x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=f3.Rotating_Axis_Y_source )
 
-NzetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
+NzetaP_arrow_glyph    = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.NzetaP_arrow_source,line_color="#E37222")
-NzetaN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
+NzetaN_arrow_glyph    = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.NzetaN_arrow_source,line_color="#E37222")
-NetaP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
+NetaP_arrow_glyph     = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.NetaP_arrow_source,line_color="#E37222")
-NetaN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
+NetaN_arrow_glyph     = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.NetaN_arrow_source,line_color="#E37222")
-Nzetaeta1_arrow_glyph= Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
+Nzetaeta1_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.Nzetaeta1_arrow_source,line_color="#0065BD")
-Nzetaeta2_arrow_glyph=Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
+Nzetaeta2_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.Nzetaeta2_arrow_source,line_color="#0065BD")
-Nzetaeta3_arrow_glyph= Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
+Nzetaeta3_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.Nzetaeta3_arrow_source,line_color="#0065BD")
-Nzetaeta4_arrow_glyph=Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
+Nzetaeta4_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.Nzetaeta4_arrow_source,line_color="#0065BD")
 ### Figure 3, Rectangle glyphs:
-Neta_rect_glyphs = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
+Neta_rect_glyphs   = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
 Ntaeta_rect_glyphs = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
 ### Figure 3, Define Figure and add Geometry:
 figure3 = figure(title="Stress State B", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400,)
@@ -390,7 +403,7 @@ figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=25, y_end=0))
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=0, y_end=-25))
-figure3_labels = LatexLabelSet(x='x', y='y', text='names', level='glyph', x_offset=5, y_offset=5, source=f1.Perm_Label_source)
+figure3_labels  = LatexLabelSet(x='x', y='y', text='names', level='glyph', x_offset=5, y_offset=5, source=f1.Perm_Label_source)
 figure3_labels2 = LatexLabelSet(x='x', y='y', text='names', source=f3.Moving_Label_source)
 
 
@@ -407,7 +420,7 @@ add_glyphs_from_list(figure3, glyphs_to_add, glyph_sources)
 
 # dummy glyphs for the legend entries
 dummy_normal_3 = figure3.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5)
-dummy_shear_3 = figure3.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5)
+dummy_shear_3  = figure3.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5)
 
 legend3 = LatexLegend(items=[
     ("\\text{Normal Stresses}\\ \\sigma_x, \\sigma_z", [dummy_normal_3]),
@@ -422,17 +435,17 @@ figure3.add_layout(figure3_labels2)
 
 ### All figures, Turn off grids: 
 def turn_off_grid(fig):
-    fig.xaxis.major_tick_line_color=None
-    fig.xaxis.major_label_text_color=None
-    fig.xaxis.minor_tick_line_color=None
-    fig.xaxis.axis_line_color=None
-    fig.yaxis.major_tick_line_color=None
-    fig.yaxis.major_label_text_color=None
-    fig.yaxis.minor_tick_line_color=None
-    fig.yaxis.axis_line_color=None
-    fig.xgrid.visible = False
-    fig.ygrid.visible = False
-    fig.toolbar.logo = None
+    fig.xaxis.major_tick_line_color  = None
+    fig.xaxis.major_label_text_color = None
+    fig.xaxis.minor_tick_line_color  = None
+    fig.xaxis.axis_line_color        = None
+    fig.yaxis.major_tick_line_color  = None
+    fig.yaxis.major_label_text_color = None
+    fig.yaxis.minor_tick_line_color  = None
+    fig.yaxis.axis_line_color        = None
+    fig.xgrid.visible                = False
+    fig.ygrid.visible                = False
+    fig.toolbar.logo                 = None
 
 turn_off_grid(figure1)
 turn_off_grid(figure2)
@@ -441,7 +454,6 @@ turn_off_grid(figure3)
 ### Create  sliders to change Normal and Tangential Forces
 Normal_X_slider= LatexSlider(title="\\sigma_x=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value= 0,start = -10, end = 10, step = 0.5)
 Normal_X_slider.on_change('value',NormalForceX_init)
-
     
 Normal_Z_slider= LatexSlider(title="\\sigma_z=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value= 0,start = -10, end = 10, step = 0.5)
 Normal_Z_slider.on_change('value',NormalForceZ_init)
@@ -458,13 +470,12 @@ Plane_Angle_slider.disabled = True
 reset_button = Button(label="Reset", button_type="success")
 reset_button.on_click(reset)
 
-
 ###Create Draw Button:
-draw_button = Button(label="Draw", button_type="success")
+draw_button  = Button(label="Draw", button_type="success")
 draw_button.on_click(draw)
 
 ###Create Show Button:
-show_button = Button(label="Show/Hide principal stress + direction", button_type="success", disabled=True)
+show_button  = Button(label="Show/Hide principal stress + direction", button_type="success", disabled=True)
 show_button.on_click(show)
 
 
