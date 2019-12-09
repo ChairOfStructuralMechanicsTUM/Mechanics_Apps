@@ -23,7 +23,7 @@ from MC_constants import (
 )
 
 from MC_figure_sources import fig1, fig2, fig3
-from MC_helper_functions import calculate_radius_and_center, clear_arrow_source, clear_rect_source
+from MC_helper_functions import calculate_radius_and_center, clear_arrow_source, clear_rect_source, add_layouts_from_list, add_glyphs_from_list
 
 ### Initial Values
 radius = initial_radius
@@ -49,6 +49,8 @@ def reset():
     Normal_Z_slider.disabled      = False
     Tangential_XZ_slider.disabled = False
     Plane_Angle_slider.disabled   = True
+    draw_button.disabled = False
+    show_button.disabled = True
 
     global_vars["MohrChangeShow"] = -1
     global_vars["alpha"] = 0
@@ -125,6 +127,8 @@ def draw():
     Normal_Z_slider.disabled      = True
     Tangential_XZ_slider.disabled = True
     Plane_Angle_slider.disabled   = False
+    show_button.disabled = False
+    draw_button.disabled = True
 
     global_vars["MohrChangeShow"]  = 1
 
@@ -301,18 +305,8 @@ figure1.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=25, y_end=0))
 figure1.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=0, y_end=-25))
+
 glyphs_to_add = [NxP_arrow_glyph, NxN_arrow_glyph, NzP_arrow_glyph, NzN_arrow_glyph, Nxz1_arrow_glyph, Nxz2_arrow_glyph, Nxz3_arrow_glyph, Nxz4_arrow_glyph]
-
-
-def add_layouts_from_list(fig, layout_list):
-    for tmp_layout in layout_list:
-        fig.add_layout(tmp_layout)
-
-def add_glyphs_from_list(fig, glyph_list, source_list):
-    assert len(glyph_list) == len(source_list), "Lists must have same length!"
-    for i in range(0,len(glyph_list)):
-        fig.add_glyph(source_list[i], glyph_list[i])
-
 add_layouts_from_list(figure1, glyphs_to_add)
 
 glyphs_to_add = [NNP_rect_glphys, NNP_rect_glphys, NNP_rect_glphys, NNP_rect_glphys, Nxz_rect_glyphs, Nxz_rect_glyphs, Nxz_rect_glyphs, Nxz_rect_glyphs]
@@ -469,7 +463,7 @@ draw_button = Button(label="Draw", button_type="success")
 draw_button.on_click(draw)
 
 ###Create Show Button:
-show_button = Button(label="Show/Hide principal stress + direction", button_type="success")
+show_button = Button(label="Show/Hide principal stress + direction", button_type="success", disabled=True)
 show_button.on_click(show)
 
 
