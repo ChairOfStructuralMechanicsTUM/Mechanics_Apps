@@ -313,8 +313,8 @@ def changePlaneAngle(attr,old,new):
 
         # Figure 3, Rotate Axis:  
         MohrP_Angle = -MohrP_Angle
-        f3.Rotating_Axis_X_source.data = dict(xS=[0], yS=[0], xE=[25*cos(MohrP_Angle)],    yE=[25*sin(MohrP_Angle)  ])
-        f3.Rotating_Axis_Y_source.data = dict(xS=[0], yS=[0], xE=[-25*sin(-MohrP_Angle)],  yE=[-25*cos(-MohrP_Angle)])
+        f3.Rotating_Axis_X_source.stream(dict(xS=[0], yS=[0], xE=[25*cos(MohrP_Angle)],    yE=[25*sin(MohrP_Angle)  ]),rollover=1)
+        f3.Rotating_Axis_Y_source.stream(dict(xS=[0], yS=[0], xE=[-25*sin(-MohrP_Angle)],  yE=[-25*cos(-MohrP_Angle)]),rollover=1)
         
         global_vars["MohrP_Angle"] = -MohrP_Angle   #      /output
         f2.ChangeMohrCircle(global_vars)
