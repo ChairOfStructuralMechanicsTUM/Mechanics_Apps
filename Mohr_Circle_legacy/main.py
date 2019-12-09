@@ -105,7 +105,7 @@ def show():
         f2.Show_Label_source.data = dict(x=[rleft_x,rright_x,centreX],
                                                 y=[0,0,0],
                                                 names=['\\sigma_{II}','\\sigma_{I}','\\sigma_{M}'])
-        f2.Wedge_source.data=dict(x=[rleft_x], y=[0],radius=[radius/2], sA=[atan(MohrNxz/(MohrNz+(-rleft_x)))], eA=[0])
+        f2.Wedge_source.data=dict(x=[rleft_x], y=[0],radius=[radius/2], sA=[atan(MohrNxz/(MohrNz+(-rleft_x+0.00001)))], eA=[0])
         glMohrFigure2_angle_label.text = '\\alpha_0=' + str(alpha)
         global_vars["MohrChangeShow"] = MohrChangeShow*-1
 
@@ -235,12 +235,7 @@ def NormalForceZ_init(attr,old,new):
 
 def TangentialXZ_init(attr,old,new):
     ## Figure 1, Present the Shear Forces while draw() hasn't yet been called: 
-        # Check if MohrNxz is zero to prevent division by zero:
-        if new == 0:
-            global_vars["MohrNxz"] = 0.00001
-        else:
-            global_vars["MohrNxz"] = new
-
+        global_vars["MohrNxz"] = new
         f1.plot_shear_forces(global_vars["MohrNxz"])
 
 
