@@ -490,5 +490,5 @@ doc_layout = layout(children=[column(
     row(Spacer(height=30)),
     row(column(figure1,row(Spacer(height=10,width=50),column(Normal_X_slider,Normal_Z_slider,Tangential_XZ_slider))),column(figure2,row(Spacer(height=10,width=50),column(draw_button,show_button,reset_button))),column(figure3, row(Spacer(height=10,width=50),Plane_Angle_slider))))])
 curdoc().add_root(doc_layout)
-curdoc().title = "Mohr Circle"
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 
