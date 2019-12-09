@@ -23,7 +23,8 @@ from MC_helper_functions import (
 from MC_constants import (
     initial_MohrNx, initial_MohrNxz, initial_MohrNz, initial_MohrP_Angle,
     initial_Neta, initial_Nzeta, initial_Nzetaeta,
-    initial_centreX, initial_radius, initial_rleft_z
+    initial_centreX, initial_radius, initial_rleft_z,
+    c_blue, c_orange, c_green
 )
 
 # latex integration
@@ -291,25 +292,25 @@ def changePlaneAngle(attr,old,new):
 
 
 ### Figure 1, Define Geometry:
-NxP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.NxP_arrow_source,line_color="#E37222")
-NxN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.NxN_arrow_source,line_color="#E37222")
-NzP_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.NzP_arrow_source,line_color="#E37222")
-NzN_arrow_glyph = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.NzN_arrow_source,line_color="#E37222")
-Nxz1_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.Nxz1_arrow_source,line_color="#0065BD")
-Nxz2_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.Nxz2_arrow_source,line_color="#0065BD")
-Nxz3_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.Nxz3_arrow_source,line_color="#0065BD")
-Nxz4_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.Nxz4_arrow_source,line_color="#0065BD")
+NxP_arrow_glyph = Arrow(end=OpenHead(line_color=c_orange,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.NxP_arrow_source,line_color=c_orange)
+NxN_arrow_glyph = Arrow(end=OpenHead(line_color=c_orange,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.NxN_arrow_source,line_color=c_orange)
+NzP_arrow_glyph = Arrow(end=OpenHead(line_color=c_orange,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.NzP_arrow_source,line_color=c_orange)
+NzN_arrow_glyph = Arrow(end=OpenHead(line_color=c_orange,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.NzN_arrow_source,line_color=c_orange)
+Nxz1_arrow_glyph = Arrow(end=OpenHead(line_color=c_blue,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.Nxz1_arrow_source,line_color=c_blue)
+Nxz2_arrow_glyph = Arrow(end=OpenHead(line_color=c_blue,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.Nxz2_arrow_source,line_color=c_blue)
+Nxz3_arrow_glyph = Arrow(end=OpenHead(line_color=c_blue,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.Nxz3_arrow_source,line_color=c_blue)
+Nxz4_arrow_glyph = Arrow(end=OpenHead(line_color=c_blue,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.Nxz4_arrow_source,line_color=c_blue)
 ### Figure 1, Rectangle glyphs:
-NNP_rect_glphys = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-Nxz_rect_glyphs = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+NNP_rect_glphys = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color=c_orange, fill_alpha=0.5)
+Nxz_rect_glyphs = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color=c_blue, fill_alpha=0.5)
 
 ### Figure 1, Define Figure and add Geometry:
 figure1 = figure(title="Stress State A", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
@@ -327,12 +328,12 @@ glyph_sources = [f1.NxP_rect_source, f1.NxN_rect_source, f1.NzP_rect_source, f1.
 add_glyphs_from_list(figure1, glyphs_to_add, glyph_sources)
 
 # dummy glyphs for the legend entries
-dummy_normal_1 = figure1.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5)
-dummy_shear_1  = figure1.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5)
+dummy_normal_1 = figure1.square([0.0],[0.0],size=0,fill_color=c_orange,fill_alpha=0.5)
+dummy_shear_1  = figure1.square([0.0],[0.0],size=0,fill_color=c_blue,fill_alpha=0.5)
 
 legend1 = LatexLegend(items=[
     ("\\text{Normal Stresses}\\ \\sigma_x, \\sigma_z", [dummy_normal_1]),
-    ("\\text{Shear Stresses}\\ \\tau_{xz}", [dummy_shear_1]),
+    ("\\text{Shear Stresses}\\ \\tau_{xz}",            [dummy_shear_1 ]),
 ], location='top_left', max_label_width = 220)
 figure1.add_layout(legend1)
 
@@ -355,10 +356,10 @@ figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
 figure2.add_glyph(f2.Mohr_Circle_source,Mohr_Circle_glyph)
 figure2.add_glyph(f2.Wedge_source,Wedge_glyph)
 # Modified line
-figure2.line(x='x',y='y',source= f2.Newplane_line_source, color="#A2AD00", line_width=3, line_join = 'bevel')
-figure2.circle(x='x',y='y',source= f2.Newplane_line_source, size=4, color="black", alpha=0.4)
-figure2.circle(x='x', y='y', source=f2.Moving_Label_source, size=5, color="black")
-figure2.circle(x='x', y='y', source=f2.Show_Label_source, size=5, color="firebrick")
+figure2.line  (x='x', y='y', source= f2.Newplane_line_source,         color=c_green, line_width=3, line_join = 'bevel')
+figure2.circle(x='x', y='y', source= f2.Newplane_line_source, size=4, color="black", alpha=0.4)
+figure2.circle(x='x', y='y', source= f2.Moving_Label_source,  size=5, color="black")
+figure2.circle(x='x', y='y', source= f2.Show_Label_source,    size=5, color="firebrick")
 figure2_labels1 = LatexLabelSet(x='x', y='y', text='names', level='glyph', x_offset=0, y_offset=0, source=f2.Perm_Label_source)
 figure2_labels2 = LatexLabelSet(x='x', y='y', text='names', source=f2.Moving_Label_source, text_color = 'black', level='glyph', x_offset=3, y_offset=3)
 figure2_labels3 = LatexLabelSet(x='x', y='y', text='names', source=f2.Show_Label_source, text_color = 'firebrick', level='glyph', x_offset=3, y_offset=-15)
@@ -372,31 +373,31 @@ glMohrFigure2_angle_label = LatexLabel(text="",x=20,y=330,render_mode='css',text
 figure2.add_layout(glMohrFigure2_angle_label)
 
 ### Figure 3: Define Geometry
-Rotating_Plane_glyph     = Square(x='x',y='y',angle='angle',size='size', fill_color = '#A2AD00', fill_alpha=0.5)
-Rotating_Plane_red_glyph = Square(x='x',y='y',angle='angle',size='size', fill_color = 'firebrick', fill_alpha=0.5)
+Rotating_Plane_glyph     = Square(x='x', y='y', angle='angle', size='size', fill_color=c_green,     fill_alpha=0.5)
+Rotating_Plane_red_glyph = Square(x='x', y='y', angle='angle', size='size', fill_color='firebrick', fill_alpha=0.5)
 
-Rotating_Axis_X_glyph = Arrow(end=NormalHead(fill_color='#A2AD00', size=15), x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=f3.Rotating_Axis_X_source )
-Rotating_Axis_Y_glyph = Arrow(end=NormalHead(fill_color='#A2AD00', size=15), x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=f3.Rotating_Axis_Y_source )
+Rotating_Axis_X_glyph = Arrow(end=NormalHead(fill_color=c_green, size=15), x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=f3.Rotating_Axis_X_source )
+Rotating_Axis_Y_glyph = Arrow(end=NormalHead(fill_color=c_green, size=15), x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=f3.Rotating_Axis_Y_source )
 
-NzetaP_arrow_glyph    = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.NzetaP_arrow_source,line_color="#E37222")
-NzetaN_arrow_glyph    = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.NzetaN_arrow_source,line_color="#E37222")
-NetaP_arrow_glyph     = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.NetaP_arrow_source,line_color="#E37222")
-NetaN_arrow_glyph     = Arrow(end=OpenHead(line_color="#E37222",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.NetaN_arrow_source,line_color="#E37222")
-Nzetaeta1_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.Nzetaeta1_arrow_source,line_color="#0065BD")
-Nzetaeta2_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.Nzetaeta2_arrow_source,line_color="#0065BD")
-Nzetaeta3_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.Nzetaeta3_arrow_source,line_color="#0065BD")
-Nzetaeta4_arrow_glyph = Arrow(end=OpenHead(line_color="#0065BD",line_width= 2, size=5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.Nzetaeta4_arrow_source,line_color="#0065BD")
+NzetaP_arrow_glyph    = Arrow(end=OpenHead(line_color=c_orange,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.NzetaP_arrow_source,line_color=c_orange)
+NzetaN_arrow_glyph    = Arrow(end=OpenHead(line_color=c_orange,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.NzetaN_arrow_source,line_color=c_orange)
+NetaP_arrow_glyph     = Arrow(end=OpenHead(line_color=c_orange,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.NetaP_arrow_source,line_color=c_orange)
+NetaN_arrow_glyph     = Arrow(end=OpenHead(line_color=c_orange,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.NetaN_arrow_source,line_color=c_orange)
+Nzetaeta1_arrow_glyph = Arrow(end=OpenHead(line_color=c_blue,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.Nzetaeta1_arrow_source,line_color=c_blue)
+Nzetaeta2_arrow_glyph = Arrow(end=OpenHead(line_color=c_blue,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.Nzetaeta2_arrow_source,line_color=c_blue)
+Nzetaeta3_arrow_glyph = Arrow(end=OpenHead(line_color=c_blue,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.Nzetaeta3_arrow_source,line_color=c_blue)
+Nzetaeta4_arrow_glyph = Arrow(end=OpenHead(line_color=c_blue,line_width= 2, size=5),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f3.Nzetaeta4_arrow_source,line_color=c_blue)
 ### Figure 3, Rectangle glyphs:
-Neta_rect_glyphs   = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#E37222", fill_alpha=0.5)
-Ntaeta_rect_glyphs = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color="#0065BD", fill_alpha=0.5)
+Neta_rect_glyphs   = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color=c_orange, fill_alpha=0.5)
+Ntaeta_rect_glyphs = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color=c_blue, fill_alpha=0.5)
 ### Figure 3, Define Figure and add Geometry:
 figure3 = figure(title="Stress State B", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400,)
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
@@ -419,12 +420,12 @@ add_glyphs_from_list(figure3, glyphs_to_add, glyph_sources)
 
 
 # dummy glyphs for the legend entries
-dummy_normal_3 = figure3.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5)
-dummy_shear_3  = figure3.square([0.0],[0.0],size=0,fill_color="#0065BD",fill_alpha=0.5)
+dummy_normal_3 = figure3.square([0.0],[0.0],size=0,fill_color=c_orange,fill_alpha=0.5)
+dummy_shear_3  = figure3.square([0.0],[0.0],size=0,fill_color=c_blue,fill_alpha=0.5)
 
 legend3 = LatexLegend(items=[
     ("\\text{Normal Stresses}\\ \\sigma_x, \\sigma_z", [dummy_normal_3]),
-    ("\\text{Shear Stresses}\\ \\tau_{xz}", [dummy_shear_3]),
+    ("\\text{Shear Stresses}\\ \\tau_{xz}",            [dummy_shear_3 ]),
 ], location='top_left', max_label_width = 220)
 figure3.add_layout(legend3)
 
@@ -452,13 +453,13 @@ turn_off_grid(figure2)
 turn_off_grid(figure3)
 
 ### Create  sliders to change Normal and Tangential Forces
-Normal_X_slider= LatexSlider(title="\\sigma_x=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value= 0,start = -10, end = 10, step = 0.5)
+Normal_X_slider= LatexSlider(title="\\sigma_x=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value = 0, start = -10, end = 10, step = 0.5)
 Normal_X_slider.on_change('value',NormalForceX_init)
     
-Normal_Z_slider= LatexSlider(title="\\sigma_z=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value= 0,start = -10, end = 10, step = 0.5)
+Normal_Z_slider= LatexSlider(title="\\sigma_z=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value = 0, start = -10, end = 10, step = 0.5)
 Normal_Z_slider.on_change('value',NormalForceZ_init)
    
-Tangential_XZ_slider= LatexSlider(title="\\tau_{xz}=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value= 0,start = 0, end = 10, step = 0.5)
+Tangential_XZ_slider= LatexSlider(title="\\tau_{xz}=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value = 0, start = 0, end = 10, step = 0.5)
 Tangential_XZ_slider.on_change('value',TangentialXZ_init)
     
 Plane_Angle_slider= LatexSlider(title= "\\alpha=",value_unit='^{\\circ}',value= 0,start = -180, end = 180, step = 1)

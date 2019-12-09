@@ -195,8 +195,8 @@ class fig3():
         self.Rotating_Axis_Y_source.stream(dict(xS=[], yS=[], xE=[], yE=[]), rollover=-1) # arrow glyph
         self.Moving_Label_source.data = dict(x=[], y=[], names =[])
 
-        self.Rotating_Plane_source.data     = dict(x=[], y=[],angle =[],size = [])
-        self.Rotating_Plane_red_source.data = dict(x=[], y=[],angle =[],size = [])
+        self.Rotating_Plane_source.data     = dict(x=[], y=[], angle =[], size = [])
+        self.Rotating_Plane_red_source.data = dict(x=[], y=[], angle =[], size = [])
 
 
     def move_labels(self, MohrP_Angle):
