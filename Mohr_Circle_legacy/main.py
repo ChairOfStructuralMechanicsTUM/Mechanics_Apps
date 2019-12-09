@@ -432,6 +432,7 @@ def turn_off_grid(fig):
     fig.yaxis.axis_line_color=None
     fig.xgrid.visible = False
     fig.ygrid.visible = False
+    fig.toolbar.logo = None
 
 turn_off_grid(figure1)
 turn_off_grid(figure2)
