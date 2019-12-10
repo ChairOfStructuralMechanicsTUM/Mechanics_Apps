@@ -18,11 +18,11 @@ def homogenize( E, G, NU, D ):
     # Quantity of layers (needs to be uneven)
     Quantity = len(D)
     if Quantity % 2 == 0:
-        print "Amount of layers must be uneven"
+        print ("Amount of layers must be uneven")
         return
 
     if Quantity == 0:
-        print "No Homogenisation needed"
+        print ("No Homogenisation needed")
         return
 
     # conver the array of NU from 2D to 1D

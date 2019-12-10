@@ -86,7 +86,7 @@ def string_to_function_parser(fun_str, h, args):
     :return:
     """
 
-    print fun_str
+    print (fun_str)
     fun_sym = sympify(fun_str)
     fun_lam = sym_to_function_parser(fun_sym + 0.0j, h, args)
 

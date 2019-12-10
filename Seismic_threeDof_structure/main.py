@@ -468,7 +468,7 @@ def show_undef_config(active):
     if active == True:
         def_config_button.active = False
         structure.update_system( np.zeros(3) )
-#        structure.update_force_indicator_location()
+        structure.update_force_indicator_location()
         
     else:
         pass

@@ -50,7 +50,7 @@ def main( ):
                            "Maximum Element Size (FEM)"],
                             FrequencyRange,
                             Width = 950,
-                            Height = 550)
+                            Height = 650)
 
 
     Graph.defineContainers(["WaveVelocity",
@@ -272,7 +272,7 @@ def main( ):
                        " and crosswise layup assumed.",
                 render_as_text = False,
                 width = 500,
-                height = 30 )
+                height = 40 )
 
 
     Scheme = Div( text = "<img src='/Vibroacoustic_plates/static/images/scheme.png' width=464 height=220>",
@@ -299,19 +299,19 @@ def main( ):
 					   ,
                 render_as_text = False,
                 width = 1000,
-                height = 40 )
+                height = 50 )
     
     Title = Div ( text = "<b><h1> Vibroacoustics of Plates</b><h1>",
                  render_as_text = False,
                  width = 900,
-                 height = 30)
+                 height = 80)
 
     # SPECIFY THE LAYOUT:
-    Buttons = row( row( Spacer( width = 50 ),
+    Buttons = row( row( Spacer( width = 50),
                         ApplyButton,
-                        Spacer( width = 50 ),
+                        Spacer( width = 50),
                         ShowInput,
-                        Spacer( width = 50 ),
+                        Spacer( width = 50),
                         SetDefaultButton ) )
 
     Headline = row( column( Title, Description ), Spacer( width = 50 ), Scheme )
@@ -329,11 +329,12 @@ def main( ):
                         GeometryProperties.Table,
                         LayersInfo.Widget,
                         Info,
-                        Spacer( height = 20 ) )
+                        Spacer( height = 30 ) )
 
 
-    RightSide = column( Graph.Widget , Buttons,WarningMessage.Widget,
-                        Spacer( height = 40 ) )
+    RightSide = column( Graph.Widget , WarningMessage.Widget,Spacer( height = 20 ),
+     Buttons,
+                        Spacer( height = 100 ) )
 
 
     # ========================= COMMUNICATION PART =============================
@@ -378,7 +379,7 @@ def main( ):
 
     # RUN ALL WIDGETS
     doc.add_root(Headline)
-    doc.add_root( column( Spacer( height = 20 ),
+    doc.add_root( column( Spacer( height =250 ),
                       row( LeftSide,
                            Spacer( width = 50 ),
                            RightSide,

@@ -50,23 +50,28 @@ def draw():
     ##Figure 1, Draw glMohrNx and keep it until reset() ist called:
     
     if(glMohrNx*0.75<0):
-        Mvar.NxP_arrow_source.data = dict(xS=[12.5-glMohrNx*0.75],  xE=[12.5],  yS=[0], yE=[0], lW = [2])
-        Mvar.NxN_arrow_source.data = dict(xS=[-12.5+glMohrNx*0.75], xE=[-12.5], yS=[0], yE=[0], lW = [2]) 
+        #Mvar.NxP_arrow_source.data = dict(xS=[12.5-glMohrNx*0.75],  xE=[12.5],  yS=[0], yE=[0], lW = [2])
+        #Mvar.NxN_arrow_source.data = dict(xS=[-12.5+glMohrNx*0.75], xE=[-12.5], yS=[0], yE=[0], lW = [2]) 
+        Mvar.NxP_arrow_source.stream(dict(xS=[12.5-glMohrNx*0.75],  xE=[12.5],  yS=[0], yE=[0], lW = [2]),rollover=1)
+        Mvar.NxN_arrow_source.stream(dict(xS=[-12.5+glMohrNx*0.75], xE=[-12.5], yS=[0], yE=[0], lW = [2]),rollover=1)
 
         Mvar.NxP_rect_source.data  = dict(x=[(25-glMohrNx*0.75)/2],  y=[0], w=[glMohrNx*0.75-1.5], h = [13], angle=[0])
         Mvar.NxN_rect_source.data  = dict(x=[(-25+glMohrNx*0.75)/2], y=[0], w=[glMohrNx*0.75-1.5], h = [13], angle=[0])
         
     elif(glMohrNx*0.75==0):
-        Mvar.NxP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        Mvar.NxN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        #Mvar.NxP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        #Mvar.NxN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        Mvar.NxP_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
+        Mvar.NxN_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
 
         Mvar.NxP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
         Mvar.NxN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
 
     else:
-        Mvar.NxP_arrow_source.data = dict(xS=[12.5],  xE=[12.5+glMohrNx*0.75],  yS=[0], yE=[0], lW = [2])
-        Mvar.NxN_arrow_source.data = dict(xS=[-12.5], xE=[-12.5-glMohrNx*0.75], yS=[0], yE=[0], lW = [2])
-
+        #Mvar.NxP_arrow_source.data = dict(xS=[12.5],  xE=[12.5+glMohrNx*0.75],  yS=[0], yE=[0], lW = [2])
+        #Mvar.NxN_arrow_source.data = dict(xS=[-12.5], xE=[-12.5-glMohrNx*0.75], yS=[0], yE=[0], lW = [2])
+        Mvar.NxP_arrow_source.stream(dict(xS=[12.5],  xE=[12.5+glMohrNx*0.75],  yS=[0], yE=[0], lW = [2]),rollover=1)
+        Mvar.NxN_arrow_source.stream(dict(xS=[-12.5], xE=[-12.5-glMohrNx*0.75], yS=[0], yE=[0], lW = [2]),rollover=1)
         Mvar.NxP_rect_source.data  = dict(x=[(25+glMohrNx*0.75)/2],  y=[0], w=[glMohrNx*0.75+1.5], h = [13], angle=[0])        
         Mvar.NxN_rect_source.data  = dict(x=[(-25-glMohrNx*0.75)/2], y=[0], w=[glMohrNx*0.75+1.5], h = [13], angle=[0])  
     
@@ -75,21 +80,24 @@ def draw():
     new = glMohrNz
     new = new*0.75
     if(new<0):
-        Mvar.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2])
-        Mvar.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2])
-
+        #Mvar.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2])
+        #Mvar.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2])
+        Mvar.NzP_arrow_source.stream(dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2]),rollover=1)
+        Mvar.NzN_arrow_source.stream(dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2]),rollover=1)
         Mvar.NzP_rect_source.data  = dict(x=[0], y=[(25-new)/2],  w=[13], h = [new-1.5], angle=[0])
         Mvar.NzN_rect_source.data  = dict(x=[0], y=[(-25+new)/2], w=[13], h = [new-1.5], angle=[0])   
     elif (new==0):
-        Mvar.NzP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        Mvar.NzN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-
+        #Mvar.NzP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        #Mvar.NzN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        Mvar.NzP_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
+        Mvar.NzN_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
         Mvar.NzP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
         Mvar.NzN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
     else:
-        Mvar.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new], lW = [2])
-        Mvar.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2])
-
+        #Mvar.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new], lW = [2])
+        #Mvar.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2])
+        Mvar.NzP_arrow_source.stream(dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new], lW = [2]),rollover=1)
+        Mvar.NzN_arrow_source.stream(dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2]),rollover=1)
         Mvar.NzP_rect_source.data  = dict(x=[0], y=[(25+new)/2],  w=[13], h = [new+1.5], angle=[0])
         Mvar.NzN_rect_source.data  = dict(x=[0], y=[(-25-new)/2], w=[13], h = [new+1.5], angle=[0])   
          
@@ -97,21 +105,29 @@ def draw():
     new = glMohrNxz
     new = new*0.75        
     if(new==0):
-        Mvar.Nxz1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        Mvar.Nxz2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        Mvar.Nxz3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-        Mvar.Nxz4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])    
+        #Mvar.Nxz1_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        #Mvar.Nxz2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        #Mvar.Nxz3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        #Mvar.Nxz4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = []) 
+        Mvar.Nxz1_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
+        Mvar.Nxz2_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
+        Mvar.Nxz3_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
+        Mvar.Nxz4_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)   
          
         Mvar.Nxz1_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
         Mvar.Nxz2_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
         Mvar.Nxz3_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
         Mvar.Nxz4_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
     else:     
-        Mvar.Nxz1_arrow_source.data = dict(xS=[9],       xE=[9],        yS=[0-(new/2)], yE=[0+(new/2)], lW = [2])
-        Mvar.Nxz2_arrow_source.data = dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2])
-        Mvar.Nxz3_arrow_source.data = dict(xS=[-new/2],  xE=[new/2],    yS=[9],         yE=[9],         lW = [2])
-        Mvar.Nxz4_arrow_source.data = dict(xS=[(new/2)], xE=[-(new/2)], yS=[-9],        yE=[-9],        lW = [2]) 
-         
+        #Mvar.Nxz1_arrow_source.data = dict(xS=[9],       xE=[9],        yS=[0-(new/2)], yE=[0+(new/2)], lW = [2])
+        #Mvar.Nxz2_arrow_source.data = dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2])
+        #Mvar.Nxz3_arrow_source.data = dict(xS=[-new/2],  xE=[new/2],    yS=[9],         yE=[9],         lW = [2])
+        #Mvar.Nxz4_arrow_source.data = dict(xS=[(new/2)], xE=[-(new/2)], yS=[-9],        yE=[-9],        lW = [2]) 
+
+        Mvar.Nxz1_arrow_source.stream(dict(xS=[9],       xE=[9],        yS=[0-(new/2)], yE=[0+(new/2)], lW = [2]),rollover=1)
+        Mvar.Nxz2_arrow_source.stream(dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2]),rollover=1)
+        Mvar.Nxz3_arrow_source.stream(dict(xS=[-new/2],  xE=[new/2],    yS=[9],         yE=[9],         lW = [2]),rollover=1)
+        Mvar.Nxz4_arrow_source.stream(dict(xS=[(new/2)], xE=[-(new/2)], yS=[-9],        yE=[-9],        lW = [2]),rollover=1)         
         Mvar.Nxz1_rect_source.data  = dict(x=[9],  y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
         Mvar.Nxz2_rect_source.data  = dict(x=[-9], y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
         Mvar.Nxz3_rect_source.data  = dict(x=[0],  y=[9],  w=[13],          h=[0.3*new+0.5], angle=[0])
