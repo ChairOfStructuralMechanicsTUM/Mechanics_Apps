@@ -78,15 +78,15 @@ support_source2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 quad_source = ColumnDataSource(data=dict(top= [], bottom= [],left = [], right =[]))
 segment_source = ColumnDataSource(data=dict(x0= [], y0= [],x1 = [], y1 =[]))
 ### Sliders and Buttons:
-p_loc_slide= LatexSlider(title="\\mathrm{Load \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value= p_loci,start = x0, end = xf, step = 1.0)
-p_mag_slide = LatexSlider(title="\\mathrm{Load \ Amplitude}", value = 1.0, start=-1.0, end=1.0, step=2.0)
-f2_loc_slide = LatexSlider(title="\\mathrm{Support \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=f2_loci,start = x0, end = xf, step = 1.0)
+p_loc_slide= LatexSlider(title="\\mathrm{Load \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value= p_loci,start = x0, end = xf, step = 1.0, width=300)
+p_mag_slide = LatexSlider(title="\\mathrm{Load \ Amplitude}", value = 1.0, start=-1.0, end=1.0, step=2.0, width=300)
+f2_loc_slide = LatexSlider(title="\\mathrm{Support \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=f2_loci,start = x0, end = xf, step = 1.0, width=300)
 # Button to choose type of load:
-radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Triangular Load"], active=loadoptionsi, width = 600)
+radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Triangular Load"], active=loadoptionsi, width=300)
 # Reset Button
-Reset_button = Button(label="Reset", button_type="success")
+Reset_button = Button(label="Reset", button_type="success", width=300)
 # Show Button
-Show_button = Button(label="Show/Hide Support Forces", button_type="success")
+Show_button = Button(label="Show/Hide Support Forces", button_type="success", width=300)
 
 
 #################################
