@@ -815,7 +815,7 @@ plot1_labels1 = LatexLabelSet(x='x', y='y', text='names', source=plot1_label_sou
 plot1.line(x='x', y='y', source=shear_source, color="#A2AD00",line_width=2)
 plot1.line(x= [x0-1,xf+1], y = [0, 0 ], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot1.line(x= [xf/2,xf/2], y = [-1.5,1.5], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
-plot1.square([0.0],[0.0],size=0,fill_color="#A2AD00",fill_alpha=0.5,legend="Shear Force")
+plot1.square([0.0],[0.0],size=0,fill_color="#A2AD00",fill_alpha=0.5,legend_label="Shear Force")
 # Set properties
 plot1.legend.location = 'top_right'
 plot1.toolbar.logo = None
@@ -839,7 +839,7 @@ plot2.axis.visible = False
 plot2.outline_line_width = 2
 plot2.outline_line_color = "Black"
 plot2.title.text_font_size="13pt"
-plot2.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5,legend="Bending Moment")
+plot2.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5,legend_label="Bending Moment")
 plot2.legend.location = 'top_right'
 plot2.toolbar.logo=None
 # Add layouts
