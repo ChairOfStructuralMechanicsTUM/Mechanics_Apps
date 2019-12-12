@@ -412,6 +412,6 @@ description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=
 ####Output section
 ################################################################################
 #Output to the browser:
-curdoc().add_root(column(description1, plot, row(weight_slide, Spacer(width=50), button), description))
+curdoc().add_root(column(description1, column(plot, row(weight_slide, Spacer(width=50), button), description)))
 
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
