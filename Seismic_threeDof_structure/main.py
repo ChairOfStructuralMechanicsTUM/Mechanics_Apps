@@ -366,14 +366,14 @@ def solve_system():
     else:
         pass
     
-solve_system_button = Button(label="Solve System", button_type="success")
+solve_system_button = Button(label="Solve System", button_type="success", width=300)
 solve_system_button.on_click(solve_system)
 
 ##################################### (2) #####################################
-mass_input = TextInput(value="10000", title="Mass [kg]")
+mass_input = TextInput(value="10000", title="Mass [kg]", width=300)
 
 ##################################### (3) #####################################
-stiffness_input = TextInput(value="10000000", title="Stiffness [N*m"u"\u00B2]")
+stiffness_input = TextInput(value="10000000", title="Stiffness [N*m"u"\u00B2]", width=300)
 
 ##################################### (4) #####################################
 Erdbebenzonen_text = Div(text="""<b>Earthquake Zones</b>""")
@@ -435,14 +435,14 @@ def calculate_ERS():
     for mode in modes:
         mode.modify_location_in_ERS(siesmicParameters)
     
-calculate_ERS_button = Button(label="Re-calculate Elastic Response Spectrum", button_type="success")
+calculate_ERS_button = Button(label="Re-calculate Elastic Response Spectrum", button_type="success", width=300)
 calculate_ERS_button.on_click(calculate_ERS)
 
 #################################### (5) ######################################
 def_undef_choices_text = Div(text="""<b>Choose which configuration to show</b> """)
 
 def show_def_config(active):
-    
+    print(active)
     if active == True:
         undef_config_button.active = False
         maxes = np.zeros((3,3))
@@ -465,6 +465,7 @@ def show_def_config(active):
         pass
     
 def show_undef_config(active):
+    print(active)
     if active == True:
         def_config_button.active = False
         structure.update_system( np.zeros(3) )
@@ -473,10 +474,10 @@ def show_undef_config(active):
     else:
         pass
 
-def_config_button = Toggle(label="Deformed Configuration", button_type="success",width=25)
+def_config_button = Toggle(label="Deformed Configuration", button_type="success", width=175)
 def_config_button.on_click(show_def_config)
 
-undef_config_button = Toggle(label="Undeformed Configuration", button_type="success",width=25)
+undef_config_button = Toggle(label="Undeformed Configuration", button_type="success", width=175)
 undef_config_button.on_click(show_undef_config)
 
 ##################################### (6) #####################################
@@ -517,8 +518,9 @@ curdoc().add_root(
                                                    def_undef_choices_text, 
                                                    row(
                                                        undef_config_button,
-                                                       Spacer(width=180), 
-                                                       def_config_button
+                                                       Spacer(width=25), 
+                                                       def_config_button,
+                                                       Spacer(width=50)  # needed such that the mode plots below don't overlap
                                                       ),
                                                    mass_input,
                                                    stiffness_input,
