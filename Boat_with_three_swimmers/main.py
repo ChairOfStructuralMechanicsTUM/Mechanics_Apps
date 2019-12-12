@@ -493,7 +493,7 @@ curdoc().add_root(
                                     reset_button
                                    ),
                              Spacer(width=100),
-                             velocity_diagram,
+                             column(velocity_diagram),
                             )
                         )
                  )
