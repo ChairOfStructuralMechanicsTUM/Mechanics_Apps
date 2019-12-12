@@ -26,9 +26,9 @@ from Maxwell_Frame_Functions import create_prof, create_shift, create_wdline
 ################################################################################
 ###Creation of frames
 ################################################################################
-orig            = Maxwell_Frame("o","0")                                                #Creation of original frame. This frame is a reference of the original location
+orig        = Maxwell_Frame("o","0")                                                    #Creation of original frame. This frame is a reference of the original location
 default     = dict(x = [0.1,0.8], y = [0.1,0.1], size = [glc.tri_size,glc.tri_size])    #Creation of triangle of original frame
-t_line          = dict(x=[0.7,0.9], y=[glc.ground,glc.ground])                          #Creation of Line
+t_line      = dict(x=[0.7,0.9], y=[glc.ground,glc.ground])                              #Creation of Line
 # frame 1 and 2 are created in Maxwell_BettyDisplacements
 
 
@@ -109,8 +109,8 @@ def button_fun():
     create_prof(MBD.f1)
     create_shift(MBD.f1)
     create_wdline(MBD.f1)
-    loc_slider.value  = loc_val
-    MBD.f2.p_mag          = MBD.f1.p_mag
+    loc_slider.value    = loc_val
+    MBD.f2.p_mag        = MBD.f1.p_mag
     mag_slider.disabled = True
     button.disabled     = True
     
@@ -130,56 +130,60 @@ def clearMBDf1():
     MBD.f1.pts.data             = dict(x = [], y = [] )
     MBD.f1.label.data           = dict(x=[0.45] , y=[0.62], name = [ "F"u"\u2081"])
     #MBD.f1.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    MBD.f1.arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
-    MBD.f1.pts.data             = dict(x = [], y = [] )
-    MBD.f1.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    MBD.f1.arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)
+    #MBD.f1.pts.data             = dict(x = [], y = [] )
+    MBD.f1.e_s.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)
     MBD.f1.tri.data             = dict(x = [], y = [], size = [])
     MBD.f1.seg.data             = dict(x0=[], x1=[], y0=[], y1=[])
     MBD.f1.dline.data           = dict(x=[], y=[])
     MBD.f1.dlabel.data          = dict(x=[] , y=[], name = [])
     #MBD.f1.w1.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
     #MBD.f1.w2.data              = dict(xS=[], xE=[], yS=[], yE=[])
-    MBD.f1.w1.stream(dict(xS=[], xE=[], yS=[], yE=[], name = []),rollover=1)
-    MBD.f1.w2.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=1)
+    MBD.f1.w1.stream(dict(xS=[], xE=[], yS=[], yE=[], name = []),rollover=-1)
+    MBD.f1.w2.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=-1)
     #MBD.f1.wdline.data          = dict(x1=[], x2 =[], y1 = [], y2=[])
-    MBD.f1.wdline.stream(dict(x1=[], x2 =[], y1 = [], y2=[]),rollover=1)
+    MBD.f1.wdline.stream(dict(x1=[], x2 =[], y1 = [], y2=[]),rollover=-1)
 
 def clearMBDf2():
     '''Clears the MBD.f2 frame'''
     MBD.f2.pts.data             = dict(x = [], y = [] )
     MBD.f2.label.data           = dict(x=[] , y=[], name = [])
     #MBD.f2.arrow_source.data    = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-    MBD.f2.arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)    
+    MBD.f2.arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)    
     MBD.f2.tri.data             = dict(x = [], y = [], size = [])
-    MBD.f2.e_s.data             = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+    MBD.f2.e_s.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)
     MBD.f2.set_param(loc_val)
     MBD.f2.set_mag(mag_val)
     MBD.f2.seg.data             = dict(x0=[], x1=[], y0=[], y1=[])
     MBD.f2.dline.data           = dict(x=[], y=[])
     MBD.f2.dlabel.data          = dict(x=[] , y=[], name = [])
     #MBD.f2.w1.data              = dict(xS=[], xE=[], yS=[], yE=[], name = [])
+    MBD.f2.w1.stream(dict(xS=[], xE=[], yS=[], yE=[], name = []),rollover=-1)
+    MBD.f2.w2.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=-1)
     #MBD.f2.w2.data              = dict(xS=[], xE=[], yS=[], yE=[])
-    MBD.f1.w1.stream(dict(xS=[], xE=[], yS=[], yE=[], name = []),rollover=1)
-    MBD.f1.w2.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=1)
+    MBD.f1.w1.stream(dict(xS=[], xE=[], yS=[], yE=[], name = []),rollover=-1)
+    #print(MBD.f1.w2.data)
+    MBD.f1.w2.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=-1)
+    #print(MBD.f1.w2.data)
     #EDIT Start
     #MBD.f2.w12.data             = dict(xS=[], xE=[], yS=[], yE=[], name = [])
     #MBD.f2.w12_11.data             = dict(xS=[], xE=[], yS=[], yE=[])
     #MBD.f2.w12_12.data           = dict(xS=[], xE=[], yS=[], yE=[])
     #MBD.f2.w21.data           = dict(xS=[], xE=[], yS=[], yE=[], name = [])
-    MBD.f2.w12.stream(dict(xS=[], xE=[], yS=[], yE=[], name = []),rollover=1)
-    MBD.f2.w12_11.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=1)
-    MBD.f2.w12_12.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=1)
-    MBD.f2.w21.stream(dict(xS=[], xE=[], yS=[], yE=[], name = []),rollover=1)
+    MBD.f2.w12.stream(dict(xS=[], xE=[], yS=[], yE=[], name = []),rollover=-1)
+    MBD.f2.w12_11.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=-1)
+    MBD.f2.w12_12.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=-1)
+    MBD.f2.w21.stream(dict(xS=[], xE=[], yS=[], yE=[], name = []),rollover=-1)
     #MBD.f2.w21_11.data           = dict(xS=[], xE=[], yS=[], yE=[])
     #MBD.f2.w21_12.data           = dict(xS=[], xE=[], yS=[], yE=[])
-    MBD.f2.w21_11.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=1)
-    MBD.f2.w21_12.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=1)
+    MBD.f2.w21_11.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=-1)
+    MBD.f2.w21_12.stream(dict(xS=[], xE=[], yS=[], yE=[]),rollover=-1)
     #MBD.f2.wdline.data          = dict(x1=[], x2 =[], y1 = [], y2=[])
-    MBD.f2.wdline.stream(dict(x1=[], x2 =[], y1 = [], y2=[]),rollover=1)
+    MBD.f2.wdline.stream(dict(x1=[], x2 =[], y1 = [], y2=[]),rollover=-1)
     #MBD.f2.wdline12.data          = dict(x1=[], x2 =[], y1 = [], y2=[])   
     #MBD.f2.wdline21.data          = dict(x1=[], x2 =[], y1 = [], y2=[])
-    MBD.f2.wdline12.stream(dict(x1=[], x2 =[], y1 = [], y2=[]),rollover=1)   
-    MBD.f2.wdline21.stream(dict(x1=[], x2 =[], y1 = [], y2=[]),rollover=1)
+    MBD.f2.wdline12.stream(dict(x1=[], x2 =[], y1 = [], y2=[]),rollover=-1)   
+    MBD.f2.wdline21.stream(dict(x1=[], x2 =[], y1 = [], y2=[]),rollover=-1)
     #EDIT End
 
 button.on_click(button_fun)
@@ -341,7 +345,7 @@ w22_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f2color,line_width= 3, size=
 #MBD.f2 w21 arrow
 w21_11_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f2color,line_width= 3, size=6,line_alpha = 0.5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w21_11,line_color=MBD.f2color,line_alpha = 0.5)
-w22_12_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f2color,line_width= 3, size=6,line_alpha = 0.5),
+w21_12_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f2color,line_width= 3, size=6,line_alpha = 0.5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w21_12,line_color=MBD.f2color,line_alpha = 0.5)
 #EDIT End
 ########
@@ -362,7 +366,7 @@ plot.add_layout(w22_arrow_glyph)
 plot.add_layout(w12_11_arrow_glyph)
 plot.add_layout(w12_12_arrow_glyph)
 plot.add_layout(w21_11_arrow_glyph)
-plot.add_layout(w22_12_arrow_glyph)
+plot.add_layout(w21_12_arrow_glyph)
 #EDIT End
 
 plot.add_glyph(absource,abtext_glyph)
@@ -393,5 +397,5 @@ description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=
 ################################################################################
 ###Send to the browser
 ################################################################################
-curdoc().add_root( column(description,plot,row(mag_slider, loc_slider), row(button,rbutton), description1 ) )
+curdoc().add_root( column(description,column(plot,row(mag_slider, loc_slider), row(button,rbutton), description1 ) ))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
