@@ -442,7 +442,6 @@ calculate_ERS_button.on_click(calculate_ERS)
 def_undef_choices_text = Div(text="""<b>Choose which configuration to show</b> """)
 
 def show_def_config(active):
-    print(active)
     if active == True:
         undef_config_button.active = False
         maxes = np.zeros((3,3))
@@ -465,7 +464,6 @@ def show_def_config(active):
         pass
     
 def show_undef_config(active):
-    print(active)
     if active == True:
         def_config_button.active = False
         structure.update_system( np.zeros(3) )
