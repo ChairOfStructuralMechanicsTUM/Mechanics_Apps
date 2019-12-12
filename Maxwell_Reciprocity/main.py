@@ -15,7 +15,8 @@ from latex_support import LatexDiv
 # external files
 from Maxwell_Frame import Maxwell_Frame
 import Maxwell_Constants as glc
-import Maxwell_BettyDisplacements as MBD
+#import Maxwell_BettyDisplacements as MBD
+from Maxwell_BettyDisplacements import BettyDisplacements
 from Maxwell_Frame_Functions import create_prof, create_shift, create_wdline
 
 #################################################################################
@@ -31,6 +32,7 @@ default     = dict(x = [0.1,0.8], y = [0.1,0.1], size = [glc.tri_size,glc.tri_si
 t_line      = dict(x=[0.7,0.9], y=[glc.ground,glc.ground])                              #Creation of Line
 # frame 1 and 2 are created in Maxwell_BettyDisplacements
 
+MBD         = BettyDisplacements()
 
 ################################################################################
 ###Sliders and buttons
