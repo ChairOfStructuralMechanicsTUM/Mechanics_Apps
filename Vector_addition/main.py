@@ -67,7 +67,8 @@ def updateVector1 ():
  
     if (Vector1== 0):
         #Vector1_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-        Vector1_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=1)
+        Vector1_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=-1)
+        V1_label_source.data = dict (x=[],y=[],V1=[])
     else:
     # else the arrow is proportional to the Vector1
         xE = Vector1*cos(theta1)
@@ -82,7 +83,8 @@ def updateVector2 ():
     # if Vector2 = 0 then there is no arrow
     if (Vector2== 0):
         #Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-        Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=1)
+        Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=-1)
+        V2_label_source.data = dict (x=[],y=[],V2=[])
     else:
         # else the arrow is proportional to the Vector1
         xE = Vector2*cos(theta2)
@@ -103,11 +105,11 @@ def updateResultant():
     R  = round(sqrt(xE**2.0+yE**2.0),1)
     if (abs(R) < 1e-3):
         #VectorResultant_source.data = dict(xS=[], yS=[], xE=[], yE=[])
-        VectorResultant_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=1)
+        VectorResultant_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=-1)
         Resultant_label_source.data = dict(x=[], y=[], R=[])
     else:
         #VectorResultant_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        VectorResultant_source.stream(dict(xS=[0], yS=[0], xE=[xE], yE=[yE]), rollover=1 )
+        VectorResultant_source.stream(dict(xS=[0], yS=[0], xE=[xE], yE=[yE]), rollover=1)
         # Readjust positions
         xL = xE-3
         yL = yE-6
