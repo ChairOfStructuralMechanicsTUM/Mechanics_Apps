@@ -422,29 +422,29 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
     LayerThicknessBuffer = Tables[ "GeometryProperties" ].getValue( 0, 2 )
     try:
 
-        print("test 00")
+
         Layers = getLayersFromString( Tables[ "GeometryProperties" ].getValue( 0, 2 ) )
-        print("test 01")
+
         LayersInfo.printMessage( str( len( Layers ) ) )
-        print("test 02")
+
         # Homogenize the input data
         if len(Layers) != 1:
-            print("test 02.1")
+
             makeMultiLayerMask( Tables )
-            print("test 02.2")
+
             HomogenizedData = homogenize( Tables[ "ElasticModulus" ].getData( )[ 0 ],
                                             Tables[ "ShearModulus" ].getData( )[ 0 ],
                                             Tables[ "PoissonRatios" ].getData( ),
                                             Layers )
 
             #cangeMode( Tables, WarningMessage, Graph.getMode( ) )
-            print("test 02.3")
+
             Tables[ "ElasticModulus" ].assignValuesSet( HomogenizedData[ "ElasticModulus" ] )
             Tables[ "ShearModulus" ].assignValuesSet( HomogenizedData[ "ShearModulus" ] )
             Tables[ "PoissonRatios" ].assignValuesSet( HomogenizedData[ "PoissonRatios" ] )
             Tables[ "GeometryProperties" ].assignValue( 0, 2, HomogenizedData[ "TotalThickness" ] )
-            print("test 02.4")
-        print("test 03")
+
+
         # Part of error handling.Function "isInputNegative" throws an error
         # if there is an element with its negetive value.
         isInputNegative( Tables [ "ElasticModulus" ].getData( ) )
@@ -455,12 +455,12 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
 
         # update the tables buffers
         makeMask( Tables, Graph.getMode() )
-        print("test 04")
+
         # before calling user-define functions check the current mode
         cangeMode( Tables, WarningMessage, Graph.getMode() )
 
         precomputePoissonRatios( Tables )
-        print("test 05")
+
         # get data from the corresponding tables
         ElasticModulusData = Tables [ "ElasticModulus" ].getData( )
         ShearModulusData = Tables [ "ShearModulus" ].getData( )
@@ -472,7 +472,6 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
     #################### CALL USER-SPECIFIC FUNCTION ##########################
 
         testInputData( Graph.getMode(), PoissonRatiosData )
-        print("test 06")
 
         Graph.Containers[ "WaveVelocity" ] = wave_speeds(
                                                 ElasticModulusData,
@@ -524,10 +523,10 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
                                                         GeometryPropertiesData,
                                                         bool( Graph.getMode() ),
                                                         Graph.getRange() )
-        print("test 08")
+
         # Update the current graph with new data
         updateGraph( Graph, Graph.getCurrentGraphNumber( ) )
-        print("test 09")
+
         WarningMessage.clean()
 
 
