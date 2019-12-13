@@ -170,9 +170,9 @@ fig.toolbar.logo = None #removes bokeh logo
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
 p = figure(title="", y_range=(2,-2), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
     toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
-p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
-p.line(x='t',y='s',source=displacement_particular,color="#a2ad00",legend="Particular Solution",muted_color="#98c6ea",muted_alpha=0.2)
-p.line(x='t',y='s',source=displacement_homogeneous,color="#64a0c8",legend="Homogeneous Solution",muted_color="#64a0c8",muted_alpha=0.2)
+p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend_label="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
+p.line(x='t',y='s',source=displacement_particular,color="#a2ad00",legend_label="Particular Solution",muted_color="#98c6ea",muted_alpha=0.2)
+p.line(x='t',y='s',source=displacement_homogeneous,color="#64a0c8",legend_label="Homogeneous Solution",muted_color="#64a0c8",muted_alpha=0.2)
 p.axis.major_label_text_font_size="12pt"
 p.axis.axis_label_text_font_style="normal"
 p.axis.axis_label_text_font_size="14pt"
