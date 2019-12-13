@@ -107,14 +107,30 @@ class all_callback_fcts(helper_fcts):
     ###############################################################################
     ###                      functions to change the shape                      ###
     ###############################################################################
+    ## change from JavaScript to Pythohn for hide/show
+    ## TODO: needs to be restructered!
     def changeObject0(self,attr,old,new):
         self.changeObject(0,new,self.my_sources.radius_slider0.value,self.my_sources.ri_slider0.value)
+        if "Hollow" in new:
+        #if (new == "Hollow sphere") or (new == "Hollow cylinder"):
+        # .visible=True if "Hollow" in new else .visible=False
+            self.my_sources.ri_slider0.visible = True
+        else:
+            self.my_sources.ri_slider0.visible = False
     
     def changeObject1(self,attr,old,new):
         self.changeObject(1,new,self.my_sources.radius_slider1.value,self.my_sources.ri_slider1.value)
+        if "Hollow" in new:
+            self.my_sources.ri_slider1.visible = True
+        else:
+            self.my_sources.ri_slider1.visible = False
     
     def changeObject2(self,attr,old,new):
         self.changeObject(2,new,self.my_sources.radius_slider2.value,self.my_sources.ri_slider2.value)
+        if "Hollow" in new:
+            self.my_sources.ri_slider2.visible = True
+        else:
+            self.my_sources.ri_slider2.visible = False
     
     ###############################################################################
     ###                     functions to change the radius                      ###
