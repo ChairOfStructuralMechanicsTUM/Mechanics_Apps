@@ -22,7 +22,7 @@ l_beam = 40.0
 F_total = 40.0
 std_lang = 'en'
 flags = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
-strings = yaml.safe_load(open('Seesaw/static/strings.json'))
+strings = yaml.safe_load(open('Seesaw/static/strings.json', encoding='utf-8'))
 
 # Force vectors and labels
 F1_source = ColumnDataSource(dict(xS=[0], xE=[0], yS=[F_total/2], yE=[0], xL=[1], yL=[5], name=["F_1"]))
