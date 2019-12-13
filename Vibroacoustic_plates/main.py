@@ -231,12 +231,12 @@ def main( ):
 
     # CREATE BUTTONS:
     SetDefaultButton = Button( label = "Default",
-                               button_type = "primary",
+                               button_type = "success",
                                width = 100 )
 
 
     ApplyButton = Button( label = "Apply",
-                          button_type = "primary",
+                          button_type = "success",
                           width = 100 )
 
 
@@ -246,7 +246,7 @@ def main( ):
 
 
     ShowInput = Button( label = "Show Input",
-                        button_type = "primary",
+                        button_type = "success",
                         width = 100 )
 
 
@@ -261,7 +261,7 @@ def main( ):
                           Size = 2,
                           MessageHeader = "Number of layers: " )
 
-    WarningMessage = VibroP_Message( Color = "grey",
+    WarningMessage = VibroP_Message( Color = "red",
                               Size = 3 ,
                               MessageHeader = "Warning: " )
 
