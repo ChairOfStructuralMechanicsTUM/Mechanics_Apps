@@ -518,7 +518,7 @@ curdoc().add_root(
                                                        undef_config_button,
                                                        Spacer(width=25), 
                                                        def_config_button,
-                                                       Spacer(width=50)  # needed such that the mode plots below don't overlap
+                                                       Spacer(width=75)  # needed such that the mode plots below don't overlap
                                                       ),
                                                    mass_input,
                                                    stiffness_input,
