@@ -260,10 +260,10 @@ def move_system(disp):
     if force_value > 0:
         t = displacement.data["t"][-1]
         F_length = force_value*sin(excitation_frequency_value*t)
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[15],y2=[15-F_length*3])
-        arrow_offset.data=dict(x1=[0],x2=[0],y1=[15-F_length*3],y2=[15-F_length*3 - (2*(F_length>0)-1)*1.0])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[15],y2=[15-F_length*3]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[15-F_length*3],y2=[15-F_length*3 - (2*(F_length>0)-1)*1.0]),rollover=1)
     else:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp]),rollover=1)
 
 ## Create slider to choose mass
 def change_mass(attr,old,new):
@@ -345,11 +345,11 @@ def change_force_value(attr,old,new):
     current_y2            = arrow_line.data["y2"][0]
     updateParameters()
     if new == 1:
-        arrow_line.data   = dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20])
-        arrow_offset.data = dict(x1=[0],y1=[current_y1-23],x2=[0],y2=[current_y2-20.1])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],y1=[current_y1-23],x2=[0],y2=[current_y2-20.1]),rollover=1)
     else:
-        arrow_line.data   = dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
-        arrow_offset.data = dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20]),rollover=1)
     
 force_value_input = Slider(title="Force", value=force_value, start=0, end=1.0, step=1,width=400)
 force_value_input.on_change('value',change_force_value)
@@ -426,11 +426,11 @@ def stop():
     drawing_displacement = -initial_displacement_value * spring.getSpringConstant
     move_system(drawing_displacement)
     if force_value > 0:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[15+drawing_displacement],y2=[12+drawing_displacement])
-        arrow_offset.data=dict(x1=[0],x2=[0],y1=[12+drawing_displacement],y2=[12+(drawing_displacement-0.1)*1.1])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[15+drawing_displacement],y2=[12+drawing_displacement]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[12+drawing_displacement],y2=[12+(drawing_displacement-0.1)*1.1]),rollover=1)
     else:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
-        arrow_offset.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement]),rollover=1)
 
 def reset():
     stop()
