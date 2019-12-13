@@ -82,7 +82,7 @@ N_input = TextInput(value='2^6',
 nyquist_label_default = "show sampling- and Nyquist-frequency"
 nyquist_button = CheckboxButtonGroup(labels=[nyquist_label_default],
                                      active=[],
-                                     sizing_mode="fixed", width=240)
+                                     sizing_mode="fixed", width=240, height=32)
 
 ###########
 # FIGURES #
