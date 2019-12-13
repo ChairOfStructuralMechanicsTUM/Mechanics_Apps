@@ -171,8 +171,8 @@ class RT_global_variables:
         ###############################################################################
         ###                                 Buttons                                 ###
         ###############################################################################
-        self.start_button = Button(label="Start", button_type="success")
-        self.reset_button = Button(label="Reset", button_type="success")
+        self.start_button = Button(label="Start", button_type="success", width=285)
+        self.reset_button = Button(label="Reset", button_type="success", width=285)
         
         self.mode_selection = RadioGroup(labels=["one", "all"], active=0, inline=True)
         
