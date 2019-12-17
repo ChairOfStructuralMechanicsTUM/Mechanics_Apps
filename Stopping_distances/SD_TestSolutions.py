@@ -1,4 +1,4 @@
-from string import find, count, replace
+#from string import find, count#, replace
 #from math import sqrt
 
 acceptable_characters=u"1234567890.+-*/^()\u221A "
@@ -7,10 +7,10 @@ numbers=u"1234567890."
 def isEquation(equation,x):
     #global acceptable_characters, numbers
     # change , to . so 0,5 becomes 0.5, thus rendering European notation readable by python
-    equation=replace(equation,',','.')
+    equation= equation.replace(',','.')
     #print (equation)
     # check there are as many opening brackets as closing brackets
-    if (count(equation,'(')!=count(equation,')')):
+    if (equation.count('(')!=equation.count(')')):
         return False
     #print("Brakets in Balance")
     # set up while loop (for loop breaks at sqrt)
@@ -22,7 +22,7 @@ def isEquation(equation,x):
     i=0
     while (i<n):
         # if the input contains a non valid character return false
-        if (find(acceptable_characters,equation[i])==-1 and equation[i]!=x):
+        if (acceptable_characters.find(equation[i])==-1 and equation[i]!=x):
             #print("invalid character used")
             return False
         #print("character valid")
@@ -31,7 +31,7 @@ def isEquation(equation,x):
         # or 2s instead of 2*s
         # or s(1+3) etc
         # add missing *
-        if (i!=n-1 and (find(numbers,equation[i])!=-1 or equation[i]==x)
+        if (i!=n-1 and (numbers.find(equation[i])!=-1 or equation[i]==x)
             and (equation[i+1]=='(' or equation[i+1]==u'\u221A' or equation[i+1]==x)):
             sTemp=equation[i+1:]
             equation=equation[:i+1]+"*"+sTemp

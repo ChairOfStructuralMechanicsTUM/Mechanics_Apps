@@ -1,4 +1,4 @@
-from string import replace
+#from string import replace
 
 #from SD_Visualisation import SD_Visualisation
 #from SD_Graphs import SD_Graphs
@@ -63,17 +63,18 @@ class SD_Problem:
         self.t = 0
         self.s = 0
         # remember which model is being used
-        self.va='v'
+        self.va='v'  # v for v0 and a for v(s)
         # save layout
         self.Layout = column(row(self.Vs,self.VMethod),row(self.UserAcceleration,self.startSim),self.reset_button,self.eqVis,
             self.eqst,self.eqvt,row(self.UserTs,self.TsSqrt),row(self.UserVs,self.VsSqrt),self.TestEqs)
     
     def getNewV(self,attr,old,new):
+        print("hallo", new)
         if (self.va=='v'):
             # if first method is in use (i.e. v0 is specified)
             try:
                 # replace , with . i.e. change 0,5 to 0.5
-                new=replace(new,',','.')
+                new= new.replace(',','.')
                 # convert input to float, if this is not possible then a ValueError is thrown
                 temp=float(new)
                 # update velocity
@@ -109,7 +110,7 @@ class SD_Problem:
                 # if the first problem is being used
                 try:
                     # replace , with . i.e. change 0,5 to 0.5
-                    s=replace(self.UserAcceleration.value,',','.')
+                    s= self.UserAcceleration.value.replace(',','.')
                     # convert input to float, if this is not possible then a ValueError is thrown
                     self.a=float(s)
                     # setup the graphs with an initial velocity and acceleration
@@ -233,6 +234,8 @@ class SD_Problem:
         # reset start values of t and s
         self.t = 0
         self.s = 0
+        # print the current value in the textbox
+        self.Vs.value=self.v
         if (self.va=='v'):
             # if using first model then move car to start and show velocity arrow
             self.Vis.move(0,self.v)
@@ -243,7 +246,7 @@ class SD_Problem:
         else:
             # if using second model equation is given,
             # move car to start and show v0 (calculated by eval(self.v) as
-            # self.v contains an equation as a functin of s which has been defined as 0)
+            # self.v contains an equation as a function of s which has been defined as 0)
             #s=0
             self.Vis.move(0,eval(self.v))
         # reset graphs
@@ -341,6 +344,7 @@ def safely_remove_periodic_callback(cb):
         curdoc().remove_periodic_callback(cb)
     except ValueError:
         #print("--- WARNING: periodic callback was already removed ---")
+        print(curdoc().session_callbacks)
         pass
     
     
