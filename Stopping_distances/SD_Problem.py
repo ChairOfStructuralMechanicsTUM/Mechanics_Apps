@@ -28,15 +28,16 @@ class SD_Problem:
         ## set up interactions
         # input for v0 or v(s)
         self.Vs = TextInput(value=str(self.v), title="Initial Velocity", width=300)
-        self.Vs.on_change('value',self.dummy_callback_attr)
+        self.Vs.on_change('value',self.set_v)
         # choice of v0 or v(s) method
         self.VMethod = Select(title="", value="Initial Velocity",
             options=["Initial Velocity", "Distance-dependent Velocity"], width=300)
         self.VMethod.on_change('value',self.switch_model)
         # get user value for acceleration
         self.UserAcceleration = TextInput(value="", title="Acceleration :", width=300)
+        self.UserAcceleration.on_change('value', self.check_acceleration)
         # button which runs the simulation
-        self.startSim = Button(label="Start",button_type="success", width=100)
+        self.startSim = Button(label="Start",button_type="success", width=100, disabled=True)
         self.startSim.on_click(self.dummy_callback)
         # reset button
         self.reset_button = Button(label="Reset",button_type="success", width=100)
@@ -77,11 +78,14 @@ class SD_Problem:
 
 
     def set_v(self, attr, old, new):
+        #print("in set v callback")
         if self.model_type == "init_v":
+            #print("in init_v")
             # if method using initial velocity v0 is used
             try:
                 # replace , with . i.e. change 0,5 to 0.5
                 new = new.replace(',','.')
+                self.Vs.value = new
                 # convert input to float, if this is not possible then a ValueError is thrown
                 temp = float(new)
                 # update velocity
@@ -109,6 +113,23 @@ class SD_Problem:
                     self.Vs.value = old
             else:
                 print("WARNING: Please enter a function v(s)!")
+
+
+    def check_acceleration(self, attr, old, new):
+        # could be extended to e.g. disallow very huge magnitudes
+
+        # get rid of empty spaces
+        new = new.replace(" ","")
+        # replace , with . i.e. change 0,5 to 0.5
+        new = new.replace(',','.')
+        self.UserAcceleration.value = new
+        #print("inf loop?") # only twice
+        if len(new)!=0:
+            self.startSim.disabled = False
+        else:
+            self.startSim.disabled = True
+
+
 
 
 
