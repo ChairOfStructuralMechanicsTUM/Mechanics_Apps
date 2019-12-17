@@ -1,5 +1,5 @@
 #from string import find, count#, replace
-#from math import sqrt
+from math import sqrt
 
 acceptable_characters=u"1234567890.+-*/^()\u221A "
 numbers=u"1234567890."
@@ -44,8 +44,8 @@ def validate_function(fct,x):
             i+=4
             # increase n so that the whole string is still checked
             n+=3
-            #print("sqrt detected:")
-            #print(fct)
+            # print("sqrt detected:")
+            # print(fct)
         elif (fct[i]=='^'):
             sTemp=fct[i+1:]
             fct=fct[:i]+"**"+sTemp

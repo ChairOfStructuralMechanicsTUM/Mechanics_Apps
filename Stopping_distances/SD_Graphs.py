@@ -4,6 +4,8 @@ from bokeh.models import ColumnDataSource
 from math import sqrt, isnan
 from numpy import linspace
 
+from SD_TestSolutions import eval_fct
+
 
 class SD_Graphs:
     def __init__(self):
@@ -153,70 +155,144 @@ class SD_Graphs:
         self.UserStSource.data = dict(s=[],t=[])
         self.vsSource.data = dict(v=[],s=[])
         self.UserVsSource.data = dict(v=[],s=[])
-    
-    def test_equation(self,Str,sv):
-        # plot user inputted equation to test it against simulation
-        # get xmax from appropriate plot
-        if (sv=='s'):
-            xmax=self.st.x_range.end
-        elif (sv=='v'):
-            xmax=self.vs.x_range.end
-        elif (sv=='a'):
-            xmax=self.at.x_range.end
-        
-        #create lists in which to store coordinates
+
+
+
+    def test_equation(self,fct,plt):
+        #plt: t, v, a
+
+        if (plt=='t'):
+            xmax = self.st.x_range.end
+        if (plt=='v'):
+            xmax = self.vs.x_range.end
+        if (plt=='a'):
+            xmax = self.at.x_range.end
+
+        scale = linspace(0,xmax,100)
+
+        #create lists to store coordinates
         X=[]
         Y=[]
 
-        scale=linspace(0,xmax,100)
+        for s in scale:
+            X.append(s)
+            Y.append(eval_fct(fct,'s',s))  ## fix if sqrt becomes negative
 
-        nan = float('nan')
+
+#eval_fct(self.Vs.value,'s',0)
 
 
+        # try:
+        #     # plot 100 points between 0 and xmax
+        #     for s in scale:
+        #         # add x point
+        #         X.append(s)
+        #         # Str contains an equation as a function of s
+        #         # evaluating it therefore gives the y co-ordinate
 
-        try:
-            # plot 100 points between 0 and xmax
-            for s in scale:
-                # add x point
-                X.append(s)
-                # Str contains an equation as a function of s
-                # evaluating it therefore gives the y co-ordinate
+        #         try:
+        #             Y.append(eval(Str))
+        #         except ZeroDivisionError:# avoid division by zero
+        #             Y.append(nan)
 
-                try:
-                    Y.append(eval(Str))
-                except ZeroDivisionError:# avoid division by zero
-                    Y.append(nan)
+        #     # add final point
+        #     X.append(xmax)
+        #     # create s=final_x_point so that s exists when it is called by Str in eval
+        #     s=xmax
+        #     try:
+        #         Y.append(eval(Str))
+        #     except ZeroDivisionError:  # avoid division by zero
+        #         Y.append(nan)
 
-            # add final point
-            X.append(xmax)
-            # create s=final_x_point so that s exists when it is called by Str in eval
-            s=xmax
-            try:
-                Y.append(eval(Str))
-            except ZeroDivisionError:  # avoid division by zero
-                Y.append(nan)
+        # except ValueError:
+        #     # if value is not valid in equation
+        #     # (i.e s has become large enough that we are doing sqrt(negative) )
+        #     # then Y.append throws ValueError stopping further points being added
+        #     # as a result X is longer than Y
+        #     # fix this
+        #     X.pop()
+        #     #print('excerption')
 
-        except ValueError:
-            # if value is not valid in equation
-            # (i.e s has become large enough that we are doing sqrt(negative) )
-            # then Y.append throws ValueError stopping further points being added
-            # as a result X is longer than Y
-            # fix this
-            X.pop()
-            #print('excerption')
-
-        #remove 'nan' form X and Y lists:
-        X=[v for i,v in enumerate(X) if not isnan(Y[i])]
-        Y=[v for i,v in enumerate(Y) if not isnan(Y[i])]
+        # #remove 'nan' form X and Y lists:
+        # X=[v for i,v in enumerate(X) if not isnan(Y[i])]
+        # Y=[v for i,v in enumerate(Y) if not isnan(Y[i])]
 
 
         # add new data to appropriate figure
-        if (sv=='s'):
+        if (plt=='t'):
             self.UserStSource.data = dict(s=X,t=Y)
-        elif (sv=='v'):
+        elif (plt=='v'):
+            print(Y)
             self.UserVsSource.data = dict(s=X,v=Y)
-        elif (sv=='a'):
+        elif (plt=='a'):
             self.UserAtSource.data = dict(ts=X,a=Y)
+
+
+
+
+    # def test_equation(self,Str,sv):
+    #     # plot user inputted equation to test it against simulation
+    #     # get xmax from appropriate plot
+    #     if (sv=='s'):
+    #         xmax=self.st.x_range.end
+    #     elif (sv=='v'):
+    #         xmax=self.vs.x_range.end
+    #     elif (sv=='a'):
+    #         xmax=self.at.x_range.end
+        
+    #     #create lists in which to store coordinates
+    #     X=[]
+    #     Y=[]
+
+    #     scale=linspace(0,xmax,100)
+
+    #     nan = float('nan')
+
+
+
+    #     try:
+    #         # plot 100 points between 0 and xmax
+    #         for s in scale:
+    #             # add x point
+    #             X.append(s)
+    #             # Str contains an equation as a function of s
+    #             # evaluating it therefore gives the y co-ordinate
+
+    #             try:
+    #                 Y.append(eval(Str))
+    #             except ZeroDivisionError:# avoid division by zero
+    #                 Y.append(nan)
+
+    #         # add final point
+    #         X.append(xmax)
+    #         # create s=final_x_point so that s exists when it is called by Str in eval
+    #         s=xmax
+    #         try:
+    #             Y.append(eval(Str))
+    #         except ZeroDivisionError:  # avoid division by zero
+    #             Y.append(nan)
+
+    #     except ValueError:
+    #         # if value is not valid in equation
+    #         # (i.e s has become large enough that we are doing sqrt(negative) )
+    #         # then Y.append throws ValueError stopping further points being added
+    #         # as a result X is longer than Y
+    #         # fix this
+    #         X.pop()
+    #         #print('excerption')
+
+    #     #remove 'nan' form X and Y lists:
+    #     X=[v for i,v in enumerate(X) if not isnan(Y[i])]
+    #     Y=[v for i,v in enumerate(Y) if not isnan(Y[i])]
+
+
+    #     # add new data to appropriate figure
+    #     if (sv=='s'):
+    #         self.UserStSource.data = dict(s=X,t=Y)
+    #     elif (sv=='v'):
+    #         self.UserVsSource.data = dict(s=X,v=Y)
+    #     elif (sv=='a'):
+    #         self.UserAtSource.data = dict(ts=X,a=Y)
         
     def swapSetup(self):
         # change between methods by figure

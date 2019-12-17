@@ -62,7 +62,7 @@ class SD_Problem:
         self.VsSqrt.on_click(self.addSqrtVs)
         # button to plot t(s) and v(s)/a(s) over simulation data
         self.TestEqs = Button(label="Check equations",button_type="success",width=100)
-        self.TestEqs.on_click(self.dummy_callback)
+        self.TestEqs.on_click(self.plot_attempt)
         
         # initialise initial time, displacement and acceleration
         self.t = 0
@@ -324,7 +324,15 @@ class SD_Problem:
 
 
 # eval_fct(self.Vs.value,'s',0)
-#     def plot_attempt(self):
+    def plot_attempt(self):
+
+        self.Plotter.test_equation(self.UserTs.value,'t')
+
+        if self.model_type == "init_v":
+            self.Plotter.test_equation(self.UserVs.value,'v')
+        else:
+            self.Plotter.test_equation(self.UserVs.value,'a')
+
 #         s1=isEquation(self.UserTs.value,'s')
 #         #print(s1)
 #         # if s1 is a string
@@ -335,6 +343,8 @@ class SD_Problem:
 #         if (s1!=False):
 #             self.Plotter.test_equation(s1,self.va)
 
+
+# test_equation(self,fct,plt)
 
 
     def _init_random_velocity(self):
