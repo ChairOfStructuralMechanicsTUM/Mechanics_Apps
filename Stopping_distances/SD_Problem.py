@@ -38,15 +38,15 @@ class SD_Problem:
         self.UserAcceleration.on_change('value', self.check_acceleration)
         # button which runs the simulation
         self.startSim = Button(label="Start",button_type="success", width=100, disabled=True)
-        self.startSim.on_click(self.dummy_callback)
+        self.startSim.on_click(self.Start)
         # reset button
         self.reset_button = Button(label="Reset",button_type="success", width=100)
-        self.reset_button.on_click(self.dummy_callback)
+        self.reset_button.on_click(self.Reset)
         #self.idealAcc = -self.v**2/40.0
         # checkbox for whether equations as a function of time are visible
         #self.eqVis = checkbox_group = CheckboxGroup(labels=["Show equations as a function of the time"], active=[])
         self.eqVis = CheckboxGroup(labels=["Show equations as a function of the time"], active=[])
-        self.eqVis.on_change('active',self.dummy_callback_attr)
+        self.eqVis.on_change('active',self.toggleEquation)
         # save space to write equations as a function of time
         self.eqst = Paragraph(text="")
         self.eqvt = Paragraph(text="")
@@ -54,21 +54,26 @@ class SD_Problem:
         self.UserTs = TextInput(value="", title="t(s) = ",width=200)
         # button to allow sqrt to be used in t(s)
         self.TsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
-        self.TsSqrt.on_click(self.dummy_callback)
+        self.TsSqrt.on_click(self.addSqrtTs)
         # user input for v(s) (or a(s)) to be tested against simulation
         self.UserVs = TextInput(value="", title="v(s) = ",width=200)
         # button to allow sqrt to be used in v(s)/a(s)
         self.VsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
-        self.VsSqrt.on_click(self.dummy_callback)
+        self.VsSqrt.on_click(self.addSqrtVs)
         # button to plot t(s) and v(s)/a(s) over simulation data
         self.TestEqs = Button(label="Check equations",button_type="success",width=100)
         self.TestEqs.on_click(self.dummy_callback)
         
-        # initialise initial time and displacement
+        # initialise initial time, displacement and acceleration
         self.t = 0
         self.s = 0
+        self.a = 0
         # remember which model is being used
         self.model_type = "init_v"  # "init_v" and "distance_v"
+
+        # save the callback id to run the simulations
+        self.callback_id = None
+
         # save layout
         #self.Layout = column(row(self.Vs,self.VMethod),row(self.UserAcceleration,self.startSim),self.reset_button,self.eqVis,
         #    self.eqst,self.eqvt,row(self.UserTs,self.TsSqrt),row(self.UserVs,self.VsSqrt),self.TestEqs)
@@ -114,6 +119,9 @@ class SD_Problem:
             else:
                 print("WARNING: Please enter a function v(s)!")
 
+        # plot the new velocity arrow
+        self.Vis.move(self.s, self.v)
+
 
     def check_acceleration(self, attr, old, new):
         # could be extended to e.g. disallow very huge magnitudes
@@ -125,8 +133,12 @@ class SD_Problem:
         self.UserAcceleration.value = new
         #print("inf loop?") # only twice
         if len(new)!=0:
+            # set the acceleration
+            self.a = float(new)
+            # enable the start button
             self.startSim.disabled = False
         else:
+            # keep the start button disabled
             self.startSim.disabled = True
 
 
@@ -191,6 +203,72 @@ class SD_Problem:
 
 
 
+
+
+
+    def Start(self):
+        # # if time is not set to zero, call Reset here at the latest!
+        # if (self.t!=0):
+        #     self.Reset()
+
+        # setup the graphs with an initial velocity and acceleration
+        # so the ranges can be set
+        self.Plotter.setup(self.v,self.a)
+        # add the first point
+        self.Plotter.addPointInTime(0)
+        # start the simulation
+        self.callback_id = curdoc().add_periodic_callback(self.init_v_Simulation, 100)
+
+        # start button should not be pressed during simulation
+        self.startSim.disabled = True
+
+        # if self.startSim.label == "Start":
+        #     # # if time is not set to zero, call Reset here at the latest!
+        #     # if (self.t!=0):
+        #     #     self.Reset()
+
+        #     # setup the graphs with an initial velocity and acceleration
+        #     # so the ranges can be set
+        #     self.Plotter.setup(self.v,self.a)
+        #     # add the first point
+        #     self.Plotter.addPointInTime(0)
+        #     # start the simulation
+        #     self.callback_id = curdoc().add_periodic_callback(self.init_v_Simulation, 100)
+        #     self.startSim.label = "Stop"
+
+        # elif self.startSim.label == "Stop":
+        #     if curdoc().session_callbacks:
+        #         curdoc().remove_periodic_callback(self.callback_id)
+        #     self.startSim.label = "Start"
+
+
+
+
+    def init_v_Simulation(self):
+        # update time
+        self.t+=0.1
+        # add point to graphs
+        self.Plotter.addPointInTime(self.t)
+        # calculate new displacement and velocity
+        s = 0.5*self.a*self.t**2+self.v*self.t
+        v = self.a*self.t+self.v
+        # if the car has stopped or started to reverse then stop the simulation
+        if (v<=0):
+            # place the car with 0 velocity
+            self.Vis.move(s,0)
+            curdoc().remove_periodic_callback(self.callback_id)
+        # if the car has hit the wall then stop the simulation
+        elif (s>=30):
+            # place the car at the wall
+            self.Vis.move(30,v)
+            curdoc().remove_periodic_callback(self.callback_id)
+        else:
+            # place the car
+            self.Vis.move(s,v)
+
+
+
+
     def Reset(self):
         # reset time and distance
         self.t = 0
@@ -213,7 +291,49 @@ class SD_Problem:
 
         # reset graphs
         self.Plotter.Reset()
-        
+
+        # enable start button again if all callbacks are removed
+        #print(curdoc().session_callbacks)
+        if not curdoc().session_callbacks:
+            self.startSim.disabled = False
+
+        # # change the button label if the simulation stopped automatically
+        # if self.startSim.label == "Stop":
+        #     self.startSim.label = "Start"
+
+
+
+    def toggleEquation(self,attr,old,new):
+        # show/hide equations as a function of time
+        #print(new)
+        if (len(new)==1):
+            self.eqst.text = u"s(t)=0.5 a\u2092t \u00B2+v\u2092t"
+            self.eqvt.text = u"v(t)=a\u2092t+v\u2092"
+        else:
+            self.eqst.text = ""
+            self.eqvt.text = ""
+
+
+    def addSqrtTs (self):
+        # add sqrt (unicode symbol) to user input for t(s)
+        self.UserTs.value=self.UserTs.value+u"\u221A("
+
+    def addSqrtVs (self):
+        # add sqrt (unicode symbol) to user input for v(s) (or a(s))
+        self.UserVs.value=self.UserVs.value+u"\u221A("    
+
+
+# eval_fct(self.Vs.value,'s',0)
+#     def plot_attempt(self):
+#         s1=isEquation(self.UserTs.value,'s')
+#         #print(s1)
+#         # if s1 is a string
+#         if (s1!=False):
+#             self.Plotter.test_equation(s1,'s')
+#         s1=isEquation(self.UserVs.value,'s')
+#         # if s1 is a string
+#         if (s1!=False):
+#             self.Plotter.test_equation(s1,self.va)
 
 
 
