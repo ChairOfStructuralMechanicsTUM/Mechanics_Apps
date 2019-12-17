@@ -2,7 +2,7 @@
 
 #from SD_Visualisation import SD_Visualisation
 #from SD_Graphs import SD_Graphs
-from SD_TestSolutions import isEquation
+from SD_TestSolutions import eval_fct #isEquation
 from random import seed, randrange
 from bokeh.layouts import column, row
 from bokeh.models.widgets import TextInput, Button, Paragraph, CheckboxGroup, Select#, Slider, Div
@@ -76,6 +76,40 @@ class SD_Problem:
 
 
 
+    def set_v(self, attr, old, new):
+        if self.model_type == "init_v":
+            # if method using initial velocity v0 is used
+            try:
+                # replace , with . i.e. change 0,5 to 0.5
+                new = new.replace(',','.')
+                # convert input to float, if this is not possible then a ValueError is thrown
+                temp = float(new)
+                # update velocity
+                self.v = temp
+                # reset the setup
+                #self.Reset()
+            except ValueError:
+                # if conversion was unsuccesful then reset box to old v0
+                self.Vs.value = str(self.v)
+        
+        elif self.model_type == "distance_v":
+            # if method using distance dependent velocity v(s) is used
+            if (len(new)!=0):
+                # if box is not empty
+                # check if input is a valid equation and evaluate it
+                #s1=isEquation(new,'s')
+                s1 = eval_fct(new,'s',self.s)
+                if (s1!=False):
+                    # if this is the case then save the new velocity
+                    self.v = s1
+                    # reset the setup
+                    #self.Reset()
+                else:
+                    # if it isn't valid then revert to old value
+                    self.Vs.value = old
+            else:
+                print("WARNING: Please enter a function v(s)!")
+
 
 
     def switch_model(self, attr, old, new):
@@ -110,8 +144,13 @@ class SD_Problem:
             self.Vs.value = ""
             # change title to expect a a(s) user function instead of v(s)
             self.UserVs.title = "a(s) = "
+            
             # set the current velocity to zero
-            self.v = 0
+            #self.v = 0
+            # show an example of a distance dependent velocity function
+            self.Vs.value = "2s+1"
+            # calculate the velocity for s=0
+            self.v = eval_fct(self.Vs.value,'s',0)
 
             # alert graphs that problem type has changed
             self.Plotter.swapSetup()
@@ -135,14 +174,21 @@ class SD_Problem:
         # reset time and distance
         self.t = 0
         self.s = 0
+        
         # print the current value in the textbox
-        self.Vs.value = str(self.v)
+        #self.Vs.value = str(self.v)
 
-        # if using the initial velocity model, move the car to the start with current velocity
-        if self.model_type == "init_v":
-            self.Vis.move(0, self.v)
-        else:
-            pass
+        # move the car to the start with current velocity
+        self.Vis.move(self.s, self.v)
+
+        # # if using the initial velocity model, move the car to the start with current velocity
+        # if self.model_type == "init_v":
+        #     self.Vis.move(self.s, self.v)
+        # elif self.model_type == "distance_v":
+        #     pass
+        #     #self.Vis.move(self.s, eval_fct(self.v,'s',self.s))
+        # else:
+        #     pass
 
         # reset graphs
         self.Plotter.Reset()
