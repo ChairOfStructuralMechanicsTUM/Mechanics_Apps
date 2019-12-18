@@ -1,21 +1,38 @@
+"""
+Collision - simulate elastic and inelastic collisions of two masses
+
+"""
+# general imports
 import numpy as np
+
+# bokeh imports
 from bokeh.io import curdoc
 from bokeh.plotting import Figure
-import Collision_BarChart as BC
-from bokeh.layouts import column, row, widgetbox
 from bokeh.models import Button, Slider, Arrow, OpenHead, Div, ColumnDataSource
-from bokeh.models.layouts import Spacer
-import Collision_Functions
-from os.path import dirname, join, split
+from bokeh.models.tools import ResetTool, BoxZoomTool
+from bokeh.layouts import column, row, widgetbox, Spacer
 from bokeh.events import Pan
+
+# internal imports
+import Collision_BarChart as BC
+import Collision_Functions
+
+# latex integration
+# TODO: latex slider; show both versions: with text and with symboles (which can be explained in div)
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir)
+from latex_support import LatexSlider
 
 '''
 ###############################################################################
-Global variables as ColumnDataSources
+Global variables
 ###############################################################################
 '''
-glCollisionCr = ColumnDataSource(data=dict(val=[1.0])) # collision parameter
-g1Collision   = ColumnDataSource(data=dict(cid=[None])) # callback id
+glCollision = dict(Crval=1.0, cid=None) # collision parameter and callback id
+slider_width = 300 # constant width for velocity sliders
 
 '''
 ###############################################################################
@@ -144,6 +161,8 @@ barsFig = BC.Collision_BarChart(
 barsFig.Width(300)
 barsFig.Height(650)
 barsFig.values='timing'
+barsFig.fig.add_tools(BoxZoomTool())
+barsFig.fig.add_tools(ResetTool())
 
 
 def update_bars():
@@ -175,7 +194,7 @@ through time
 '''
 # Calculate the new location of the two balls
 def compute_trajectory():
-    [glCollisionCr_val] = glCollisionCr.data["val"] # input/
+    glCollisionCr_val = glCollision["Crval"] # input/
     
     # Compute the new position of the circles' center
     particleOne.position[0] += particleOne.velocity[0]*dt
@@ -314,10 +333,10 @@ Add the interactive functionalities
 '''
 ########################### Creating reset button #############################
 def Reset():
-    [g1Collision_id] = g1Collision.data["cid"] # input/
+    glCollision_id = glCollision["cid"] # input/
     if curdoc().session_callbacks:
-        for c in curdoc().session_callbacks:
-            curdoc().remove_periodic_callback(g1Collision_id)
+        #for c in curdoc().session_callbacks:
+        curdoc().remove_periodic_callback(glCollision_id)
     
     # Return the solider to their default values
     ballOneVelocityDirSlider.value = dirOne
@@ -338,6 +357,7 @@ def Reset():
     ballOneVelocityMagSlider.disabled = False
     ballTwoVelocityDirSlider.disabled = False
     ballTwoVelocityMagSlider.disabled = False
+    crSlider.disabled                 = False
 
     # Update the height of the bars accordingly
     update_bars()
@@ -347,18 +367,19 @@ reset_button.on_click(Reset)
 
 ########################### Creating play-pause button ##############################
 def playpause():
-    [g1Collision_id] = g1Collision.data["cid"] # input/output
+    glCollision_id = glCollision["cid"] # input/output
     if playpause_button.label == "Play":
-        g1Collision_id = curdoc().add_periodic_callback(compute_trajectory, 10)
+        glCollision_id = curdoc().add_periodic_callback(compute_trajectory, 10)
         playpause_button.label = "Pause"
         ballOneVelocityDirSlider.disabled = True
         ballOneVelocityMagSlider.disabled = True
         ballTwoVelocityDirSlider.disabled = True    
         ballTwoVelocityMagSlider.disabled = True
        # crSlider.disabled = True  # We can leave the Cr Slider enabled while the app is running, changing Cr on the fly is anice feature and has no impact on performance
-    else:
-        for c in curdoc().session_callbacks:
-            curdoc().remove_periodic_callback(g1Collision_id)
+        crSlider.disabled = True
+    else: # "Pause"
+        #for c in curdoc().session_callbacks:
+        curdoc().remove_periodic_callback(glCollision_id)
         playpause_button.label = "Play"
 
         #update sliders
@@ -371,9 +392,9 @@ def playpause():
         ballOneVelocityMagSlider.disabled = False
         ballTwoVelocityDirSlider.disabled = False
         ballTwoVelocityMagSlider.disabled = False
-       # crSlider.disabled = False # The slider has not to be enabled again, if it did not get disabled in line 349
+        crSlider.disabled = False
        
-    g1Collision.data = dict(cid=[g1Collision_id])
+    glCollision['cid'] = glCollision_id
 
 playpause_button = Button(label="Play", button_type="success")
 playpause_button.on_click(playpause)
@@ -396,9 +417,9 @@ def update_ballOne_VelocityDir(attr,old,new):
         
     particleOne.update_velocity(newVelocityVectorOne[0], newVelocityVectorOne[1])
     
-ballOneVelocityDirSlider = Slider(
-                                  title=u" Green Ball Velocity Direction (deg) ",
-                                  value=dirOne , start=0, end=360, step=1.0, width=260
+ballOneVelocityDirSlider = LatexSlider(
+                                  title="\\text{Green Ball Velocity Direction [deg]:} ",
+                                  value=dirOne , start=0, end=360, step=1.0, width=slider_width
                                  )
 ballOneVelocityDirSlider.on_change('value',update_ballOne_VelocityDir)
 
@@ -424,9 +445,9 @@ def update_ballOne_VelocityMag(attr,old,new):
 
     update_bars()
    
-ballOneVelocityMagSlider = Slider(
-                                  title=u" Green Ball Velocity Magnitude (m/s) ",
-                                  value=magOne, start=0, end=5, step=0.1, width=260
+ballOneVelocityMagSlider = LatexSlider(
+                                  title="\\text{Green Ball Velocity Magnitude} \\left[ \\frac{m}{s} \\right] :",
+                                  value=magOne, start=0, end=5, step=0.1, width=slider_width
                                  )
 ballOneVelocityMagSlider.on_change('value',update_ballOne_VelocityMag)
 
@@ -448,9 +469,9 @@ def update_ballTwo_VelocityDir(attr,old,new):
         
     particleTwo.update_velocity(newVelocityVectorTwo[0],newVelocityVectorTwo[1])
     
-ballTwoVelocityDirSlider = Slider(  
-                                  title=u" Orange Ball Velocity Direction (deg) ",
-                                  value=dirTwo, start=0, end=360, step=1.0, width=260
+ballTwoVelocityDirSlider = LatexSlider(  
+                                  title="\\text{Orange Ball Velocity Direction [deg]:}",
+                                  value=dirTwo, start=0, end=360, step=1.0, width=slider_width
                                  )
 ballTwoVelocityDirSlider.on_change('value',update_ballTwo_VelocityDir)
 
@@ -476,19 +497,19 @@ def update_ballTwo_VelocityMag(attr,old,new):
 
     update_bars()
     
-ballTwoVelocityMagSlider = Slider(
-                                  title=u" Orange Ball Velocity Magnitude (m/s) ",
-                                  value=magTwo, start=0, end=5, step=0.1, width=260
+ballTwoVelocityMagSlider = LatexSlider(
+                                  title="\\text{Orange Ball Velocity Magnitude} \\left[ \\frac{m}{s} \\right] : ",
+                                  value=magTwo, start=0, end=5, step=0.1, width=slider_width
                                  )
 ballTwoVelocityMagSlider.on_change('value',update_ballTwo_VelocityMag)
 
 ################# Creating coefficient of restitution slider ##################
 def update_Cr_value(attr,old,new):
-    glCollisionCr.data = dict(val=[new]) #      /output
+    glCollision['Crval'] = new #      /output
 
-crSlider = Slider(
-                   title=u" Coefficient of Restitution ",
-                   value=1, start=0, end=1, step=0.1,width=530
+crSlider = LatexSlider(
+                   title="\\text{Coefficient of Restitution:}",
+                   value=1, start=0, end=1, step=0.1,width=2*slider_width+10
                   )
 crSlider.on_change('value',update_Cr_value)
 
@@ -508,7 +529,7 @@ Add all the components together and initiate the app
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
-description = Div(text=open(description_filename).read(), render_as_text=False, width=970)
+description = Div(text=open(description_filename).read(), render_as_text=False, width=1000)
 
 area_image = Div(text="""
 <h2>
@@ -519,13 +540,13 @@ Particles' Parameters:
 </p>
 """, render_as_text=False, width=450)
 
-#buttons = widgetbox(reset_button, play_button, pause_button,width=150)
 
 curdoc().add_root(
     column(
         description,
         row(
             playGround,
+            Spacer(width=130),
             barsFig.getFig()
         ),
         row(
@@ -540,12 +561,12 @@ curdoc().add_root(
                     ballOneVelocityDirSlider,
                     Spacer(width=10),
                     ballOneVelocityMagSlider,
-                ),
+                ), Spacer(height=20), 
                 row(
                     ballTwoVelocityDirSlider,
                     Spacer(width=10),
                     ballTwoVelocityMagSlider
-                ),
+                ), Spacer(height=20),
                 crSlider,
             )
         )
