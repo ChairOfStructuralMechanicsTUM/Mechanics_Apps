@@ -1,3 +1,10 @@
+
+# copied from the bokeh examples
+# https://github.com/bokeh/bokeh/tree/master/examples/app/surface3d
+
+#-----------------------------------------------------#
+
+
 from bokeh.core.properties import Any, Dict, Instance, String
 from bokeh.models import ColumnDataSource, LayoutDOM
 
@@ -13,13 +20,13 @@ DEFAULTS = {
     'showGrid':        False,
     'keepAspectRatio': True,
     'verticalRatio':   0.2,
-    'zMin' : -2.0,
-    'zMax' : +2.0,
+    'zMin': -2.0,
+    'zMax': +2.0,
     'cameraPosition':  {
         'horizontal': -0.8,
         'vertical':    0.6,
         'distance':    1.6,
-    },
+    }
 }
 
 # This custom extension model will have a DOM view that should layout-able in
@@ -29,9 +36,9 @@ DEFAULTS = {
 class diffraction_Surface3d(LayoutDOM):
 
     # The special class attribute ``__implementation__`` should contain a string
-    # of JavaScript (or CoffeeScript) code that implements the JavaScript side
+    # of JavaScript (or TypeScript) code that implements the JavaScript side
     # of the custom extension model.
-    __implementation__ = "diffraction_surface3d.coffee"
+    __implementation__ = "diffraction_surface3d.ts"
     # this is the local resource for the vis.js library
     __javascript__ = ["https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.min.js"] ## online resource
     #__javascript__ = ["Diffraction/static/js/vis.min.js"] ## offline resource
@@ -43,22 +50,23 @@ class diffraction_Surface3d(LayoutDOM):
     # also support type validation. More information about properties in
     # can be found here:
     #
-    #    http://bokeh.pydata.org/en/latest/docs/reference/core.html#bokeh-core-properties
+    #    https://docs.bokeh.org/en/latest/docs/reference/core/properties.html#bokeh-core-properties
 
     # This is a Bokeh ColumnDataSource that can be updated in the Bokeh
     # server by Python code
     data_source = Instance(ColumnDataSource)
 
-    # The vis.js library that we are wrapping expects data for x, y, z, and
-    # color. The data will actually be stored in the ColumnDataSource, but
-    # these properties let us specify the *name* of the column that should
-    # be used for each field.
+    # The vis.js library that we are wrapping expects data for x, y, and z.
+    # The data will actually be stored in the ColumnDataSource, but these
+    # properties let us specify the *name* of the column that should be
+    # used for each field.
     x = String
 
     y = String
 
     z = String
 
+    # color might not be used from vis.js
     color = String
 
     # Any of the available vis.js options for Graph3d can be set by changing
