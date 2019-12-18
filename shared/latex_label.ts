@@ -29,6 +29,20 @@ export class LatexLabelView extends LabelView {
     sy -= this.model.y_offset
     this._css_text(this.plot_view.canvas_view.ctx, "", sx, sy, angle)
     katex.render(this.model.text, this.el, {displayMode: true})
+
+
+    const bbox_bounds = this.plot_view.frame.bbox
+    // if the label position is outside of the box, do not display it
+    if(sx < bbox_bounds.x0 || sx > bbox_bounds.x1 ||
+      sy < bbox_bounds.y0 || sy > bbox_bounds.y1)
+    {
+     this.el.style.display = "none"
+    }
+    else{
+     //display(this.el)
+     this.el.style.display = "" //equivalent
+    }
+
   }
 }
 export class LatexLabel extends Label {

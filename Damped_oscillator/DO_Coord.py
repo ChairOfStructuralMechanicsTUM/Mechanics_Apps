@@ -41,7 +41,7 @@ class DO_Coord(object):
         return self
     
     # define DO_Coord/num
-    def __div__(self,a):
+    def __truediv__(self,a):
         return DO_Coord(self.x/a,self.y/a)
     
     # define DO_Coord/=num

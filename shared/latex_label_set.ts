@@ -157,8 +157,19 @@ export class LatexLabelSetView extends TextAnnotationView {
       el.style.borderWidth = `${this.visuals.border_line.line_width.value()}px`
       el.style.borderColor = `${this.visuals.border_line.color_value()}`
     }
+    
+    
+    const bbox_bounds = this.plot_view.frame.bbox
+    // if the label position is outside of the box, do not display it
+    if(sx < bbox_bounds.x0 || sx > bbox_bounds.x1 ||
+      sy < bbox_bounds.y0 || sy > bbox_bounds.y1)
+    {
+     el.style.display = "none"
+    }
+    else{
+     display(el)
+    }
 
-    display(el)
   }
 }
 
