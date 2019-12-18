@@ -123,12 +123,18 @@ def update(attr, old, new):
         return None
 
     disable_interactivity(True)
+    My_Layout.children[0].children[2].children[1].children[0] = loading # Computation loading spinner
+
+    # call another callback such since layout changes are currently (Bokeh 1.4.0) only applied at the end of functions
+    curdoc().add_next_tick_callback(comp_intensive_work)
+
+
+def comp_intensive_work():
 
     sample_function_id = sample_fun_input_f.value 
     Wavelet_function_id = Wavelet_fun_input.value
     Resolut=int(sympify(Resolution.value.replace(',','.')))
     Resolution.value=str(Resolut)
-    My_Layout.children[0].children[2].children[1].children[0] = loading # Computation loading spinner
 
     # Extract parameters and account for German dot
     T_0 = float(sympify(T0_input.value.replace(',','.')))
@@ -225,7 +231,7 @@ def update(attr, old, new):
     My_Layout.children[0].children[2].children[1].children[0] = plot_Wavelet    # Put the "plot_Wavelet" figure back to show the result
     disable_interactivity(False)
 
-def sample_fun_input_modified(self):
+def sample_fun_input_modified(attr, old, new):
     """
     This function is called to change the layout of the interactive widgets according the new selected sample function
     """
@@ -233,7 +239,7 @@ def sample_fun_input_modified(self):
     reset()
   
     # Get the new sample function id
-    sample_function_id = sample_fun_input_f.value
+    sample_function_id = new #sample_fun_input_f.value
     sample_fun_input_f.label=sample_function_id
 
     # Change the Layout of interactive widgets according to sample functin id
@@ -266,12 +272,12 @@ def sample_fun_input_modified(self):
         controls_box = widgetbox(controls, sizing_mode='scale_width')  # all controls
         My_Layout.children[0].children[1].children[0].children[0]= controls_box
 
-def Wavelet_fun_modified(self):
+def Wavelet_fun_modified(attr, old, new):
     """
     This function is called to plot the new selected wavelet function
     """
     # Get the new wavelet function id
-    Wavelet_function_id = Wavelet_fun_input.value
+    Wavelet_function_id = new#Wavelet_fun_input.value
     Wavelet_fun_input.label = Wavelet_function_id
     n = 200
     t=np.linspace(-10,10,n)
@@ -334,15 +340,15 @@ def param_change(attr,old,new):
     t=np.linspace(-10,10,n)
 
     if (Wavelet_function_id == "Wavelet 1"):
-        y= np.exp(-(((t-b_param.value)/a_param.value)**2)/2) * np.cos(5*((t-b_param.value)/a_param.value))
-        Wavelet_Function_source.data = dict(t=t, y=y)
-        plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
-
-    elif (Wavelet_function_id == "Wavelet 2"):
         y= (t-b_param.value)/a_param.value * np.exp(-((t-b_param.value)/a_param.value)**2)
         Wavelet_Function_source.data = dict(t=t, y=y)
         plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
 
+    elif (Wavelet_function_id == "Wavelet 2"):
+        y= np.exp(-(((t-b_param.value)/a_param.value)**2)/2) * np.cos(5*((t-b_param.value)/a_param.value))
+        Wavelet_Function_source.data = dict(t=t, y=y)
+        plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
+        
 def disable_interactivity(flag):
     """
     This function enables or disables all interactivities of the app (used e.g. during computation)
@@ -363,8 +369,8 @@ def disable_interactivity(flag):
 ######################
 # Callback behaviour #
 ######################
-sample_fun_input_f.on_click(sample_fun_input_modified)
-Wavelet_fun_input.on_click(Wavelet_fun_modified)
+sample_fun_input_f.on_change('value', sample_fun_input_modified)
+Wavelet_fun_input.on_change('value', Wavelet_fun_modified)
 Wavelet_fun_input.on_change('label', update)
 T0_input.on_change('value', update)
 T1_input.on_change('value', update)

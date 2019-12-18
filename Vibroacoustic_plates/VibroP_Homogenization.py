@@ -18,11 +18,11 @@ def homogenize( E, G, NU, D ):
     # Quantity of layers (needs to be uneven)
     Quantity = len(D)
     if Quantity % 2 == 0:
-        print "Amount of layers must be uneven"
+        print ("Amount of layers must be uneven")
         return
 
     if Quantity == 0:
-        print "No Homogenisation needed"
+        print ("No Homogenisation needed")
         return
 
     # conver the array of NU from 2D to 1D
@@ -51,7 +51,7 @@ def homogenize( E, G, NU, D ):
     #copysign(x,y):
     #Return x with the sign of y. (There is no sign() in Python)
     # Middle Part
-    for i in range(1,(Quantity+1)/2): # 1,2,3...Quantity  # X%Y rest of modulo division X/Y???
+    for i in range(1,(Quantity+1)//2): # 1,2,3...Quantity  # X%Y rest of modulo division X/Y???
         Matrjoschka = -math.copysign(1,i%2 -1) * (1-E[1]/E[0]) * sum(D[i:-i])**3 + Matrjoschka
 
     # Homogenisation of Parameters
@@ -94,4 +94,4 @@ def homogenize( E, G, NU, D ):
              "ShearModulus" : [ format(G1_eff,'.2E'),format(G2_eff,'.2E'),format(G3_eff,'.2E') ],
              "PoissonRatios": [ [ format(nu12_eff,'.5f'), format(nu13_eff,'.5f'), format(nu23_eff,'.5f') ],
                                 [ format(nu21_eff,'.5f'), format(nu31_eff,'.5f'), format(nu32_eff,'.5f') ] ],
-             "TotalThickness" : sum(D) }
+             "TotalThickness" : format(sum(D),'.5f') }

@@ -1,9 +1,8 @@
 # Mechanics Apps
 This repository contains the python codes for webbased-visualization for mechanics principles, via Bokeh.
-It contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechnaics, Prof. Müller, TUM (Technical University of Munich).
+It contains different prototypes for WebApps for the visualization of mechanics example for the lectures of the Chair of Strcutrual Mechanics, Prof. Müller, TUM (Technical University of Munich).
 
 ## Overview
-[![Conda fastai version](https://img.shields.io/conda/v/bokeh/bokeh.svg)](https://anaconda.org/bokeh/bokeh)
 
 The use of this repository is only suggested for developers. If you are only interested in using the completed apps, please visit the following website: http://www.bm.bgu.tum.de/lehre/interactive-apps/.
 
@@ -130,16 +129,12 @@ If you are using a Linux system, please execute the ```.sh``` scripts, under Win
 - Franziska Mittermeier (fm)
 - Hannes Englert (he)
 - Corinna Schmausser (cs)
-- Christoph Winter (cw)
 
 ### Developers
 
 Please comply with the [Development Guideline](DevelopmentGuideline.md)
-- Khaled Boulbrachene, kb
 - Matthias Ebert, me, [@m3bert](https://github.com/m3bert)
-- Rishith Ellath Meethal, rem
-- Irfan Haider, ih
-- Sascha Kubisch, sk, [@ga96wec](https://github.com/ga96wec)
+
 
 
 ### Former developers
@@ -151,3 +146,7 @@ Please comply with the [Development Guideline](DevelopmentGuideline.md)
 - Ravil Dorozhinskii, rd
 - Vyshakh Unnikrishnan, vu
 - Carmen Font Mata, cfm 
+- Khaled Boulbrachene, kb
+- Rishith Ellath Meethal, rem
+- Irfan Haider, ih
+- Sascha Kubisch, sk, [@ga96wec](https://github.com/ga96wec)

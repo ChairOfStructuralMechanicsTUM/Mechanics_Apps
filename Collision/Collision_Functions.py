@@ -17,7 +17,7 @@ class Collision_Particle():
         self.velocityInPlot = ColumnDataSource(data=dict(xs=[0],ys=[0],xe=[0],ye=[0]))
         
     def update_position_source(self):
-        self.positionInPlot.data = dict(x=[self.position[0]],y=[self.position[1]])
+        self.positionInPlot.stream(dict(x=[self.position[0]],y=[self.position[1]]),rollover=1)
         
     def update_position(self, x, y):
         self.position[0] = x
@@ -51,12 +51,12 @@ class Collision_Particle():
                                       self.positionInPlot.data['x'][0]+self.velocity[0],
                                       self.positionInPlot.data['y'][0]+self.velocity[1]
                                     ])
-        self.velocityInPlot.data = dict(
+        self.velocityInPlot.stream(dict(
                                          xs=[arrowTailPosition[0]],
                                          ys=[arrowTailPosition[1]],
                                          xe=[arrowHeadPosition[0]],
                                          ye=[arrowHeadPosition[1]]
-                                       ) 
+                                       ),rollover=1)
         
     def update_velocity(self, vx, vy):
         self.velocity[0] = vx

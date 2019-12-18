@@ -1,14 +1,19 @@
 import {TextAnnotation, TextAnnotationView} from "models/annotations/text_annotation"
 import {ColumnarDataSource} from "models/sources/columnar_data_source"
 import {ColumnDataSource} from "models/sources/column_data_source"
-import {NumberSpec, AngleSpec, StringSpec, ColorSpec} from "core/vectorization"
-import {TextMixinVector} from "core/property_mixins"
+import {TextVector} from "core/property_mixins"
 import {LineJoin, LineCap} from "core/enums"
 import {SpatialUnits} from "core/enums"
-import {div, show, hide} from "core/dom"
+import {div, display, undisplay} from "core/dom"
 import * as p from "core/properties"
+import {Size} from "core/layout"
 import {Arrayable} from "core/types"
 import {Context2d} from "core/util/canvas"
+
+
+declare namespace katex {
+  function render(expression: string, element: HTMLElement, options: {displayMode?: boolean}): void
+}
 
 export class LatexLabelSetView extends TextAnnotationView {
   model: LatexLabelSet
@@ -20,12 +25,12 @@ export class LatexLabelSetView extends TextAnnotationView {
   protected _angle: Arrayable<number>
   protected _x_offset: Arrayable<number>
   protected _y_offset: Arrayable<number>
-  protected _display_mode: Boolean
+  protected _display_mode: boolean
 
-  initialize(options: any): void {
+    initialize(): void {
     this.model.render_mode = 'css' //LaTeX display only supported in css mode
     
-    super.initialize(options)
+    super.initialize()
 
     this.set_data(this.model.source)
     
@@ -65,7 +70,7 @@ export class LatexLabelSetView extends TextAnnotationView {
     const xscale = this.plot_view.frame.xscales[this.model.x_range_name]
     const yscale = this.plot_view.frame.yscales[this.model.y_range_name]
 
-    const panel = this.model.panel != null ? this.model.panel : this.plot_view.frame
+    const panel = this.panel != null ? this.panel : this.plot_view.frame
 
     const sx = this.model.x_units == "data" ? xscale.v_compute(this._x) : panel.xview.v_compute(this._x)
     const sy = this.model.y_units == "data" ? yscale.v_compute(this._y) : panel.yview.v_compute(this._y)
@@ -82,13 +87,16 @@ export class LatexLabelSetView extends TextAnnotationView {
       }
     } else if (this.el.children.length > this._text.length) {
       for (let i = this._text.length, end = this.el.children.length; i < end; i++) {
-        this.el.removeChild(this.el.lastChild)
+        if(this.el.lastChild){ // check if it is of None type; if yes, skip
+          this.el.removeChild(this.el.lastChild)
+        }
       }
     }
 
     if (!this.model.visible) {
-      hide(this.el)
+      undisplay(this.el)
     }
+
     
     const draw = this._v_css_text.bind(this)
     const {ctx} = this.plot_view.canvas_view
@@ -100,24 +108,12 @@ export class LatexLabelSetView extends TextAnnotationView {
     }
   }
 
-  protected _get_size(): number {
+  protected _get_size(): Size {
     const {ctx} = this.plot_view.canvas_view
     this.visuals.text.set_value(ctx)
 
-    switch (this.model.panel!.side) {
-      case "above":
-      case "below": {
-        const height = ctx.measureText(this._text[0]).ascent
-        return height
-      }
-      case "left":
-      case "right": {
-        const {width} = ctx.measureText(this._text[0])
-        return width
-      }
-      default:
-        throw new Error("unreachable code")
-    }
+    const {width, ascent} = ctx.measureText(this._text[0])
+    return {width, height: ascent}
   }
 
   protected _v_css_text(ctx: Context2d, i: number, text: string, sx: number, sy: number, angle: number): void {
@@ -126,13 +122,13 @@ export class LatexLabelSetView extends TextAnnotationView {
     const el = this.el.children[i] as HTMLElement
     el.textContent = text
     try {
-      katex.render(el.textContent, el, { displayMode: this.model.display_mode })
+      katex.render(el.textContent, el, { displayMode: this._display_mode })
     } catch (err) {
       el.textContent = err
     }
     
     this.visuals.text.set_vectorize(ctx, i)
-    const bbox_dims = this._calculate_bounding_box_dimensions(ctx, el.textContent)
+    const bbox_dims = this._calculate_bounding_box_dimensions(ctx, text)
     
     // attempt to support vector-style ("8 4 8") line dashing for css mode
     const ld = this.visuals.border_line.line_dash.value()
@@ -161,47 +157,52 @@ export class LatexLabelSetView extends TextAnnotationView {
       el.style.borderWidth = `${this.visuals.border_line.line_width.value()}px`
       el.style.borderColor = `${this.visuals.border_line.color_value()}`
     }
+    
+    
+    const bbox_bounds = this.plot_view.frame.bbox
+    // if the label position is outside of the box, do not display it
+    if(sx < bbox_bounds.x0 || sx > bbox_bounds.x1 ||
+      sy < bbox_bounds.y0 || sy > bbox_bounds.y1)
+    {
+     el.style.display = "none"
+    }
+    else{
+     display(el)
+    }
 
-    show(el)
   }
 }
 
 export namespace LatexLabelSet {
-  // line:border_ v
-  export interface BorderLine {
-    border_line_color: ColorSpec
-    border_line_width: NumberSpec
-    border_line_alpha: NumberSpec
-    border_line_join: LineJoin
-    border_line_cap: LineCap
-    border_line_dash: number[]
-    border_line_dash_offset: number
+  export type Attrs = p.AttrsOf<Props>
+
+  export type Props = TextAnnotation.Props & TextVector & {
+    x: p.NumberSpec
+    y: p.NumberSpec
+    x_units: p.Property<SpatialUnits>
+    y_units: p.Property<SpatialUnits>
+    text: p.StringSpec
+    angle: p.AngleSpec
+    x_offset: p.NumberSpec
+    y_offset: p.NumberSpec
+    source: p.Property<ColumnarDataSource>
+    x_range_name: p.Property<string>
+    y_range_name: p.Property<string>
+    display_mode: p.Property<boolean>
+
+    // line:border_ v
+    border_line_color: p.ColorSpec
+    border_line_width: p.NumberSpec
+    border_line_alpha: p.NumberSpec
+    border_line_join: p.Property<LineJoin>
+    border_line_cap: p.Property<LineCap>
+    border_line_dash: p.Property<number[]>
+    border_line_dash_offset: p.Property<number>
+
+    // fill:background_ v
+    background_fill_color: p.ColorSpec
+    background_fill_alpha: p.NumberSpec
   }
-
-  // fill:background_ v
-  export interface BackgroundFill {
-    background_fill_color: ColorSpec
-    background_fill_alpha: NumberSpec
-  }
-
-  export interface Mixins extends TextMixinVector, BorderLine, BackgroundFill {}
-
-  export interface Attrs extends TextAnnotation.Attrs, Mixins {
-    x: NumberSpec
-    y: NumberSpec
-    x_units: SpatialUnits
-    y_units: SpatialUnits
-    text: StringSpec
-    angle: AngleSpec
-    x_offset: NumberSpec
-    y_offset: NumberSpec
-    source: ColumnarDataSource
-    x_range_name: string
-    y_range_name: string
-    display_mode: boolean
-  }
-
-  export interface Props extends TextAnnotation.Props {}
 
   export type Visuals = TextAnnotation.Visuals
 }
@@ -222,7 +223,7 @@ export class LatexLabelSet extends TextAnnotation {
 
     this.mixins(['text', 'line:border_', 'fill:background_'])
 
-    this.define({
+    this.define<LatexLabelSet.Props>({
       x:            [ p.NumberSpec                      ],
       y:            [ p.NumberSpec                      ],
       x_units:      [ p.SpatialUnits, 'data'            ],

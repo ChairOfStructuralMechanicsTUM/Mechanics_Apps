@@ -129,7 +129,7 @@ def create_shift(f):
     
     if (f.get_mag() == 0):
         if (f.get_param() == 0):
-            f.e_s.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
+            f.e_s.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ),rollover=-1)
     else:
         paramInt1 = f.get_param()
         localDouble1 = compute_shift(paramInt1,paramInt1, f.get_mag())
@@ -146,8 +146,8 @@ def create_shift(f):
         if (paramInt1 < 30):
             d2 = paramInt1 / 30.0 * 0.5 + 0.1
             d1 = 0.1
-            f.e_s.data = dict(xS= [ d1 ], xE= [d1 + 1.35*localDouble1[0]],
-            yS= [d2], yE=[d2], lW = [abs(localDouble1[0]*sclr) ] )
+            f.e_s.stream(dict(xS= [ d1 ], xE= [d1 + 1.35*localDouble1[0]],
+            yS= [d2], yE=[d2], lW = [abs(localDouble1[0]*sclr) ] ),rollover=1)
 
             if (f.name ==  "F"u"\u2081"):
                 y1 = -0.05
@@ -170,8 +170,8 @@ def create_shift(f):
             y1 = d2 + localDouble1[1]
             y2 = d2
 
-            f.e_s.data = dict(xS= [ d1 ], xE= [d1],
-            yS= [d2 + localDouble1[1] ], yE=[d2], lW = [abs(localDouble1[1]*sclr) ] )
+            f.e_s.stream(dict(xS= [ d1 ], xE= [d1],
+            yS= [d2 + localDouble1[1] ], yE=[d2], lW = [abs(localDouble1[1]*sclr) ] ),rollover=1)
 
         elif (paramInt1 > 70):
             d1 = 0.8
@@ -186,14 +186,14 @@ def create_shift(f):
 
             x1 = d1 + localDouble1[0]
             x2 = d1
-            f.e_s.data = dict(xS= [ d1], xE= [d1 + localDouble1[0] ],
-            yS= [d2], yE=[d2], lW = [ abs(localDouble1[0]*sclr ) ] )
+            f.e_s.stream(dict(xS= [ d1], xE= [d1 + localDouble1[0] ],
+            yS= [d2], yE=[d2], lW = [ abs(localDouble1[0]*sclr ) ] ),rollover=1)
 
-        f.w1.data = dict(xS= [x1], xE= [x2],
-        yS= [y1], yE=[y2], name = [names] )
+        f.w1.stream(dict(xS= [x1], xE= [x2],
+        yS= [y1], yE=[y2], name = [names] ),rollover=1)
         
-        f.w2.data = dict(xS= [ x2 ], xE= [x1],
-        yS= [y2], yE=[y1] )
+        f.w2.stream(dict(xS= [ x2 ], xE= [x1],
+        yS= [y2], yE=[y1] ),rollover=1)
         
 
 
