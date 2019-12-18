@@ -80,19 +80,19 @@ def drawPhiAngle():
         Y=PendulumElbow.data['y'][0]
     Xe=X+dPhi*cos(phi)
     Ye=Y+dPhi*sin(phi)
-    dPhiArrow.data=dict(xs=[X],xe=[Xe],ys=[Y],ye=[Ye])              #      /output
+    dPhiArrow.stream(dict(xs=[X],xe=[Xe],ys=[Y],ye=[Ye]),rollover=1)   #      /output
     if (Xe>X):
-        dPhiArrowText.data=dict(x=[Xe],y=[Ye],t=[u"\u03C6\u0307"])  #      /output
+        dPhiArrowText.data=dict(x=[Xe],y=[Ye],t=[u"\u03C6\u0307"])     #      /output
         dPhiText.glyph.text_align="left"
     else:
-        dPhiArrowText.data=dict(x=[Xe],y=[Ye],t=[u"-\u03C6\u0307"]) #      /output
+        dPhiArrowText.data=dict(x=[Xe],y=[Ye],t=[u"-\u03C6\u0307"])    #      /output
         dPhiText.glyph.text_align="right"
 
 def removePhiAngle():
-    PhiAngle.data=dict(x=[],y=[])                #      /output
-    PhiAngleText.data=dict(x=[],y=[],t=[])       #      /output
-    dPhiArrow.data=dict(xs=[],xe=[],ys=[],ye=[]) #      /output
-    dPhiArrowText.data=dict(x=[],y=[],t=[])      #      /output  
+    PhiAngle.data=dict(x=[],y=[])                                #      /output
+    PhiAngleText.data=dict(x=[],y=[],t=[])                       #      /output
+    dPhiArrow.stream(dict(xs=[],xe=[],ys=[],ye=[]),rollover=-1)  #      /output
+    dPhiArrowText.data=dict(x=[],y=[],t=[])                      #      /output  
 
 # return total energy
 def getTotEng():

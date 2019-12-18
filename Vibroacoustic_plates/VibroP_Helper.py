@@ -153,7 +153,7 @@ def parseString( aString ):
 
     except:
         raise VibroP_WrongLayersThikness( "The data format for the layers thickness is wrong. "
-                                   "The delimiter can be comma, semicolon or space.")
+                                   "The delimiter can be a semicolon or space.")
 
     return LayersThickness
 
@@ -170,7 +170,7 @@ def checkLayerConsistency( Layers ):
                                       "has its negative value")
         if Layer == 0.0:
             raise VibroP_WrongLayersThikness("The thickness of one of the layers "
-                                      "is eqaul to zero" )
+                                      "is equal to zero" )
 
 
 def mirrorLayers( TopLayers ):

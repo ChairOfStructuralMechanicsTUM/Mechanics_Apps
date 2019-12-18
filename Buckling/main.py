@@ -51,8 +51,7 @@ class Column(object):
         self.fcrit      = fcrit                                                 #Critical Force. Value where buckling begins
         self.xstart     = 0                                                     #x-coordinate of the bottom of the column
         self.floor      = dict(x = [] , y = [])                                 #coordinates for floor of column
-        self.arrow      = ColumnDataSource(data=dict(xS=[], xE=[],              #Force arrow of column
-        yS=[], yE=[], lW = []))
+        self.arrow      = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], lW = []))
         self.labels     = ColumnDataSource(data=dict(x=[] , y=[], name = []))   #Force arrows labels
         self.sk         = ColumnDataSource(data=dict(x=[] , y=[]))              #buckling length (visual)
         self.sk_labels  = ColumnDataSource(data=dict(x=[] , y=[], name = []))   #buckling length (visual)
@@ -61,10 +60,14 @@ class Column(object):
         '''Member function made to reset the column to orginal position'''
         self.h              = self.hi
         self.deflection     = self.defi
-        self.arrow.data     = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        #self.arrow.data     = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
+        self.arrow.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)
         self.labels.data    = dict(x=[], y=[], name = [])
         self.pts.data       = dict(x=[self.xstart, self.xstart], y=[zstart, zstart+self.hi])
         self.sk.data        = dict(x=[], y=[])
+        #self.labels.stream(dict(x=[], y=[], name = []),rollover=1)
+        #self.pts.stream(dict(x=[self.xstart, self.xstart], y=[zstart, zstart+self.hi]),rollover=1)
+        #self.sk.stream(dict(x=[], y=[]),rollover=1)
         self.sk_labels.data = dict(x=[], y=[], name = [])
 
     def fun_floor(self,zoffset=0):
@@ -91,8 +94,8 @@ class Column(object):
         yS = [self.h + zstart + 0.5 + arrow_length] # starting point y-coordinate
         yE = [self.h + zstart + 0.5] # end point y-coordinate
         lW = [3] # line width
-        self.arrow.data = dict(xS = xS, xE = xE , yS = yS, yE = yE, lW = lW)
-
+        #self.arrow.data = dict(xS = xS, xE = xE , yS = yS, yE = yE, lW = lW)
+        self.arrow.stream(dict(xS = xS, xE = xE , yS = yS, yE = yE, lW = lW),rollover=1)
     def fun_labels(self,force_label="F"):
         '''Member Function: Creates labels of force arrows'''
         x                   = [self.pts.data['x'][-1]+.6, self.xstart-.7]
@@ -126,7 +129,10 @@ col1.pts.data=dict(x=[col1.xstart, col1.xstart], y=[zstart, zstart+col1.h])
 col2.pts.data=dict(x=[col2.xstart, col2.xstart], y=[zstart, zstart+col2.h])
 col3.pts.data=dict(x=[col3.xstart, col3.xstart], y=[zstart, zstart+col3.h])
 col4.pts.data=dict(x=[col4.xstart, col4.xstart], y=[zstart, zstart+col4.h])
-
+#col1.pts.stream(dict(x=[col1.xstart, col1.xstart], y=[zstart, zstart+col1.h]),rollover=1)
+#col2.pts.stream(dict(x=[col2.xstart, col2.xstart], y=[zstart, zstart+col2.h]),rollover=1)
+#col3.pts.stream(dict(x=[col3.xstart, col3.xstart], y=[zstart, zstart+col3.h]),rollover=1)
+#col4.pts.stream(dict(x=[col4.xstart, col4.xstart], y=[zstart, zstart+col4.h]),rollover=1)
 
 #, "name" = ["L","2L","3L","4L"]
 #creation of the floors of the columns:
@@ -158,8 +164,9 @@ def fun_col1(x0,y0):
     '''Function: Calculates deflection in column 1'''
     y = np.linspace(0,col1.h,30)
     x = np.cos(np.pi/(2*col1.h)*y)-1
-    col1.pts.data = dict(x = x0 + x, y = y0 + y) 
-    col1.sk.data = dict(x=[col1.xstart+1.2, col1.xstart+1.8, col1.xstart+1.5, col1.xstart+1.5, col1.xstart+1.2, col1.xstart+1.8], y=[zstart, zstart, zstart, zstart+col1.h, zstart+col1.h, zstart+col1.h])
+    col1.pts.data=dict(x = x0 + x, y = y0 + y)
+    #col1.pts.stream(dict(x = x0 + x, y = y0 + y),rollover=1)
+    col1.sk.data=dict(x=[col1.xstart+1.2, col1.xstart+1.8, col1.xstart+1.5, col1.xstart+1.5, col1.xstart+1.2, col1.xstart+1.8], y=[zstart, zstart, zstart, zstart+col1.h, zstart+col1.h, zstart+col1.h])
     #col1.sk_labels.data = dict(x=[col1.xstart+1.7], y=[zstart+0.5*col1.h], name=["sk/2 = L"])
     col1.sk_labels.data = dict(x=[col1.xstart+1.7], y=[zstart+0.5*col1.h], name=["\\frac{s_k}{2} = L"])
 
@@ -168,7 +175,10 @@ def fun_col2(x0,y0):
     y = np.linspace(0,col2.h,30)
     x = -np.sin(np.pi/col2.h*y)
     col2.pts.data = dict(x = x0 + x, y = y0 + y)
+    #col2.pts.stream(dict(x = x0 + x, y = y0 + y),rollover=1)
     col2.sk.data = dict(x=[col2.xstart+1.2, col2.xstart+1.8, col2.xstart+1.5, col2.xstart+1.5, col2.xstart+1.2, col2.xstart+1.8], y=[zstart, zstart, zstart, zstart+col2.h, zstart+col2.h, zstart+col2.h])
+    #col2.pts.stream(dict(x = x0 + x, y = y0 + y), rollover=1)
+    #col2.sk.stream(dict(x=[col2.xstart+1.2, col2.xstart+1.8, col2.xstart+1.5, col2.xstart+1.5, col2.xstart+1.2, col2.xstart+1.8], y=[zstart, zstart, zstart, zstart+col2.h, zstart+col2.h, zstart+col2.h]), rollover=1)
     col2.sk_labels.data = dict(x=[col2.xstart+1.7], y=[zstart+0.5*col2.h], name=["s_k = L"])
 
 def fun_col3(x0,y0):
@@ -177,7 +187,10 @@ def fun_col3(x0,y0):
     y = np.linspace(0,col3.h,30)
     x = np.cos(alph*y)-np.sin(alph*y)/(alph*col3.h) + y/col3.h -1
     col3.pts.data = dict(x = x0 + x, y = y0 + y)
+    #col3.pts.stream(dict(x = x0 + x, y = y0 + y),rollover=1)
     col3.sk.data = dict(x=[col3.xstart+1.2, col3.xstart+1.8, col3.xstart+1.5, col3.xstart+1.5, col3.xstart+1.2, col3.xstart+1.8], y=[zstart+0.3*col3.h, zstart+0.3*col3.h, zstart+0.3*col3.h, zstart+col3.h, zstart+col3.h, zstart+col3.h])
+    #col3.pts.stream(dict(x = x0 + x, y = y0 + y), rollover=1)
+    #col3.sk.stream(dict(x=[col3.xstart+1.2, col3.xstart+1.8, col3.xstart+1.5, col3.xstart+1.5, col3.xstart+1.2, col3.xstart+1.8], y=[zstart+0.3*col3.h, zstart+0.3*col3.h, zstart+0.3*col3.h, zstart+col3.h, zstart+col3.h, zstart+col3.h]),rollover=1)
     #col3.sk_labels.data = dict(x=[col3.xstart+1.7], y=[zstart+0.5*col3.h], name=["sk = 0.7"u"\u00B7L"])
     col3.sk_labels.data = dict(x=[col3.xstart+1.7], y=[zstart+0.5*col3.h], name=["s_k = 0.7 \\cdot L"])
 
@@ -187,6 +200,8 @@ def fun_col4(x0,y0):
     x = np.cos(2*np.pi/col4.h*y)-1
     col4.pts.data = dict(x = x0 + x, y = y0 + y)
     col4.sk.data = dict(x=[col4.xstart+1.2, col4.xstart+1.8, col4.xstart+1.5, col4.xstart+1.5, col4.xstart+1.2, col4.xstart+1.8], y=[zstart+0.25*col4.h, zstart+0.25*col4.h, zstart+0.25*col4.h, zstart+0.75*col4.h, zstart+0.75*col4.h, zstart+0.75*col4.h])
+
+    #col4.sk.stream(dict(x=[col4.xstart+1.2, col4.xstart+1.8, col4.xstart+1.5, col4.xstart+1.5, col4.xstart+1.2, col4.xstart+1.8], y=[zstart+0.25*col4.h, zstart+0.25*col4.h, zstart+0.25*col4.h, zstart+0.75*col4.h, zstart+0.75*col4.h, zstart+0.75*col4.h]),rollover=1)
     #col4.sk_labels.data = dict(x=[col4.xstart+1.7], y=[zstart+0.5*col4.h], name=["sk = 0.5"u"\u00B7L"])
     col4.sk_labels.data = dict(x=[col4.xstart+1.7], y=[zstart+0.5*col4.h], name=["s_k = 0.5 \\cdot L"])
 
@@ -303,15 +318,7 @@ plot.outline_line_color = "Black"
 plot.title.text_font_size = "18pt"
 plot.width = 900
 
-#Arrow Glyph Section:
-col1_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
-x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col1.arrow,line_color="#A2AD00")
-col2_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
-x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col2.arrow,line_color="#A2AD00")
-col3_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
-x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col3.arrow,line_color="#A2AD00")
-col4_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
-x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col4.arrow,line_color="#A2AD00")
+
 
 #Labels section:
 # F and column name
@@ -323,6 +330,16 @@ labels3 = LatexLabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-20, y_offset=0, source=col3.labels, render_mode='canvas')
 labels4 = LatexLabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-20, y_offset=0, source=col4.labels, render_mode='canvas')
+
+#Arrow Glyph Section:
+col1_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
+x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col1.arrow,line_color="#A2AD00")
+col2_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
+x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col2.arrow,line_color="#A2AD00")
+col3_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
+x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col3.arrow,line_color="#A2AD00")
+col4_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
+x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col4.arrow,line_color="#A2AD00")
 
 # buckling length
 sk_l1 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
@@ -354,10 +371,7 @@ sk_l3.text_font_size = '10pt'
 sk_l4.text_font_size = '10pt'
 
 #Add layouts of arrows and labels in to plot:
-plot.add_layout(col1_a)
-plot.add_layout(col2_a)
-plot.add_layout(col3_a)
-plot.add_layout(col4_a)
+
 
 plot.add_layout(labels1)
 plot.add_layout(labels2)
@@ -368,6 +382,11 @@ plot.add_layout(sk_l1)
 plot.add_layout(sk_l2)
 plot.add_layout(sk_l3)
 plot.add_layout(sk_l4)
+
+plot.add_layout(col1_a)
+plot.add_layout(col2_a)
+plot.add_layout(col3_a)
+plot.add_layout(col4_a)
 
 
 ################################################################################
@@ -393,6 +412,6 @@ description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=
 ####Output section
 ################################################################################
 #Output to the browser:
-curdoc().add_root(column(description1, plot, row(weight_slide, Spacer(width=50), button), description))
+curdoc().add_root(column(description1, column(plot, row(weight_slide, Spacer(width=50), button), description)))
 
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
