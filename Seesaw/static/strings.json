@@ -14,7 +14,7 @@
     {
         "isCode": true,
         "en": "open('Seesaw/description.html').read()",
-        "de": "open('Seesaw/description_de.html').read()"
+        "de": "open('Seesaw/description_de.html', encoding='utf-8').read()"
     },
     "F1F2Location_slider.title":
     {

@@ -10,7 +10,8 @@ class SD_Shape:
         self.x=x
         self.y=y
     
-    def __add__(self,(b,c)):
+    def __add__(self,t):
+        b,c = t
         x=list(self.x)
         y=list(self.y)
         for i in range(0,len(x)):

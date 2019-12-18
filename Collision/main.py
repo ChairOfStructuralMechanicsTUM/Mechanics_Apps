@@ -18,7 +18,6 @@ import Collision_BarChart as BC
 import Collision_Functions
 
 # latex integration
-# TODO: latex slider; show both versions: with text and with symboles (which can be explained in div)
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))

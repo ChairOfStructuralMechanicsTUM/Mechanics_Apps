@@ -1,5 +1,28 @@
-from __future__ import division
+"""
+Diffraction - visualizes the effect of wave diffraction at a wall
+"""
+# general imports
+import numpy as np
+from numpy import pi, cos, sin, sqrt, log10
+import time
 
+# bokeh imports
+from bokeh.io                    import curdoc
+from bokeh.models                import ColumnDataSource, Div
+from bokeh.layouts               import widgetbox, row, column
+from bokeh.models.layouts        import Spacer
+from bokeh.plotting              import Figure
+from bokeh.models.widgets        import Slider, TextInput
+
+# internal imports
+from diffraction_surface3d       import diffraction_Surface3d
+from diffraction_contour         import diffraction_Contour
+from diffraction_quiver          import diffraction_Quiver
+from diffraction_clickInteractor import diffraction_ClickInteractor
+from diffraction_grid            import diffraction_Grid
+from diffraction_computation     import compute_wave_max_at_cart
+
+# latex integration
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
@@ -7,27 +30,9 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv
 
-import numpy as np
-from numpy import pi, cos, sin, sqrt, log10
-import time
+# ----------------------------------------------------------------- #
 
-from bokeh.io import curdoc
-from bokeh.models import ColumnDataSource, Div
-from bokeh.layouts import widgetbox, row, column
-from bokeh.models.layouts import Spacer
-from bokeh.plotting import Figure
-from bokeh.models.widgets import Slider, TextInput
-
-from diffraction_surface3d import diffraction_Surface3d
-from diffraction_contour import diffraction_Contour
-from diffraction_quiver import diffraction_Quiver
-from diffraction_clickInteractor import diffraction_ClickInteractor
-#from LatexLabel import LatexLabel
-
-from diffraction_grid import diffraction_Grid
-from diffraction_computation import compute_wave_max_at_cart
-
-SHOWWARN = False
+SHOWWARN  = False
 SHOWDEBUG = False
 
 # number of gridpoints in x and y direction
@@ -47,11 +52,18 @@ phi0_init = 60  # angle of incident
 c = 3  # speed of sound - fictive value used in order to decrease speed of animation - does not affect amplitudes
 wavelength_init = 1  # wavelength
 
+# constant target time
+target_frame_time = 100  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
+
+# global variables
+# check if a slider has changed
+global_checker = dict(SliderHasChanged=False)
+# variables for time measurements
+global_time_check = dict(frame_end_time=0, lagcount=0, frame_no=0)
+
 # data sources
 # data source for surface plot
 source_surf = ColumnDataSource(data=dict(x=[], y=[], z=[], color=[]))
-# global variable that is set if a slider is changed
-source_checker = ColumnDataSource(data=dict(SliderHasChanged=[False]))
 # defines wavefront of plane wave
 source_wavefront = ColumnDataSource(data=dict(x=[], y=[]))
 # visualization of click location
@@ -70,7 +82,7 @@ source_shadow = ColumnDataSource(data=dict(x=[], y=[]))
 phi0_slider = Slider(title=u"Angle of incidence \u03C6\u2080 [\u00B0]", name='angle of incidence', value=phi0_init, start=0, end=180, step=10) #
 # slider for setting wavelength
 wavelength_slider = Slider(title=u"Dimensionless wavelength w.r.t. height of barrier [\u03BB/h]", name='wavelength', value=wavelength_init, start=0.4, end=2, step=0.1)
-# textbox for displaying dB value at proble location
+# textbox for displaying dB value at probe location
 textbox = TextInput(title="Noise probe (in contour plot)", name='noise probe', placeholder="pick a location for probe")
 
 # Generate a Figure container for the field
@@ -128,7 +140,7 @@ def set_slider_has_changed(attr, old, new):
     :return:
     """
     set_parameter_visualization()
-    source_checker.data = dict(SliderHasChanged=[True])
+    global_checker["SliderHasChanged"] = True
 
 
 def slider_has_changed():
@@ -136,7 +148,7 @@ def slider_has_changed():
     returns true, if any slider has been changed since the last call of update(t)
     :return: bool
     """
-    return source_checker.data['SliderHasChanged'][0]
+    return global_checker["SliderHasChanged"]
 
 
 def on_click_change(attr,old,new):
@@ -177,7 +189,7 @@ def update_wave_amplitude_on_grids(t):
     """
     if slider_has_changed():
         update_fresnel_on_grids()
-        source_checker.data = dict(SliderHasChanged=[False])
+        global_checker["SliderHasChanged"] = False
 
     # Surf Mesh
     p_surf = surface_grid.compute_wave_amplitude(t)
@@ -203,37 +215,31 @@ def update_wave_amplitude_at_probe(x,y,t):
     textbox.value = "%.2f dB" % loudness  # write measured value to textbox
 
 
-target_frame_time     = 100  # we update the app after x milliseconds. If computation takes longer than this time, the app lags.
-global_frame_end_time = ColumnDataSource(data=dict(val=[0]))
-global_lagcount       = ColumnDataSource(data=dict(val=[0]))
-
-
 def do_time_measurement(frame_no, computation_time):
-    [frame_end_time] = global_frame_end_time.data["val"] # input/output
-    [lagcount]       = global_lagcount.data["val"]       # input/output    
+    frame_end_time = global_time_check["frame_end_time"] # input/output
+    lagcount       = global_time_check["lagcount"]       # input/output    
 
     this_frame_end_time = time.time() * 1000  # in ms
     frame_duration = (this_frame_end_time - frame_end_time)
 
     if ((frame_duration > 1.5 * target_frame_time) or (computation_time > target_frame_time)) and SHOWWARN:
-        print " "
-        print "high lag observed for frame %s. Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (
-        frame_no, target_frame_time, frame_duration, computation_time)
+        print(" ")
+        print("high lag observed for frame {:d}. Frame Target: {:f} ms, Frame Real: {:f} ms, Computation: {:f} ms".format(
+        frame_no, target_frame_time, frame_duration, computation_time))
         lagcount += 1
         lagfraction = lagcount / (frame_no + 1)
         if lagfraction > 0.1 and frame_no > 100:
-            print "WARNING! more than 10% of the frames are lost. Consider increasing TARGET_FRAME_TIME to avoid lags!"
+            print("WARNING! more than 10% of the frames are lost. Consider increasing TARGET_FRAME_TIME to avoid lags!")
     if (computation_time < .5 * target_frame_time) and (target_frame_time > 40) and SHOWDEBUG:
-        print " "
-        print "Frame Target: %s ms, Frame Real: %s ms, Computation: %s ms" % (
-        target_frame_time, frame_duration, computation_time)
-        print "Computation time is much lower than frame time and framerate is below 25Hz. Consider decreasing TARGET_FRAME_TIME to improve user experience!"
+        print(" ")
+        print("Frame Target: {:f} ms, Frame Real: {:f} ms, Computation: {:f} ms".format(
+        target_frame_time, frame_duration, computation_time))
+        print("Computation time is much lower than frame time and framerate is below 25Hz. Consider decreasing TARGET_FRAME_TIME to improve user experience!")
 
     frame_end_time = this_frame_end_time
-    global_frame_end_time.data = dict(val=[frame_end_time])
-    global_lagcount.data       = dict(val=[lagcount])
+    global_time_check["frame_end_time"] = frame_end_time
+    global_time_check["lagcount"]       = lagcount
 
-global_frame_no = ColumnDataSource(data=dict(val=[0]))
 
 def update():
     """
@@ -241,7 +247,7 @@ def update():
     :param t: time
     :return:
     """
-    [frame_no] = global_frame_no.data["val"] #input/output
+    frame_no = global_time_check["frame_no"] #input/output
     frame_no += 1
     t = frame_no * target_frame_time / 1000.0
     computation_start_time = time.time()
@@ -263,7 +269,7 @@ def update():
     computation_time = (time.time() - computation_start_time) * 1000
 
     do_time_measurement(frame_no, computation_time)
-    global_frame_no.data = dict(val=[frame_no])
+    global_time_check["frame_no"] = frame_no
 
 
 def initialize():
@@ -272,7 +278,7 @@ def initialize():
     :return:
     """
     set_parameter_visualization()
-    source_checker.data = dict(SliderHasChanged=[True])
+    global_checker["SliderHasChanged"] = True
     update()
 
 
@@ -282,6 +288,7 @@ wavelength_slider.on_change('value',set_slider_has_changed)
 interactor.on_click(on_click_change)
 
 # create plots
+#REMARK: color might not be used from internal vis.js and has no effect - colormap always according to z! see https://github.com/bokeh/bokeh/issues/7814
 surface = diffraction_Surface3d(x="x", y="y", z="z", color="color", data_source=source_surf, width=500,height=100)  # wave surface
 # contour plots of wave
 contour_zero = diffraction_Contour(plot, line_width=2,line_color='black', path_filter = 10)  # zero level
@@ -303,7 +310,7 @@ initialize()
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
-description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1130)
 
 # add area image
 area_image = Div(text="""
