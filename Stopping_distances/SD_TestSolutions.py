@@ -31,11 +31,15 @@ def validate_function(fct,x):
         # or 2s instead of 2*s
         # or s(1+3) etc
         # add missing *
+        # # # print("--DEBUG: i,n = ", i,n)
+        # # # print("--DEBUG: fct[i] = ", fct[i])
+        # # # print("--DEBUG: fct = ", fct)# if fct[i]=='5' else pass
         if (i!=n-1 and (numbers.find(fct[i])!=-1 or fct[i]==x)
             and (fct[i+1]=='(' or fct[i+1]==u'\u221A' or fct[i+1]==x)):
             sTemp=fct[i+1:]
             fct=fct[:i+1]+"*"+sTemp
             n+=1
+        # # # print("--DEBUG: fct = ", fct)# if fct[i]=='5' else pass
         # if character is sqrt (u'\u221A') then replace with python readable "sqrt"
         if (fct[i]==u'\u221A'):
             sTemp=fct[i+1:]
@@ -55,24 +59,34 @@ def validate_function(fct,x):
             n+=1
         i+=1
 
-        return fct
+    return fct
 
 
 def eval_fct(fct, x='s', val=0):
+    # returns either "not valid" or the value of the given function
+
     # check if the given function is valid
     fct = validate_function(fct,x)
     if fct == False:
         print("Not a valid function!")
+        return "not valid"
     else:
         # if false has not yet been returned then fct should be valid and can be used in eval function
         try:
             # create a variable with the appropriate name and test function
+            # # # print("val = ", val)
+            # # # print("fct = ", fct)
             exec(x+"="+str(val))
+            # # # # print("x = ", x)
+            #print("s = ", s)
+            #print(eval(fct))
             #eval(fct)
             # return it if everything works
             return eval(fct)
         except :
             # otherwise return False
-            return False
+            # no, do not return False, since it can be confused with zero
+            #return False
+            return "not valid"
 
 

@@ -108,14 +108,21 @@ class SD_Problem:
                 # check if input is a valid equation and evaluate it
                 #s1=isEquation(new,'s')
                 s1 = eval_fct(new,'s',self.s)
-                if (s1!=False):
-                    # if this is the case then save the new velocity
-                    self.v = s1
-                    # reset the setup
-                    #self.Reset()
-                else:
-                    # if it isn't valid then revert to old value
+                print("s1 = ", s1)
+                #if (s1!=False):
+                if s1 == "not valid":
+                    print("WARNING: Not a valid function, using old entry.")
                     self.Vs.value = old
+                else:
+                    self.v = s1
+                # if (s1 != "not valid"):
+                #     # if this is the case then save the new velocity
+                #     self.v = s1
+                #     # reset the setup
+                #     #self.Reset()
+                # else:
+                #     # if it isn't valid then revert to old value
+                #     self.Vs.value = old
             else:
                 print("WARNING: Please enter a function v(s)!")
 
@@ -184,6 +191,7 @@ class SD_Problem:
             self.Vs.value = "2s+1"
             # calculate the velocity for s=0
             self.v = eval_fct(self.Vs.value,'s',0)
+            print("v after switching = ", self.v)
 
             # alert graphs that problem type has changed
             self.Plotter.swapSetup()
@@ -210,36 +218,48 @@ class SD_Problem:
         # # if time is not set to zero, call Reset here at the latest!
         # if (self.t!=0):
         #     self.Reset()
+        if self.model_type == "init_v":
+            # setup the graphs with an initial velocity and acceleration
+            # so the ranges can be set
+            self.Plotter.setup(self.v,self.a)
+            # add the first point
+            self.Plotter.addPointInTime(0)
+            # start the simulation
+            self.callback_id = curdoc().add_periodic_callback(self.init_v_Simulation, 100)
+        
+        elif self.model_type == "distance_v":
+            # setup and addPointInTime can only be used for init_v ... TODO: code them more general
 
-        # setup the graphs with an initial velocity and acceleration
-        # so the ranges can be set
-        self.Plotter.setup(self.v,self.a)
-        # add the first point
-        self.Plotter.addPointInTime(0)
-        # start the simulation
-        self.callback_id = curdoc().add_periodic_callback(self.init_v_Simulation, 100)
+            # start the simulation
+            self.callback_id = curdoc().add_periodic_callback(self.distance_v_Simulation, 100)
+
 
         # start button should not be pressed during simulation
         self.startSim.disabled = True
+        
 
-        # if self.startSim.label == "Start":
-        #     # # if time is not set to zero, call Reset here at the latest!
-        #     # if (self.t!=0):
-        #     #     self.Reset()
 
-        #     # setup the graphs with an initial velocity and acceleration
-        #     # so the ranges can be set
-        #     self.Plotter.setup(self.v,self.a)
-        #     # add the first point
-        #     self.Plotter.addPointInTime(0)
-        #     # start the simulation
-        #     self.callback_id = curdoc().add_periodic_callback(self.init_v_Simulation, 100)
-        #     self.startSim.label = "Stop"
 
-        # elif self.startSim.label == "Stop":
-        #     if curdoc().session_callbacks:
-        #         curdoc().remove_periodic_callback(self.callback_id)
-        #     self.startSim.label = "Start"
+        
+
+            # if self.startSim.label == "Start":
+            #     # # if time is not set to zero, call Reset here at the latest!
+            #     # if (self.t!=0):
+            #     #     self.Reset()
+
+            #     # setup the graphs with an initial velocity and acceleration
+            #     # so the ranges can be set
+            #     self.Plotter.setup(self.v,self.a)
+            #     # add the first point
+            #     self.Plotter.addPointInTime(0)
+            #     # start the simulation
+            #     self.callback_id = curdoc().add_periodic_callback(self.init_v_Simulation, 100)
+            #     self.startSim.label = "Stop"
+
+            # elif self.startSim.label == "Stop":
+            #     if curdoc().session_callbacks:
+            #         curdoc().remove_periodic_callback(self.callback_id)
+            #     self.startSim.label = "Start"
 
 
 
@@ -266,6 +286,96 @@ class SD_Problem:
             # place the car
             self.Vis.move(s,v)
 
+
+
+
+    def distance_v_Simulation(self):
+        # v is a function of s but for the simulation to appear realistic
+        # the plot must be done at similar time steps
+        # therefore temporary variables are used 
+        totT=0
+        sTemp=self.s
+        t=self.t
+        # the initial displacement step is val
+        val=0.05
+        # the function is looped until the total time step = 0.05s
+        while (totT<0.05):
+            # create s for the eval
+            s=sTemp
+            # find the old velocity
+            oldv=eval_fct(self.Vs.value,'s',s)
+            # update s with displacement step
+            s+=val
+            # find new velocity
+            v=eval_fct(self.Vs.value,'s',s)
+
+            # check for errors in the evaluation
+            if ((type(oldv) == str) or (type(v) == str)):
+                print("function evaluation was unsuccessful")
+                print("abort simulation")
+                print("this part needs to be revisited")
+                curdoc().remove_periodic_callback(self.callback_id)
+                return
+
+            if (v<=1e-10 and val<=0.0005):
+                # if the velocity is 0 (including rounding errors)
+                # or negative and val has reached it's minimum value
+                # then the car is placed with 0 velocity
+                self.Vis.move(s,0)
+                # the simulation is stopped
+                curdoc().remove_periodic_callback(self.callback_id)
+                # and totT is made large enough to break the while loop
+                totT=0.15
+            elif (v<0):
+                # else if the velocity is negative
+                # then reduce the displacement step
+                val/=2.0
+            else:
+                # else if the velocity is normal then find the time step
+                try:
+                    dt=val/v
+                #except ZeroDivisionError:
+                except:
+                    print(v)   # prints false/"not valid", so the error appears in eval_fct
+                    print(val)
+                    print("this part of the code needs to be revisited")
+                    curdoc().remove_periodic_callback(self.callback_id)
+                    return
+                if (totT+dt<=0.06):
+                    # if dt is small enough then keep it
+                    # update total time simulated
+                    totT+=dt
+                    # update position to which simulated
+                    sTemp=s
+                    # update time to which simulated
+                    t+=dt
+                    # calculate acceleration (a(s)=dv^2(s)/ds)
+                    a=0.5*(v**2-oldv**2)/val
+                    # add new point to graphs
+                    self.Plotter.addPoint(t,s,v,a)
+                    if (v<=1e-10):
+                        # if velocity is 0 or negative then place the car with 0 velocity
+                        v=0
+                        # and stop simulation
+                        totT=0.15
+                        curdoc().remove_periodic_callback(self.callback_id)
+                    # # elif (abs(v-oldv)<0.001):
+                    # #     # if acceleration is too slow to see changes stop the simulation
+                    # #     totT=0.15
+                    # #     safely_remove_periodic_callback(self.aSimulation)
+                    elif (s>=29.99):
+                        # if the car has hit the wall then place the car
+                        s=30
+                        # and stop the simulation
+                        totT=0.15
+                        curdoc().remove_periodic_callback(self.callback_id)
+                else:
+                    # if dt was too large then decrease deplacement step
+                    val=val/2.0
+        self.Vis.move(s,v)
+        # save new displacement and time values
+        self.s=s
+        self.t=t
 
 
 
