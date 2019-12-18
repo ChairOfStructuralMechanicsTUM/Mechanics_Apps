@@ -68,9 +68,9 @@ source_datatable = ColumnDataSource(data=dict(shot_alpha=[], shot_error=[]))
 app_data = ColumnDataSource(data=dict(alpha=[bv_settings.alpha_init], alpha_left=[bv_settings.alpha_left],
                                       alpha_right=[bv_settings.alpha_right]))
 
-buttonShort = Button(label="shoot shorter")
+buttonShort = Button(label="shoot shorter", width=300)
 buttonShort.on_click(shoot_shorter)
-buttonFar = Button(label="shoot further")
+buttonFar = Button(label="shoot further", width=300)
 buttonFar.on_click(shoot_further)
 
 # initialize plot
@@ -89,21 +89,21 @@ plot.line('rx', 'ry',
           line_width=3,
           line_alpha=0.6,
           color='blue',
-          legend='current shot')
+          legend_label='current shot')
 plot.line('rx_short', 'ry_short',
           source=source_short,
           line_width=1,
           line_alpha=.6,
           line_dash=[4, 4],
           color='green',
-          legend='old next shorter shot')
+          legend_label='old next shorter shot')
 plot.line('rx_far', 'ry_far',
           source=source_far,
           line_width=1,
           line_alpha=.6,
           line_dash=[4, 4],
           color='red',
-          legend='old next farther sh')
+          legend_label='old next farther sh')
 
 # insert picture of cannon and target
 target_position = np.random.rand() * 10
@@ -122,8 +122,8 @@ update_data()
 
 # make layout
 curdoc().add_root(layout(children=[[plot],
-                                   [widgetbox(buttonShort, buttonFar)],
-                                   [widgetbox(data_table)]],
+                                   [widgetbox(buttonShort, buttonFar, width=300, height=100)],
+                                   [widgetbox(data_table, width=350, height=80)]],
                          sizing_mode='fixed'))
 
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
