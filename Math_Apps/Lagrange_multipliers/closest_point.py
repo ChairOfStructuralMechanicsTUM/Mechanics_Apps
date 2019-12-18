@@ -12,4 +12,4 @@ cons = ({'type': 'eq', 'fun': lambda x:  g(x[0],x[1])})
 
 x, y = minimize(f,[x0,y0],constraints=cons,jac=df)['x']
 
-print "(%f,%f)" % (x,y)
+print("({:f},{:f})".format(x,y))
