@@ -2,6 +2,11 @@ import { Markup, MarkupView } from "models/widgets/markup"
 import { div } from "core/dom"
 import * as p from "core/properties"
 
+declare namespace katex {
+  function render(expression: string, element: HTMLElement, options: {displayMode?: boolean}): void
+}
+
+
 export class LatexDivView extends MarkupView {
   model: LatexDiv
 
@@ -14,10 +19,10 @@ export class LatexDivView extends MarkupView {
       content.innerHTML = this.model.text
       this.myrender(content)
     }
-    this.markupEl.appendChild(content)
+    this.markup_el.appendChild(content)
   }
   
-  myrender(content): void {
+  myrender(content: any): void {
     // taken from http://sixthform.info/katex/guide.html
     // first, replace all $$ 
     content.innerHTML = content.innerHTML.replace(/(\$\$){1}([\s\S]+?)(\$\$){1}/g, '<div class=\"maths\">$2</div>');
@@ -48,9 +53,9 @@ export class LatexDivView extends MarkupView {
       // console.log(t)
       try {
         if (x[i].tagName == "DIV") {
-          katex.render(x[i].textContent, x[i], { displayMode: true });
+          katex.render(x[i].textContent, x[i], { displayMode: true  });
         } else {
-          katex.render(x[i].textContent, x[i]);
+          katex.render(x[i].textContent, x[i], { displayMode: false });
         }
       }
       catch (err) {
@@ -71,12 +76,20 @@ export class LatexDivView extends MarkupView {
   }
 }
 
-export namespace LatexDiv {
-  export interface Attrs extends Markup.Attrs {
-    render_as_text: boolean
-  }
+// export namespace LatexDiv {
+//   export interface Attrs extends Markup.Attrs {
+//     render_as_text: boolean
+//   }
 
-  export interface Props extends Markup.Props { }
+//   export interface Props extends Markup.Props { }
+// }
+
+export namespace LatexDiv {
+  export type Attrs = p.AttrsOf<Props> 
+
+  export type Props = Markup.Props & {
+    render_as_text: p.Property<boolean>
+  }
 }
 
 export interface LatexDiv extends LatexDiv.Attrs { }
@@ -93,8 +106,8 @@ export class LatexDiv extends Markup {
     this.prototype.type = "LatexDiv"
     this.prototype.default_view = LatexDivView
 
-    this.define({
-      render_as_text: [p.Bool, false],
+    this.define<LatexDiv.Props>({
+      render_as_text: [p.Boolean, false],
     })
   }
 }
