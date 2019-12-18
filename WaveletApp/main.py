@@ -123,12 +123,18 @@ def update(attr, old, new):
         return None
 
     disable_interactivity(True)
+    My_Layout.children[0].children[2].children[1].children[0] = loading # Computation loading spinner
+
+    # call another callback such since layout changes are currently (Bokeh 1.4.0) only applied at the end of functions
+    curdoc().add_next_tick_callback(comp_intensive_work)
+
+
+def comp_intensive_work():
 
     sample_function_id = sample_fun_input_f.value 
     Wavelet_function_id = Wavelet_fun_input.value
     Resolut=int(sympify(Resolution.value.replace(',','.')))
     Resolution.value=str(Resolut)
-    My_Layout.children[0].children[2].children[1].children[0] = loading # Computation loading spinner
 
     # Extract parameters and account for German dot
     T_0 = float(sympify(T0_input.value.replace(',','.')))
