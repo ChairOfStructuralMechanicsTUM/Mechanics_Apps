@@ -150,6 +150,9 @@ class SD_Problem:
             #self.UserAcceleration.disabled = False
             self.UserAcceleration.visible = True
 
+            # disable start button until acceleration is given
+            self.startSim.disabled = True
+
         elif new == "Distance-dependent Velocity":
             # set the new model internally
             self.model_type = "distance_v"

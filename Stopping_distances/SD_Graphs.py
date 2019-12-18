@@ -11,28 +11,29 @@ class SD_Graphs:
     def __init__(self):
         ## create the 4 figures and set their visual properties
         # create velocity vs. time graph
-        self.vt=figure(tools="",x_range=(0,10),y_range=(0,10))
+        tmp_tools = "pan, wheel_zoom, reset"
+        self.vt=figure(tools=tmp_tools,x_range=(0,10),y_range=(0,10))
         self.vt.axis.axis_label_text_font_size="14pt"
         self.vt.axis.major_label_text_font_size="12pt"
         #self.vt.axis.axis_label_text_font_style="normal"
         self.vt.xaxis.axis_label = "Time (s)"
         self.vt.yaxis.axis_label = "Velocity (m/s)"
         # create acceleration vs. time (or displacement) graph
-        self.at=figure(tools="",x_range=(0,10),y_range=(-10,0))
+        self.at=figure(tools=tmp_tools,x_range=(0,10),y_range=(-10,0))
         self.at.axis.axis_label_text_font_size="14pt"
         self.at.axis.major_label_text_font_size="12pt"
         #self.at.axis.axis_label_text_font_style="normal"
         self.at.xaxis.axis_label = "Time (s)"
         self.at.yaxis.axis_label = u"Acceleration (m/s\u00B2)"
         # create time vs. displacement graph
-        self.st=figure(tools="",x_range=(0,30),y_range=(0,10))
+        self.st=figure(tools=tmp_tools,x_range=(0,30),y_range=(0,10))
         self.st.axis.axis_label_text_font_size="14pt"
         self.st.axis.major_label_text_font_size="12pt"
         #self.st.axis.axis_label_text_font_style="normal"
         self.st.xaxis.axis_label = "Travelled Distance (m)"
         self.st.yaxis.axis_label = "Time (s)"
         # create velocity vs. displacement graph
-        self.vs=figure(tools="",x_range=(0,30),y_range=(0,10))
+        self.vs=figure(tools=tmp_tools,x_range=(0,30),y_range=(0,10))
         self.vs.axis.axis_label_text_font_size="14pt"
         self.vs.axis.major_label_text_font_size="12pt"
         #self.vs.axis.axis_label_text_font_style="normal"
