@@ -1,11 +1,7 @@
-#from string import replace
-
-#from SD_Visualisation import SD_Visualisation
-#from SD_Graphs import SD_Graphs
-from SD_TestSolutions import eval_fct #isEquation
+from SD_TestSolutions import eval_fct
 from random import seed, randrange
 from bokeh.layouts import column, row
-from bokeh.models.widgets import TextInput, Button, Paragraph, CheckboxGroup, Select#, Slider, Div
+from bokeh.models.widgets import TextInput, Button, Paragraph, CheckboxGroup, Select
 from bokeh.io import curdoc
 
 from SD_Constants import (
@@ -42,9 +38,7 @@ class SD_Problem:
         # reset button
         self.reset_button = Button(label="Reset",button_type="success", width=100)
         self.reset_button.on_click(self.Reset)
-        #self.idealAcc = -self.v**2/40.0
         # checkbox for whether equations as a function of time are visible
-        #self.eqVis = checkbox_group = CheckboxGroup(labels=["Show equations as a function of the time"], active=[])
         self.eqVis = CheckboxGroup(labels=["Show equations as a function of the time"], active=[])
         self.eqVis.on_change('active',self.toggleEquation)
         # save space to write equations as a function of time
@@ -75,17 +69,13 @@ class SD_Problem:
         self.callback_id = None
 
         # save layout
-        #self.Layout = column(row(self.Vs,self.VMethod),row(self.UserAcceleration,self.startSim),self.reset_button,self.eqVis,
-        #    self.eqst,self.eqvt,row(self.UserTs,self.TsSqrt),row(self.UserVs,self.VsSqrt),self.TestEqs)
         self.Layout = column(self.VMethod, self.Vs, self.UserAcceleration, self.startSim, self.reset_button,
                              self.eqVis, self.eqst, self.eqvt, row(self.UserTs, self.TsSqrt), row(self.UserVs,self.VsSqrt),self.TestEqs)
 
 
 
     def set_v(self, attr, old, new):
-        #print("in set v callback")
         if self.model_type == "init_v":
-            #print("in init_v")
             # if method using initial velocity v0 is used
             try:
                 # replace , with . i.e. change 0,5 to 0.5
@@ -95,8 +85,6 @@ class SD_Problem:
                 temp = float(new)
                 # update velocity
                 self.v = temp
-                # reset the setup
-                #self.Reset()
             except ValueError:
                 # if conversion was unsuccesful then reset box to old v0
                 self.Vs.value = str(self.v)
@@ -106,23 +94,12 @@ class SD_Problem:
             if (len(new)!=0):
                 # if box is not empty
                 # check if input is a valid equation and evaluate it
-                #s1=isEquation(new,'s')
                 s1 = eval_fct(new,'s',self.s)
-                print("s1 = ", s1)
-                #if (s1!=False):
                 if s1 == "not valid":
                     print("WARNING: Not a valid function, using old entry.")
                     self.Vs.value = old
                 else:
                     self.v = s1
-                # if (s1 != "not valid"):
-                #     # if this is the case then save the new velocity
-                #     self.v = s1
-                #     # reset the setup
-                #     #self.Reset()
-                # else:
-                #     # if it isn't valid then revert to old value
-                #     self.Vs.value = old
             else:
                 print("WARNING: Please enter a function v(s)!")
 
@@ -137,8 +114,7 @@ class SD_Problem:
         new = new.replace(" ","")
         # replace , with . i.e. change 0,5 to 0.5
         new = new.replace(',','.')
-        self.UserAcceleration.value = new
-        #print("inf loop?") # only twice
+        self.UserAcceleration.value = new   # calls function again (max. twice)
         if len(new)!=0:
             # set the acceleration
             self.a = float(new)
@@ -147,8 +123,6 @@ class SD_Problem:
         else:
             # keep the start button disabled
             self.startSim.disabled = True
-
-
 
 
 
@@ -185,13 +159,10 @@ class SD_Problem:
             # change title to expect a a(s) user function instead of v(s)
             self.UserVs.title = "a(s) = "
             
-            # set the current velocity to zero
-            #self.v = 0
             # show an example of a distance dependent velocity function
-            self.Vs.value = "2s+1"
+            self.Vs.value = u"\u221A(2*(-0.15s)+9)"
             # calculate the velocity for s=0
             self.v = eval_fct(self.Vs.value,'s',0)
-            print("v after switching = ", self.v)
 
             # alert graphs that problem type has changed
             self.Plotter.swapSetup()
@@ -199,11 +170,8 @@ class SD_Problem:
             self.Reset()
             # stop viewer from seeing s(t) and v(t) (as not relevant to this problem)
             self.eqVis.visible=False
-            # clear and remove name from acceleration input
-            # (disabled does not work, nor does visible)
+            # clear acceleration input for distance dependent velocity, not needed in this case
             self.UserAcceleration.value= ""
-            #self.UserAcceleration.title= ""
-            #self.UserAcceleration.disabled = True
             self.UserAcceleration.visible = False
 
         else:
@@ -211,13 +179,7 @@ class SD_Problem:
 
 
 
-
-
-
     def Start(self):
-        # # if time is not set to zero, call Reset here at the latest!
-        # if (self.t!=0):
-        #     self.Reset()
         if self.model_type == "init_v":
             # setup the graphs with an initial velocity and acceleration
             # so the ranges can be set
@@ -233,35 +195,9 @@ class SD_Problem:
             # start the simulation
             self.callback_id = curdoc().add_periodic_callback(self.distance_v_Simulation, 100)
 
-
         # start button should not be pressed during simulation
         self.startSim.disabled = True
         
-
-
-
-        
-
-            # if self.startSim.label == "Start":
-            #     # # if time is not set to zero, call Reset here at the latest!
-            #     # if (self.t!=0):
-            #     #     self.Reset()
-
-            #     # setup the graphs with an initial velocity and acceleration
-            #     # so the ranges can be set
-            #     self.Plotter.setup(self.v,self.a)
-            #     # add the first point
-            #     self.Plotter.addPointInTime(0)
-            #     # start the simulation
-            #     self.callback_id = curdoc().add_periodic_callback(self.init_v_Simulation, 100)
-            #     self.startSim.label = "Stop"
-
-            # elif self.startSim.label == "Stop":
-            #     if curdoc().session_callbacks:
-            #         curdoc().remove_periodic_callback(self.callback_id)
-            #     self.startSim.label = "Start"
-
-
 
 
     def init_v_Simulation(self):
@@ -285,7 +221,6 @@ class SD_Problem:
         else:
             # place the car
             self.Vis.move(s,v)
-
 
 
 
@@ -378,39 +313,20 @@ class SD_Problem:
         self.t=t
 
 
-
     def Reset(self):
         # reset time and distance
         self.t = 0
         self.s = 0
         
-        # print the current value in the textbox
-        #self.Vs.value = str(self.v)
-
         # move the car to the start with current velocity
         self.Vis.move(self.s, self.v)
-
-        # # if using the initial velocity model, move the car to the start with current velocity
-        # if self.model_type == "init_v":
-        #     self.Vis.move(self.s, self.v)
-        # elif self.model_type == "distance_v":
-        #     pass
-        #     #self.Vis.move(self.s, eval_fct(self.v,'s',self.s))
-        # else:
-        #     pass
 
         # reset graphs
         self.Plotter.Reset()
 
         # enable start button again if all callbacks are removed
-        #print(curdoc().session_callbacks)
         if not curdoc().session_callbacks:
             self.startSim.disabled = False
-
-        # # change the button label if the simulation stopped automatically
-        # if self.startSim.label == "Stop":
-        #     self.startSim.label = "Start"
-
 
 
     def toggleEquation(self,attr,old,new):
@@ -433,7 +349,6 @@ class SD_Problem:
         self.UserVs.value=self.UserVs.value+u"\u221A("    
 
 
-# eval_fct(self.Vs.value,'s',0)
     def plot_attempt(self):
 
         self.Plotter.test_equation(self.UserTs.value,'t')
@@ -443,27 +358,9 @@ class SD_Problem:
         else:
             self.Plotter.test_equation(self.UserVs.value,'a')
 
-#         s1=isEquation(self.UserTs.value,'s')
-#         #print(s1)
-#         # if s1 is a string
-#         if (s1!=False):
-#             self.Plotter.test_equation(s1,'s')
-#         s1=isEquation(self.UserVs.value,'s')
-#         # if s1 is a string
-#         if (s1!=False):
-#             self.Plotter.test_equation(s1,self.va)
-
-
-# test_equation(self,fct,plt)
 
 
     def _init_random_velocity(self):
         return randrange(min_v*10,max_v*10,steps_v*10)/10.0
 
-    def dummy_callback(self):
-        pass
-
-    def dummy_callback_attr(self, attr, old, new):
-        pass
-        
-
+    
