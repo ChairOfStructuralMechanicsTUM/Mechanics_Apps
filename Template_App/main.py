@@ -7,7 +7,7 @@ import numpy as np
 # bokeh imports
 from bokeh.io             import curdoc
 from bokeh.plotting       import figure
-from bokeh.models         import ColumnDataSource, Arrow, OpenHead
+from bokeh.models         import ColumnDataSource, Arrow, OpenHead, NormalHead
 from bokeh.models.glyphs  import ImageURL
 from bokeh.models.widgets import Button, RadioButtonGroup, RadioGroup
 from bokeh.layouts        import column, row, Spacer
@@ -19,7 +19,8 @@ from TA_constants import (
     xsl, ysl, xsr, ysr,                    # support coordinates
     support_width, support_height,         # support scale
     initial_value, start_value, end_value, # slider settings
-    button_width                           # button settings
+    button_width,                          # button settings
+    c_orange                               # colors used
 )
 from TA_Spring  import TA_Spring
 from TA_Mass    import TA_CircularMass
@@ -60,6 +61,7 @@ global_vars = dict(callback_id=None)
 cds_support_left  = ColumnDataSource(data=dict(sp_img=[fixed_support_img], x=[xsl] , y=[ysl]))
 cds_support_right = ColumnDataSource(data=dict(sp_img=[slide_support_img], x=[xsr] , y=[ysr]))
 
+cds_arrow = ColumnDataSource(data=dict(xS=[1], xE=[3], yS=[1], yE=[1]))
 
 
 ##################################
@@ -88,12 +90,22 @@ def slider_cb_fun(attr,old,new):
         some_helper_fun() # call helper function
 
 
-# a more detailed example of hiding models can be found in the Dummy App
 def radio_cb_fun(attr,old,new):
-    if new==0: # show slider
+    if new==0: # slider without background color
         example_slider.css_classes = ["slider"]
+    elif new==1: # change the background of the slider
+        example_slider.css_classes = ["slider", "bgcol"]
+        # NOTE: this just serves as an example
+        # Bokeh provides an easy python access via   example_slider.background = "red"
+        # Use css_classes only in case if there is no attribute which provides your desired functionality!
+
+
+# a more detailed example of hiding models can be found in the Dummy App
+def radio_cb_fun_2(attr,old,new):
+    if new==0: # show slider
+        example_slider.visible = True
     elif new==1: # hide slider
-        example_slider.css_classes = ["slider", "hidden"]
+        example_slider.visible = False
 
 
 
@@ -105,7 +117,6 @@ def radio_cb_fun(attr,old,new):
 
 def some_helper_fun():
     print("hello, I'm here to help")
-
 
 
 
@@ -129,6 +140,11 @@ figure_name.add_glyph(cds_support_left,  ImageURL(url="sp_img", x='x', y='y', w=
 figure_name.add_glyph(cds_support_right, ImageURL(url="sp_img", x='x', y='y', w=support_width, h=support_height, anchor="center"))
 
 
+### add arrows to the figure ###
+# use either Normalheads or Openheads and orange color by default
+#arrow_glyph = Arrow(end=NormalHead(line_color=c_orange, fill_color=c_orange), x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_color=c_orange, source=cds_arrow)
+arrow_glyph = Arrow(end=OpenHead(line_color=c_orange), x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_color=c_orange, source=cds_arrow)
+figure_name.add_layout(arrow_glyph)
 
 
 
@@ -143,7 +159,6 @@ play_pause_button = Button(label="Play", button_type="success", width=button_wid
 play_pause_button.on_click(play_pause) 
 
 
-
 # the attribute "value_unit" only exists in the costum LatexSlider class
 # for a default bokeh slider use Slider
 # use the css_classes to reference this object in /templates/styles.css
@@ -156,7 +171,8 @@ example_slider.on_change('value',slider_cb_fun) # callback function is called wh
 # inline=True to place the buttons horizontally
 radio_group_01  = RadioGroup(labels=["1", "2"], active=0, inline=True)
 radio_group_02  = RadioGroup(labels=["3", "4"])
-radio_group_01.on_change("active",radio_cb_fun)
+radio_group_01.on_change("active", radio_cb_fun)
+radio_group_02.on_change("active", radio_cb_fun_2)
 
 
 # radio button group: buttons that are merged next to each other, only one active selection per group allowed
