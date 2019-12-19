@@ -128,7 +128,7 @@ For more information and contacts, please consult the [Wiki](https://github.com/
 - [x] 1) Diffraction (br)
 - [x] 2) Vibroacoustic plates (rd)
 
-#### Integral transform method (fm, mm):
+#### Integral transform method (fw, mm):
 - [x] 1) Sampling (br, me)
 - [ ] 2) Wavelet-Transform (kb)
 
@@ -139,7 +139,7 @@ For more information and contacts, please consult the [Wiki](https://github.com/
 - Moritz Becker (mb)
 - Julian Freisinger (jf)
 - Matthias Miksch (mm)
-- Franziska Mittermeier (fm)
+- Franziska Weber (fw)
 - Hannes Englert (he)
 - Corinna Schmausser (cs)
 
