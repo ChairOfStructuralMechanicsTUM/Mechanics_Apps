@@ -74,7 +74,9 @@ The server can be run in two modes:
 	- In our case, we use a proxy name for the *IP:Port*, which is *apps.bm.bgu.tum.de:5006* in order to display a more appropriate website name.
 
 <br>
+
 For more information and contacts, please consult the [Wiki](https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/wiki).
+
 <br>
 
 ## Apps 
