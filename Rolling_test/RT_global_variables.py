@@ -171,8 +171,8 @@ class RT_global_variables:
         ###############################################################################
         ###                                 Buttons                                 ###
         ###############################################################################
-        self.start_button = Button(label="Start", button_type="success")
-        self.reset_button = Button(label="Reset", button_type="success")
+        self.start_button = Button(label="Start", button_type="success", width=285)
+        self.reset_button = Button(label="Reset", button_type="success", width=285)
         
         self.mode_selection = RadioGroup(labels=["one", "all"], active=0, inline=True)
         
@@ -198,9 +198,11 @@ class RT_global_variables:
         
         # inner radius
         # end value dependent on selected radius size
-        self.ri_slider0 = Slider(title="Inner radius [m]", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj1", "hidden"])
-        self.ri_slider1 = Slider(title="Inner radius [m]", value=0.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj2", "hidden"])
-        self.ri_slider2 = Slider(title="Inner radius [m]", value=1.5, start=0.0, end=2.0, step=0.5, css_classes=["wall_slider", "obj3"])
+        ## change from JavaScript to Pythohn for hide/show --> no css_classes needed!
+        ## TODO: needs to be restructered!
+        self.ri_slider0 = Slider(title="Inner radius [m]", value=0.5, start=0.0, end=2.0, step=0.5, visible=False)#, css_classes=["wall_slider", "obj1", "hidden"])
+        self.ri_slider1 = Slider(title="Inner radius [m]", value=0.5, start=0.0, end=2.0, step=0.5, visible=False)#, css_classes=["wall_slider", "obj2", "hidden"])
+        self.ri_slider2 = Slider(title="Inner radius [m]", value=1.5, start=0.0, end=2.0, step=0.5, visible=True )#, css_classes=["wall_slider", "obj3"])
         
         # slider for the angle
         self.alpha_slider0 = Slider(title=u"\u03B1 [\u00B0]", value=20.0, start=5.0, end=alpha_max, step=1.0)

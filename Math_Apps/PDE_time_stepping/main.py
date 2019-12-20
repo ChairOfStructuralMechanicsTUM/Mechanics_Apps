@@ -234,10 +234,10 @@ plot.line('x', 'u', source=plot_data_ana,
           line_width=.5,
           line_alpha=.6,
           color='blue',
-          legend='analytical solution')
+          legend_label='analytical solution')
 plot.circle('x', 'u', source=plot_data_num,
             color='red',
-            legend='numerical solution')
+            legend_label='numerical solution')
 
 # calculate data
 init_pde()

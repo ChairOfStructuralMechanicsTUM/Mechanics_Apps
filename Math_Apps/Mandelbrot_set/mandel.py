@@ -38,7 +38,7 @@ def mandel(x0, y0, xw, yw, x_res, y_res, iterate_max, iteration_bound):
                 re = 0
                 im = 0
                 count = iterate_max
-                for it_n in xrange(iterate_max + 1):
+                for it_n in range(iterate_max + 1):
                     xx = re * re
                     yy = im * im
                     xy = re * im
@@ -63,8 +63,8 @@ def mandel(x0, y0, xw, yw, x_res, y_res, iterate_max, iteration_bound):
     # initialite array where results are saved to
     it_count = np.zeros(re.shape, dtype=np.float64)
     # call vectorized worker function
-    print "calling iterate_mandelbrot."
+    print("calling iterate_mandelbrot.")
     iterate_mandelbrot(re, im, it_count)
-    print "elapsed time:" + str(time.clock() - t0) + " sec"
+    print("elapsed time:" + str(time.clock() - t0) + " sec")
 
     return it_count

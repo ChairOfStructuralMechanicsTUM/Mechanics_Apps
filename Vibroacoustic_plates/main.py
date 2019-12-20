@@ -50,7 +50,7 @@ def main( ):
                            "Maximum Element Size (FEM)"],
                             FrequencyRange,
                             Width = 950,
-                            Height = 550)
+                            Height = 650)
 
 
     Graph.defineContainers(["WaveVelocity",
@@ -231,12 +231,12 @@ def main( ):
 
     # CREATE BUTTONS:
     SetDefaultButton = Button( label = "Default",
-                               button_type = "primary",
+                               button_type = "success",
                                width = 100 )
 
 
     ApplyButton = Button( label = "Apply",
-                          button_type = "primary",
+                          button_type = "success",
                           width = 100 )
 
 
@@ -246,7 +246,7 @@ def main( ):
 
 
     ShowInput = Button( label = "Show Input",
-                        button_type = "primary",
+                        button_type = "success",
                         width = 100 )
 
 
@@ -261,7 +261,7 @@ def main( ):
                           Size = 2,
                           MessageHeader = "Number of layers: " )
 
-    WarningMessage = VibroP_Message( Color = "grey",
+    WarningMessage = VibroP_Message( Color = "red",
                               Size = 3 ,
                               MessageHeader = "Warning: " )
 
@@ -272,7 +272,7 @@ def main( ):
                        " and crosswise layup assumed.",
                 render_as_text = False,
                 width = 500,
-                height = 30 )
+                height = 40 )
 
 
     Scheme = Div( text = "<img src='/Vibroacoustic_plates/static/images/scheme.png' width=464 height=220>",
@@ -299,41 +299,49 @@ def main( ):
 					   ,
                 render_as_text = False,
                 width = 1000,
-                height = 40 )
+                height = 50 )
     
     Title = Div ( text = "<b><h1> Vibroacoustics of Plates</b><h1>",
                  render_as_text = False,
                  width = 900,
-                 height = 30)
+                 height = 80)
 
     # SPECIFY THE LAYOUT:
-    Buttons = row( row( Spacer( width = 50 ),
+    Buttons = row( row( Spacer( width = 50),
                         ApplyButton,
-                        Spacer( width = 50 ),
+                        Spacer( width = 50),
                         ShowInput,
-                        Spacer( width = 50 ),
+                        Spacer( width = 50),
                         SetDefaultButton ) )
 
     Headline = row( column( Title, Description ), Spacer( width = 50 ), Scheme )
 	
     LeftSide = column( ModeRadioButtons,
+                        Spacer(height=20),
                         ELASTIC_MODULUS_TITEL,
                         ElasticModulus.Table,
+                        Spacer(height=20),
                         SHEAR_MODULUS_TITEL,
                         ShearModulus.Table,
+                        Spacer(height=20),
                         POISSON_RATIO_TITEL,
                         PoissonRatios.Table,
+                        Spacer(height=20),
                         MATERIALS_TITEL,
                         MaterialProperties.Table,
+                        Spacer(height=20),
                         GEOMETRY_TITEL,
                         GeometryProperties.Table,
                         LayersInfo.Widget,
+                        Spacer(height=10),
                         Info,
-                        Spacer( height = 20 ) )
+                        Spacer( height = 20 ),
+                        WarningMessage.Widget )
 
 
-    RightSide = column( Graph.Widget , Buttons,WarningMessage.Widget,
-                        Spacer( height = 40 ) )
+    RightSide = column( Graph.Widget, Spacer( height = 50 ),
+     Buttons,
+                        Spacer( height = 100 ) )
 
 
     # ========================= COMMUNICATION PART =============================
@@ -378,7 +386,7 @@ def main( ):
 
     # RUN ALL WIDGETS
     doc.add_root(Headline)
-    doc.add_root( column( Spacer( height = 20 ),
+    doc.add_root( column( Spacer( height = 150 ),
                       row( LeftSide,
                            Spacer( width = 50 ),
                            RightSide,
@@ -414,10 +422,14 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
     LayerThicknessBuffer = Tables[ "GeometryProperties" ].getValue( 0, 2 )
     try:
 
+
         Layers = getLayersFromString( Tables[ "GeometryProperties" ].getValue( 0, 2 ) )
+
         LayersInfo.printMessage( str( len( Layers ) ) )
+
         # Homogenize the input data
         if len(Layers) != 1:
+
             makeMultiLayerMask( Tables )
 
             HomogenizedData = homogenize( Tables[ "ElasticModulus" ].getData( )[ 0 ],
@@ -460,7 +472,6 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
     #################### CALL USER-SPECIFIC FUNCTION ##########################
 
         testInputData( Graph.getMode(), PoissonRatiosData )
-
 
         Graph.Containers[ "WaveVelocity" ] = wave_speeds(
                                                 ElasticModulusData,
