@@ -71,4 +71,4 @@ class DY_ball(object):
     def plot(self, fig):
         #fig.circle(x=self.x, y=self.y, color=self.c, size=30) # plotting it this way would not remove the old ball from the plot
         #self.update_cds()
-        fig.circle(x='x', y='y', color='color', source=self.cds, size=30) #changing the color does not work using ColumnDataSource
+        fig.circle(x='x', y='y', color='color', source=self.cds, size=30) # set the position and color defined in the current ColumnDataSource

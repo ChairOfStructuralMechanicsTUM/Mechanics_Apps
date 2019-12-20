@@ -1,3 +1,3 @@
-div.bk-widget.bk-layout-fixed.hidden{
-	display: none;
+div.bk.radios.bgcol{ /* the element class */
+    background-color: aqua; /* change the background color of a slider */
 }
