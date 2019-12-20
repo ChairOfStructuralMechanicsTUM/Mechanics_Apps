@@ -107,25 +107,25 @@ def compute_click_data():
     quiver_constraint.compute_quiver_data(x, y, u, v, h=h, scaling=1)
 
 
-def sample_fun_input_f_changed(self):
+def sample_fun_input_f_changed(attr, old, new):
     """
     called if the sample function is changed.
     :param self:
     :return:
     """
-    sample_fun_key = sample_fun_input_f.value
+    sample_fun_key = new #sample_fun_input_f.value
     sample_fun_f = lagrange_settings.sample_functions_f[sample_fun_key]
     # write new functions to f_input, this triggers the callback of f_input
     f_input.value = sample_fun_f
 
 
-def sample_fun_input_g_changed(self):
+def sample_fun_input_g_changed(attr, old, new):
     """
     called if the sample function is changed.
     :param self:
     :return:
     """
-    sample_fun_key = sample_fun_input_g.value
+    sample_fun_key = new #sample_fun_input_g.value
     sample_fun_g = lagrange_settings.sample_functions_g[sample_fun_key]
     # write new functions to g_input, this triggers the callback of f_input
     g_input.value = sample_fun_g
@@ -188,9 +188,9 @@ plot = Figure(plot_height=lagrange_settings.res_x,
 # Plot contour of f(x,y)
 contour_f = my_bokeh_utils.Contour(plot, line_color='grey', line_width=1)
 # Plot active isolevel f(x,y)=v
-contour_f0 = my_bokeh_utils.Contour(plot, add_label=True, line_color='black', line_width=2, legend='f(x,y) = v')
+contour_f0 = my_bokeh_utils.Contour(plot, add_label=True, line_color='black', line_width=2, legend_label='f(x,y) = v')
 # Plot constraint function contour g(x,y)=0
-contour_g = my_bokeh_utils.Contour(plot, line_color='red', line_width=2, legend='g(x,y) = 0')
+contour_g = my_bokeh_utils.Contour(plot, line_color='red', line_width=2, legend_label='g(x,y) = 0')
 # Plot corresponding tangent vector
 quiver_isolevel = my_bokeh_utils.Quiver(plot, fix_at_middle=False, line_width=2, color='black')
 # Plot corresponding tangent vector
@@ -210,7 +210,7 @@ f_input.on_change('value', f_changed)
 # dropdown menu for selecting one of the sample functions
 sample_fun_input_f = Dropdown(label="choose a sample function f(x,y) or enter one below",
                               menu=lagrange_settings.sample_f_names)
-sample_fun_input_f.on_click(sample_fun_input_f_changed)
+sample_fun_input_f.on_change('value', sample_fun_input_f_changed)
 
 # text input window for side condition g(x,y)=0
 g_input = TextInput(value=lagrange_settings.g_init, title="g(x,y):")
@@ -219,7 +219,7 @@ g_input.on_change('value', g_changed)
 # dropdown menu for selecting one of the sample functions
 sample_fun_input_g = Dropdown(label="choose a sample function g(x,y) or enter one below",
                               menu=lagrange_settings.sample_g_names)
-sample_fun_input_g.on_click(sample_fun_input_g_changed)
+sample_fun_input_g.on_change('value', sample_fun_input_g_changed)
 
 # calculate data
 init_data()

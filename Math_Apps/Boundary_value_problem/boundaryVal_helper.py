@@ -1,6 +1,7 @@
 from __future__ import division
 
-from scipy import ndimage
+#from scipy import ndimage
+import imageio
 import os
 import numpy as np
 
@@ -38,7 +39,8 @@ def draw_cannon(fig):
 
     dir = os.path.dirname(__file__)
     filename = os.path.join(dir, 'Pictures/cannon.png')
-    img = ndimage.imread(filename)
+    #img = ndimage.imread(filename)
+    img = imageio.imread(filename)
 
     scaling_cannon = 60
     scaling_cannon_x = scaling_cannon*(bv_settings.max_x-bv_settings.min_x)/bv_settings.fig_width
@@ -60,7 +62,8 @@ def draw_target_at(fig, x_target):
 
     dir = os.path.dirname(__file__)
     filename = os.path.join(dir, 'Pictures/target.png')
-    img = ndimage.imread(filename)
+    #img = ndimage.imread(filename)
+    img = imageio.imread(filename)
 
     scaling_target = 30
     scaling_target_x = scaling_target*(bv_settings.max_x-bv_settings.min_x)/bv_settings.fig_width

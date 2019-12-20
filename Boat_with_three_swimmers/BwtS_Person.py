@@ -227,17 +227,20 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
         
 def reset_arrows_velocityDiagram( boatArrows_sources, swimmerArrows_sources, boatSpeed ):
     for i in range(0,6):
-        boatArrows_sources[i].data=dict(xs=[5],ys=[0],xe=[5],ye=[0])
+        boatArrows_sources[i].stream(dict(xs=[5],ys=[0],xe=[5],ye=[0]),rollover=1)
         
-    boatArrows_sources[0].data = dict(
+    boatArrows_sources[0].stream(dict(
                                     xs=[5],ys=[0],xe=[5],ye=[boatSpeed]
-                                 )
+                                 ),rollover=1)
     
     for i in range(0,5):
         xPos = float(i*5+10)
-        swimmerArrows_sources[i][0].data=dict(xs=[xPos],ys=[boatSpeed],xe=[xPos],ye=[boatSpeed])
-        swimmerArrows_sources[i][1].data=dict(xs=[xPos+0.5],ys=[0],xe=[xPos+0.5],ye=[0])
-        swimmerArrows_sources[i][2].data=dict(xs=[xPos-0.5],ys=[0],xe=[xPos-0.5],ye=[boatSpeed])
+        #swimmerArrows_sources[i][0].data=dict(xs=[xPos],ys=[boatSpeed],xe=[xPos],ye=[boatSpeed])
+        #swimmerArrows_sources[i][1].data=dict(xs=[xPos+0.5],ys=[0],xe=[xPos+0.5],ye=[0])
+        #swimmerArrows_sources[i][2].data=dict(xs=[xPos-0.5],ys=[0],xe=[xPos-0.5],ye=[boatSpeed])
+        swimmerArrows_sources[i][0].stream(dict(xs=[xPos],ys=[boatSpeed],xe=[xPos],ye=[boatSpeed]),rollover=1)
+        swimmerArrows_sources[i][1].stream(dict(xs=[xPos+0.5],ys=[0],xe=[xPos+0.5],ye=[0]),rollover=1)
+        swimmerArrows_sources[i][2].stream(dict(xs=[xPos-0.5],ys=[0],xe=[xPos-0.5],ye=[boatSpeed]),rollover=1)
         
 def modify_swimmer_arrows( boatArrows_sources, swimmerArrows_sources, swimmer, velocityIncrease, boatSpeed ):
     currentBoatSpeed = boatSpeed
@@ -245,49 +248,49 @@ def modify_swimmer_arrows( boatArrows_sources, swimmerArrows_sources, swimmer, v
     # Modify the swimmer's arrows
     position = float(swimmer.n*5 + 10)
     
-    swimmerArrows_sources[swimmer.n][0].data = dict(
+    swimmerArrows_sources[swimmer.n][0].stream(dict(
                                                     xs = [position],
                                                     ys = [currentBoatSpeed],
                                                     xe = [position],
                                                     ye = [currentBoatSpeed - swimmer.relativeVelocity[0]]
-                                                   )
+                                                   ),rollover=1)
     
-    swimmerArrows_sources[swimmer.n][1].data = dict(
+    swimmerArrows_sources[swimmer.n][1].stream(dict(
                                                     xs = [position+0.5],
                                                     ys = [0],
                                                     xe = [position+0.5],
                                                     ye = [currentBoatSpeed - swimmer.relativeVelocity[0]]
-                                                  )
+                                                  ),rollover=1)
     
-    swimmerArrows_sources[swimmer.n][2].data = dict(
+    swimmerArrows_sources[swimmer.n][2].stream(dict(
                                                     xs = [position-0.5],
                                                     ys = [0],
                                                     xe = [position-0.5],
                                                     ye = [currentBoatSpeed]
-                                                   )
+                                                   ),rollover=1)
     
     for i in range(0,5):
         if i > swimmer.n:
             position = float(i*5 + 10)
-            swimmerArrows_sources[i][2].data = dict(
+            swimmerArrows_sources[i][2].stream(dict(
                                                     xs = [position-0.5],
                                                     ys = [0],
                                                     xe = [position-0.5],
                                                     ye = [currentBoatSpeed]
-                                                   )
-            swimmerArrows_sources[i][0].data = dict(
+                                                   ),rollover=1)
+            swimmerArrows_sources[i][0].stream(dict(
                                                     xs = [position],
                                                     ys = [currentBoatSpeed],
                                                     xe = [position],
                                                     ye = [currentBoatSpeed]
-                                                   )
+                                                   ),rollover=1)
         else:
             pass
 
     # Modify the boat's arrow
-    boatArrows_sources[swimmer.n + 1].data = dict(
+    boatArrows_sources[swimmer.n + 1].stream(dict(
                                                     xs = [5],
                                                     ys = [boatArrows_sources[swimmer.n].data['ye'][0]],
                                                     xe = [5],
                                                     ye = [boatArrows_sources[swimmer.n].data['ye'][0] + velocityIncrease]
-                                                 )
+                                                 ),rollover=1)

@@ -170,9 +170,9 @@ fig.toolbar.logo = None #removes bokeh logo
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
 p = figure(title="", y_range=(2,-2), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
     toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
-p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
-p.line(x='t',y='s',source=displacement_particular,color="#a2ad00",legend="Particular Solution",muted_color="#98c6ea",muted_alpha=0.2)
-p.line(x='t',y='s',source=displacement_homogeneous,color="#64a0c8",legend="Homogeneous Solution",muted_color="#64a0c8",muted_alpha=0.2)
+p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend_label="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
+p.line(x='t',y='s',source=displacement_particular,color="#a2ad00",legend_label="Particular Solution",muted_color="#98c6ea",muted_alpha=0.2)
+p.line(x='t',y='s',source=displacement_homogeneous,color="#64a0c8",legend_label="Homogeneous Solution",muted_color="#64a0c8",muted_alpha=0.2)
 p.axis.major_label_text_font_size="12pt"
 p.axis.axis_label_text_font_style="normal"
 p.axis.axis_label_text_font_size="14pt"
@@ -260,10 +260,10 @@ def move_system(disp):
     if force_value > 0:
         t = displacement.data["t"][-1]
         F_length = force_value*sin(excitation_frequency_value*t)
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[15],y2=[15-F_length*3])
-        arrow_offset.data=dict(x1=[0],x2=[0],y1=[15-F_length*3],y2=[15-F_length*3 - (2*(F_length>0)-1)*1.0])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[15],y2=[15-F_length*3]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[15-F_length*3],y2=[15-F_length*3 - (2*(F_length>0)-1)*1.0]),rollover=1)
     else:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp]),rollover=1)
 
 ## Create slider to choose mass
 def change_mass(attr,old,new):
@@ -345,11 +345,11 @@ def change_force_value(attr,old,new):
     current_y2            = arrow_line.data["y2"][0]
     updateParameters()
     if new == 1:
-        arrow_line.data   = dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20])
-        arrow_offset.data = dict(x1=[0],y1=[current_y1-23],x2=[0],y2=[current_y2-20.1])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],y1=[current_y1-23],x2=[0],y2=[current_y2-20.1]),rollover=1)
     else:
-        arrow_line.data   = dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
-        arrow_offset.data = dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20]),rollover=1)
     
 force_value_input = Slider(title="Force", value=force_value, start=0, end=1.0, step=1,width=400)
 force_value_input.on_change('value',change_force_value)
@@ -426,11 +426,11 @@ def stop():
     drawing_displacement = -initial_displacement_value * spring.getSpringConstant
     move_system(drawing_displacement)
     if force_value > 0:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[15+drawing_displacement],y2=[12+drawing_displacement])
-        arrow_offset.data=dict(x1=[0],x2=[0],y1=[12+drawing_displacement],y2=[12+(drawing_displacement-0.1)*1.1])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[15+drawing_displacement],y2=[12+drawing_displacement]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[12+drawing_displacement],y2=[12+(drawing_displacement-0.1)*1.1]),rollover=1)
     else:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
-        arrow_offset.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement]),rollover=1)
 
 def reset():
     stop()

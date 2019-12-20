@@ -41,7 +41,7 @@ class Coord(object):
         return self
     
     # define Coord/num
-    def __div__(self,a):
+    def __truediv__(self,a):
         return Coord(self.x/a,self.y/a)
     
     # define Coord/=num

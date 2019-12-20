@@ -13,7 +13,7 @@
     {
         "isCode": true,
         "en": "open('Vector_addition/description.html').read()",
-        "de": "open('Vector_addition/description_de.html').read()"
+        "de": "open('Vector_addition/description_de.html', encoding='utf-8').read()"
     },
     "show_button.label":
     {

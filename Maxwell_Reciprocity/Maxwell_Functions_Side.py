@@ -29,15 +29,18 @@ def side1(f,paramInt,i):
 
     #change arrow:
     if (i<0):
-        f.arrow_source.data = dict(xS= [0.12-i/glc.arr_scal], xE= [0.12],
-        yS= [0.1 + paramInt*(1.0/60)], yE=[0.1+ paramInt*(1.0/60)], lW = [abs(i/glc.arr_scal)] )
-
+       # f.arrow_source.data = dict(xS= [0.12-i/glc.arr_scal], xE= [0.12],
+        #yS= [0.1 + paramInt*(1.0/60)], yE=[0.1+ paramInt*(1.0/60)], lW = [abs(i/glc.arr_scal)] )
+        f.arrow_source.stream(dict(xS= [0.12-i/glc.arr_scal], xE= [0.12],
+        yS= [0.1 + paramInt*(1.0/60)], yE=[0.1+ paramInt*(1.0/60)], lW = [abs(i/glc.arr_scal)]),rollover=1)
         f.label.data = dict(x = [0.12-i/glc.arr_scal], y = [0.1+ paramInt*(1.0/60)], name = [f.name])
 
     elif i>0:
-        f.arrow_source.data = dict(xS= [0.08-i/glc.arr_scal], xE= [0.08],
-        yS= [0.1 + paramInt*(1.0/60)], yE=[0.1+ paramInt*(1.0/60)], lW = [abs(i/glc.arr_scal)] )
-
+        #f.arrow_source.data = dict(xS= [0.08-i/glc.arr_scal], xE= [0.08],
+        #yS= [0.1 + paramInt*(1.0/60)], yE=[0.1+ paramInt*(1.0/60)], lW = [abs(i/glc.arr_scal)] )
+        f.arrow_source.stream(dict(xS= [0.08-i/glc.arr_scal], xE= [0.08],
+        yS= [0.1 + paramInt*(1.0/60)], yE=[0.1+ paramInt*(1.0/60)], lW = [abs(i/glc.arr_scal)]),rollover=1)
+        
         f.label.data = dict(x = [0.08-i/glc.arr_scal], y = [0.1+ paramInt*(1.0/60)], name = [f.name])
     else:
         f.label.data = dict(x = [0.03-i/glc.arr_scal], y = [0.1+ paramInt*(1.0/60)], name = [f.name])
@@ -105,15 +108,17 @@ def side2(f,paramInt,i):
     #change arrow:
 
     if i<0:
-        f.arrow_source.data = dict(xS= [0.1 + (paramInt-30)*(0.0175)], xE= [0.1 + (paramInt-30)*(0.0175)],
-        yS= [0.58+i/glc.arr_scal], yE=[0.58], lW = [abs(i/glc.arr_scal)] )
-
+        #f.arrow_source.data = dict(xS= [0.1 + (paramInt-30)*(0.0175)], xE= [0.1 + (paramInt-30)*(0.0175)],
+        #yS= [0.58+i/glc.arr_scal], yE=[0.58], lW = [abs(i/glc.arr_scal)] )
+        f.arrow_source.stream(dict(xS= [0.1 + (paramInt-30)*(0.0175)], xE= [0.1 + (paramInt-30)*(0.0175)],
+        yS= [0.58+i/glc.arr_scal], yE=[0.58], lW = [abs(i/glc.arr_scal)] ),rollover=1)
         f.label.data = dict(x = [0.1 + (paramInt-30)*(0.0175)], y = [0.58+i/glc.arr_scal], name = [f.name])
 
     elif i>0:
-        f.arrow_source.data = dict(xS= [0.1 + (paramInt-30)*(0.0175)], xE= [0.1 + (paramInt-30)*(0.0175)],
-        yS= [0.62+i/glc.arr_scal], yE=[0.62], lW = [abs(i/glc.arr_scal)] )
-
+        #f.arrow_source.data = dict(xS= [0.1 + (paramInt-30)*(0.0175)], xE= [0.1 + (paramInt-30)*(0.0175)],
+        #yS= [0.62+i/glc.arr_scal], yE=[0.62], lW = [abs(i/glc.arr_scal)] )
+        f.arrow_source.stream(dict(xS= [0.1 + (paramInt-30)*(0.0175)], xE= [0.1 + (paramInt-30)*(0.0175)],
+        yS= [0.62+i/glc.arr_scal], yE=[0.62], lW = [abs(i/glc.arr_scal)] ),rollover=1)
         f.label.data = dict(x = [0.1 + (paramInt-30)*(0.0175)], y = [0.62+i/glc.arr_scal], name = [f.name])
     else:
         f.label.data = dict(x = [0.1 + (paramInt-30)*(0.0175)], y = [0.62+i/glc.arr_scal], name = [f.name])
@@ -185,15 +190,17 @@ def side3(f,paramInt,i):
     #change arrow:
 
     if i<0:
-        f.arrow_source.data = dict(xS= [0.78+i/glc.arr_scal], xE= [0.78],
-        yS= [0.6 - (paramInt%70)*(1.0/60)], yE=[0.6 - (paramInt%70)*(1.0/60)], lW = [abs(i/glc.arr_scal)] )
-
+        #f.arrow_source.data = dict(xS= [0.78+i/glc.arr_scal], xE= [0.78],
+        #yS= [0.6 - (paramInt%70)*(1.0/60)], yE=[0.6 - (paramInt%70)*(1.0/60)], lW = [abs(i/glc.arr_scal)] )
+        f.arrow_source.stream(dict(xS= [0.78+i/glc.arr_scal], xE= [0.78],
+        yS= [0.6 - (paramInt%70)*(1.0/60)], yE=[0.6 - (paramInt%70)*(1.0/60)], lW = [abs(i/glc.arr_scal)] ),rollover=1)
         f.label.data = dict(x = [0.78+i/glc.arr_scal], y = [0.6 - (paramInt%70)*(1.0/60)], name = [f.name])
 
     elif i>0:
-        f.arrow_source.data = dict(xS= [0.82+i/glc.arr_scal], xE= [0.82],
-        yS= [0.6 - (paramInt%70)*(1.0/60)], yE=[0.6 - (paramInt%70)*(1.0/60)], lW = [abs(i/glc.arr_scal)] )
-
+        #f.arrow_source.data = dict(xS= [0.82+i/glc.arr_scal], xE= [0.82],
+        #yS= [0.6 - (paramInt%70)*(1.0/60)], yE=[0.6 - (paramInt%70)*(1.0/60)], lW = [abs(i/glc.arr_scal)] )
+        f.arrow_source.stream(dict(xS= [0.82+i/glc.arr_scal], xE= [0.82],
+        yS= [0.6 - (paramInt%70)*(1.0/60)], yE=[0.6 - (paramInt%70)*(1.0/60)], lW = [abs(i/glc.arr_scal)] ),rollover=1)
         f.label.data = dict(x = [0.82+i/glc.arr_scal], y = [0.6 - (paramInt%70)*(1.0/60)], name = [f.name])
     else:
         f.label.data = dict(x = [0.82+i/glc.arr_scal], y = [0.6 - (paramInt%70)*(1.0/60)], name = [f.name])

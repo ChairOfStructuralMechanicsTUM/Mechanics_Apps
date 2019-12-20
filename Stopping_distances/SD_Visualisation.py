@@ -36,7 +36,7 @@ class SD_Visualisation:
     
     def setV(self,v_0):
         # modify the arrow so its length is proportional to the velocity
-        self.arrow.data = dict(xS=[0],yS=[0.5], xE=[v_0], yE=[0.5])
+        self.arrow.stream(dict(xS=[0],yS=[0.5], xE=[v_0], yE=[0.5]),rollover=1)
         # move the velocity label to the middle of the arrow
         self.v_label.data = dict(x=[v_0/2.0],y=[0.5],S=[u"v\u2092"])
     
@@ -49,7 +49,7 @@ class SD_Visualisation:
         temp['x']=[x-2.25,x-0.75]
         self.wheels.data=temp
         # modify the arrow so its length is proportional to the velocity
-        self.arrow.data = dict(xS=[x],yS=[0.5], xE=[v+x], yE=[0.5])
+        self.arrow.stream(dict(xS=[x],yS=[0.5], xE=[v+x], yE=[0.5]),rollover=1)
         if (x==0):
             # move the velocity label to the middle of the arrow
             self.v_label.data = dict(x=[x+v/2.0],y=[0.5],S=[u"v\u2092"])

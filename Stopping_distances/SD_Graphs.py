@@ -4,33 +4,36 @@ from bokeh.models import ColumnDataSource
 from math import sqrt, isnan
 from numpy import linspace
 
+from SD_TestSolutions import eval_fct
+
 
 class SD_Graphs:
     def __init__(self):
         ## create the 4 figures and set their visual properties
         # create velocity vs. time graph
-        self.vt=figure(tools="",x_range=(0,10),y_range=(0,10))
+        tmp_tools = "pan, wheel_zoom, reset"
+        self.vt=figure(tools=tmp_tools,x_range=(0,10),y_range=(0,10))
         self.vt.axis.axis_label_text_font_size="14pt"
         self.vt.axis.major_label_text_font_size="12pt"
         #self.vt.axis.axis_label_text_font_style="normal"
         self.vt.xaxis.axis_label = "Time (s)"
         self.vt.yaxis.axis_label = "Velocity (m/s)"
         # create acceleration vs. time (or displacement) graph
-        self.at=figure(tools="",x_range=(0,10),y_range=(-10,0))
+        self.at=figure(tools=tmp_tools,x_range=(0,10),y_range=(-10,0))
         self.at.axis.axis_label_text_font_size="14pt"
         self.at.axis.major_label_text_font_size="12pt"
         #self.at.axis.axis_label_text_font_style="normal"
         self.at.xaxis.axis_label = "Time (s)"
         self.at.yaxis.axis_label = u"Acceleration (m/s\u00B2)"
         # create time vs. displacement graph
-        self.st=figure(tools="",x_range=(0,30),y_range=(0,10))
+        self.st=figure(tools=tmp_tools,x_range=(0,30),y_range=(0,10))
         self.st.axis.axis_label_text_font_size="14pt"
         self.st.axis.major_label_text_font_size="12pt"
         #self.st.axis.axis_label_text_font_style="normal"
         self.st.xaxis.axis_label = "Travelled Distance (m)"
         self.st.yaxis.axis_label = "Time (s)"
         # create velocity vs. displacement graph
-        self.vs=figure(tools="",x_range=(0,30),y_range=(0,10))
+        self.vs=figure(tools=tmp_tools,x_range=(0,30),y_range=(0,10))
         self.vs.axis.axis_label_text_font_size="14pt"
         self.vs.axis.major_label_text_font_size="12pt"
         #self.vs.axis.axis_label_text_font_style="normal"
@@ -153,70 +156,39 @@ class SD_Graphs:
         self.UserStSource.data = dict(s=[],t=[])
         self.vsSource.data = dict(v=[],s=[])
         self.UserVsSource.data = dict(v=[],s=[])
-    
-    def test_equation(self,Str,sv):
-        # plot user inputted equation to test it against simulation
-        # get xmax from appropriate plot
-        if (sv=='s'):
-            xmax=self.st.x_range.end
-        elif (sv=='v'):
-            xmax=self.vs.x_range.end
-        elif (sv=='a'):
-            xmax=self.at.x_range.end
-        
-        #create lists in which to store coordinates
+
+
+
+    def test_equation(self,fct,plt):
+        #plt: t, v, a
+
+        if (plt=='t'):
+            xmax = self.st.x_range.end
+        if (plt=='v'):
+            xmax = self.vs.x_range.end
+        if (plt=='a'):
+            xmax = self.at.x_range.end
+
+        scale = linspace(0,xmax,100)
+
+        #create lists to store coordinates
         X=[]
         Y=[]
 
-        scale=linspace(0,xmax,100)
-
-        nan = float('nan')
-
-
-
-        try:
-            # plot 100 points between 0 and xmax
-            for s in scale:
-                # add x point
-                X.append(s)
-                # Str contains an equation as a function of s
-                # evaluating it therefore gives the y co-ordinate
-
-                try:
-                    Y.append(eval(Str))
-                except ZeroDivisionError:# avoid division by zero
-                    Y.append(nan)
-
-            # add final point
-            X.append(xmax)
-            # create s=final_x_point so that s exists when it is called by Str in eval
-            s=xmax
-            try:
-                Y.append(eval(Str))
-            except ZeroDivisionError:  # avoid division by zero
-                Y.append(nan)
-
-        except ValueError:
-            # if value is not valid in equation
-            # (i.e s has become large enough that we are doing sqrt(negative) )
-            # then Y.append throws ValueError stopping further points being added
-            # as a result X is longer than Y
-            # fix this
-            X.pop()
-            #print('excerption')
-
-        #remove 'nan' form X and Y lists:
-        X=[v for i,v in enumerate(X) if not isnan(Y[i])]
-        Y=[v for i,v in enumerate(Y) if not isnan(Y[i])]
+        for s in scale:
+            X.append(s)
+            Y.append(eval_fct(fct,'s',s))  ## fix if sqrt becomes negative
 
 
         # add new data to appropriate figure
-        if (sv=='s'):
+        if (plt=='t'):
             self.UserStSource.data = dict(s=X,t=Y)
-        elif (sv=='v'):
+        elif (plt=='v'):
+            print(Y)
             self.UserVsSource.data = dict(s=X,v=Y)
-        elif (sv=='a'):
+        elif (plt=='a'):
             self.UserAtSource.data = dict(ts=X,a=Y)
+
         
     def swapSetup(self):
         # change between methods by figure

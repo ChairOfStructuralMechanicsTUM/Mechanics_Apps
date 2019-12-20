@@ -40,11 +40,16 @@ NewpositionLine4_source = ColumnDataSource(data=dict(x=[],y=[],angle=[]))
 def init ():
     updateVector1()
     updateVector2()
-    Distance_line_source.data = dict(x=[-150,-100], y=[-150,-150])
-    NewpositionLine1_source.data = dict(x=[-150],y=[-150],angle=[90])
-    NewpositionLine2_source.data = dict(x=[-150],y=[-150],angle=[-90])
-    NewpositionLine3_source.data = dict(x=[-100],y=[-150],angle=[90])
-    NewpositionLine4_source.data = dict(x=[-100],y=[-150],angle=[-90])
+    #Distance_line_source.data = dict(x=[-150,-100], y=[-150,-150])
+    Distance_line_source.stream(dict(x=[-150,-100], y=[-150,-150]),rollover=1)
+    #NewpositionLine1_source.data = dict(x=[-150],y=[-150],angle=[90])
+    NewpositionLine1_source.stream(dict(x=[-150],y=[-150],angle=[90]),rollover=1)
+    #NewpositionLine2_source.data = dict(x=[-150],y=[-150],angle=[-90])
+    NewpositionLine2_source.stream(dict(x=[-150],y=[-150],angle=[-90]), rollover=1)
+    #NewpositionLine3_source.data = dict(x=[-100],y=[-150],angle=[90])
+    NewpositionLine3_source.stream(dict(x=[-100],y=[-150],angle=[90]),rollover=1)
+    #NewpositionLine4_source.data = dict(x=[-100],y=[-150],angle=[-90])
+    NewpositionLine4_source.stream(dict(x=[-100],y=[-150],angle=[-90]),rollover=1)
 
     RigidBody_label_source.data=dict(x=[30],y=[-200],RG=["Rigid Body"])
     Distance_label_source.data =dict(x=[-105],y=[-150],Dis=["d = 50 "])
@@ -54,7 +59,8 @@ def updateVector1 ():     # To update Vector 1 based on Angle it makes with hori
     global Sp,theta,Vector1
  
     if (Vector1== 0):
-        Vector1_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+        #Vector1_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+        Vector1_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=1)
     
     else:
     # else the arrow is proportional to the Vector1
@@ -63,7 +69,8 @@ def updateVector1 ():     # To update Vector 1 based on Angle it makes with hori
         yS=-150+Sp
         xE=xS+Vector1*cos(theta)
         yE=yS+Vector1*sin(theta)
-        Vector1_source.data = dict(xS=[xS], yS=[yS], xE=[xE], yE=[yE])
+        #Vector1_source.data = dict(xS=[xS], yS=[yS], xE=[xE], yE=[yE])
+        Vector1_source.stream(dict(xS=[xS], yS=[yS], xE=[xE], yE=[yE]),rollover=1)
         V1_label_source.data = dict (x=[xE+3],y=[yE-3],V1=["V"])    
         
         
@@ -72,7 +79,8 @@ def updateVector2 ():               # To update Vector 2 based on Angle it makes
     global Sp,Vector2, theta
     # if Vector2 = 0 then there is no arrow
     if (Vector2== 0):
-        Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+        #Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
+        Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=1)
     else:
         # else the arrow is proportional to the Vector1
         Vector2 = 50/(sin(theta))
@@ -80,25 +88,32 @@ def updateVector2 ():               # To update Vector 2 based on Angle it makes
         yS=-150+Sp
         xE=xS-(Vector2*cos(theta))
         yE=yS-(Vector2*sin(theta))
-        Vector2_source.data = dict(xS=[xS], yS=[yS], xE=[xE], yE=[yE])
+        #Vector2_source.data = dict(xS=[xS], yS=[yS], xE=[xE], yE=[yE])
+        Vector2_source.stream(dict(xS=[xS], yS=[yS], xE=[xE], yE=[yE]),rollover=1)
         V2_label_source.data = dict (x=[xE+3],y=[yE+3],V2=["V"])
+
         
         
 def updateLineOfAction():
     global Sp,Vector1,theta1
  
-    NewpositionLine1_source.data = dict(x=[-150+Sp],y=[-150+Sp],angle=[theta1])
-    NewpositionLine2_source.data = dict(x=[-150+Sp],y=[-150+Sp],angle=[theta1-180])
-    NewpositionLine3_source.data = dict(x=[-100+Sp],y=[-150+Sp],angle=[theta1])
-    NewpositionLine4_source.data = dict(x=[-100+Sp],y=[-150+Sp],angle=[theta1-180])
-    
+    #NewpositionLine1_source.data = dict(x=[-150+Sp],y=[-150+Sp],angle=[theta1])
+    #NewpositionLine2_source.data = dict(x=[-150+Sp],y=[-150+Sp],angle=[theta1-180])
+    #NewpositionLine3_source.data = dict(x=[-100+Sp],y=[-150+Sp],angle=[theta1])
+    #NewpositionLine4_source.data = dict(x=[-100+Sp],y=[-150+Sp],angle=[theta1-180])
+    NewpositionLine1_source.stream(dict(x=[-150+Sp],y=[-150+Sp],angle=[theta1]),rollover=1)
+    NewpositionLine2_source.stream(dict(x=[-150+Sp],y=[-150+Sp],angle=[theta1-180]),rollover=1)
+    NewpositionLine3_source.stream(dict(x=[-100+Sp],y=[-150+Sp],angle=[theta1]),rollover=1)
+    NewpositionLine4_source.stream(dict(x=[-100+Sp],y=[-150+Sp],angle=[theta1-180]),rollover=1)
+
         
 def UpdateDistanceLine():     #To update the distance line between Vectors
     global Sp,theta,Dist
     Dist = float(50*sin(theta))   
-    Distance_line_source.data = dict(x=[-150+Sp,-150+Sp+(Dist*sin(theta))], y=[-150+Sp,-150+Sp-(Dist*cos(theta))])
+    #Distance_line_source.data = dict(x=[-150+Sp,-150+Sp+(Dist*sin(theta))], y=[-150+Sp,-150+Sp-(Dist*cos(theta))])
+    Distance_line_source.stream(dict(x=[-150+Sp,-150+Sp+(Dist*sin(theta))], y=[-150+Sp,-150+Sp-(Dist*cos(theta))]))
     Distance_label_source.data= dict (x=[-150+Sp+(Dist*sin(theta))],y=[-150+Sp-(Dist*cos(theta))],Dis=["d = "])
- 
+    
 # adding the vectors to the plot
 Vector1_glyph = Arrow(end=OpenHead(line_color="black",line_width=10,size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Vector1_source,line_color="black",line_width=7)
