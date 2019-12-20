@@ -75,6 +75,11 @@
    Since different heights and widths may be needed in different figures and ranges, we urge to use images in svg format.
 </p>
 
+<h3>/static/strings.json</h3>
+<p>If multiple languages should be supported, define the text in this file. Alle definitions need to match object names used in your python files.<br>
+   Load this file into python via yaml.safe_load (needs the yaml package). Refer to the Seesaw App for an example.
+</p>
+
 <h3>/templates</h3>
 <p>If you need to apply a special design on one of your objects but no built-in attribute exists in Bokeh (see their reference pages), you can define a custom CSS style in
    this location. Load it with an index.html in the same folder and call it using the css_classes attribute in your python file.
