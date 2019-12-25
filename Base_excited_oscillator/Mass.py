@@ -51,7 +51,9 @@ class Mass(object):
             # check if object has already applied a force in previous steps
             if (self.nextStepObjForces[i]==obj):
                 # if so update it with the new force
-                if(isinstance(obj, Dashpot)):
+                if(isinstance(obj, Dashpot)): 
+                    # in case of the dashpot, F consists of the force resulting from the base shift and the force 
+                    # resulting from the mass displacement from the previous step
                     self.nextStepForces[i]=(F + self.old)
                     self.old = F
                 else:
@@ -84,8 +86,6 @@ class Mass(object):
         ax=F.x/self.mass
         ay=F.y/self.mass
         a=Coord(ax,ay)
-
-        #temp[0]*dt+0.5*dt*dt*temp[1]
 
         # Use explicit Euler to find new velocity
         self.v+=dt*a

@@ -100,33 +100,16 @@ class Dashpot(object):
         fig.line(x='x',y='y',color=colour,source=self.Line1,line_width=width)
         fig.line(x='x',y='y',color=colour,source=self.Line2,line_width=width)
     
-    """def assertForces(self,dt,save=True):
-        # collect displacement
-        # the scalar product of the displacement vector with dashpotVec produces the magnitude of the
-        # component of displacement vector which lies along initial normalized dashpot vector
-        displacement = (self.endNow-self.end+self.startNow-self.start).prod_scal(self.direction)
-        if (save):
-            self.end=self.endNow
-            self.start=self.startNow
-        # calculate the force exerted on/by the dashpot
-        F = -self.lam*displacement/dt
-        # apply this force to all objects in contact with the dashpot
-        for i in range(0,len(self.actsOn)):
-            self.actsOn[i][0].applyForce(F*self.out(self.actsOn[i][1]),self)"""
-    
     ## place dashpot in space over a certain time
     def compressTo(self,start,end,type):
-        dt=0.03
+        dt=0.0075
         # draw dashpot and collect displacement
         displacement=self.draw(start,end)
-        #self.end=self.endNow
-        #self.start=self.startNow
         # calculate the force exerted on/by the dashpot
-        if (type==0):
-            Fd = 0
+        if (type==0): # if dashpot is compressed in order to reach static equilibrium
+            Fd = 0 # no damping force
         else:
             Fd = -self.lam*(displacement/dt)
-            print(Fd)
             # apply this force to all connected objects
         for i in range(0,len(self.actsOn)):
             self.actsOn[i][0].applyForce(Fd*self.out(self.actsOn[i][1]),self)
@@ -139,7 +122,7 @@ class Dashpot(object):
             #self.draw(start+moveVect,self.endNow)
             return self.compressTo(DashpotEnd+moveVect,self.end,1)
         else:
-            #self.draw(self.startNow,start+moveVect)
+            #self.draw(self.startNow,end+moveVect)
             return self.compressTo(self.start,DashpotEnd+moveVect,1)
     
     # return outward direction

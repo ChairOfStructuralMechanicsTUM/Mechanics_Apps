@@ -28,7 +28,7 @@ initial_lambda_value = 5.0
 
 mass = RectangularMass(initial_mass_value,-4,16,8,2)     # an object of RectangularMass class (mass, x, y, w, h)
 spring = Spring((-2,16),(-2,9),7,initial_kappa_value)   # an object of Spring class (start,end,x0,kappa,spacing)
-dashpot = Dashpot((2,16),(2,9),initial_lambda_value)       # an object of Dashpot class (start,end,lam=1.0)
+dashpot = Dashpot((2,16),(2,9),initial_lambda_value)       # an object of Dashpot class (start,end,lam)
 
 oldBase = 9     # initial y coordinate of the horizontal line 
 mass.linkObj(spring,(-2,16))    # Link spring to mass
@@ -39,43 +39,27 @@ Position = ColumnDataSource(data = dict(t=[0],s=[0]))
 Wheel_source = ColumnDataSource(data = dict(x=[0],y=[5]))
 Floor = dict(x=[],y=[])
 Floor_source = ColumnDataSource(data = dict(x=[],y=[]))
-dt=0.03
+dt=0.0075
 t=0     # time = 0
 s=0     # mass displacement = 0
-sOld=0
-Floor_angle=4*141
+sOld=0  # used to calculate the relative displacement
+Floor_angle=561
 Active=False
 maxX=20
 
 # Defining Floor
 def InitialFloor():
     global Floor, Floor_source, oldBase, Floor_angle
-    #x_range=(-7,7)
-    Floor = dict(x=[],y=[])    
-    
-     
-    # Old floor definintion
-    # for x in (-7,2)
-    # for i in range(0,91):
-    #     Floor['x'].append(i/10.0-7.0)
-    #     Floor['y'].append(4)
-    # #for x in (2,4)
-    # for i in range(91,110):
-    #     Floor['x'].append(i/10.0-7.0)
-    #     Floor['y'].append(-0.0308*(i/10.0)**3+0.7329*(i/10.0)**2-5.7046*i/10.0+18.4390)
-    # #for x in (4,7)
-    # for i in range(110,141):
-    #     Floor['x'].append((i/10.0) - 7.0)
-    #     Floor['y'].append(4-sin(radians((i-110)*4.0))) # Floor['y'][140]= 4-sin(radians(140*4.0)) 
-    
-    # my new floor definition
-    for i in range(0,91):
-        Floor['x'].append((i/10.0) - 7.0)
+    #x_range = (-7,7)
+    Floor = dict(x=[],y=[])
+    #for x in (-7,2)    
+    for i in range(0,360):
+        Floor['x'].append((i/40.0) - 7.0)
         Floor['y'].append(4)
-    #for x in (4,7)
-    for i in range(91,141):
-        Floor['x'].append((i/10.0) - 7.0)
-        Floor['y'].append(4-sin(radians(i*4.0))) # Floor['y'][140]= 4-sin(radians(140*4.0))
+    #for x in (2,7)
+    for i in range(361,561):
+        Floor['x'].append((i/40.0) - 7.0)
+        Floor['y'].append(4-sin(radians(i))) 
 
     Floor_source.data = deepcopy(dict(Floor))
     stable_pos= 16 - 9.81*float(mass_input.value)/float(kappa_input.value) # Find position of static equilibrium
@@ -85,7 +69,7 @@ def InitialFloor():
     mass.resetLinks(spring,(-2,stable_pos))     # move spring's upper end to the position of static equilibrium
     mass.resetLinks(dashpot,(2,stable_pos))     # move dashpot's upper end to the position of static equilibrium
     oldBase=9
-    Floor_angle=4*141
+    Floor_angle=561
 
 
 
@@ -95,24 +79,17 @@ def updateFloor():
     Floor['y'].pop(0)   # removes the first element of Floor['y'] list
     Floor['y'].append(4-sin(radians(Floor_angle)))  # update the y coordinate at x=7
     Floor_source.data = deepcopy(dict(Floor))   # deep copy creates a new object and recursively adds the copies
-    Floor_angle+=4  # update floor angle
+    Floor_angle+=1  # update floor angle
 
 # Evolve problem
 def evolve():
     global mass, Bottom_Line, Linking_Line, t, s, sOld, oldBase
     updateFloor()
-    """gradient = (Floor['y'][73]  -Floor['y'][68])/0.5    # slope at x=0 (delta/deltaX)
-    if (gradient==0):
-        baseShift=Floor['y'][70]-4      # shift equal to zero
-    else:
-        gradNorm = sqrt(1+gradient**2)
-        baseShift=Floor['y'][int(floor(70+10.0*gradient/gradNorm))]-4-(1-1.0/gradNorm)"""
-    baseShift=Floor['y'][70]-4
+    baseShift=Floor['y'][280]-4 # (y value at x=0) - 4
     Bottom_Line.data=dict(x=[-2,2],y=[9+baseShift,9+baseShift]) # Update horizontal line position
     Linking_Line.data=dict(x=[0,0],y=[9+baseShift,5+baseShift]) # Update vertical line position
     Wheel_source.data=dict(x=[0],y=[5+baseShift]) # Update Wheel position
     
-    # movePoint(start,moveVect)
     # moveVect: compare position of static equilibrium (9) with oldBase and current baseShift
     spring.movePoint(Coord(-2,oldBase),Coord(0,(9+baseShift)-oldBase)) # movePoint(start,moveVect)
     dashpot.movePoint(Coord(2,oldBase),Coord(0,(9+baseShift)-oldBase)) # movePoint(start,moveVect)
@@ -123,24 +100,10 @@ def evolve():
     s=sOld
     s+=disp.y # update mass displacement
     sOld=s
-    s-=Floor['y'][70]-4
-    t+=0.03
-    
-    # previous calculations
-    """ temp=mass.getVelAcc()   # temp: list[self.v.copy(), a, self.currentPos['y'][0]]
-    mass.move(temp[0]*dt+0.5*dt*dt*temp[1]) # move(Coord disp)
-    A=temp[1]
-    s+=temp[0].y*dt+0.5*dt*dt*temp[1].y #
-    dashpot.assertForces(dt)
-    mass.FreezeForces()
-    temp=mass.getVelAcc()
-    mass.v+=0.5*dt*(A+temp[1]) """
+    s-=Floor['y'][280]-4 # subtract base displacement from absolute displacement
+    t+=0.0075 # update time
     
     Position.stream(dict(t=[t],s=[s]))
-    # global maxX
-    # if (t>maxX):
-    #     maxX+=20
-    #     p.x_range.end=maxX
 
 def change_mass(attr,old,new):
     global mass,t 
@@ -148,7 +111,6 @@ def change_mass(attr,old,new):
     if (t==0):
         InitialFloor()  # update position of static equilibrium for the new mass
 ## Create slider to choose mass of blob
-#mass_input = Slider(title="Mass [kg]", value=initial_mass_value, start=0.3, end=10.0, step=0.1,width=400)
 mass_input = LatexSlider(title="\\text{Mass} \\left[ \\mathrm{kg} \\right]: ", value=5, start=0.3, end=10.0, step=0.1, width=400)
 mass_input.on_change('value',change_mass)
 
@@ -158,7 +120,6 @@ def change_kappa(attr,old,new):
     if (t==0):
         InitialFloor()  # update position of static equilibrium for the new mass
 ## Create slider to choose spring constant
-#kappa_input = Slider(title="Spring stiffness [N/m]", value=initial_kappa_value, start=0.0, end=200, step=10,width=400)
 kappa_input = LatexSlider(title="\\text{Spring stiffness} \\left[ \\frac{\\mathrm{N}}{\\mathrm{m}} \\right]: ", value=100, start=10.0, end=200, step=10, width=400)
 kappa_input.on_change('value',change_kappa)
 
@@ -168,7 +129,6 @@ def change_lam(attr,old,new):
     if (t==0):
         InitialFloor()  # update position of static equilibrium for the new mass
 ## Create slider to choose damper coefficient
-#lam_input = Slider(title=u"Damper Coefficient [N*s/m]", value=initial_lambda_value, start=0.0, end=10, step=0.1,width=400)
 lam_input = LatexSlider(title="\\text{Damper Coefficient} \\left[ \\frac{\\mathrm{Ns}}{\\mathrm{m}} \\right]: ", value=5, start=0.0, end=10, step=0.1, width=400)
 lam_input.on_change('value',change_lam)
 
@@ -188,30 +148,24 @@ def pause():
 def play():
     global Active, g1BaseOscillator
     if (not Active):
-        disable_all_sliders(True)
+        disable_all_sliders(True) # while the app is running, it's not possible to change any values
          # Add a callback to be invoked on a session periodically
         g1BaseOscillator = curdoc().add_periodic_callback(evolve,dt*1000)
         Active=True
 
 def stop():
+    # set everything except mass value, lam value and kappa value to initial settings
     global t, s, sOld
     disable_all_sliders(False)
     pause()
-    t=0                     #      /output
+    t=0                     
     s=0
-    sOld=0                    #      /output
-    Position.data=dict(t=[0],s=[0])             #      /output
-    Bottom_Line.data = dict(x=[-2,2],y=[9,9]) #      /output
-    Linking_Line.data = dict(x=[0,0],y=[9,5])  #      /output
-    """stable_pos= 16 - 9.81*float(mass_input.value)/float(kappa_input.value)
-    spring.compressTo(Coord(-2,stable_pos),Coord(-2,9))
-    dashpot.compressTo(Coord(2,stable_pos),Coord(2,9))
-    mass.moveTo(-4,stable_pos,8,2)
-    mass.resetLinks(spring,(-2,stable_pos))
-    mass.resetLinks(dashpot,(2,stable_pos))"""
+    sOld=0                    
+    Position.data=dict(t=[0],s=[0])            
+    Bottom_Line.data = dict(x=[-2,2],y=[9,9]) 
+    Linking_Line.data = dict(x=[0,0],y=[9,5])  
     Wheel_source.data = dict(x=[0],y=[5])
     InitialFloor()
-    #mass.changeInitV(initV_input.value)
     mass.nextStepForces=[]
     mass.nextStepObjForces=[]   
     mass.changeInitV(0.0)   
@@ -225,12 +179,6 @@ def reset():
     lam_input.value=5.0
     kappa_input.value=100.0
     stop()
-    """stable_pos= 16 - 9.81*float(mass_input.value)/float(kappa_input.value)
-    spring.compressTo(Coord(-2,stable_pos),Coord(-2,9))
-    dashpot.compressTo(Coord(2,stable_pos),Coord(2,9))
-    mass.moveTo(-4,stable_pos,8,2)
-    mass.resetLinks(spring,(-2,stable_pos))
-    mass.resetLinks(dashpot,(2,stable_pos))"""
 
 title_box = Div(text="",width=1000)
 
