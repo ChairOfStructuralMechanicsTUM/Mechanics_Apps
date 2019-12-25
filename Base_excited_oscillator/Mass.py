@@ -1,6 +1,7 @@
 from bokeh.models import ColumnDataSource
 from Coord import *
 from copy import deepcopy
+from Dashpot import *
 
 class Mass(object):
     ## create mass
@@ -14,6 +15,9 @@ class Mass(object):
         self.v=Coord(0,0)
         # create vector of objects affected by this object
         self.affectedObjects=[]
+        self.currentPos=dict()
+        self.shape=ColumnDataSource
+        self.old = Coord(0,0)
     
     ## Add an object that is affected by the movement of the mass
     def linkObj(self,obj,point):
@@ -47,7 +51,11 @@ class Mass(object):
             # check if object has already applied a force in previous steps
             if (self.nextStepObjForces[i]==obj):
                 # if so update it with the new force
-                self.nextStepForces[i]=F
+                if(isinstance(obj, Dashpot)):
+                    self.nextStepForces[i]=(F + self.old)
+                    self.old = F
+                else:
+                    self.nextStepForces[i]=F
                 # and exit while loop
                 i=n+1
             i+=1
@@ -56,6 +64,7 @@ class Mass(object):
             # add to lists
             self.nextStepForces.append(F)
             self.nextStepObjForces.append(obj)
+            
     
     # function which saves the forces so movement of other masses does not
     # affect this mass's behaviour
@@ -70,9 +79,11 @@ class Mass(object):
         F=Coord(0,-self.mass*9.81)
         for i in range(0,len(self.thisStepForces)):
             # add all forces acting on mass (e.g. spring, dashpot)
-            F+=self.thisStepForces.pop()    # returns the last entry, adds it to the force, and eliminates it from the list
+            F+=self.thisStepForces.pop()   # returns the last entry, adds it to the force, and eliminates it from the list 
         # Find acceleration
-        a=F/self.mass
+        ax=F.x/self.mass
+        ay=F.y/self.mass
+        a=Coord(ax,ay)
 
         #temp[0]*dt+0.5*dt*dt*temp[1]
 

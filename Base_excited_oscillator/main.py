@@ -8,6 +8,14 @@ from bokeh.models import Slider, Button, Div
 from math import sin, radians
 from os.path import dirname, join, split
 
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexDiv, LatexSlider
+
+
 # z = lam/(2*sqrt(k*m))
 # z = 1 => crit damped
 # z > 1 => over damped
@@ -34,6 +42,7 @@ Floor_source = ColumnDataSource(data = dict(x=[],y=[]))
 dt=0.03
 t=0     # time = 0
 s=0     # mass displacement = 0
+sOld=0
 Floor_angle=4*141
 Active=False
 maxX=20
@@ -72,7 +81,7 @@ def InitialFloor():
     stable_pos= 16 - 9.81*float(mass_input.value)/float(kappa_input.value) # Find position of static equilibrium
     mass.moveTo(-4,stable_pos,8,2)      # moveTo method (x,y,w,h) 
     spring.compressTo(Coord(-2,stable_pos),Coord(-2,9)) # compressTo method (start,end)
-    dashpot.compressTo(Coord(2,stable_pos),Coord(2,9))
+    dashpot.compressTo(Coord(2,stable_pos),Coord(2,9),0)
     mass.resetLinks(spring,(-2,stable_pos))     # move spring's upper end to the position of static equilibrium
     mass.resetLinks(dashpot,(2,stable_pos))     # move dashpot's upper end to the position of static equilibrium
     oldBase=9
@@ -90,14 +99,15 @@ def updateFloor():
 
 # Evolve problem
 def evolve():
-    global mass, Bottom_Line, Linking_Line, t, s, oldBase
+    global mass, Bottom_Line, Linking_Line, t, s, sOld, oldBase
     updateFloor()
-    gradient = (Floor['y'][73]  -Floor['y'][68])/0.5    # slope at x=0 (delta/deltaX)
+    """gradient = (Floor['y'][73]  -Floor['y'][68])/0.5    # slope at x=0 (delta/deltaX)
     if (gradient==0):
         baseShift=Floor['y'][70]-4      # shift equal to zero
     else:
         gradNorm = sqrt(1+gradient**2)
-        baseShift=Floor['y'][int(floor(70+10.0*gradient/gradNorm))]-4-(1-1.0/gradNorm)
+        baseShift=Floor['y'][int(floor(70+10.0*gradient/gradNorm))]-4-(1-1.0/gradNorm)"""
+    baseShift=Floor['y'][70]-4
     Bottom_Line.data=dict(x=[-2,2],y=[9+baseShift,9+baseShift]) # Update horizontal line position
     Linking_Line.data=dict(x=[0,0],y=[9+baseShift,5+baseShift]) # Update vertical line position
     Wheel_source.data=dict(x=[0],y=[5+baseShift]) # Update Wheel position
@@ -110,8 +120,11 @@ def evolve():
     
     mass.FreezeForces()
     disp=mass.EvolveMass(dt)
-    s+=disp.y   # update mass displacement
-    t+=0.03     # increment time
+    s=sOld
+    s+=disp.y # update mass displacement
+    sOld=s
+    s-=Floor['y'][70]-4
+    t+=0.03
     
     # previous calculations
     """ temp=mass.getVelAcc()   # temp: list[self.v.copy(), a, self.currentPos['y'][0]]
@@ -135,7 +148,8 @@ def change_mass(attr,old,new):
     if (t==0):
         InitialFloor()  # update position of static equilibrium for the new mass
 ## Create slider to choose mass of blob
-mass_input = Slider(title="Mass [kg]", value=initial_mass_value, start=0.3, end=10.0, step=0.1,width=400)
+#mass_input = Slider(title="Mass [kg]", value=initial_mass_value, start=0.3, end=10.0, step=0.1,width=400)
+mass_input = LatexSlider(title="\\text{Mass} \\left[ \\mathrm{kg} \\right]: ", value=5, start=0.3, end=10.0, step=0.1, width=400)
 mass_input.on_change('value',change_mass)
 
 def change_kappa(attr,old,new):
@@ -144,7 +158,8 @@ def change_kappa(attr,old,new):
     if (t==0):
         InitialFloor()  # update position of static equilibrium for the new mass
 ## Create slider to choose spring constant
-kappa_input = Slider(title="Spring stiffness [N/m]", value=initial_kappa_value, start=0.0, end=200, step=10,width=400)
+#kappa_input = Slider(title="Spring stiffness [N/m]", value=initial_kappa_value, start=0.0, end=200, step=10,width=400)
+kappa_input = LatexSlider(title="\\text{Spring stiffness} \\left[ \\frac{\\mathrm{N}}{\\mathrm{m}} \\right]: ", value=100, start=10.0, end=200, step=10, width=400)
 kappa_input.on_change('value',change_kappa)
 
 def change_lam(attr,old,new):
@@ -153,12 +168,18 @@ def change_lam(attr,old,new):
     if (t==0):
         InitialFloor()  # update position of static equilibrium for the new mass
 ## Create slider to choose damper coefficient
-lam_input = Slider(title=u"Damper Coefficient [N*s/m]", value=initial_lambda_value, start=0.0, end=10, step=0.1,width=400)
+#lam_input = Slider(title=u"Damper Coefficient [N*s/m]", value=initial_lambda_value, start=0.0, end=10, step=0.1,width=400)
+lam_input = LatexSlider(title="\\text{Damper Coefficient} \\left[ \\frac{\\mathrm{Ns}}{\\mathrm{m}} \\right]: ", value=5, start=0.0, end=10, step=0.1, width=400)
 lam_input.on_change('value',change_lam)
 
 InitialFloor() # call floor definition after defining necessary variables
 
-def stop():
+def disable_all_sliders(d=True):
+    mass_input.disabled = d
+    kappa_input.disabled = d
+    lam_input.disabled = d
+
+def pause():
     global Active, g1BaseOscillator
     if (Active):
         curdoc().remove_periodic_callback(g1BaseOscillator)
@@ -167,28 +188,51 @@ def stop():
 def play():
     global Active, g1BaseOscillator
     if (not Active):
+        disable_all_sliders(True)
          # Add a callback to be invoked on a session periodically
         g1BaseOscillator = curdoc().add_periodic_callback(evolve,dt*1000)
         Active=True
 
-def reset():
-    global Position, t, s, Bottom_Line, Linking_Line, spring, mass, dashpot, maxX
-    stop()
-    t=0
+def stop():
+    global t, s, sOld
+    disable_all_sliders(False)
+    pause()
+    t=0                     #      /output
     s=0
-    mass_input.value=5.0
-    lam_input.value=5.0
-    kappa_input.value=100.0
-    Position.data=dict(t=[0],s=[0])
-    Bottom_Line.data = dict(x=[-2,2],y=[9,9])
-    Linking_Line.data = dict(x=[0,0],y=[9,5])
+    sOld=0                    #      /output
+    Position.data=dict(t=[0],s=[0])             #      /output
+    Bottom_Line.data = dict(x=[-2,2],y=[9,9]) #      /output
+    Linking_Line.data = dict(x=[0,0],y=[9,5])  #      /output
+    """stable_pos= 16 - 9.81*float(mass_input.value)/float(kappa_input.value)
+    spring.compressTo(Coord(-2,stable_pos),Coord(-2,9))
+    dashpot.compressTo(Coord(2,stable_pos),Coord(2,9))
+    mass.moveTo(-4,stable_pos,8,2)
+    mass.resetLinks(spring,(-2,stable_pos))
+    mass.resetLinks(dashpot,(2,stable_pos))"""
     Wheel_source.data = dict(x=[0],y=[5])
-    InitialFloor() 
-    mass.changeInitV(0.0)
+    InitialFloor()
+    #mass.changeInitV(initV_input.value)
+    mass.nextStepForces=[]
+    mass.nextStepObjForces=[]   
+    mass.changeInitV(0.0)   
     maxX=20
     p.x_range.end=maxX
 
-title_box = Div(text="""<h2 style="text-align:center;">Base-excited oscillator</h2>""",width=1000)
+def reset():
+    global Position, t, s, Bottom_Line, Linking_Line, spring, mass, dashpot, maxX
+    
+    mass_input.value=5.0
+    lam_input.value=5.0
+    kappa_input.value=100.0
+    stop()
+    """stable_pos= 16 - 9.81*float(mass_input.value)/float(kappa_input.value)
+    spring.compressTo(Coord(-2,stable_pos),Coord(-2,9))
+    dashpot.compressTo(Coord(2,stable_pos),Coord(2,9))
+    mass.moveTo(-4,stable_pos,8,2)
+    mass.resetLinks(spring,(-2,stable_pos))
+    mass.resetLinks(dashpot,(2,stable_pos))"""
+
+title_box = Div(text="",width=1000)
 
 # Plot evolution of elements
 fig = figure(title="", tools="", x_range=(-7,7), y_range=(0,20),width=350,height=500)
@@ -201,8 +245,9 @@ dashpot.plot(fig,width=2)
 fig.line(x='x',y='y',source=Bottom_Line,color="black",line_width=3)
 fig.line(x='x',y='y',source=Linking_Line,color="black",line_width=3)
 fig.line(x='x',y='y',source=Floor_source,color="black",line_width=1)
-fig.ellipse(x='x',y='y',width=2,height=2,source=Wheel_source,line_color="#E37222",fill_color=None,line_width=2)
+fig.ellipse(x='x',y='y',width=2,height=2,source=Wheel_source,line_color="#E37222",fill_color="#E37222",line_width=2)
 mass.plot(fig)
+fig.toolbar.logo = None
 
 # Plot Mass-Displacement.vs.Time graph
 p = figure(title="", tools=["ywheel_zoom,xwheel_pan,pan,reset"], y_range=(-5,5), x_range=(0,maxX),height=500)
@@ -211,19 +256,27 @@ p.axis.major_label_text_font_size="12pt"
 p.axis.axis_label_text_font_style="normal"
 p.axis.axis_label_text_font_size="14pt"
 p.xaxis.axis_label="Time [s]"
-p.yaxis.axis_label="Displacement [m]"
+p.yaxis.axis_label="Relative Displacement [m]"
+p.toolbar.logo = None
+
 
 
 
 # Define buttons and what happens when clicked
-stop_button = Button(label="Pause", button_type="success",width=100)
-stop_button.on_click(stop)
+pause_button = Button(label="Pause", button_type="success",width=100)
+pause_button.on_click(pause)
 play_button = Button(label="Play", button_type="success",width=100)
 play_button.on_click(play)
 reset_button = Button(label="Reset", button_type="success",width=100)
 reset_button.on_click(reset)
+stop_button = Button(label="Stop", button_type="success",width=100)
+stop_button.on_click(stop)
+
 
 ## Send to window
-curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,stop_button,reset_button),Spacer(width=10),fig,p),
+curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,pause_button,stop_button,reset_button),Spacer(width=10),fig,p),
     row(mass_input),row(kappa_input),row(lam_input)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
+
+
+
