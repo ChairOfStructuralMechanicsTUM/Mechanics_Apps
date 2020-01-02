@@ -55,7 +55,7 @@ def selective_str_sin(coeff,T,k):
 def generate_tex(a,b,T):
     TeX_string = ""
     N = len(a)-1
-    print "generating TeX string for N = "+str(N)
+    print("generating TeX string for N = "+str(N))
     
     for k in range(0,N+1):
         if(k == 0):
@@ -72,5 +72,5 @@ def generate_tex(a,b,T):
         
     TeX_string = "   f(x)="+TeX_string+"   "
         
-    print "sending the following TeX string: "+TeX_string
+    print("sending the following TeX string: "+TeX_string)
     return TeX_string

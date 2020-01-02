@@ -84,10 +84,10 @@ def curve_change(attrname, old, new):
         update_point()
 
 
-def sample_curve_change(self):
+def sample_curve_change(attr, old, new):
     global update_callback
     # get sample function pair (first & second component of ode)
-    sample_curve_key = sample_curve_input.value
+    sample_curve_key = new #sample_curve_input.value
     sample_curve_x_component, sample_curve_y_component = leibnitz_settings.sample_curves[sample_curve_key]
     # write new functions to u_input and v_input
     update_callback = False  # prevent callback
@@ -122,7 +122,7 @@ y_component_input.on_change('value', curve_change)
 # dropdown menu for selecting one of the sample curves
 sample_curve_input = Dropdown(label="choose a sample function pair or enter one below",
                               menu=leibnitz_settings.sample_curve_names)
-sample_curve_input.on_click(sample_curve_change)
+sample_curve_input.on_change('value', sample_curve_change)
 
 # initialize plot
 toolset = "crosshair,pan,reset,save,wheel_zoom"
@@ -133,10 +133,10 @@ plot = Figure(plot_height=400, plot_width=400, tools=toolset,
               y_range=[leibnitz_settings.y_min_view, leibnitz_settings.y_max_view])
 
 # Plot the line by the x,y values in the source property
-plot.line('x', 'y', source=source_curve, line_width=3, line_alpha=1, color='black', legend='curve')
-plot.scatter('x', 'y', source=source_point, color='blue', legend='point at t')
+plot.line('x', 'y', source=source_curve, line_width=3, line_alpha=1, color='black', legend_label='curve')
+plot.scatter('x', 'y', source=source_point, color='blue', legend_label='point at t')
 plot.scatter([0], [0], color='black', marker='x')
-pat = plot.patch('x', 'y', source=source_sector, fill_color='blue', fill_alpha=.2, legend='area')
+pat = plot.patch('x', 'y', source=source_sector, fill_color='blue', fill_alpha=.2, legend_label='area')
 plot.line('x_start', 'y_start', source=source_lines, line_width=1, line_alpha=1, color='blue')
 plot.line('x_end', 'y_end', source=source_lines, line_width=1, line_alpha=1, color='blue')
 plot.text('x', 'y', text='text', text_color='text_color', source=source_text)

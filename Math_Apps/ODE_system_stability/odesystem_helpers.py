@@ -62,10 +62,10 @@ def critical_points(u_sym, v_sym, bounds):
         system = (u_sym, v_sym)
         s=sympy.solve(system, (x,y),dict=True)
         repeat = False
-        print "system:"
-        print system
-        print "solutions:"
-        print s
+        print("system:")
+        print(system)
+        print("solutions:")
+        print(s)
 
         for solution in s:
             vars =  solution.keys()
@@ -73,13 +73,13 @@ def critical_points(u_sym, v_sym, bounds):
                 x_sol = solution[x]
                 y_sol = solution[y]
                 if x_sol.is_real and y_sol.is_real:
-                    print "found pt:"
-                    print solution
+                    print("found pt:")
+                    print(solution)
                     real_point = True
 
                     if u_sym.subs(x,x_sol).is_zero and v_sym.subs(x,x_sol).is_zero:
-                        print "pt is actually a line!"
-                        print "x = %d" % float(x_sol)
+                        print("pt is actually a line!")
+                        print("x =", float(x_sol))
                         u_sym = u_sym / (x_sol - x)
                         v_sym = v_sym / (x_sol - x)
                         l_y = sympy.lambdify(y,x_sol)
@@ -87,8 +87,8 @@ def critical_points(u_sym, v_sym, bounds):
                         repeat = True
                         real_point = False
                     if u_sym.subs(y,y_sol).is_zero and v_sym.subs(y,y_sol).is_zero:
-                        print "pt is actually a line!"
-                        print "y = %d" % float(y_sol)
+                        print("pt is actually a line!")
+                        print("y =", float(y_sol))
                         u_sym = u_sym / (y_sol - y)
                         v_sym = v_sym / (y_sol - y)
                         l_x = sympy.lambdify(x,y_sol)
@@ -106,18 +106,18 @@ def critical_points(u_sym, v_sym, bounds):
                 u_sym = u_sym / (solution[y] - y)
                 v_sym = v_sym / (solution[y] - y)
                 x_lines.append(l_x)
-                print "found xline:"
-                print solution
+                print("found xline:")
+                print(solution)
             elif x in vars:
                 repeat = True
                 l_y = sympy.lambdify(y,solution[x])
                 u_sym = u_sym / (solution[x] - x)
                 v_sym = v_sym / (solution[x] - x)
                 y_lines.append(l_y)
-                print "found yline:"
-                print solution
+                print("found yline:")
+                print(solution)
             else:
-                print "no pts found"
+                print("no pts found")
 
     x_val_lines = [[]]
     y_val_lines = [[]]

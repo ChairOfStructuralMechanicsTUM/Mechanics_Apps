@@ -68,7 +68,7 @@ def update_curve_data(cx_str, cy_str):
     # save data
     source_curve.data = dict(x=x_val, y=y_val)
 
-    print "curve data was updated with c(t)=[%s,%s]" % (cx_str, cy_str)
+    print("curve data was updated with c(t)=[{},{}]".format(cx_str, cy_str))
 
 
 def update_parameter_data(cx_str, cy_str, t):
@@ -99,7 +99,7 @@ def update_parameter_data(cx_str, cy_str, t):
     source_param.data = dict(x=[x_val], y=[y_val], t=[t], x0=ssdict['x0'], y0=ssdict['y0'],
                              x1=ssdict['x1'], y1=ssdict['y1'], xs=spdict['xs'], ys=spdict['ys'])
 
-    print "curve point was updated with t=%f" % (t)
+    #print("curve point was updated with t={:f}".format(t))
 
 
 def update_quiver_data(u_str, v_str):
@@ -122,7 +122,7 @@ def update_quiver_data(u_str, v_str):
     source_patches.data = spdict
     source_basept.data = sbdict
 
-    print "quiver data was updated for u(x,y) = %s, v(x,y) = %s" % (u_str, v_str)
+    print("quiver data was updated for u(x,y) = {}, v(x,y) = {}".format(u_str, v_str))
 
 
 def update_integral_data(u_str, v_str, cx_str, cy_str):
@@ -248,9 +248,9 @@ plot_field.segment('x0', 'y0', 'x1', 'y1', source=source_segments)
 plot_field.patches('xs', 'ys', source=source_patches)
 plot_field.circle('x', 'y', source=source_basept, color='blue', size=1.5)
 # Plot curve
-plot_field.line('x', 'y', source=source_curve, color='black', legend='curve')
+plot_field.line('x', 'y', source=source_curve, color='black', legend_label='curve')
 # Plot parameter point
-plot_field.scatter('x', 'y', source=source_param, color='black', legend='c(t)')
+plot_field.scatter('x', 'y', source=source_param, color='black', legend_label='c(t)')
 # Plot corresponding tangent vector
 plot_field.segment('x0', 'y0', 'x1', 'y1', source=source_param, color='black')
 plot_field.patches('xs', 'ys', source=source_param, color='black')
