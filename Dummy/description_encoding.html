@@ -1,0 +1,50 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+
+<h3>Encoding</h3>
+
+<p>
+    For some apps it is possible to switch between an English and German version.
+    In order to display umlauts properly, we need the utf-8 encoding. 
+</p>
+
+<p>
+    To provide this feature, you need a file strings.json in the static/ folder where also the images are located. <br>
+    See the Template App and for example Vector_addition or Seesaw.
+</p>
+
+<p>
+    The important part to know is, to provide an extra parameter for the open function, loading html files into strings.json or loading strings.json into your python files. <br>
+    open('Seesaw/description_de.html', encoding='utf-8').read()
+</p>
+
