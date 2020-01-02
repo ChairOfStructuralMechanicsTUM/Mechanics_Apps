@@ -92,16 +92,19 @@ def update_colormap(attrname, old, new_frequency):
     """
     mandel_iterations = source_mandel_raw.data['its'][0]
 
-    frequency = int(
-        np.mean(mandel_iterations[
-                    mandel_iterations != int(slider_max_iterations.value)]) / new_frequency * 10)  # todo magic number?
+    if slider_max_iterations.value == 0:
+        frequency = 1
+    else:
+        frequency = int(
+            np.mean(mandel_iterations[
+                        mandel_iterations != int(slider_max_iterations.value)]) / new_frequency * 10)  # todo magic number?
 
-    print "calculating colors."
+    print("calculating colors.")
     col = mandel_colormap.iteration_count_to_rgb_color(mandel_iterations, frequency, int(slider_max_iterations.value))
     img = mandel_colormap.rgb_color_to_bokeh_rgba(color=col)
-    print "done."
+    print("done.")
 
-    print "updating image data."
+    print("updating image data.")
     view_data = my_bokeh_utils.get_user_view(plot)
     source_view.data = view_data
     source_image.data = dict(image=[img],
@@ -110,7 +113,7 @@ def update_colormap(attrname, old, new_frequency):
                              xw=[view_data['x_end'][0]-view_data['x_start'][0]],
                              yw=[view_data['y_end'][0]-view_data['y_start'][0]],
                              freq=[new_frequency])
-    print "data was updated."
+    print("data was updated.")
 
 
 def update_mandelbrot_set():
@@ -126,16 +129,16 @@ def update_mandelbrot_set():
     y0 = view_data['y_start'][0]
     yw = view_data['y_end'][0] - y0
 
-    print "calculating mandelbrot set."
+    print("calculating mandelbrot set.")
     mandel_iterations = mandel.mandel(x0, y0, xw, yw,  # user view
                                       mandelbrot_settings.x_res, mandelbrot_settings.y_res,  # resolution
                                       slider_max_iterations.value,  # maximum number of iterations
                                       mandelbrot_settings.iteration_bound)
-    print "done."
+    print("done.")
 
-    print "updating raw data."
+    print("updating raw data.")
     source_mandel_raw.data = dict(its=[mandel_iterations], max_iter=[int(slider_max_iterations.value)])
-    print "data was updated."
+    print("data was updated.")
 
 
 def check_parameters(max_iterations):

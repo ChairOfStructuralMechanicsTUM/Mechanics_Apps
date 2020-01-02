@@ -1,0 +1,55 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+
+<h3>Style Example</h3>
+
+<p>
+    In very rare cases you might need custom styles to enhance the appearance of your objects. <br>
+    Most likely there already exists a dedicated attribute in new Bokeh versions which can be used directly in Python.
+    However, sometimes such an attribute might still miss, therefore we present a short example on how to manipulate the style via the attribute css_classes since this
+    is a more sophisticated approach that might not be clear when encountered for the first time.
+</p>
+
+<p>
+    We need:
+    <ul>
+        <li>a callback function to change the css_classes</li>
+        <li>a CSS style file located in /templates/styles.css</li>
+        <li>an html index file located in /templates/index.html</li>
+    </ul>
+</p>
+
+<p>
+    The names defined in css_classes have to appear in the styles.css in order to work. Have a look at the codes and files to see the connection. <br>
+    Note how the colored background matches the size defined by width in the code.
+</p>

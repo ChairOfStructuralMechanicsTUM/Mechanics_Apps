@@ -1,0 +1,54 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+
+<h3>LaTeX/KaTeX and last steps</h3>
+
+<p>
+You might have noticed a bit of LaTeX in the descriptions. This is rendered due to a special package (KaTeX) which is imported in the main file.
+It is not only possible to include LaTeX in the description text but also in the title of sliders, or legends and labels of plots. </br>
+When updating the Bokeh version, you might have to adapt the custom LaTeX implementation in the shared folder.
+See the Wiki for more details.
+</p>
+
+<p>
+Last but not least one of the most important parts to actually receive output and being able to look at the figures in your favorite browser lies in the command
+curdoc().add_root(), where you can define the position of your objects (figures, sliders, buttons, etc.) by using rows and columns notation. </br>
+Without this last step - opening the window to the outside world - all your programming and ideas would just stay imaginary.
+</p>
+
+<p>
+We hope that we covered the most important underlying structures of the apps presented here and that the gained basis for programming in Bokeh will lead to magnificent creations. </br>
+Copy the Template App for a quick start and have a look at Bokehs references for other possible models that could not be covered here. <br>
+Happy coding!
+</p>
+

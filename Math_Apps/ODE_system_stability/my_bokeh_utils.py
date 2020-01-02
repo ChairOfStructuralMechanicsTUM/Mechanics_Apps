@@ -315,7 +315,7 @@ class Interactor:
         returns the currently clicked on point in the local coordinate system of self._plot
         :return:
         """
-        print "HERE"
+        print("HERE")
         if len(self._pseudo_square.data_source.selected.indices) > 0:
             id = self._pseudo_square.data_source.selected.indices[0]
             x_coor = self._pseudo_square.data_source.data['x'][id]

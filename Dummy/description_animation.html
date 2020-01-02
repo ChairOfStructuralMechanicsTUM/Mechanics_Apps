@@ -1,0 +1,78 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+<h3>Animation Example</h3>
+
+<p>
+After you have found out how to change input manually, let's try to program a nice animation which does not depend on any user input except for clicking on start. </br>
+How about a ping pong match? Too boring? Well, maybe we can add some fancy flashing ball, to make it visually more appealing!
+</p>
+
+<p>
+To efficiently code more complex animations, it is advisable to know how <strong>classes</strong> work. You can find an example of a class of the ball in DY_ball.py. </br>
+Another important remark at this place is the following: Keep an eye on Pythons caching system! Don't worry, you won't need to understand how it works in detail.
+Just make sure to create new ColumnDataSources whenever refreshing the page. This means, do not use the same ColumnDataSource over several Python files. </br>
+In the codes example you will see that the ColumnDataSource for the coordinates of the ball is defined in the class. Yet, the class is build in the main file.
+Therefore, after refreshing the page, the object will be built completely new too! 
+One could also think of a separate file which lists all the ColumnDataSources and importing it to the files where needed. However, Python will "remember" these definitions
+in its cache and the app won't be able to start up again, since there arises a definition conflict now. <br> 
+To avoid this, <strong>only define ColumnDataSources in the main file</strong> or within classes in other files, which are being built in the main. This way, 
+when leaving/refreshing the page, the class and also its ColumnDataSource will be destroyed, making room for the new ColumnDataSources. </br>
+Don't worry, if you didn't understand what we were trying to tell here. Again, just keep trying out new scenarios and sooner or later you will stumble accross this problem.
+A detailed description regarding this topic can also be found in the Wiki/Guidelines.
+</p>
+
+
+<p>
+Looking at the code, we do not need so many more items on the list as before. Just the functions become more complex. </br>
+The ingredients for this animation are
+<ul>
+    <li>the ping pong ball class DY_ball</li>
+    <li>play/pause button to start/stop the animation</li>
+    <li>a callback function which defines the movement of the ball</li>
+    <li>a reset button to place the ball on its inital position without refreshing the page</li>
+</ul>
+</br>
+The class contains important properties of the ball and several functions which can change them in an appropriate way. </br>
+Regarding the button, it is more or less the same approach as in the slider case. We build the button object, and define a callback function to handle the click event. </br>
+Now comes the crucial part. Since the animation should keep running as long as we want it to (and without repeatedly harassing the Play button), we need a callback function,
+which is called periodcally and automatically. </br>
+When pressing Play, we therefore set this <strong>periodic callback</strong>: id = curdoc().add_periodic_callback(ping_pong,100) which only means to call the function ping_pong() every 100 milliseconds</br>
+If we are done with watching the ping pong match and want to stop it, we need to remove the callback by curdoc().remove_periodic_callback(id) </br>
+In order to not overload an app with a ton of buttons, we can use the same button and distinguish its different purposes by using if-statements and label manipulations. 
+In this case, the Play button becomes the Pause button and vice versa.
+</br>
+To see how the animation works in the background, please have a look at the code and play with it.
+</p>
+
+
+
