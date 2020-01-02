@@ -81,7 +81,7 @@ For more information and contacts, please consult the [Wiki](https://github.com/
 
 ## Apps 
 
-#### Technical Mechanics (he):
+#### Technical Mechanics:
 - [ ] 1) Tensile testing / Zugversuch (eb,rr)
 - [ ] 2) Transverse strain / Querdehnung (eb,rr)
 - [ ] 3) Double-supported beam with point load / Balken (ad)
@@ -97,7 +97,7 @@ For more information and contacts, please consult the [Wiki](https://github.com/
 - [ ] 13) Moment is a free vector (rem, cfm)
 - [ ] 14) Balken (ad, sk)
 
-#### Supplementary course / Ergänzungskurs Technical Mechanics (ft, qa, cs):
+#### Supplementary course / Ergänzungskurs Technical Mechanics:
 - [x] 1) Damped oscillator / Federpendel (eb, qa, ft)
 - [x] 2) Pendulum / Schwerependel (eb, ft)
 - [ ] 3) Base-excited oscillator / Fusspunkterregter Schwinger (eb, kb)
@@ -117,24 +117,23 @@ For more information and contacts, please consult the [Wiki](https://github.com/
 - [ ] 17) Angular momentum / Drallerhaltung (ma, cfm)
 
 
-#### Structural Dynamics (mb):
+#### Structural Dynamics:
 - [ ] 1) Euler-Bernoulli Vibrations with analytical solutions (me)
 - [ ] 2) 2D cantilever beam (ma, cfm, sk)
 - [x] 3) Seismic three DOF structure (ma)
 - [ ] 4) Shock Response Spectra (rem)
 - [ ] 5) Dynamic seismic three DOF structure (mb, ft)
 
-#### Technical Acoustics II (jf):
+#### Technical Acoustics II:
 - [x] 1) Diffraction (br)
 - [x] 2) Vibroacoustic plates (rd)
 
-#### Integral transform method (fw, mm):
+#### Integral transform method:
 - [x] 1) Sampling (br, me)
 - [ ] 2) Wavelet-Transform (kb)
 
 ### Supervisors
 - Francesca Taddei (ft), [@FrancescaTaddei](https://github.com/FrancescaTaddei)
-- Axel Greim (ag), [@axelgreim](https://github.com/axelgreim)
 - Quirin Aumann (qa), [@qaumann](https://github.com/qaumann)
 - Moritz Becker (mb)
 - Julian Freisinger (jf)
@@ -142,6 +141,7 @@ For more information and contacts, please consult the [Wiki](https://github.com/
 - Franziska Weber (fw)
 - Hannes Englert (he)
 - Corinna Schmausser (cs)
+- Felix Schneider (fs)
 
 ### Developers
 
@@ -149,7 +149,7 @@ Please comply with the [Development Guideline](https://github.com/ChairOfStructu
 - Matthias Ebert, me, [@m3bert](https://github.com/m3bert)
 - Qiaozhi Gao, qg, [@QiaozhiGao](https://github.com/QiaozhiGao)
 - Martin Hefel, mh
-- Vioal Li, vl, [@ViolaM151](https://github.com/ViolaM151)
+- Viola Li, vl, [@ViolaM151](https://github.com/ViolaM151)
 
 ### Former developers
 
