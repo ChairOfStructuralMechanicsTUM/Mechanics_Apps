@@ -139,10 +139,17 @@ def disable_all_sliders(d=True):
     kappa_input.disabled = d
     lam_input.disabled = d
 
+def play_pause():
+    if play_pause_button.label == "Play":
+        play()
+    else: 
+        pause()
+
 def pause():
     global Active, g1BaseOscillator
     if (Active):
         curdoc().remove_periodic_callback(g1BaseOscillator)
+        play_pause_button.label = "Play"
         Active=False
 
 def play():
@@ -151,6 +158,7 @@ def play():
         disable_all_sliders(True) # while the app is running, it's not possible to change any values
          # Add a callback to be invoked on a session periodically
         g1BaseOscillator = curdoc().add_periodic_callback(evolve,dt*1000)
+        play_pause_button.label = "Pause"
         Active=True
 
 def stop():
@@ -193,7 +201,7 @@ dashpot.plot(fig,width=2)
 fig.line(x='x',y='y',source=Bottom_Line,color="black",line_width=3)
 fig.line(x='x',y='y',source=Linking_Line,color="black",line_width=3)
 fig.line(x='x',y='y',source=Floor_source,color="black",line_width=1)
-fig.ellipse(x='x',y='y',width=2,height=2,source=Wheel_source,line_color="#E37222",fill_color="#E37222",line_width=2)
+fig.ellipse(x='x',y='y',width=2,height=2,source=Wheel_source,line_color="#E37222",fill_color=None,line_width=2)
 mass.plot(fig)
 fig.toolbar.logo = None
 
@@ -211,10 +219,8 @@ p.toolbar.logo = None
 
 
 # Define buttons and what happens when clicked
-pause_button = Button(label="Pause", button_type="success",width=100)
-pause_button.on_click(pause)
-play_button = Button(label="Play", button_type="success",width=100)
-play_button.on_click(play)
+play_pause_button = Button(label="Play", button_type="success",width=100)
+play_pause_button.on_click(play_pause)
 reset_button = Button(label="Reset", button_type="success",width=100)
 reset_button.on_click(reset)
 stop_button = Button(label="Stop", button_type="success",width=100)
@@ -222,7 +228,7 @@ stop_button.on_click(stop)
 
 
 ## Send to window
-curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,pause_button,stop_button,reset_button),Spacer(width=10),fig,p),
+curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_pause_button,stop_button,reset_button),Spacer(width=10),fig,p),
     row(mass_input),row(kappa_input),row(lam_input)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 
