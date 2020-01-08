@@ -38,10 +38,10 @@ How about a ping pong match? Too boring? Well, maybe we can add some fancy flash
 </p>
 
 <p>
-To efficiently code more complex animations, it is advisable to know how <strong>classes</strong> work. You can find an example of a class of the ball in DY_ball.py. </br>
+To efficiently code more complex animations, it is advisable to know how <strong>classes</strong> work. You can find an example of a class of the ball in <i>DY_ball.py</i>. </br>
 Another important remark at this place is the following: Keep an eye on Pythons caching system! Don't worry, you won't need to understand how it works in detail.
 Just make sure to create new ColumnDataSources whenever refreshing the page. This means, do not use the same ColumnDataSource over several Python files. </br>
-In the codes example you will see that the ColumnDataSource for the coordinates of the ball is defined in the class. Yet, the class is build in the main file.
+In the code example you will see that the ColumnDataSource for the coordinates of the ball is defined in the class. Yet, the class is build in the main file.
 Therefore, after refreshing the page, the object will be built completely new too! 
 One could also think of a separate file which lists all the ColumnDataSources and importing it to the files where needed. However, Python will "remember" these definitions
 in its cache and the app won't be able to start up again, since there arises a definition conflict now. <br> 
@@ -56,20 +56,20 @@ More on this topic can also be found in the <a href="https://github.com/ChairOfS
 Looking at the code, we do not need so many more items on the list as before. Just the functions become more complex. </br>
 The ingredients for this animation are
 <ul>
-    <li>the ping pong ball class DY_ball</li>
-    <li>play/pause button to start/stop the animation</li>
+    <li>the ping pong ball class <i>DY_ball</i></li>
+    <li>a play/pause button to start/stop the animation</li>
     <li>a callback function which defines the movement of the ball</li>
     <li>a reset button to place the ball on its inital position without refreshing the page</li>
 </ul>
 </br>
 The class contains important properties of the ball and several functions which can change them in an appropriate way. </br>
 Regarding the button, it is more or less the same approach as in the slider case. We build the button object, and define a callback function to handle the click event. </br>
-Now comes the crucial part. Since the animation should keep running as long as we want it to (and without repeatedly harassing the Play button), we need a callback function,
+Now comes the crucial part. Since the animation should keep running as long as we want it to (and without repeatedly harassing the <i>Play</i> button), we need a callback function,
 which is called periodcally and automatically. </br>
-When pressing Play, we therefore set this <strong>periodic callback</strong>: id = curdoc().add_periodic_callback(ping_pong,100) which only means to call the function ping_pong() every 100 milliseconds</br>
-If we are done with watching the ping pong match and want to stop it, we need to remove the callback by curdoc().remove_periodic_callback(id) </br>
+When pressing <i>Play</i>, we therefore set this <strong>periodic callback</strong>: <i>id = curdoc().add_periodic_callback(ping_pong,100)</i> which only means to call the function <i>ping_pong()</i> every 100 milliseconds.</br>
+If we are done with watching the ping pong match and want to stop it, we need to remove the callback with <i>curdoc().remove_periodic_callback(id)</i>. </br>
 In order to not overload an app with a ton of buttons, we can use the same button and distinguish its different purposes by using if-statements and label manipulations. 
-In this case, the Play button becomes the Pause button and vice versa.
+In this case, the <i>Play</i> button becomes the <i>Pause</i> button and vice versa.
 </br>
 To see how the animation works in the background, please have a look at the code and play with it.
 </p>
