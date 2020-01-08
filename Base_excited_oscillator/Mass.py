@@ -130,7 +130,7 @@ class RectangularMass(Mass):    # Subclass inheriting attributes and methods of 
         self.currentPos = dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y]) # Rectangular Mass vertices CCW
     
     # add RectangularMass to figure
-    def plot(self,fig,colour="#0065BD",width=1):
+    def plot(self,fig,colour="#3070b3",width=1):
         fig.patch(x='x',y='y',color=colour,source=self.shape,line_width=width)
     
     # displace mass to position (used for reset)

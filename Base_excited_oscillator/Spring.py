@@ -76,7 +76,7 @@ class Spring(object):
         return SpringVec
     
     ## draw spring on figure
-    def plot(self,fig,colour="#808080",width=1):
+    def plot(self,fig,colour="#8a8a8a",width=1):
         fig.line(x='x',y='y',color=colour,source=self.Position,line_width=width)
     
     ## place spring in space
