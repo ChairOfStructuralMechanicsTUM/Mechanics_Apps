@@ -193,9 +193,9 @@ def changetheta2(attr,old,new):
     updateResultant()
     
 ## Create slider to choose force applied
-Vector1Slider = LatexSlider(title="|V1|=",value=95.0,start=0,end=100,step=5)
+Vector1Slider = LatexSlider(title="|V1|=", value=95.0, value_unit="\mathrm{N}", start=0, end=100, step=5)
 Vector1Slider.on_change('value',changeVector1)
-Vector2Slider = LatexSlider(title="|V2|=", value=100.0, start=0.0, end=100.0, step=5)
+Vector2Slider = LatexSlider(title="|V2|=", value=100.0, value_unit="\mathrm{N}", start=0.0, end=100.0, step=5)
 Vector2Slider.on_change('value',changeVector2)
 
 AngleVector1Slider = LatexSlider(title='\\alpha_{V1}=', value_unit='^{\\circ}', value=60.0, start=0.0, end=360.0, step=5)
