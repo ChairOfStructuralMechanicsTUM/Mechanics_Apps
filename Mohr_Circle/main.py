@@ -207,25 +207,25 @@ def NormalForceX_init(attr,old,new):
         new = new*0.75
         if(new<0):
             #Mvar.NxP_arrow_source.data = dict(xS=[12.5-new],  xE=[12.5],  yS=[0], yE=[0], lW = [2])
-            Mvar.NxP_arrow_source.stream(dict(xS=[12.5-new],  xE=[12.5],  yS=[0], yE=[0], lW = [2]),rollover=1)
+            Mvar.NxP_arrow_source.stream(dict(xS=[12.5-new],  xE=[12.5],  yS=[0], yE=[0], lW = [2]),rollover=-1)
             #Mvar.NxN_arrow_source.data = dict(xS=[-12.5+new], xE=[-12.5], yS=[0], yE=[0], lW = [2]) 
-            Mvar.NxN_arrow_source.stream(dict(xS=[-12.5+new], xE=[-12.5], yS=[0], yE=[0], lW = [2]),rollover=1)
+            Mvar.NxN_arrow_source.stream(dict(xS=[-12.5+new], xE=[-12.5], yS=[0], yE=[0], lW = [2]),rollover=-1)
      
             Mvar.NxP_rect_source.data  = dict(x=[(25-new)/2],  y=[0], w=[new-1.5], h = [13], angle=[0])
             Mvar.NxN_rect_source.data  = dict(x=[(-25+new)/2], y=[0], w=[new-1.5], h = [13], angle=[0]) 
         elif(new==0):
             #Mvar.NxP_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
             #Mvar.NxN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-            Mvar.NxP_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
-            Mvar.NxN_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)     
+            Mvar.NxP_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)
+            Mvar.NxN_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)     
             Mvar.NxP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
             Mvar.NxN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
 
         else:
             #Mvar.NxP_arrow_source.data  = dict(xS=[12.5],  xE=[12.5+new],  yS=[0], yE=[0], lW = [2])
             #Mvar.NxN_arrow_source.data  = dict(xS=[-12.5], xE=[-12.5-new], yS=[0], yE=[0], lW = [2])
-            Mvar.NxN_arrow_source.stream(dict(xS=[12.5],  xE=[12.5+new],  yS=[0], yE=[0], lW = [2]),rollover=1)
-            Mvar.NxN_arrow_source.stream(dict(xS=[-12.5], xE=[-12.5-new], yS=[0], yE=[0], lW = [2]),rollover=1)
+            Mvar.NxN_arrow_source.stream(dict(xS=[12.5],  xE=[12.5+new],  yS=[0], yE=[0], lW = [2]),rollover=-1)
+            Mvar.NxN_arrow_source.stream(dict(xS=[-12.5], xE=[-12.5-new], yS=[0], yE=[0], lW = [2]),rollover=-1)
             Mvar.NxP_rect_source.data   = dict(x=[(25+new)/2],  y=[0], w=[new+1.5], h = [13], angle=[0])        
             Mvar.NxN_rect_source.data   = dict(x=[(-25-new)/2], y=[0], w=[new+1.5], h = [13], angle=[0]) 
     
@@ -237,23 +237,23 @@ def NormalForceZ_init(attr,old,new):
         if(new<0):
             #Mvar.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2])
             #Mvar.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2])
-            Mvar.NzP_arrow_source.stream(dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2]),rollover=1)
-            Mvar.NzN_arrow_source.stream(dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2]),rollover=1)
+            Mvar.NzP_arrow_source.stream(dict(xS=[0], xE=[0], yS=[12.5-new],  yE=[12.5],  lW = [2]),rollover=-1)
+            Mvar.NzN_arrow_source.stream(dict(xS=[0], xE=[0], yS=[-12.5+new], yE=[-12.5], lW = [2]),rollover=-1)
 
             Mvar.NzP_rect_source.data  = dict(x=[0], y=[(25-new)/2],  w=[13], h = [new-1.5], angle=[0])
             Mvar.NzN_rect_source.data  = dict(x=[0], y=[(-25+new)/2], w=[13], h = [new-1.5], angle=[0])   
         elif (new==0):
            # Mvar.NzP_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
             #Mvar.NzN_arrow_source.data  = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
-            Mvar.NzP_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
-            Mvar.NzN_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
+            Mvar.NzP_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)
+            Mvar.NzN_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)
             Mvar.NzP_rect_source.data   = dict(x=[], y=[], w=[], h = [], angle=[])
             Mvar.NzN_rect_source.data   = dict(x=[], y=[], w=[], h = [], angle=[])
         else:
             #Mvar.NzP_arrow_source.data = dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new],  lW = [2])
             #Mvar.NzN_arrow_source.data = dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2])
-            Mvar.NzP_arrow_source.stream(dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new],  lW = [2]),rollover=1)
-            Mvar.NzN_arrow_source.stream(dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2]),rollover=1)
+            Mvar.NzP_arrow_source.stream(dict(xS=[0], xE=[0], yS=[12.5],  yE=[12.5+new],  lW = [2]),rollover=-1)
+            Mvar.NzN_arrow_source.stream(dict(xS=[0], xE=[0], yS=[-12.5], yE=[-12.5-new], lW = [2]),rollover=-1)
             Mvar.NzP_rect_source.data  = dict(x=[0], y=[(25+new)/2],  w=[13], h = [new+1.5], angle=[0])
             Mvar.NzN_rect_source.data  = dict(x=[0], y=[(-25-new)/2], w=[13], h = [new+1.5], angle=[0])   
 
@@ -274,10 +274,10 @@ def TangentialXZ_init(attr,old,new):
             #Mvar.Nxz2_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
             #Mvar.Nxz3_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
             #Mvar.Nxz4_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])    
-            Mvar.Nxz1_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
-            Mvar.Nxz2_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
-            Mvar.Nxz3_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)
-            Mvar.Nxz4_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=1)        
+            Mvar.Nxz1_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)
+            Mvar.Nxz2_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)
+            Mvar.Nxz3_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)
+            Mvar.Nxz4_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []),rollover=-1)        
             Mvar.Nxz1_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
             Mvar.Nxz2_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
             Mvar.Nxz3_rect_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
@@ -288,10 +288,10 @@ def TangentialXZ_init(attr,old,new):
            # Mvar.Nxz2_arrow_source.data = dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2])
            # Mvar.Nxz3_arrow_source.data = dict(xS=[-new/2],  xE=[new/2],    yS=[9],         yE=[9],         lW = [2])
            # Mvar.Nxz4_arrow_source.data = dict(xS=[(new/2)], xE=[-(new/2)], yS=[-9],        yE=[-9],        lW = [2]) 
-            Mvar.Nxz1_arrow_source.stream(dict(xS=[9],       xE=[9],        yS=[0-(new/2)], yE=[0+(new/2)], lW = [2]),rollover=1)
-            Mvar.Nxz2_arrow_source.stream(dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2]),rollover=1)
-            Mvar.Nxz3_arrow_source.stream(dict(xS=[-new/2],  xE=[new/2],    yS=[9],         yE=[9],         lW = [2]),rollover=1)
-            Mvar.Nxz4_arrow_source.stream(dict(xS=[(new/2)], xE=[-(new/2)], yS=[-9],        yE=[-9],        lW = [2]),rollover=1)         
+            Mvar.Nxz1_arrow_source.stream(dict(xS=[9],       xE=[9],        yS=[0-(new/2)], yE=[0+(new/2)], lW = [2]),rollover=-1)
+            Mvar.Nxz2_arrow_source.stream(dict(xS=[-9],      xE=[-9],       yS=[0+(new/2)], yE=[0-(new/2)], lW = [2]),rollover=-1)
+            Mvar.Nxz3_arrow_source.stream(dict(xS=[-new/2],  xE=[new/2],    yS=[9],         yE=[9],         lW = [2]),rollover=-1)
+            Mvar.Nxz4_arrow_source.stream(dict(xS=[(new/2)], xE=[-(new/2)], yS=[-9],        yE=[-9],        lW = [2]),rollover=-1)         
             Mvar.Nxz1_rect_source.data  = dict(x=[9],  y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
             Mvar.Nxz2_rect_source.data  = dict(x=[-9], y=[0],  w=[0.3*new+0.5], h=[13],          angle=[0])
             Mvar.Nxz3_rect_source.data  = dict(x=[0],  y=[9],  w=[13],          h=[0.3*new+0.5], angle=[0])
@@ -537,6 +537,6 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 doc_layout = layout(children=[column(
     row(Spacer(height=200,width=18),description),
     row(Spacer(height=30)),
-    row(column(figure1,row(Spacer(height=10,width=50),column(Normal_X_slider,Normal_Z_slider,Tangential_XZ_slider))),column(figure2,row(Spacer(height=10,width=50),column(draw_button,show_button,reset_button))),column(figure3, row(Spacer(height=10,width=50),Plane_Angle_slider))))])
+    row(column(figure1,row(Spacer(height=10,width=50),column(Normal_X_slider,Normal_Z_slider,Tangential_XZ_slider))),column(figure2,row(Spacer(height=10,width=50),column(draw_button,show_button,reset_button))),column(row(figure3), row(Spacer(height=10,width=50)),Plane_Angle_slider)))])
 curdoc().add_root(doc_layout)
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

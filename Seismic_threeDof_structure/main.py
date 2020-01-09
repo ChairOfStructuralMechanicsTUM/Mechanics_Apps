@@ -512,7 +512,7 @@ curdoc().add_root(
                             row(
                                 column(
                                         row(
-                                            time_plot, 
+                                            time_plot, Spacer(width=25),
                                             column(
                                                    def_undef_choices_text, 
                                                    row(

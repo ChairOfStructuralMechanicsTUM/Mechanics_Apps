@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="19.84198"
-   height="17.657001"
-   viewBox="0 0 19.84198 17.657001"
+   width="6.0869036"
+   height="24.444717"
+   viewBox="0 0 6.0869036 24.444717"
    id="svg10739"
    version="1.1"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="auflager01.svg">
+   sodipodi:docname="support03.svg">
   <defs
      id="defs10741">
     <marker
@@ -159,11 +159,11 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.6"
-     inkscape:cx="104.31615"
-     inkscape:cy="-17.769476"
+     inkscape:cx="56.39683"
+     inkscape:cy="-3.4790905"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="true"
+     showgrid="false"
      inkscape:snap-object-midpoints="true"
      inkscape:snap-center="true"
      inkscape:object-paths="true"
@@ -188,8 +188,8 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       originx="-0.079105859"
-       originy="-62.255907" />
+       originx="-21.305948"
+       originy="-47.058213" />
   </sodipodi:namedview>
   <metadata
      id="metadata10744">
@@ -207,30 +207,50 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-0.07910586,-972.4493)">
+     transform="translate(-21.305948,-980.85927)">
     <g
-       transform="translate(-446.9519,935.8663)"
-       id="g3730">
-      <polygon
-         style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
-         stroke-miterlimit="22.9256"
-         points="462.578,50.599 456.953,42.751 451.326,50.599 "
-         id="polygon299" />
+       id="g3071"
+       transform="rotate(90,32.634951,989.8298)">
       <line
          style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
          stroke-miterlimit="22.9256"
-         x1="447.03101"
-         y1="53.740002"
-         x2="466.87299"
-         y2="53.740002"
-         id="line301" />
-      <circle
-         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:22.92560005"
+         x1="24.154125"
+         y1="995.5719"
+         x2="48.109142"
+         y2="995.5719"
+         id="line305" />
+      <line
+         style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
          stroke-miterlimit="22.9256"
-         cx="456.953"
-         cy="39.917"
-         r="2.8340001"
-         id="circle303" />
+         x1="40.172131"
+         y1="1000.7719"
+         x2="46.52412"
+         y2="995.5719"
+         id="line307" />
+      <line
+         style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
+         stroke-miterlimit="22.9256"
+         x1="34.172131"
+         y1="1000.7719"
+         x2="40.52412"
+         y2="995.5719"
+         id="line309" />
+      <line
+         style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
+         stroke-miterlimit="22.9256"
+         x1="28.172131"
+         y1="1000.7719"
+         x2="34.52412"
+         y2="995.5719"
+         id="line311" />
+      <line
+         style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
+         stroke-miterlimit="22.9256"
+         x1="23.981152"
+         y1="999.33191"
+         x2="28.574108"
+         y2="995.5719"
+         id="line313" />
     </g>
   </g>
 </svg>

@@ -70,8 +70,8 @@ triangular_load_source  = ColumnDataSource(data=dict(x=[], y=[]))
 # Label Source:
 labels_source = ColumnDataSource(data=dict(x=[] , y=[], name = []))
 # Support Source:
-support1 = "Bending_Beam/static/images/auflager02.svg"
-support2 = "Bending_Beam/static/images/auflager01.svg"
+support1 = "Bending_Beam/static/images/support02.svg"
+support2 = "Bending_Beam/static/images/support01.svg"
 support_source1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 support_source2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 # Cantilever rectangle source:

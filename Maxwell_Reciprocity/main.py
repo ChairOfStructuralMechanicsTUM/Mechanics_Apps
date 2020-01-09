@@ -313,22 +313,22 @@ p2_arrow_glyph = Arrow(end=NormalHead(line_color=MBD.f2color,line_width= 4, size
 
 #e arrow:
 e1_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f1color,line_width= 3, size=6,line_alpha = 0.5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f1.e_s,line_color=MBD.f1color,line_alpha = 0.5)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f1.e_s,line_color=MBD.f1color,line_alpha = 1)
 e2_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f2color,line_width= 3, size=6,line_alpha = 0.5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.e_s,line_color=MBD.f2color,line_alpha = 0.5)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.e_s,line_color=MBD.f2color,line_alpha = 1)
 
 #MBD.f1 w11 arrow
 w11_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f1color,line_width= 3, size=6,line_alpha = 0.3),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f1.w1,line_color=MBD.f1color,line_alpha = 0.3)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f1.w1,line_color=MBD.f1color,line_alpha = 1)
 w12_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f1color,line_width= 3, size=6,line_alpha = 0.3),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f1.w2,line_color=MBD.f1color,line_alpha = 0.3)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f1.w2,line_color=MBD.f1color,line_alpha = 1)
 
 #EDIT Start
 #MBD.f1 w12 arrow
 w12_11_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f1color,line_width= 3, size=6,line_alpha = 0.5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w12_11,line_color=MBD.f1color,line_alpha = 0.5)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w12_11,line_color=MBD.f1color,line_alpha = 1)
 w12_12_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f1color,line_width= 3, size=6,line_alpha = 0.5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w12_12,line_color=MBD.f1color,line_alpha = 0.5)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w12_12,line_color=MBD.f1color,line_alpha = 1)
 #EDIT End
 
 #MBD.f2 w22 arrow
@@ -340,9 +340,9 @@ w22_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f2color,line_width= 3, size=
 #EDIT Start
 #MBD.f2 w21 arrow
 w21_11_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f2color,line_width= 3, size=6,line_alpha = 0.5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w21_11,line_color=MBD.f2color,line_alpha = 0.5)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w21_11,line_color=MBD.f2color,line_alpha = 0.3)
 w22_12_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f2color,line_width= 3, size=6,line_alpha = 0.5),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w21_12,line_color=MBD.f2color,line_alpha = 0.5)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w21_12,line_color=MBD.f2color,line_alpha = 0.3)
 #EDIT End
 ########
 
@@ -393,5 +393,5 @@ description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=
 ################################################################################
 ###Send to the browser
 ################################################################################
-curdoc().add_root( column(description,plot,row(mag_slider, loc_slider), row(button,rbutton), description1 ) )
+curdoc().add_root( column(description,column(plot,row(mag_slider, loc_slider), row(button,rbutton)), description1 ) )
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

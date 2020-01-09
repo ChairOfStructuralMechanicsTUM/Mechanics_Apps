@@ -22,7 +22,7 @@ l_beam = 40.0
 F_total = 40.0
 std_lang = 'en'
 flags = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
-strings = yaml.safe_load(open('Seesaw/static/strings.json'))
+strings = yaml.safe_load(open('Seesaw/static/strings.json', encoding='utf-8'))
 
 # Force vectors and labels
 F1_source = ColumnDataSource(dict(xS=[0], xE=[0], yS=[F_total/2], yE=[0], xL=[1], yL=[5], name=["F_1"]))
@@ -109,11 +109,11 @@ def setDocumentLanguage(lang):
     for s in strings:
         if 'checkFlag' in strings[s]:
             flag = flags.data[strings[s]['checkFlag']][0]
-            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode('utf-8') )
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
         elif 'isCode' in strings[s] and strings[s]['isCode']:
-            exec( (s + '=' + strings[s][lang]).encode('utf-8') )
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
         else:
-            exec( (s + '=\"' + strings[s][lang] + '\"').encode('utf-8') )
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
      
 # Slider to change location of Forces F1 and F2
 F1F2Location_slider = LatexSlider(value=20, start=1, end=39, step=1, value_unit="\\text{m}")
