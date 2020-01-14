@@ -260,10 +260,12 @@ def move_system(disp):
     if force_value > 0:
         t = displacement.data["t"][-1]
         F_length = force_value*sin(excitation_frequency_value*t)
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[15],y2=[15-F_length*3])
-        arrow_offset.data=dict(x1=[0],x2=[0],y1=[15-F_length*3],y2=[15-F_length*3 - (2*(F_length>0)-1)*1.0])
+        #arrow_line.data=dict(x1=[0],x2=[0],y1=[15],y2=[15-F_length*3])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[15],y2=[15-F_length*3]),rollover=-1)
+        #arrow_offset.data=dict(x1=[0],x2=[0],y1=[15-F_length*3],y2=[15-F_length*3 - (2*(F_length>0)-1)*1.0])
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[15-F_length*3],y2=[15-F_length*3 - (2*(F_length>0)-1)*1.0]),rollover=-1)        
     else:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp]),rollover=-1)
 
 ## Create slider to choose mass
 def change_mass(attr,old,new):
