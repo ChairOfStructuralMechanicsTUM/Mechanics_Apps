@@ -49,16 +49,17 @@ def validate_function(fct,x):
     #           fct         string      evaluateable function
     # If fct is invalid, it returns as an empty string.
 
+    invalid_return = [False, ""]
 
     # change , to . so 0,5 becomes 0.5, thus rendering European notation readable by python
     fct = squeeze_string(fct).replace(',','.')
     # check there are as many opening brackets as closing brackets
     if (fct.count('(')!=fct.count(')')):
-        return [False, ""]
+        return invalid_return
     # set up while loop (for loop breaks at sqrt)
     n=len(fct)
     if (n==0):
-        return [False, ""]
+        return invalid_return
 
     # check if there are repeating mathematical operators  (only one operator next to a number or parenthesis allowed!)
     # replace all operators by "?"
@@ -67,17 +68,22 @@ def validate_function(fct,x):
     list_rep_op = re.findall(r"\?{2,}",test_op_str)
     # if there are any reps, not valid
     if len(list_rep_op)>0:
-        return [False, ""]
+        return invalid_return
 
     # check if the function starts with * or / or ^
     if fct[0]=='*' or fct[0]=='/' or fct[0]=='^':
-        return [False, ""]
+        return invalid_return
+
+    # check for empty parentheses
+    list_empty_p = re.findall("\( {0,}\)",fct)
+    if len(list_empty_p)>0:
+        return invalid_return
 
     i=0
     while (i<n):
         # if the input contains a non valid character return false
         if (acceptable_characters.find(fct[i])==-1 and fct[i]!=x):
-            return [False, ""]
+            return invalid_return
         # if user has written 2(3+1) instead of 2*(3+1)
         # or 2sqrt(3) instead of 2*sqrt(3)
         # or 2s instead of 2*s
