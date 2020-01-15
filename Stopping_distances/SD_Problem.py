@@ -1,12 +1,15 @@
 from SD_TestSolutions import eval_fct
 from random import seed, randrange
 from bokeh.layouts import column, row
-from bokeh.models.widgets import TextInput, Button, Paragraph, CheckboxGroup, Select
+from bokeh.models.widgets import TextInput, Button, Paragraph, CheckboxGroup, Select, Div
 from bokeh.io import curdoc
 
 from SD_Constants import (
-    min_v, max_v, steps_v
+    min_v, max_v, steps_v, msg_invalid_value
 )
+
+from SD_InputChecker import value_validation, isempty
+
 
 class SD_Problem:
     def __init__(self,Vis,Plotter):
@@ -57,6 +60,8 @@ class SD_Problem:
         # button to plot t(s) and v(s)/a(s) over simulation data
         self.TestEqs = Button(label="Check equations",button_type="success",width=100)
         self.TestEqs.on_click(self.plot_attempt)
+        # warning widget
+        self.warning_widget = Div(text="", render_as_text = False, style={'color':'red', 'font_size':'200%'}, width=300)
         
         # initialise initial time, displacement and acceleration
         self.t = 0
@@ -69,25 +74,38 @@ class SD_Problem:
         self.callback_id = None
 
         # save layout
-        self.Layout = column(self.VMethod, self.Vs, self.UserAcceleration, self.startSim, self.reset_button,
+        self.Layout = column(self.VMethod, self.Vs, self.UserAcceleration, row(self.startSim, self.warning_widget), self.reset_button,
                              self.eqVis, self.eqst, self.eqvt, row(self.UserTs, self.TsSqrt), row(self.UserVs,self.VsSqrt),self.TestEqs)
 
 
 
     def set_v(self, attr, old, new):
+        # remove the callback while working in this function
+        self.Vs.remove_on_change('value',self.set_v)
+
         if self.model_type == "init_v":
             # if method using initial velocity v0 is used
-            try:
-                # replace , with . i.e. change 0,5 to 0.5
-                new = new.replace(',','.')
-                self.Vs.value = new
-                # convert input to float, if this is not possible then a ValueError is thrown
-                temp = float(new)
-                # update velocity
-                self.v = temp
-            except ValueError:
-                # if conversion was unsuccesful then reset box to old v0
-                self.Vs.value = str(self.v)
+            [valid, new_v] = value_validation(new, self.v)
+            # store new value if it is valid, otherwise throw a warning message
+            if valid:
+                self.v = new_v
+                self.warning_widget.text = ""
+            else:
+                self.warning_widget.text = msg_invalid_value
+            # display new value in input box
+            self.Vs.value = str(new_v)
+
+            # # try:
+            # #     # replace , with . i.e. change 0,5 to 0.5
+            # #     new = new.replace(',','.')
+            # #     self.Vs.value = new
+            # #     # convert input to float, if this is not possible then a ValueError is thrown
+            # #     temp = float(new)
+            # #     # update velocity
+            # #     self.v = temp
+            # # except ValueError:
+            # #     # if conversion was unsuccesful then reset box to old v0
+            # #     self.Vs.value = str(self.v)
         
         elif self.model_type == "distance_v":
             # if method using distance dependent velocity v(s) is used
@@ -106,23 +124,50 @@ class SD_Problem:
         # plot the new velocity arrow
         self.Vis.move(self.s, self.v)
 
+        # set the callback again
+        self.Vs.on_change('value',self.set_v)
+
 
     def check_acceleration(self, attr, old, new):
-        # could be extended to e.g. disallow very huge magnitudes
+        # remove the callback while working in this function
+        self.UserAcceleration.remove_on_change('value',self.check_acceleration)
 
-        # get rid of empty spaces
-        new = new.replace(" ","")
-        # replace , with . i.e. change 0,5 to 0.5
-        new = new.replace(',','.')
-        self.UserAcceleration.value = new   # calls function again (max. twice)
-        if len(new)!=0:
-            # set the acceleration
-            self.a = float(new)
-            # enable the start button
-            self.startSim.disabled = False
+        [valid, new_a] = value_validation(new, self.a)
+        # store new value if it is valid, otherwise throw a warning message
+        if valid:
+            self.a = new_a
+            self.warning_widget.text = ""
         else:
+            self.warning_widget.text = msg_invalid_value
+        # display new value in input box
+        self.UserAcceleration.value = str(new_a)   # calls function again (max. twice)
+
+
+        if isempty(new) or self.a==0:
             # keep the start button disabled
             self.startSim.disabled = True
+        else:
+            # enable the start button
+            self.startSim.disabled = False
+
+
+        # # # get rid of empty spaces
+        # # new = new.replace(" ","")
+        # # # replace , with . i.e. change 0,5 to 0.5
+        # # new = new.replace(',','.')
+        # # # self.UserAcceleration.value = new   # calls function again (max. twice)
+        # if len(new)!=0:
+        #     # set the acceleration
+        #     self.a = float(new)
+        #     # enable the start button
+        #     self.startSim.disabled = False
+        # else:
+        #     # keep the start button disabled
+        #     self.startSim.disabled = True
+
+        # set the callback again
+        self.UserAcceleration.on_change('value',self.check_acceleration)
+        
 
 
 
@@ -183,6 +228,9 @@ class SD_Problem:
 
 
     def Start(self):
+        # remove warnings
+        self.warning_widget.text = ""
+
         if self.model_type == "init_v":
             # setup the graphs with an initial velocity and acceleration
             # so the ranges can be set
