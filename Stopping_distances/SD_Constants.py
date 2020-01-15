@@ -3,9 +3,17 @@
 
 
 # random initial velocity settings
-min_v = 0.5
-max_v = 10
+min_random_v = 0.5
+max_random_v = 10
 steps_v = 0.5
+
+#initial velocity settings
+t_update = 0.20   # increase for faster simulation
+
+# distance-dependent velocity settings
+max_totT = 0.25   # inrease for faster simulation
+min_val  = 0.0005
+min_v    = 1e-10
 
 
 
