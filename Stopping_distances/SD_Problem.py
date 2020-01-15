@@ -99,18 +99,6 @@ class SD_Problem:
                 self.warning_widget.text = msg_invalid_value
             # display new value in input box
             self.Vs.value = str(new_v)
-
-            # # try:
-            # #     # replace , with . i.e. change 0,5 to 0.5
-            # #     new = new.replace(',','.')
-            # #     self.Vs.value = new
-            # #     # convert input to float, if this is not possible then a ValueError is thrown
-            # #     temp = float(new)
-            # #     # update velocity
-            # #     self.v = temp
-            # # except ValueError:
-            # #     # if conversion was unsuccesful then reset box to old v0
-            # #     self.Vs.value = str(self.v)
         
         elif self.model_type == "distance_v":
             # if method using distance dependent velocity v(s) is used
@@ -157,21 +145,6 @@ class SD_Problem:
             # enable the start button
             self.startSim.disabled = False
 
-
-        # # # get rid of empty spaces
-        # # new = new.replace(" ","")
-        # # # replace , with . i.e. change 0,5 to 0.5
-        # # new = new.replace(',','.')
-        # # # self.UserAcceleration.value = new   # calls function again (max. twice)
-        # if len(new)!=0:
-        #     # set the acceleration
-        #     self.a = float(new)
-        #     # enable the start button
-        #     self.startSim.disabled = False
-        # else:
-        #     # keep the start button disabled
-        #     self.startSim.disabled = True
-
         # set the callback again
         self.UserAcceleration.on_change('value',self.check_acceleration)
 
@@ -179,25 +152,14 @@ class SD_Problem:
 
     def check_function_inputs(self, attr, old, new):
         # check if given function is valid
-        print(new)
         [valid, fct] = validate_function(new, 's')
-        print(valid, fct)
-        print('----')
-        # if it is not valid throw a warning an disable the check equations (evaluation) button
         if not valid:
             self.warning_widget_equ.text = msg_invalid_function
-            #self.TestEqs.disabled = True
-        # if it is valid enable the check equations (evaluation) button
         else:
             self.warning_widget_equ.text = ""
-            #self.TestEqs.disabled = False
 
-
-            # disabling the button here does not make sense since **every** function is checked here
 
         
-
-
 
     def switch_model(self, attr, old, new):
         if new == "Initial Velocity":
@@ -258,6 +220,9 @@ class SD_Problem:
     def Start(self):
         # remove warnings
         self.warning_widget.text = ""
+
+        # all input functions and values should be valid at this point
+        # however there is still a check in the eval_fct for double safety
 
         if self.model_type == "init_v":
             # setup the graphs with an initial velocity and acceleration
