@@ -10,7 +10,7 @@ sys.path.insert(0,parentdir)
 from latex_support import LatexDiv
 
 from bokeh.io import curdoc
-from bokeh.layouts import column, row#test
+from bokeh.layouts import column, row
 
 
 # create each part of the window
