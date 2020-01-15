@@ -19,4 +19,5 @@ numbers               = u"1234567890."
 
 
 # warning messages
-msg_invalid_value = "<strong>No valid value! Old value restored.</strong>"
+msg_invalid_value    = "<strong>No valid value! Old value restored.</strong>"
+msg_invalid_function = "<strong>No valid function! Old function restored.</strong>"

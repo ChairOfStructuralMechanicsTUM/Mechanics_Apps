@@ -5,10 +5,11 @@ from bokeh.models.widgets import TextInput, Button, Paragraph, CheckboxGroup, Se
 from bokeh.io import curdoc
 
 from SD_Constants import (
-    min_v, max_v, steps_v, msg_invalid_value
+    min_v, max_v, steps_v,
+    msg_invalid_value, msg_invalid_function
 )
 
-from SD_InputChecker import value_validation, isempty
+from SD_InputChecker import isempty, validate_function, validate_value
 
 
 class SD_Problem:
@@ -49,19 +50,23 @@ class SD_Problem:
         self.eqvt = Paragraph(text="")
         # user input for t(s) to be tested against simulation
         self.UserTs = TextInput(value="", title="t(s) = ",width=200)
+        self.UserTs.on_change('value', self.check_function_inputs)
         # button to allow sqrt to be used in t(s)
         self.TsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
         self.TsSqrt.on_click(self.addSqrtTs)
         # user input for v(s) (or a(s)) to be tested against simulation
         self.UserVs = TextInput(value="", title="v(s) = ",width=200)
+        self.UserVs.on_change('value', self.check_function_inputs)
         # button to allow sqrt to be used in v(s)/a(s)
         self.VsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
         self.VsSqrt.on_click(self.addSqrtVs)
         # button to plot t(s) and v(s)/a(s) over simulation data
-        self.TestEqs = Button(label="Check equations",button_type="success",width=100)
+        self.TestEqs = Button(label="Check equations",button_type="success",width=150)
         self.TestEqs.on_click(self.plot_attempt)
         # warning widget
-        self.warning_widget = Div(text="", render_as_text = False, style={'color':'red', 'font_size':'200%'}, width=300)
+        self.warning_widget     = Div(text="", render_as_text = False, style={'color':'red', 'font_size':'200%'}, width=300)
+        self.warning_widget_equ = Div(text="", render_as_text = False, style={'color':'red', 'font_size':'200%'}, width=300)
+    
         
         # initialise initial time, displacement and acceleration
         self.t = 0
@@ -75,7 +80,7 @@ class SD_Problem:
 
         # save layout
         self.Layout = column(self.VMethod, self.Vs, self.UserAcceleration, row(self.startSim, self.warning_widget), self.reset_button,
-                             self.eqVis, self.eqst, self.eqvt, row(self.UserTs, self.TsSqrt), row(self.UserVs,self.VsSqrt),self.TestEqs)
+                             self.eqVis, self.eqst, self.eqvt, row(self.UserTs, self.TsSqrt), row(self.UserVs,self.VsSqrt), row(self.TestEqs, self.warning_widget_equ))
 
 
 
@@ -85,7 +90,7 @@ class SD_Problem:
 
         if self.model_type == "init_v":
             # if method using initial velocity v0 is used
-            [valid, new_v] = value_validation(new, self.v)
+            [valid, new_v] = validate_value(new, self.v)
             # store new value if it is valid, otherwise throw a warning message
             if valid:
                 self.v = new_v
@@ -115,9 +120,11 @@ class SD_Problem:
                 s1 = eval_fct(new,'s',self.s)
                 if s1 == "not valid":
                     print("WARNING: Not a valid function, using old entry.")
+                    self.warning_widget.text = msg_invalid_function
                     self.Vs.value = old
                 else:
                     self.v = s1
+                    self.warning_widget.text = ""
             else:
                 print("WARNING: Please enter a function v(s)!")
 
@@ -132,7 +139,7 @@ class SD_Problem:
         # remove the callback while working in this function
         self.UserAcceleration.remove_on_change('value',self.check_acceleration)
 
-        [valid, new_a] = value_validation(new, self.a)
+        [valid, new_a] = validate_value(new, self.a)
         # store new value if it is valid, otherwise throw a warning message
         if valid:
             self.a = new_a
@@ -143,7 +150,7 @@ class SD_Problem:
         self.UserAcceleration.value = str(new_a)   # calls function again (max. twice)
 
 
-        if isempty(new) or self.a==0:
+        if isempty(self.UserAcceleration.value) or self.a==0:
             # keep the start button disabled
             self.startSim.disabled = True
         else:
@@ -167,6 +174,27 @@ class SD_Problem:
 
         # set the callback again
         self.UserAcceleration.on_change('value',self.check_acceleration)
+
+
+
+    def check_function_inputs(self, attr, old, new):
+        # check if given function is valid
+        print(new)
+        [valid, fct] = validate_function(new, 's')
+        print(valid, fct)
+        print('----')
+        # if it is not valid throw a warning an disable the check equations (evaluation) button
+        if not valid:
+            self.warning_widget_equ.text = msg_invalid_function
+            #self.TestEqs.disabled = True
+        # if it is valid enable the check equations (evaluation) button
+        else:
+            self.warning_widget_equ.text = ""
+            #self.TestEqs.disabled = False
+
+
+            # disabling the button here does not make sense since **every** function is checked here
+
         
 
 
@@ -401,13 +429,16 @@ class SD_Problem:
 
 
     def plot_attempt(self):
-
-        self.Plotter.test_equation(self.UserTs.value,'t')
-
-        if self.model_type == "init_v":
-            self.Plotter.test_equation(self.UserVs.value,'v')
+        # if there is a warning message, this button has no functionality
+        if self.warning_widget_equ.text == msg_invalid_function:
+            pass
+        # if everything is fine, call the plotter to plot the graphs of user defined functions
         else:
-            self.Plotter.test_equation(self.UserVs.value,'a')
+            self.Plotter.test_equation(self.UserTs.value,'t')
+            if self.model_type == "init_v":
+                self.Plotter.test_equation(self.UserVs.value,'v')
+            else:
+                self.Plotter.test_equation(self.UserVs.value,'a')
 
 
 
