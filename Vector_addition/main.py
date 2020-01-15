@@ -131,7 +131,7 @@ def updateResultant():
                 angle = round(atan(yE/xE)/pi*180,0)+360
             else:
                 angle = 0
-        Resultant_values_source.data = dict(x=[100,100], y=[160,140], names=["|R| = " + str(R), "\\alpha_{R} = " + str(angle) + "\\,^{\\circ}"])
+        Resultant_values_source.data = dict(x=[100,100], y=[160,140], names=["|R| = " + str(R) + "\, \\mathrm{N}", "\\alpha_{R} = " + str(angle) + "\\,^{\\circ}"])
     else:
         Resultant_values_source.data = dict(x=[], y=[], names=[])
 
