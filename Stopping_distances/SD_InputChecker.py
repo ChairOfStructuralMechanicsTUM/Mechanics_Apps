@@ -80,7 +80,7 @@ def validate_function(fct,x):
 
     # add missing * between ) and s
     # i.e. if user has written (3+1)s instead of (3+1)*s
-    fct = fct.replace(")x", ")*x")
+    fct = fct.replace(")"+x, ")*"+x)
     
     # more complex, but covers more cases:
     # also accepts spaces but the string should already be squeezed at this point anyway, so the easy way above should also work
