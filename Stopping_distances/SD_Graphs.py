@@ -71,7 +71,7 @@ class SD_Graphs:
         # then the car will stop at tmax (if it has not yet collided with the wall)
         tmax=abs(v/a)
         # set x and y ranges
-        # the time range is [0,tmax] or [0,(sqrt(v^2+60*a)-v)/a]
+        # the time range is [0,tmax] or [0,(sqrt(v^2+60*a)-v)/a]   # 60 = 2*30 = 2*s_max
         # if else is required to avoid sqrt of a negative number
         if (v**2+60*a<0):
             # figure at may have s or t on the x axis,
@@ -159,6 +159,7 @@ class SD_Graphs:
 
 
 
+    # user defined functions - for comparison to the actual graphs
     def test_equation(self,fct,plt):
         #plt: t, v, a
 

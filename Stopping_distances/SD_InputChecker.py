@@ -51,14 +51,13 @@ def validate_function(fct,x):
 
     invalid_return = [False, ""]
 
+    if isempty(fct):
+        return invalid_return
+
     # change , to . so 0,5 becomes 0.5, thus rendering European notation readable by python
     fct = squeeze_string(fct).replace(',','.')
     # check there are as many opening brackets as closing brackets
     if (fct.count('(')!=fct.count(')')):
-        return invalid_return
-    # set up while loop (for loop breaks at sqrt)
-    n=len(fct)
-    if (n==0):
         return invalid_return
 
     # check if there are repeating mathematical operators  (only one operator next to a number or parenthesis allowed!)
@@ -78,6 +77,20 @@ def validate_function(fct,x):
     list_empty_p = re.findall("\( {0,}\)",fct)
     if len(list_empty_p)>0:
         return invalid_return
+
+    # add missing * between ) and s
+    # i.e. if user has written (3+1)s instead of (3+1)*s
+    fct = fct.replace(")x", ")*x")
+    
+    # more complex, but covers more cases:
+    # also accepts spaces but the string should already be squeezed at this point anyway, so the easy way above should also work
+    # # # # tmp = re.findall(r"\) {0,}x",fct)
+    # # # # for i in range(0,len(tmp)):
+    # # # #     fct = fct.replace(tmp[i],tmp[i].replace('x','*x'))
+
+
+    # set up while loop (for loop breaks at sqrt)
+    n=len(fct)
 
     i=0
     while (i<n):

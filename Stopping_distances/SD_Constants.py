@@ -28,4 +28,6 @@ numbers               = u"1234567890."
 
 # warning messages
 msg_invalid_value    = "<strong>No valid value! Old value restored.</strong>"
-msg_invalid_function = "<strong>No valid function! Old function restored.</strong>"
+#msg_invalid_function = "<strong>No valid function! Old function restored.</strong>"
+msg_invalid_function = "<strong>No valid function!</strong>"
+msg_empty_field      = "<strong>At least one field is still empty. Please provide both functions before checking.</strong>"

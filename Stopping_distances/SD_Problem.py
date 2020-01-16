@@ -7,7 +7,7 @@ from bokeh.io import curdoc
 from SD_Constants import (
     min_random_v, max_random_v, steps_v,
     min_v, min_val, max_totT, t_update,
-    msg_invalid_value, msg_invalid_function
+    msg_invalid_value, msg_invalid_function, msg_empty_field
 )
 
 from SD_InputChecker import isempty, validate_function, validate_value
@@ -18,11 +18,11 @@ class SD_Problem:
         # setup random by selecting a seed (so that numbers are truly random)
         seed()
         # save car viewer
-        self.Vis=Vis
+        self.Vis = Vis
         # save graph plotter
-        self.Plotter=Plotter
-        # choose a random velocity between 0.5 and 10 (steps of 0.5)
-        self.v=randrange(5,100,5)/10.0
+        self.Plotter = Plotter
+        # choose a random velocity, e.g. between 0.5 and 10 (steps of 0.5)
+        self.v = self._init_random_velocity()
         # tell the car viewer about this choice
         self.Vis.setV(self.v)   
         
@@ -106,13 +106,13 @@ class SD_Problem:
             if (len(new)!=0):
                 # if box is not empty
                 # check if input is a valid equation and evaluate it
-                s1 = eval_fct(new,'s',self.s)
-                if s1 == "not valid":
+                [valid, fct] = validate_function(new,'s')
+                if not valid:
                     print("WARNING: Not a valid function, using old entry.")
                     self.warning_widget.text = msg_invalid_function
                     self.Vs.value = old
                 else:
-                    self.v = s1
+                    self.v = eval_fct(new,'s',self.s)
                     self.warning_widget.text = ""
             else:
                 print("WARNING: Please enter a function v(s)!")
@@ -163,6 +163,9 @@ class SD_Problem:
         
 
     def switch_model(self, attr, old, new):
+        # remove the callback while working in this function
+        self.Vs.remove_on_change('value',self.set_v)
+
         if new == "Initial Velocity":
             # set the new model internally
             self.model_type = "init_v"
@@ -216,6 +219,9 @@ class SD_Problem:
 
         else:
             print("WARNING: model '", new, "' does not exist - using '", self.model_type, "'", sep="")
+        
+        # set the callback again
+        self.Vs.on_change('value',self.set_v)
 
 
 
@@ -370,8 +376,14 @@ class SD_Problem:
 
 
     def plot_attempt(self):
-        # if there is a warning message, this button has no functionality
-        if self.warning_widget_equ.text == msg_invalid_function:
+        print(self.UserTs.value, isempty(self.UserTs.value))
+        print(self.UserVs.value, isempty(self.UserVs.value))
+        # if any of the input fields is empty, provide a message
+        if isempty(self.UserTs.value) or isempty(self.UserVs.value):
+            print("create warning")
+            self.warning_widget_equ.text = msg_empty_field
+        # if there is already a warning message, this button has no functionality
+        elif self.warning_widget_equ.text == msg_invalid_function:
             pass
         # if everything is fine, call the plotter to plot the graphs of user defined functions
         else:
