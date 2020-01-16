@@ -30,6 +30,9 @@ class SD_Problem:
         # input for v0 or v(s)
         self.Vs = TextInput(value=str(self.v), title="Initial Velocity", width=300)
         self.Vs.on_change('value',self.set_v)
+        # button to allow sqrt to be used in v(s)
+        self.VsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100, visible=False)
+        self.VsSqrt.on_click(self.addSqrtVs)
         # choice of v0 or v(s) method
         self.VMethod = Select(title="", value="Initial Velocity",
             options=["Initial Velocity", "Distance-dependent Velocity"], width=300)
@@ -53,14 +56,14 @@ class SD_Problem:
         self.UserTs = TextInput(value="", title="t(s) = ",width=200)
         self.UserTs.on_change('value', self.check_function_inputs)
         # button to allow sqrt to be used in t(s)
-        self.TsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
-        self.TsSqrt.on_click(self.addSqrtTs)
+        self.UserTsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
+        self.UserTsSqrt.on_click(self.addSqrtUserTs)
         # user input for v(s) (or a(s)) to be tested against simulation
         self.UserVs = TextInput(value="", title="v(s) = ",width=200)
         self.UserVs.on_change('value', self.check_function_inputs)
         # button to allow sqrt to be used in v(s)/a(s)
-        self.VsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
-        self.VsSqrt.on_click(self.addSqrtVs)
+        self.UserVsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
+        self.UserVsSqrt.on_click(self.addSqrtUserVs)
         # button to plot t(s) and v(s)/a(s) over simulation data
         self.TestEqs = Button(label="Check equations",button_type="success",width=150)
         self.TestEqs.on_click(self.plot_attempt)
@@ -80,8 +83,8 @@ class SD_Problem:
         self.callback_id = None
 
         # save layout
-        self.Layout = column(self.VMethod, self.Vs, self.UserAcceleration, row(self.startSim, self.warning_widget), self.reset_button,
-                             self.eqVis, self.eqst, self.eqvt, row(self.UserTs, self.TsSqrt), row(self.UserVs,self.VsSqrt), row(self.TestEqs, self.warning_widget_equ))
+        self.Layout = column(self.VMethod, row(self.Vs, self.VsSqrt), self.UserAcceleration, row(self.startSim, self.warning_widget), self.reset_button,
+                             self.eqVis, self.eqst, self.eqvt, row(self.UserTs, self.UserTsSqrt), row(self.UserVs,self.UserVsSqrt), row(self.TestEqs, self.warning_widget_equ))
 
 
 
@@ -102,6 +105,11 @@ class SD_Problem:
             self.Vs.value = str(new_v)
         
         elif self.model_type == "distance_v":
+            # if a sqrt has been inserted, disable the start button since the function is not valid
+            if new[-2:] == u"\u221A(":
+                self.startSim.disabled = True
+                self.Vs.on_change('value',self.set_v)
+                return
             # if method using distance dependent velocity v(s) is used
             if (len(new)!=0):
                 # if box is not empty
@@ -114,6 +122,7 @@ class SD_Problem:
                 else:
                     self.v = eval_fct(new,'s',self.s)
                     self.warning_widget.text = ""
+                    self.startSim.disabled = False
             else:
                 print("WARNING: Please enter a function v(s)!")
 
@@ -152,6 +161,8 @@ class SD_Problem:
 
 
     def check_function_inputs(self, attr, old, new):
+        # if a sqrt has been inserted, do nothing
+        if new[-2:] == u"\u221A(": return
         # check if given function is valid
         [valid, fct] = validate_function(new, 's')
         if not valid:
@@ -177,6 +188,8 @@ class SD_Problem:
             self.v = self._init_random_velocity()
             # show this initial velocity in the text box
             self.Vs.value = str(self.v)
+            # hide the sqrt button
+            self.VsSqrt.visible = False
 
             # alert graphs that problem type has changed
             self.Plotter.swapSetup()
@@ -206,6 +219,9 @@ class SD_Problem:
             self.Vs.value = u"\u221A(2*(-0.15s)+9)"
             # calculate the velocity for s=0
             self.v = eval_fct(self.Vs.value,'s',0)
+
+            # show the sqrt button
+            self.VsSqrt.visible = True
 
             # alert graphs that problem type has changed
             self.Plotter.swapSetup()
@@ -366,25 +382,36 @@ class SD_Problem:
             self.eqvt.text = ""
 
 
-    def addSqrtTs (self):
-        # add sqrt (unicode symbol) to user input for t(s)
-        self.UserTs.value=self.UserTs.value+u"\u221A("
+    def addSqrt_general(self, input_box):
+        # add sqrt to any input box given in "input_box"
+        input_box.value = input_box.value + u"\u221A("
 
     def addSqrtVs (self):
+        # add sqrt (unicode symbol) to user input for v(s)
+        #self.Vs.value=self.Vs.value+u"\u221A("
+        self.addSqrt_general(self.Vs)
+
+    def addSqrtUserTs (self):
+        # add sqrt (unicode symbol) to user input for t(s)
+        #self.UserTs.value=self.UserTs.value+u"\u221A("
+        self.addSqrt_general(self.UserTs)
+
+    def addSqrtUserVs (self):
         # add sqrt (unicode symbol) to user input for v(s) (or a(s))
-        self.UserVs.value=self.UserVs.value+u"\u221A("    
+        #self.UserVs.value=self.UserVs.value+u"\u221A("
+        self.addSqrt_general(self.UserVs)
 
 
     def plot_attempt(self):
-        print(self.UserTs.value, isempty(self.UserTs.value))
-        print(self.UserVs.value, isempty(self.UserVs.value))
         # if any of the input fields is empty, provide a message
         if isempty(self.UserTs.value) or isempty(self.UserVs.value):
-            print("create warning")
             self.warning_widget_equ.text = msg_empty_field
         # if there is already a warning message, this button has no functionality
         elif self.warning_widget_equ.text == msg_invalid_function:
             pass
+        # double check if the given function is valid
+        elif validate_function(self.UserTs.value,'s')[0]==False or validate_function(self.UserVs.value,'s')[0]==False:
+            self.warning_widget_equ.text = msg_invalid_function
         # if everything is fine, call the plotter to plot the graphs of user defined functions
         else:
             self.Plotter.test_equation(self.UserTs.value,'t')

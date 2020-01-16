@@ -88,6 +88,15 @@ def validate_function(fct,x):
     # # # # for i in range(0,len(tmp)):
     # # # #     fct = fct.replace(tmp[i],tmp[i].replace('x','*x'))
 
+    # add missing * between ) and sqrt
+    fct = fct.replace(u")\u221A", u")*\u221A")
+
+    # do not allow numbers after parentheses like   sqrt(s)5
+    list_num_after_p = re.findall("\)[0-9]",fct)
+    if len(list_num_after_p)>0:
+        return invalid_return
+
+
 
     # set up while loop (for loop breaks at sqrt)
     n=len(fct)
