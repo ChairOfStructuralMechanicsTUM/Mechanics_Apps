@@ -98,8 +98,8 @@ def evolve():
 
     if force_value > 0:
         if D == 0 and frequency_ratio_value == 1:
-            s_p = 0.5 * (initial_displacement_value * cos(ef*t) + initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * (sin(ef*t) - ef*t*cos(ef*t)))
-            s_h = s_p
+            s_p = -force_value/ (2*k) * ef*t*cos(ef*t)
+            s_h = initial_displacement_value * cos(ef*t)+initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * sin(ef*t)
         else:
             # particular (steady-state) part
             s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
