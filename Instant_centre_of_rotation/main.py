@@ -4,130 +4,166 @@ Instant centre of rotation -
 @author: antonis / martin
 """
 # general imports
-from numpy import math, loadtxt
-from os.path import dirname, join, split 
+from numpy      import math, loadtxt
+from os.path    import dirname, join, split 
 #from latex_support import LatexLabelSet, LatexSlider
 
 # bokeh imports
-from bokeh.plotting import figure
-from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, Slider, Button, LabelSet, Div, Arrow, OpenHead, NormalHead, VeeHead
-from bokeh.io import curdoc
+from bokeh.plotting         import figure
+from bokeh.models.layouts   import Spacer
+from bokeh.layouts          import column, row, widgetbox, layout
+from bokeh.models           import ColumnDataSource, Slider, Button, LabelSet, Div, Arrow, OpenHead, NormalHead, VeeHead
+from bokeh.models.glyphs    import ImageURL
+from bokeh.io               import curdoc
 
-# internal imports: none
+# internal imports
+from TA_constants           import (
+    slide_support_img,                      # support image
+    support_width, support_height,          # support scale
+    c_black, c_blue, c_orange, c_gray       # colors used
+)
 
 # latex integration: none
 
 #--------Data Source--------#
-# ->TUM colors
-color_TUM_black         = '#333333'
-color_TUM_blue          = '#3070b3'
-color_TUM_green         = '#a2ad00'
-color_TUM_orange        = '#e37222'
-color_TUM_grey          = '#b3b3b3'
-color_TUM_greytext      = '#8a8a8a'
-color_TUM_lightgrey1    = '#e6e6e6'
-color_TUM_lightgrey2    = '#f7f7f7'
-
 # -> trace curve
 trace_curve_data = loadtxt('Instant_centre_of_rotation/graph.txt')
-trace_curve_data_dictionary = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
-trace_curve=ColumnDataSource(data=dict(x=[], y=[]))
+trace_curve=ColumnDataSource( data = dict(x=[], y=[]))
+# -> Hatching
+hatching_data = loadtxt('Instant_centre_of_rotation/hatching.txt')
+wall_horizontal_hatching    = ColumnDataSource( data = dict(x=hatching_data[0:105,0], y=hatching_data[0:105,1]) )
+wall_vertical_hatching      = ColumnDataSource( data = dict(x=hatching_data[106:198,0], y=hatching_data[106:198,1]) )
 #--------Data Source--------#
 
 #--------initialize variables--------#
 # -> define constant length
 const_length                = 5
+# -> global variable
+global_vars = dict(show=-1)
 # -> immutable objects
-wall_horizontal             = ColumnDataSource( data = dict(x=[0,0], y=[0,const_length+1]) )
-wall_vertical               = ColumnDataSource( data = dict(x=[-1,const_length+1], y=[0,0]) )
-wall_horizontal_hatching    = ColumnDataSource( data = dict(x=[0,0], y=[0,0]) )
-wall_vertical_hatching      = ColumnDataSource( data = dict(x=[0,0], y=[0,0]) )
+wall_horizontal             = ColumnDataSource( data = dict( x=[-1,const_length+1], y=[0,0]) )
+wall_vertical               = ColumnDataSource( data = dict( x=[0,0], y=[0,const_length+1]) )
+Frame_w                     = ColumnDataSource( data = dict( x=[0.5,3,3,0.5,0.5], y=[0.1,0.1,0.4,0.4,0.1]))
+Frame_u                     = ColumnDataSource( data = dict( x=[0.5,3,3,0.5,0.5], y=[-0.1,-0.1,-0.4,-0.4,-0.1]))
+displacement_ratio_w        = ColumnDataSource( data = dict( x=[0.52,0.52], y=[0.25,0.25]) )
+displacement_ratio_u        = ColumnDataSource( data = dict( x=[0.52,2.98], y=[-0.25,-0.25]) )
+displacement_ratio_w_label  = ColumnDataSource( data = dict( x=[0.1], y=[0.15], text=['w:']) )
+displacement_ratio_u_label  = ColumnDataSource( data = dict( x=[0.1], y=[-0.35], text=['u:']) )
 # -> mutable objects
-current_coords              = ColumnDataSource( data = dict(x=[0],y=[const_length]) )
-beam_position               = ColumnDataSource( data = dict(x=[0,0], y=[const_length,0]) )
-support_A_locus             = ColumnDataSource( data = dict(x=[-1,const_length+1], y=[const_length,const_length]) )
-support_B_locus             = ColumnDataSource( data = dict(x=[0,0], y=[-1,const_length+1]) )
-support_A_arrow_source      = ColumnDataSource( data = dict(xS=[], xE=[], yS=[], yE=[]) )
-support_B_arrow_source      = ColumnDataSource( data = dict(xS=[], xE=[], yS=[], yE=[]) )
-support_A_label_source      = ColumnDataSource( data = dict(x=[0.50], y=[], text=['A']) )
-support_B_label_source      = ColumnDataSource( data = dict(x=[], y=[0.50], text=['B']) )
-ICR_label_source            = ColumnDataSource( data = dict(x=[0.1], y=[const_length+0.1], text=['ICR']))
+current_coords              = ColumnDataSource( data = dict( x=[0],y=[const_length]) )
+beam_position               = ColumnDataSource( data = dict( x=[0,0], y=[const_length,0]) )
+support_A_img_source        = ColumnDataSource( data = dict( sp_img=[], x=[] , y=[]) )
+support_B_img_source        = ColumnDataSource( data = dict( sp_img=[], x=[] , y=[]) )
+support_A_locus             = ColumnDataSource( data = dict( x=[-1,const_length+1], y=[const_length,const_length]) )
+support_B_locus             = ColumnDataSource( data = dict( x=[0,0], y=[-1,const_length+1]) )
+displacement_w_source       = ColumnDataSource( data = dict( xS=[], xE=[], yS=[], yE=[]) )
+displacement_u_source       = ColumnDataSource( data = dict( xS=[], xE=[], yS=[], yE=[]) )
+displacement_w_label_source = ColumnDataSource( data = dict( x=[], y=[], text=[]) )
+displacement_u_label_source = ColumnDataSource( data = dict( x=[], y=[], text=[]) )
+ICR_label_source            = ColumnDataSource( data = dict( x=[0.1], y=[const_length+0.1], text=['ICR']) )
 #--------initialize variables--------#
 
 #--------------------------------------Main--------------------------------------#
-glob_var_dict = dict(x=0)
+# -> create figures
+fig_1 = figure( plot_height=650, plot_width=650, tools="", x_range=(-1,const_length+1), y_range=(-1,const_length+1), toolbar_location=None )
+fig_1.axis.visible = False
+fig_1.grid.visible = False
+fig_1.outline_line_color = None
+fig_2 = figure( plot_height=200, plot_width=310, tools="", x_range=(0,3), y_range=(-1,1), toolbar_location=None )
+fig_2.axis.visible = False
+fig_2.grid.visible = False
+fig_2.outline_line_color = None
 
-# -> create figure
-fig = figure( plot_height=750, plot_width=750, tools="", x_range=(-1,const_length+1), y_range=(-1,const_length+1), toolbar_location=None )
-fig.axis.visible = False
-fig.grid.visible = False
-fig.outline_line_color = None
 
 # -> plot objects
-fig.line(x='x', y='y', source=wall_horizontal, line_width=3, line_color=color_TUM_black)                        #Wall horizontal
-fig.line(x='x', y='y', source=wall_vertical, line_width=3, line_color=color_TUM_black)                          #Wall vertival
-fig.line(x='x', y='y', source=beam_position, line_width=10, line_color=color_TUM_grey)                          #beam
-fig.line(x='x', y='y', source=support_A_locus, line_width=2, line_color=color_TUM_blue, line_dash=[10,10] )     #A locus    
-fig.line(x='x', y='y', source=support_B_locus, line_width=2, line_color=color_TUM_blue, line_dash=[10,10] )     #B locus
-fig.line(x='x', y='y', source=trace_curve, line_width=2, line_color=color_TUM_orange)                           #trace curve
-fig.circle(x='x', y='y', source=current_coords, radius=0.05, line_color=color_TUM_orange, fill_color=color_TUM_orange) #ICR
-support_A_arrow = Arrow( x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=support_A_arrow_source, end=OpenHead(line_color=color_TUM_orange, line_width=3), line_color=color_TUM_orange, line_width=3 )
-fig.add_layout(support_A_arrow) #Arrow A
-support_B_arrow = Arrow( x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=support_B_arrow_source, end=OpenHead(line_color=color_TUM_orange, line_width=3), line_color=color_TUM_orange, line_width=3 )
-fig.add_layout(support_B_arrow) #Arrow B
+fig_1.line(x='x', y='y', source=wall_horizontal_hatching, line_width=1, line_color=c_black)                 #Wall horizontal hatching
+fig_1.line(x='x', y='y', source=wall_vertical_hatching, line_width=1, line_color=c_black)                   #Wall vertical hatching
+fig_1.line(x='x', y='y', source=wall_horizontal, line_width=3, line_color=c_black)                          #Wall horizontal
+fig_1.line(x='x', y='y', source=wall_vertical, line_width=3, line_color=c_black)                            #Wall vertival
+fig_1.line(x='x', y='y', source=beam_position, line_width=10, line_color=c_gray)                            #beam
+fig_1.line(x='x', y='y', source=support_A_locus, line_width=2, line_color=c_blue, line_dash=[10,10] )       #A locus 
+fig_1.line(x='x', y='y', source=support_B_locus, line_width=2, line_color=c_blue, line_dash=[10,10] )       #B locus
+fig_1.line(x='x', y='y', source=trace_curve, line_width=2, line_color=c_orange)                             #trace curve
+displacement_w = Arrow(end=OpenHead(line_color=c_blue, line_width=2), x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_color=c_blue, line_width=2, source=displacement_w_source)
+fig_1.add_layout(displacement_w)                                                                            #displacement w
+displacement_u = Arrow(end=OpenHead(line_color=c_blue, line_width=2), x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_color=c_blue, line_width=2, source=displacement_u_source)
+fig_1.add_layout(displacement_u)                                                                            #displacement u
+displacement_w_label = LabelSet( x='x', y='y', text='text', source=displacement_w_label_source, text_font_size="15pt", level='glyph', text_color=c_blue )
+fig_1.add_layout(displacement_w_label)                                                                      #displacement w label
+displacement_u_label = LabelSet( x='x', y='y', text='text', source=displacement_u_label_source, text_font_size="15pt", level='glyph', text_color=c_blue )
+fig_1.add_layout(displacement_u_label)                                                                      #displacement u label
 
-# -> plot labels
-support_A_label=LabelSet( x='x', y='y', text='text', source=support_A_label_source, text_font_size="15pt", level='glyph', text_color=color_TUM_orange )
-fig.add_layout(support_A_label)
-support_B_label=LabelSet( x='x', y='y', text='text', source=support_B_label_source, text_font_size="15pt", level='glyph', text_color=color_TUM_orange )
-fig.add_layout(support_B_label)
-ICR_label=LabelSet( x='x', y='y', text='text', source=ICR_label_source, text_font_size="15pt", level='glyph', text_color=color_TUM_orange )
-fig.add_layout(ICR_label)
+# -> add support images
+fig_1.add_glyph(support_A_img_source , ImageURL(url="sp_img", x="x", y="y",  w=0.66, h=0.4, anchor="center", angle=3/2*math.pi))
+fig_1.add_glyph(support_B_img_source , ImageURL(url="sp_img", x="x", y="y",  w=0.66, h=0.4, anchor="center"))
+
+# -> plott ICR
+fig_1.circle(x='x', y='y', source=current_coords, radius=0.05, line_color=c_orange, fill_color=c_orange) #ICR
+ICR_label=LabelSet( x='x', y='y', text='text', source=ICR_label_source, text_font_size="15pt", level='glyph', text_color=c_orange )
+fig_1.add_layout(ICR_label)
+
+# -> displacement ratio 
+fig_2.line(x='x', y='y', source=displacement_ratio_w, line_width=29, line_color=c_blue)
+fig_2.line(x='x', y='y', source=displacement_ratio_u, line_width=29, line_color=c_blue)
+fig_2.line(x='x', y='y', source=Frame_w, line_width=4, line_color=c_black)
+fig_2.line(x='x', y='y', source=Frame_u, line_width=4, line_color=c_black)  
+ratio_w_label = LabelSet( x='x', y='y', text='text', source=displacement_ratio_w_label, text_font_size="15pt", level='glyph', text_color=c_black )
+fig_2.add_layout(ratio_w_label)
+ratio_u_label = LabelSet( x='x', y='y', text='text', source=displacement_ratio_u_label, text_font_size="15pt", level='glyph', text_color=c_black )
+fig_2.add_layout(ratio_u_label)
 
 # -> inputs: create silder and button
-slider_angle = Slider( title="angle in degree", value=0.0, start=0.0, end=90, step=90/40, width=400 )
-button_structural_system = Button(label="button", button_type="success", width=100)
+slider_angle = Slider( title="angle in degree", value=0.0, start=0.0, end=90, step=90/20, width=300 )
+button_structural_system = Button(label="show/hide structural system", button_type="success", width=300)
 
 # -> function: updates the drawing, for change of angle
 def slider_func(attr, old, new):
     angle=(slider_angle.value) * math.pi/180
-    step=int(new * math.pi/180 * 40/90)
+    trace_curve_index=int(round(angle * 180/math.pi * 20/90,0))
     #current coordinates
-    x_current = const_length*math.sin(angle)
-    y_current = const_length*math.cos(angle)
+    x_current = trace_curve_data[trace_curve_index,0]
+    y_current = trace_curve_data[trace_curve_index,1]
     current_coords.data = dict( x=[x_current], y=[y_current] )
-    #length of arrows
-    Arrow_length_A = x_current * 1/3
-    Arrow_length_B = y_current * 1/3
-	#adjusts the coordinates of the beam, the loci and the labels
+    #displacement w and u
+    ratio_w = 1/(x_current+y_current) * x_current 
+    ratio_u = 1/(x_current+y_current) * y_current
+    displacement_ratio_w.data   = dict( x=[0.52,0.52+2.48*ratio_w], y=[0.25,0.25])
+    displacement_ratio_u.data   = dict( x=[0.52,0.52+2.48*ratio_u], y=[-0.25,-0.25])
+	#adjusts the coordinates of all mutable objects
     beam_position.data          = dict( x=[0,x_current], y=[y_current,0] )
     support_A_locus.data        = dict( x=[-1,const_length+1], y=[y_current, y_current] )
     support_B_locus.data        = dict( x=[x_current,x_current], y=[-1, const_length+1] )
-    support_A_label_source.data = dict( x=[-0.2], y=[y_current-Arrow_length_A/2], text=['A'] )
-    support_B_label_source.data = dict( x=[x_current+Arrow_length_B/2], y=[-0.2], text=['B'] )
     ICR_label_source.data       = dict( x=[x_current+0.1], y=[y_current+0.1], text=['ICR'] )
-    #adjusts the coordinates of the arrows
-    if Arrow_length_A < 0.01: #moves arrow out of range
-        support_A_arrow_source.stream(dict( xS=[10], xE=[10], yS=[10], yE=[10]), rollover=1)
+    if global_vars['show'] == 1:
+        support_A_img_source.data           = dict( sp_img=[slide_support_img], x=[0.4] , y=[y_current+0.15] )
+        support_B_img_source.data           = dict( sp_img=[slide_support_img], x=[x_current] , y=[-0.15] )
+        displacement_w_source.stream(         dict( xS=[0], xE=[0], yS=[y_current], yE=[y_current-0.8]), rollover=1)
+        displacement_u_source.stream(         dict( xS=[x_current], xE=[x_current+0.8], yS=[0], yE=[0]), rollover=1)
+        displacement_w_label_source.data    = dict( x=[-0.2], y=[y_current-0.45], text=['w'])
+        displacement_u_label_source.data    = dict( x=[x_current+0.3], y=[0.05], text=['u'])
+        wall_horizontal_hatching.data       = dict(x=[], y=[])
+        wall_vertical_hatching.data         = dict(x=[], y=[])
     else:
-        support_A_arrow_source.stream(dict( xS=[0.05], xE=[0.05], yS=[y_current], yE=[y_current-Arrow_length_A]), rollover=1)
-    if Arrow_length_B < 0.01: #moves arrow out of range
-        support_B_arrow_source.stream(dict( xS=[10], xE=[10], yS=[10], yE=[10]), rollover=1)
-    else:
-        support_B_arrow_source.stream(dict( xS=[x_current], xE=[x_current+Arrow_length_B], yS=[0.05], yE=[0.05]), rollover=1)
+        support_A_img_source.data           = dict( sp_img=[], x=[] , y=[] )
+        support_B_img_source.data           = dict( sp_img=[], x=[] , y=[] )
+        displacement_w_source.stream(         dict( xS=[], xE=[], yS=[], yE=[]), rollover=-1)
+        displacement_u_source.stream(         dict( xS=[], xE=[], yS=[], yE=[]), rollover=-1)
+        displacement_w_label_source.data    = dict( x=[], y=[], text=['w'])
+        displacement_u_label_source.data    = dict( x=[], y=[], text=['u'])
+        wall_horizontal_hatching.data       = dict(x=hatching_data[0:105,0], y=hatching_data[0:105,1])
+        wall_vertical_hatching.data         = dict(x=hatching_data[106:198,0], y=hatching_data[106:198,1])
+    trace_curve.data = dict( x=trace_curve_data[0:trace_curve_index+1,0], y=trace_curve_data[0:trace_curve_index+1,1])
     pass
-    #refreshing trace curve
-    trace_curve.data = dict( x=trace_curve_data[0:trace_curve_data_dictionary[step],0], y=trace_curve_data[0:trace_curve_data_dictionary[step],1])
-    print(step)
-    print(trace_curve)
-# -> function: updates the drawing, for activateing the structural system
-def button_func(attr, old, new):
+    
+# -> function: show/hide structural system
+def show_structural_system():
+    global_vars['show']=global_vars['show'] * -1
+    slider_func(None,None,None)
     pass
 
 # -> call functions
-slider_angle.on_change('value',slider_func) #callback function
-#button_structural_system.on_change('active',button_func)
+slider_angle.on_change('value',slider_func)
+button_structural_system.on_click(show_structural_system)
 
 #--------------------------------------Main--------------------------------------#
 
@@ -136,8 +172,6 @@ description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 # send to window
-curdoc().add_root(column(description,row(fig), slider_angle))
+doc_layout=layout(children=[ column(description,row(column(Spacer(height=20,width=350), widgetbox(slider_angle), widgetbox(button_structural_system), fig_2 ),fig_1 ) ) ] )
+curdoc().add_root(doc_layout)
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
-
-
-
