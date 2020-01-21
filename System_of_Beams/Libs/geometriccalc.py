@@ -102,7 +102,7 @@ def get_real_roots(func, root_symb, round_pos=2):
     root_vec = []
     func = nsimplify(func)
     roots = solveset(func, root_symb, S.Reals)
-    if isinstance(roots, EmptySet):
+    if roots.is_empty:
         return root_vec
     if isinstance(roots, FiniteSet):
         for root in roots:
@@ -111,7 +111,7 @@ def get_real_roots(func, root_symb, round_pos=2):
             except:
                 continue  # necessary, to handle complex roots
         return root_vec
-    if isinstance(roots, ConditionSet):
+    elif isinstance(roots, ConditionSet):
         '''
         TODO 
         If sin, cos function is used, a condition set will be created.

@@ -147,7 +147,7 @@ def plot_symbolic_func(plot, symb_func, symb_to_plot_over, l_val, start_knot, en
         return None, None
 
     x_length = float(symbbox.remove_free_symbols(l_val, None))
-    x_vals = np.linspace(0, x_length, prec_plot*len_el)
+    x_vals = np.linspace(0, x_length, round(prec_plot*len_el))
     symb_func = symbbox.remove_free_symbols(symb_func, symb_to_plot_over)
     if symb_to_plot_over in free_symbs:
         # evaluate function from zero to one with symb_to_plot_over
@@ -158,7 +158,7 @@ def plot_symbolic_func(plot, symb_func, symb_to_plot_over, l_val, start_knot, en
         y_vals = np.full((len(x_vals, )), float(symb_func))
 
     # Rotate, translate and scale function to beam to plot over
-    x_vals = np.linspace(start_knot.x_, start_knot.x_+len_el, prec_plot*len_el)
+    x_vals = np.linspace(start_knot.x_, start_knot.x_+len_el, round(prec_plot*len_el))
     y_vals += start_knot.y_
     x_vals, y_vals = gc.rotate_x_y_values(x_vals, y_vals, start_knot, end_knot, tol)
 
