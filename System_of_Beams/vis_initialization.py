@@ -114,6 +114,7 @@ def configure_input_plot(p, div_xy, max_indep_elements):
 
     # JavaScript callback to create an element when mouse tap in plot is detected and a button element is activated
     p.js_on_event(Tap, vis_cbs.cb_plot_tap(div_input, max_indep_elements))
+    p.js_on_event(Tap, vis_cbs.cb_plot_xy(div_xy))
 
     # callback to react when the data source of the input plot has changed
     vis_cbs.ds_input.on_change('data', vis_cbs.cb_adapt_plot_indep)
@@ -129,7 +130,7 @@ def configure_input_plot(p, div_xy, max_indep_elements):
     vis_cbs.ds_input_selected.on_change('data', vis_cbs.cb_show_selected)
 
     # JavaScript callback to show the x and y position of the cursor in the input plot
-    p.js_on_event(MouseMove, vis_cbs.cb_plot_xy(div_xy))
+    # p.js_on_event(MouseMove, vis_cbs.cb_plot_xy(div_xy))
 
 
 def expand_msg2user(msg, bg_color="white"):
