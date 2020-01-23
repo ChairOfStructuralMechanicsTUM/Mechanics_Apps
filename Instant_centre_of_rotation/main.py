@@ -80,8 +80,8 @@ fig_1.line(x='x', y='y', source=wall_vertical_hatching, line_width=1, line_color
 fig_1.line(x='x', y='y', source=wall_horizontal, line_width=3, line_color=c_black)                          #Wall horizontal
 fig_1.line(x='x', y='y', source=wall_vertical, line_width=3, line_color=c_black)                            #Wall vertival
 fig_1.line(x='x', y='y', source=beam_position, line_width=10, line_color=c_gray)                            #beam
-fig_1.circle(x='x0', y='y', source=current_coords, radius=0.06, line_color=c_black, fill_color=c_white)                      #beam A
-fig_1.circle(x='x', y='y0', source=current_coords, radius=0.06, line_color=c_black, fill_color=c_white)                          #beam B
+fig_1.circle(x='x0', y='y', source=current_coords, radius=0.06, line_color=c_black, fill_color=c_white)     #joint A
+fig_1.circle(x='x', y='y0', source=current_coords, radius=0.06, line_color=c_black, fill_color=c_white)     #joint B
 fig_1.line(x='x', y='y', source=support_A_locus, line_width=2, line_color=c_blue, line_dash=[10,10] )       #A locus 
 fig_1.line(x='x', y='y', source=support_B_locus, line_width=2, line_color=c_blue, line_dash=[10,10] )       #B locus
 fig_1.line(x='x', y='y', source=trace_curve, line_width=2, line_color=c_orange)                             #trace curve
@@ -140,8 +140,8 @@ def slider_func(attr, old, new):
     displacement_w_source.stream(           dict( xS=[0], xE=[0], yS=[y_current], yE=[y_current-0.8]), rollover=-1)
     displacement_u_source.stream(           dict( xS=[x_current], xE=[x_current+0.8], yS=[0], yE=[0]), rollover=-1)
     if global_vars['show'] == 1:
-        support_A_img_source.data           = dict( sp_img=[slide_support_img], x=[0.4] , y=[y_current+0.15] )
-        support_B_img_source.data           = dict( sp_img=[slide_support_img], x=[x_current] , y=[-0.15] )
+        support_A_img_source.data           = dict( sp_img=[slide_support_img], x=[0.4] , y=[y_current+0.14] )
+        support_B_img_source.data           = dict( sp_img=[slide_support_img], x=[x_current] , y=[-0.14] )
         wall_horizontal_hatching.data       = dict(x=[], y=[])
         wall_vertical_hatching.data         = dict(x=[], y=[])
     else:
