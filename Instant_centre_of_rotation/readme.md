@@ -4,9 +4,5 @@ Prototype of a WebApp demonstrating Instantaneous Center of Rotation via Bokeh f
 
 The app can be run using the command "bokeh serve --show Leiter from the parent directory.
 
-## ToDos
-
-- [ ] Solve warning "Columns must be of the same length"
-- [ ] Pole curve is missing
 
 

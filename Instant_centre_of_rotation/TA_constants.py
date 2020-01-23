@@ -77,4 +77,3 @@ button_width = 100
 
 # images/graphics from external sources
 slide_support_img = "Instant_centre_of_rotation/static/images/slide_support.svg"
-fixed_support_img = "Instant_centre_of_rotation/images/fixed_support.svg"
