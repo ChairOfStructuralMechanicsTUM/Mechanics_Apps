@@ -91,7 +91,7 @@ class Dashpot(object):
         #return displacement.prod_scal(self.direction)
     
     ## draw spring on figure
-    def plot(self,fig,colour="#808080",width=1):
+    def plot(self,fig,colour="#8a8a8a",width=1):
         fig.line(x='x',y='y',color=colour,source=self.Casing,line_width=width)
         fig.line(x='x',y='y',color=colour,source=self.Piston,line_width=width)
         fig.line(x='x',y='y',color=colour,source=self.Line1,line_width=width)
@@ -109,14 +109,18 @@ class Dashpot(object):
             self.actsOn[i][0].applyForce(F*self.out(self.actsOn[i][1]),self)
     
     ## place dashpot in space over a certain time
-    def compressTo(self,start,end,dt):
+    def compressTo(self,start,end,type):
         # draw dashpot and collect displacement
+        dt=0.1
         self.draw(start,end)
         displacement=(self.endNow-self.end+self.startNow-self.start).prod_scal(self.direction)
         self.end=self.endNow
         self.start=self.startNow
         # calculate the force exerted on/by the spring
-        F = -self.lam*displacement/dt
+        if (type==0): # if dashpot is compressed in order to reach static equilibrium
+            F = 0
+        else:
+            F = -self.lam*displacement/dt
         # apply this force to all connected objects
         for i in range(0,len(self.actsOn)):
             self.actsOn[i][0].applyForce(F*self.out(self.actsOn[i][1]),self)

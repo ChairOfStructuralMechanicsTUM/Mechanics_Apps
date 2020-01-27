@@ -1,5 +1,6 @@
 from Mass import *
 from math import cos
+from Spring import *
 
 class Integrator:
     def __init__(self,listOfMasses,oscAmp,listOfDashpots):
@@ -31,20 +32,22 @@ class Integrator:
         # prepare vectors to save values needed across loops
         Disp=[]
         Acc=[]
+        beta = 0.25
         for i in range(0,self.n):
             # save all forces to allow movements without acceleration being changed
             self.masses[i].FreezeForces()
             # find current velocity and acceleration
             temp=self.masses[i].getVelAcc()
-            # calculate new position s=s+v*dt+0.5*a*dt*dt
-            Disp.append(temp[0]*dt+0.5*dt*dt*temp[1])
+            # calculate new position s=s+v_t*dt+0.5*a_t*dt*dt
+            Disp.append(temp[0]*dt+dt*dt*((0.5-beta)*temp[1]))
             # save current acceleration
             Acc.append(temp[1])
         for i in range(0,self.n):
             # once all forces have been saved, move by previously calculated displacement
             self.masses[i].move(Disp[i])
             # apply force that will be applied at next timestep
-            self.masses[i].applyForce(Coord(0,self.oscAmp*cos(oscForceAngle+omega*dt)),None)
+            if (i == 1):
+                self.masses[i].applyForce(Coord(0,self.oscAmp*cos(oscForceAngle+omega*dt)),None)
         for i in range(0,self.d):
             self.dashpots[i].assertForces(dt)
         for i in range(0,self.n):
