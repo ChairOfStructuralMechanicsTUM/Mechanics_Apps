@@ -352,14 +352,14 @@ def solve_system():
 
     
 
-solve_system_button = Button(label="Solve System", button_type="success")
+solve_system_button = Button(label="Solve System", button_type="success", width=300)
 solve_system_button.on_click(solve_system)
 
 ##################################### (2) #####################################
-mass_input = TextInput(value="10000", title="Mass [kg]")
+mass_input = TextInput(value="10000", title="Mass [kg]", width=300)
 
 ##################################### (3) #####################################
-stiffness_input = TextInput(value="10000000", title="Stiffness [N*m"u"\u00B2]")
+stiffness_input = TextInput(value="10000000", title="Stiffness [N*m"u"\u00B2]", width=300)
 
 ##################################### (4) #####################################
 Erdbebenzonen_text = Div(text="""<b>Earthquake Zones</b>""")
@@ -427,43 +427,7 @@ calculate_ERS_button.on_click(calculate_ERS)
 #################################### (5) ######################################
 def_undef_choices_text = Div(text="""<b>Choose which configuration to show</b> """)
 
-def show_def_config(active):
-    
-    if active == True:
-        undef_config_button.active = False
-        maxes = np.zeros((3,3))
-        counter = 0
-        for mode in modes:
-            maxes[:,counter] = mode.get_maximum_displacement(siesmicParameters)
-            counter += 1
-            
-        maximumDisp = np.sqrt( maxes[:,0]**2 + maxes[:,1]**2 + maxes[:,2]**2 ) * 1000 # to convert to mm
-        structure.update_system( maximumDisp )
-        structure.massLocations[:,1] = maximumDisp
-        plot( time_plot, structure, radius, color)
-        
-#        # Calculate forces
-#        force1 = (12*bendingStiffness*stiffnessRatio[0] / trussLength**3) * structure.masses[0].data['x'][0]
-#        force2 = (12*bendingStiffness*stiffnessRatio[1] / trussLength**3) * (structure.masses[1].data['x'][0] - structure.masses[0].data['x'][0])
-#        force3 = (12*bendingStiffness*stiffnessRatio[2] / trussLength**3) * (structure.masses[2].data['x'][0] - structure.masses[1].data['x'][0])
-#        structure.update_force_indicator_value( [int(force1),int(force2),int(force3)] )
-    else:
-        pass
-    
-def show_undef_config(active):
-    if active == True:
-        def_config_button.active = False
-        structure.update_system( np.zeros(2) )
-#        structure.update_force_indicator_location()
-        
-    else:
-        pass
 
-#def_config_button = Toggle(label="Deformed Configuration", button_type="success",width=25)
-#def_config_button.on_click(show_def_config)
-
-undef_config_button = Toggle(label="Undeformed Configuration", button_type="success",width=25)
-undef_config_button.on_click(show_undef_config)
 
 ##################################### (6) #####################################
 columns = [
@@ -506,12 +470,7 @@ curdoc().add_root(
                                         row(
                                             time_plot, 
                                             column(
-                                                   def_undef_choices_text, 
-                                                   row(
-                                                       #undef_config_button,
-                                                       #Spacer(width=180), 
-                                                      #def_config_button
-                                                      ),
+                                                   def_undef_choices_text,
                                                    mass_input,
                                                    stiffness_input,
                                                    solve_system_button
