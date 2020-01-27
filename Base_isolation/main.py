@@ -203,35 +203,6 @@ time_plot.add_layout(
                               )
                     )
 
-#'''
-################################################################################
-#Define here the time loop that leads to the solution of the system of equations
-#in time domain (not needed right now!)
-################################################################################
-#'''
-#timeStep = 0.01 #seconds
-#
-## siesmicInput is an array which has a list of time in seconds in its first 
-## index and a list of the ampitude in m/s2 in its second index
-#siesmicInput = ColumnDataSource(data=dict(amplitude=[0],time=[0],color=["33FF33"]))
-#siesmicInput.data = read_siesmic_input(file='data/preDefinedTwo.txt')
-#
-## Plot the siesmic input signal into the siesmic_input_plot
-#siesmic_input_plot.line( x='time', y='amplitude', color="#33FF33", source=siesmicInput,   line_width=1)
-#siesmic_input_plot.circle(x='time', y='amplitude', color="color", source=siesmicInput, radius=0.01)
-#
-## Modify the y-range of the signal plot
-#maxValue = max(abs(i) for i in siesmicInput.data['amplitude'])
-#
-#siesmic_input_plot.y_range = Range1d(-maxValue, maxValue)
-#siesmic_input_plot.x_range = Range1d(0, siesmicInput.data['time'][-1])
-#
-#siesmicInput.data['color'][100] = siesmicInput.data['color'][100]*0 + '#000000'
-#
-## the solution data structure consists of a vector which contains the time-doma
-## -in displacement of the massesm in addition to the displacement of the base
-#solution = ColumnDataSource(data=dict(time=[0],amplitude=[0]))
-#solution = solve_time_domain(structure, siesmicInput)
 
 '''
 ###############################################################################
@@ -444,8 +415,6 @@ columns = [
             TableColumn(field="storey", title="Storey"),
             TableColumn(field="maxDisp", title="Maximum Displacement [mm]"),
           ]   
-max_disp_data_table = DataTable(source=structure.maximumDisplacement, columns=columns, width=400, height=150)
-max_disp_data_table_text = Div(text="""<b>Maximum Displacement Achieved by the Structure</b> """,width = 600)
 
 '''
 ###############################################################################
@@ -473,7 +442,7 @@ curdoc().add_root(
                                         row(
                                             column(mode_one,modes[1].frequency_text,modes[1].multiplier_text),
                                             column(mode_two,modes[0].frequency_text,modes[0].multiplier_text),
-                                            Spacer(width=180)
+                                            Spacer(width=80)
                                            )
                                       ),
                                 column(
@@ -489,8 +458,6 @@ curdoc().add_root(
                                        data_table, 
                                        data_table_text_two,
                                        data_table_two
-                                       #max_disp_data_table_text,
-                                       #max_disp_data_table
                                       )
                                )
                           )

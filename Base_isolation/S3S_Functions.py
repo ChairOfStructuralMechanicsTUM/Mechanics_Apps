@@ -178,14 +178,7 @@ class S3S_Structure:
         # update the source fle
         self.forces.data = dict(x=[x1,x2],y=[y1,y2],force=self.forces.data['force'])
               
-#    def update_force_indicator_value(self, forces):
-#        
-#        self.forces.data = dict(
-#                                x = self.forces.data['x'],
-#                                y = self.forces.data['y'],
-#                                force = ['Force = '+str(forces[0])+' N','Force = '+str(forces[1])+' N','Force = '+str(forces[2])+' N']
-#                               )
-        
+
     def update_mass_indicator_locaiton(self):
         updateLocation = list()
         for i in self.masses:
@@ -447,9 +440,7 @@ def cubicInterpolate(y1, y2, x1, x2, noNodes,length):
     while i<noNodes:
         x = i*2.0/(float(noNodes)-1.0) - 1.0
         nodes[int(i)] = cubic_N1(x)*y1 + cubic_N2(x)*y2
-        #print('value = ',nodes[int(i)])
         i += 1.0
-        #print('------------------------------')
 
     return(nodes)
     
@@ -629,9 +620,6 @@ def solve_modal_analysis(structure):
     return eigenvalues, eigenvectors
     
 def plot( plot_name, subject, radius, color ):
-
-    #plot_name.line( x='x', y='y', color='#AEACAC', source=subject.trusses[0], line_width=39 , alpha=1)
-    #plot_name.line( x='x', y='y', color='#AEACAC', source=subject.trusses[1], line_width=39 , alpha=1)
     plot_name.patch( x='x', y='y', source=subject.trusses_patch , color='#AEACAC' , alpha=1)
 
     plot_name.line( x='x', y='y', source=subject.massSupports[0], color='#484848', line_width=5)
@@ -640,18 +628,9 @@ def plot( plot_name, subject, radius, color ):
     plot_name.circle( x='x',y='y',radius=radius,color='#484848',source=subject.masses[0] )
     plot_name.circle( x='x',y='y',radius=radius,color='#484848',source=subject.masses[1] )
 
-    #cds = ColumnDataSource(data=dict(x = np.concatenate((subject.trusses[0].data['x'] , subject.trusses[1].data['x'][::-1])) , y  = np.concatenate((subject.trusses[0].data['y'] , subject.trusses[1].data['y'][::-1]))))
-    #print 
-    #plot_name.patch( np.concatenate((subject.trusses[0].data['x'] , subject.trusses[1].data['x'][::-1])), np.concatenate((subject.trusses[0].data['y'] , subject.trusses[1].data['y'][::-1])), alpha=1.0, color=color, line_width=2)
-    #plot_name.patch( np.concatenate((subject.isolation[0].data['x'] , subject.isolation[1].data['x'][::-1])), np.concatenate((subject.isolation[0].data['y'] , subject.isolation[1].data['y'][::-1])), alpha=1.0, color=color, line_width=2)
-    #plot_name.patch( x='x', y='y', source=cds, alpha=1.0, color=color, line_width=2)
-    
-
-
     plot_name.line( x='x', y='y', color='#484848', source=subject.trusses[2], line_width=2)
     plot_name.line( x='x', y='y', color='#484848', source=subject.trusses[3], line_width=2)
     
-    #plot_name.line( x='x', y='y', source=subject.base, color='#000000', line_width=5 )
     
 def GetMaximumDisplacement( modes, siesmicParameters ):
     
