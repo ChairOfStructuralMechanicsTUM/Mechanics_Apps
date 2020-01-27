@@ -1,7 +1,7 @@
 Vector Addition App
 
 Prototype of a WebApp demonstrating Addition of Two vectors via Bokeh for 
-the lectures at the Chair of Structural Mechanics, Prof. Müller, TUM (Technische Universität München).
+the lectures at the Chair of Structural Mechanics, Prof. MÃ¼ller, TUM (Technische UniversitÃ¤t MÃ¼nchen).
 
 Vector magnitude and direction can be changed interactively using sliders and the resultant will be
 displayed .

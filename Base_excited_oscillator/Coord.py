@@ -77,11 +77,15 @@ class Coord(object):
     
     # function returning the direction
     def direction(self):
-        return Coord(self.x,self.y)/self.norm()
+        abx=self.x/self.norm()
+        aby=self.y/self.norm()
+        return Coord(abx,aby)
     
     # function returning the perpendicular direction
     def perp(self):
-        return Coord(self.y,-self.x)/self.norm()
+        abx=self.x/self.norm()
+        aby=self.y/self.norm()
+        return Coord(aby,-abx)
     
     def copy(self):
         return Coord(self.x,self.y)

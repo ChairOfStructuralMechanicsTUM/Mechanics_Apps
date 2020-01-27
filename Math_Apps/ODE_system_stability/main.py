@@ -128,7 +128,7 @@ def update_streamline_data(u_str, v_str, x0, y0):
     x_val, y_val = odesystem_helpers.do_integration(x0, y0, u_fun, v_fun, get_plot_bounds(plot), chaotic)
     # update sources
     streamline_to_data(x_val, y_val, x0, y0) # save data to ColumnDataSource
-    print "streamline was calculated for initial value (x0,y0)=(%f,%f)" % (x0, y0)
+    print("streamline was calculated for initial value (x0,y0)=({:f},{:f})".format(x0, y0))
 
 
 def update_quiver_data(u_str, v_str):
@@ -150,7 +150,7 @@ def update_quiver_data(u_str, v_str):
     # save critical point data
     critical_to_data(x_c, y_c, x_lines, y_lines)
 
-    print "quiver data was updated for u(x,y) = %s, v(x,y) = %s" % (u_str, v_str)
+    print("quiver data was updated for u(x,y) = {}, v(x,y) = {}".format(u_str, v_str))
 
 
 def get_samples(u_fun, v_fun):
@@ -205,7 +205,7 @@ def critical_to_data(x_c, y_c, x_lines, y_lines):
     source_critical_lines.data = dict(x_ls=x_lines, y_ls=y_lines)
 
 
-def sample_fun_change(self):
+def sample_fun_change(attr, old, new):
     """
     called if the sample function is changed. The global variable update_callback is used to prevent triggering the
     callback function ode_change twice, once for change in u with old v, then for change in v with new u.
@@ -214,7 +214,7 @@ def sample_fun_change(self):
     """
     global update_callback
     # get sample function pair (first & second component of ode)
-    sample_fun_key = sample_fun_input.value
+    sample_fun_key = new #sample_fun_input.value
     sample_fun_u, sample_fun_v = odesystem_settings.sample_system_functions[sample_fun_key]
     # write new functions to u_input and v_input
     update_callback = False  # prevent callback
@@ -257,12 +257,12 @@ plot.grid[1].grid_line_alpha = 0.0
 # Plot the direction field
 quiver = my_bokeh_utils.Quiver(plot)
 # Plot initial values
-plot.scatter('x0', 'y0', source=source_initialvalue, color='black', legend='(x0,y0)')
+plot.scatter('x0', 'y0', source=source_initialvalue, color='black', legend_label='(x0,y0)')
 # Plot streamline
-plot.line('x', 'y', source=source_streamline, color='black', legend='streamline')
+plot.line('x', 'y', source=source_streamline, color='black', legend_label='streamline')
 # Plot critical points and lines
-plot.scatter('x', 'y', source=source_critical_pts, color='red', legend='critical pts')
-plot.multi_line('x_ls', 'y_ls', source=source_critical_lines, color='red', legend='critical lines')
+plot.scatter('x', 'y', source=source_critical_pts, color='red', legend_label='critical pts')
+plot.multi_line('x_ls', 'y_ls', source=source_critical_lines, color='red', legend_label='critical lines')
 
 # initialize controls
 # text input for input of the ode system [u,v] = [x',y']
@@ -277,7 +277,7 @@ sample_fun_input = Dropdown(label="choose a sample function pair or enter one be
 interactor = my_bokeh_utils.Interactor(plot)
 
 # initialize callback behaviour
-sample_fun_input.on_click(sample_fun_change)
+sample_fun_input.on_change('value', sample_fun_change)
 u_input.on_change('value', ode_change)
 v_input.on_change('value', ode_change)
 interactor.on_click(initial_value_change)

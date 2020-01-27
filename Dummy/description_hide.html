@@ -1,0 +1,76 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+
+<h3>Hide Example</h3>
+
+<p>
+    Sometimes hiding objects for specific settings becomes handy. Both the user experience improves and the app is less crowded. <br>
+    Bokeh provides a simple way to achieve this. In old bokeh versions, one had to manipulate the objects via JavaScript and CSS. 
+    Now it is enough to set the visible attribute accordingly.
+</p>
+
+<!-- <p>
+For this more sophisticated example of hiding a button, we need to dive a bit into CSS and JavaScript, since Bokeh does not offer yet a simple hide functionality.
+</br>
+We need:
+<ul>
+    <li>a (JavaScript) callback function</li>
+    <li>a CSS style file located in /templates/styles.css</li>
+    <li>an html index file located in /templates/index.html</li>
+</ul>
+</p>
+
+
+<p>
+All or the most Bokeh models provide a css_classes attribute. </br>
+Unfortunately, simply altering the css_classes attribute via hide_button.css_classes has no effect. That is why we need explicit JavaScript code which changes the
+underlying CSS names of the object in question. </br>
+<strong>UPDATE:</strong> It seems that now it is in fact possible to change the CSS classes without having to use a JavaScript function.
+A normal callback function programmed in Python like in the examples above will do.
+</p>
+
+<p>
+Choose any tag, here "hidden", which should be present in the css_classes of objects you want to hide. The same tag is used in styles.css, so it is very important 
+to keep consistent with the wording! </br>
+In the defined callback function (see code), we can now easily change the css_classes attribute.
+Depending on the names inside this attribute, the defined behavior in the styles file takes over. </br>
+In case of choosing "show" in the slection below, the tag "hidden" is removed from the CSS classes of the button (if there), thus, the button is visible. </br>
+Choosing "hide" will add the tag "hidden" and due to the styles file the button with this tag will not be displayed.
+</p> -->
+
+<p>
+Instead of a dropdown selection one could also encode this functionality using radio buttons or other suitable widgets. </br>
+Of course we could also add some functionality to the button via callback functions like in the example above. </br>
+For the purpose of providing a short overview we keep it this way without functionality. Nevertheless, feel free to try to expand or interconnect the examples. </br>
+A good "real world" reference of the apps can be considered to be <a href="https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/tree/master/SDOF">SDOF</a>, since it provides a structure using classes, many sliders, buttons and animations.
+</p>

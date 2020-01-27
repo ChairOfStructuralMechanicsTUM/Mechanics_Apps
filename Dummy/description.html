@@ -1,0 +1,60 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+<h1>Dummy App</h1>
+
+<p>
+This dummy app will show you how to program constantly recurring Bokeh models which can be found in most of the apps of this project. </br>
+For a general overview of Bokeh, please consult the <a href="https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/wiki">Wiki</a>. <br>
+In case you are only looking for a skeleton for new apps, have a look at the <strong><a href="https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/tree/master/Template_App">Template App</a></strong>.
+</p>
+
+
+<h3>Inclination Example</h3>
+
+
+<p>
+First of all, let's start with a slider. Sliders can be used to dynamically change variables, and its effect is usually found in (several) plots. </br>
+In this example, we will change the inclination of a line. All you need is
+<ul>
+    <li>a slider changing the angle $\alpha$</li>
+    <li>a callback function which defines the new coordinates to plot based on $\alpha$</li>
+    <li>a figure to show the output</li>
+</ul>
+</br>
+To show the updated data and omit the old one, Bokeh uses a special type called <strong>ColumnDataSource</strong>. </br>
+A detailed description of the underlying functions and programmatic structure can be found in the code itself.
+</p>
+
+<p>
+Feel free to change, add or dismiss whatever you like. Learning by doing is the best kind of learning ;)
+</p>

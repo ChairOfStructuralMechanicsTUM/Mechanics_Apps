@@ -8,7 +8,7 @@ Here we visualize the effect of wave diffraction at a wall.
 
 Different areas exist:
 
-![](./static/images/Diffraktion_areas.jpg)  
+![](./static/images/Diffraction_areas.jpg)  
 From[1]
 
 For more information on theory see [1].

@@ -51,7 +51,7 @@ def update_fourier_coeffs(f, N, t_start, t_end):
     # save coefficients to data source
     source_coeff.data = dict(a=a, b=b)
 
-    print "fourier coefficients have been updated for new function up to maximum degree N = %d" % (N)
+    #print("fourier coefficients have been updated for new function up to maximum degree N =", N)
 
 
 def update_plot(f, N, t_start, t_end):
@@ -174,7 +174,7 @@ def automatic_update():
     """
     Function that is regularly called by the periodic callback. Updates the plots to the current user view.
     """
-    print source_view.data
+    #print(source_view.data)
     user_view_has_changed = my_bokeh_utils.check_user_view(source_view.data, plot)
     if user_view_has_changed:
 
@@ -186,7 +186,7 @@ def automatic_update():
         t_start = source_periodicity.data['t_start'][0]
         t_end = source_periodicity.data['t_end'][0]
 
-        print "updating plot"
+        #print("updating plot")
         update_plot(f, N, t_start, t_end)
 
 
@@ -236,13 +236,13 @@ plot.line('t', 'x_orig', source=source_orig,
           line_width=3,
           line_alpha=0.6,
           color='red',
-          legend='original function'
+          legend_label='original function'
           )
 plot.line('t', 'x_fourier', source=source_fourier,
           color='green',
           line_width=3,
           line_alpha=0.6,
-          legend='fourier series'
+          legend_label='fourier series'
           )
 
 plot.patch('x_patch', 'y_patch', source=source_interval_patch, alpha=.2)

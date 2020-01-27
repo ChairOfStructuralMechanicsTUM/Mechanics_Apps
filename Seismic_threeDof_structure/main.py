@@ -260,7 +260,7 @@ for mode in modes:
     counter += 1
 
 ########################## Output the results #################################
-mode_colors = ['#0000FF','#00FF00','#D4AC0D']
+mode_colors = ['#A2AD00','#E37222','#64A0C8']
 
 fc.plot( mode_one  , modes[2], radius, mode_colors[2])
 fc.plot( mode_two  , modes[1], radius, mode_colors[1])
@@ -278,7 +278,7 @@ siesmicParameters = S3S_SeismicParameters(a=0.4,gamma=1.0,S=1.0,eta=1.0,beta=2.5
 fc.update_ERS_plot_data( siesmicParameters )
 
 # plot the line drawn by the ERS data source
-ERSplot.line(x='x',y='y',source=siesmicParameters.ERSdata)
+ERSplot.line(x='x',y='y',source=siesmicParameters.ERSdata,color='black')
 
 # Allocate each mode in the ERS plot
 counter = 0
@@ -348,14 +348,14 @@ def solve_system():
     else:
         pass
     
-solve_system_button = Button(label="Solve System", button_type="success")
+solve_system_button = Button(label="Solve System", button_type="success", width=300)
 solve_system_button.on_click(solve_system)
 
 ##################################### (2) #####################################
-mass_input = TextInput(value="10000", title="Mass [kg]")
+mass_input = TextInput(value="10000", title="Mass [kg]", width=300)
 
 ##################################### (3) #####################################
-stiffness_input = TextInput(value="10000000", title="Stiffness [N*m"u"\u00B2]")
+stiffness_input = TextInput(value="10000000", title="Stiffness [N*m"u"\u00B2]", width=300)
 
 ##################################### (4) #####################################
 Erdbebenzonen_text = Div(text="""<b>Earthquake Zones</b>""")
@@ -417,14 +417,13 @@ def calculate_ERS():
     for mode in modes:
         mode.modify_location_in_ERS(siesmicParameters)
     
-calculate_ERS_button = Button(label="Re-calculate Elastic Response Spectrum", button_type="success")
+calculate_ERS_button = Button(label="Re-calculate Elastic Response Spectrum", button_type="success", width=300)
 calculate_ERS_button.on_click(calculate_ERS)
 
 #################################### (5) ######################################
 def_undef_choices_text = Div(text="""<b>Choose which configuration to show</b> """)
 
 def show_def_config(active):
-    
     if active == True:
         undef_config_button.active = False
         maxes = np.zeros((2,2))
@@ -449,16 +448,16 @@ def show_def_config(active):
 def show_undef_config(active):
     if active == True:
         def_config_button.active = False
-        structure.update_system( np.zeros(2) )
-#        structure.update_force_indicator_location()
+        structure.update_system( np.zeros(3) )
+        structure.update_force_indicator_location()
         
     else:
         pass
 
-def_config_button = Toggle(label="Deformed Configuration", button_type="success",width=25)
+def_config_button = Toggle(label="Deformed Configuration", button_type="success", width=175)
 def_config_button.on_click(show_def_config)
 
-undef_config_button = Toggle(label="Undeformed Configuration", button_type="success",width=25)
+undef_config_button = Toggle(label="Undeformed Configuration", button_type="success", width=175)
 undef_config_button.on_click(show_undef_config)
 
 ##################################### (6) #####################################
@@ -498,8 +497,9 @@ curdoc().add_root(
                                                    def_undef_choices_text, 
                                                    row(
                                                        undef_config_button,
-                                                       Spacer(width=180), 
-                                                       def_config_button
+                                                       Spacer(width=25), 
+                                                       def_config_button,
+                                                       Spacer(width=75)  # needed such that the mode plots below don't overlap
                                                       ),
                                                    mass_input,
                                                    stiffness_input,

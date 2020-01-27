@@ -32,8 +32,8 @@ code {
 
 <h1>Free Vibrations of the Euler-Bernoulli Beam</h1>
 <br>
-This App shows the vibration patterns of the Euler-Bernoulli beam for different boundary conditions. If no damping is considered, the equation of motion reduces to $$EIw'''' + \mu \ddot{w} = 0.$$ 
-Using a product approach, $$w\left(x,t\right) = W\left(x\right) f\left(t\right)$$ and defining $$ \lambda = l \sqrt[4]{\frac{\mu \omega^2}{\mathrm{EI}}} $$ an ordinary differential equation is obtained: 
+This app shows the vibration patterns of the Euler-Bernoulli beam for different boundary conditions. If no damping is considered, the equation of motion reduces to $$EIw'''' + \mu \ddot{w} = 0.$$ 
+Performing a separation of variables, $$w\left(x,t\right) = W\left(x\right) f\left(t\right)$$ and defining $$ \lambda = l \sqrt[4]{\frac{\mu \omega^2}{\mathrm{EI}}} $$ an ordinary differential equation is obtained: 
 $$ W''''\left(x\right) - \lambda^4W\left(x\right) = 0, \qquad \ddot{f}\left(t\right) + \omega^2 f\left(t\right) = 0.$$
 The solution of this ODE is given by $$W\left(x\right) = C_{x1}\cosh\left(\lambda x\right) + C_{x2}\sinh\left(\lambda x\right) + C_{x3}\cos\left(\lambda x\right) + C_{x4}\sin\left(\lambda x\right), \qquad f\left(t\right) = C_{t1}\cos\left(\omega t\right) + C_{t2}\sin\left(\omega t\right). $$
 Using two temporal and four spatial boundary conditions, depending on the support of the beam, the system of equations can be established. It can be solved setting its determinant equal to zero.
