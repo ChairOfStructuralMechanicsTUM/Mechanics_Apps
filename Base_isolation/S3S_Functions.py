@@ -84,7 +84,6 @@ class S3S_Structure:
         self.update_stiffness_indicator_locaiton()
         self.update_truss_sources()
         self.update_isolation()
-        #print('truss1 = ',self.trusses[1].data['x'])
         
     def update_masses(self, displacement):
         self.masses[0].data = dict(x=[displacement[0]] , y=self.masses[0].data['y'])
@@ -140,8 +139,10 @@ class S3S_Structure:
         ys = linIntepolate(y1,y2,y1,y2,noNodes,self.trussLength)
         self.trusses[3].data =dict( x=xs, y=ys )
         
-        self.trusses_patch.data['x'] = np.concatenate((self.trusses[0].data['x'] , self.trusses[1].data['x'][::-1]))
-        self.trusses_patch.data['y'] = np.concatenate((self.trusses[0].data['y'] , self.trusses[1].data['y'][::-1]))
+        new_x = np.concatenate((self.trusses[0].data['x'] , self.trusses[1].data['x'][::-1]))
+        new_y = np.concatenate((self.trusses[0].data['y'] , self.trusses[1].data['y'][::-1]))
+        self.trusses_patch.data = dict(x=new_x, y=new_y)
+
     def update_isolation(self):
         noNodes = 10
         
