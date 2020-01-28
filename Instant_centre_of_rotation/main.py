@@ -5,8 +5,6 @@ Instant centre of rotation -
 """
 # general imports
 from numpy      import math, loadtxt
-from os.path    import dirname, join, split 
-#from latex_support import LatexLabelSet, LatexSlider
 
 # bokeh imports
 from bokeh.plotting         import figure
@@ -23,7 +21,13 @@ from TA_constants           import (
     c_black, c_blue, c_orange, c_gray, c_white      # colors used
 )
 
-# latex integration: none
+# latex integration
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir)
+from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
 #--------Data Source--------#
 # -> trace curve
@@ -114,8 +118,10 @@ ratio_u_label = LabelSet( x='x', y='y', text='text', source=displacement_ratio_u
 fig_2.add_layout(ratio_u_label)
 
 # -> inputs: create silder and button
-slider_angle = Slider( title="angle in degree", value=0.0, start=0.0, end=90, step=90/20, width=300 )
-button_structural_system = Button(label="show/hide structural system", button_type="success", width=300)
+slider_angle= LatexSlider(title='\\text{Inclination of ladder:}', value_unit='^{\\circ}', value=0.0, start=0.0, end=90, step=90/20)
+#slider_angle.on_change('value',changeTheta1)
+#slider_angle = Slider( title="Inclination of ladder", value=0.0, start=0.0, end=90, step=90/20, width=300 )
+button_structural_system = Button(label="Show/Hide structural system", button_type="success", width=300)
 
 # -> function: updates the drawing, for change of angle
 def slider_func(attr, old, new):
