@@ -39,11 +39,11 @@ class Maxwell_Frame(object):
         
         
         self.w12            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], name = []))
-        self.w12_11            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
-        self.w12_12            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
+        self.w12_11         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
+        self.w12_12         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
         self.w21            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[], name = []))
-        self.w21_11            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[] ))
-        self.w21_12            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[] ))
+        self.w21_11         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[] ))
+        self.w21_12         = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[] ))
         
         self.w2             = ColumnDataSource(data=dict(xS=[], xE=[], yS=[], yE=[]))
         self.wdline         = ColumnDataSource(data=dict(x1=[], x2 =[], y1 = [], y2=[]))
