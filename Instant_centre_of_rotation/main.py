@@ -119,8 +119,6 @@ fig_2.add_layout(ratio_u_label)
 
 # -> inputs: create silder and button
 slider_angle= LatexSlider(title='\\text{Inclination of ladder:}', value_unit='^{\\circ}', value=0.0, start=0.0, end=90, step=90/20)
-#slider_angle.on_change('value',changeTheta1)
-#slider_angle = Slider( title="Inclination of ladder", value=0.0, start=0.0, end=90, step=90/20, width=300 )
 button_structural_system = Button(label="Show/Hide structural system", button_type="success", width=300)
 
 # -> function: updates the drawing, for change of angle
