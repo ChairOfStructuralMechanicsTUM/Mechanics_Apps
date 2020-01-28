@@ -231,12 +231,12 @@ def main( ):
 
     # CREATE BUTTONS:
     SetDefaultButton = Button( label = "Default",
-                               button_type = "primary",
+                               button_type = "success",
                                width = 100 )
 
 
     ApplyButton = Button( label = "Apply",
-                          button_type = "primary",
+                          button_type = "success",
                           width = 100 )
 
 
@@ -246,7 +246,7 @@ def main( ):
 
 
     ShowInput = Button( label = "Show Input",
-                        button_type = "primary",
+                        button_type = "success",
                         width = 100 )
 
 
@@ -261,7 +261,7 @@ def main( ):
                           Size = 2,
                           MessageHeader = "Number of layers: " )
 
-    WarningMessage = VibroP_Message( Color = "grey",
+    WarningMessage = VibroP_Message( Color = "red",
                               Size = 3 ,
                               MessageHeader = "Warning: " )
 
@@ -317,22 +317,29 @@ def main( ):
     Headline = row( column( Title, Description ), Spacer( width = 50 ), Scheme )
 	
     LeftSide = column( ModeRadioButtons,
+                        Spacer(height=20),
                         ELASTIC_MODULUS_TITEL,
                         ElasticModulus.Table,
+                        Spacer(height=20),
                         SHEAR_MODULUS_TITEL,
                         ShearModulus.Table,
+                        Spacer(height=20),
                         POISSON_RATIO_TITEL,
                         PoissonRatios.Table,
+                        Spacer(height=20),
                         MATERIALS_TITEL,
                         MaterialProperties.Table,
+                        Spacer(height=20),
                         GEOMETRY_TITEL,
                         GeometryProperties.Table,
                         LayersInfo.Widget,
+                        Spacer(height=10),
                         Info,
-                        Spacer( height = 30 ) )
+                        Spacer( height = 20 ),
+                        WarningMessage.Widget )
 
 
-    RightSide = column( Graph.Widget , WarningMessage.Widget,Spacer( height = 20 ),
+    RightSide = column( Graph.Widget, Spacer( height = 50 ),
      Buttons,
                         Spacer( height = 100 ) )
 
@@ -379,7 +386,7 @@ def main( ):
 
     # RUN ALL WIDGETS
     doc.add_root(Headline)
-    doc.add_root( column( Spacer( height =250 ),
+    doc.add_root( column( Spacer( height = 150 ),
                       row( LeftSide,
                            Spacer( width = 50 ),
                            RightSide,
@@ -415,10 +422,14 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
     LayerThicknessBuffer = Tables[ "GeometryProperties" ].getValue( 0, 2 )
     try:
 
+
         Layers = getLayersFromString( Tables[ "GeometryProperties" ].getValue( 0, 2 ) )
+
         LayersInfo.printMessage( str( len( Layers ) ) )
+
         # Homogenize the input data
         if len(Layers) != 1:
+
             makeMultiLayerMask( Tables )
 
             HomogenizedData = homogenize( Tables[ "ElasticModulus" ].getData( )[ 0 ],
@@ -461,7 +472,6 @@ def updateData( Tables, Graph, LayersInfo, WarningMessage ):
     #################### CALL USER-SPECIFIC FUNCTION ##########################
 
         testInputData( Graph.getMode(), PoissonRatiosData )
-
 
         Graph.Containers[ "WaveVelocity" ] = wave_speeds(
                                                 ElasticModulusData,

@@ -67,7 +67,8 @@ def updateVector1 ():
  
     if (Vector1== 0):
         #Vector1_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-        Vector1_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=1)
+        Vector1_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=-1)
+        V1_label_source.data = dict (x=[],y=[],V1=[])
     else:
     # else the arrow is proportional to the Vector1
         xE = Vector1*cos(theta1)
@@ -82,7 +83,8 @@ def updateVector2 ():
     # if Vector2 = 0 then there is no arrow
     if (Vector2== 0):
         #Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-        Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=1)
+        Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=-1)
+        V2_label_source.data = dict (x=[],y=[],V2=[])
     else:
         # else the arrow is proportional to the Vector1
         xE = Vector2*cos(theta2)
@@ -103,11 +105,11 @@ def updateResultant():
     R  = round(sqrt(xE**2.0+yE**2.0),1)
     if (abs(R) < 1e-3):
         #VectorResultant_source.data = dict(xS=[], yS=[], xE=[], yE=[])
-        VectorResultant_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=1)
+        VectorResultant_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=-1)
         Resultant_label_source.data = dict(x=[], y=[], R=[])
     else:
         #VectorResultant_source.data = dict(xS=[0], yS=[0], xE=[xE], yE=[yE])
-        VectorResultant_source.stream(dict(xS=[0], yS=[0], xE=[xE], yE=[yE]), rollover=1 )
+        VectorResultant_source.stream(dict(xS=[0], yS=[0], xE=[xE], yE=[yE]), rollover=1)
         # Readjust positions
         xL = xE-3
         yL = yE-6
@@ -129,7 +131,7 @@ def updateResultant():
                 angle = round(atan(yE/xE)/pi*180,0)+360
             else:
                 angle = 0
-        Resultant_values_source.data = dict(x=[100,100], y=[160,140], names=["|R| = " + str(R), "\\alpha_{R} = " + str(angle) + "\\,^{\\circ}"])
+        Resultant_values_source.data = dict(x=[100,100], y=[160,140], names=["|R| = " + str(R) + "\, \\mathrm{N}", "\\alpha_{R} = " + str(angle) + "\\,^{\\circ}"])
     else:
         Resultant_values_source.data = dict(x=[], y=[], names=[])
 
@@ -191,9 +193,9 @@ def changetheta2(attr,old,new):
     updateResultant()
     
 ## Create slider to choose force applied
-Vector1Slider = LatexSlider(title="|V1|=",value=95.0,start=0,end=100,step=5)
+Vector1Slider = LatexSlider(title="|V1|=", value=95.0, value_unit="\mathrm{N}", start=0, end=100, step=5)
 Vector1Slider.on_change('value',changeVector1)
-Vector2Slider = LatexSlider(title="|V2|=", value=100.0, start=0.0, end=100.0, step=5)
+Vector2Slider = LatexSlider(title="|V2|=", value=100.0, value_unit="\mathrm{N}", start=0.0, end=100.0, step=5)
 Vector2Slider.on_change('value',changeVector2)
 
 AngleVector1Slider = LatexSlider(title='\\alpha_{V1}=', value_unit='^{\\circ}', value=60.0, start=0.0, end=360.0, step=5)

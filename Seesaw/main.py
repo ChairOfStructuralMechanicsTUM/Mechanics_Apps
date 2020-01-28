@@ -72,6 +72,9 @@ plot.add_layout(length_label)
 # Div to show force and distance values
 value_plot = LatexDiv(text="", render_as_text=False, width=300)
 
+def setValueText(F1, F2):
+    value_plot.text = "$$\\begin{aligned} F_1&=" + "{:4.1f}".format(F1) + "\\,\\mathrm{N}\\\\ F_2&=" + "{:4.1f}".format(F2) + "\\,\\mathrm{N} \\end{aligned}$$"
+
 def changeLength(attr, old, new):
     tmp = (l_beam-new)/new
     F1_new = (F_total*tmp) / (1+tmp)
@@ -81,7 +84,7 @@ def changeLength(attr, old, new):
     dist_source.patch( {'xE':[(0,new)], 'xL':[(0,new/2.0-0.3)]} )
     support_source.patch( {'x':[(0,new)]} )
     if flags.data["show"][0] == 'on':
-        value_plot.text = "$$\\begin{aligned} F_1&=" + str(F1_new) + "\\,\\mathrm{N}\\\\ F_2&=" + str(F2_new) + "\\,\\mathrm{N} \\end{aligned}$$"
+        setValueText(F1_new, F2_new)
 
 def changeShow(active):
     a = show_button
@@ -90,7 +93,7 @@ def changeShow(active):
         flags.patch( {'show':[(0,'on')]} )
         [F1] = F1_source.data['yS']
         [F2] = F2_source.data['yS']
-        value_plot.text = "$$\\begin{aligned} F_1&=" + str(F1) + "\\,\\mathrm{N}\\\\ F_2&=" + str(F2) + "\\,\\mathrm{N} \\end{aligned}$$"
+        setValueText(F1, F2)
         show_button.label = strings["show_button.label"]['on'][lang]
     else:
         flags.patch( {'show':[(0,'off')]} )

@@ -85,12 +85,12 @@ def input_change(attrname, old, new):
         update_data()
 
 
-def function_pair_input_change(self):
+def function_pair_input_change(attr, old, new):
     """
     called if the sample function changes
     :param self:
     """
-    function_key = function_type.value
+    function_key = new #function_type.value
     function1, function2 = convolution_settings.sample_functions[function_key]
     global update_is_enabled
     update_is_enabled = False  # disable update, that update is not committed again
@@ -116,7 +116,7 @@ update_is_enabled = True
 # dropdown menu for sample functions
 function_type = Dropdown(label="choose a sample function pair or enter one below",
                          menu=convolution_settings.sample_function_names)
-function_type.on_click(function_pair_input_change)
+function_type.on_change('value', function_pair_input_change)
 
 # slider controlling the evaluated x value of the convolved function
 x_value_input = Slider(title="x value", name='x value', value=convolution_settings.x_value_init,
@@ -139,9 +139,9 @@ plot = Figure(plot_height=400, plot_width=400, tools=toolset,
               y_range=[convolution_settings.y_min_view, convolution_settings.y_max_view])
 
 # Plot the line by the x,y values in the source property
-plot.line('x', 'y', source=source_function1, line_width=3, line_alpha=0.6, color='red', legend='function 1')
-plot.line('x', 'y', source=source_function2, color='green', line_width=3, line_alpha=0.6, legend='function 2')
-plot.line('x', 'y', source=source_result, color='blue', line_width=3, line_alpha=0.6, legend='convolution')
+plot.line('x', 'y', source=source_function1, line_width=3, line_alpha=0.6, color='red', legend_label='function 1')
+plot.line('x', 'y', source=source_function2, color='green', line_width=3, line_alpha=0.6, legend_label='function 2')
+plot.line('x', 'y', source=source_result, color='blue', line_width=3, line_alpha=0.6, legend_label='convolution')
 plot.scatter('x', 'y', source=source_xmarker, color='black')
 plot.line('x', 'y', source=source_xmarker, color='black', line_width=3)
 plot.patch('x', 'y_pos', source=source_overlay, fill_color='blue', fill_alpha=.2)

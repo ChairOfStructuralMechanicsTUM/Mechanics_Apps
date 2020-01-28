@@ -164,7 +164,7 @@ def impl_euler(f, x0, h, timespan):
         try:
             x[:, k + 1] = fsolve(lambda arg: x[:, k] - arg + h * f(t[k + 1], arg), x[:, k])
         except RuntimeError:
-            print "newton did not converge!"
+            print("newton did not converge!")
             for k in range(k, n):
                 t[k + 1] = (k + 1) * h
             break
@@ -192,7 +192,7 @@ def impl_midpoint(f, x0, h, timespan):
             dx_left = f(t[k], x[:, k])
             x[:, k + 1] = fsolve(lambda arg: x[:, k] - arg + h / 2 * (f(t[k + 1], arg) + dx_left), x[:, k])
         except RuntimeError:
-            print "newton did not converge!"
+            print("newton did not converge!")
             for k in range(k, n):
                 t[k + 1] = (k + 1) * h
             break

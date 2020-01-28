@@ -171,18 +171,18 @@ source_view = ColumnDataSource(data=dict(x_start=[ode_settings.min_time],
 # initialize controls
 # slider controlling stepsize of the solver
 stepsize = Slider(title="stepsize", name='stepsize', value=ode_settings.step_init, start=ode_settings.step_min,
-                  end=ode_settings.step_max, step=ode_settings.step_step)
+                  end=ode_settings.step_max, step=ode_settings.step_step, width=380)
 stepsize.on_change('value', update_ode_data)
 # slider controlling initial value of the ode
 startvalue = Slider(title="startvalue", name='startvalue', value=ode_settings.x0_init,
                     start=ode_settings.x0_min,
-                    end=ode_settings.x0_max, step=ode_settings.x0_step)
+                    end=ode_settings.x0_max, step=ode_settings.x0_step, width=380)
 startvalue.on_change('value', update_data)
 # gives the opportunity to choose from different solvers
-solvers = RadioButtonGroup(labels=ode_settings.solver_labels, active=ode_settings.solver_init)
+solvers = RadioButtonGroup(labels=ode_settings.solver_labels, active=ode_settings.solver_init, width=300)
 solvers.on_change('active', update_ode_data)
 # gives the opportunity to choose from different odes
-odes = RadioButtonGroup(labels=ode_settings.odetype_labels, active=ode_settings.odetype_init)
+odes = RadioButtonGroup(labels=ode_settings.odetype_labels, active=ode_settings.odetype_init, width=300)
 odes.on_change('active', update_data)
 
 # initialize plot
@@ -205,14 +205,14 @@ plot.line('t_num', 'x_num', source=source_num,
           )
 plot.circle('t_num', 'x_num', source=source_num,
             color='red',
-            legend='numerical solution'
+            legend_label='numerical solution'
             )
 # Plot the analytical solution by the x_ref,t values in the source property
 plot.line('t_ref', 'x_ref', source=source_ref,
           color='green',
           line_width=3,
           line_alpha=0.6,
-          legend='analytical solution'
+          legend_label='analytical solution'
           )
 # Plot the direction field
 quiver = my_bokeh_utils.Quiver(plot)
@@ -221,7 +221,7 @@ quiver = my_bokeh_utils.Quiver(plot)
 init_data()
 
 # lists all the controls in our app
-controls = widgetbox(stepsize, startvalue, solvers, odes, sizing_mode='stretch_both', width=400)
+controls = widgetbox(stepsize, startvalue, solvers, odes, width=400)
 
 curdoc().add_periodic_callback(refresh_user_view, 100)
 # make layout

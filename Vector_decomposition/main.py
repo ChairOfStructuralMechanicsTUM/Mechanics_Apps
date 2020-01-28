@@ -92,9 +92,9 @@ def createTwoComponents():
          V1parallel_line_source.data = dict(x=[],y=[])
          V2parallel_line_source.data=dict(x=[],y=[])
          #Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-         Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=1)
+         Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=-1)
          #Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-         Vector3_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=1)
+         Vector3_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=-1)
          glob_active.data   = dict(Active=[False])
          show_button.label = 'Show components'
          value_plot.text=""
@@ -107,9 +107,9 @@ def createTwoComponents():
           V1parallel_line_source.data = dict(x=[],y=[])
           V2parallel_line_source.data=dict(x=[],y=[])
           #Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-          Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=1)
+          Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=-1)
           #Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-          Vector3_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=1)
+          Vector3_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=-1)
           V1_label_source.data=dict(x=[],y=[],V=[])
           V2_label_source.data=dict(x=[],y=[],V=[])
           glob_active.data = dict(Active=[True])
@@ -148,7 +148,7 @@ def createTwoComponents():
          
           if (F22==0 ):
                #Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-               Vector3_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=1)
+               Vector3_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=-1)
                #Vector2_source.data = dict(xS=[0],yS=[0],xE=[xE1],yE=[yE1])
                Vector2_source.stream(dict(xS=[0],yS=[0],xE=[xE1],yE=[yE1]),rollover=1)
                V2_label_source.data=dict(x=[],y=[],V=[])
@@ -159,7 +159,7 @@ def createTwoComponents():
                
           elif (F11==0 ):
                #Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-               Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=1)
+               Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=-1)
                #Vector3_source.data = dict(xS=[0],yS=[0],xE=[xE2],yE=[yE2])
                Vector3_source.stream(dict(xS=[0],yS=[0],xE=[xE2],yE=[yE2]),rollover=1)
                V2_label_source.data=dict(x=[xE2+5],y=[yE2],V=['F1'])
@@ -223,9 +223,9 @@ def reset():
      V2_label_source.data=dict(x=[],y=[],V=[])
      Resultant_values_source.data = dict(x=[], y=[], names=[])
      #Vector2_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-     Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=1)
+     Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=-1)
      #Vector3_source.data = dict(xS=[],yS=[],xE=[],yE=[])
-     Vector3_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=1)
+     Vector3_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=-1)
      Line_source.data = dict(x=[0,0],y=[-1000,1000])
      Line2_source.data = dict(x=[-1000,1000],y=[0,0])
      Line_source1.data = dict(x=[15,50],y=[25,50])
@@ -312,7 +312,7 @@ LineVector1Slider.on_change('value',changeTheta1Line1)
 LineVector2Slider= LatexSlider(title="\\text {Direction 2: } \\alpha_2=", value_unit='^{\\circ}', value=0.0, start=0.0, end=360.0, step=5)
 LineVector2Slider.on_change('value',changeTheta1Line2)     
 
-Vector1Slider = LatexSlider(title="|F|=", value_unit='N', value=70,start=0,end=100,step=5)
+Vector1Slider = LatexSlider(title="|F|=", value_unit='\mathrm{N}', value=70,start=0,end=100,step=5)
 Vector1Slider.on_change('value',changeVectorValue)
 
 show_button = Button(label="Show components", button_type="success")
