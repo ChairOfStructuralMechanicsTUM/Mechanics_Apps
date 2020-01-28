@@ -174,7 +174,7 @@ def ChangeRotatingPlane_Forces():
         #Mvar.NetaN_arrow_source.data = dict(xS=[], xE=[], yS=[], yE=[], lW = [])
 
         Mvar.NetaP_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []), rollover=-1)
-        Mvar.NetaN_arrow_source.strean(dict(xS=[], xE=[], yS=[], yE=[], lW = []), rollover=-1)
+        Mvar.NetaN_arrow_source.stream(dict(xS=[], xE=[], yS=[], yE=[], lW = []), rollover=-1)
 
         Mvar.NetaP_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
         Mvar.NetaN_rect_source.data  = dict(x=[], y=[], w=[], h = [], angle=[])
