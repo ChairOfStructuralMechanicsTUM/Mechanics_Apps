@@ -160,9 +160,9 @@ fig.line(x='x',y='y',source=Linking_Line,color="black",line_width=3)
 spring.plot(fig,width=2)
 damper.plot(fig,width=2)
 mass.plot(fig)
-fig.add_layout(Arrow(end=None, line_color="red", line_width=2,
+fig.add_layout(Arrow(end=None, line_color="#E37222", line_width=2,
     x_start='x1', y_start='y1', x_end='x2', y_end='y2', source=arrow_line))
-fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red", line_width=2,
+fig.add_layout(Arrow(end=NormalHead(fill_color="#E37222"), line_color="#A2AD00", line_width=2,
     x_start='x1', y_start='y1', x_end='x2', y_end='y2', source=arrow_offset))
 fig.toolbar.logo = None #removes bokeh logo
 
