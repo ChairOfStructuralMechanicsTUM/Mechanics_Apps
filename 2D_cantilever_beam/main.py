@@ -528,29 +528,29 @@ def fun_change_Py(attrname, old, new):
         sourceFyLabel.data = dict(x= [],y= [],f= [])                                 
     else:
         if sourceXYdef.data['y'][0][3] <= 0:
-            sourceArrowXY.data = dict(
+            sourceArrowXY.stream(dict(
                                       xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Py)/5000+0.25],
                                       xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
-                                 )
-            sourceFyLabel.data = dict(
+                                 ),rollover=1)
+            sourceFyLabel.stream(dict(
                                       x= sourceArrowXY.data['xs'],
                                       y= [sourceArrowXY.data['ys'][0] + 0.5],
                                       f= ['Fy']
-                                 )
+                                 ),rollover=1)
         else:
-            sourceArrowXY.data = dict(
+            sourceArrowXY.stream(dict(
                                       xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Py)/5000-0.25],
                                       xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
-                                 )
-            sourceFyLabel.data = dict(
+                                 ),rollover=1)
+            sourceFyLabel.stream(dict(
                                       x= sourceArrowXY.data['xs'],
                                       y= [sourceArrowXY.data['ys'][0] - 0.5],
                                       f= ['Fy']
-                                 )
+                                 ),rollover=1)
         
     update_colorBar_extremas(smallestValue,biggestValue)
     fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSection,Py,Pz)
@@ -602,29 +602,29 @@ def fun_change_Pz(attrname, old, new):
         sourceFzLabel.data = dict(x=[],y=[],f=[])
     else:
         if sourceXZdef.data['y'][0][3] <= 0:
-            sourceArrowXZ.data = dict(
+            sourceArrowXZ.stream(dict(
                                       xs=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Pz)/5000.0+0.25],
                                       xe=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ye=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
-                                 )
-            sourceFzLabel.data = dict(
+                                 ),rollover=1)
+            sourceFzLabel.stream(dict(
                                       x= sourceArrowXZ.data['xs'],
                                       y= [sourceArrowXZ.data['ys'][0] + 0.5],
                                       f= ['Fz']
-                                 )
+                                 ),rollover=1)
         else:
-            sourceArrowXZ.data = dict(
+            sourceArrowXZ.stream(dict(
                                       xs=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Pz)/5000.0-0.25],
                                       xe=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ye=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
-                                 )
-            sourceFzLabel.data = dict(
+                                 ),rollover=1)
+            sourceFzLabel.stream(dict(
                                       x= sourceArrowXZ.data['xs'],
                                       y= [sourceArrowXZ.data['ys'][0] - 0.5],
                                       f= ['Fz']
-                                 )
+                                 ),rollover=1)
         
     update_colorBar_extremas(smallestValue,biggestValue)
     fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSection,Py,Pz)
