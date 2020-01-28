@@ -30,19 +30,25 @@ code {
 }
 </style>
 
-<h1>Building with baseisolation under seismic loading</h1>
+<h1>Building with base isolation under seismic loading</h1>
 
 <p>
-In this application, the maximum deformation a building with baseisolation can encounter under a seismic loading is to be modelled. First, the governing equation of motion of the building will be determined. Then, a modal analysis will be performed upon this system of equations and the corresponding eigenfrequencies and eigen-modeshapes are plotted. At the end, the maximum deformation of the building is to be determined based on standard codes for seismic loading on buildings.
+In this application, the maximum deformation of a building with base isolation subjected to seismic loading is simulated.  
+The seismic load is defined according to the Eurocode 8, German Annex, and it is shown in terms of spectral accelerations.
+Different parameters such as earthquake zones, importance coefficient and underground parameter, influnce the amplitudes and shape of the spectrum.
+The governing equation of motion of the building are solved using the response spectrum analysis. 
+The app shows the eigenfrequencies, the natural mode shapes and the maximum deformation of the system, with and without base isolation.
 </p>
 
 <p>
-In this application, the following interactivities have been implemented:
+In this app, the following interactivities have been implemented:
 </p>
 
 <ul>
-    <li>The mass of each floor can be modified using the mass input box</li>
-    <li>The bending stiffness ($EI$) of each side wall can be modified using the bending stiffness input box</li>
-    <li>The corrsponding seismic related parameters can be changed on the right next to the Elastic Response Spectrum plot. Whenever those paramters are changed, the user should hit the "Re-calculate Elastic Response Spectrum" button to re-draw the spectrum</li>
-    <li>The user should hit the button "Solve System" whenever the user wants to update the modal parameters as well as the maximum deformation of the building according to the newly chosen values and parameters</li>
+    <li>The mass of the floors can be modified using the mass input box.</li>
+    <li>The bending stiffness ($EI$) of each side wall can be modified using the bending stiffness input box.</li>
+    <li>The earthquake zone, the importance coefficient and the underground parameter can be changed on the right next to the Elastic Response Spectrum plot. Whenever those paramters are changed, the user should hit the "Re-calculate Elastic Response Spectrum" button to re-draw the spectrum.</li>
+    <li>To solve the problem hit the button "Solve System". This should be reapeted whenever the user changes the input parameters.</li>
 </ul>
+
+<i>Ref: Dynamik der Baukonstruktionen (2017) Christian Petersen, Horst Werkle, Example 13.8.3.3, Page 903.</i>
