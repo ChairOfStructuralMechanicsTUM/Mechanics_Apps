@@ -92,29 +92,29 @@ def construct_deformed_beam_centerLine( Py, Pz, E,
     if (glCantileverPrint == 1): 
         if xComponent > 5.0 and Pz==100.0 and Py==100.0:
             if glCantileverCrossSection == 0:
-                print "Rectangular CS"
-                print "(length, width, height) = ", "(", length, ", ", thickness, ", ", height, ")"
-                print "Iz = ", Iz
-                print "Iy = ", Iy                
+                print ("Rectangular CS")
+                print ("(length, width, height) = ", "(", length, ", ", thickness, ", ", height, ")")
+                print ("Iz = ", Iz)
+                print ("Iy = ", Iy)                
             elif glCantileverCrossSection == 1:
-                print "Double-T CS"
-                print "(length, width_total, width_elements, height) = ", "(", length, ", ", thickness, ", ", thickness/10, ", ", height, ")"                
-                print "Iz = ", Iz
-                print "Iy = ", Iy                
+                print ("Double-T CS")
+                print ("(length, width_total, width_elements, height) = ", "(", length, ", ", thickness, ", ", thickness/10, ", ", height, ")" )               
+                print ("Iz = ", Iz)
+                print ("Iy = ", Iy)                
             elif glCantileverCrossSection == 2:
-                print "Circular CS"
-                print "(length, d) = ", "(", length, ", ", thickness, ")"                
-                print "Iz = ", Iz
-                print "Iy = ", Iy                
+                print ("Circular CS")
+                print ("(length, d) = ", "(", length, ", ", thickness, ")")                
+                print ("Iz = ", Iz)
+                print ("Iy = ", Iy)                
             elif glCantileverCrossSection == 3:
-                print "Triangular CS"
-                print "(length, width, height) = ", "(", length, ", ", thickness, ", ", height, ")"                
-                print "Iz = ", Iz
-                print "Iy = ", Iy                     
-            print "Py = ", Py
-            print "Pz = ", Pz 
-            print "u_y(x=5, y=0, z=0) = ", yComponent/amplificationFactor
-            print "u_z(x=5, y=0, z=0) = ", zComponent/amplificationFactor
+                print ("Triangular CS")
+                print ("(length, width, height) = ", "(", length, ", ", thickness, ", ", height, ")" )               
+                print ("Iz = ", Iz)
+                print ("Iy = ", Iy)                     
+            print ("Py = ", Py)
+            print ("Pz = ", Pz)
+            print ("u_y(x=5, y=0, z=0) = ", yComponent/amplificationFactor)
+            print ("u_z(x=5, y=0, z=0) = ", zComponent/amplificationFactor)
     ### PRINTEND
 
 
@@ -298,14 +298,14 @@ def elements_color_determiner( deformed,
                 if (glCantileverPrint == 1): 
                     if (x_pos > 1.45 and x_pos < 1.55 and y_pos > 0.45 and Py==100 and Pz==100):
                         if (glCantileverCrossSection==0):
-                            print "Sigma(x=1.5, y=0.5, z=0.5) = ", strainXXup
+                            print ("Sigma(x=1.5, y=0.5, z=0.5) = ", strainXXup)
                         elif (glCantileverCrossSection==1):
-                            print "Sigma(x=1.5, y=0.5, z=0.5) = ", strainXXup
+                            print ("Sigma(x=1.5, y=0.5, z=0.5) = ", strainXXup)
                         elif (glCantileverCrossSection==2):
-                            print "Sigma(x=1.5, y=0.5, z=0.0) = ", strainXXup  
+                            print ("Sigma(x=1.5, y=0.5, z=0.0) = ", strainXXup)  
                     if (glCantileverCrossSection==3):
                             if (x_pos > 1.45 and x_pos < 1.55 and y_pos > 0.33 and Py==100 and Pz==100):
-                                print "Sigma(x=1.5, y=0.33, z=0.5) = ", strainXXup
+                                print ("Sigma(x=1.5, y=0.33, z=0.5) = ", strainXXup)
                 ### PRINTEND
 
 
@@ -522,11 +522,11 @@ def calculate_stresses_xy_element(x_pos, y_pos, length, height, thickness, glCan
     if (glCantileverPrint == 1): 
         if (Py==100 and Pz==100):
             if(glCantileverCrossSection==3):
-                print "Sigma_xx(x=1.5, y=-0,66, z=0) = ", -1*(sigma_x_l[0])
+                print ("Sigma_xx(x=1.5, y=-0,66, z=0) = ", -1*(sigma_x_l[0]))
             else:
-                print "Sigma_xx(x=1.5, y=-0,5, z=0) = ", -1*(sigma_x_l[0])
-            print "Tau_xy(x=1.5, y=0, z=0) = ", tau_xy[-1]
-            print ""               
+                print ("Sigma_xx(x=1.5, y=-0,5, z=0) = ", -1*(sigma_x_l[0]))
+            print ("Tau_xy(x=1.5, y=0, z=0) = ", tau_xy[-1])
+            print ("")               
 ### PRINTEND
 
     return sigma_x_l,sigma_x_r,tau_xy

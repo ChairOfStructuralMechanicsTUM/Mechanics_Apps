@@ -98,8 +98,8 @@ def evolve():
 
     if force_value > 0:
         if D == 0 and frequency_ratio_value == 1:
-            s_p = 0.5 * (initial_displacement_value * cos(ef*t) + initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * (sin(ef*t) - ef*t*cos(ef*t)))
-            s_h = s_p
+            s_p = -force_value/ (2*k) * ef*t*cos(ef*t)
+            s_h = initial_displacement_value * cos(ef*t)+initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * sin(ef*t)
         else:
             # particular (steady-state) part
             s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
@@ -160,9 +160,9 @@ fig.line(x='x',y='y',source=Linking_Line,color="black",line_width=3)
 spring.plot(fig,width=2)
 damper.plot(fig,width=2)
 mass.plot(fig)
-fig.add_layout(Arrow(end=None, line_color="red", line_width=2,
+fig.add_layout(Arrow(end=None, line_color="#E37222", line_width=2,
     x_start='x1', y_start='y1', x_end='x2', y_end='y2', source=arrow_line))
-fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red", line_width=2,
+fig.add_layout(Arrow(end=NormalHead(fill_color="#E37222"), line_color="#A2AD00", line_width=2,
     x_start='x1', y_start='y1', x_end='x2', y_end='y2', source=arrow_offset))
 fig.toolbar.logo = None #removes bokeh logo
 
@@ -170,9 +170,9 @@ fig.toolbar.logo = None #removes bokeh logo
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
 p = figure(title="", y_range=(2,-2), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
     toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
-p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
-p.line(x='t',y='s',source=displacement_particular,color="#a2ad00",legend="Particular Solution",muted_color="#98c6ea",muted_alpha=0.2)
-p.line(x='t',y='s',source=displacement_homogeneous,color="#64a0c8",legend="Homogeneous Solution",muted_color="#64a0c8",muted_alpha=0.2)
+p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend_label="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
+p.line(x='t',y='s',source=displacement_particular,color="#a2ad00",legend_label="Particular Solution",muted_color="#98c6ea",muted_alpha=0.2)
+p.line(x='t',y='s',source=displacement_homogeneous,color="#64a0c8",legend_label="Homogeneous Solution",muted_color="#64a0c8",muted_alpha=0.2)
 p.axis.major_label_text_font_size="12pt"
 p.axis.axis_label_text_font_style="normal"
 p.axis.axis_label_text_font_size="14pt"
@@ -260,10 +260,10 @@ def move_system(disp):
     if force_value > 0:
         t = displacement.data["t"][-1]
         F_length = force_value*sin(excitation_frequency_value*t)
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[15],y2=[15-F_length*3])
-        arrow_offset.data=dict(x1=[0],x2=[0],y1=[15-F_length*3],y2=[15-F_length*3 - (2*(F_length>0)-1)*1.0])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[15],y2=[15-F_length*3]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[15-F_length*3],y2=[15-F_length*3 - (2*(F_length>0)-1)*1.0]),rollover=1)
     else:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp]),rollover=1)
 
 ## Create slider to choose mass
 def change_mass(attr,old,new):
@@ -345,11 +345,11 @@ def change_force_value(attr,old,new):
     current_y2            = arrow_line.data["y2"][0]
     updateParameters()
     if new == 1:
-        arrow_line.data   = dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20])
-        arrow_offset.data = dict(x1=[0],y1=[current_y1-23],x2=[0],y2=[current_y2-20.1])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[current_y1-20],y2=[current_y2-20]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],y1=[current_y1-23],x2=[0],y2=[current_y2-20.1]),rollover=1)
     else:
-        arrow_line.data   = dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
-        arrow_offset.data = dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20]),rollover=1)
     
 force_value_input = Slider(title="Force", value=force_value, start=0, end=1.0, step=1,width=400)
 force_value_input.on_change('value',change_force_value)
@@ -426,11 +426,11 @@ def stop():
     drawing_displacement = -initial_displacement_value * spring.getSpringConstant
     move_system(drawing_displacement)
     if force_value > 0:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[15+drawing_displacement],y2=[12+drawing_displacement])
-        arrow_offset.data=dict(x1=[0],x2=[0],y1=[12+drawing_displacement],y2=[12+(drawing_displacement-0.1)*1.1])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[15+drawing_displacement],y2=[12+drawing_displacement]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[12+drawing_displacement],y2=[12+(drawing_displacement-0.1)*1.1]),rollover=1)
     else:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
-        arrow_offset.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement]),rollover=1)
+        arrow_offset.stream(dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement]),rollover=1)
 
 def reset():
     stop()
@@ -505,7 +505,7 @@ description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
 # grid plot of phase angle and amplification
-gp = gridplot([p_af,p_pa],ncols=1,plot_width=250,plot_height=250,merge_tools=True,toolbar_location="below",toolbar_options=dict(logo=None))  # for gridpot we need to disable logo again
+gp = gridplot([p_af,p_pa],ncols=1,plot_width=250,plot_height=250,merge_tools=True,toolbar_location="below",toolbar_options=dict(logo=None))  # for gridplot we need to disable logo again
 
 ## Send to window
 hspace = 20

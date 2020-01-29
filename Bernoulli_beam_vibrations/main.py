@@ -37,10 +37,10 @@ beam2 = ColumnDataSource(data=dict(x=[0,1], y=[0,0]))
 beam3=ColumnDataSource(data=dict(x=[0,1], y=[0,0]))
 
 # load support symbols
-support1 = "Bernoulli_beam_vibrations/static/images/auflager01.svg"
-support2 = "Bernoulli_beam_vibrations/static/images/auflager02.svg"
-support3 = "Bernoulli_beam_vibrations/static/images/auflager03.svg"
-support4 = "Bernoulli_beam_vibrations/static/images/auflager04.svg"
+support1 = "Bernoulli_beam_vibrations/static/images/support01.svg"
+support2 = "Bernoulli_beam_vibrations/static/images/support02.svg"
+support3 = "Bernoulli_beam_vibrations/static/images/support03.svg"
+support4 = "Bernoulli_beam_vibrations/static/images/support04.svg"
 support_src = ColumnDataSource(dict(sp1=[support1], sp2=[support2], sp3=[support3], sp4=[support4]))
 
 ## pre-compute the eigenvalues for all beams

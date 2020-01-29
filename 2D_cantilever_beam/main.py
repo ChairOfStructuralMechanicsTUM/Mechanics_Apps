@@ -284,10 +284,10 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         ## DELETE TAU LABELS
         Tauplot_Label_Source.data = dict(x=[], y=[], names=[])
         ## DELETE TAU ARROWS
-        TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
-        TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])        
-        TauArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
-        TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        TauArrowSource1.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+        TauArrowSource2.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+        TauArrowSource3.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+        TauArrowSource4.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
 
         ## SCALING AND POSITION OF SIGMA GLYPHS
         sigmascaling = 0.0000025*50
@@ -334,31 +334,31 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
 
         # Arrows left end 
         if (sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))] < -0.05): 
-            SigmaArrowSource1.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
-            SigmaArrowSource2.data = dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
-            SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+            SigmaArrowSource1.stream(dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4]),rollover=1)
+            SigmaArrowSource2.stream(dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] ),rollover=1)
+            SigmaArrowSource3.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
         elif (sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))] > 0.05): 
-            SigmaArrowSource1.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
-            SigmaArrowSource2.data = dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )       
-            SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])        
+            SigmaArrowSource1.stream(dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4]),rollover=1)
+            SigmaArrowSource2.stream(dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] ),rollover=1)
+            SigmaArrowSource3.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
         else:
-            SigmaArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-            SigmaArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-            SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+            SigmaArrowSource1.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            SigmaArrowSource2.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            SigmaArrowSource3.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
 
         # Arrows right end
         if (sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))] < -0.05): 
-            SigmaArrowSource4.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
-            SigmaArrowSource5.data = dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )
-            SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+            SigmaArrowSource4.stream(dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4]),rollover=1)
+            SigmaArrowSource5.stream(dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] ),rollover=1)
+            SigmaArrowSource6.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
         elif (sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))] > 0.05): 
-            SigmaArrowSource4.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4])
-            SigmaArrowSource5.data = dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] )     
-            SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+            SigmaArrowSource4.stream(dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4]),rollover=1)
+            SigmaArrowSource5.stream(dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] ),rollover=1)
+            SigmaArrowSource6.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
         else:
-            SigmaArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-            SigmaArrowSource5.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-            SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+            SigmaArrowSource4.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            SigmaArrowSource5.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            SigmaArrowSource6.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
 
     ## IF TAU BUTTON IS ACTIVATED:
     if (glCantileverStress==1):    
@@ -368,12 +368,12 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         ## DELETE SIGMA LABELS
         Sigmaplot_Label_Source.data = dict(x=[], y=[], names=[])
         ## DELETE SIGMA ARROWS
-        SigmaArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-        SigmaArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-        SigmaArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-        SigmaArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-        SigmaArrowSource5.data = dict(xs=[] , xe= [], ys=[] , ye=[])
-        SigmaArrowSource6.data = dict(xs=[] , xe= [], ys=[] , ye=[])
+        SigmaArrowSource1.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+        SigmaArrowSource2.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+        SigmaArrowSource3.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+        SigmaArrowSource4.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+        SigmaArrowSource5.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+        SigmaArrowSource6.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
 
         ## SCALING AND POSITION OF TAU GLYPHS
         tau_xy_scaling = 0.000005*50
@@ -443,20 +443,20 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         ## ARROW LEFT END:
         tau_xy_l_pos_y = -0.25                 
         if (Py<0): 
-            TauArrowSource1.data = dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y])
+            TauArrowSource1.stream(dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y]),rollover=1)
         elif (Py>0):
-            TauArrowSource1.data = dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y])
+            TauArrowSource1.stream(dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y]),rollover=1)
         else:            
-            TauArrowSource1.data = dict(xs=[] , xe= [], ys=[] , ye=[])  
+            TauArrowSource1.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
         
         ## ARROWS RIGHT END:             
         tau_xy_r_pos_y = -0.25           
         if (Py<-30):
-            TauArrowSource2.data = dict(xs=[tau_xy_r_pos_x+arrow_adjust_x] , xe= [tau_xy_r_pos_x+arrow_adjust_x], ys=[tau_xy_r_pos_y-arrow_adjust_y+arrow_move_y] , ye=[tau_xy_r_pos_y+arrow_adjust_y+arrow_move_y])
+            TauArrowSource2.stream(dict(xs=[tau_xy_r_pos_x+arrow_adjust_x] , xe= [tau_xy_r_pos_x+arrow_adjust_x], ys=[tau_xy_r_pos_y-arrow_adjust_y+arrow_move_y] , ye=[tau_xy_r_pos_y+arrow_adjust_y+arrow_move_y]),rollover=1)
         elif (Py>30):
-            TauArrowSource2.data = dict(xs=[tau_xy_r_pos_x+arrow_adjust_x] , xe= [tau_xy_r_pos_x+arrow_adjust_x], ys=[tau_xy_r_pos_y+arrow_adjust_y+arrow_move_y] , ye=[tau_xy_r_pos_y-arrow_adjust_y+arrow_move_y])
+            TauArrowSource2.stream(dict(xs=[tau_xy_r_pos_x+arrow_adjust_x] , xe= [tau_xy_r_pos_x+arrow_adjust_x], ys=[tau_xy_r_pos_y+arrow_adjust_y+arrow_move_y] , ye=[tau_xy_r_pos_y-arrow_adjust_y+arrow_move_y]),rollover=1)
         else:            
-            TauArrowSource2.data = dict(xs=[] , xe= [], ys=[] , ye=[])  
+            TauArrowSource2.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
 
         ## ARROWS UPPER BORDER:
         tau_xy_u_pos_y = 0.0            
@@ -470,14 +470,14 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
         else:            
             arrow_adjust_y = max(abs(tau_xy_u_scaled))/2.0
         if (Py<-30):
-            TauArrowSource3.data = dict(xs=[(tau_xy_u_pos_x-0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)+arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])            
-            TauArrowSource4.data = dict(xs=[(tau_xy_u_pos_x+0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)+arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])                                  
+            TauArrowSource3.stream(dict(xs=[(tau_xy_u_pos_x-0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)+arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y]),rollover=1)
+            TauArrowSource4.stream(dict(xs=[(tau_xy_u_pos_x+0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)+arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y]),rollover=1)                     
         elif (Py>30):
-            TauArrowSource3.data = dict(xs=[(tau_xy_u_pos_x-0.5)+arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)-arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])            
-            TauArrowSource4.data = dict(xs=[(tau_xy_u_pos_x+0.5)+arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)-arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y])
+            TauArrowSource3.stream(dict(xs=[(tau_xy_u_pos_x-0.5)+arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)-arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y]),rollover=1)
+            TauArrowSource4.stream(dict(xs=[(tau_xy_u_pos_x+0.5)+arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)-arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y]),rollover=1)
         else:
-            TauArrowSource3.data = dict(xs=[] , xe= [], ys=[] , ye=[])            
-            TauArrowSource4.data = dict(xs=[] , xe= [], ys=[] , ye=[])   
+            TauArrowSource3.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)        
+            TauArrowSource4.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
 
 
 
@@ -524,33 +524,33 @@ def fun_change_Py(attrname, old, new):
     # deforming downwards
 
     if Py == 0:
-        sourceArrowXY.data = dict(xs=[], ys=[],xe=[], ye=[],)
+        sourceArrowXY.stream(dict(xs=[], ys=[],xe=[], ye=[]),rollover=-1)
         sourceFyLabel.data = dict(x= [],y= [],f= [])                                 
     else:
         if sourceXYdef.data['y'][0][3] <= 0:
-            sourceArrowXY.data = dict(
+            sourceArrowXY.stream(dict(
                                       xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Py)/5000+0.25],
                                       xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
-                                 )
-            sourceFyLabel.data = dict(
+                                 ),rollover=1)
+            sourceFyLabel.stream(dict(
                                       x= sourceArrowXY.data['xs'],
                                       y= [sourceArrowXY.data['ys'][0] + 0.5],
                                       f= ['Fy']
-                                 )
+                                 ),rollover=1)
         else:
-            sourceArrowXY.data = dict(
+            sourceArrowXY.stream(dict(
                                       xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Py)/5000-0.25],
                                       xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
-                                 )
-            sourceFyLabel.data = dict(
+                                 ),rollover=1)
+            sourceFyLabel.stream(dict(
                                       x= sourceArrowXY.data['xs'],
                                       y= [sourceArrowXY.data['ys'][0] - 0.5],
                                       f= ['Fy']
-                                 )
+                                 ),rollover=1)
         
     update_colorBar_extremas(smallestValue,biggestValue)
     fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSection,Py,Pz)
@@ -598,33 +598,33 @@ def fun_change_Pz(attrname, old, new):
     # deforming downwards
 
     if Pz == 0:
-        sourceArrowXZ.data = dict(xs=[],ys=[],xe=[],ye=[])
+        sourceArrowXZ.stream(dict(xs=[],ys=[],xe=[],ye=[]),rollover=-1)
         sourceFzLabel.data = dict(x=[],y=[],f=[])
     else:
         if sourceXZdef.data['y'][0][3] <= 0:
-            sourceArrowXZ.data = dict(
+            sourceArrowXZ.stream(dict(
                                       xs=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Pz)/5000.0+0.25],
                                       xe=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
                                       ye=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
-                                 )
-            sourceFzLabel.data = dict(
+                                 ),rollover=1)
+            sourceFzLabel.stream(dict(
                                       x= sourceArrowXZ.data['xs'],
                                       y= [sourceArrowXZ.data['ys'][0] + 0.5],
                                       f= ['Fz']
-                                 )
+                                 ),rollover=1)
         else:
-            sourceArrowXZ.data = dict(
+            sourceArrowXZ.stream(dict(
                                       xs=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Pz)/5000.0-0.25],
                                       xe=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
                                       ye=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
-                                 )
-            sourceFzLabel.data = dict(
+                                 ),rollover=1)
+            sourceFzLabel.stream(dict(
                                       x= sourceArrowXZ.data['xs'],
                                       y= [sourceArrowXZ.data['ys'][0] - 0.5],
                                       f= ['Fz']
-                                 )
+                                 ),rollover=1)
         
     update_colorBar_extremas(smallestValue,biggestValue)
     fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSection,Py,Pz)
@@ -636,9 +636,9 @@ def fun_change_Cross_Section(attrname, old, new):
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])
-        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]) 
-        CoordArrowXZSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])  
-        CoordArrowXYESource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])           
+        CoordArrowXYSource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)
+        CoordArrowXZSource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)
+        CoordArrowXYESource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])  
         labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])      
         labelXYElement.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                          
@@ -649,8 +649,8 @@ def fun_change_Cross_Section(attrname, old, new):
         CrossSectionSource2.data = dict(sp2=[CrossSection2], x = [0], y = [0])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
-        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])       
-        CoordArrowXYESource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])             
+        CoordArrowXYSource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)   
+        CoordArrowXYESource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)  
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                           
         labelXYElement.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                                         
         XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])           
@@ -660,8 +660,8 @@ def fun_change_Cross_Section(attrname, old, new):
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[CrossSection3], x = [0], y = [0])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
-        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])   
-        CoordArrowXYESource.data=dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])                       
+        CoordArrowXYSource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)
+        CoordArrowXYESource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)            
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                         
         labelXYElement.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])    
         XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])   
@@ -671,8 +671,8 @@ def fun_change_Cross_Section(attrname, old, new):
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])       
         CrossSectionSource4.data = dict(sp4=[CrossSection4], x = [0], y = [0]) 
-        CoordArrowXYSource.data=dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0])  
-        CoordArrowXYESource.data=dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0])              
+        CoordArrowXYSource.stream(dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0]),rollover=1)
+        CoordArrowXYESource.stream(dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0]),rollover=1)   
         labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3+1.0/6.0], text=['y','x'])
         labelXYElement.data=dict(x=[-.3,5.8], y=[2.7,-.3+1.0/6.0], text=['y','x'])    
         XYElementSource.data = dict(sp4=[], x =[], y = []) 

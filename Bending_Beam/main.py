@@ -78,15 +78,15 @@ support_source2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 quad_source = ColumnDataSource(data=dict(top= [], bottom= [],left = [], right =[]))
 segment_source = ColumnDataSource(data=dict(x0= [], y0= [],x1 = [], y1 =[]))
 ### Sliders and Buttons:
-p_loc_slide= LatexSlider(title="\\mathrm{Load \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value= p_loci,start = x0, end = xf, step = 1.0)
-p_mag_slide = LatexSlider(title="\\mathrm{Load \ Amplitude}", value = 1.0, start=-1.0, end=1.0, step=2.0)
-f2_loc_slide = LatexSlider(title="\\mathrm{Support \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=f2_loci,start = x0, end = xf, step = 1.0)
+p_loc_slide= LatexSlider(title="\\mathrm{Load \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value= p_loci,start = x0, end = xf, step = 1.0, width=300)
+p_mag_slide = LatexSlider(title="\\mathrm{Load \ Amplitude}", value = 1.0, start=-1.0, end=1.0, step=2.0, width=300)
+f2_loc_slide = LatexSlider(title="\\mathrm{Support \ Position}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=f2_loci,start = x0, end = xf, step = 1.0, width=300)
 # Button to choose type of load:
-radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Triangular Load"], active=loadoptionsi, width = 600)
+radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Triangular Load"], active=loadoptionsi, width=300)
 # Reset Button
-Reset_button = Button(label="Reset", button_type="success")
+Reset_button = Button(label="Reset", button_type="success", width=300)
 # Show Button
-Show_button = Button(label="Show/Hide Support Forces", button_type="success")
+Show_button = Button(label="Show/Hide Support Forces", button_type="success", width=300)
 
 
 #################################
@@ -134,8 +134,8 @@ def Fun_Cantilever():
         support_source1.data = dict(sp1=[], x = [] , y = [])
         # IF CONSTANT LOAD IS SELECTED, PLOT CANTILEVER WITH CONSTANT LOAD
     if radio_button_group.active == 1:
-        f1_arrow_source.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [])
-        f2_arrow_source.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [])
+        f1_arrow_source.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = []),rollover=-1)
+        f2_arrow_source.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = []),rollover=-1)
         top = 2
         bottom  = -top
         left = -1
@@ -151,8 +151,8 @@ def Fun_Cantilever():
         support_source1.data = dict(sp1=[], x = [] , y = [])
         # IF TRIANGULAR LOAD IS SELECTED, PLOT CANTILEVER WITH TRIANGULAR LOAD
     if radio_button_group.active == 2:    
-        f1_arrow_source.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [])
-        f2_arrow_source.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [])
+        f1_arrow_source.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = []),rollover=-1)
+        f2_arrow_source.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = []),rollover=-1)
         top = 2
         bottom  = -top
         left = -1
@@ -193,9 +193,9 @@ def Fun_Update(attrname, old, new):
             xcan = x0
             Fun_Cantilever()
             if (p_mag>0):
-                p_arrow_source1.data = dict(xS= [p_coord], xE= [p_coord], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
-                p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
+                p_arrow_source1.stream(dict(xS= [p_coord], xE= [p_coord], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] ), rollover=1)
+                p_arrow_source2.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ), rollover=-1)
+                p_arrow_source3.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ), rollover=-1)
                 labels_source.data = dict(x = [p_coord] , y = [1],name = ['F'])
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
                 triangular_load_source.data  = dict(x=[], y=[])                
@@ -279,9 +279,9 @@ def Fun_Update(attrname, old, new):
 
             # p_arrow and labels:
             if (p_mag>0):
-                p_arrow_source1.data = dict(xS= [p_coord], xE= [p_coord], yS= [1+(p_mag/2.3)], yE=[1-(p_mag/2.3)], lW = [2] )
-                p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
-                p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
+                p_arrow_source1.stream(dict(xS= [p_coord], xE= [p_coord], yS= [1+(p_mag/2.3)], yE=[1-(p_mag/2.3)], lW = [2] ),  rollover=1)
+                p_arrow_source2.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ), rollover=-1)
+                p_arrow_source3.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ), rollover=-1)
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [p_coord] , y = [1],name = ['F'])
@@ -300,33 +300,33 @@ def Fun_Update(attrname, old, new):
             # f1_arrow:
             if (p_mag<0):
                 if (f1_mag>0):
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.stream(dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)]), rollover=1)
                 elif (f1_mag<0):                
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [1-(math.atan(f1_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.stream(dict(xS= [0], xE= [0], yE= [1-(math.atan(f1_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)]), rollover=1)
                 else:                    
-                    f1_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
+                    f1_arrow_source.stream(dict(xS= [], xE= [], yE= [], yS=[], lW = []), rollover=-1)
             else:
                 if (f1_mag>0):                    
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-1-(math.atan(f1_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.stream(dict(xS= [0], xE= [0], yE= [-1-(math.atan(f1_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)]), rollover=1)
                 elif (f1_mag<0):                
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.stream(dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)]), rollover=1)
                 else:                    
-                    f1_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])            
+                    f1_arrow_source.stream(dict(xS= [], xE= [], yE= [], yS=[], lW = []), rollover=-1)            
             # f2_arrow:
             if (p_mag<0):
                 if (f2_mag>0 and p_coord!=0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [0.8], yS=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.stream(dict(xS= [f2_coord], xE= [f2_coord], yE= [0.8], yS=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)]), rollover=1)
                 elif (f2_mag<0 and p_coord!=0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [1-(math.atan(f2_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.stream( dict(xS= [f2_coord], xE= [f2_coord], yE= [1-(math.atan(f2_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f2_mag*0.05)]), rollover=1)
                 else:                    
-                    f2_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
+                    f2_arrow_source.stream( dict(xS= [], xE= [], yE= [], yS=[], lW = []), rollover=-1)
             else:
                 if (f2_mag>0 and p_coord!=0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-1-(math.atan(f2_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.steam(dict(xS= [f2_coord], xE= [f2_coord], yE= [-1-(math.atan(f2_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)]), rollover=1)
                 elif (f2_mag<0 and p_coord!=0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.stream(dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)]), rollover=1)
                 else:                    
-                    f2_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
+                    f2_arrow_source.stream(dict(xS= [], xE= [], yE= [], yS=[], lW = []), rollover=-1)
             # Show Support Forces
             if (showvar==1):
                 if (p_mag>0):
@@ -359,23 +359,23 @@ def Fun_Update(attrname, old, new):
             Fun_Cantilever()
 
             if (p_mag>0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source1.stream(dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] ),rollover=1)
+                p_arrow_source2.stream(dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] ),rollover=1)
+                p_arrow_source3.stream(dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] ),rollover=1)
                 constant_load_source.data  = dict(x=[p_coord/2.0], y=[1], w=[p_coord], h=[p_mag], angle=[0])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [p_coord] , y = [1],name = ['p'])            
             elif (p_mag<0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source1.stream( dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] ),rollover=1)
+                p_arrow_source2.stream( dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] ),rollover=1)
+                p_arrow_source3.stream( dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] ),rollover=1)
                 constant_load_source.data  = dict(x=[p_coord/2.0], y=[-1.1], w=[p_coord], h=[p_mag], angle=[0])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [p_coord] , y = [-1.1],name = ['p']) 
             else: 
-                p_arrow_source1.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
-                p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
-                p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )   
+                p_arrow_source1.stream( dict(xS= [], xE= [], yS= [], yE=[], lW = [] ), rollover=1)
+                p_arrow_source2.stream( dict(xS= [], xE= [], yS= [], yE=[], lW = [] ), rollover=1)
+                p_arrow_source3.stream( dict(xS= [], xE= [], yS= [], yE=[], lW = [] ), rollover=1)  
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [] , y = [],name = [])                        
@@ -454,27 +454,27 @@ def Fun_Update(attrname, old, new):
 
             # p_arrow and labels:
             if (p_mag>0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source1.stream(dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] ), rollover=1)
+                p_arrow_source2.stream(dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] ), rollover=1)
+                p_arrow_source3.stream(dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yE= [1-(p_mag/2.3)], yS=[1+(p_mag/2.3)], lW = [2] ), rollover=1)
                 constant_load_source.data  = dict(x=[p_coord/2.0], y=[1], w=[p_coord], h=[p_mag], angle=[0])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [p_coord] , y = [1],name = ['p'])
                 support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])      
             elif (p_mag<0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] )
+                p_arrow_source1.stream(dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] ), rollover=1)
+                p_arrow_source2.stream(dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] ), rollover=1)
+                p_arrow_source3.stream(dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yE= [-1.1-(p_mag/2.3)], yS=[-1.1+(p_mag/2.3)], lW = [2] ), rollover=1)
                 constant_load_source.data  = dict(x=[p_coord/2.0], y=[-1.1], w=[p_coord], h=[p_mag], angle=[0])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [p_coord] , y = [-1.1],name = ['p'])
                 support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
             else: 
-                p_arrow_source1.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
-                p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
-                p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
+                p_arrow_source1.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ), rollover=-1)
+                p_arrow_source2.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ), rollover=-1)
+                p_arrow_source3.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ), rollover=-1)
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [] , y = [],name = [])
@@ -484,30 +484,30 @@ def Fun_Update(attrname, old, new):
             # f1_arrow:
             if (p_mag<0 and p_coord!=0):
                 if (f1_mag>0):
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.stream(dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)]),rollover=1)
                 else:
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [1-(math.atan(f1_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.stream(dict(xS= [0], xE= [0], yE= [1-(math.atan(f1_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)]),rollover=1)
             elif (p_mag>0 and p_coord!=0):
                 if (f1_mag>0):
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-1-(math.atan(f1_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.stream(dict(xS= [0], xE= [0], yE= [-1-(math.atan(f1_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)]),rollover=1)
                 else:
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.stream(dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)]),rollover=1)
             else:
-                 f1_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
+                 f1_arrow_source.stream(dict(xS= [], xE= [], yE= [], yS=[], lW = []),rollover=-1)
 
           # f2_arrow:
             if (p_mag<0 and p_coord!=0):
                 if (f2_mag>0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [0.8], yS=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.stream(dict(xS= [f2_coord], xE= [f2_coord], yE= [0.8], yS=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)]),rollover=1)
                 else:
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [1-(math.atan(f2_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.stream(dict(xS= [f2_coord], xE= [f2_coord], yE= [1-(math.atan(f2_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f2_mag*0.05)]),rollover=1)
             elif (p_mag>0 and p_coord!=0):
                 if (f2_mag>0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-1-(math.atan(f2_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.stream(dict(xS= [f2_coord], xE= [f2_coord], yE= [-1-(math.atan(f2_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)]),rollover=1)
                 else:
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.stream(dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)]),rollover=1)
             else:
-                 f2_arrow_source.data = dict(xS= [], xE= [], yE= [], yS=[], lW = [])
+                 f2_arrow_source.stream(dict(xS= [], xE= [], yE= [], yS=[], lW = []),rollover=-1)
                     
             # Show Support Forces
             if (showvar==1):
@@ -542,9 +542,9 @@ def Fun_Update(attrname, old, new):
             Fun_Cantilever()
 
             if (p_mag>0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1-p_mag/2.3+p_mag/10.0], yE=[1-p_mag/2.3], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1-p_mag/2.3+p_mag/2.6], yE=[1-(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1+(p_mag/2.3/1.9)], yE=[1-(p_mag/2.3)], lW = [2] )
+                p_arrow_source1.stream(dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1-p_mag/2.3+p_mag/10.0], yE=[1-p_mag/2.3], lW = [2] ),rollover=1)
+                p_arrow_source2.stream(dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1-p_mag/2.3+p_mag/2.6], yE=[1-(p_mag/2.3)], lW = [2] ),rollover=1)
+                p_arrow_source3.stream(dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1+(p_mag/2.3/1.9)], yE=[1-(p_mag/2.3)], lW = [2] ),rollover=1)
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])     
                 N = 30
                 x1 = np.linspace(0, p_coord, N)
@@ -556,9 +556,9 @@ def Fun_Update(attrname, old, new):
                 triangular_load_source.data  = dict(x=x, y=y)
                 labels_source.data = dict(x = [p_coord] , y = [1],name = ['p'])
             elif (p_mag<=0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [-1.1-p_mag/2.3+p_mag/10.0], yE=[-1.1-p_mag/2.3], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [-1.1-p_mag/2.3+p_mag/2.6], yE=[-1.1-(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [-1.1+(p_mag/2.3/1.9)], yE=[-1.1-(p_mag/2.3)], lW = [2] )
+                p_arrow_source1.stream(dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [-1.1-p_mag/2.3+p_mag/10.0], yE=[-1.1-p_mag/2.3], lW = [2] ),rollover=1)
+                p_arrow_source2.stream(dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [-1.1-p_mag/2.3+p_mag/2.6], yE=[-1.1-(p_mag/2.3)], lW = [2] ),rollover=1)
+                p_arrow_source3.stream(dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [-1.1+(p_mag/2.3/1.9)], yE=[-1.1-(p_mag/2.3)], lW = [2] ),rollover=1)
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])     
                 # Shape triangular load:
                 N = 30
@@ -571,9 +571,9 @@ def Fun_Update(attrname, old, new):
                 triangular_load_source.data  = dict(x=x, y=y)                   
                 labels_source.data = dict(x = [p_coord] , y = [-1.1],name = ['p'])
             else:
-                p_arrow_source1.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
-                p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
-                p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
+                p_arrow_source1.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ),rollover=-1)
+                p_arrow_source2.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ),rollover=-1)
+                p_arrow_source3.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ),rollover=-1)
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
                 triangular_load_source.data  = dict(x=[], y=[])     
                 labels_source.data = dict(x = [] , y = [],name = [])
@@ -652,9 +652,9 @@ def Fun_Update(attrname, old, new):
 
             # p_arrow and labels:
             if (p_mag>0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1-p_mag/2.3+p_mag/10.0], yE=[1-p_mag/2.3], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1-p_mag/2.3+p_mag/2.6], yE=[1-(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1+(p_mag/2.3/1.9)], yE=[1-(p_mag/2.3)], lW = [2] )
+                p_arrow_source1.stream(dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [1-p_mag/2.3+p_mag/10.0], yE=[1-p_mag/2.3], lW = [2] ),rollover=1)
+                p_arrow_source2.stream(dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [1-p_mag/2.3+p_mag/2.6], yE=[1-(p_mag/2.3)], lW = [2] ),rollover=1)
+                p_arrow_source3.stream(dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [1+(p_mag/2.3/1.9)], yE=[1-(p_mag/2.3)], lW = [2] ),rollover=1)
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])     
                 # Shape triangular load
                 N = 30
@@ -669,9 +669,9 @@ def Fun_Update(attrname, old, new):
                 support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
             elif (p_mag<=0) and (p_coord!=0):
-                p_arrow_source1.data = dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [-1.1-p_mag/2.3+p_mag/10.0], yE=[-1.1-p_mag/2.3], lW = [2] )
-                p_arrow_source2.data = dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [-1.1-p_mag/2.3+p_mag/2.6], yE=[-1.1-(p_mag/2.3)], lW = [2] )
-                p_arrow_source3.data = dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [-1.1+(p_mag/2.3/1.9)], yE=[-1.1-(p_mag/2.3)], lW = [2] )
+                p_arrow_source1.stream(dict(xS= [0.2*p_coord], xE= [0.2*p_coord], yS= [-1.1-p_mag/2.3+p_mag/10.0], yE=[-1.1-p_mag/2.3], lW = [2] ),rollover=1)
+                p_arrow_source2.stream(dict(xS= [p_coord/2.0], xE= [p_coord/2.0], yS= [-1.1-p_mag/2.3+p_mag/2.6], yE=[-1.1-(p_mag/2.3)], lW = [2] ),rollover=1)
+                p_arrow_source3.stream(dict(xS= [p_coord*(1-0.2)], xE= [p_coord*(1-0.2)], yS= [-1.1+(p_mag/2.3/1.9)], yE=[-1.1-(p_mag/2.3)], lW = [2] ),rollover=1)
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])     
                 N = 30
                 x1 = np.linspace(0, p_coord, N)
@@ -685,9 +685,9 @@ def Fun_Update(attrname, old, new):
                 support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
             else:
-                p_arrow_source1.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
-                p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
-                p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
+                p_arrow_source1.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ),rollover=-1)
+                p_arrow_source2.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ),rollover=-1)
+                p_arrow_source3.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ),rollover=-1)
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
                 triangular_load_source.data  = dict(x=[], y=[])                    
                 labels_source.data = dict(x = [] , y = [],name = [])
@@ -697,25 +697,25 @@ def Fun_Update(attrname, old, new):
             # f1_arrow:
             if (p_mag<0):
                 if (f1_mag>0):
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.stream(dict(xS= [0], xE= [0], yE= [0.8], yS=[1+(math.atan(f1_mag)/1.1)], lW = [1.0+2.0*math.atan(f1_mag*0.05)]),rollover=1)
                 else:
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [1-(math.atan(f1_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.stream(dict(xS= [0], xE= [0], yE= [1-(math.atan(f1_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f1_mag*0.05)]),rollover=1)
             else:
                 if (f1_mag>0):
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-1-(math.atan(f1_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.stream(dict(xS= [0], xE= [0], yE= [-1-(math.atan(f1_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f1_mag*0.05)]),rollover=1)
                 else:
-                    f1_arrow_source.data = dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)])
+                    f1_arrow_source.stream(dict(xS= [0], xE= [0], yE= [-0.8], yS=[-1+(math.atan(f1_mag)/1.1)], lW = [1.0-2.0*math.atan(f1_mag*0.05)]),rollover=1)
             # f2_arrow:
             if (p_mag<0):
                 if (f2_mag>0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [0.8], yS=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.stream(dict(xS= [f2_coord], xE= [f2_coord], yE= [0.8], yS=[1+(math.atan(f2_mag)/1.1)], lW = [1.0+2.0*math.atan(f2_mag*0.05)]),rollover=1)
                 else:
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [1-(math.atan(f2_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.stream(dict(xS= [f2_coord], xE= [f2_coord], yE= [1-(math.atan(f2_mag)/1.1)], yS=[0.8], lW = [1.0-2.0*math.atan(f2_mag*0.05)]),rollover=1)
             else:
                 if (f2_mag>0):
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-1-(math.atan(f2_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.stream(dict(xS= [f2_coord], xE= [f2_coord], yE= [-1-(math.atan(f2_mag)/1.1)], yS=[-0.8], lW = [1.0+2.0*math.atan(f2_mag*0.05)]),rollover=1)
                 else:
-                    f2_arrow_source.data = dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)])
+                    f2_arrow_source.stream(dict(xS= [f2_coord], xE= [f2_coord], yE= [-0.8], yS=[-1+(math.atan(f2_mag)/1.1)], lW = [1.0-2.0*math.atan(f2_mag*0.05)]),rollover=1)
                    
             # Show Support Forces
             if (showvar==1):
@@ -738,7 +738,7 @@ def initial():
     radio_button_group.active = 0
     Fun_Update(None,None,None)
     support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
-    beam_doublearrow_source.data = dict(xS= [0.05], xE= [9.95], yS= [-0.6], yE=[-0.6], lW = [5])
+    beam_doublearrow_source.stream(dict(xS= [0.05], xE= [9.95], yS= [-0.6], yE=[-0.6], lW = [5]),rollover=1)
     beam_measure_label_source.data = dict(x=[4.85], y=[-0.8], names=["L"])
 
 ##### SHOW FUNCTION:
@@ -815,7 +815,7 @@ plot1_labels1 = LatexLabelSet(x='x', y='y', text='names', source=plot1_label_sou
 plot1.line(x='x', y='y', source=shear_source, color="#A2AD00",line_width=2)
 plot1.line(x= [x0-1,xf+1], y = [0, 0 ], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot1.line(x= [xf/2,xf/2], y = [-1.5,1.5], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
-plot1.square([0.0],[0.0],size=0,fill_color="#A2AD00",fill_alpha=0.5,legend="Shear Force")
+plot1.square([0.0],[0.0],size=0,fill_color="#A2AD00",fill_alpha=0.5,legend_label="Shear Force")
 # Set properties
 plot1.legend.location = 'top_right'
 plot1.toolbar.logo = None
@@ -839,7 +839,7 @@ plot2.axis.visible = False
 plot2.outline_line_width = 2
 plot2.outline_line_color = "Black"
 plot2.title.text_font_size="13pt"
-plot2.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5,legend="Bending Moment")
+plot2.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5,legend_label="Bending Moment")
 plot2.legend.location = 'top_right'
 plot2.toolbar.logo=None
 # Add layouts

@@ -22,7 +22,7 @@ l_beam = 40.0
 F_total = 40.0
 std_lang = 'en'
 flags = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
-strings = yaml.safe_load(open('Seesaw/static/strings.json'))
+strings = yaml.safe_load(open('Seesaw/static/strings.json', encoding='utf-8'))
 
 # Force vectors and labels
 F1_source = ColumnDataSource(dict(xS=[0], xE=[0], yS=[F_total/2], yE=[0], xL=[1], yL=[5], name=["F_1"]))
@@ -72,6 +72,9 @@ plot.add_layout(length_label)
 # Div to show force and distance values
 value_plot = LatexDiv(text="", render_as_text=False, width=300)
 
+def setValueText(F1, F2):
+    value_plot.text = "$$\\begin{aligned} F_1&=" + "{:4.1f}".format(F1) + "\\,\\mathrm{N}\\\\ F_2&=" + "{:4.1f}".format(F2) + "\\,\\mathrm{N} \\end{aligned}$$"
+
 def changeLength(attr, old, new):
     tmp = (l_beam-new)/new
     F1_new = (F_total*tmp) / (1+tmp)
@@ -81,7 +84,7 @@ def changeLength(attr, old, new):
     dist_source.patch( {'xE':[(0,new)], 'xL':[(0,new/2.0-0.3)]} )
     support_source.patch( {'x':[(0,new)]} )
     if flags.data["show"][0] == 'on':
-        value_plot.text = "$$\\begin{aligned} F_1&=" + str(F1_new) + "\\,\\mathrm{N}\\\\ F_2&=" + str(F2_new) + "\\,\\mathrm{N} \\end{aligned}$$"
+        setValueText(F1_new, F2_new)
 
 def changeShow(active):
     a = show_button
@@ -90,7 +93,7 @@ def changeShow(active):
         flags.patch( {'show':[(0,'on')]} )
         [F1] = F1_source.data['yS']
         [F2] = F2_source.data['yS']
-        value_plot.text = "$$\\begin{aligned} F_1&=" + str(F1) + "\\,\\mathrm{N}\\\\ F_2&=" + str(F2) + "\\,\\mathrm{N} \\end{aligned}$$"
+        setValueText(F1, F2)
         show_button.label = strings["show_button.label"]['on'][lang]
     else:
         flags.patch( {'show':[(0,'off')]} )
@@ -109,11 +112,11 @@ def setDocumentLanguage(lang):
     for s in strings:
         if 'checkFlag' in strings[s]:
             flag = flags.data[strings[s]['checkFlag']][0]
-            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode('utf-8') )
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
         elif 'isCode' in strings[s] and strings[s]['isCode']:
-            exec( (s + '=' + strings[s][lang]).encode('utf-8') )
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
         else:
-            exec( (s + '=\"' + strings[s][lang] + '\"').encode('utf-8') )
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
      
 # Slider to change location of Forces F1 and F2
 F1F2Location_slider = LatexSlider(value=20, start=1, end=39, step=1, value_unit="\\text{m}")

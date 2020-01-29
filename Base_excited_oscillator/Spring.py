@@ -11,7 +11,9 @@ class Spring(object):
         self.kappa=kappa
         # define rest directional length (length) and direction (Norm_Initial_Length)
         self.length = (InitialEnd-InitialStart)   # initial spring vector
-        self.Norm_Initial_Length = self.length/self.length.norm()   # normalizd initial spring vector
+        self.Norm_Initial_Length_x = self.length.x/self.length.norm()   # normalizd initial spring vector
+        self.Norm_Initial_Length_y = self.length.y/self.length.norm()   
+        self.Norm_Initial_Length=Coord(self.Norm_Initial_Length_x,self.Norm_Initial_Length_y)
         self.length = self.Norm_Initial_Length*x0
         # define the number of coils with respect to the relaxed position of the spring
         self.nCoils=int(floor(x0/spacing))
@@ -25,11 +27,11 @@ class Spring(object):
     ## add object affected by spring force 
     def linkTo(self,obj,point):
         if (point==self.start):
-            self.actsOn.append((obj,'s'))
+            self.actsOn.append([obj,'s'])
             # apply current spring force to the mass object
             #obj.applyForce(-self.kappa*((self.end-self.start)-self.length),self)
         else:
-            self.actsOn.append((obj,'e'))
+            self.actsOn.append([obj,'e'])
             # apply current spring force to the mass object
             #obj.applyForce(self.kappa*(self.end-self.start-self.length),self)
     
@@ -57,9 +59,10 @@ class Spring(object):
             # loop over the 4 points in the coil
             for j in range(0,4):
                 # save points
-                step = SpringVec*0.05+SpringVec*0.9*float(i+j/4.0)/self.nCoils+wiggle[j]
-                Pos['x'].append(start.x+step.x)
-                Pos['y'].append(start.y+step.y)
+                stepx = SpringVec.x*0.05+SpringVec.x*0.9*float(i+j/4.0)/self.nCoils+wiggle[j].x
+                stepy = SpringVec.y*0.05+SpringVec.y*0.9*float(i+j/4.0)/self.nCoils+wiggle[j].y
+                Pos['x'].append(start.x+stepx)
+                Pos['y'].append(start.y+stepy)
         
         # add final points
         Pos['x'].append(end.x-0.05*SpringVec.x)
@@ -73,7 +76,7 @@ class Spring(object):
         return SpringVec
     
     ## draw spring on figure
-    def plot(self,fig,colour="#808080",width=1):
+    def plot(self,fig,colour="#8a8a8a",width=1):
         fig.line(x='x',y='y',color=colour,source=self.Position,line_width=width)
     
     ## place spring in space
@@ -86,7 +89,6 @@ class Spring(object):
         # and the (initial normalized spring vector). The scalar product produces the magnitude of the 
         # component of delta length vector which lies along initial normalized spring vector
         Fs = -self.kappa*(length-self.length).prod_scal(self.Norm_Initial_Length)  # Float
-
         # apply force to each object that the spring acts on
         for i in range(0,len(self.actsOn)):
             self.actsOn[i][0].applyForce(Fs*self.out(self.actsOn[i][1]),self)    # applyForce(Coord,obj)! multiply by Norm_Initial_Length to get a force vector

@@ -1,0 +1,34 @@
+{
+    "curdoc().title": 
+    {
+        "en": "English Title",
+        "de": "Deutscher Titel evtl. auch mit äöü..."
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Template_App/description.html').read()",
+        "de": "open('Template_App/description_de.html', encoding='utf-8').read()"
+    },
+    "slider_name.title":
+    {
+        "en": "\\\\text{Length }a=",
+        "de": "\\\\text{Länge }a="
+    },
+    "plot_name.xaxis.axis_label":
+    {
+        "en": "Distance [m]",
+        "de": "Länge [m]"
+    },
+    "plot_name.yaxis.axis_label":
+    {
+        "en": "Force [N]",
+        "de": "Kraft [N]"
+    }
+}

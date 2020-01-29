@@ -3,6 +3,7 @@
 *~
 *.md#
 *.db
-.vscode/
+.vscode/*
 server.conf
 server_autorun.cmd
+.vscode/settings.json

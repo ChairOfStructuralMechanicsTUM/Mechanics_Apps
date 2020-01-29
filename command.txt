@@ -1,2 +1,0 @@
-activate yourenvname
-bokeh serve --show WaveletApp

@@ -1,0 +1,87 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+
+
+.lds-dual-ring {
+        display: block;
+        width: 50%;
+        margin: auto;
+        padding: 10px;
+    }
+    .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 46px;
+        height: 46px;
+        margin: auto;
+        border-radius: 50%;
+        border: 5px solid rgb(0, 101, 189);
+        border-color: rgb(0, 101, 189) transparent rgb(0, 101, 189) transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+    }
+    @keyframes lds-dual-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+</style>
+
+
+<h3>Loading Example</h3>
+
+<p>
+    For very long and exhaustive computations it is beneficial to inform the user about that. Most commonly this is done through a loading symbol. <br>
+    CSS codes for such loading animations can be found for example on <a href="https://loading.io/css/">https://loading.io/css/</a>.
+</p>
+
+<p>
+    We need:
+    <ul>
+        <li>an html file including the CSS style definition</li>
+        <li>a <i>Div</i> setting this loading symbol</li>
+        <li><i>curdoc().add_next_tick_callback</i></li>
+    </ul>
+</p>
+
+<p>
+    By manipulating the layout one can replace for example a figure with the loading symbol.
+    One could also just provide a dedicated space for this sign and set it to visible only when needed. <br>
+    We go for the second approach here. The other way can be seen in the <a href="https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/tree/master/WaveletApp">Wavelet App</a>.
+</p>
+
+<p>
+    Since Bokeh currently synchronizes only at the <strong>end</strong> of callback functions, we need to provide an extra work function where we put the heavy computation. <br>
+    This function is then called via a <i>curdoc().add_next_tick_callback</i> in order to end the original callback which was opened by a button for example.
+</p>
