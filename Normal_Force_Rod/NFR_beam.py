@@ -18,7 +18,8 @@ from NFR_constants import (
     fixed_support_img,          # support image (fixed)
     lb, ub,                     # lower and upper bound for patch labels
     y_offset,                   # offset of the beam in y direction
-    initial_load, initial_load_position  # inital load values
+    initial_load, initial_load_position,  # inital load values
+    color_rod_hot, color_rod_cold # colors for temperature load
     )
 
 # latex integration
@@ -101,12 +102,23 @@ class NFR_beam():
     def _update_load_direction(self):
         # if arrows should show from right to left
         # swap start and end coordinates of the arrows
-        if self.load_direction == "rtl":
-            self.arrow_source.data['xS'], self.arrow_source.data['xE'] = \
-            self.arrow_source.data['xE'], self.arrow_source.data['xS']
 
-            self.point_load_source.data['xS'], self.point_load_source.data['xE'] = \
-            self.point_load_source.data['xE'], self.point_load_source.data['xS']
+        ### leave this in case the bug https://github.com/bokeh/bokeh/issues/9436 is solved
+        # # if self.load_direction == "rtl":
+        # #     self.arrow_source.data['xS'], self.arrow_source.data['xE'] = \
+        # #     self.arrow_source.data['xE'], self.arrow_source.data['xS']
+
+        # #     self.point_load_source.data['xS'], self.point_load_source.data['xE'] = \
+        # #     self.point_load_source.data['xE'], self.point_load_source.data['xS']
+
+        if self.load_direction == "rtl":
+            new_source = self.arrow_source.data
+            new_source['xS'], new_source['xE'] = new_source['xE'], new_source['xS']
+            self.arrow_source.stream(new_source, rollover=len(new_source['xS'])) # len=rollover can be 2 for triangular or 3 for constant laod
+
+            new_source = self.point_load_source.data
+            new_source['xS'], new_source['xE'] = new_source['xE'], new_source['xS']
+            self.point_load_source.stream(new_source, rollover=1) # len=rollover=1 for point source
 
 
     def set_load_direction(self, new_dir):
@@ -129,7 +141,8 @@ class NFR_beam():
     def _set_point_load(self):
         LP = self.load_position
 
-        self.point_load_source.data=dict(xS=[xr_start-0.5+LP], xE=[xr_start+0.5+LP], yS=[y_offset+0.3], yE=[y_offset+0.3], lW=[2], lC=[color_arrow])
+        #self.point_load_source.data=dict(xS=[xr_start-0.5+LP], xE=[xr_start+0.5+LP], yS=[y_offset+0.3], yE=[y_offset+0.3], lW=[2], lC=[color_arrow])
+        self.point_load_source.stream(dict(xS=[xr_start-0.5+LP], xE=[xr_start+0.5+LP], yS=[y_offset+0.3], yE=[y_offset+0.3], lW=[2], lC=[color_arrow]), rollover=1)
 
         self.load_labels.data=dict(x=[xr_start-0.1+LP, xr_start-0.05+LP], y=[y_offset+0.4, y_offset+0.1], name=['F','|'])
 
@@ -240,6 +253,11 @@ class NFR_beam():
             self.temperature_load_source.data=dict(x=[xr_start, xr_start, LP, LP], y=[y_offset+lb, y_offset+ub, y_offset+ub, y_offset+lb])
 
             self.load_labels.data = dict(x=[LP+0.1], y=[y_offset+0.2], name=['T'])
+
+            # # change the color and pictures based on amplitude
+            # if self.load_direction == "ltr":
+            #     self.color = color_rod_hot
+
         
             self._clear_source(self.point_load_source)
             self._clear_source(self.constant_load_source)
@@ -250,8 +268,7 @@ class NFR_beam():
     # clears ColumnDataSources in such a way, that all keys will stay but only contain empty lists
     def _clear_source(self, cds):
         # exploit the inner rollover definition data = data[-rollover:]
-        cds.stream(cds.data, -2*len(cds.data.values()[0]))
-
+        cds.stream(cds.data, -2*len(list(cds.data.values())[0])) # get the length of the first column of the CDS
 
 
     # move the load to position x (or extend it from 0 to x)
