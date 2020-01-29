@@ -340,7 +340,7 @@ def calcNU(ls_type, rs_type, load_type, L1, ampl):
     if samples_total['yN'].size==0 or samples_total['yU'].size==0:
         samples_total['x'] = []
     else:
-        samples_total['x']  = x_samples
+        samples_total['x'] = x_samples
     
 
     return samples_total
