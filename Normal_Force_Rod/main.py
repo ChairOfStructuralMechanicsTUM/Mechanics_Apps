@@ -54,6 +54,11 @@ graph_U         = ColumnDataSource(data=dict(x=[0], y=[0]))       # data for def
 
 def change_load(attr, old, new):
     beam.set_load(new)
+    # if new = 3
+    #    if -1
+    #       cold.visible
+    #    if 1
+    #       hot.visible
     compute_new_scenario()
 
 def change_left_support(attr, old, new):
@@ -82,16 +87,38 @@ def change_amplitude(attr, old, new):
 
 
     #### changing colors in patches via ColumnDataSource does not seem to work
-    # # print(radio_button_group.active)
-    # # print(new)
+    # # print("active: ", radio_button_group.active)
+    # # print("new:", new)
     # # if radio_button_group.active == 3: # temperature
     # #     if new == 0: #-1
-    # #         beam.set_color("red") # change to TUM hex
+    # #         beam.set_color("blue") # change to TUM hex
     # #     elif new == 1: #+1
-    # #         beam.set_color(color_rod)
+    # #         beam.set_color("red")
+    # # else:
+    # #     beam.set_color(color_rod)
 
     # # print(beam.color)
     # # print(" ---- ")
+
+    # adapt to functions
+    if radio_button_group.active == 3: # temperature
+        if new == 0: #-1
+            snow1_glyph.visible = True
+            snow2_glyph.visible = True
+            snow3_glyph.visible = True
+
+            fire1_glyph.visible = False
+            fire2_glyph.visible = False
+            fire3_glyph.visible = False
+        else:
+            snow1_glyph.visible = False
+            snow2_glyph.visible = False
+            snow3_glyph.visible = False
+
+            fire1_glyph.visible = True
+            fire2_glyph.visible = True
+            fire3_glyph.visible = True
+
 
     compute_new_scenario()
 
@@ -262,34 +289,44 @@ line_button.on_click(change_line_visibility)
 
 
 
-
+# adapt to functions
 sf1 = "Normal_Force_Rod/static/images/snowflake01.svg"
 sf2 = "Normal_Force_Rod/static/images/snowflake02.svg"
 sf3 = "Normal_Force_Rod/static/images/snowflake03.svg"
 
-cds_t1 = ColumnDataSource(data=dict(x=[0.4],y=[1.1], img=[sf1]))
-cds_t2 = ColumnDataSource(data=dict(x=[3.4],y=[1.2], img=[sf2]))
-cds_t3 = ColumnDataSource(data=dict(x=[7.4],y=[-0.7], img=[sf3]))
+cds_t1 = ColumnDataSource(data=dict(x=[0.4],y=[0.2], img=[sf1]))
+cds_t2 = ColumnDataSource(data=dict(x=[3.4],y=[0.2], img=[sf2]))
+cds_t3 = ColumnDataSource(data=dict(x=[7.4],y=[0.2], img=[sf3]))
 
 
 
-
-plot_main.add_glyph(cds_t1, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
-plot_main.add_glyph(cds_t2, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
-plot_main.add_glyph(cds_t3, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
-
+snow1_glyph = plot_main.add_glyph(cds_t1, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
+snow2_glyph = plot_main.add_glyph(cds_t2, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
+snow3_glyph = plot_main.add_glyph(cds_t3, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
+snow1_glyph.visible = False
+snow2_glyph.visible = False
+snow3_glyph.visible = False
+snow1_glyph.level = "overlay"
+snow2_glyph.level = "overlay"
+snow3_glyph.level = "overlay"
 
 fi1 = "Normal_Force_Rod/static/images/fire01.svg"
 fi2 = "Normal_Force_Rod/static/images/fire02.svg"
 fi3 = "Normal_Force_Rod/static/images/fire03.svg"
 
-cds_ht1 = ColumnDataSource(data=dict(x=[0.4],y=[-0.6], img=[fi1]))
-cds_ht2 = ColumnDataSource(data=dict(x=[3.4],y=[-0.7], img=[fi2]))
-cds_ht3 = ColumnDataSource(data=dict(x=[7.4],y=[0.7], img=[fi3]))
+cds_ht1 = ColumnDataSource(data=dict(x=[0.4],y=[0.2], img=[fi1]))
+cds_ht2 = ColumnDataSource(data=dict(x=[3.4],y=[0.2], img=[fi2]))
+cds_ht3 = ColumnDataSource(data=dict(x=[7.4],y=[0.2], img=[fi3]))
 
-plot_main.add_glyph(cds_ht1, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
-plot_main.add_glyph(cds_ht2, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
-plot_main.add_glyph(cds_ht3, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
+fire1_glyph = plot_main.add_glyph(cds_ht1, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
+fire2_glyph = plot_main.add_glyph(cds_ht2, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
+fire3_glyph = plot_main.add_glyph(cds_ht3, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
+fire1_glyph.visible = False
+fire2_glyph.visible = False
+fire3_glyph.visible = False
+fire1_glyph.level = "overlay"
+fire2_glyph.level = "overlay"
+fire3_glyph.level = "overlay"
 
 #cds_col_test = ColumnDataSource(data=dict(x=[2,7], y=[1,1], col=["yellow", "yellow"]))
 #cds_col_test_circ = ColumnDataSource(data=dict(x=[2,7], y=[1,1], col=["yellow", "yellow"]))

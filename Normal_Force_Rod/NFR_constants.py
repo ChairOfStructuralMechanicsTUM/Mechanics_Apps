@@ -55,6 +55,10 @@ x_range    = (xr_start-1.5,xr_end+1.5)
 color_rod   = "#0065BD" # beam color
 color_arrow = "#0065BD" # force arrow color
 
+color_rod_cold = "#3070b3"
+color_rod_hot  = "#e37222"
+
+
 
 
 
