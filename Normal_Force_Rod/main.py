@@ -4,6 +4,8 @@ Normal Force Rod - presents the influence of different loads on force and deform
 """
 # general imports
 from __future__ import division # float division only, like in python 3
+from math import ceil
+import numpy as np
 
 # bokeh imports
 from bokeh.io             import curdoc
@@ -19,7 +21,7 @@ from NFR_beam      import NFR_beam
 from NFR_equations import calcNU
 from NFR_constants import (
         xr_start, xr_end,
-        color_rod, 
+        color_rod, num_symbols,
         x_range, fig_height,
         #lb, ub, 
         initial_load, initial_load_position
@@ -54,11 +56,21 @@ graph_U         = ColumnDataSource(data=dict(x=[0], y=[0]))       # data for def
 
 def change_load(attr, old, new):
     beam.set_load(new)
-    # if new = 3
-    #    if -1
-    #       cold.visible
-    #    if 1
-    #       hot.visible
+    
+    # if the temperature load is selected, display either fire or snow symbols
+    # based on the selected amplitude
+    if new == 3: # temperature load
+        if radio_group_ampl.active==0: # -1
+            snow_glyphs.visible = True
+            fire_glyphs.visible = False
+        elif radio_group_ampl.active==1: #1
+            snow_glyphs.visible = False
+            fire_glyphs.visible = True
+    # if another load is selected, do not display any symbols
+    else:
+        snow_glyphs.visible = False
+        fire_glyphs.visible = False
+
     compute_new_scenario()
 
 def change_left_support(attr, old, new):
@@ -85,40 +97,13 @@ def change_right_support(attr, old, new):
 def change_amplitude(attr, old, new):
     beam.set_load_direction(new)
 
-
-    #### changing colors in patches via ColumnDataSource does not seem to work
-    # # print("active: ", radio_button_group.active)
-    # # print("new:", new)
-    # # if radio_button_group.active == 3: # temperature
-    # #     if new == 0: #-1
-    # #         beam.set_color("blue") # change to TUM hex
-    # #     elif new == 1: #+1
-    # #         beam.set_color("red")
-    # # else:
-    # #     beam.set_color(color_rod)
-
-    # # print(beam.color)
-    # # print(" ---- ")
-
-    # adapt to functions
     if radio_button_group.active == 3: # temperature
         if new == 0: #-1
-            snow1_glyph.visible = True
-            snow2_glyph.visible = True
-            snow3_glyph.visible = True
-
-            fire1_glyph.visible = False
-            fire2_glyph.visible = False
-            fire3_glyph.visible = False
+            snow_glyphs.visible = True
+            fire_glyphs.visible = False
         else:
-            snow1_glyph.visible = False
-            snow2_glyph.visible = False
-            snow3_glyph.visible = False
-
-            fire1_glyph.visible = True
-            fire2_glyph.visible = True
-            fire3_glyph.visible = True
-
+            snow_glyphs.visible = False
+            fire_glyphs.visible = True
 
     compute_new_scenario()
 
@@ -222,6 +207,41 @@ plot_main.add_glyph(error_msg_frame,Rect(x="x", y="y", width=8, height=1, angle=
 plot_main.add_glyph(aux_line, aux_line_glyph)
 
 
+# graphics for a cold beam
+snow_images = ["Normal_Force_Rod/static/images/snowflake01.svg",
+               "Normal_Force_Rod/static/images/snowflake02.svg",
+               "Normal_Force_Rod/static/images/snowflake03.svg"]
+
+cds_snow = ColumnDataSource(data=dict(x=np.linspace(xr_start+0.5, xr_end-0.5,num_symbols),
+                                      y=np.zeros((num_symbols,1)).flatten(),
+                                      # copy the image list often enough and select the first num_symbols images
+                                      # this way the symbols will be repeated in order
+                                      img=(snow_images*ceil(num_symbols/len(snow_images)))[:num_symbols]
+                                      ))
+
+snow_glyphs = plot_main.add_glyph(cds_snow, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4, anchor="center"))
+snow_glyphs.visible = False
+snow_glyphs.level = "overlay"
+
+
+# graphics for a hot beam
+fire_images = ["Normal_Force_Rod/static/images/fire01.svg",
+               "Normal_Force_Rod/static/images/fire02.svg",
+               "Normal_Force_Rod/static/images/fire03.svg"]
+
+cds_fire = ColumnDataSource(data=dict(x=np.linspace(xr_start+0.5, xr_end-0.5,num_symbols),
+                                      y=np.zeros((num_symbols,1)).flatten(),
+                                      # copy the image list often enough and select the first num_symbols images
+                                      # this way the symbols will be repeated in order
+                                      img=(fire_images*ceil(num_symbols/len(fire_images)))[:num_symbols]
+                                      ))
+
+fire_glyphs = plot_main.add_glyph(cds_fire, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4, anchor="bottom_center"))
+fire_glyphs.visible = False
+fire_glyphs.level = "overlay"
+
+
+
 
 ###### FORCE PLOT (normal force) ######
 # define plot
@@ -290,52 +310,6 @@ line_button.on_click(change_line_visibility)
 
 
 
-
-# adapt to functions
-sf1 = "Normal_Force_Rod/static/images/snowflake01.svg"
-sf2 = "Normal_Force_Rod/static/images/snowflake02.svg"
-sf3 = "Normal_Force_Rod/static/images/snowflake03.svg"
-
-cds_t1 = ColumnDataSource(data=dict(x=[0.4],y=[0.2], img=[sf1]))
-cds_t2 = ColumnDataSource(data=dict(x=[3.4],y=[0.2], img=[sf2]))
-cds_t3 = ColumnDataSource(data=dict(x=[7.4],y=[0.2], img=[sf3]))
-
-
-
-snow1_glyph = plot_main.add_glyph(cds_t1, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
-snow2_glyph = plot_main.add_glyph(cds_t2, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
-snow3_glyph = plot_main.add_glyph(cds_t3, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
-snow1_glyph.visible = False
-snow2_glyph.visible = False
-snow3_glyph.visible = False
-snow1_glyph.level = "overlay"
-snow2_glyph.level = "overlay"
-snow3_glyph.level = "overlay"
-
-fi1 = "Normal_Force_Rod/static/images/fire01.svg"
-fi2 = "Normal_Force_Rod/static/images/fire02.svg"
-fi3 = "Normal_Force_Rod/static/images/fire03.svg"
-
-cds_ht1 = ColumnDataSource(data=dict(x=[0.4],y=[0.2], img=[fi1]))
-cds_ht2 = ColumnDataSource(data=dict(x=[3.4],y=[0.2], img=[fi2]))
-cds_ht3 = ColumnDataSource(data=dict(x=[7.4],y=[0.2], img=[fi3]))
-
-fire1_glyph = plot_main.add_glyph(cds_ht1, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
-fire2_glyph = plot_main.add_glyph(cds_ht2, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
-fire3_glyph = plot_main.add_glyph(cds_ht3, ImageURL(url='img', x='x', y='y', w=0.66, h=0.4))
-fire1_glyph.visible = False
-fire2_glyph.visible = False
-fire3_glyph.visible = False
-fire1_glyph.level = "overlay"
-fire2_glyph.level = "overlay"
-fire3_glyph.level = "overlay"
-
-#cds_col_test = ColumnDataSource(data=dict(x=[2,7], y=[1,1], col=["yellow", "yellow"]))
-#cds_col_test_circ = ColumnDataSource(data=dict(x=[2,7], y=[1,1], col=["yellow", "yellow"]))
-
-#plot_main.patch(x='x', y='y', fill_color='col', source=cds_col_test)
-#plot_main.circle(x='x', y='y', color='col', source=cds_col_test_circ)
-
 ##################################
 #           Build beam           #
 ##################################
@@ -354,18 +328,12 @@ beam.plot_beam_shadow(plot_deform)
 compute_new_scenario()
 
 
-
-
-
 ###################################
 #           Page Layout           #
 ###################################
 
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1000)
-
-# rt_filename = join(dirname(__file__), "radio_button_title.html")
-# rt = LatexDiv(text=open(rt_filename).read())
 
 p_rt1 = Paragraph(text="""Left support:  """)
 p_rt2 = Paragraph(text="""Right support: """)
@@ -379,9 +347,8 @@ doc_layout = layout(children=[
                        Spacer(height=20,width=400),
                        widgetbox(radio_button_group),
                        row(widgetbox(p_rt1, width=120), widgetbox(radio_group_left)),
-                       row(widgetbox(p_rt2, width=120), widgetbox(radio_group_right)), 
-                       ##row(widgetbox(p_rt3, width=120), widgetbox(radio_group_cross)), 
-                       row(widgetbox(p_rt4, width=120), widgetbox(radio_group_ampl)), 
+                       row(widgetbox(p_rt2, width=120), widgetbox(radio_group_right)),
+                       row(widgetbox(p_rt4, width=120), widgetbox(radio_group_ampl)),
                        load_position_slider,
                        reset_button,
                        line_button),

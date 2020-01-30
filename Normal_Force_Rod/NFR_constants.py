@@ -58,6 +58,9 @@ color_arrow = "#0065BD" # force arrow color
 color_rod_cold = "#3070b3"
 color_rod_hot  = "#e37222"
 
+# symbols
+num_symbols = 5 # number of symbols/images on rod
+
 
 
 
