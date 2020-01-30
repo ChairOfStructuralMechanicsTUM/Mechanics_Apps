@@ -9,8 +9,9 @@
 - [x] spacing of the radio buttons
 - [x] force arrow
 - [x] load types graphics
-- [ ] temperature "load" 
+- [x] temperature "load" 
 - [ ] cross-section types of the rod
+- [ ] display values for the extreme points
 
 ## To Do - maths/internal
 - [x] slider functionality
@@ -19,4 +20,4 @@
 - [x] radio group functionality
 - [x] reset button functionality
 - [x] internal calculations
-- [ ] catch zero division errors
+- [x] catch zero division errors
