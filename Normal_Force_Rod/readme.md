@@ -11,7 +11,7 @@
 - [x] load types graphics
 - [x] temperature "load" 
 - [ ] cross-section types of the rod
-- [ ] display values for the extreme points
+- [x] display values for the extreme points
 
 ## To Do - maths/internal
 - [x] slider functionality

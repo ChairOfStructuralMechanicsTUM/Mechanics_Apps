@@ -10,10 +10,10 @@ import numpy as np
 # bokeh imports
 from bokeh.io             import curdoc
 from bokeh.plotting       import Figure
-from bokeh.models         import ColumnDataSource, LabelSet #Arrow, OpenHead
-from bokeh.models.glyphs  import MultiLine, Rect ,ImageURL #, Patch, 
+from bokeh.models         import ColumnDataSource, LabelSet
+from bokeh.models.glyphs  import MultiLine, Rect ,ImageURL
 from bokeh.models.layouts import Spacer
-from bokeh.models.widgets import Paragraph, Button, RadioButtonGroup, RadioGroup #CheckboxGroup
+from bokeh.models.widgets import Paragraph, Button, RadioButtonGroup, RadioGroup
 from bokeh.layouts        import column, row, widgetbox, layout
 
 # internal imports
@@ -23,7 +23,6 @@ from NFR_constants import (
         xr_start, xr_end,
         color_rod, num_symbols,
         x_range, fig_height,
-        #lb, ub, 
         initial_load, initial_load_position
         )
 
@@ -47,6 +46,8 @@ error_msg       = ColumnDataSource(data=dict(x=[],y=[],name=[]))  # error messag
 graph_N         = ColumnDataSource(data=dict(x=[0], y=[0]))       # data for force plot
 graph_U         = ColumnDataSource(data=dict(x=[0], y=[0]))       # data for deformation plot
 
+zero_label_source       = ColumnDataSource(data=dict(x=[], y=[], text=[])) # position and text for the labels in force plot
+extrem_val_label_source = ColumnDataSource(data=dict(x=[], y=[], text=[])) # position and text for the labels in deformation plot
 
 
 
@@ -114,15 +115,17 @@ def change_load_position(attr, old, new):
 
 
 def reset():
-    radio_button_group.active  = initial_load
-    radio_group_left.active    = 0
-    radio_group_right.active   = 1
-    radio_group_ampl.active    = 1
-    load_position_slider.value = initial_load_position
+    radio_button_group.active    = initial_load
+    radio_group_left.active      = 0
+    radio_group_right.active     = 1
+    radio_group_ampl.active      = 1
+    load_position_slider.value   = initial_load_position
     # possibly set the values in beam correspondingly - # ok no, happens automatically
     # setting the values via their attributes seems to call the callback functions as well
-    aux_line.data     = dict(x=[], y=[])
-    line_button.label = "Show line"
+    aux_line.data                = dict(x=[], y=[])
+    zero_label_source.data       = dict(x=[], y=[], text=[])
+    extrem_val_label_source.data = dict(x=[], y=[], text=[])
+    line_button.label            = "Show line"
     compute_new_scenario()
 
 
@@ -131,7 +134,9 @@ def change_line_visibility():
         move_aux_line()
         line_button.label = "Hide line"
     elif line_button.label == "Hide line":
-        aux_line.data = dict(x=[], y=[])
+        aux_line.data                = dict(x=[], y=[])
+        zero_label_source.data       = dict(x=[], y=[], text=[])
+        extrem_val_label_source.data = dict(x=[], y=[], text=[])
         line_button.label = "Show line"
 
 
@@ -157,15 +162,51 @@ def compute_new_scenario():
         move_aux_line()
 
 
+def n2str(number, n=4):
+    # costum number to string function
+    # rounds up to n decimals and crops zeros 
+    # e.g.  0.210000  --> 0.21
+    #       0.1654486 --> 0.1654
+    return str(round(number,n))
+
+
 def move_aux_line():
+    # only for fixed supports on both sides, but would work in general
+
+    # fetch data
     x_samples = graph_N.data['x']
     y_samples = graph_N.data['y']
+    #y_value   = graph_U.data['y']
     roots     = []
 
+    # find the zero crossings
     for i in range(0,len(y_samples)-1):
         if y_samples[i]*y_samples[i+1] < 0: # sign changes => root
             r = 0.5*(x_samples[i+1]-x_samples[i]) + x_samples[i]
+            #print(r, 0.5*abs((y_value[i+1]-y_value[i]))+np.sign(y_value[i])*max(abs(y_value[i]), abs(y_value[i+1])) )
             roots.append([r,r])
+
+    if radio_group_left.active==0 and radio_group_right.active==0: # fixed/fixed
+        a = -1 if radio_group_ampl.active==0 else 1 # set the sign
+        k = load_position_slider.value
+        ## point load labels
+        if radio_button_group.active==0:
+            new_data_zero    = dict(x=[0], y=[-2*a], text=["x_0="+n2str(k/10)+"L"])
+            new_data_extreme = dict(x=[0], y=[-2*a], text=["u(x_0)="+n2str( -k*(k/10 - 1)/10 )+"\\frac{F L}{EA}"])
+        ## constant load labels
+        elif radio_button_group.active==1:
+            new_data_zero    = dict(x=[0], y=[-2*a], text=["x_0="+n2str((20*k-k**2)/200)+"L"])
+            new_data_extreme = dict(x=[0], y=[-2*a], text=["u(x_0)="+n2str(a*(k**2 * (k/20-1)**2)/200)+"\\frac{p L^2}{EA}"])
+        ## triangular load labels
+        elif radio_button_group.active==2:
+            new_data_zero    = dict(x=[0], y=[-2*a], text=["x_0="+n2str(-k*((k/30)**(1/2) - 1)/10)+"L"])
+            new_data_extreme = dict(x=[0], y=[-2*a], text=["u(x_0)="+n2str( a*(k**2*((30**(1/2)*k**(3/2))/15 - 3*k + 30))/18000 )+"\\frac{p L^2}{EA}"])
+        else:
+            new_data_zero    = dict(x=[], y=[], text=[])
+            new_data_extreme = dict(x=[], y=[], text=[])
+
+        zero_label_source.data = new_data_zero
+        extrem_val_label_source.data = new_data_extreme
 
     aux_line.data = dict(x=roots, y=[[15,-15]]*len(roots))
 
@@ -259,6 +300,11 @@ plot_normalF.line(x='x', y='y', source=graph_N, color="#A2AD00",line_width=2)
 # plot helper line
 plot_normalF.add_glyph(aux_line, aux_line_glyph)
 
+# zero crossing label
+zero_label = LatexLabelSet(x='x', y='y', text='text', source=zero_label_source, level='glyph')
+plot_normalF.add_layout(zero_label)
+
+
 
 
 ###### DEFORMATION PLOT ######
@@ -276,6 +322,10 @@ plot_deform.line(x='x', y='y', source=graph_U, color="#A2AD00",line_width=2)
 
 # plot helper line
 plot_deform.add_glyph(aux_line, aux_line_glyph)
+
+# extremum label
+extrem_val_label = LatexLabelSet(x='x', y='y', text='text', source=extrem_val_label_source, level='glyph')
+plot_deform.add_layout(extrem_val_label)
 
 
 
