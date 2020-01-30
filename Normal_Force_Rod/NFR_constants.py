@@ -47,7 +47,7 @@ sigma    = 0.0   # actually no sigma in formulas, missread; could be replaced by
 ###################################
 
 # scale
-fig_width  = 630
+fig_width  = 600
 fig_height = 300
 x_range    = (xr_start-1.5,xr_end+1.5)
 

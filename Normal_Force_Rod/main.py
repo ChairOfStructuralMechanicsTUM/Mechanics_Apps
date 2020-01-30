@@ -136,6 +136,8 @@ def reset():
     load_position_slider.value = initial_load_position
     # possibly set the values in beam correspondingly - # ok no, happens automatically
     # setting the values via their attributes seems to call the callback functions as well
+    aux_line.data     = dict(x=[], y=[])
+    line_button.label = "Show line"
     compute_new_scenario()
 
 
@@ -260,17 +262,17 @@ plot_deform.add_glyph(aux_line, aux_line_glyph)
 ###################################
 #       Buttons and Sliders       #
 ###################################
-radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Triangular Load", "Temperature"], active=initial_load, width = 600)
+radio_button_group = RadioButtonGroup(labels=["Point Load", "Constant Load", "Triangular Load", "Temperature"], active=initial_load, width=400)
 
 radio_group_left  = RadioGroup(labels=["fixed", "sliding"], active=0, inline=True)
 radio_group_right = RadioGroup(labels=["fixed", "sliding"], active=1, inline=True)
 #radio_group_cross = RadioGroup(labels=["constant", "tapered"], active=0, inline=True) # cross-section not yet
 radio_group_ampl  = RadioGroup(labels=["-1", "+1"], active=1, inline=True) # amplitude
 
-load_position_slider  = LatexSlider(title="\\mathrm{Load \ Position:}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=initial_load_position, start=xr_start, end=xr_end, step=1.0)
+load_position_slider  = LatexSlider(title="\\mathrm{Load \ Position:}", value_unit='\\frac{\\mathrm{L}}{\\mathrm{10}}', value=initial_load_position, start=xr_start, end=xr_end, step=1.0, width=400)
 
-reset_button = Button(label="Reset", button_type="success")
-line_button  = Button(label="Show line", button_type="success")
+reset_button = Button(label="Reset", button_type="success", width=400)
+line_button  = Button(label="Show line", button_type="success", width=400)
 
 
 ## call their corresponding callback functions
@@ -374,7 +376,7 @@ p_rt4 = Paragraph(text="""Load Amplitude:""")
 doc_layout = layout(children=[
         column(description,
                row(column(
-                       Spacer(height=20,width=450),
+                       Spacer(height=20,width=400),
                        widgetbox(radio_button_group),
                        row(widgetbox(p_rt1, width=120), widgetbox(radio_group_left)),
                        row(widgetbox(p_rt2, width=120), widgetbox(radio_group_right)), 

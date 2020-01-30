@@ -257,7 +257,6 @@ class NFR_beam():
             # # change the color and pictures based on amplitude
             # if self.load_direction == "ltr":
             #     self.color = color_rod_hot
-
         
             self._clear_source(self.point_load_source)
             self._clear_source(self.constant_load_source)
@@ -269,6 +268,10 @@ class NFR_beam():
     def _clear_source(self, cds):
         # exploit the inner rollover definition data = data[-rollover:]
         cds.stream(cds.data, -2*len(list(cds.data.values())[0])) # get the length of the first column of the CDS
+
+        # other approach:
+        ##col_names = cds.column_names
+        ##cds.stream(cds.data, -2*len(cds.data[col_names[0]]))
 
 
     # move the load to position x (or extend it from 0 to x)
