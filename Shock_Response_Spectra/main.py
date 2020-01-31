@@ -18,7 +18,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_support import LatexDiv, LatexLabelSet #, LatexLabel
+from latex_support import LatexDiv, LatexLabelSet, LatexSlider
 from math  import sqrt, exp, pow, pi, sin #, cos, ceil, pi, atan2, sinh, cosh
 from numpy import convolve, amax, argmax
 
@@ -30,6 +30,14 @@ initial_displacement_value    = 0
 force_value = 1.
 Force_duration  = 1 ## input parameters for the analytic solution
 dt = 0.02
+
+# while LaTeX in Axis does not work, use unicode:
+# subscript 0       \u2080
+# subscript e       \u2091
+# subscript m       \u2098
+# subscript a       \u2090
+# subscript x       \u2093
+# omega             \u03c9
 
 # global variables
 glob_callback_id = ColumnDataSource(data = dict(callback_id = [None]))
@@ -111,7 +119,7 @@ Force_input.stream(dict(beta=[1.0001],phi=[0]))
 Force_input.stream(dict(beta=[2],phi=[0]))
 
 #parameter variable for parameter table
-parameters = ColumnDataSource(data = dict(names1=[u'\u03c9',"Te"],names2=["D",u'\u03c9*'],values1=[round(glob_vars["W"],4),round(glob_vars["Te"],4)],values2=[round(glob_vars["D"],4),round(glob_vars["WD"],4)]))
+parameters = ColumnDataSource(data = dict(names1=[u'\u03c9',u"t\u2091"],names2=["D",u'\u03c9*'],values1=[round(glob_vars["W"],4),round(glob_vars["Te"],4)],values2=[round(glob_vars["D"],4),round(glob_vars["WD"],4)]))
 
 def evolve():
     load_vals = ["FI", "final", "h", "WD", "D", "W", "t"]
@@ -169,38 +177,47 @@ fig.toolbar.logo = None
 glob_vars["spring"].plot(fig,width=2)
 glob_vars["damper"].plot(fig,width=2)
 glob_vars["mass"].plot(fig)
-arrow = fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red", line_width=2,
+arrow = fig.add_layout(Arrow(end=NormalHead(fill_color="red", size=15), line_color="red", line_width=2,
     x_start='x1', y_start='y1', x_end='x2', y_end='y2', source=arrow_line))
 
 # time plot
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
 Displacement = figure(title="", y_range=(2,-2), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
     toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
-Displacement.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
+Displacement.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,muted_color="#e37222",muted_alpha=0.2)
 Displacement.axis.major_label_text_font_size="12pt"
 Displacement.axis.axis_label_text_font_style="normal"
 Displacement.axis.axis_label_text_font_size="14pt"
-Displacement.xaxis.axis_label="Time [s]"
-Displacement.yaxis.axis_label="Displacement [u/(F/k)]"
-Displacement.legend.location="top_right"
-Displacement.legend.click_policy="mute"
+Displacement.xaxis.axis_label="time [s]"
+Displacement.yaxis.axis_label=u"displacement [u/(F\u2080/k)]"
 Displacement.toolbar.logo = None
 
 
 #maximum displacement against time of impulse to time period ratio plot
 Dis_max = figure(title="", tools="", x_range=(0,3.0), y_range=(0,4), width=600, height=600)
 Dis_max.circle(x='time', y='omega', source=omega_max, color="#a2ad00")
-D_max_Label_source   = ColumnDataSource(data=dict(x=[-0.45,1.7], y=[2.5, -0.4], names=[ "\dfrac{U_{max}}{\dfrac{F}{K}}","\dfrac{T_0}{T_e}"]))
-D_max_label = LatexLabelSet(x='x', y='y', text='names', source=D_max_Label_source, text_color = 'black', level='glyph', x_offset= 0, y_offset=0)
-Dis_max.add_layout(D_max_label)
+# D_max_Label_source   = ColumnDataSource(data=dict(x=[-0.45,1.7], y=[2.5, -0.4], names=[ "\dfrac{U_{max}}{\dfrac{F}{K}}","\dfrac{T_0}{T_e}"]))
+# D_max_label = LatexLabelSet(x='x', y='y', text='names', source=D_max_Label_source, text_color = 'black', level='glyph', x_offset= 0, y_offset=0)
+# Dis_max.add_layout(D_max_label)
+Dis_max.xaxis.axis_label=u"t\u2080/t\u2091"
+Dis_max.yaxis.axis_label=u"displacement [u\u2098\u2090\u2093/(F\u2080/k)]"
+#Dis_max.yaxis.axis_label=u"displacement [uₘₐₓ/(F\u2080/k)]"
+Dis_max.axis.major_label_text_font_size="12pt"
+Dis_max.axis.axis_label_text_font_style="normal"
+Dis_max.axis.axis_label_text_font_size="14pt"
 Dis_max.toolbar.logo = None
 
 #time at which maximum displacement occurs against duration of impulse ratio plot
 T_max = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=600, height=600)
 T_max.circle(x='time', y='tmax', source=t_max, color="#a2ad00") 
-T_max_Label_source   = ColumnDataSource(data=dict(x=[-0.45,1.7], y=[2.5, -0.4], names=["\dfrac{T_{max}}{T_0}", "T_{max}"]))
-T_max_label = LatexLabelSet(x='x', y='y', text='names', source=T_max_Label_source, text_color = 'black', level='glyph', x_offset= 0, y_offset=0)
-T_max.add_layout(T_max_label)
+#T_max_Label_source   = ColumnDataSource(data=dict(x=[-0.45,1.7], y=[2.5, -0.4], names=["\dfrac{T_{max}}{T_0}", "T_{max}"]))
+#T_max_label = LatexLabelSet(x='x', y='y', text='names', source=T_max_Label_source, text_color = 'black', level='glyph', x_offset= 0, y_offset=0)
+#T_max.add_layout(T_max_label)
+T_max.xaxis.axis_label=u"t\u2098\u2090\u2093"
+T_max.yaxis.axis_label=u"t\u2098\u2090\u2093/t\u2080"
+T_max.axis.major_label_text_font_size="12pt"
+T_max.axis.axis_label_text_font_style="normal"
+T_max.axis.axis_label_text_font_size="14pt"
 T_max.toolbar.logo = None
 
 #plotting input force
@@ -220,16 +237,16 @@ def move_system(disp): # for moving the spring damper mass image according to th
     Bottom_Line.data=dict(x=[-2,2],y=[8+disp, 8+disp])
     Linking_Line.data=dict(x=[0,0],y=[8+disp, 10+disp])
     if force_value > 0:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[15+disp],y2=[12+disp])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[15+disp],y2=[12+disp]), rollover=1)
     else:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[35+disp],y2=[32+disp]), rollover=1)
 
 
 ## Create slider to choose damping coefficient
 def change_damping_coefficient(attr,old,new):
     glob_vars["damper"].changeDamperCoeff(float(new*2*sqrt(initial_spring_constant_value*glob_vars["mass_value"])))
     updateParameters()
-damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=initial_damping_ratio, callback_policy="mouseup", start=0.0, end=1, step=0.05,width=600)
+damping_coefficient_input = LatexSlider(title="\\text{Damping coefficient} \\left[ \\frac{\\mathrm{Ns}}{\mathrm{m}} \\right]:", value=initial_damping_ratio, callback_policy="mouseup", start=0.0, end=1, step=0.05,width=550)
 damping_coefficient_input.on_change('value',change_damping_coefficient)
 
 ## Create slider to choose the frequency ratio
@@ -237,7 +254,7 @@ def change_frequency_ratio(attr,old,new):
     if (not glob_vars["Active"]):
         glob_vars["TimePeriodRatio"] = new #      /output
         updateParameters()
-frequency_ratio_input = Slider(title="Impulse duration to natural period ratio", value=glob_vars["TimePeriodRatio"], start=0.1, end=3.0, step=0.1,width=600)
+frequency_ratio_input = LatexSlider(title="\\text{Impulse duration to natural period ratio:}", value=glob_vars["TimePeriodRatio"], start=0.1, end=3.0, step=0.1,width=550)
 frequency_ratio_input.on_change('value',change_frequency_ratio)
 
 def play_pause():
@@ -265,9 +282,9 @@ def reset(): # resets values to initial cofiguration
     drawing_displacement = -initial_displacement_value * glob_vars["spring"].getSpringConstant
     move_system(drawing_displacement)
     if force_value > 0:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[15+drawing_displacement],y2=[12+drawing_displacement])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[15+drawing_displacement],y2=[12+drawing_displacement]), rollover=1)
     else:
-        arrow_line.data=dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement])
+        arrow_line.stream(dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement]), rollover=1)
     updateParameters()
 
 def reset_OmegaMax_plot():
@@ -303,7 +320,7 @@ def updateParameters():
         h[i] = x
     glob_vars["final"] = convolve(FI,h,mode='full') #      /output
     glob_vars["h"] = h #      /output
-    parameters.data = dict(names1=[u'\u03c9',"Te"],names2=["D",u'\u03c9*'],values1=[round(W,4),round(Te,4)],values2=[round(D,4),round(WD,4)])
+    parameters.data = dict(names1=[u'\u03c9',u"t\u2091"],names2=["D",u'\u03c9*'],values1=[round(W,4),round(Te,4)],values2=[round(D,4),round(WD,4)])
     glob_vars["mass_value"] = mass_value #      /output
     glob_vars["Te"] = Te #      /output
     glob_vars["WD"] = WD #      /output
