@@ -382,11 +382,25 @@ parameter_table = DataTable(source=parameters, columns=columns, reorderable=Fals
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
+### tests to use div instead of axis to include LaTeX
+# axis_div_style = {
+#     "transform":"rotate(-90deg)",
+#     "white-space":"nowrap",
+# }
+#test_div = LatexDiv(text="hello $\\lambda$ test", render_as_text=False, width=50, height=500, style={"display":"flex", "flex-direction":"column" , "justify-content":"center", "transform":"rotate(-90deg)", "white-space":"nowrap"})
+#test_div = LatexDiv(text="<div>hello $\\lambda$ test</div>", render_as_text=False, width=50, height=500, style={"display":"flex", "align-itmes":"center"}, id="container")
+# test_div.width  = 50
+# test_div.height = 500
+##style={"transform":"rotate(-90deg)", "text-align":"center", "white-space":"nowrap"}
+##style={"display":"flex", "flex-direction":"column" , "justify-content":"center", "transform":"rotate(-90deg)", "white-space":"nowrap"}
+#"hello $\\lambda$ test some longer text with some $u=0$ and $u_{max}$ etc to test it"
+
 ## Send to window
 hspace = 20
 curdoc().add_root(column(description,\
     row(column(row(column(row(column(fig,column(play_pause_button,Spacer(width = 10),\
     column(Spacer(width = 10),reset_button))),column(Force_select,InputForce,parameter_table)),\
+    #Spacer(height=10),row(test_div,Displacement))),Spacer(height=hspace)),Spacer(width=30),\
     Spacer(height=10),Displacement)),Spacer(height=hspace)),Spacer(width=30),\
     column(damping_coefficient_input,frequency_ratio_input,Spacer(height=hspace),\
     row(gridplot([Dis_max,Spacer(height=3 *hspace),T_max],ncols=1,plot_width=480,plot_height=420,merge_tools=True,toolbar_location=""),\
