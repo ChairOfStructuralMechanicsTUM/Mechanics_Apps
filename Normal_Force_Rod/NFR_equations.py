@@ -130,57 +130,82 @@ def calcU_c_sf(L1, ampl):
 
 #######################
 ##  triangular load  ##
-#######################    
+#######################
+
+# decorators @np.errstate(divide='ignore',invalid='ignore') ignore the
+# zero div warning message, since the zero div errors are all handled in try-except-blocks here
 
 # left support fixed, right support fixed
+@np.errstate(divide='ignore',invalid='ignore')
 def calcN_tri_ff(L1, ampl):
-    load_vals = ["x1", "nsx2"]
-    x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 =  ampl*p0*L1*0.5*(1.0 - L1/(3.0*L)) - ampl*p0*x1*(1.0 - x1/(2*L1))
+    load_vals = ["x1", "nsx1", "nsx2"]
+    x1, num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
+    try:
+        y1 = ampl*p0*L1*0.5*(1.0 - L1/(3.0*L)) - ampl*p0*x1*(1.0 - x1/(2*L1))
+    except ZeroDivisionError:
+        y1 = np.zeros(num_samples_x1)
     y2 = -ampl*p0*L1*L1/(6.0*L) * np.ones(num_samples_x2)
     return (y1,y2)
 
+@np.errstate(divide='ignore',invalid='ignore')
 def calcU_tri_ff(L1, ampl):
-    load_vals = ["x1", "x2"]
-    x1, x2 = [local_samples.get(val) for val in load_vals]
-    y1 = ampl*p0*x1*0.5*( 1.0/(3.0*L1)*x1*x1 - x1 + L1 - L1*L1/(3.0*L))/(E*A)
+    load_vals = ["x1", "x2", "nsx1"]
+    x1, x2, num_samples_x1 = [local_samples.get(val) for val in load_vals]
+    try:
+        y1 = ampl*p0*x1*0.5*( 1.0/(3.0*L1)*x1*x1 - x1 + L1 - L1*L1/(3.0*L))/(E*A)
+    except ZeroDivisionError:
+        y1 = np.zeros(num_samples_x1)
     y2 = ampl*p0*L1*(L1/(6.0*E*A*L)) * ((L-L1) - x2)
     return (y1,y2)
 
 
 # left support fixed, right support slides
+@np.errstate(divide='ignore',invalid='ignore')
 def calcN_tri_fs(L1, ampl):
-    load_vals = ["x1", "nsx2"]
-    x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = ampl*p0*(x1*x1/(2.0*L1) - x1 + 0.5*L1)
+    load_vals = ["x1", "nsx1", "nsx2"]
+    x1, num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
+    try:
+        y1 = ampl*p0*(x1*x1/(2.0*L1) - x1 + 0.5*L1)
+    except ZeroDivisionError:
+        y1 = np.zeros(num_samples_x1)
     y2 = sigma * np.ones(num_samples_x2)
     return (y1,y2)
 
+@np.errstate(divide='ignore',invalid='ignore')
 def calcU_tri_fs(L1, ampl):
-    load_vals = ["x1", "nsx2"]
-    x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 = ampl*p0*0.5*x1*(x1*x1/(3.0*L1) - x1 + L1)/(E*A)
+    load_vals = ["x1", "nsx1", "nsx2"]
+    x1, num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
+    try:
+        y1 = ampl*p0*0.5*x1*(x1*x1/(3.0*L1) - x1 + L1)/(E*A)
+    except ZeroDivisionError:
+        y1 = np.zeros(num_samples_x1)
     y2 = ampl*p0*L1*(L1/(6.0*E*A)) * np.ones(num_samples_x2)
     return (y1,y2)
 
 
 # left support slides, right support fixed
+@np.errstate(divide='ignore',invalid='ignore')
 def calcN_tri_sf(L1, ampl):
-    load_vals = ["x1", "nsx2"]
-    x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
-    y1 =  ampl*(p0/L1)*x1*(0.5*x1 - L1)
+    load_vals = ["x1", "nsx1", "nsx2"]
+    x1, num_samples_x1, num_samples_x2 = [local_samples.get(val) for val in load_vals]
+    try:
+        y1 =  ampl*(p0/L1)*x1*(0.5*x1 - L1)
+    except ZeroDivisionError:
+        y1 = np.zeros(num_samples_x1)
     y2 = -ampl*p0*L1*0.5 * np.ones(num_samples_x2)
     return (y1,y2)
 
+@np.errstate(divide='ignore',invalid='ignore')
 def calcU_tri_sf(L1, ampl):
-    load_vals = ["x1", "x2"]
-    x1, x2 = [local_samples.get(val) for val in load_vals]
+    load_vals = ["x1", "x2", "nsx1"]
+    x1, x2, num_samples_x1 = [local_samples.get(val) for val in load_vals]
     #y1 = p0/(E*A) * (0.5*L*L1 - L1*L1/3.0 - x1*p0/(sigma*L1)*x1*x1)
-    y1 = -ampl*p0*x1*x1/(2.0*E*A) + ampl*p0*x1*x1*x1/(6.0*E*A*L1) + ampl*p0*L1/(2.0*E*A)*(L-L1/3.0)
+    try:
+        y1 = -ampl*p0*x1*x1/(2.0*E*A) + ampl*p0*x1*x1*x1/(6.0*E*A*L1) + ampl*p0*L1/(2.0*E*A)*(L-L1/3.0)
+    except ZeroDivisionError:
+        y1 = np.zeros(num_samples_x1)
     y2 = ampl*p0*L1/(2.0*E*A)*(L-L1-x2)
     return (y1,y2)
-
-
 
 
 #######################
