@@ -83,7 +83,6 @@ def change_left_support(attr, old, new):
         show_error(False)
         compute_new_scenario()
 
-    #compute_new_scenario()
 
 def change_right_support(attr, old, new):
     beam.set_right_support(new)
@@ -140,8 +139,6 @@ def change_line_visibility():
         line_button.label = "Show line"
 
 
-
-
 ################################
 #       Helper Functions       #
 ################################
@@ -186,7 +183,7 @@ def move_aux_line():
             #print(r, 0.5*abs((y_value[i+1]-y_value[i]))+np.sign(y_value[i])*max(abs(y_value[i]), abs(y_value[i+1])) )
             roots.append([r,r])
 
-    if radio_group_left.active==0 and radio_group_right.active==0: # fixed/fixed
+    if roots!=[] and radio_group_left.active==0 and radio_group_right.active==0: # fixed/fixed
         a = -1 if radio_group_ampl.active==0 else 1 # set the sign
         k = load_position_slider.value
         ## point load labels
@@ -204,9 +201,12 @@ def move_aux_line():
         else:
             new_data_zero    = dict(x=[], y=[], text=[])
             new_data_extreme = dict(x=[], y=[], text=[])
+    else:
+        new_data_zero    = dict(x=[], y=[], text=[])
+        new_data_extreme = dict(x=[], y=[], text=[])
 
-        zero_label_source.data = new_data_zero
-        extrem_val_label_source.data = new_data_extreme
+    zero_label_source.data = new_data_zero
+    extrem_val_label_source.data = new_data_extreme
 
     aux_line.data = dict(x=roots, y=[[15,-15]]*len(roots))
 
