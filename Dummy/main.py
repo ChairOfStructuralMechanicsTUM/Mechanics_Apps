@@ -78,9 +78,7 @@ alpha_input.on_change('value',change_alpha) # callback function called when alph
                 #####################################      
 
 
-# ping pong animation with changing color
-
-#with class
+# ping pong animation with changing color and a class
 
 # IMPORTANT NOTE: Only plot objects ONCE and then update them via the ColumnDataSources - otherwise the animation would slow down drastically
 #                 if the object would be plotted completely at each callback
@@ -148,7 +146,7 @@ pp_plot.toolbar_location = None # hide the toolbar
 pp_plot.axis.visible = False    # do not show axis
 pp_plot.grid.visible = False    # do not show grid
 
-pp_ball.plot(pp_plot)
+pp_ball.plot(pp_plot) # plot the ball ONCE at this place - updates only via ColumnDataSources
 
 
 
@@ -271,7 +269,7 @@ def start_work():
 
 
 # define the button which is used to start the desired computation
-heavy_comp_button = Button(label="start intensive computation", button_type="success", width=150, height=80) # also add a height to avoid resizing when the loading sign is display # in general buttons can stay with their default height
+heavy_comp_button = Button(label="start intensive computation", button_type="success", width=150, height=80) # also add a height to avoid resizing when the loading sign is displayed # in general buttons can stay with their default height
 heavy_comp_button.on_click(start_work)  # callback to apply the layout changes and start the computational work
 
 

@@ -98,8 +98,8 @@ def evolve():
 
     if force_value > 0:
         if D == 0 and frequency_ratio_value == 1:
-            s_p = 0.5 * (initial_displacement_value * cos(ef*t) + initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * (sin(ef*t) - ef*t*cos(ef*t)))
-            s_h = s_p
+            s_p = -force_value/ (2*k) * ef*t*cos(ef*t)
+            s_h = initial_displacement_value * cos(ef*t)+initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * sin(ef*t)
         else:
             # particular (steady-state) part
             s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
@@ -160,9 +160,9 @@ fig.line(x='x',y='y',source=Linking_Line,color="black",line_width=3)
 spring.plot(fig,width=2)
 damper.plot(fig,width=2)
 mass.plot(fig)
-fig.add_layout(Arrow(end=None, line_color="red", line_width=2,
+fig.add_layout(Arrow(end=None, line_color="#E37222", line_width=2,
     x_start='x1', y_start='y1', x_end='x2', y_end='y2', source=arrow_line))
-fig.add_layout(Arrow(end=NormalHead(fill_color="red"), line_color="red", line_width=2,
+fig.add_layout(Arrow(end=NormalHead(fill_color="#E37222"), line_color="#A2AD00", line_width=2,
     x_start='x1', y_start='y1', x_end='x2', y_end='y2', source=arrow_offset))
 fig.toolbar.logo = None #removes bokeh logo
 

@@ -126,7 +126,7 @@ def some_helper_fun():
 
 ### define the figure ###
 # the shown attributes should always be set
-# if no tool is needed set tools="" or toolbar_location=None
+# if no tool is needed, set tools="" or toolbar_location=None
 # for more attributes have a look at the bokeh documentation
 figure_name = figure(title="Example Figure", x_range=(-1,max_x), y_range=(-0.5,2.5), height=300, width=400, tools="pan, wheel_zoom, reset")
 figure_name.toolbar.logo = None # do not display the bokeh logo
@@ -152,7 +152,7 @@ figure_name.add_layout(arrow_glyph)
 #       Buttons and Sliders       #
 ###################################
 # or in general widgets
-# you may also sepperate the definitions and calls depending on you setting
+# you may also separate the definitions and calls depending on your setting
 
 
 play_pause_button = Button(label="Play", button_type="success", width=button_width)

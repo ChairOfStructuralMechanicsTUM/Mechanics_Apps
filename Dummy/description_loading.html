@@ -70,18 +70,18 @@ code {
     We need:
     <ul>
         <li>an html file including the CSS style definition</li>
-        <li>a Div setting this loading symbol</li>
-        <li>curdoc().add_next_tick_callback</li>
+        <li>a <i>Div</i> setting this loading symbol</li>
+        <li><i>curdoc().add_next_tick_callback</i></li>
     </ul>
 </p>
 
 <p>
     By manipulating the layout one can replace for example a figure with the loading symbol.
     One could also just provide a dedicated space for this sign and set it to visible only when needed. <br>
-    We go for the second approach here. The other way can be seen in the Wavelet App.
+    We go for the second approach here. The other way can be seen in the <a href="https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/tree/master/WaveletApp">Wavelet App</a>.
 </p>
 
 <p>
     Since Bokeh currently synchronizes only at the <strong>end</strong> of callback functions, we need to provide an extra work function where we put the heavy computation. <br>
-    This function is then called via a curdoc().add_next_tick_callback in order to end the original callback which was opened by a button for example.
+    This function is then called via a <i>curdoc().add_next_tick_callback</i> in order to end the original callback which was opened by a button for example.
 </p>

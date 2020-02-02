@@ -148,7 +148,7 @@ For more information and contacts, please consult the [Wiki](https://github.com/
 Please comply with the [Development Guideline](https://github.com/ChairOfStructuralMechanicsTUM/Mechanics_Apps/wiki/Development-Guidelines)
 - Matthias Ebert, me, [@m3bert](https://github.com/m3bert)
 - Qiaozhi Gao, qg, [@QiaozhiGao](https://github.com/QiaozhiGao)
-- Martin Hefel, mh
+- Martin Hefel, mh, [@MartinHefel](https://github.com/MartinHefel)
 - Viola Li, vl, [@ViolaM151](https://github.com/ViolaM151)
 
 ### Former developers
