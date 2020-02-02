@@ -146,7 +146,7 @@ Amplification_current_source = ColumnDataSource(data=dict(x=[0],y=[0]))         
 PhaseAngle_current_source = ColumnDataSource(data=dict(x=[0],y=[0]))                #spot showing current phase angle
 
 ## plot-boundaries
-Amplification_range = Range1d(0,0)
+Amplification_range = Range1d(0,30)
 PhaseAngle_range = Range1d(0,3.5)       #(0,pi)
 Frequency_range = Range1d(0,5)
 
@@ -404,7 +404,7 @@ def reset():
     stop()
 
 def Update_system():    
-    Calculate_MagnificationFactor_PhaseAngle(mass_ratio_input.value,tuning_input.value,D1_input.value,D2_input.value,mainMass_amplificationFrequency_source,mainMass_phaseAngleFrequency_source,Amplification_range,k1,m1)
+    Calculate_MagnificationFactor_PhaseAngle(mass_ratio_input.value,tuning_input.value,D1_input.value,D2_input.value,mainMass_amplificationFrequency_source,mainMass_phaseAngleFrequency_source,k1,m1)
     
 def Update_current_state():
     Calculate_Current_Amplification_PhaseAngle(frequency_ratio_input.value,tuning_input.value,mass_ratio_input.value,D1_input.value,D2_input.value,Amplification_current_source,PhaseAngle_current_source,k1,m1)

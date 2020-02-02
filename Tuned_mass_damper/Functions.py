@@ -98,7 +98,7 @@ def force_forced_amplfication_function(
 def Calculate_MagnificationFactor_PhaseAngle( 
                                        mu, kappa, D1, D2,
                                        Amplification_source, Phase_source,
-                                       amplification_range, k1, m1
+                                       k1, m1
                                       ):
     eta = []
     Amplification = []
@@ -125,13 +125,6 @@ def Calculate_MagnificationFactor_PhaseAngle(
     Amplification_source.data = dict(x=eta, y=Amplification)
     
     Phase_source.data = dict(x=eta, y=Phase)
-    
-    # Determine maximum amplification and phase angle
-    Max_Amplification = np.max(Amplification) 
-    
-    # Define the boundaries of the plot
-    amplification_range.start = 0
-    amplification_range.end =  abs(Max_Amplification*1.2) # Multiplied by 1.2 to give more space at the top
     
     
 def Calculate_Current_Amplification_PhaseAngle(
