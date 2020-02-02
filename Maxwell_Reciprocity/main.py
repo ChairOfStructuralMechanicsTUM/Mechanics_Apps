@@ -313,9 +313,9 @@ abtext_glyph = Text( x='x' , y='y', text='text' ,text_color="Black",
 #######Arrows:
 #P arrow:
 p1_arrow_glyph = Arrow(end=NormalHead(line_color=MBD.f1color,line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=MBD.f1.arrow_source,line_color=MBD.f1color)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 1, source=MBD.f1.arrow_source,line_color=MBD.f1color)
 p2_arrow_glyph = Arrow(end=NormalHead(line_color=MBD.f2color,line_width= 4, size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=MBD.f2.arrow_source,line_color=MBD.f2color)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 1, source=MBD.f2.arrow_source,line_color=MBD.f2color)
 
 #e arrow:
 e1_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f1color,line_width= 3, size=6,line_alpha = 0.5),
@@ -325,9 +325,9 @@ e2_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f2color,line_width= 3, size=6
 
 #MBD.f1 w11 arrow
 w11_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f1color,line_width= 3, size=6,line_alpha = 0.3),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f1.w1,line_color=MBD.f1color,line_alpha = 0.3)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f1.w1,line_color=MBD.f1color,line_alpha = 0.6)
 w12_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f1color,line_width= 3, size=6,line_alpha = 0.3),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f1.w2,line_color=MBD.f1color,line_alpha = 0.3)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f1.w2,line_color=MBD.f1color,line_alpha = 0.6)
 
 #EDIT Start
 #MBD.f1 w12 arrow
@@ -339,9 +339,9 @@ w12_12_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f1color,line_width= 3, si
 
 #MBD.f2 w22 arrow
 w21_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f2color,line_width= 3, size=6,line_alpha = 0.3),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w1,line_color=MBD.f2color,line_alpha = 0.3)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w1,line_color=MBD.f2color,line_alpha = 0.6)
 w22_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f2color,line_width= 3, size=6,line_alpha = 0.3),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w2,line_color=MBD.f2color,line_alpha = 0.3)
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= 4, source=MBD.f2.w2,line_color=MBD.f2color,line_alpha = 0.6)
 
 #EDIT Start
 #MBD.f2 w21 arrow
@@ -355,10 +355,11 @@ w21_12_arrow_glyph = Arrow(end=OpenHead(line_color=MBD.f2color,line_width= 3, si
 
 ########Layout adding
 #Adding the arrows and labels to the plot:
-plot.add_layout(p1_arrow_glyph)
-plot.add_layout(p2_arrow_glyph)
+
 plot.add_layout(e1_arrow_glyph)
 plot.add_layout(e2_arrow_glyph)
+plot.add_layout(p1_arrow_glyph)
+plot.add_layout(p2_arrow_glyph)
 plot.add_layout(w11_arrow_glyph)
 plot.add_layout(w12_arrow_glyph)
 plot.add_layout(w21_arrow_glyph)
