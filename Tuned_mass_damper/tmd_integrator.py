@@ -1,6 +1,6 @@
-from Mass import *
+from tmd_mass import Mass
 from math import cos
-from Spring import *
+from tmd_spring import Spring
 
 class Integrator:
     def __init__(self,listOfMasses,oscAmp,listOfDashpots):

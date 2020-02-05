@@ -1,16 +1,19 @@
 from __future__ import division
-from Spring import *
-from Dashpot import *
-from Mass import *
-from Integrator import *
+from tmd_spring import Spring
+from tmd_dashpot import Dashpot
+from tmd_mass import RectangularMass
+from tmd_integrator import Integrator
+from tmd_coord import Coord
+
+from tmd_functions import Calculate_MagnificationFactor_PhaseAngle, Calculate_Current_Amplification_PhaseAngle
+from tmd_functions import Clear_Time_History
+
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div, Arrow, NormalHead, Range1d, LabelSet, OpenHead
+from bokeh.models import Slider, Button, Div, Arrow, NormalHead, Range1d, LabelSet, OpenHead, ColumnDataSource
 from math import cos, sin, radians, sqrt, pi, atan2
-from os.path import dirname, join, split
-from Functions import Calculate_MagnificationFactor_PhaseAngle, Calculate_Current_Amplification_PhaseAngle
-from Functions import Clear_Time_History
+
 import numpy as np
 from numpy.linalg import inv
 
