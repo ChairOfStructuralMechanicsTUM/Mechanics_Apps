@@ -27,11 +27,11 @@ class Spring(object):
         if (point==self.start):
             self.actsOn.append((obj,'s'))
             # apply current force to object
-            obj.applyForce(-self.kappa*(self.end-self.start-self.length),self)
+            #obj.applyForce(-self.kappa*(self.end-self.start-self.length),self)
         else:
             self.actsOn.append((obj,'e'))
             # apply current force to object
-            obj.applyForce(self.kappa*(self.end-self.start-self.length),self)
+            #obj.applyForce(self.kappa*(self.end-self.start-self.length),self)
     
     ## define spring co-ordinates
     def draw(self,start,end):
@@ -74,7 +74,7 @@ class Spring(object):
         return direction
     
     ## draw spring on figure
-    def plot(self,fig,colour="#808080",width=1):
+    def plot(self,fig,colour="#8a8a8a",width=1):
         fig.line(x='x',y='y',color=colour,source=self.Position,line_width=width)
     
     ## place spring in space
