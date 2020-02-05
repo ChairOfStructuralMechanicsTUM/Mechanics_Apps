@@ -4,7 +4,7 @@ Normal Force Rod - force and deformation equations
 """
 # general imports
 from __future__ import division # float division only, like in python 3
-import numpy as np
+import numpy as np # needs at least version 1.17
 
 # bokeh imports
 

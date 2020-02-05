@@ -10,7 +10,7 @@ import numpy as np
 # bokeh imports
 from bokeh.io             import curdoc
 from bokeh.plotting       import Figure
-from bokeh.models         import ColumnDataSource, LabelSet
+from bokeh.models         import ColumnDataSource, LabelSet, Arrow, OpenHead, NormalHead
 from bokeh.models.glyphs  import MultiLine, Rect ,ImageURL
 from bokeh.models.layouts import Spacer
 from bokeh.models.widgets import Paragraph, Button, RadioButtonGroup, RadioGroup
@@ -22,6 +22,7 @@ from NFR_equations import calcNU
 from NFR_constants import (
         xr_start, xr_end,
         color_rod, num_symbols,
+        color_nf, color_def, c_black, c_gray,
         x_range, fig_height,
         initial_load, initial_load_position
         )
@@ -46,8 +47,9 @@ error_msg       = ColumnDataSource(data=dict(x=[],y=[],name=[]))  # error messag
 graph_N         = ColumnDataSource(data=dict(x=[0], y=[0]))       # data for force plot
 graph_U         = ColumnDataSource(data=dict(x=[0], y=[0]))       # data for deformation plot
 
-zero_label_source       = ColumnDataSource(data=dict(x=[], y=[], text=[])) # position and text for the labels in force plot
-extrem_val_label_source = ColumnDataSource(data=dict(x=[], y=[], text=[])) # position and text for the labels in deformation plot
+beam_measure_label_source = ColumnDataSource(data=dict(x=[], y=[], text=[])) # position and text for measure labels in the main plot
+zero_label_source         = ColumnDataSource(data=dict(x=[], y=[], text=[])) # position and text for the labels in force plot
+extrem_val_label_source   = ColumnDataSource(data=dict(x=[], y=[], text=[])) # position and text for the labels in deformation plot
 
 
 
@@ -231,7 +233,7 @@ aux_line_glyph = MultiLine(xs='x', ys='y', line_width=2, line_dash=[1,2], line_c
 
 ###### MAIN PLOT (beam, supports, load) ######
 # define plot:
-plot_main = Figure(title="Rod with Supports and Load", tools="", x_range=x_range, y_range=(-1.5,2.5), height=fig_height)
+plot_main = Figure(title="Rod with Supports and Load", tools="", x_range=x_range, y_range=(-2.0,2.5), height=fig_height)
 # set properties
 plot_main.axis.visible = False
 plot_main.outline_line_width = 2
@@ -246,6 +248,19 @@ plot_main.add_glyph(error_msg_frame,Rect(x="x", y="y", width=8, height=1, angle=
 
 # plot helper line
 plot_main.add_glyph(aux_line, aux_line_glyph)
+
+# measures
+beam_measure_doublearrow_glyph = Arrow(start=OpenHead(line_color=c_black, line_width=2, size=8), end=OpenHead(line_color='black',line_width= 2, size=8),
+    x_start=xr_start, y_start=-1.2, x_end=xr_end, y_end=-1.2, line_width=5, line_color=c_black)
+beam_measure_singlearrow_glyph = Arrow(end=NormalHead(fill_color=c_gray, line_width=1, size=6),
+    x_start=xr_start-0.1, y_start=-0.8, x_end=xr_start+0.8, y_end=-0.8, line_width=1, line_color=c_black)
+
+beam_measure_label_source.data = dict(x=[xr_start+0.25, 0.5*(xr_end-xr_start)], y=[-0.7,-1.6], text=["x","L"])
+beam_measure_label = LatexLabelSet(x='x', y='y', text='text', source=beam_measure_label_source, level='glyph')#, x_offset=3, y_offset=-15)
+plot_main.line(x=[xr_start, xr_start], y=[-0.7,-0.9], line_color=c_black) # vertical line for single x-arrow
+plot_main.add_layout(beam_measure_singlearrow_glyph)
+plot_main.add_layout(beam_measure_doublearrow_glyph)
+plot_main.add_layout(beam_measure_label)
 
 
 # graphics for a cold beam
@@ -295,7 +310,7 @@ plot_normalF.title.text_font_size = "13pt"
 plot_normalF.toolbar.logo = None
 
 # plot data
-plot_normalF.line(x='x', y='y', source=graph_N, color="#A2AD00",line_width=2)
+plot_normalF.line(x='x', y='y', source=graph_N, color=color_nf ,line_width=2)
 
 # plot helper line
 plot_normalF.add_glyph(aux_line, aux_line_glyph)
@@ -318,7 +333,7 @@ plot_deform.title.text_font_size = "13pt"
 plot_deform.toolbar.logo = None
 
 # plot data
-plot_deform.line(x='x', y='y', source=graph_U, color="#A2AD00",line_width=2)
+plot_deform.line(x='x', y='y', source=graph_U, color=color_def, line_width=2)
 
 # plot helper line
 plot_deform.add_glyph(aux_line, aux_line_glyph)

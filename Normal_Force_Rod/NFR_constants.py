@@ -7,6 +7,13 @@ Normal Force Rod - constants used throughout different files
 
 
 ###################################
+#          general colors         #
+###################################
+c_black = "#333333"
+c_gray  = "#b3b3b3"
+
+
+###################################
 #           coordinates           #
 ###################################
 
@@ -54,6 +61,9 @@ x_range    = (xr_start-1.5,xr_end+1.5)
 # color
 color_rod   = "#0065BD" # beam color
 color_arrow = "#0065BD" # force arrow color
+
+color_nf    = "#a2ad00" # normal force line color
+color_def   = "#e37222" # deformation line color
 
 color_rod_cold = "#3070b3"
 color_rod_hot  = "#e37222"
