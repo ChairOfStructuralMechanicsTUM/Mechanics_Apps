@@ -1,5 +1,5 @@
 from bokeh.models import ColumnDataSource
-from Coord import *
+from beo_coord import Coord
 from copy import deepcopy
 
 class Dashpot(object):

@@ -1,12 +1,15 @@
-from Spring import *
-from Dashpot import *
-from Mass import *
+from beo_spring import Spring
+from beo_dashpot import Dashpot
+from beo_mass import RectangularMass
+from beo_coord import Coord
+
 from bokeh.plotting import figure, output_file
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div
+from bokeh.models import Slider, Button, Div, ColumnDataSource
+
 from math import sin, radians
-from os.path import dirname, join, split
+from copy import deepcopy
 
 from os.path import dirname, join, split, abspath
 import sys, inspect
