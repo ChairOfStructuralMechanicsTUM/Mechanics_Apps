@@ -1,7 +1,7 @@
 from bokeh.models import ColumnDataSource
-from Coord import *
+from beo_coord import Coord
 from copy import deepcopy
-from Dashpot import *
+from beo_dashpot import Dashpot
 
 class Mass(object):
     ## create mass
