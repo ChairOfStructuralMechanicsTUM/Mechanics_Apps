@@ -1,7 +1,15 @@
+# general imports
 from math import sqrt
 import re
 
+# bokeh imports
+
+# internal imports
 from SD_Constants import acceptable_characters, numbers
+
+# latex integration
+
+#---------------------------------------------------------------------#
 
 
 

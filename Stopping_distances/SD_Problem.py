@@ -1,26 +1,30 @@
-from SD_TestSolutions import eval_fct
+# general imports
 from random import seed, randrange
-from bokeh.layouts import column, row
-from bokeh.models.widgets import TextInput, Button, Paragraph, CheckboxGroup, Select, Div
-from bokeh.io import curdoc
 
-from SD_Constants import (
+# bokeh imports
+from bokeh.io             import curdoc
+from bokeh.layouts        import column, row
+from bokeh.models.widgets import TextInput, Button, Paragraph, CheckboxGroup, Select, Div
+
+# internal imports
+from SD_TestSolutions import eval_fct
+from SD_InputChecker  import isempty, validate_function, validate_value
+from SD_Constants     import (
     min_random_v, max_random_v, steps_v,
     min_v, min_val, max_totT, t_update,
     msg_invalid_value, msg_invalid_function, msg_empty_field,
     bl_quad, bl_sqrt, math_button_width
 )
 
-from SD_InputChecker import isempty, validate_function, validate_value
-
-
-
+# latex integration
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv
+
+#---------------------------------------------------------------------#
 
 
 class SD_Problem:
@@ -53,7 +57,7 @@ class SD_Problem:
         # reset button
         self.reset_button = Button(label="Reset",button_type="success", width=100)
         self.reset_button.on_click(self.Reset)
-        # checkbox for whether equations as a function of time are visible
+        # selection for exact time and distance dependent formulas
         self.eq_selection = Select(title="", value="Select an equation", width=300,
             options=["Select an equation",
                      "s(t) - time dependent distance",
@@ -61,18 +65,12 @@ class SD_Problem:
                      "t(s) - distance dependent time",
                      "v(s) - distance dependent velocity"])
         self.eq_selection.on_change('value', self.show_equation)
-        # self.eqVis = CheckboxGroup(labels=["Show equations as a function of the time"], active=[])
-        # self.eqVis.on_change('active',self.toggleEquation)
-        # save space to write equations as a function of time
+        # write equations into a invisible div
         self.eq_st = LatexDiv(text="$$ s(t) = \\frac{1}{2} a_0 t^2 + v_0 t $$", visible=False)
         self.eq_vt = LatexDiv(text="$$ v(t) = \\frac{1}{2} a_0 t + v_0 $$"    , visible=False)
         self.eq_ts = LatexDiv(text="$$ t(s) = \\frac{2s}{v(s)+v_0} = \\frac{2s}{\\sqrt{2as + v_0^2}+v_0} $$", visible=False)
         self.eq_vs = LatexDiv(text="$$ v(s) = \\sqrt{2as + v_0^2} $$"         , visible=False)
         self.equations = {"st":self.eq_st, "vt":self.eq_vt, "ts":self.eq_ts, "vs":self.eq_vs}
-        # self.eqst.text = u"s(t)=0.5 a\u2092t \u00B2+v\u2092t"
-        #     self.eqvt.text = u"v(t)=a\u2092t+v\u2092"
-        # self.eqst = Paragraph(text="")
-        # self.eqvt = Paragraph(text="")
         # user input for t(s) to be tested against simulation
         self.UserTs = TextInput(value="", title="t(s) = ",width=200)
         self.UserTs.on_change('value', self.check_function_inputs)
@@ -118,21 +116,12 @@ class SD_Problem:
                              self.UserAcceleration,
                              row(self.startSim, self.warning_widget),
                              self.reset_button,
-                             #self.eqVis, self.eqst, self.eqvt, self.eq_st,
-                             column(self.eq_selection, self.eq_st, self.eq_vt, self.eq_ts, self.eq_vs),
-                             #row(
-                             #column(
-                                row(self.math_usr_buttons["sqrts"][1], self.math_usr_buttons["quads"][1]), 
-                                self.UserTs,
-                                row(self.math_usr_buttons["sqrts"][2], self.math_usr_buttons["quads"][2]),
-                                self.UserVs,
-                                row(self.TestEqs, self.warning_widget_equ)#),
-                            #  column(self.eq_selection, 
-                            #         self.eq_st, 
-                            #         self.eq_vt,
-                            #         self.eq_ts,
-                            #         self.eq_vs)
-                             #)
+                             self.eq_selection, self.eq_st, self.eq_vt, self.eq_ts, self.eq_vs,
+                             row(self.math_usr_buttons["sqrts"][1], self.math_usr_buttons["quads"][1]), 
+                             self.UserTs,
+                             row(self.math_usr_buttons["sqrts"][2], self.math_usr_buttons["quads"][2]),
+                             self.UserVs,
+                             row(self.TestEqs, self.warning_widget_equ)
                              )
 
 
@@ -245,8 +234,6 @@ class SD_Problem:
             self.Plotter.swapSetup()
             # reset drawing
             self.Reset()
-            # enable viewer to see s(t) and v(t)
-            #self.eqVis.visible=True
             # rename acceleration input
             self.UserAcceleration.title="Acceleration :"
             #self.UserAcceleration.disabled = False
@@ -274,8 +261,6 @@ class SD_Problem:
             self.Plotter.swapSetup()
             # reset drawing
             self.Reset()
-            # stop viewer from seeing s(t) and v(t) (as not relevant to this problem)
-            #self.eqVis.visible=False
             # clear acceleration input for distance dependent velocity, not needed in this case
             #self.UserAcceleration.value= ""
             self.UserAcceleration.visible = False
@@ -481,7 +466,6 @@ class SD_Problem:
                 self.Plotter.test_equation(self.UserVs.value,'v')
             else:
                 self.Plotter.test_equation(self.UserVs.value,'a')
-
 
 
     def _init_random_velocity(self):

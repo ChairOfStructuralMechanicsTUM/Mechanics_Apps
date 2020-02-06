@@ -1,13 +1,15 @@
+# general imports
 from math import sqrt
 
-from SD_Constants import acceptable_characters, numbers
+# bokeh imports
 
+# internal imports
+from SD_Constants import acceptable_characters, numbers
 from SD_InputChecker import validate_function
 
+# latex integration
 
-
-
-# TODO?: add a function to derive the exact formulas
+#---------------------------------------------------------------------#
 
 
 
