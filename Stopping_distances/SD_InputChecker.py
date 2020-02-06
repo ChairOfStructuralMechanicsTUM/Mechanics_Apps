@@ -56,7 +56,12 @@ def validate_function(fct,x):
 
     # change , to . so 0,5 becomes 0.5, thus rendering European notation readable by python
     fct = squeeze_string(fct).replace(',','.')
-    # check there are as many opening brackets as closing brackets
+
+    # test if the input contains a non valid character
+    if not all(characters in acceptable_characters + x for characters in fct):
+        return invalid_return
+
+    # check if there are as many opening brackets as closing brackets
     if (fct.count('(')!=fct.count(')')):
         return invalid_return
 
@@ -78,9 +83,22 @@ def validate_function(fct,x):
     if len(list_empty_p)>0:
         return invalid_return
 
+    # check whether an opening paranthesis is followed by *, / or ^
+    list_op_after_oppar = re.findall("\([\^\*\/]",fct)
+    if len(list_op_after_oppar)>0:
+        return invalid_return
+
+
+    # add missing * between closing and opening parantheses
+    # i.e. (...)(...) becomes (...)*(...)
+    fct = fct.replace(")(", ")*(")
+
     # add missing * between ) and s
     # i.e. if user has written (3+1)s instead of (3+1)*s
     fct = fct.replace(")"+x, ")*"+x)
+    # same with s and (
+    # ie. if user has written s(3+1) instead of s*(3+1)
+    fct = fct.replace(x+"(", x+"*(")
     
     # more complex, but covers more cases:
     # also accepts spaces but the string should already be squeezed at this point anyway, so the easy way above should also work
@@ -91,75 +109,32 @@ def validate_function(fct,x):
     # add missing * between ) and sqrt
     fct = fct.replace(u")\u221A", u")*\u221A")
 
+    # add missing * between the following cases: 
+    # if user has written 2(3+1) instead of 2*(3+1)
+    # or 2sqrt(3) instead of 2*sqrt(3)
+    # or 2s instead of 2*s
+    fct = re.sub(r"([0-9"+x+r"])([\u221A\("+x+r"])",r"\1*\2",fct)
+    fct = re.sub(r"([0-9"+x+r"])([\u221A\("+x+r"])",r"\1*\2",fct)
+    # needs repetition to cover cases like  2s√(3) or ssss... 
+
+    # replace Matlab ^ with Python **
+    fct = fct.replace("^", "**")
+
+    # replace unicode square root with python readable "sqrt"
+    fct = fct.replace(u"\u221A", "sqrt")
+
+
     # do not allow numbers after parentheses like   sqrt(s)5
-    list_num_after_p = re.findall("\)[0-9]",fct)
+    # and also no numbers after the variable like   s5 
+    list_num_after_p = re.findall("[\)"+x+"][0-9]",fct)
     if len(list_num_after_p)>0:
         return invalid_return
 
 
-
-    # set up while loop (for loop breaks at sqrt)
-    n=len(fct)
-
-    i=0
-    while (i<n):
-        # if the input contains a non valid character return false
-        if (acceptable_characters.find(fct[i])==-1 and fct[i]!=x):
-            return invalid_return
-        # if user has written 2(3+1) instead of 2*(3+1)
-        # or 2sqrt(3) instead of 2*sqrt(3)
-        # or 2s instead of 2*s
-        # or s(1+3) etc
-        # add missing *
-        if (i!=n-1 and (numbers.find(fct[i])!=-1 or fct[i]==x)
-            and (fct[i+1]=='(' or fct[i+1]==u'\u221A' or fct[i+1]==x)):
-            sTemp=fct[i+1:]
-            fct=fct[:i+1]+"*"+sTemp
-            n+=1
-        # if character is sqrt (u'\u221A') then replace with python readable "sqrt"
-        if (fct[i]==u'\u221A'):
-            sTemp=fct[i+1:]
-            fct=fct[:i]+"sqrt"+sTemp
-            # increase i so as not to check the letters in sqrt
-            i+=4
-            # increase n so that the whole string is still checked
-            n+=3
-        elif (fct[i]=='^'):
-            sTemp=fct[i+1:]
-            fct=fct[:i]+"**"+sTemp
-            # increase i so as not to check **
-            i+=1
-            # increase n so that the whole string is still checked
-            n+=1
-        i+=1
-
+    # if everything is fine
     return [True, fct]
 
 
-    # still wrong:
-    #2****
-    #2*/
 
-
-# # # # def eval_fct(fct, x='s', val=0):
-# # # #     # returns either "not valid" or the value of the given function
-
-# # # #     # check if the given function is valid
-# # # #     fct = validate_function(fct,x)
-# # # #     if fct == False:
-# # # #         print("Not a valid function!")
-# # # #         return "not valid"
-# # # #     else:
-# # # #         # if false has not yet been returned then fct should be valid and can be used in eval function
-# # # #         try:
-# # # #             # create a variable with the appropriate name and test function
-# # # #             exec(x+"="+str(val))
-# # # #             # return it if everything works
-# # # #             return eval(fct)
-# # # #         except :
-# # # #             # otherwise return False
-# # # #             # no, do not return False, since it can be confused with zero
-# # # #             #return False
-# # # #             return "not valid"
 
 
