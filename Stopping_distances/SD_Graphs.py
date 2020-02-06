@@ -1,10 +1,18 @@
-from bokeh.plotting import figure
-from bokeh.layouts import gridplot
-from bokeh.models import ColumnDataSource
-from math import sqrt, isnan
+# general imports
+from math  import sqrt, isnan
 from numpy import linspace
 
+# bokeh imports
+from bokeh.plotting import figure
+from bokeh.layouts  import gridplot
+from bokeh.models   import ColumnDataSource
+
+# internal imports
 from SD_TestSolutions import eval_fct
+
+# latex integration
+
+#---------------------------------------------------------------------#
 
 
 class SD_Graphs:
@@ -69,9 +77,9 @@ class SD_Graphs:
         self.a0=a
         # if the initial velocity and constant acceleration was specified
         # then the car will stop at tmax (if it has not yet collided with the wall)
-        tmax=abs(v/a)
+        tmax=abs(v/a) # only for negative a, since then v_0 > v(t) for all t>0
         # set x and y ranges
-        # the time range is [0,tmax] or [0,(sqrt(v^2+60*a)-v)/a]
+        # the time range is [0,tmax] or [0,(sqrt(v^2+60*a)-v)/a]   # 60 = 2*30 = 2*s_max
         # if else is required to avoid sqrt of a negative number
         if (v**2+60*a<0):
             # figure at may have s or t on the x axis,
@@ -159,6 +167,7 @@ class SD_Graphs:
 
 
 
+    # user defined functions - for comparison to the actual graphs
     def test_equation(self,fct,plt):
         #plt: t, v, a
 
@@ -184,7 +193,6 @@ class SD_Graphs:
         if (plt=='t'):
             self.UserStSource.data = dict(s=X,t=Y)
         elif (plt=='v'):
-            print(Y)
             self.UserVsSource.data = dict(s=X,v=Y)
         elif (plt=='a'):
             self.UserAtSource.data = dict(ts=X,a=Y)
