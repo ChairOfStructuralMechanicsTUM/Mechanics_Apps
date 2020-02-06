@@ -14,6 +14,15 @@ from SD_Constants import (
 from SD_InputChecker import isempty, validate_function, validate_value
 
 
+
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexDiv
+
+
 class SD_Problem:
     def __init__(self,Vis,Plotter):
         # setup random by selecting a seed (so that numbers are truly random)
@@ -45,11 +54,25 @@ class SD_Problem:
         self.reset_button = Button(label="Reset",button_type="success", width=100)
         self.reset_button.on_click(self.Reset)
         # checkbox for whether equations as a function of time are visible
-        self.eqVis = CheckboxGroup(labels=["Show equations as a function of the time"], active=[])
-        self.eqVis.on_change('active',self.toggleEquation)
+        self.eq_selection = Select(title="", value="Select an equation", width=300,
+            options=["Select an equation",
+                     "s(t) - time dependent distance",
+                     "v(t) - time dependent velocity",
+                     "t(s) - distance dependent time",
+                     "v(s) - distance dependent velocity"])
+        self.eq_selection.on_change('value', self.show_equation)
+        # self.eqVis = CheckboxGroup(labels=["Show equations as a function of the time"], active=[])
+        # self.eqVis.on_change('active',self.toggleEquation)
         # save space to write equations as a function of time
-        self.eqst = Paragraph(text="")
-        self.eqvt = Paragraph(text="")
+        self.eq_st = LatexDiv(text="$$ s(t) = \\frac{1}{2} a_0 t^2 + v_0 t $$", visible=False)
+        self.eq_vt = LatexDiv(text="$$ v(t) = \\frac{1}{2} a_0 t + v_0 $$"    , visible=False)
+        self.eq_ts = LatexDiv(text="$$ t(s) = \\frac{2s}{v(s)+v_0} = \\frac{2s}{\\sqrt{2as + v_0^2}+v_0} $$", visible=False)
+        self.eq_vs = LatexDiv(text="$$ v(s) = \\sqrt{2as + v_0^2} $$"         , visible=False)
+        self.equations = {"st":self.eq_st, "vt":self.eq_vt, "ts":self.eq_ts, "vs":self.eq_vs}
+        # self.eqst.text = u"s(t)=0.5 a\u2092t \u00B2+v\u2092t"
+        #     self.eqvt.text = u"v(t)=a\u2092t+v\u2092"
+        # self.eqst = Paragraph(text="")
+        # self.eqvt = Paragraph(text="")
         # user input for t(s) to be tested against simulation
         self.UserTs = TextInput(value="", title="t(s) = ",width=200)
         self.UserTs.on_change('value', self.check_function_inputs)
@@ -95,12 +118,22 @@ class SD_Problem:
                              self.UserAcceleration,
                              row(self.startSim, self.warning_widget),
                              self.reset_button,
-                             self.eqVis, self.eqst, self.eqvt, 
-                             row(self.math_usr_buttons["sqrts"][1], self.math_usr_buttons["quads"][1]), 
-                             self.UserTs,
-                             row(self.math_usr_buttons["sqrts"][2], self.math_usr_buttons["quads"][2]),
-                             self.UserVs,
-                             row(self.TestEqs, self.warning_widget_equ))
+                             #self.eqVis, self.eqst, self.eqvt, self.eq_st,
+                             column(self.eq_selection, self.eq_st, self.eq_vt, self.eq_ts, self.eq_vs),
+                             #row(
+                             #column(
+                                row(self.math_usr_buttons["sqrts"][1], self.math_usr_buttons["quads"][1]), 
+                                self.UserTs,
+                                row(self.math_usr_buttons["sqrts"][2], self.math_usr_buttons["quads"][2]),
+                                self.UserVs,
+                                row(self.TestEqs, self.warning_widget_equ)#),
+                            #  column(self.eq_selection, 
+                            #         self.eq_st, 
+                            #         self.eq_vt,
+                            #         self.eq_ts,
+                            #         self.eq_vs)
+                             #)
+                             )
 
 
 
@@ -213,7 +246,7 @@ class SD_Problem:
             # reset drawing
             self.Reset()
             # enable viewer to see s(t) and v(t)
-            self.eqVis.visible=True
+            #self.eqVis.visible=True
             # rename acceleration input
             self.UserAcceleration.title="Acceleration :"
             #self.UserAcceleration.disabled = False
@@ -242,7 +275,7 @@ class SD_Problem:
             # reset drawing
             self.Reset()
             # stop viewer from seeing s(t) and v(t) (as not relevant to this problem)
-            self.eqVis.visible=False
+            #self.eqVis.visible=False
             # clear acceleration input for distance dependent velocity, not needed in this case
             #self.UserAcceleration.value= ""
             self.UserAcceleration.visible = False
@@ -385,17 +418,22 @@ class SD_Problem:
             self.startSim.disabled = False
 
 
-    def toggleEquation(self,attr,old,new):
-        # show/hide equations as a function of time
-        #print(new)
-        if (len(new)==1):
-            self.eqst.text = u"s(t)=0.5 a\u2092t \u00B2+v\u2092t"
-            self.eqvt.text = u"v(t)=a\u2092t+v\u2092"
+
+    def show_equation(self, attr, old, new):
+        if new == "Select an equation":
+            for k in self.equations.keys():
+                self.equations[k].visible = False
         else:
-            self.eqst.text = ""
-            self.eqvt.text = ""
-
-
+            # get the key for the equations dict by extracting the first letters
+            k = new[:4].replace('(','').replace(')','')
+            # hide all other equations
+            # remark: need to go through all keys, since value of "old" might be "Select..." which has no key
+            for other_key in self.equations.keys():
+                if k != other_key: # attention!  != compares strings,  "is not" compares ids
+                    self.equations[other_key].visible = False
+            # show the corresponding equation
+            self.equations[k].visible = True
+ 
 
     def add_math_op(self, event_obj):
         # get the Button which called this function
