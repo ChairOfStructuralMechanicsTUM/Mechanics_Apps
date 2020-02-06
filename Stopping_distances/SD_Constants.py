@@ -1,5 +1,11 @@
 # constants
 
+# labels/strings
+bl_sqrt = u"\u221A"
+bl_quad = u".²"
+
+# standard object widths/heights
+math_button_width = 20
 
 
 # random initial velocity settings

@@ -7,7 +7,8 @@ from bokeh.io import curdoc
 from SD_Constants import (
     min_random_v, max_random_v, steps_v,
     min_v, min_val, max_totT, t_update,
-    msg_invalid_value, msg_invalid_function, msg_empty_field
+    msg_invalid_value, msg_invalid_function, msg_empty_field,
+    bl_quad, bl_sqrt, math_button_width
 )
 
 from SD_InputChecker import isempty, validate_function, validate_value
@@ -30,9 +31,6 @@ class SD_Problem:
         # input for v0 or v(s)
         self.Vs = TextInput(value=str(self.v), title="Initial Velocity", width=300)
         self.Vs.on_change('value',self.set_v)
-        # button to allow sqrt to be used in v(s)
-        self.VsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100, visible=False)
-        self.VsSqrt.on_click(self.addSqrtVs)
         # choice of v0 or v(s) method
         self.VMethod = Select(title="", value="Initial Velocity",
             options=["Initial Velocity", "Distance-dependent Velocity"], width=300)
@@ -55,21 +53,29 @@ class SD_Problem:
         # user input for t(s) to be tested against simulation
         self.UserTs = TextInput(value="", title="t(s) = ",width=200)
         self.UserTs.on_change('value', self.check_function_inputs)
-        # button to allow sqrt to be used in t(s)
-        self.UserTsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
-        self.UserTsSqrt.on_click(self.addSqrtUserTs)
         # user input for v(s) (or a(s)) to be tested against simulation
         self.UserVs = TextInput(value="", title="v(s) = ",width=200)
         self.UserVs.on_change('value', self.check_function_inputs)
-        # button to allow sqrt to be used in v(s)/a(s)
-        self.UserVsSqrt = Button(label="Insert: " u"\u221A",button_type="success",width=100)
-        self.UserVsSqrt.on_click(self.addSqrtUserVs)
         # button to plot t(s) and v(s)/a(s) over simulation data
         self.TestEqs = Button(label="Check equations",button_type="success",width=150)
         self.TestEqs.on_click(self.plot_attempt)
         # warning widget
         self.warning_widget     = Div(text="", render_as_text = False, style={'color':'red', 'font_size':'200%'}, width=300)
         self.warning_widget_equ = Div(text="", render_as_text = False, style={'color':'red', 'font_size':'200%'}, width=300)
+
+        # mathematical operation buttons for user input
+        self.math_group_map = {0:self.Vs, 1:self.UserTs, 2:self.UserVs}
+        num_math_usr_button_groups = len(self.math_group_map)
+        self.math_usr_buttons = dict(sqrts=[], quads=[])
+        for i in range(0,num_math_usr_button_groups):
+            tmp_tag = "math_group_"+str(i)
+            self.math_usr_buttons["sqrts"].append(Button(label=bl_sqrt, button_type="success", width=math_button_width, tags=[tmp_tag]))
+            self.math_usr_buttons["quads"].append(Button(label=bl_quad, button_type="success", width=math_button_width, tags=[tmp_tag]))
+            self.math_usr_buttons["sqrts"][i].on_click(self.add_math_op)
+            self.math_usr_buttons["quads"][i].on_click(self.add_math_op)
+
+        # define a callback map for easy removal and reset of callbacks to widgets
+        self.callback_map = {self.Vs: self.set_v, self.UserTs: self.check_function_inputs, self.UserVs: self.check_function_inputs}
     
         
         # initialise initial time, displacement and acceleration
@@ -83,12 +89,25 @@ class SD_Problem:
         self.callback_id = None
 
         # save layout
-        self.Layout = column(self.VMethod, row(self.Vs, self.VsSqrt), self.UserAcceleration, row(self.startSim, self.warning_widget), self.reset_button,
-                             self.eqVis, self.eqst, self.eqvt, row(self.UserTs, self.UserTsSqrt), row(self.UserVs,self.UserVsSqrt), row(self.TestEqs, self.warning_widget_equ))
+        self.Layout = column(self.VMethod,
+                             row(self.math_usr_buttons["sqrts"][0], self.math_usr_buttons["quads"][0]), 
+                             self.Vs, 
+                             self.UserAcceleration,
+                             row(self.startSim, self.warning_widget),
+                             self.reset_button,
+                             self.eqVis, self.eqst, self.eqvt, 
+                             row(self.math_usr_buttons["sqrts"][1], self.math_usr_buttons["quads"][1]), 
+                             self.UserTs,
+                             row(self.math_usr_buttons["sqrts"][2], self.math_usr_buttons["quads"][2]),
+                             self.UserVs,
+                             row(self.TestEqs, self.warning_widget_equ))
 
 
 
     def set_v(self, attr, old, new):
+        # if the box is empty, do nothing
+        if new=="": return
+
         # remove the callback while working in this function
         self.Vs.remove_on_change('value',self.set_v)
 
@@ -188,8 +207,6 @@ class SD_Problem:
             self.v = self._init_random_velocity()
             # show this initial velocity in the text box
             self.Vs.value = str(self.v)
-            # hide the sqrt button
-            self.VsSqrt.visible = False
 
             # alert graphs that problem type has changed
             self.Plotter.swapSetup()
@@ -219,9 +236,6 @@ class SD_Problem:
             self.Vs.value = u"\u221A(2*(-0.15s)+9)"
             # calculate the velocity for s=0
             self.v = eval_fct(self.Vs.value,'s',0)
-
-            # show the sqrt button
-            self.VsSqrt.visible = True
 
             # alert graphs that problem type has changed
             self.Plotter.swapSetup()
@@ -382,24 +396,34 @@ class SD_Problem:
             self.eqvt.text = ""
 
 
-    def addSqrt_general(self, input_box):
-        # add sqrt to any input box given in "input_box"
-        input_box.value = input_box.value + u"\u221A("
 
-    def addSqrtVs (self):
-        # add sqrt (unicode symbol) to user input for v(s)
-        #self.Vs.value=self.Vs.value+u"\u221A("
-        self.addSqrt_general(self.Vs)
+    def add_math_op(self, event_obj):
+        # get the Button which called this function
+        b = curdoc().get_model_by_id(event_obj._model_id)
+        # check if there is a fitting tag - if not, do nothing
+        if not any("math_group" in s for s in b.tags):
+            print("WARNING: No valid tag for function 'add_math_op'!")
+            return
+        # extract digit from tag
+        mg = int(b.tags[0].split('_')[-1]) # math group
+        # set corresponding text input box
+        # math_group_map maps the digit in the tag to the currect input box widget
+        tmp_input_box = self.math_group_map[mg]
 
-    def addSqrtUserTs (self):
-        # add sqrt (unicode symbol) to user input for t(s)
-        #self.UserTs.value=self.UserTs.value+u"\u221A("
-        self.addSqrt_general(self.UserTs)
+        # avoid triggering the callback while setting a new value
+        tmp_input_box.remove_on_change('value',self.callback_map[tmp_input_box])
 
-    def addSqrtUserVs (self):
-        # add sqrt (unicode symbol) to user input for v(s) (or a(s))
-        #self.UserVs.value=self.UserVs.value+u"\u221A("
-        self.addSqrt_general(self.UserVs)
+        # add the correct operator to the end of the string
+        if b.label == bl_sqrt:
+            tmp_input_box.value = tmp_input_box.value + bl_sqrt + '('
+        elif b.label == bl_quad:
+            tmp_input_box.value = tmp_input_box.value + '^2'
+        else:
+            print("WARNING: Operator not supported!")
+
+        # set the callback again
+        tmp_input_box.on_change('value',self.callback_map[tmp_input_box])
+
 
 
     def plot_attempt(self):
