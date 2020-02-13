@@ -77,8 +77,8 @@ max_displacement_plot.yaxis.axis_label= "Amplitude [mm]"
 max_displacement_plot.xaxis.axis_label="Time [second]"
 
 ERSplot = figure(
-                      plot_width=800,
-                      plot_height=800,
+                      plot_width=600,
+                      plot_height=600,
                       x_range=[0,3.0], 
                       y_range=[0,3.0],
                       
@@ -300,7 +300,7 @@ ERS_dataThree_info = Read_ERS_info(file='Dynamic_seismic_threeDof_structure/Time
 
 informationTable = ColumnDataSource(
                                      data=dict(
-                                               subject=['Earthquake Name', 'Year',
+                                               subject=[ 'Year',
                                                         'Station Name', 'Magnitude',
                                                         'Mechanism', 'Rjb (km)',
                                                         'Rrup (km)'],

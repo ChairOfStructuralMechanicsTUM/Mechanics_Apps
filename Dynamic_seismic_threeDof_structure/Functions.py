@@ -544,7 +544,7 @@ def read_ERS_data(file):
 def Read_ERS_info(file):
 
     data = list()
-    wordCounter = 0
+    wordCounter = -1
     lineCounter = 0                    
     with open( file, 'r') as f:
         for line in f:
