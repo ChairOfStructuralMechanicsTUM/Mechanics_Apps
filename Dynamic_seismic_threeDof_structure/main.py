@@ -173,7 +173,7 @@ structure_plot.add_layout(
                               )
                     )
                       
-color = ['#FF0000','#00FF00','#0000FF']
+color = ["#A2AD00","#0065BD","#E37222"]
 '''
 ###############################################################################
 Read and plot the seismic signals
