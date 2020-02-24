@@ -173,7 +173,7 @@ structure_plot.add_layout(
                               )
                     )
                       
-color = ["#A2AD00","#0065BD","#E37222","#FA8072"]
+color = ["#0065BD","#E37222","#FA8072","#A2AD00"]
 '''
 ###############################################################################
 Read and plot the seismic signals
@@ -185,7 +185,7 @@ signalOne   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_d
 signalTwo   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Rio_Hondo/RSN8837_14383980_CIRIOHNE1.AT2', scale = 2.9467
 )
 signalThree = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Bevagna/RSN4346_UBMARCHE.P_A-BEV000.AT2', scale = 1)
-signalFour = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Kobe/KOBE_NS1.AT2', scale = 0.0001)
+signalFour = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Kobe_new/RSN1106_KOBE_KJM000.AT2', scale = 1)
 # Calculate the maximum achieved amplitude in all three signals
 maxAmplitude = 0
 for element in signalOne.data['amplitude']:
@@ -259,12 +259,13 @@ Reading ERS data
 ERS_dataOne = read_ERS_data(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/San_Ramon_Fire_Station/_SearchResults.csv')
 ERS_dataTwo = read_ERS_data(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Rio_Hondo/_SearchResults.csv')
 ERS_dataThree = read_ERS_data(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Bevagna/_SearchResults.csv')
+ERS_dataFour = read_KOKE_ERS_data(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Kobe_new/_SearchResults.csv')
 
 # Plot the ERS_data into signal_plot
 ERS_dataOne_plot   = ERSplot.line(x='period',y='acceleration',source=ERS_dataOne,line_width=1,color=color[0])
 ERS_dataTwo_plot   = ERSplot.line(x='period',y='acceleration',source=ERS_dataTwo,line_width=1,color=color[1])
 ERS_dataThree_plot = ERSplot.line(x='period',y='acceleration',source=ERS_dataThree,line_width=1,color=color[2])
-
+ERS_dataFour_plot = ERSplot.line(x='period',y='acceleration',source=ERS_dataFour,line_width=1,color=color[3])
 # Calculate the maximum achieved amplitude in all three signals
 maxAcceleration = 0
 for element in ERS_dataOne.data['acceleration']:
@@ -276,6 +277,10 @@ for element in ERS_dataTwo.data['acceleration']:
         maxAcceleration = abs(element)
         
 for element in ERS_dataThree.data['acceleration']:
+    if abs(element) > maxAcceleration:
+        maxAcceleration = abs(element)
+
+for element in ERS_dataFour.data['acceleration']:
     if abs(element) > maxAcceleration:
         maxAcceleration = abs(element)
         
@@ -297,6 +302,7 @@ legend3 = Legend(items=[
     ("ERS Signal One  ", [ERS_dataOne_plot  ]),
     ("ERS Signal Two  ", [ERS_dataTwo_plot  ]),
     ("ERS Signal Three", [ERS_dataThree_plot]),
+    ("ERS Signal Four", [ERS_dataFour_plot]),
 ], location=(0, 0))
 
 ERSplot.add_layout(legend3, 'above')
@@ -306,6 +312,7 @@ ERSplot.legend.click_policy="hide"
 ERS_dataOne_info = Read_ERS_info(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/San_Ramon_Fire_Station/_SearchResults.csv')
 ERS_dataTwo_info = Read_ERS_info(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Rio_Hondo/_SearchResults.csv')
 ERS_dataThree_info = Read_ERS_info(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Bevagna/_SearchResults.csv')
+ERS_dataFour_info = Read_Kobe_ERS_info(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Kobe_new/_SearchResults.csv')
 
 informationTable = ColumnDataSource(
                                      data=dict(
@@ -315,7 +322,8 @@ informationTable = ColumnDataSource(
                                                         'Rrup (km)'],
                                                 signalOne  =ERS_dataOne_info,
                                                 signalTwo  =ERS_dataTwo_info,
-                                                signalThree=ERS_dataThree_info
+                                                signalThree=ERS_dataThree_info,
+                                                signalFour =ERS_dataFour_info
                                               )
                                     )
 columns = [
@@ -323,6 +331,7 @@ columns = [
             TableColumn(field="signalOne", title="Signal One"),
             TableColumn(field="signalTwo", title="Signal Two"),
             TableColumn(field="signalThree", title="Signal Three"),
+            TableColumn(field="signalFour", title="Signal Four"),
           ]   
 data_table = DataTable(source=informationTable, columns=columns, width=900, height=280)
 data_table_title = Div(text="""<b>Information about the seismic signals</b> """,width = 600)
