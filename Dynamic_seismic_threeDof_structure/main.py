@@ -8,7 +8,7 @@ from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 from bokeh.io import curdoc
 from Functions import *
-from bokeh.models import Arrow, OpenHead, Button, Slider, Toggle, LabelSet, Legend
+from bokeh.models import Arrow, OpenHead, Button, Slider, Toggle, LabelSet, Legend,CustomJS
 from bokeh.layouts import column, row, widgetbox
 from bokeh.models.widgets import TextInput, RadioGroup, Div, DataTable,TableColumn,DateFormatter
 from os.path import dirname, join, split
@@ -16,6 +16,7 @@ from Functions import *
 from bokeh.models.ranges import Range1d
 from bokeh.models.layouts import Spacer
 from bokeh.models.ranges import Range
+from bokeh.models.renderers import GlyphRenderer
 
 '''
 ###############################################################################
@@ -92,6 +93,21 @@ ERSplot.xaxis.visible=True
 ERSplot.xaxis.axis_label= 'Period [second]'
 ERSplot.yaxis.visible=True
 ERSplot.yaxis.axis_label= "S"u"\u2090 [m/s"u"\u00B2]"
+'''
+###############################################################################
+input the scale value
+###############################################################################
+'''
+initial_scale_value1=1
+initial_scale_value2=1
+initial_scale_value3=1
+initial_scale_value4=1
+
+glob_scale_value1=ColumnDataSource(data=dict(initial_scale_value1=[initial_scale_value1]))
+glob_scale_value2=ColumnDataSource(data=dict(initial_scale_value2=[initial_scale_value2]))
+glob_scale_value3=ColumnDataSource(data=dict(initial_scale_value3=[initial_scale_value3]))
+glob_scale_value4=ColumnDataSource(data=dict(initial_scale_value4=[initial_scale_value4]))
+
 
 '''
 ###############################################################################
@@ -176,17 +192,59 @@ structure_plot.add_layout(
 color = ["#0065BD","#E37222","#FA8072","#A2AD00"]
 '''
 ###############################################################################
+set the scale value
+###############################################################################
+'''
+
+'''
+###############################################################################
 Read and plot the seismic signals
 ###############################################################################
 '''
-# There will be three signals to be read
-signalOne   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/San_Ramon_Fire_Station/RSN215_LIVERMOR_A-SRM070.AT2', scale = 1.9187
+# There will be Four signals to be read
+signalOne   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/San_Ramon_Fire_Station/RSN215_LIVERMOR_A-SRM070.AT2', scale = initial_scale_value1
 )
-signalTwo   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Rio_Hondo/RSN8837_14383980_CIRIOHNE1.AT2', scale = 2.9467
+signalTwo   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Rio_Hondo/RSN8837_14383980_CIRIOHNE1.AT2', scale = initial_scale_value2
 )
-signalThree = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Bevagna/RSN4346_UBMARCHE.P_A-BEV000.AT2', scale = 1)
-signalFour = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Kobe_new/RSN1106_KOBE_KJM000.AT2', scale = 1)
+signalThree = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Bevagna/RSN4346_UBMARCHE.P_A-BEV000.AT2', scale = initial_scale_value3)
+signalFour = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Kobe_new/RSN1106_KOBE_KJM000.AT2', scale = initial_scale_value4)
 # Calculate the maximum achieved amplitude in all three signals
+
+def change_scaleV1(attr, old, new):
+    #[initial_scale_value1]=glob_scale_value1.data["initial_scale_value1"]
+    initial_scale_value1=float(new)
+    glob_scale_value1.data=dict(initial_scale_value1=[initial_scale_value1])    
+
+initial_scale_value_input1=Slider(title="Scale Value for Signal one", value=initial_scale_value1,start=0,end=10,step=0.5, width=200)
+initial_scale_value_input1.on_change('value', change_scaleV1)
+
+
+
+def change_scaleV2(attr, old, new):
+    #[initial_scale_value2]=glob_scale_value2.data["initial_scale_value2"]
+    initial_scale_value2=float(new)
+    glob_scale_value2.data=dict(initial_scale_value2=[initial_scale_value2])
+
+initial_scale_value_input2=Slider(title="Scale Value for Signal Two", value=initial_scale_value2,start=0,end=10,step=0.5, width=200)
+initial_scale_value_input2.on_change('value',change_scaleV2)
+
+def change_scaleV3(attr, old, new):
+    #[initial_scale_value3]=glob_scale_value3.data["initial_scale_value3"]
+    initial_scale_value3=float(new)
+    glob_scale_value3.data=dict(initial_scale_value3=[initial_scale_value3])
+
+initial_scale_value_input3=Slider(title="Scale Value for Signal Three", value=initial_scale_value3,start=0,end=10,step=0.5, width=200)
+initial_scale_value_input3.on_change('value',change_scaleV3)
+
+def change_scaleV4(attr, old, new):
+    #[initial_scale_value4]=glob_scale_value4.data["initial_scale_value4"]
+    initial_scale_value4=float(new)
+    glob_scale_value4.data=dict(initial_scale_value4=[initial_scale_value4])
+
+initial_scale_value_input4=Slider(title="Scale Value for Signal Four", value=initial_scale_value4,start=0,end=2,step=0.1, width=200)
+initial_scale_value_input4.on_change('value',change_scaleV4)
+
+print(initial_scale_value1)
 maxAmplitude = 0
 for element in signalOne.data['amplitude']:
     if abs(element) > maxAmplitude:
@@ -239,7 +297,7 @@ print('maxTimeStep = ',maxTimeStep)
 signalOne_plot   = signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=1,color=color[0])
 signalTwo_plot   = signal_plot.line(x='time',y='amplitude',source=signalTwo,line_width=1,color=color[1])
 signalThree_plot = signal_plot.line(x='time',y='amplitude',source=signalThree,line_width=1,color=color[2])
-signalFour_plot = signal_plot.line(x='time',y='amplitude',source=signalFour,line_width=1,color=color[3])
+signalFour_plot  = signal_plot.line(x='time',y='amplitude',source=signalFour,line_width=1,color=color[3])
 # Create legend for the signal_plot
 legend2 = Legend(items=[
     ("Signal One  ", [signalOne_plot  ]),
@@ -485,6 +543,89 @@ def playPause():
     
 playPause_button = Button(label="Play", button_type="success")
 playPause_button.on_click(playPause)
+'''
+###############################################################################
+Replot
+###############################################################################
+'''
+
+
+def re_plot():
+    #initil the plot of seimic Signal
+    amplitude   = list()
+    time           = list()
+    global signalOne
+    signalOne.data=dict(amplitude=np.array(amplitude),time=np.array(time))
+    global signalTwo
+    signalTwo.data=dict(amplitude=np.array(amplitude),time=np.array(time))
+    global signalThree
+    signalThree.data=dict(amplitude=np.array(amplitude),time=np.array(time))
+    global signalFour
+    signalFour.data=dict(amplitude=np.array(amplitude),time=np.array(time))
+    [initial_scale_value1]=glob_scale_value1.data["initial_scale_value1"]
+    [initial_scale_value2]=glob_scale_value2.data["initial_scale_value2"]
+    [initial_scale_value3]=glob_scale_value3.data["initial_scale_value3"]
+    [initial_scale_value4]=glob_scale_value4.data["initial_scale_value4"]
+    signalOne   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/San_Ramon_Fire_Station/RSN215_LIVERMOR_A-SRM070.AT2', scale = initial_scale_value1)
+    signalTwo   = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Rio_Hondo/RSN8837_14383980_CIRIOHNE1.AT2', scale = initial_scale_value2)
+    signalThree = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Bevagna/RSN4346_UBMARCHE.P_A-BEV000.AT2', scale = initial_scale_value3)
+    signalFour  = read_seismic_input(file='Dynamic_seismic_threeDof_structure/Time_domain_signals/Kobe_new/RSN1106_KOBE_KJM000.AT2', scale = initial_scale_value4)
+    
+    maxAmplitude = 0
+    for element in signalOne.data['amplitude']:
+        if abs(element) > maxAmplitude:
+           maxAmplitude = abs(element)
+        
+    for element in signalTwo.data['amplitude']:
+        if abs(element) > maxAmplitude:
+            maxAmplitude = abs(element)
+        
+    for element in signalThree.data['amplitude']:
+        if abs(element) > maxAmplitude:
+           maxAmplitude = abs(element)
+
+    for element in signalFour.data['amplitude']:
+   
+        if abs(element) > maxAmplitude:
+           maxAmplitude = abs(element)
+        
+    # Calculate the maximum achieved time in all three signals and max time-step
+    maxTime = 0
+    maxTimeStep = 0
+
+    if maxTime < signalOne.data['time'][-1]:
+       maxTime = abs(signalOne.data['time'][-1])
+    if maxTime < signalTwo.data['time'][-1]:
+       maxTime = abs(signalTwo.data['time'][-1])
+    if maxTime < signalThree.data['time'][-1]:
+       maxTime = abs(signalThree.data['time'][-1])
+    if maxTime < signalFour.data['time'][-1]:
+       maxTime = abs(signalFour.data['time'][-1])
+    
+    if maxTimeStep < signalOne.data['time'][1] - signalOne.data['time'][0]:
+       maxTimeStep = signalOne.data['time'][1] - signalOne.data['time'][0]
+    if maxTimeStep < signalTwo.data['time'][1] - signalTwo.data['time'][0]:
+       maxTimeStep = signalTwo.data['time'][1] - signalTwo.data['time'][0]
+    if maxTimeStep < signalThree.data['time'][1] - signalThree.data['time'][0]:
+       maxTimeStep = signalThree.data['time'][1] - signalThree.data['time'][0]
+    if maxTimeStep < signalFour.data['time'][1] - signalFour.data['time'][0]:
+       maxTimeStep = signalFour.data['time'][1] - signalFour.data['time'][0]
+    global signal_plot    
+    # Modify the plotting ranges of the signal_plot
+    signal_plot.y_range.start = -maxAmplitude
+    signal_plot.y_range.end = maxAmplitude #= Range(-maxAmplitude,maxAmplitude)
+    signal_plot.x_range.start = 0
+    signal_plot.x_range.end = maxTime/3 #= Range(0,maxTime)
+    
+    signalOne_plot   =  signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=1,color=color[0])
+    signalTwo_plot   =  signal_plot.line(x='time',y='amplitude',source=signalTwo,line_width=1,color=color[1])
+    signalThree_plot =  signal_plot.line(x='time',y='amplitude',source=signalThree,line_width=1,color=color[2])
+    signalFour_plot  =  signal_plot.line(x='time',y='amplitude',source=signalFour,line_width=1,color=color[3])
+    
+
+re_plot_button = Button(label="Refresh Plot", button_type="success")
+re_plot_button.on_click(re_plot)
+
 
 '''
 ###############################################################################
@@ -497,7 +638,12 @@ curdoc().add_root(
                                structure_plot,
                                time_slider,
                                playPause_button,
-                               signal_choices
+                               signal_choices,
+                               initial_scale_value_input1,
+                               initial_scale_value_input2,
+                               initial_scale_value_input3,
+                               initial_scale_value_input4,
+                               re_plot_button,
                               ),
                         
                         column(
