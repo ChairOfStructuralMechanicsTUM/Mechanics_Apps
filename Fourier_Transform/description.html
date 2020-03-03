@@ -1,0 +1,65 @@
+<head>
+    <style>
+    h1 {
+        margin: 2em 0 0 0;
+        color: #2e484c;
+        font-family: 'Julius Sans One', sans-serif;
+        font-size: 1.8em;
+        text-transform: uppercase;
+    }
+    a:link {
+        font-weight: bold;
+        text-decoration: none;
+        color: #0d8ba1;
+    }
+    a:visited {
+        font-weight: bold;
+        text-decoration: none;
+        color: #1a5952;
+    }
+    a:hover, a:focus, a:active {
+        text-decoration: underline;
+        color: #9685BA;
+    }
+    p {
+        font: "Libre Baskerville", sans-serif;
+        text-align: justify;
+        text-justify: inter-word;
+    }
+    code {
+        color: #336699;
+    }
+    </style>
+    <head>
+    
+    <h1>Fourier Transform</h1>
+    
+    <p>
+        The Fourier Transform is an operation that transforms a function \(f(t)\) from the time domain into a function \(F(\omega)\), where \(\omega\) describes the frequency domain. 
+        Linear operations performed in one domain (time or frequency) have corresponding operations in the other domain, which are sometimes easier to perform. 
+    </p>
+    <p>
+        The drop down menu allows to choose from six different input functions \(f(t)\):
+        <ul>
+            <li> rectangular function \(rect(t)=\begin{cases}1&\text{for }-0.5\leq t\leq0.5\\0&\text{otherwise}\end{cases}\)</li>
+            <li> sinc function \(si(t)=\frac{sin(t)}{t}\) </li>
+            <li> dirac delta function \(δ(t)=\begin{cases}\infty&\text{for }t=0\\0&\text{otherwise}\end{cases}\)</li>
+            <li> constant function \(f(t)=c=1\)</li>
+            <li> sine function \(sin(t)\)</li>
+            <li> cosine function \(cos(t)\)</li>
+            </ul>
+    </p>
+    
+    <p>
+    The plots show the input function \(f(t)\) and the corresponding Fourier Transform. The input function \(f(t)\) is defined as the sum of an even
+    function \(f_e(t)=f_e(-t)\) and an odd function \(f_o(t)=-f_o(-t)\). 
+    The Fourier Transform of a real and even function is also real and even. The Fourier Transform of 
+    a real and odd function is an imaginary and odd function.
+    </p>
+    <p>
+        Additionally, a second drop down menu allows the modification of the input functions. With this it is possible to show the basic theorems of the Fourier Transform.
+    </p>
+
+
+
+
