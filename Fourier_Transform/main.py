@@ -5,8 +5,6 @@ from bokeh.io import curdoc
 from bokeh.models import Slider, Button, Div, Arrow, OpenHead, Range1d, Label, Select, ColumnDataSource, NormalHead, LabelSet
 from math import cos, sin, radians, sqrt, pi, atan2
 from os.path import dirname, join, split
-from Functions import Calculate_MagnificationFactor_PhaseAngle, Calculate_Current_Amplification_PhaseAngle
-from Functions import Clear_Time_History
 import numpy as np
 from scipy import signal
 
