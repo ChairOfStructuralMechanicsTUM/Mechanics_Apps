@@ -38,7 +38,9 @@ structure_plot.title.align = "center"
 structure_plot.grid.visible=False
 structure_plot.xaxis.visible=True
 structure_plot.yaxis.visible=True
+structure_plot.yaxis.axis_label_text_font_size= "20px"
 structure_plot.yaxis.axis_label= "Height [m]"
+structure_plot.xaxis.axis_label_text_font_size= "20px"
 structure_plot.xaxis.axis_label="Relative Displacement [mm]"
 
 xmin2, xmax2 = 0,1800
@@ -56,7 +58,9 @@ signal_plot.title.align = "center"
 signal_plot.grid.visible=False
 signal_plot.xaxis.visible=True
 signal_plot.yaxis.visible=True
+signal_plot.yaxis.axis_label_text_font_size= "20px"
 signal_plot.yaxis.axis_label= "Amplitude [m/s"u"\u00B2]"
+signal_plot.xaxis.axis_label_text_font_size= "20px"
 signal_plot.xaxis.axis_label="Time [second]"
 
 xmin3, xmax3 = 0,1800
@@ -74,7 +78,9 @@ max_displacement_plot.title.align = "center"
 max_displacement_plot.grid.visible=False
 max_displacement_plot.xaxis.visible=True
 max_displacement_plot.yaxis.visible=True
+max_displacement_plot.yaxis.axis_label_text_font_size= "20px"
 max_displacement_plot.yaxis.axis_label= "Amplitude [mm]"
+max_displacement_plot.xaxis.axis_label_text_font_size= "20px"
 max_displacement_plot.xaxis.axis_label="Time [second]"
 
 ERSplot = figure(
@@ -90,8 +96,10 @@ ERSplot.title.align = "center"
 ERSplot.grid.visible=True
 ERSplot.xaxis.visible=True
 ERSplot.xaxis.visible=True
+ERSplot.xaxis.axis_label_text_font_size= "20px"
 ERSplot.xaxis.axis_label= 'Period [second]'
 ERSplot.yaxis.visible=True
+ERSplot.yaxis.axis_label_text_font_size= "20px"
 ERSplot.yaxis.axis_label= "S"u"\u2090 [m/s"u"\u00B2]"
 '''
 ###############################################################################
