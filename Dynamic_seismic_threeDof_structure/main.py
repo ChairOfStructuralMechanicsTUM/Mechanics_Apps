@@ -537,17 +537,43 @@ signal_choices = RadioGroup(
         labels=["Response One", "Response Two", "Response Three","Response Four"], active=0)
 
 def playPause():
-    global Active, periodicCallback
-    
-    if Active == False:
-        curdoc().add_periodic_callback(update_structure,100)
-        Active=True
-        periodicCallback = 0
-        playPause_button.label = "Pause"
+    if playPause_button.label == 'Play':
+        play()
     else:
-        curdoc().remove_periodic_callback(update_structure)
-        Active=False
-        playPause_button.label = "Play"
+        pause()
+
+glob_callback_id = ColumnDataSource(data = dict(callback_id = [None]))
+
+def pause():
+    [callback_id] = glob_callback_id.data['callback_id']
+    playPause_button.label = "Play"
+    try:
+        curdoc().remove_periodic_callback(callback_id) 
+    except ValueError:
+        print("WARNING: callback_id was already removed - this can happen if stop was pressed after pause, usually no serious problem; if stop was not called this part should be changed")
+        # callback_id is not set to None or similar, the object hex-code stays -> no if == None possible -> use try/except
+    except:
+        print("This error is not covered: ", sys.exc_info()[0])
+        raise
+
+def play():
+    [callback_id] = glob_callback_id.data['callback_id']
+    playPause_button.label = "Pause"
+    callback_id=curdoc().add_periodic_callback(update_structure,100)
+    glob_callback_id.data = dict(callback_id = [callback_id])
+
+#def playPause():
+    #global Active, periodicCallback
+    
+    #if Active == False:
+        #curdoc().add_periodic_callback(update_structure,100)
+        #Active=True
+        #periodicCallback = 0
+        #playPause_button.label = "Pause"
+    #else:
+        #curdoc().remove_periodic_callback(update_structure)
+        #Active=False
+        #playPause_button.label = "Play"
     
 playPause_button = Button(label="Play", button_type="success")
 playPause_button.on_click(playPause)
