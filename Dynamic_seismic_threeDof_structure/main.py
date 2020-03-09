@@ -197,7 +197,7 @@ structure_plot.add_layout(
                               )
                     )
                       
-color = ["#0065BD","#E37222","#FA8072","#A2AD00"]
+color = ["#0065BD","#E37222","#DA70D6","#A2AD00"]
 '''
 ###############################################################################
 set the scale value
@@ -562,6 +562,24 @@ def play():
     callback_id=curdoc().add_periodic_callback(update_structure,100)
     glob_callback_id.data = dict(callback_id = [callback_id])
 
+def stop():
+    pause()
+    global structure
+    global time_slider
+    if signal_choices.active == 0:
+        drawing_displacement = responseOne_amplitudes[:,0]*1000
+    elif signal_choices.active == 1:
+        drawing_displacement = responseTwo_amplitudes[:,0]*1000
+    elif signal_choices.active == 2:
+        drawing_displacement = responseThree_amplitudes[:,0]*1000
+    elif signal_choices.active == 3:
+        drawing_displacement = responseFour_amplitudes[:,0]*1000
+    structure.update_system(drawing_displacement)
+    time_slider.value = 0
+
+stop_button = Button(label="Stop", button_type="success")
+stop_button.on_click(stop)
+
 #def playPause():
     #global Active, periodicCallback
     
@@ -672,6 +690,7 @@ curdoc().add_root(
                                structure_plot,
                                time_slider,
                                playPause_button,
+                               stop_button,
                                signal_choices,
                                initial_scale_value_input1,
                                initial_scale_value_input2,
