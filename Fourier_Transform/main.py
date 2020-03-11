@@ -17,7 +17,7 @@ sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexSlider, LatexLabel, LatexLabelSet
 
 initial_func = "rect(t)"
-initial_mod = "Scaling"
+initial_mod = "Shifting"
 x0 = -7.0
 x = np.linspace(x0, 7.0, 1401)
 y = []
@@ -26,13 +26,10 @@ y_FT_Re = []
 y_FT_Im = []
 y_FT_Re_mod = []
 y_FT_Im_mod = []
-text_mod = ["f^{*}(t)=f(\\lambda t)"]
-text_FT_mod = ["\\frac{1}{|\\lambda|}F\\left(\\frac{\\omega}{\\lambda}\\right)"]
+text_mod = ["f^{*}(t)=f(t-\\lambda)"]
+text_FT_mod = ["e^{-i\\lambda\\omega}F(\\omega)"]
 with_text =["with"]
-lambda_input = LatexSlider(title="\\lambda =", value=1, start=-3, end=3, step=0.1, width=250)
-g_select = Select(title="g(t):", value=initial_mod,
-    options=["Scaling","Shifting", "Multiplication with exponential function", "Multiplication with other function", "Convolution with other function",
-    "Differentiation","Integration","Linear combination"], width = 430)
+lambda_input = LatexSlider(title="\\lambda =", value=0, start=-3, end=3, step=0.1, width=250)
 
 for i in range(0,1401):
     t = x[i]
@@ -53,6 +50,12 @@ for i in range(0,1401):
 
 def changeFunc(attr,old,new):
     global y, x, y_FT_Im, y_FT_Re, y_mod, y_FT_Im_mod, y_FT_Re_mod
+    if new == "\u03B4(t)" or new == "1":
+        mod_select.options = ["Shifting", "Multiplication with exponential function", "Multiplication with other function", "Convolution with other function",
+        "Differentiation","Integration","Linear combination"]
+    else:
+        mod_select.options = ["Shifting","Scaling", "Multiplication with exponential function", "Multiplication with other function", "Convolution with other function",
+        "Differentiation","Integration","Linear combination"]
     if new == "rect(t)":
         for i in range(0,1401):
             t = x[i]
@@ -70,10 +73,7 @@ def changeFunc(attr,old,new):
                 y_FT_Re_mod[i]=1.0
             y_FT_Im[i]=0
             y_FT_Im_mod[i]=0
-        update_functions(y, y_mod, y_FT_Re, y_FT_Im, y_FT_Re_mod, y_FT_Im_mod)
-        update_all_arrows()
-        mod_select.value = "Scaling"
-        lambda_input.value = 1
+        
     elif new == "si(t)":
         for i in range(0,1401):
             t = x[i]
@@ -91,10 +91,7 @@ def changeFunc(attr,old,new):
                 y_FT_Re_mod[i]=pi
             y_FT_Im[i]=0.0
             y_FT_Im_mod[i]=0.0
-        update_functions(y, y_mod, y_FT_Re, y_FT_Im, y_FT_Re_mod, y_FT_Im_mod)
-        update_all_arrows()
-        mod_select.value = "Scaling"
-        lambda_input.value = 1
+       
     elif new == "\u03B4(t)":
         y = 0.9*signal.unit_impulse(1401,700)
         y_mod = 0.9*signal.unit_impulse(1401,700)
@@ -103,10 +100,7 @@ def changeFunc(attr,old,new):
             y_FT_Re_mod[i]=1.0
             y_FT_Im[i]=0.0
             y_FT_Im_mod[i]=0.0
-        update_functions(y, y_mod, y_FT_Re, y_FT_Im, y_FT_Re_mod, y_FT_Im_mod)
-        update_all_arrows()
-        mod_select.value = "Scaling"
-        lambda_input.value = 1
+       
     elif new == "1":
         for i in range(0,1401):
             y[i] = 1.0
@@ -115,10 +109,7 @@ def changeFunc(attr,old,new):
             y_FT_Im_mod[i] = 0.0
         y_FT_Re = 0.95*2*pi*signal.unit_impulse(1401,700)
         y_FT_Re_mod = 0.95*2*pi*signal.unit_impulse(1401,700)
-        update_functions(y, y_mod, y_FT_Re, y_FT_Im, y_FT_Re_mod, y_FT_Im_mod)
-        update_all_arrows()
-        mod_select.value = "Scaling"
-        lambda_input.value = 1
+        
     elif new == "sin(t)":
         for i in range(0,1401):
             t = x[i]
@@ -128,10 +119,7 @@ def changeFunc(attr,old,new):
             y_FT_Re_mod[i]=0.0
         y_FT_Im = 0.9*pi*signal.unit_impulse(1401,600)
         y_FT_Im_mod = 0.9*pi*signal.unit_impulse(1401,600)
-        update_functions(y, y_mod, y_FT_Re, y_FT_Im, y_FT_Re_mod, y_FT_Im_mod)
-        update_all_arrows()
-        mod_select.value = "Scaling"
-        lambda_input.value = 1
+        
     elif new == "cos(t)":
         for i in range(0,1401):
             t = x[i]
@@ -141,15 +129,16 @@ def changeFunc(attr,old,new):
             y_FT_Im_mod[i]=0.0
             y_FT_Re = 0.85*pi*signal.unit_impulse(1401,600)+0.85*pi*signal.unit_impulse(1401,800)
             y_FT_Re_mod = 0.85*pi*signal.unit_impulse(1401,600)+0.85*pi*signal.unit_impulse(1401,800)
-        update_functions(y, y_mod, y_FT_Re, y_FT_Im, y_FT_Re_mod, y_FT_Im_mod)
-        update_all_arrows()
-        mod_select.value = "Scaling"
-        lambda_input.value = 1
+    
+    update_functions(y, y_mod, y_FT_Re, y_FT_Im, y_FT_Re_mod, y_FT_Im_mod)
+    update_all_arrows()
+    mod_select.value = "Shifting"
+    lambda_input.value = 0
+    #changeMod(0,0,"Shifting")
         
 func_select = Select(title="Input function f(t):", value=initial_func,
     options=["rect(t)","si(t)", "\u03B4(t)", "1", "sin(t)", "cos(t)"], width = 430)
 func_select.on_change('value',changeFunc)
-
 
 func_time_source = ColumnDataSource(data=dict(x=x,y=y)) # Default values
 func_freq_Re_source = ColumnDataSource(data=dict(x=x,y=y_FT_Re)) # Default values
@@ -265,107 +254,69 @@ modification.add_layout(LabelSet(x=68,y=-0.5,text="t",text_color='black',text_fo
 
 
 def changeMod(attr, old, new):
-    global text_mod, text_FT_mod, lambda_input, layout, modification, g_select, with_text
+    global text_mod, text_FT_mod, lambda_input, layout, modification, with_text
     if new == "Scaling":
         text_mod = ["f^{*}(t)=f(\\lambda t)"]
         text_FT_mod = ["\\frac{1}{|\\lambda|}F\\left(\\frac{\\omega}{\\lambda}\\right)"]
-        modification_source.data = dict(t=text_mod)
-        modification_result_source.data = dict(t=text_FT_mod)
         lambda_input = LatexSlider(title="\\lambda =", value=1, start=-3, end=3, step=0.1, width=250)
-        reset_mod_functions(y,y_mod,y_FT_Im,y_FT_Re,y_FT_Im_mod,y_FT_Re_mod)
-        update_all_arrows()
         lambda_input.on_change('value',change_lambda_scaling)
         with_text =["with"]
-        with_source.data=dict(t=with_text)
         layout.children[5] = row(Spacer(width=35),modification, column(Spacer(height=19),lambda_input))
     elif new == "Shifting":
         text_mod = ["f^{*}(t)=f(t-\\lambda)"]
         text_FT_mod = ["e^{-i\\lambda\\omega}F(\\omega)"]
-        modification_source.data = dict(t=text_mod)
-        modification_result_source.data = dict(t=text_FT_mod)
         lambda_input = LatexSlider(title="\\lambda =", value=0, start=-3, end=3, step=0.1, width=250)
-        reset_mod_functions(y,y_mod,y_FT_Im,y_FT_Re,y_FT_Im_mod,y_FT_Re_mod)
-        update_all_arrows()
         lambda_input.on_change('value',change_lambda_shifting)
         with_text =["with"]
-        with_source.data=dict(t=with_text)
         layout.children[5] = row(Spacer(width=35),modification, column(Spacer(height=19),lambda_input)) 
     elif new == "Multiplication with exponential function":
         text_mod = ["f^{*}(t)=f(t)e^{i\\lambda t}"]
         text_FT_mod = ["F(\\omega-\\lambda)"]
-        modification_source.data = dict(t=text_mod)
-        modification_result_source.data = dict(t=text_FT_mod)
         lambda_input = LatexSlider(title="\\lambda =", value=0, start=-3, end=3, step=0.1, width=250)
-        reset_mod_functions(y,y_mod,y_FT_Im,y_FT_Re,y_FT_Im_mod,y_FT_Re_mod)
-        update_all_arrows()
         lambda_input.on_change('value',change_lambda_exp)
         with_text =["with"]
-        with_source.data=dict(t=with_text)
         layout.children[5] = row(Spacer(width=35),modification, column(Spacer(height=19),lambda_input)) 
     elif new == "Multiplication with other function":
         text_mod = ["f^{*}(t)=f(t)\\cdot g(t)"]
         text_FT_mod = ["\\frac{1}{2\\pi}(F(\\omega)*G(\\omega))"]
-        modification_source.data = dict(t=text_mod)
-        modification_result_source.data = dict(t=text_FT_mod)
         g_select = Select(title="g(t):", value="1", options=["rect(t)","si(t)", "\u03B4(t)", "1", "sin(t)", "cos(t)"], width = 100)
-        reset_mod_functions(y,y_mod,y_FT_Im,y_FT_Re,y_FT_Im_mod,y_FT_Re_mod)
-        update_all_arrows()
         g_select.on_change('value',change_g_mult)
         with_text =["with"]
-        with_source.data=dict(t=with_text)
         layout.children[5] = row(Spacer(width=35),modification, column(Spacer(height=19),g_select)) 
     elif new == "Convolution with other function":
         text_mod = ["f^{*}(t)=f(t)*g(t)"]
         text_FT_mod = ["F(\\omega)\\cdot G(\\omega))"]
-        modification_source.data = dict(t=text_mod)
-        modification_result_source.data = dict(t=text_FT_mod)
         g_select = Select(title="g(t):", value="rect(t)", options=["rect(t)","si(t)", "\u03B4(t)", "1", "sin(t)", "cos(t)"], width = 100)
-        reset_mod_functions(y,y_mod,y_FT_Im,y_FT_Re,y_FT_Im_mod,y_FT_Re_mod)
-        update_all_arrows()
         g_select.on_change('value',change_g_conv)
         with_text =["with"]
-        with_source.data=dict(t=with_text)
         layout.children[5] = row(Spacer(width=35),modification, column(Spacer(height=19),g_select))         
     elif new == "Differentiation":
         text_mod = ["f^{*}(t)=f^{(n)}(t)"]
         text_FT_mod = ["(i\\omega)^{n}F(\\omega)"]
-        modification_source.data = dict(t=text_mod)
-        modification_result_source.data = dict(t=text_FT_mod)
         with_text =[""]
-        with_source.data=dict(t=with_text)
-        reset_mod_functions(y,y_mod,y_FT_Im,y_FT_Re,y_FT_Im_mod,y_FT_Re_mod)
-        update_all_arrows()
         layout.children[5] = row(Spacer(width=35),modification) 
     elif new == "Integration":
         text_mod = ["f^{*}(t)=\\int f(t)dt"]
         text_FT_mod = ["\\frac{1}{i\\omega}F(\\omega)"]
-        modification_source.data = dict(t=text_mod)
-        modification_result_source.data = dict(t=text_FT_mod)
         with_text =[""]
-        with_source.data=dict(t=with_text)
-        reset_mod_functions(y,y_mod,y_FT_Im,y_FT_Re,y_FT_Im_mod,y_FT_Re_mod)
-        update_all_arrows()
         layout.children[5] = row(Spacer(width=35),modification)  
     elif new == "Linear combination":
         text_mod = ["f^{*}(t)=\\lambda_\\mathrm{1}f(t)+\\lambda_\\mathrm{2}g(t)"]
         text_FT_mod = ["\\lambda_\\mathrm{1}F(\\omega)+\\lambda_\\mathrm{2}G(\\omega)"]
-        modification_source.data = dict(t=text_mod)
-        modification_result_source.data = dict(t=text_FT_mod)
         g_select = Select(title="g(t):", value="1", options=["rect(t)","si(t)", "\u03B4(t)", "1", "sin(t)", "cos(t)"], width = 100)
         g_select.on_change('value',change_g_conv)
-        lambda1_input = LatexSlider(title="\\lambda_\\mathrm{1} =", value=0, start=-3, end=3, step=0.1, width=250)
-        lambda1_input.on_change('value',change_lambda1)
-        lambda2_input = LatexSlider(title="\\lambda_\\mathrm{2} =", value=0, start=-3, end=3, step=0.1, width=250)
-        lambda2_input.on_change('value',change_lambda2)
-        reset_mod_functions(y,y_mod,y_FT_Im,y_FT_Re,y_FT_Im_mod,y_FT_Re_mod)
-        update_all_arrows()
         with_text =["with"]
-        with_source.data=dict(t=with_text)
-        layout.children[5] = row(Spacer(width=35),modification, column(Spacer(height=19),g_select),Spacer(width=20),column(Spacer(height=19),
-            lambda1_input),Spacer(width=20),column(Spacer(height=19),lambda2_input))          
+        layout.children[5] = row(Spacer(width=35),modification, column(Spacer(height=19),g_select))          
+    modification_source.data = dict(t=text_mod)
+    modification_result_source.data = dict(t=text_FT_mod)
+    reset_mod_functions(y,y_mod,y_FT_Im,y_FT_Re,y_FT_Im_mod,y_FT_Re_mod)
+    update_all_arrows()
+    with_source.data=dict(t=with_text)
+       
+
 
 mod_select = Select(title="Modification of input function f(t):", value=initial_mod,
-    options=["Scaling","Shifting", "Multiplication with exponential function", "Multiplication with other function", "Convolution with other function",
+    options=["Shifting","Scaling", "Multiplication with exponential function", "Multiplication with other function", "Convolution with other function",
     "Differentiation","Integration","Linear combination"], width = 430)
 mod_select.on_change('value',changeMod)
 
@@ -449,7 +400,6 @@ def change_lambda_scaling(attr,old,new):
                     y_FT_Re_mod[i]=1/abs(new)
                 y_FT_Im[i]=0
             mod_arrow_source_Re.stream(dict(x1=[100],y1=[0],x2=[100],y2=[0]),rollover=1)
-        update_mod_functions(y_mod, y_FT_Re_mod, y_FT_Im_mod)
     elif func_select.value == "si(t)":
         if new == 0:
             for i in range(0,1401):
@@ -471,15 +421,6 @@ def change_lambda_scaling(attr,old,new):
                     y_FT_Re_mod[i]=pi/abs(new)
                 y_FT_Im_mod[i] = 0.0
             mod_arrow_source_Re.stream(dict(x1=[100],y1=[0],x2=[100],y2=[0]),rollover=1)
-        update_mod_functions(y_mod, y_FT_Re_mod, y_FT_Im_mod)
-    elif func_select.value == "\u03B4(t)":
-        y_mod = 0.9*signal.unit_impulse(1401,700)
-        mod_arrow_source.stream(dict(x1=[0],y1=[0],x2=[0],y2=[1]),rollover=1)
-        mod_time_source.data = dict(x=x,y=y_mod)
-    elif func_select.value == "1":
-        for i in range(0,1401):
-            y_mod[i] = 1.0
-        mod_time_source.data = dict(x=x,y=y_mod)
     elif func_select.value == "sin(t)":
         if new == 0:
             for i in range(0,1401):
@@ -500,7 +441,6 @@ def change_lambda_scaling(attr,old,new):
             mod_arrow_line_source2.data=dict(x=[new,new],y=[0,-pi])
             mod_arrow_source_Im.stream(dict(x1=[-new],y1=[0],x2=[-new],y2=[pi]),rollover=1)
             mod_arrow_source_Im2.stream(dict(x1=[new],y1=[0],x2=[new],y2=[-pi]),rollover=1)
-        update_mod_functions(y_mod, y_FT_Re_mod, y_FT_Im_mod)
     elif func_select.value == "cos(t)":
         if new == 0:
             for i in range(0,1401):
@@ -518,7 +458,7 @@ def change_lambda_scaling(attr,old,new):
             y_FT_Re_mod=0.85*pi*signal.unit_impulse(1401,700-int(new*100))+0.85*pi*signal.unit_impulse(1401,700+int(new*100))
             mod_arrow_source_Re.stream(dict(x1=[-new],y1=[0],x2=[-new],y2=[pi]),rollover=1)
             mod_arrow_source_Re2.stream(dict(x1=[new],y1=[0],x2=[new],y2=[pi]),rollover=1)
-        update_mod_functions(y_mod, y_FT_Re_mod, y_FT_Im_mod)
+    update_mod_functions(y_mod, y_FT_Re_mod, y_FT_Im_mod)
         
 
 def change_lambda_shifting(attr,old,new):
@@ -536,7 +476,6 @@ def change_lambda_shifting(attr,old,new):
             elif t == 0:
                 y_FT_Re_mod[i]=1.0
                 y_FT_Im_mod[i]=0.0
-        update_mod_functions(y_mod, y_FT_Re_mod, y_FT_Im_mod)
     elif func_select.value == "si(t)":
         for i in range(0,1401):
             t = x[i]
@@ -550,7 +489,6 @@ def change_lambda_shifting(attr,old,new):
             elif t>=-1 and t<=1:
                 y_FT_Re_mod[i]=pi*cos(-new*t)
                 y_FT_Im_mod[i]=pi*sin(-new*t)
-        update_mod_functions(y_mod, y_FT_Re_mod, y_FT_Im_mod)
     elif func_select.value == "\u03B4(t)":
         y_mod = 0.9*signal.unit_impulse(1401,int(700+new*100))
         mod_arrow_source.stream(dict(x1=[new],y1=[0],x2=[new],y2=[1]),rollover=1)
@@ -558,7 +496,6 @@ def change_lambda_shifting(attr,old,new):
             t = x[i]
             y_FT_Im_mod[i]=sin(-new*t)
             y_FT_Re_mod[i]=cos(-new*t)
-        update_mod_functions(y_mod, y_FT_Re_mod, y_FT_Im_mod)
     elif func_select.value == "1":
         ""
     elif func_select.value == "sin(t)":
@@ -577,7 +514,6 @@ def change_lambda_shifting(attr,old,new):
         elif new == 0:
             mod_arrow_source_Re.stream(dict(x1=[100],y1=[0],x2=[100],y2=[0]),rollover=1)
             mod_arrow_source_Re2.stream(dict(x1=[100],y1=[0],x2=[100],y2=[0]),rollover=1)
-        update_mod_functions(y_mod, y_FT_Re_mod, y_FT_Im_mod)
     elif func_select.value == "cos(t)":
         for i in range(0,1401):
             t = x[i]
@@ -594,7 +530,8 @@ def change_lambda_shifting(attr,old,new):
             mod_arrow_source_Im2.stream(dict(x1=[1],y1=[0],x2=[1],y2=[pi*sin(-new)]),rollover=1)
         mod_arrow_source_Re.stream(dict(x1=[-1],y1=[0],x2=[-1],y2=[pi*cos(new)]),rollover=1)
         mod_arrow_source_Re2.stream(dict(x1=[1],y1=[0],x2=[1],y2=[pi*cos(-new)]),rollover=1)
-        update_mod_functions(y_mod, y_FT_Re_mod, y_FT_Im_mod)
+    update_mod_functions(y_mod, y_FT_Re_mod, y_FT_Im_mod)
+
 def change_lambda_exp(attr,old,new):
     ""
 def change_g_mult(attr,old,new):
@@ -662,12 +599,8 @@ def change_g_mult(attr,old,new):
    
 def change_g_conv(attr,old,new):
     ""
-def change_lambda1(attr,old,new):
-    ""
-def change_lambda2(attr,old,new):
-    ""
 
-changeMod(0,0,"Scaling")
+changeMod(0,0,"Shifting")
 
                     
 ## Send to window
