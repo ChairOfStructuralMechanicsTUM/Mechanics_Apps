@@ -311,7 +311,7 @@ def change_initV(attr,old,new):
     glob_initial_velocity_value.data = dict(initial_velocity_value = [initial_velocity_value])
 
 
-initial_velocity_input = LatexSlider(title="\\text{Initial velocity} \\left[ \\frac{\\mathrm{m}}{\\mathrm{s}} \\right]: ", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
+initial_velocity_input = LatexSlider(title="\\text{Initial velocity factor } v_0\\cdot k \\left[ \\frac{\\mathrm{N}}{\\mathrm{s}} \\right]: ", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initial_velocity_input.on_change('value',change_initV)
 
 ## Create slider to choose initial displacement
@@ -325,7 +325,7 @@ def change_initial_displacement(attr,old,new):
     move_system(-new)
     updateParameters()
 
-initial_displacement_input = LatexSlider(title="\\text{Initial displacement} \\left[ \\mathrm{m} \\right]: ", value=initial_displacement_value, start=-2.0, end=2.0, step=0.5,width=400)
+initial_displacement_input = LatexSlider(title="\\text{Initial displacement factor } u_0\\cdot k \\left[ \\mathrm{N} \\right]: ", value=initial_displacement_value, start=-2.0, end=2.0, step=0.5,width=400)
 initial_displacement_input.on_change('value',change_initial_displacement)
 
 ## Create slider to choose the frequency ratio
