@@ -1,606 +1,433 @@
 from __future__ import division
-from Spring import *
-from Dashpot import *
-from Mass import *
-from Integrator import *
+from tmd_spring import Spring
+from tmd_dashpot import Dashpot
+from tmd_mass import RectangularMass
+from tmd_integrator import Integrator
+from tmd_coord import Coord
+
+from tmd_functions import Calculate_MagnificationFactor_PhaseAngle, Calculate_Current_Amplification_PhaseAngle
+from tmd_functions import Clear_Time_History
+
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div, Arrow, OpenHead, Range1d, LabelSet
+from bokeh.models import Slider, Button, Div, Arrow, NormalHead, Range1d, LabelSet, OpenHead, ColumnDataSource
 from math import cos, sin, radians, sqrt, pi, atan2
-from os.path import dirname, join, split
-from Functions import Calculate_MagnificationFactor_PhaseAngle, Calculate_Current_Amplification_PhaseAngle
-from Functions import Clear_Time_History
-import numpy as np
 
-## create and link objects
-g=9.81
-x1=6
-x2=16
-h=5
-m1=100
-m2=8.0
-c2=3.7
-k1 = 1000.0
-k2 = 80.0
-# create upper mass
+import numpy as np
+from numpy.linalg import inv
+
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir) 
+from latex_support import LatexDiv, LatexSlider
+
+## set start parameters
+x1=6                #y-coordinate of main mass
+x2=16               #y-coordinate of top mass
+m1=5.0              #mass
+m2=0.25
+c1=sqrt(10)/5       #damping coefficient
+c2=sqrt(10)/100
+k1 = 200.0          #stiffness coefficient
+k2 = 10.0
+
+Active=False
+oscForceAngle = 0   
+oscAmp = 1
+omega = 2*sqrt(10)  #F(t)=ascAmp*cos(omega*t+oscForceAngle)
+dt = 0.01
+t=0.0
+
+## coefficients for Newmark solver
+gamma = 0.5
+beta = 0.25
+
+## create masses, springs, dashpots and link them
 topMass = RectangularMass(m2,-5,x2,4,4)
-# create dashpot and spring linked to upper mass
-dashpot = Dashpot((-2,x2),(-2,x1+h),c2)
-# l2 = m2*g/k2+x2-x1-h so that start is at equilibrium
-l2=m2*g/k2+x2-x1-h
-spring = Spring((-4,x2),(-4,x1+h),l2,k2)
-# link objects to upper mass
+dashpot = Dashpot((-2,x2),(-2,x1+5),c2)
+spring = Spring((-4,x2),(-4,x1+5),5,k2)
+
 topMass.linkObj(spring,(-4,x2))
 topMass.linkObj(dashpot,(-2,x2))
-# create base spring
-# l1 = g*(m1+m2)/k1+x1 for equilibrium
-# where k2=100,k1=10000,x1=6,x2=16, m1=100,m2=1, h=5
-l1=g*(m1+m2)/k1+x1
-baseSpring = Spring((0,0),(0,6),l1,k1)
-# link objects to main large mass
-mainMass = RectangularMass(m1,-6,x1,12,h)
-mainMass.linkObj(spring,(-4,x1+h))
-mainMass.linkObj(dashpot,(-2,x1+h))
-mainMass.linkObj(baseSpring,(0,x1))
-# create ColumnDataSource for Amplitude as a function of frequency
-AmplitudeFrequency = ColumnDataSource(data = dict(omega=[],A=[]))
-# create ColumnDataSource for spot showing current frequency
-Position = ColumnDataSource(data = dict(om=[],A=[]))
-# create ColumnDataSource for arrow showing force
-Arrow_source = ColumnDataSource(data = dict(xS=[], xE=[], yS=[], yE=[]))
-# create ColumnDataSource for force label
-ForceLabel_source = ColumnDataSource(data=dict(x=[0],y=[0],t=[0]))
-# create vector of forces applied during simulation
-ForceList = [0,0]
-# create initial
-Active=False
-oscForceAngle = pi/2
-oscAmp = 200.0
-omega = 1
-alpha=0.5
-Omega0=0.01
-dt = 0.1
-t=0.0
-# create integrator
-Int = Integrator([topMass,mainMass],oscAmp,dashpot)
 
-'''
-###############################################################################
-Define the displacement-time diagram for both masses
-###############################################################################
-'''
-mainMass_displacementTime_source = ColumnDataSource(data=dict(x=[0],y=[0])) # Default values
-topMass_displacementTime_source = ColumnDataSource(data=dict(x=[0],y=[0])) # Default values
+mainMass = RectangularMass(m1,-6,x1,12,5)
+baseSpring = Spring((-1,6),(-1,0),6,k1)
+baseDashpot = Dashpot((1,6),(1,0),c1)
 
-# Initial space and time plot-boundaries
-displacement_range = Range1d(-2,2)
-time_range = Range1d(0,10)
+mainMass.linkObj(spring,(-4,x1+5))
+mainMass.linkObj(dashpot,(-2,x1+5))
+mainMass.linkObj(baseSpring,(-1,x1))
+mainMass.linkObj(baseDashpot,(1,x1))
 
-displacementTime_plot = figure(
-                                plot_width = 1100,
-                                plot_height= 800,
-                                x_range  = time_range,
-                                y_range  = displacement_range,
-                                title = 'Displacement-Time Plot',
-                                #tools=''
-                              )
-displacementTime_plot.title.text_font_size = "20px"
-displacementTime_plot.title.align = "center"
-displacementTime_plot.axis.axis_label_text_font_size="14pt"
-displacementTime_plot.xaxis.axis_label="Time [second]"
-displacementTime_plot.yaxis.axis_label="Displacement [meter]"
+## create matrices for equation of motion Ma+Cv+Kd = F (a: acceleration, v: velocity, d: displacement)
+M = np.array([[mainMass.mass,0.],
+              [0., topMass.mass]])
 
-displacementTime_plot.line(x='x',y='y', source = mainMass_displacementTime_source, color='#0033FF', legend='Main mass')
-displacementTime_plot.line(x='x',y='y', source = topMass_displacementTime_source, color='#330011', legend='Top mass')
+C = np.array([[baseDashpot.lam+dashpot.lam,-dashpot.lam],
+              [-dashpot.lam,                 dashpot.lam]])
 
-'''
-###############################################################################
-Add application describtion
-###############################################################################
-'''
-# add app description
+K = np.array([[baseSpring.kappa+spring.kappa,-spring.kappa],
+              [-spring.kappa,                 spring.kappa]])
+
+lhs = np.array([[0.,0.],
+                [0.,0.]]) 
+
+rhs = np.array([[0.,0.],
+                [0.,0.]])
+
+## initial conditions
+velOld = np.array([0.,0.])
+dispOld = np.array([0.,0.])
+F0 = np.array([-1.,0.])
+accOld = inv(M).dot(F0-K.dot(dispOld)-C.dot(velOld))
+
+## create ColumnDataSources            
+arrow_line   = ColumnDataSource(data = dict(x1=[3],y1=[5+x1+5],x2=[3],y2=[x1+5]))   #arrow line showing initial force
+arrow_offset = ColumnDataSource(data = dict(x1=[3],y1=[x1+5+0.1],x2=[3],y2=[x1+5])) #arrow head showing initial force
+
+m1_label_source = ColumnDataSource(data=dict(x=[0],y=[x1+2.5],t=['m']))             #'m_1' and 'm_2' label at initial position
+m2_label_source = ColumnDataSource(data=dict(x=[-3],y=[x2+2],t=['m']))
+m1_index_label_source = ColumnDataSource(data=dict(x=[0.6],y=[x1+2.2],t=['1']))
+m2_index_label_source = ColumnDataSource(data=dict(x=[-2.4],y=[x2+1.7],t=['2']))
+
+
+################################################################################
+#Define the displacement-time diagram for both masses and the force-time diagram
+################################################################################
+
+## create ColumnDataSources
+mainMass_displacementTime_source = ColumnDataSource(data=dict(x=[0],y=[0])) #initial displacement of main mass
+topMass_displacementTime_source = ColumnDataSource(data=dict(x=[0],y=[0]))  #initial displacement of top mass
+forceTime_source = ColumnDataSource(data=dict(x=[0],y=[-1]))                #initial force acting on main mass
+
+## plot-boundaries
+displacement_range = Range1d(-6,6)
+force_range = Range1d(-1.2,1.2)
+time_range = Range1d(0,20)
+
+##displacement-time diagram
+displacementTime_plot = figure(title="",tools=["ywheel_zoom,xwheel_pan,pan,reset"],width = 400,height= 300,x_range  = time_range,
+    y_range  = displacement_range)
+displacementTime_plot.axis.axis_label_text_font_size="12pt"
+displacementTime_plot.axis.axis_label_text_font_style="normal"
+displacementTime_plot.yaxis.axis_label="Normalized Displacement u/(F/k)"
+displacementTime_plot.line(x='x',y='y', source = mainMass_displacementTime_source, color='#e37222', legend_label='Main Mass')
+displacementTime_plot.line(x='x',y='y', source = topMass_displacementTime_source, color='#3070b3', legend_label='Top Mass')
+displacementTime_plot.toolbar.logo = None
+
+##force-time diagram
+forceTime_plot = figure(title="",tools=["ywheel_zoom,xwheel_pan,pan,reset"],width = 400,height= 300,x_range  = time_range,
+    y_range  = force_range)
+forceTime_plot.axis.axis_label_text_font_size="12pt"
+forceTime_plot.axis.axis_label_text_font_style="normal"
+forceTime_plot.xaxis.axis_label="Time [s]"
+forceTime_plot.yaxis.axis_label="Force [N]"
+forceTime_plot.line(x='x',y='y', source = forceTime_source, color='black')
+forceTime_plot.toolbar.logo = None
+
+
+################################################################################
+#Add application describtion
+################################################################################
+
+## add app description
 description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1920)
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
-'''
-###############################################################################
-Define the amplification-frequency and phase angle-frequency diagrams for both masses
-###############################################################################
-'''
-mainMass_amplificationFrequency_source = ColumnDataSource(data=dict(x=[0],y=[0]))
-topMass_amplificationFrequency_source = ColumnDataSource(data=dict(x=[0],y=[0]))
-mainMass_phaseAngleFrequency_source = ColumnDataSource(data=dict(x=[0],y=[0]))
-topMass_phaseAngleFrequency_source = ColumnDataSource(data=dict(x=[0],y=[0]))
-Amplification_current_source = ColumnDataSource(data=dict(x=[0],y=[0],c=['#000000']))
-PhaseAngle_current_source = ColumnDataSource(data=dict(x=[0],y=[0],c=['#000000']))
 
-Amplificaiton_range = Range1d(0,0)
-PhaseAngle_range = Range1d(0,0)
-Frequency_range = Range1d(0,0)
+################################################################################
+#Define the amplification-frequency and phase angle-frequency diagrams for both masses
+################################################################################
 
-Amplification_Frequency_plot = figure(
-                                plot_width = 500,
-                                plot_height= 400,
-                                x_range  = Frequency_range,
-                                y_range  = Amplificaiton_range,
-                                title = 'Amplification Factor vs. Frequency Ratio Plot',
-                                tools=''
-                              )
-Amplification_Frequency_plot.title.text_font_size = "20px"
-Amplification_Frequency_plot.title.align = "center"
-Amplification_Frequency_plot.axis.axis_label_text_font_size="14pt"
-Amplification_Frequency_plot.xaxis.axis_label="Frequency Ratio"
-Amplification_Frequency_plot.yaxis.axis_label="Amplification Factor"
+## create ColumnDataSources
+mainMass_amplificationFrequency_source = ColumnDataSource(data=dict(x=[0],y=[0]))   #default values
+mainMass_phaseAngleFrequency_source = ColumnDataSource(data=dict(x=[0],y=[0]))      #default values
+Amplification_current_source = ColumnDataSource(data=dict(x=[0],y=[0]))             #spot showing current amplification
+PhaseAngle_current_source = ColumnDataSource(data=dict(x=[0],y=[0]))                #spot showing current phase angle
 
-PhaseAngle_Frequency_plot = figure(
-                                plot_width = 500,
-                                plot_height= 400,
-                                x_range  = Frequency_range,
-                                y_range  = PhaseAngle_range,
-                                title = 'Phase Angle vs. Frequency Ratio Plot',
-                                tools=''
-                              )
-PhaseAngle_Frequency_plot.title.text_font_size = "20px"
-PhaseAngle_Frequency_plot.title.align = "center"
-PhaseAngle_Frequency_plot.axis.axis_label_text_font_size="14pt"
-PhaseAngle_Frequency_plot.xaxis.axis_label="Frequency Ratio"
+## plot-boundaries
+Amplification_range = Range1d(0,30)
+PhaseAngle_range = Range1d(0,3.5)       #(0,pi)
+Frequency_range = Range1d(0,5)
+
+## amplification-frequency diagram
+Amplification_Frequency_plot = figure(plot_width = 400,plot_height= 300,x_range  = Frequency_range,y_range  = Amplification_range, tools='')
+Amplification_Frequency_plot.axis.axis_label_text_font_size="12pt"
+Amplification_Frequency_plot.axis.axis_label_text_font_style="normal"
+Amplification_Frequency_plot.yaxis.axis_label="Amplification"
+Amplification_Frequency_plot.line(x='x',y='y', source = mainMass_amplificationFrequency_source, color="#a2ad00")
+Amplification_Frequency_plot.circle(x='x',y='y', color="#e37222", source=Amplification_current_source, radius=0.1)
+Amplification_Frequency_plot.toolbar.logo = None
+
+## phase angle-frequency diagram
+PhaseAngle_Frequency_plot = figure(plot_width = 400,plot_height= 300,x_range  = Frequency_range,y_range  = PhaseAngle_range, tools='')
+PhaseAngle_Frequency_plot.axis.axis_label_text_font_size="12pt"
+PhaseAngle_Frequency_plot.axis.axis_label_text_font_style="normal"
+PhaseAngle_Frequency_plot.xaxis.axis_label="Excitation Frequency Ratio"
 PhaseAngle_Frequency_plot.yaxis.axis_label="Phase Angle [rad]"
+PhaseAngle_Frequency_plot.line(x='x',y='y', source = mainMass_phaseAngleFrequency_source, color="#a2ad00")
+PhaseAngle_Frequency_plot.circle(x='x',y='y', color="#e37222", source=PhaseAngle_current_source, radius=0.1)
+PhaseAngle_Frequency_plot.toolbar.logo = None
 
-Amplification_Frequency_plot.line(x='x',y='y', source = mainMass_amplificationFrequency_source, color='#0033FF', legend='Main mass')
-#Amplification_Frequency_plot.line(x='x',y='y', source = topMass_amplificationFrequency_source, color='#330011', legend='Top mass')
 
-PhaseAngle_Frequency_plot.line(x='x',y='y', source = mainMass_phaseAngleFrequency_source, color='#0033FF', legend='Main mass')
-#PhaseAngle_Frequency_plot.line(x='x',y='y', source = topMass_phaseAngleFrequency_source, color='#330011', legend='Top mass')
+################################################################################
+#Create simulation drawing
+################################################################################
 
-Amplification_Frequency_plot.circle(x='x',y='y', color='c', source=Amplification_current_source, radius=0.1)
-PhaseAngle_Frequency_plot.circle(x='x',y='y', color='c', source=PhaseAngle_current_source, radius=0.1)
-## functions
-
-def evolve():
-    global topMass, mainMass, oscForceAngle, oscAmp, omega, dt, t, displacement_range, time_range, mainMass_displacementTime_source, topMass_displacementTime_source
-    t+=dt
-    
-    # current force applied to main mass
-    F=oscAmp*cos(oscForceAngle)
-    mainMass.applyForce(Coord(0,F),None)
-    # make system evolve by time dt
-    Int.evolve(dt,oscForceAngle,omega)
-    # calculate force at next timestep
-    oscForceAngle+=omega*dt
-    
-    ## draw force arrow
-    h=mainMass.getTop()
-    
-    ###########################################################################
-    # Stream the new displacement to the displacement-time diagram
-    mainMass_center_y = x1
-    #mainMass_height   = h
-    topMass_center_y = x2
-    #topMass_height   = 4
-    
-    mainMass_position = mainMass.currentPos['y'][0]#+mainMass.currentPos['y'][1]/2
-    topMass_position = topMass.currentPos['y'][0]#+topMass.currentPos['y'][1]/2
-
-    mainMass_displacement = mainMass_position - mainMass_center_y#-mainMass_height/2
-    topMass_displacement = topMass_position - topMass_center_y#-topMass_height/2
-
-    #print('topMass_displacement = ',topMass_displacement)
-    mainMass_displacementTime_source.stream(
-                                           dict(
-                                                x=[t],
-                                                y=[mainMass_displacement]
-                                               )
-                                          )
-    topMass_displacementTime_source.stream(
-                                           dict(
-                                                x=[t],
-                                                y=[topMass_displacement]
-                                               )
-                                          )
-                                           
-    # Change boundaries of displacement-time plot if exceeded
-    # Determine the bigger displacement achieved by the two masses
-    bigger_displacement = max(mainMass_displacement, topMass_displacement)
-    smaller_displacement = min(mainMass_displacement, topMass_displacement)
-    
-    if bigger_displacement > displacement_range.end:
-        #displacement_range.start = -abs(bigger_displacement)*1.1 
-        displacement_range.end =  abs(bigger_displacement)*1.1  # multiplied by 1.1 for having an adsmall margin
-    if smaller_displacement < displacement_range.start:
-        displacement_range.start = smaller_displacement*1.1
-    if t > time_range.end:
-        time_range.end = t*2
-    ###########################################################################
-    
-    # reduce F to make arrow normal sized on drawing
-    F_for_vis = F/50.0
-    OscAmp_for_vis = oscAmp/50
-    # draw arrow in correct direction
-    if (F<0):
-        Arrow_source.data=dict(xS=[3], xE=[3], yS=[h], yE=[h-F_for_vis])
-        Arrow_glyph.start=ArrowHead_glyph
-        Arrow_glyph.end=None
-    else:
-        Arrow_source.data=dict(xS=[3], xE=[3], yS=[h], yE=[h+F_for_vis])
-        Arrow_glyph.start=None
-        Arrow_glyph.end=ArrowHead_glyph
-        
-    ForceLabel_source.data=dict(x=[3], y=[1.1*(h+OscAmp_for_vis)], t=['Force = '+str(round(F,1))])
-
-## calculate Amplitude as a function of frequency
-def calculateGraphPlot():
-    global lam_input, kappa_input, mass_input, oscAmp, AmplitudeFrequency
-    global m1, m2, k1, k2, c2
-    # prepare vectors
-    omega=[]
-    Amplitude=[]
-    
-    # calculate points on graph
-    for i in range(1,201):
-        # find omega
-        omega.append(i/10.0)
-        om=i/10.0
-        
-        # find amplitude
-        num=(c2/om)**2+(k2/om**2-m2)**2
-        denom=((k1/om-m1*om)*(k2/om-m2*om)-k2*m2)**2+(c2*(k1/om-om*(m1+m2)))**2
-        if (denom!=0):
-            Amplitude.append(oscAmp*sqrt(num/denom))
-        else:
-            Amplitude.append(100000)
-    
-    # add calculated values to graph
-    AmplitudeFrequency.data=dict(omega=omega,A=Amplitude)
-
-def omegaScanStep():
-    global Omega0, alpha, t, k1, k2, m1, m2, c2
-    om=Omega0+alpha*t
-    xi = sqrt(k2/m2) / om
-    Dmod = c2/2.0/sqrt(m2*k2)
-    
-    A = k2-m2*om*om
-    B = c2*om
-    C = k1*k2-(k1*m2+k2*m1+m2*k2)*om*om+m1*m2*om*om*om*om
-    D = (k1-(m1+m2)*om*om)*c2*om
-    E = xi * xi - 1.0
-    F = 2.0 * Dmod * xi
-    G = C * E - D * F
-    H = C * F + D * E
-    
-    norm = C*C+D*D
-    norm2 = G*G+H*H
-    
-    if (norm!=0):
-        x1re = (A*C+B*D) / norm
-        x1im = (B*C-A*D) / norm
-    else:
-        x1re = 1000000
-        x1im = 1000000
-    if (norm2!=0):
-        x2re = (A*G+B*H) / norm2
-        x2im = (B*G-A*H) / norm2
-    else:
-        x1re = 1000000
-        x1im = 1000000
-    
-    y0 = sqrt(x1re * x1re + x1im * x1im)
-    y1 = -atan2(x1im , x1re)
-    y2 = sqrt(x2re * x2re + x2im * x2im)
-    y3 = -atan2(x2im , x2re)
-    
-    d = (4.0 * alpha * t + Omega0)*t
-    
-    global mainMass, Arrow_source, topMass, baseSpring, dashpot, spring, Position
-    start = x1 + oscAmp * y0 * cos(d + y1)
-    end = x2 + oscAmp * y2 * cos(d + y3) + oscAmp * y0 * cos(d + y1)
-    mainMass.moveTo(-6,start,12,h)
-    Arrow_source.data=dict(xS=[3], xE=[3], yS=[start+h], yE=[start+h+2])
-    topMass.moveTo(-5,end,4,4)
-    baseSpring.compressTo(Coord(0,0),Coord(0,start))
-    dashpot.compressTo(Coord(-2,end),Coord(-2,start+h),1)
-    dashpot.compressTo(Coord(-2,end),Coord(-2,start+h),1)
-    spring.compressTo(Coord(-4,end),Coord(-4,start+h))
-    Position.data=dict(om=[om],A=[oscAmp*y0])
-    if (om>10.0):
-        global Active, omega_input
-        curdoc().remove_periodic_callback(omegaScanStep)
-        Active=False
-        Arrow_source.data=dict(xS=[], xE=[], yS=[], yE=[])
-        omega_input.value=om
-    t+=0.05
-
-# draw title in the middle
-title_box = Div(text="""<h2 style="text-align:center;">Schwingungstilger (Tuned mass damper)</h2>""",width=1000)
-
-## create simulation drawing
-fig = figure(title="Dynamical System", tools = "pan,wheel_zoom,box_zoom", x_range=(-7,7), y_range=(0,40),width=350,height=800)
-fig.title.text_font_size = "20px"
-fig.title.align = "center"
+fig = figure(title="", tools = "", x_range=(-7,7), y_range=(-5,35),width=300,height=550)
 fig.axis.visible = False
 fig.grid.visible = False
 fig.outline_line_color = None
+fig.toolbar.logo = None
+fig.add_layout(LabelSet(x='x',y='y',text='t',text_color='black',text_font_size="15pt",level='overlay',text_baseline="middle",
+    text_align="center",source=m2_label_source))
+fig.add_layout(LabelSet(x='x',y='y',text='t',text_color='black',text_font_size="15pt",level='overlay',text_baseline="middle",
+    text_align="center",source=m1_label_source))
+fig.add_layout(LabelSet(x='x',y='y',text='t',text_color='black',text_font_size="10pt",level='overlay',text_baseline="middle",
+    text_align="center",source=m2_index_label_source))
+fig.add_layout(LabelSet(x='x',y='y',text='t',text_color='black',text_font_size="10pt",level='overlay',text_baseline="middle",
+    text_align="center",source=m1_index_label_source))
+
 # add objects to plot
 spring.plot(fig,width=2)
 baseSpring.plot(fig,width=2)
 dashpot.plot(fig,width=2)
 mainMass.plot(fig)
 topMass.plot(fig)
-# create and add force arrow to plot
-ArrowHead_glyph = OpenHead(line_color="#E37222",line_width=3,size=10)
-Arrow_glyph = Arrow(x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Arrow_source,
-    line_color="#E37222",line_width=3)
-fig.add_layout(Arrow_glyph)
+baseDashpot.plot(fig,width=2)
 
-# Construct and add external force label
-fig.add_layout(
-               LabelSet(
-                          x='x', y='y',
-                          text='t',
-                          text_color='black',text_font_size="15pt",
-                          level='glyph',text_baseline="middle",text_align="center",
-                          source=ForceLabel_source
-                       )
-              )
+fig.add_layout(Arrow(end=None,line_color="#e37222",line_width=2,x_start='x1',y_start='y1',x_end='x2',y_end='y2',source=arrow_line))
+fig.add_layout(Arrow(end=NormalHead(fill_color="#e37222",line_color="#e37222"),line_color="#e37222",line_width=2,
+    x_start='x1',y_start='y1',x_end='x2',y_end='y2',source=arrow_offset))
+fig.line(x=[-3,3],y=[0,0],color="black",line_width=3)
+fig.multi_line(xs=[[-3.75,-3],[-2.75,-2],[-1.75,-1],[-0.75,0],[0.25,1],[1.25,2],[2.25,3]],
+    ys=[[-0.75,0],[-0.75,0],[-0.75,0],[-0.75,0],[-0.75,0],[-0.75,0],[-0.75,0]],color="black",line_width=3)
 
-## create amplitude frequency diagram
-p = figure(title="", tools="",x_range=(0,10),y_range=(0,5),height=500)
-p.axis.major_label_text_font_size="12pt"
-p.axis.axis_label_text_font_style="normal"
-p.axis.axis_label_text_font_size="14pt"
-p.xaxis.axis_label=u"\u03C9 [s\u207B\u00B9]"
-p.yaxis.axis_label="Amplitude [m]"
-# plot graph
-p.line(x='omega',y='A',source=AmplitudeFrequency,color="black")
-# show current frequency
-p.circle(x='om',y='A', radius=0.5, source=Position,color="#E37222")
 
-System_Parameters_text = Div(text="""<b>System Parameters</b> """)
-ExternalForce_Parameter_text = Div(text="""<b>External Force Parameters</b> """)
+################################################################################
+#functions
+################################################################################
 
-def change_mass(attr,old,new):
-    Update_system()
-    Update_current_state()
-    global Active
-    if (not Active):
-        global topMass, omega, m2
-        topMass.changeMass(new)
-        m2=new
-        #global m1, g, k1, k2, x2, x1, h
-        #l2=m2*g/k2+x2-x1-h
-        #spring.changeL0(l2)
-        #l1=g*(m1+m2)/k1+x1
-        #baseSpring.changeL0(l1)
-        # recalculate graph for new values
-        calculateGraphPlot()
-        change_Omega(None,None,omega)
-    elif (new!=topMass.mass):
-        mass_input.value=topMass.mass
-## Create slider to choose mass of upper mass
-mass_input = Slider(title="Top Mass' Mass [kg]", value=m2, start=1, end=100.0, step=1,width=400)
-mass_input.on_change('value',change_mass)
-
-def change_kappa(attr,old,new):
-    Update_system()
-    Update_current_state()
-    global Active
-    if (not Active):
-        global spring, omega, k2
-        spring.changeSpringConst(new)
-        k2=new
-#        global m1, m2, g, k1, x2, x1, h
-#        l2=m2*g/k2+x2-x1-h
-#        spring.changeL0(l2)
-#        l1=g*(m1+m2)/k1+x1
-#        baseSpring.changeL0(l1)
-        # recalculate graph for new values
-        calculateGraphPlot()
-        # plot frequency on new graph
-        change_Omega(None,None,omega)
-    elif (new!=spring.kappa):
-        kappa_input.value=spring.kappa
-## Create slider to choose spring constant
-kappa_input = Slider(title="Top Mass' Spring Stiffness [N/m]", value=k2, start=1.0, end=200, step=10,width=400)
-kappa_input.on_change('value',change_kappa)
-
-def change_lam(attr,old,new):
-
-    Update_system()
-    Update_current_state()
-    global Active
-    if (not Active):
-        global dashpot, omega,c2
-        dashpot.changeDamperCoeff(new)
-        c2=new
-        # recalculate graph for new values
-        calculateGraphPlot()
-        # plot frequency on new graph
-        change_Omega(None,None,omega)
-    elif (new!=dashpot.lam):
-        lam_input.value=dashpot.lam
-## Create slider to choose damper coefficient
-lam_input = Slider(title=u"Top Mass' Damper Coefficient [N*s/m]", value=c2, start=0.1, end=15, step=0.1,width=400)
-lam_input.on_change('value',change_lam)
-
-def change_Omega(attr,old,new):
-    #global m1, k1, k2, c2, oscAmp, Amplification_current_source, PhaseAngle_current_source
-    if (not Active):
-        global omega, oscAmp
-        omega = new
-        if (omega==0):
-            # if no oscillation then A is natural amplitude
-            Position.data=dict(om=[new],A=[AmplitudeFrequency.data['A'][0]])
-        else:
-            # find amplitude for current frequency from AmplitudeFrequency graph
-            Position.data=dict(om=[new],A=[AmplitudeFrequency.data['A'][int(floor(new*10))-1]])
-            
-        Update_current_state()
-        
-    elif (new!=omega):
-        omega_input.value=omega
-## Create slider to choose damper coefficient
-omega_input = Slider(title=u"\u03C9 [s\u207B\u00B9]", value=1.0, start=0.1, end=14.0, step=0.1,width=400)
-omega_input.on_change('value',change_Omega)
-
-## create functions for buttons which control simulation
-Simulation_Controls_text = Div(text="""<b>Simulation Controls</b> """)
-
-def PlayStop():
-    global Active
-    if (not Active):
-        #reset()
-        curdoc().add_periodic_callback(evolve,100)
-        Active=True
-        PlayStop_button.label = 'Stop' 
-    else:
-        curdoc().remove_periodic_callback(evolve)
-        Active=False
-        PlayStop_button.label = 'Play' 
-        
-def reset():
-    global spring, topMass, dashpot, mainMass, baseSpring, oscForceAngle, x1, x2, h, t
-    mass_input.value=8.0
-    kappa_input.value=80.0
-    lam_input.value=3.7
-    omega_input.value=1.0
-    # if simulation is running, then stop it
-    PlayStop()
-    # reset objects
-    spring.compressTo(Coord(-4,x2),Coord(-4,x2-h))
-    # (done twice to implement 0 velocity)
-    dashpot.compressTo(Coord(-2,x2),Coord(-2,x2-h),0.1)
-    dashpot.compressTo(Coord(-2,x2),Coord(-2,x2-h),0.1)
-    baseSpring.compressTo(Coord(0,0),Coord(0,x1))
+## set all objects to initial setting
+def init_pos():
     topMass.moveTo(-5,x2,4,4)
+    mainMass.moveTo(-6,x1,12,5)
+    spring.compressTo(Coord(-4,x2),Coord(-4,x1+5))
+    dashpot.compressTo(Coord(-2,x2),Coord(-2,x1+5),0)
+    baseSpring.compressTo(Coord(-1,x1),Coord(-1,0))
+    baseDashpot.compressTo(Coord(1,x1),Coord(1,0),0)
     topMass.resetLinks(spring,(-4,x2))
     topMass.resetLinks(dashpot,(-2,x2))
-    topMass.changeInitV(0)
-    mainMass.moveTo(-6,x1,12,h)
-    mainMass.resetLinks(spring,(-4,x2-h))
-    mainMass.resetLinks(dashpot,(-2,x2-h))
-    mainMass.resetLinks(baseSpring,(0,x1))
-    mainMass.changeInitV(0)
-    oscForceAngle = pi/2
-    Arrow_source.data=dict(xS=[], xE=[], yS=[], yE=[])
+    mainMass.resetLinks(spring,(-4,x1+5))
+    mainMass.resetLinks(dashpot,(-2,x1+5))
+    mainMass.resetLinks(baseSpring,(-1,x1))
+    mainMass.resetLinks(baseDashpot,(1,x1))
+
+## called periodically to solve equation of motion
+def evolve():
+    global topMass, mainMass, oscForceAngle, oscAmp, omega, dt, t, mainMass_displacementTime_source, topMass_displacementTime_source, M, C, K, velOld, dispOld, lhs, F0, rhs, gamma, beta, accOld, x1, x2
+    oscForceAngle+=omega*dt
+    t+=dt
     
-    # Clear the displacement-time diagram related data structures
-    mainMass_displacementTime_source.data=dict(x=[0],y=[0]) # Default values
-    topMass_displacementTime_source.data=dict(x=[0],y=[0]) # Default values
+    F1_next=-oscAmp*cos(oscForceAngle)      #force applied to main mass
+    F_next = np.array([[F1_next,0]])
     
-    displacement_range.start = -2
-    displacement_range.end   = 2
-    time_range.end   = 10
-    time_range.start = 0
+    # Newmark method with gamma = 0.5 and beta = 0.25:
+    # v_n+1 = v_n+dt*[(1-gamma)*a_n+gamma*a_n+1]
+    # d_n+1 = d_n+dt*v_n+dt*dt*[(0.5-beta)*a_n+beta*a_n+1]
+    # Ma_n+1 + Cv_n+1 + Kd_n+1 = F_n+1
     
-    t = 0
+    lhs = M+gamma*dt*C+beta*dt*dt*K
+    rhs = F_next-C.dot(velOld+(1-gamma)*dt*accOld)-K.dot(dispOld+dt*velOld+dt*dt*(0.5-beta)*accOld)
+    rhs_array = np.array([rhs[0][0],rhs[0][1]])
+    
+    accNew = inv(lhs).dot(rhs_array)
+    velNew = velOld+(1-gamma)*dt*accOld+gamma*dt*accNew
+    dispNew = dispOld+dt*velOld+dt*dt*(0.5-beta)*accOld+dt*dt*beta*accNew
+    
+    mainMass.move(Coord(0,dispNew[0]-dispOld[0])*baseSpring.kappa)      #move main mass by calculated displacement normalized with spring stiffness
+    topMass.move(Coord(0,dispNew[1]-dispOld[1])*spring.kappa)           #move top mass by calculated displacement normalized with spring stiffness
+   
+    accOld = accNew         #a_n for next time step
+    velOld = velNew         #v_n for next time step
+    dispOld = dispNew       #d_n for next time step
+
+    h1=mainMass.getTop()
+    h2=topMass.getTop()
+    
+    mainMass_position = mainMass.currentPos['y'][0]
+    topMass_position = topMass.currentPos['y'][0]
+    mainMass_displacement = mainMass_position - x1
+    topMass_displacement = topMass_position - x2
+    mainMass_displacementTime_source.stream(dict(x=[t],y=[mainMass_displacement]))
+    topMass_displacementTime_source.stream(dict(x=[t],y=[topMass_displacement]))
+    forceTime_source.stream(dict(x=[t],y=[F1_next]))                                       
+    
+    # update force arrow
+    F_for_vis = F1_next*5 #scale
+    # draw arrow in correct direction
+    if (F1_next<1e-10):
+        arrow_line.stream(dict(x1=[3], x2=[3], y1=[h1-F_for_vis], y2=[h1]),rollover=1)
+        arrow_offset.stream(dict(x1=[3], x2=[3], y1=[h1+0.1], y2=[h1]),rollover=1)
+    else:
+        arrow_line.stream(dict(x1=[3], x2=[3], y1=[h1-F_for_vis], y2=[h1]),rollover=1)
+        arrow_offset.stream(dict(x1=[3], x2=[3], y1=[h1-0.1], y2=[h1]),rollover=1)
+
+    # update position of m_1 and m_2 label    
+    m1_label_source.data=dict(x=[0], y=[h1-2.5], t=['m'])
+    m2_label_source.data=dict(x=[-3], y=[h2-2], t=['m'])
+    m1_index_label_source.data=dict(x=[0.6], y=[h1-2.8], t=['1'])
+    m2_index_label_source.data=dict(x=[-2.4], y=[h2-2.3], t=['2'])
 
 
-    
-def omega_scan():
-    global Active, t
+def change_mass_ratio(attr,old,new):
+    global M, accOld
+    Update_system()
+    Update_current_state()
+    topMass.changeMass(new*m1)
+    M = np.array([[mainMass.mass,0.],
+                  [0., topMass.mass]])
+    accOld = inv(M).dot(F0-K.dot(dispOld)-C.dot(velOld))
+
+## Create slider to choose mass of upper mass
+mass_ratio_input = LatexSlider(title="\\text{Mass Ratio } \mu = \\frac{m_2}{m_1} = ", value=m2/m1, start=0.01, end=0.20, step=0.01, width=450)
+mass_ratio_input.on_change('value',change_mass_ratio)
+
+def change_tuning(attr,old,new):
+    global K, accOld
+    Update_system()
+    Update_current_state()
+    spring.changeSpringConst(new*new*k1*mass_ratio_input.value)
+    K = np.array([[baseSpring.kappa+spring.kappa,-spring.kappa],
+                 [-spring.kappa,                 spring.kappa]])
+    accOld = inv(M).dot(F0-K.dot(dispOld)-C.dot(velOld))
+
+## Create slider to choose spring constant
+tuning_input = LatexSlider(title="\\text{TMD Tuning } \kappa = \\frac{\omega_2}{\omega_1} = \sqrt{\\frac{k_2 \cdot m_1}{k_1 \cdot m_2}} = ", value=sqrt(k2*m1/(k1*m2)), start=0.7, end=1.3, step=0.01, width=450)
+tuning_input.on_change('value',change_tuning)
+
+def change_D1(attr,old,new):
+    global C, accOld
+    Update_system()
+    Update_current_state()
+    baseDashpot.changeDamperCoeff(new*2*m1*sqrt(k1/m1))
+    C = np.array([[baseDashpot.lam+dashpot.lam,-dashpot.lam],
+                 [-dashpot.lam,                 dashpot.lam]])
+    accOld = inv(M).dot(F0-K.dot(dispOld)-C.dot(velOld))
+
+## Create slider to choose base damper coefficient
+#D1_input = LatexSlider(title="\\text{Percentage of Critical Damping of Main Mass } D_1 = \\frac{c_1}{2 \cdot m_1 \cdot \omega_1} = ", value=c1/(2*m1*sqrt(k1/m1)), start=0.001, end=0.1, step=0.001, width=450)
+D1_input = LatexSlider(title="\\text{Percentage of Critical Damping of Main Mass } D_1 = \\frac{c_1}{2 \cdot m_1 \cdot \omega_1} = ", value=c1/(2*m1*sqrt(k1/m1)), start=0.01, end=0.1, step=0.01, width=450)
+D1_input.on_change('value',change_D1)
+
+def change_D2(attr,old,new):
+    global C, accOld
+    Update_system()
+    Update_current_state()
+    dashpot.changeDamperCoeff(new*2*mass_ratio_input.value*m1*sqrt(tuning_input.value*tuning_input.value*k1/m1))
+    C = np.array([[baseDashpot.lam+dashpot.lam,-dashpot.lam],
+                 [-dashpot.lam,                 dashpot.lam]])
+    accOld = inv(M).dot(F0-K.dot(dispOld)-C.dot(velOld))
+
+## Create slider to choose upper damper coefficient
+#D2_input = LatexSlider(title="\\text{Percentage of Critical Damping of Top Mass } D_2  = \\frac{c_2}{2 \cdot m_2 \cdot \omega_2} = ", value=c2/(2*m2*sqrt(k2/m2)), start=0.001, end=0.1, step=0.001, width=450)
+D2_input = LatexSlider(title="\\text{Percentage of Critical Damping of Top Mass } D_2  = \\frac{c_2}{2 \cdot m_2 \cdot \omega_2} = ", value=c2/(2*m2*sqrt(k2/m2)), start=0.01, end=0.1, step=0.01, width=450)
+D2_input.on_change('value',change_D2)
+
+def change_frequeny_ratio(attr,old,new):
+    global omega, oscAmp
+    omega = new*sqrt(k1/m1)
+    Update_current_state()
+
+## Create slider to choose excitation frequency omega
+frequency_ratio_input = LatexSlider(title="\\text{Excitation Frequency Ratio } \eta  = \\frac{\Omega}{\omega_1} = ", value=omega/sqrt(k1/m1), start=0.0, end=5.0, step=0.05, width=400)
+frequency_ratio_input.on_change('value',change_frequeny_ratio)
+
+def disable_all_sliders(d=True):
+
+    mass_ratio_input.disabled = d
+    tuning_input.disabled = d
+    D1_input.disabled = d
+    D2_input.disabled = d
+    frequency_ratio_input.disabled = d
+
+def play_pause():
+    if play_pause_button.label == "Play":
+        play()
+    else: 
+        pause()
+
+def play():
+    global Active, g1BaseOscillator
     if (not Active):
-        reset()
-        t=0
-        curdoc().add_periodic_callback(omegaScanStep,100)
+        disable_all_sliders(True)       #while the app is running, it's not possible to change any values
+        #Add a callback to be invoked on a session periodically
+        g1BaseOscillator = curdoc().add_periodic_callback(evolve,dt*1000)
+        play_pause_button.label = "Pause"
         Active=True
-        Arrow_glyph.start=ArrowHead_glyph
-        Arrow_glyph.end=None
-        
-def ClearAndReset_DisplacementTime_History():
-    global mainMass_displacementTime_source, topMass_displacementTime_source, displacement_range, time_range, t
-    
-    # Clear Displacement-Time sources
-    Clear_Time_History(
-                       mainMass_displacementTime_source,
-                       topMass_displacementTime_source
-                      )
 
-    # Reset Displacement-Time plot time boundary
-    time_range.end   = 10
-    time_range.start = 0
-    
-    # Reset time
-    t = 0
-    
-    
+def pause():
+    global Active, g1BaseOscillator
+    if (Active):
+        curdoc().remove_periodic_callback(g1BaseOscillator)
+        play_pause_button.label = "Play"
+        Active=False
 
-## create buttons to control simulation
-PlayStop_button = Button(label="Play", button_type="success",width=100)
-PlayStop_button.on_click(PlayStop)
-#play_button = Button(label="Play", button_type="success",width=100)
-#play_button.on_click(play)
-reset_button = Button(label="Reset", button_type="success",width=100)
-reset_button.on_click(reset)
-omega_scan_button = Button(label=u"\u03C9 scan", button_type="success",width=100)
-omega_scan_button.on_click(omega_scan)
+def stop():
+    #set everything except slider values to initial settings
+    global spring, topMass, dashpot, mainMass, baseSpring, baseDashpot, oscForceAngle, x1, x2, t, accOld, velOld, dispOld, F0, M, K , C, F0
+    disable_all_sliders(False)
+    pause()
+    t=0      
+    oscForceAngle = 0            
+    init_pos()   
+    # Clear the displacement-time diagram related data structures
+    mainMass_displacementTime_source.data=dict(x=[0],y=[0]) 
+    topMass_displacementTime_source.data=dict(x=[0],y=[0]) 
+    forceTime_source.data=dict(x=[0],y=[-1])
+    arrow_line.stream(dict(x1=[3], x2=[3], y1=[x1+5+5], y2=[x1+5]),rollover=1)
+    arrow_offset.stream(dict(x1=[3], x2=[3], y1=[x1+5+0.1], y2=[x1+5]),rollover=1)
+    m1_label_source.data=dict(x=[0], y=[x1+2.5], t=['m'])
+    m2_label_source.data=dict(x=[-3], y=[x2+2], t=['m'])
+    m1_index_label_source.data=dict(x=[0.6], y=[x1+2.2], t=['1'])
+    m2_index_label_source.data=dict(x=[-2.4], y=[x2+1.7], t=['2'])
+    velOld = np.array([0.,0.])
+    dispOld = np.array([0.,0.])
+    accOld = inv(M).dot(F0-K.dot(dispOld)-C.dot(velOld))
 
-ClearResetTimeHistory_button = Button(label="Clear Displacement-Time Plot", button_type="success",width=100)
-ClearResetTimeHistory_button.on_click(ClearAndReset_DisplacementTime_History)
+def reset():
+    mass_ratio_input.value = m2/m1
+    tuning_input.value = sqrt(k2*m1/(m2*k1))
+    D1_input.value = c1/(2*m1*sqrt(k1/m1))
+    D2_input.value = c2/(2*m2*sqrt(k2/m2))
+    frequency_ratio_input.value = (2*sqrt(10))/sqrt(k1/m1)
+    stop()
 
 def Update_system():    
-    Calculate_MagnificationFactor_PhaseAngle( 
-                                       m1, mass_input.value, k1, kappa_input.value, lam_input.value,
-                                       oscAmp, omega_input.end, omega_input.value, 200,
-                                       mainMass_amplificationFrequency_source, 
-                                       topMass_amplificationFrequency_source,
-                                       mainMass_phaseAngleFrequency_source,
-                                       topMass_phaseAngleFrequency_source,
-                                       Amplificaiton_range, 
-                                       PhaseAngle_range, 
-                                       Frequency_range,
-                                      )
+    Calculate_MagnificationFactor_PhaseAngle(mass_ratio_input.value,tuning_input.value,D1_input.value,D2_input.value,mainMass_amplificationFrequency_source,mainMass_phaseAngleFrequency_source,k1,m1)
     
 def Update_current_state():
-    Calculate_Current_Amplification_PhaseAngle(
-                                                m1, mass_input.value, k1, kappa_input.value,
-                                                lam_input.value, oscAmp, omega_input.end, omega_input.value,
-                                                Amplification_current_source, PhaseAngle_current_source
-                                              )
+    Calculate_Current_Amplification_PhaseAngle(frequency_ratio_input.value,tuning_input.value,mass_ratio_input.value,D1_input.value,D2_input.value,Amplification_current_source,PhaseAngle_current_source,k1,m1)
 
-# setup initial conditions
-calculateGraphPlot()
-change_Omega(None,None,1.0)
+## create buttons to control simulation
+play_pause_button = Button(label="Play", button_type="success",width=100)
+play_pause_button.on_click(play_pause)
+reset_button = Button(label="Reset", button_type="success",width=100)
+reset_button.on_click(reset)
+stop_button = Button(label="Stop", button_type="success",width=100)
+stop_button.on_click(stop)
 
-# Fill the Amplification factor and Phase angle diagrams
+## Fill the Amplification factor and Phase angle diagrams
 Update_system()
 Update_current_state()
 
-
 ## Send to window
-curdoc().add_root(
-                    column(
-                           description,
-                           row(
-                               fig,
-                               column(
-                                      Amplification_Frequency_plot,
-                                      PhaseAngle_Frequency_plot
-                                     ),
-                               displacementTime_plot,
-                               ),
-                           row(
-                               column(
-                                      Simulation_Controls_text,
-                                      PlayStop_button,
-                                      ClearResetTimeHistory_button,
-                                      reset_button,
-                                     ),
-                               Spacer(width=50),
-                               column(
-                                      System_Parameters_text,
-                                      mass_input,
-                                      kappa_input,
-                                      lam_input,     
-                                     ),                                     
-                               Spacer(width=50),
-                               column(
-                                      ExternalForce_Parameter_text,
-                                      omega_input
-                                     )
-                              )
-                           )
-                  )
-                              
-#curdoc().add_root(column(title_box,row(column(Spacer(height=100),play_button,stop_button,reset_button),Spacer(width=10),fig,test_fig),
-    
+curdoc().add_root(column(description,row(column(Spacer(height=200),play_pause_button,stop_button,reset_button),fig,column(Amplification_Frequency_plot,PhaseAngle_Frequency_plot),
+Spacer(width=50),column(displacementTime_plot,forceTime_plot)),
+Spacer(height=30),row(column(mass_ratio_input,tuning_input,column(D1_input,D2_input)),                                     
+Spacer(width=420),column(frequency_ratio_input))))
+                                  
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

@@ -1,5 +1,5 @@
 from bokeh.models import ColumnDataSource
-from Coord import *
+from tmd_coord import Coord
 from copy import deepcopy
 
 class Mass(object):
@@ -14,6 +14,8 @@ class Mass(object):
         self.v=Coord(0,0)
         # create vector of objects affected by this object
         self.affectedObjects=[]
+        self.currentPos=dict()
+        self.shape=ColumnDataSource
     
     ## Add an object that is affected by the movement of the mass
     def linkObj(self,obj,point):
@@ -72,6 +74,7 @@ class Mass(object):
             # add all forces acting on mass (e.g. spring, dashpot)
             F+=self.thisStepForces.pop()
         # Find acceleration
+        print(F)
         a=F/self.mass
         return [self.v.copy(), a, self.currentPos['y'][0]]
     
@@ -109,7 +112,7 @@ class RectangularMass(Mass):
         self.currentPos = dict(x=[x,x,x+w,x+w],y=[y,y+h,y+h,y])
     
     # add RectangularMass to figure
-    def plot(self,fig,colour="#0065BD",width=1):
+    def plot(self,fig,colour="#3070b3",width=1):
         fig.patch(x='x',y='y',color=colour,source=self.shape,line_width=width)
     
     # displace mass to position (used for reset)

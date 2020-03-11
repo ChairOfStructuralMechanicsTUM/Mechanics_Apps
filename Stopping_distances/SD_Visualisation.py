@@ -1,6 +1,15 @@
+# general imports
+
+# bokeh imports
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, Arrow, OpenHead, LabelSet
+from bokeh.models   import ColumnDataSource, Arrow, OpenHead, LabelSet
+
+# internal imports
 from SD_Shape import SD_Shape
+
+# latex integration
+
+#---------------------------------------------------------------------#
 
 # class that handles the drawing of the car and house
 
