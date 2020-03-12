@@ -38,6 +38,7 @@ structure_plot.title.align = "center"
 structure_plot.grid.visible=False
 structure_plot.xaxis.visible=True
 structure_plot.yaxis.visible=True
+structure_plot.axis.axis_label_text_font_style="normal"
 structure_plot.yaxis.axis_label_text_font_size= "20px"
 structure_plot.yaxis.axis_label= "Height [m]"
 structure_plot.xaxis.axis_label_text_font_size= "20px"
@@ -47,7 +48,7 @@ xmin2, xmax2 = 0,1800
 ymin2, ymax2 = -0.5,0.5
 signal_plot = figure(
                       plot_width=700,
-                      plot_height=400,
+                      plot_height=500,
                       x_range=[xmin2,xmax2], 
                       y_range=[ymin2,ymax2],
                       #tools = '',
@@ -58,16 +59,17 @@ signal_plot.title.align = "center"
 signal_plot.grid.visible=False
 signal_plot.xaxis.visible=True
 signal_plot.yaxis.visible=True
+signal_plot.axis.axis_label_text_font_style="normal"
 signal_plot.yaxis.axis_label_text_font_size= "20px"
 signal_plot.yaxis.axis_label= "Amplitude [m/s"u"\u00B2]"
 signal_plot.xaxis.axis_label_text_font_size= "20px"
 signal_plot.xaxis.axis_label="Time [second]"
 
-xmin3, xmax3 = 0,1800
+xmin3, xmax3 = 0,1000
 ymin3, ymax3 = -0.5,0.5
 max_displacement_plot = figure(
                                   plot_width=720,
-                                  plot_height=400,
+                                  plot_height=500,
                                   x_range=[xmin3,xmax3], 
                                   y_range=[ymin3,ymax3],
                                   #tools = '',
@@ -78,14 +80,15 @@ max_displacement_plot.title.align = "center"
 max_displacement_plot.grid.visible=False
 max_displacement_plot.xaxis.visible=True
 max_displacement_plot.yaxis.visible=True
+max_displacement_plot.axis.axis_label_text_font_style="normal"
 max_displacement_plot.yaxis.axis_label_text_font_size= "20px"
 max_displacement_plot.yaxis.axis_label= "Amplitude [mm]"
 max_displacement_plot.xaxis.axis_label_text_font_size= "20px"
 max_displacement_plot.xaxis.axis_label="Time [second]"
 
 ERSplot = figure(
-                      plot_width=600,
-                      plot_height=600,
+                      plot_width=800,
+                      plot_height=800,
                       x_range=[0,3.0], 
                       y_range=[0,3.0],
                       
@@ -96,6 +99,7 @@ ERSplot.title.align = "center"
 ERSplot.grid.visible=True
 ERSplot.xaxis.visible=True
 ERSplot.xaxis.visible=True
+ERSplot.axis.axis_label_text_font_style="normal"
 ERSplot.xaxis.axis_label_text_font_size= "20px"
 ERSplot.xaxis.axis_label= 'Period [second]'
 ERSplot.yaxis.visible=True
@@ -296,7 +300,7 @@ if maxTimeStep < signalFour.data['time'][1] - signalFour.data['time'][0]:
 signal_plot.y_range.start = -maxAmplitude
 signal_plot.y_range.end = maxAmplitude #= Range(-maxAmplitude,maxAmplitude)
 signal_plot.x_range.start = 0
-signal_plot.x_range.end = maxTime/3 #= Range(0,maxTime)
+signal_plot.x_range.end = maxTime/5 #= Range(0,maxTime)
 
 print('maxTime = ',maxTime)
 print('maxTimeStep = ',maxTimeStep)
@@ -418,7 +422,7 @@ responseFour_amplitudes = solve_time_domain(structure, signalFour)
 responseOne_thirdStorey = ColumnDataSource(data=dict(time=signalOne.data['time'],amplitude=responseOne_amplitudes[2,:]*1000))
 responseTwo_thirdStorey = ColumnDataSource(data=dict(time=signalTwo.data['time'],amplitude=responseTwo_amplitudes[2,:]*1000))
 responseThree_thirdStorey = ColumnDataSource(data=dict(time=signalThree.data['time'],amplitude=responseThree_amplitudes[2,:]*1000))
-responseFour_thirdStorey = ColumnDataSource(data=dict(time=signalThree.data['time'],amplitude=responseFour_amplitudes[2,:]*1000))
+responseFour_thirdStorey = ColumnDataSource(data=dict(time=signalFour.data['time'],amplitude=responseFour_amplitudes[2,:]*1000))
 # Plot the third floor initial displacement for each signal
 responseOne_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseOne_thirdStorey,line_width=1,color=color[0])
 responseTwo_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseTwo_thirdStorey,line_width=1,color=color[1])
@@ -445,7 +449,7 @@ for element in responseFour_thirdStorey.data['amplitude']:
 max_displacement_plot.y_range.start = -maxResponseAmplitude
 max_displacement_plot.y_range.end = maxResponseAmplitude #= Range(-maxAmplitude,maxAmplitude)
 max_displacement_plot.x_range.start = 0
-max_displacement_plot.x_range.end = maxTime/3 #= Range(0,maxTime)
+max_displacement_plot.x_range.end = maxTime/6 #= Range(0,maxTime)
 
 # Create legend for the signal_plot
 legend3 = Legend(items=[
@@ -667,15 +671,129 @@ def re_plot():
     signal_plot.y_range.start = -maxAmplitude
     signal_plot.y_range.end = maxAmplitude #= Range(-maxAmplitude,maxAmplitude)
     signal_plot.x_range.start = 0
-    signal_plot.x_range.end = maxTime/3 #= Range(0,maxTime)
+    signal_plot.x_range.end = maxTime/5 #= Range(0,maxTime)
     
     signalOne_plot   =  signal_plot.line(x='time',y='amplitude',source=signalOne,line_width=1,color=color[0])
     signalTwo_plot   =  signal_plot.line(x='time',y='amplitude',source=signalTwo,line_width=1,color=color[1])
     signalThree_plot =  signal_plot.line(x='time',y='amplitude',source=signalThree,line_width=1,color=color[2])
     signalFour_plot  =  signal_plot.line(x='time',y='amplitude',source=signalFour,line_width=1,color=color[3])
     
+    amplitude   = list()
+    time           = list()
 
-re_plot_button = Button(label="Refresh Plot", button_type="success")
+    responseFour_amplitudes = solve_time_domain(structure, signalFour)
+    responseOne_amplitudes = solve_time_domain(structure, signalOne)
+    responseTwo_amplitudes = solve_time_domain(structure, signalTwo)
+    responseThree_amplitudes = solve_time_domain(structure, signalThree)
+    # Note: multiplied by 1000 to convert from meter to millimeter
+    
+    global responseOne_thirdStorey
+    responseOne_thirdStorey.data=dict(amplitude=np.array(amplitude),time=np.array(time))
+    global responseTwo_thirdStorey
+    responseTwo_thirdStorey.data=dict(amplitude=np.array(amplitude),time=np.array(time))
+    global responseThree_thirdStorey
+    responseThree_thirdStorey.data=dict(amplitude=np.array(amplitude),time=np.array(time))
+    global responseFour_thirdStorey
+    responseFour_thirdStorey.data=dict(amplitude=np.array(amplitude),time=np.array(time))
+    responseOne_thirdStorey = ColumnDataSource(data=dict(time=signalOne.data['time'],amplitude=responseOne_amplitudes[2,:]*1000))
+    responseTwo_thirdStorey = ColumnDataSource(data=dict(time=signalTwo.data['time'],amplitude=responseTwo_amplitudes[2,:]*1000))
+    responseThree_thirdStorey = ColumnDataSource(data=dict(time=signalThree.data['time'],amplitude=responseThree_amplitudes[2,:]*1000))
+    responseFour_thirdStorey = ColumnDataSource(data=dict(time=signalFour.data['time'],amplitude=responseFour_amplitudes[2,:]*1000))
+    # Calculate the maximum achieved amplitude in all three signals
+    maxResponseAmplitude = 0
+    for element in responseOne_thirdStorey.data['amplitude']:
+        if abs(element) > maxResponseAmplitude:
+            maxResponseAmplitude = abs(element)
+            
+    for element in responseTwo_thirdStorey.data['amplitude']:
+        if abs(element) > maxResponseAmplitude:
+            maxResponseAmplitude = abs(element)
+            
+    for element in responseThree_thirdStorey.data['amplitude']:
+        if abs(element) > maxResponseAmplitude:
+            maxResponseAmplitude = abs(element)
+
+    for element in responseFour_thirdStorey.data['amplitude']:
+        if abs(element) > maxResponseAmplitude:
+            maxResponseAmplitude = abs(element)
+    global max_displacement_plot
+    global responseOne_thirdStorey_plot
+    global responseTwo_thirdStorey_plot
+    global responseThree_thirdStorey_plot
+    global responseFour_thirdStorey_plot
+    responseOne_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseOne_thirdStorey,line_width=1,color=color[0])
+    responseTwo_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseTwo_thirdStorey,line_width=1,color=color[1])
+    responseThree_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseThree_thirdStorey,line_width=1,color=color[2])
+    responseFour_thirdStorey_plot = max_displacement_plot.line(x='time',y='amplitude',source=responseFour_thirdStorey,line_width=1,color=color[3])
+    max_displacement_plot.y_range.start = -maxResponseAmplitude
+    max_displacement_plot.y_range.end = maxResponseAmplitude #= Range(-maxAmplitude,maxAmplitude)
+    max_displacement_plot.x_range.start = 0
+    max_displacement_plot.x_range.end = maxTime/6 #= Range(0,maxTime)
+
+    time = 0
+    
+    dt   = maxTimeStep
+    periodicCallback = 0
+    Active = False
+
+    def update_structure():
+        global time
+        
+        # Update time
+        time += maxTimeStep
+        if time >= time_slider.end:
+            time = 0
+            time_slider.value = time_slider.start
+        else:
+            time_slider.value += time_slider.step
+            
+        if signal_choices.active == 0:
+            displacement = responseOne_amplitudes[:,int(time/maxTimeStep)]*1000
+        elif signal_choices.active == 1:
+            displacement = responseTwo_amplitudes[:,int(time/maxTimeStep)]*1000
+        elif signal_choices.active == 2:
+            displacement = responseThree_amplitudes[:,int(time/maxTimeStep)]*1000
+        elif signal_choices.active == 3:
+            displacement = responseFour_amplitudes[:,int(time/maxTimeStep)]*1000
+        structure.update_system(displacement)
+        
+        
+    def update_time(attr,old,new):
+        global time
+        time = new
+        
+        if signal_choices.active == 0:
+            if time < signalOne.data['time'][-1]:
+                displacement = responseOne_amplitudes[:,int(time/maxTimeStep)]*1000
+            else:
+                displacement = responseOne_amplitudes[:,0]*1000
+                time = 0
+                time_slider.value = time_slider.start
+        elif signal_choices.active == 1:
+            if time < signalTwo.data['time'][-1]:
+                displacement = responseTwo_amplitudes[:,int(time/maxTimeStep)]*1000
+            else:
+                displacement = responseTwo_amplitudes[:,0]*1000
+                time = 0
+                time_slider.value = time_slider.start
+        elif signal_choices.active == 2:
+            if time < signalThree.data['time'][-1]:
+                displacement = responseThree_amplitudes[:,int(time/maxTimeStep)]*1000
+            else:
+                displacement = responseThree_amplitudes[:,0]*1000
+                time = 0
+                time_slider.value = time_slider.start
+        elif signal_choices.active == 3:
+            if time < signalFour.data['time'][-1]:
+                displacement = responseFour_amplitudes[:,int(time/maxTimeStep)]*1000
+            else:
+                displacement = responseFour_amplitudes[:,0]*1000
+                time = 0
+                time_slider.value = time_slider.start
+                
+        structure.update_system(displacement)
+
+re_plot_button = Button(label="Refresh", button_type="success")
 re_plot_button.on_click(re_plot)
 
 
@@ -687,25 +805,37 @@ Plot everything
 curdoc().add_root(
                     row(
                         column(
+                               Spacer(height=80),
+                               row(Spacer(width=20),column(signal_choices,
                                structure_plot,
                                time_slider,
                                playPause_button,
-                               stop_button,
-                               signal_choices,
-                               initial_scale_value_input1,
-                               initial_scale_value_input2,
-                               initial_scale_value_input3,
-                               initial_scale_value_input4,
-                               re_plot_button,
+                               stop_button,re_plot_button,),)
+                               
                               ),
                         
                         column(
-                               signal_plot,
                                max_displacement_plot,
+                               signal_plot,
                               ),
-                        column(ERSplot, data_table_title, data_table)
+                        column(
+                               row( 
+                                  column(
+                                         Spacer(height=200),
+                                         initial_scale_value_input1,
+                                         initial_scale_value_input2,
+                                         initial_scale_value_input3,
+                                         initial_scale_value_input4,
+                                         ),
+                                         ERSplot,
+                               ),
+                               row(Spacer(width=120), column(data_table_title,
+                               data_table,),                             
+                                     
                        )
                  )
+             )
+)
 
 # get path of parent directory and only use the name of the Parent Directory 
 # for the tab name. Replace underscores '_' and minuses '-' with blanks ' '		
