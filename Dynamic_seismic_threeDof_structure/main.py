@@ -17,6 +17,12 @@ from bokeh.models.ranges import Range1d
 from bokeh.models.layouts import Spacer
 from bokeh.models.ranges import Range
 from bokeh.models.renderers import GlyphRenderer
+from os.path import dirname, join, split, abspath
+import sys, inspect
+currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+parentdir = join(dirname(currentdir), "shared/")
+sys.path.insert(0,parentdir)
+from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
 '''
 ###############################################################################
@@ -181,7 +187,7 @@ plot( structure_plot, structure, radius, structure_color )
 
 # label that indicates the mass 
 structure_plot.add_layout(
-                      LabelSet(
+                      LatexLabelSet(
                                   x='x', y='y',
                                   text='mass',
                                   text_color='black',text_font_size="10pt",
@@ -192,7 +198,7 @@ structure_plot.add_layout(
                       
 # Label that indicates the stiffness
 structure_plot.add_layout(
-                      LabelSet(
+                      LatexLabelSet(
                                   x='x', y='y',
                                   text='stiffness',
                                   text_color='black',text_font_size="10pt",
