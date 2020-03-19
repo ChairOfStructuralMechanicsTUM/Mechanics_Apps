@@ -207,7 +207,7 @@ structure_plot.add_layout(
                               )
                     )
                       
-color = ["#0065BD","#E37222","#DA70D6","#A2AD00"]
+color = ["#0065BD","#E37222","#808080","#A2AD00"]
 '''
 ###############################################################################
 set the scale value
@@ -686,11 +686,13 @@ def re_plot():
     
     amplitude   = list()
     time           = list()
+    global responseOne_amplitudes, responseTwo_amplitudes, responseThree_amplitudes, responseFour_amplitudes
 
-    responseFour_amplitudes = solve_time_domain(structure, signalFour)
+    
     responseOne_amplitudes = solve_time_domain(structure, signalOne)
     responseTwo_amplitudes = solve_time_domain(structure, signalTwo)
     responseThree_amplitudes = solve_time_domain(structure, signalThree)
+    responseFour_amplitudes = solve_time_domain(structure, signalFour)
     # Note: multiplied by 1000 to convert from meter to millimeter
     
     global responseOne_thirdStorey
@@ -762,7 +764,7 @@ def re_plot():
         elif signal_choices.active == 3:
             displacement = responseFour_amplitudes[:,int(time/maxTimeStep)]*1000
         structure.update_system(displacement)
-        
+     
         
     def update_time(attr,old,new):
         global time
@@ -798,6 +800,7 @@ def re_plot():
                 time_slider.value = time_slider.start
                 
         structure.update_system(displacement)
+    play()
 
 re_plot_button = Button(label="Refresh", button_type="success")
 re_plot_button.on_click(re_plot)
