@@ -23,8 +23,8 @@ length = 5.0
 height = 1.0
 thickness = height
 E = 50000000.0
-Py = 0.0 #-1000
-Pz = 0.0 #2000
+Pzn = 0.0 #-1000
+Pyn = 0.0 #2000
 
 global glCantileverCrossSection
 glCantileverCrossSection = 0
@@ -32,13 +32,14 @@ glCantileverCrossSection = 0
 global glCantileverStress
 glCantileverStress = 0
 
+
 # Define mesh for visualization
 noElementsX = 80
-noElementsY = 20
-noElementsZ = 20
+noElementsZn = 20
+noElementsYn = 20
 elementSizeX = length / noElementsX
-elementSizeY = height / noElementsY
-elementSizeZ = thickness / noElementsZ
+elementSizeZn = height / noElementsZn
+elementSizeYn = thickness / noElementsYn
 amplificationFactor = 100
 
 
@@ -47,74 +48,78 @@ CrossSection1 = "2D_cantilever_beam/static/images/Rectangular.png"
 CrossSection2 = "2D_cantilever_beam/static/images/DoubleT.png"
 CrossSection3 = "2D_cantilever_beam/static/images/Circular.png"
 CrossSection4 = "2D_cantilever_beam/static/images/Triangular.png"
-CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
-CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
-CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , y=[]))
-CrossSectionSource4 = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
+CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , zn=[]))
+CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , zn=[]))
+CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , zn=[]))
+CrossSectionSource4 = ColumnDataSource(data=dict(sp4=[], x=[] , zn=[]))
 
 # Source & Initialization of Internal Element Plot:
-XYElement = "2D_cantilever_beam/static/images/XYElement.png"
-XYElementSource = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
-XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])
-XYElement2 = "2D_cantilever_beam/static/images/XYElement.png"
-XYElement2Source = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
-XYElement2Source.data = dict(sp4=[XYElement], x = [0], y = [0])
-XYBeam = "2D_cantilever_beam/static/images/XYBeam.png"
-XYBeamSource = ColumnDataSource(data=dict(sp5=[], x=[] , y=[]))
-XYBeamSource.data = dict(sp5=[XYBeam], x = [0], y = [0])
+XZElement = "2D_cantilever_beam/static/images/XZElement.png"
+XZElementSource = ColumnDataSource(data=dict(sp4=[], x=[] , zn=[]))
+XZElementSource.data = dict(sp4=[XZElement], x = [0], zn = [0])
+XZElement2 = "2D_cantilever_beam/static/images/XZElement.png"
+XZElement2Source = ColumnDataSource(data=dict(sp4=[], x=[] , zn=[]))
+XZElement2Source.data = dict(sp4=[XZElement], x = [0], zn = [0])
+XZBeam = "2D_cantilever_beam/static/images/XZBeam.png"
+XZBeamSource = ColumnDataSource(data=dict(sp5=[], x=[] , zn=[]))
+XZBeamSource.data = dict(sp5=[XZBeam], x = [0], zn = [0])
 
 
 
 # Construct source files of dynamic labels:
-labelXY = ColumnDataSource(data=dict(x=[-.3,5.8],
-                                     y=[2.7,-.3],
-                                     text=['y','x']))
-labelXZ = ColumnDataSource(data=dict(x=[-.3,5.8],
-                                     y=[-2.7,-.3],
-                                     text=['z','x']))     
-labelXYElement = ColumnDataSource(dict(x=[-.3,5.8,0.7,0.7], y=[2.7,-.3,0.7,-0.7], text=['y','x','\\frac{a}{2}','-\\frac{a}{2}']))                                                           
+labelXZn = ColumnDataSource(data=dict(x=[-.3,5.8],
+                                     zn=[-2.7,-.3],
+                                     text=['zn','x']))
+labelXYn = ColumnDataSource(data=dict(x=[-.3,5.8],
+                                     zn=[-2.7,-.3],
+                                     text=['yn','x']))     
+labelXZnElement = ColumnDataSource(dict(x=[-.3,5.8,0.7,0.7], zn=[-2.7,-.3,0.7,-0.7], text=['zn','x','\\frac{a}{2}','-\\frac{a}{2}']))                                                           
                                      
 # Construct the source files for the force labels
-sourceFyLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fy'] ))
-sourceFzLabel = ColumnDataSource(data=dict( x=[length], y=[height+0.5], f=['Fz'] ))
+sourceFznLabel = ColumnDataSource(data=dict( x=[length], zn=[-(height+0.5)], f=['Fz'] ))
+sourceFynLabel = ColumnDataSource(data=dict( x=[length], zn=[(height+0.5)], f=['Fy'] ))
 
 # Construct source files of dynamic axis:
-CoordArrowXYSource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0])) 
-CoordArrowXZSource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]))  
-CoordArrowXYESource = ColumnDataSource(data=dict(xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]))     
+CoordArrowXZnSource     = ColumnDataSource(data=dict(xs=[-0.5], zns=[0.0],xe=[5.9], zne=[0.0])) 
+CoordArrowXYnSource     = ColumnDataSource(data=dict(xs=[-0.5], zns=[0.0],xe=[5.9], zne=[0.0]))  
+CoordArrowXZnESource    = ColumnDataSource(data=dict(xs=[-0.5], zns=[0.0],xe=[5.9], zne=[0.0]))     
 
 
-# Sigma and tau sources in "XY-Element" plot:
-Sigmaplot_l_Source = ColumnDataSource(data=dict(x=[] , y=[]))
-Sigmaplot_r_Source = ColumnDataSource(data=dict(x=[] , y=[]))
-Tauplot_l_Source = ColumnDataSource(data=dict(x=[] , y=[]))
-Tauplot_r_Source = ColumnDataSource(data=dict(x=[] , y=[]))
-Tauplot_u_Source = ColumnDataSource(data=dict(x=[] , y=[]))
-Sigmaplot_Label_Source = ColumnDataSource(data=dict(x=[], y=[], names=[]))
-Tauplot_Label_Source = ColumnDataSource(data=dict(x=[], y=[], names=[]))
-# Arrow sources in "XY-Element" plot:
-SigmaArrowSource1 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
-SigmaArrowSource2 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
-SigmaArrowSource3 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
-SigmaArrowSource4 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
-SigmaArrowSource5 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
-SigmaArrowSource6 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
-TauArrowSource1 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
-TauArrowSource2 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
-TauArrowSource3 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
-TauArrowSource4 = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
+# Sigma and tau sources in "XZn-Element" plot:
+Sigmaplot_l_Source      = ColumnDataSource(data=dict(x=[] , zn=[]))
+Sigmaplot_r_Source      = ColumnDataSource(data=dict(x=[] , zn=[]))
+Tauplot_l_Source        = ColumnDataSource(data=dict(x=[] , zn=[]))
+Tauplot_r_Source        = ColumnDataSource(data=dict(x=[] , zn=[]))
+Tauplot_u_Source        = ColumnDataSource(data=dict(x=[] , zn=[]))
+Sigmaplot_Label_Source  = ColumnDataSource(data=dict(x=[] , zn=[], names=[]))
+Tauplot_Label_Source    = ColumnDataSource(data=dict(x=[] , zn=[], names=[]))
+# Arrow sources in "XZn-Element" plot:
+SigmaArrowSource1   = ColumnDataSource(data = dict(xs=[], zns=[], xe=[], zne=[]))
+SigmaArrowSource2   = ColumnDataSource(data = dict(xs=[], zns=[], xe=[], zne=[]))
+SigmaArrowSource3   = ColumnDataSource(data = dict(xs=[], zns=[], xe=[], zne=[]))
+SigmaArrowSource4   = ColumnDataSource(data = dict(xs=[], zns=[], xe=[], zne=[]))
+SigmaArrowSource5   = ColumnDataSource(data = dict(xs=[], zns=[], xe=[], zne=[]))
+SigmaArrowSource6   = ColumnDataSource(data = dict(xs=[], zns=[], xe=[], zne=[]))
+TauArrowSource1     = ColumnDataSource(data = dict(xs=[], zns=[], xe=[], zne=[]))
+TauArrowSource2     = ColumnDataSource(data = dict(xs=[], zns=[], xe=[], zne=[]))
+TauArrowSource3     = ColumnDataSource(data = dict(xs=[], zns=[], xe=[], zne=[]))
+TauArrowSource4     = ColumnDataSource(data = dict(xs=[], zns=[], xe=[], zne=[]))
+
+# colorBar source plot:
+colorBarSource = ColumnDataSource(data = dict( x=[], zn=[], c=[], a=[] ))
+colorDistributionNoteSource  = ColumnDataSource(data=dict(x=[5.9] , zn=[-2.8], note=['non-linear color distribution!']))
 
 
-def deformed_cantilever_beam_determiner_XY( 
-                                            length, height, thickness, E, Py, 
-                                            Pz, noElementsX, noElementsY, 
-                                            noElementsZ, elementSizeX,  
-                                            elementSizeY, elementSizeZ, 
+def deformed_cantilever_beam_determiner_XZn( 
+                                            length, height, thickness, E, Pzn, 
+                                            Pyn, noElementsX, noElementsZn, 
+                                            noElementsYn, elementSizeX,  
+                                            elementSizeZn, elementSizeYn, 
                                             amplificationFactor
                                           ):
     # Construct the deformed beam's center line
-    deformedBeamXY, deformedBeamXZ = functions.construct_deformed_beam_centerLine(
-                                                                                      Py, Pz, E, 
+    deformedBeamXZn, deformedBeamXYn = functions.construct_deformed_beam_centerLine(
+                                                                                      Pzn, Pyn, E, 
                                                                                       noElementsX,
                                                                                       thickness, height, 
                                                                                       length, elementSizeX,
@@ -123,25 +128,25 @@ def deformed_cantilever_beam_determiner_XY(
                                                                                  )
     
     # Construct the normal vectors to the deformed beam's center line
-    normalVecrtorsXYUpperDef, normalVectorsXYLowerDef = functions.construct_normal_vectors( deformedBeamXY )
+    normalVecrtorsXZnUpperDef, normalVectorsXZnLowerDef = functions.construct_normal_vectors( deformedBeamXZn )
     
     # Construct mesh for the deformed and the deformed beams    
-    listDeformedElementsXY = functions.construct_deformed_elements(   
-                                                                      deformedBeamXY,
+    listDeformedElementsXZn = functions.construct_deformed_elements(   
+                                                                      deformedBeamXZn,
                                                                       elementSizeX,
-                                                                      elementSizeY,
+                                                                      elementSizeZn,
                                                                       noElementsX,
-                                                                      noElementsY,
-                                                                      normalVecrtorsXYUpperDef,
-                                                                      normalVectorsXYLowerDef
+                                                                      noElementsZn,
+                                                                      normalVecrtorsXZnUpperDef,
+                                                                      normalVectorsXZnLowerDef
                                                                   )
     
-    # Determine the patches' X,Y,Z coordinates
-    XCoordsDefXY , YCoordsDefXY = functions.create_coordinates_list( listDeformedElementsXY)
+    # Determine the patches' X,Zn,Yn coordinates
+    XCoordsDefXZn , YCoordsDefXZn = functions.create_coordinates_list( listDeformedElementsXZn)
     
     # Detemine the color of the elements
-    biggestValue, smallestValue, listValuesUpperXY, listValuesLowerXZ = functions.values_determiner( 
-                                                                                                        Py, Pz,
+    biggestValue, smallestValue, listValuesUpperXZn, listValuesLowerXYn = functions.values_determiner( 
+                                                                                                        Pzn, Pyn,
                                                                                                         length,
                                                                                                         height,
                                                                                                         thickness,
@@ -150,39 +155,39 @@ def deformed_cantilever_beam_determiner_XY(
                                                                                                    )
     
     # Coloring the deformed elements
-    colorListDeformedXY = functions.elements_color_determiner(
+    colorListDeformedXZn = functions.elements_color_determiner(
                                                                   True,
-                                                                  'XY',
-                                                                  listDeformedElementsXY,
+                                                                  'XZ',
+                                                                  listDeformedElementsXZn,
                                                                   noElementsX,
-                                                                  noElementsY,
+                                                                  noElementsZn,
                                                                   E, height, thickness,
-                                                                  length, Py, Pz,
+                                                                  length, Pzn, Pyn,
                                                                   biggestValue, smallestValue,
-                                                                  listValuesLowerXZ,
+                                                                  listValuesLowerXYn,
                                                                   glCantileverCrossSection
                                                              )
 
     return (
-                listDeformedElementsXY,
-                XCoordsDefXY,
-                YCoordsDefXY,
-                listValuesUpperXY,
-                colorListDeformedXY, 
+                listDeformedElementsXZn,
+                XCoordsDefXZn,
+                YCoordsDefXZn,
+                listValuesUpperXZn,
+                colorListDeformedXZn, 
                 biggestValue, smallestValue
            )
     
-def deformed_cantilever_beam_determiner_XZ( 
-                                           length, height, thickness, E, Py, 
-                                           Pz, noElementsX, noElementsY, 
-                                           noElementsZ, elementSizeX, 
-                                           elementSizeY, elementSizeZ,
+def deformed_cantilever_beam_determiner_XYn( 
+                                           length, height, thickness, E, Pzn, 
+                                           Pyn, noElementsX, noElementsZn, 
+                                           noElementsYn, elementSizeX, 
+                                           elementSizeZn, elementSizeYn,
                                            amplificationFactor
                                           ):
     
     # Construct the deformed beam's center line
-    deformedBeamXY, deformedBeamXZ = functions.construct_deformed_beam_centerLine(
-                                                                                      Py, Pz, E, 
+    deformedBeamXZn, deformedBeamXYn = functions.construct_deformed_beam_centerLine(
+                                                                                      Pzn, Pyn, E, 
                                                                                       noElementsX,
                                                                                       thickness, height, 
                                                                                       length, elementSizeX,
@@ -191,25 +196,25 @@ def deformed_cantilever_beam_determiner_XZ(
                                                                                  )
     
     # Construct the normal vectors to the deformed beam's center line
-    normalVecrtorsXZUpperDef, normalVectorsXZLowerDef = functions.construct_normal_vectors( deformedBeamXZ )
+    normalVecrtorsXYnUpperDef, normalVectorsXYnLowerDef = functions.construct_normal_vectors( deformedBeamXYn )
     
     # Construct mesh for the deformed and the deformed beams     
-    listDeformedElementsXZ = functions.construct_deformed_elements(   
-                                                                      deformedBeamXZ,
+    listDeformedElementsXYn = functions.construct_deformed_elements(   
+                                                                      deformedBeamXYn,
                                                                       elementSizeX,
-                                                                      elementSizeZ,
+                                                                      elementSizeYn,
                                                                       noElementsX,
-                                                                      noElementsZ,
-                                                                      normalVecrtorsXZUpperDef,
-                                                                      normalVectorsXZLowerDef
+                                                                      noElementsYn,
+                                                                      normalVecrtorsXYnUpperDef,
+                                                                      normalVectorsXYnLowerDef
                                                                   )
     
-    # Determine the patches' X,Y,Z coordinates
-    XCoordsDefXZ , YCoordsDefXZ = functions.create_coordinates_list( listDeformedElementsXZ)
+    # Determine the patches' X,Zn,Yn coordinates
+    XCoordsDefXYn , YCoordsDefXYn = functions.create_coordinates_list( listDeformedElementsXYn)
     
     # Detemine the color of the elements
-    biggestValue, smallestValue, listValuesUpperXY, listValuesLowerXZ = functions.values_determiner( 
-                                                                                                        Py, Pz,
+    biggestValue, smallestValue, listValuesUpperXZn, listValuesLowerXYn = functions.values_determiner( 
+                                                                                                        Pzn, Pyn,
                                                                                                         length,
                                                                                                         height,
                                                                                                         thickness,
@@ -218,79 +223,78 @@ def deformed_cantilever_beam_determiner_XZ(
                                                                                                    )
     
     # Coloring the deformed elements
-    colorListDeformedXZ = functions.elements_color_determiner(
+    colorListDeformedXYn = functions.elements_color_determiner(
                                                                   True,
-                                                                  'XZ',
-                                                                  listDeformedElementsXZ,
+                                                                  'XY',
+                                                                  listDeformedElementsXYn,
                                                                   noElementsX,
-                                                                  noElementsZ,
+                                                                  noElementsYn,
                                                                   E, thickness, height,
-                                                                  length, Py, Pz, 
+                                                                  length, Pzn, Pyn, 
                                                                   biggestValue, smallestValue,
-                                                                  listValuesUpperXY,
+                                                                  listValuesUpperXZn,
                                                                   glCantileverCrossSection
                                                              )
 
     return (
-                listDeformedElementsXZ,
-                XCoordsDefXZ,
-                YCoordsDefXZ,
-                listValuesLowerXZ,
-                colorListDeformedXZ,
+                listDeformedElementsXYn,
+                XCoordsDefXYn,
+                YCoordsDefXYn,
+                listValuesLowerXYn,
+                colorListDeformedXYn,
                 biggestValue, smallestValue
            )
 
 
-# Construct the deformed beam in XY plane
-(listDeformedElementsXY, XCoordsDefXY,
- YCoordsDefXY, listValuesUpperXY, colorListDeformedXY,
- biggestValue, smallestValue) = deformed_cantilever_beam_determiner_XY( 
-                               length, height, thickness, E, Py, Pz,
-                               noElementsX, noElementsY, noElementsZ,
-                               elementSizeX, elementSizeY, elementSizeZ,
+# Construct the deformed beam in XZn plane
+(listDeformedElementsXZn, XCoordsDefXZn,
+ YCoordsDefXZn, listValuesUpperXZn, colorListDeformedXZn,
+ biggestValue, smallestValue) = deformed_cantilever_beam_determiner_XZn( 
+                               length, height, thickness, E, Pzn, Pyn,
+                               noElementsX, noElementsYn, noElementsYn,
+                               elementSizeX, elementSizeZn, elementSizeYn,
                                amplificationFactor
                            )
 
-# Construct the deformed beam in XZ plane
-(listDeformedElementsXZ, XCoordsDefXZ,
- YCoordsDefXZ, listValuesLowerXZ, colorListDeformedXZ,
- biggestValue, smallestValue) = deformed_cantilever_beam_determiner_XZ( 
-                               length, height, thickness, E, Py, Pz,
-                               noElementsX, noElementsY, noElementsZ,
-                               elementSizeX, elementSizeY, elementSizeZ,
+# Construct the deformed beam in XYn plane
+(listDeformedElementsXYn, XCoordsDefXYn,
+ YCoordsDefXYn, listValuesLowerXYn, colorListDeformedXYn,
+ biggestValue, smallestValue) = deformed_cantilever_beam_determiner_XYn( 
+                               length, height, thickness, E, Pzn, Pyn,
+                               noElementsX, noElementsYn, noElementsYn,
+                               elementSizeX, elementSizeZn, elementSizeYn,
                                amplificationFactor
                            )
 
 # Create alpha list for the transparency of the colored patches
 alphaList = list()
-for index in range(len(listDeformedElementsXY)):
+for index in range(len(listDeformedElementsXZn)):
     alphaList.append(1)
 
-# Update stresses along xy-Element (sigma and tau)
-def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSection,Py,Pz):
-
+# Update stresses along xzn-Element (sigma and tau)
+def fun_update_xzn_element_stresses(length,height,thickness,glCantileverCrossSection,Pzn,Pyn):
     x_pos = 2.5
-    y_pos = -height/2.0
+    zn_pos = height/2.0
     if(glCantileverCrossSection==3):
-        y_pos = -height*2.0/3.0
-    sigma_x_l,sigma_x_r,tau_xy = functions.calculate_stresses_xy_element(x_pos,y_pos,length,height,thickness,glCantileverCrossSection,Py,Pz)
+        zn_pos = height*2.0/3.0
+    sigma_x_l,sigma_x_r,tau_xzn = functions.calculate_stresses_xzn_element(x_pos,zn_pos,length,height,thickness,glCantileverCrossSection,Pzn,Pyn)
     
     ## IF SIGMA BUTTON IS ACTIVATED:
     if (glCantileverStress==0):
         ## DELETE TAU PLOTS
-        Tauplot_l_Source.data = dict(x = [], y = [])
-        Tauplot_r_Source.data = dict(x = [], y = [])
-        Tauplot_u_Source.data = dict(x = [], y = [])   
+        Tauplot_l_Source.data = dict(x = [], zn = [])
+        Tauplot_r_Source.data = dict(x = [], zn = [])
+        Tauplot_u_Source.data = dict(x = [], zn = [])   
         ## DELETE TAU LABELS
-        Tauplot_Label_Source.data = dict(x=[], y=[], names=[])
+        Tauplot_Label_Source.data = dict(x=[], zn=[], names=[])
         ## DELETE TAU ARROWS
-        TauArrowSource1.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
-        TauArrowSource2.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
-        TauArrowSource3.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
-        TauArrowSource4.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+        TauArrowSource1.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
+        TauArrowSource2.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
+        TauArrowSource3.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
+        TauArrowSource4.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
 
         ## SCALING AND POSITION OF SIGMA GLYPHS
-        sigmascaling = 0.0000025*50
+        sigmascaling = 0.000003*50
         sigma_l_pos = 1.5
         sigma_r_pos = 3.5
 
@@ -301,10 +305,10 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
             sigma_x_l_scaled[i]=sigma_x_l[len(sigma_x_l)-i-1]*sigmascaling
         SigmaPlot_l_x = np.hstack((np.linspace(sigma_l_pos, sigma_l_pos, len(sigma_x_l)), sigma_l_pos-abs(sigma_x_l_scaled)))
         if (glCantileverCrossSection==3):        
-            SigmaPlot_l_y = np.hstack((np.linspace(-0.525, 1.0/6.0, len(sigma_x_l)),np.linspace(1.0/6.0, -0.525, len(sigma_x_l))))
+            SigmaPlot_l_zn = np.hstack((np.linspace(-0.525, 1.0/6.0, len(sigma_x_l)),np.linspace(1.0/6.0, -0.525, len(sigma_x_l))))
         else:
-            SigmaPlot_l_y = np.hstack((np.linspace(-0.525, 0, len(sigma_x_l)),np.linspace(0, -0.525, len(sigma_x_l))))
-        Sigmaplot_l_Source.data = dict(x = SigmaPlot_l_x, y = SigmaPlot_l_y)
+            SigmaPlot_l_zn = np.hstack((np.linspace(-0.525, 0, len(sigma_x_l)),np.linspace(0, -0.525, len(sigma_x_l))))
+        Sigmaplot_l_Source.data = dict(x = SigmaPlot_l_x, zn = SigmaPlot_l_zn)
 
         ## SIGMA_X RIGHT END DATA SOURCE:
         sigma_x_r_scaled = np.linspace(0, 0, len(sigma_x_r))
@@ -313,20 +317,20 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
             sigma_x_r_scaled[i]=sigma_x_r[len(sigma_x_r)-i-1]*sigmascaling
         SigmaPlot_r_x = np.hstack((np.linspace(sigma_r_pos, sigma_r_pos, len(sigma_x_r)), sigma_r_pos+abs(sigma_x_r_scaled)))
         if (glCantileverCrossSection==3):
-            SigmaPlot_r_y = np.hstack((np.linspace(-0.525, 1.0/6.0, len(sigma_x_r)),np.linspace(1.0/6.0, -0.525, len(sigma_x_r))))
+            SigmaPlot_r_zn = np.hstack((np.linspace(-0.525, 1.0/6.0, len(sigma_x_r)),np.linspace(1.0/6.0, -0.525, len(sigma_x_r))))
         else:
-            SigmaPlot_r_y = np.hstack((np.linspace(-0.525, 0, len(sigma_x_r)),np.linspace(0, -0.525, len(sigma_x_r))))
-        Sigmaplot_r_Source.data = dict(x = SigmaPlot_r_x, y = SigmaPlot_r_y)
+            SigmaPlot_r_zn = np.hstack((np.linspace(-0.525, 0, len(sigma_x_r)),np.linspace(0, -0.525, len(sigma_x_r))))
+        Sigmaplot_r_Source.data = dict(x = SigmaPlot_r_x, zn = SigmaPlot_r_zn)
 
         # POSITION SIGMA LABELS
         if(glCantileverCrossSection==3):
             Sigmaplot_Label_Source.data = dict(
                 x=[max(sigma_r_pos+abs(sigma_x_r_scaled))+0.1,min(sigma_l_pos-abs(sigma_x_l_scaled))-0.6], 
-                y=[-0.3, -0.3], names=["\\sigma_{xx}","\\sigma_{xx}"])            
+                zn=[-0.3, -0.3], names=["\\sigma_{xx}","\\sigma_{xx}"])            
         else:   
             Sigmaplot_Label_Source.data = dict(
                 x=[max(sigma_r_pos+abs(sigma_x_r_scaled))+0.1,min(sigma_l_pos-abs(sigma_x_l_scaled))-0.6], 
-                y=[-0.4, -0.4], names=["\\sigma_{xx}","\\sigma_{xx}"])
+                zn=[-0.4, -0.4], names=["\\sigma_{xx}","\\sigma_{xx}"])
         
         # SCALING AND POSITIONING OF SIGMA ARROWS
         arrow_scale = 0.7
@@ -334,398 +338,410 @@ def fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSect
 
         # Arrows left end 
         if (sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))] < -0.05): 
-            SigmaArrowSource1.stream(dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4]),rollover=1)
-            SigmaArrowSource2.stream(dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] ),rollover=1)
-            SigmaArrowSource3.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            SigmaArrowSource1.stream(dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], zns=[-0.4] , zne=[-0.4]),rollover=1)
+            SigmaArrowSource2.stream(dict(xs=[sigma_l_pos-arrow_adjust_x] , xe= [sigma_l_pos+arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , zns=[-0.25] , zne=[-0.25] ),rollover=1)
+            SigmaArrowSource3.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
         elif (sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))] > 0.05): 
-            SigmaArrowSource1.stream(dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4]),rollover=1)
-            SigmaArrowSource2.stream(dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] ),rollover=1)
-            SigmaArrowSource3.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            SigmaArrowSource1.stream(dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*4.0/5.0))]], zns=[-0.4] , zne=[-0.4]),rollover=1)
+            SigmaArrowSource2.stream(dict(xe=[sigma_l_pos-arrow_adjust_x] , xs= [sigma_l_pos-arrow_scale*sigma_x_l_scaled[int(round(len(sigma_x_l_scaled)*2.5/5.0))]] , zns=[-0.25] , zne=[-0.25] ),rollover=1)
+            SigmaArrowSource3.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
         else:
-            SigmaArrowSource1.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
-            SigmaArrowSource2.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
-            SigmaArrowSource3.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            SigmaArrowSource1.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
+            SigmaArrowSource2.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
+            SigmaArrowSource3.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
 
         # Arrows right end
         if (sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))] < -0.05): 
-            SigmaArrowSource4.stream(dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4]),rollover=1)
-            SigmaArrowSource5.stream(dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] ),rollover=1)
-            SigmaArrowSource6.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            SigmaArrowSource4.stream(dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], zns=[-0.4] , zne=[-0.4]),rollover=1)
+            SigmaArrowSource5.stream(dict(xs=[sigma_r_pos+arrow_adjust_x] , xe= [sigma_r_pos-arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , zns=[-0.25] , zne=[-0.25] ),rollover=1)
+            SigmaArrowSource6.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
         elif (sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))] > 0.05): 
-            SigmaArrowSource4.stream(dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], ys=[-0.4] , ye=[-0.4]),rollover=1)
-            SigmaArrowSource5.stream(dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , ys=[-0.25] , ye=[-0.25] ),rollover=1)
-            SigmaArrowSource6.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            SigmaArrowSource4.stream(dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*4.0/5.0))]], zns=[-0.4] , zne=[-0.4]),rollover=1)
+            SigmaArrowSource5.stream(dict(xe=[sigma_r_pos+arrow_adjust_x] , xs= [sigma_r_pos+arrow_scale*sigma_x_r_scaled[int(round(len(sigma_x_r_scaled)*2.5/5.0))]] , zns=[-0.25] , zne=[-0.25] ),rollover=1)
+            SigmaArrowSource6.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
         else:
-            SigmaArrowSource4.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
-            SigmaArrowSource5.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
-            SigmaArrowSource6.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            SigmaArrowSource4.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
+            SigmaArrowSource5.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
+            SigmaArrowSource6.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
 
     ## IF TAU BUTTON IS ACTIVATED:
     if (glCantileverStress==1):    
         ## DELETE SIGMA PLOTS
-        Sigmaplot_l_Source.data = dict(x = [], y = [])
-        Sigmaplot_r_Source.data = dict(x = [], y = [])
+        Sigmaplot_l_Source.data = dict(x = [], zn = [])
+        Sigmaplot_r_Source.data = dict(x = [], zn = [])
         ## DELETE SIGMA LABELS
-        Sigmaplot_Label_Source.data = dict(x=[], y=[], names=[])
+        Sigmaplot_Label_Source.data = dict(x=[], zn=[], names=[])
         ## DELETE SIGMA ARROWS
-        SigmaArrowSource1.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
-        SigmaArrowSource2.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
-        SigmaArrowSource3.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
-        SigmaArrowSource4.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
-        SigmaArrowSource5.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
-        SigmaArrowSource6.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+        SigmaArrowSource1.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
+        SigmaArrowSource2.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
+        SigmaArrowSource3.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
+        SigmaArrowSource4.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
+        SigmaArrowSource5.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
+        SigmaArrowSource6.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
 
         ## SCALING AND POSITION OF TAU GLYPHS
-        tau_xy_scaling = 0.000005*50
+        tau_xzn_scaling = 0.0020
         tau_xy_l_pos_x = 1.5
-        tau_xy_r_pos_x = 3.5
+        tau_xzn_r_pos_x = 3.5
         tau_xy_u_pos_x = 2.5        
 
         ## TAU LEFT END DATA SOURCE:
-        tau_xy_l_scaled = np.linspace(0, 0, len(tau_xy))
+        tau_xzn_l_scaled = np.linspace(0, 0, len(tau_xzn))
         # Create scaled and reversed list 
-        for i in range(len(tau_xy)): 
-            tau_xy_l_scaled[i]=tau_xy[len(tau_xy)-i-1]*tau_xy_scaling
-        TauPlot_l_x = np.hstack((np.linspace(tau_xy_l_pos_x, tau_xy_l_pos_x, len(tau_xy)), tau_xy_l_pos_x-abs(tau_xy_l_scaled)))
+        for i in range(len(tau_xzn)): 
+            tau_xzn_l_scaled[i]=tau_xzn[len(tau_xzn)-i-1]*tau_xzn_scaling
+        TauPlot_l_x = np.hstack((np.linspace(tau_xy_l_pos_x, tau_xy_l_pos_x, len(tau_xzn)), tau_xy_l_pos_x-abs(tau_xzn_l_scaled)))
         if (glCantileverCrossSection==3):        
-            TauPlot_l_y = np.hstack((np.linspace(-0.525, 1.0/6.0, len(tau_xy)),np.linspace(1.0/6.0, -0.525, len(tau_xy))))
+            TauPlot_l_y = np.hstack((np.linspace(-0.525, 1.0/6.0, len(tau_xzn)),np.linspace(1.0/6.0, -0.525, len(tau_xzn))))
         else:    
-            TauPlot_l_y = np.hstack((np.linspace(-0.525, 0, len(tau_xy)),np.linspace(0, -0.525, len(tau_xy))))            
-        Tauplot_l_Source.data = dict(x = TauPlot_l_x, y = TauPlot_l_y)
+            TauPlot_l_y = np.hstack((np.linspace(-0.525, 0, len(tau_xzn)),np.linspace(0, -0.525, len(tau_xzn))))            
+        Tauplot_l_Source.data = dict(x = TauPlot_l_x, zn = TauPlot_l_y)
         
         ## TAU RIGHT END DATA SOURCE:
-        tau_xy_r_scaled = np.linspace(0, 0, len(tau_xy))
+        tau_xzn_r_scaled = np.linspace(0, 0, len(tau_xzn))
         # Create scaled and reversed list 
-        for i in range(len(tau_xy)): 
-            tau_xy_r_scaled[i]=tau_xy[len(tau_xy)-i-1]*tau_xy_scaling
-        TauPlot_r_x = np.hstack((np.linspace(tau_xy_r_pos_x, tau_xy_r_pos_x, len(tau_xy)), tau_xy_r_pos_x+abs(tau_xy_r_scaled)))
+        for i in range(len(tau_xzn)): 
+            tau_xzn_r_scaled[i]=tau_xzn[len(tau_xzn)-i-1]*tau_xzn_scaling
+        TauPlot_r_x = np.hstack((np.linspace(tau_xzn_r_pos_x, tau_xzn_r_pos_x, len(tau_xzn)), tau_xzn_r_pos_x+abs(tau_xzn_r_scaled)))
         if (glCantileverCrossSection==3):       
-            TauPlot_r_y = np.hstack((np.linspace(-0.525, 1.0/6.0, len(tau_xy)),np.linspace(1.0/6.0, -0.525, len(tau_xy))))
+            TauPlot_r_y = np.hstack((np.linspace(-0.525, 1.0/6.0, len(tau_xzn)),np.linspace(1.0/6.0, -0.525, len(tau_xzn))))
         else:
-            TauPlot_r_y = np.hstack((np.linspace(-0.525, 0, len(tau_xy)),np.linspace(0, -0.525, len(tau_xy))))            
-        Tauplot_r_Source.data = dict(x = TauPlot_r_x, y = TauPlot_r_y)
+            TauPlot_r_y = np.hstack((np.linspace(-0.525, 0, len(tau_xzn)),np.linspace(0, -0.525, len(tau_xzn))))            
+        Tauplot_r_Source.data = dict(x = TauPlot_r_x, zn = TauPlot_r_y)
 
         ## TAU UPPER BORDER DATA SOURCE
-        tau_xy_u_scaled = np.linspace(0, 0, len(tau_xy))
+        tau_xzn_u_scaled = np.linspace(0, 0, len(tau_xzn))
         # Create scaled and reversed list consisting of tau_max value: 
-        for i in range(len(tau_xy)): 
-            tau_xy_u_scaled[i]=tau_xy[len(tau_xy)-1]*tau_xy_scaling
-        TauPlot_u_x = np.hstack((np.linspace(tau_xy_u_pos_x-1, tau_xy_u_pos_x+1, len(tau_xy)), np.linspace(tau_xy_u_pos_x+1, tau_xy_u_pos_x-1, len(tau_xy))))
+        for i in range(len(tau_xzn)): 
+            tau_xzn_u_scaled[i]=tau_xzn[len(tau_xzn)-1]*tau_xzn_scaling
+        TauPlot_u_x = np.hstack((np.linspace(tau_xy_u_pos_x-1, tau_xy_u_pos_x+1, len(tau_xzn)), np.linspace(tau_xy_u_pos_x+1, tau_xy_u_pos_x-1, len(tau_xzn))))
         if (glCantileverCrossSection==3):              
-            TauPlot_u_y = np.hstack((np.linspace(1.0/6.0, 1.0/6.0, len(tau_xy)), abs(tau_xy_u_scaled)+1.0/6.0)) 
+            TauPlot_u_y = np.hstack((np.linspace(1.0/6.0, 1.0/6.0, len(tau_xzn)), abs(tau_xzn_u_scaled)+1.0/6.0)) 
         else:
-            TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xy)), abs(tau_xy_u_scaled)))            
-        Tauplot_u_Source.data = dict(x = TauPlot_u_x, y = TauPlot_u_y)
+            TauPlot_u_y = np.hstack((np.linspace(0, 0, len(tau_xzn)), abs(tau_xzn_u_scaled)))            
+        Tauplot_u_Source.data = dict(x = TauPlot_u_x, zn = TauPlot_u_y)
 
         # POSITION TAU LABELS
         if(glCantileverCrossSection==3):
             Tauplot_Label_Source.data = dict(
-                x=[max(tau_xy_r_pos_x+abs(tau_xy_r_scaled))+0.1, min(tau_xy_l_pos_x-abs(tau_xy_l_scaled))-0.5, tau_xy_l_pos_x+0.7], 
-                y=[-0.3, -0.3, max(abs(tau_xy_u_scaled))+0.3 ], names=['\\tau_{xy}','\\tau_{xy}','\\tau_{yx}'])
+                x=[max(tau_xzn_r_pos_x+abs(tau_xzn_r_scaled))+0.1, min(tau_xy_l_pos_x-abs(tau_xzn_l_scaled))-0.5, tau_xy_l_pos_x+0.7], 
+                zn=[-0.3, -0.3, max(abs(tau_xzn_u_scaled))+0.3 ], names=['\\tau_{xz}','\\tau_{xz}','\\tau_{zx}'])
         else:    
             Tauplot_Label_Source.data = dict(
-                x=[max(tau_xy_r_pos_x+abs(tau_xy_r_scaled))+0.1, min(tau_xy_l_pos_x-abs(tau_xy_l_scaled))-0.5, tau_xy_l_pos_x+0.7], 
-                y=[-0.4, -0.4, max(abs(tau_xy_u_scaled))+0.15 ], names=['\\tau_{xy}','\\tau_{xy}','\\tau_{yx}'])
+                x=[max(tau_xzn_r_pos_x+abs(tau_xzn_r_scaled))+0.1, min(tau_xy_l_pos_x-abs(tau_xzn_l_scaled))-0.5, tau_xy_l_pos_x+0.7], 
+                zn=[-0.4, -0.4, max(abs(tau_xzn_u_scaled))+0.15 ], names=['\\tau_{xz}','\\tau_{xz}','\\tau_{zx}'])
 
         ### SCALING AND POSITIONING OF ARROWS:
         # Position arrows into tau glyph
-        arrow_adjust_x = max(abs(tau_xy_l_scaled))/4.0
+        arrow_adjust_x = max(abs(tau_xzn_l_scaled))/4.0
         # Make arrow size grow with increasing tau stress, but restrict length of arrows to dimensions of tau glyph
-        if (max(abs(tau_xy_u_scaled))/2.0 >= 0.15):
-            arrow_adjust_y = 0.15
+        if (max(abs(tau_xzn_u_scaled))/2.0 >= 0.15):
+            arrow_adjust_zn = 0.15
         else:
-            arrow_adjust_y = max(abs(tau_xy_u_scaled))/2.0
+            arrow_adjust_zn = max(abs(tau_xzn_u_scaled))/2.0
         if (glCantileverCrossSection==3):
-            arrow_move_y = 0.04 + 1.0/12.0    
+            arrow_move_zn = 0.04 + 1.0/12.0    
         else:
-            arrow_move_y = 0.04    
+            arrow_move_zn = 0.04    
         
         ## ARROW LEFT END:
-        tau_xy_l_pos_y = -0.25                 
-        if (Py<0): 
-            TauArrowSource1.stream(dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y]),rollover=1)
-        elif (Py>0):
-            TauArrowSource1.stream(dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], ys=[tau_xy_l_pos_y-arrow_adjust_y+arrow_move_y] , ye=[tau_xy_l_pos_y+arrow_adjust_y+arrow_move_y]),rollover=1)
+        tau_xzn_l_pos_zn = -0.25                 
+        if (Pzn<0): 
+            TauArrowSource1.stream(dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], zns=[tau_xzn_l_pos_zn+arrow_adjust_zn+arrow_move_zn] , zne=[tau_xzn_l_pos_zn-arrow_adjust_zn+arrow_move_zn]),rollover=1)
+        elif (Pzn>0):
+            TauArrowSource1.stream(dict(xs=[tau_xy_l_pos_x-arrow_adjust_x] , xe= [tau_xy_l_pos_x-arrow_adjust_x], zns=[tau_xzn_l_pos_zn-arrow_adjust_zn+arrow_move_zn] , zne=[tau_xzn_l_pos_zn+arrow_adjust_zn+arrow_move_zn]),rollover=1)
         else:            
-            TauArrowSource1.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            TauArrowSource1.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
         
         ## ARROWS RIGHT END:             
-        tau_xy_r_pos_y = -0.25           
-        if (Py<-30):
-            TauArrowSource2.stream(dict(xs=[tau_xy_r_pos_x+arrow_adjust_x] , xe= [tau_xy_r_pos_x+arrow_adjust_x], ys=[tau_xy_r_pos_y-arrow_adjust_y+arrow_move_y] , ye=[tau_xy_r_pos_y+arrow_adjust_y+arrow_move_y]),rollover=1)
-        elif (Py>30):
-            TauArrowSource2.stream(dict(xs=[tau_xy_r_pos_x+arrow_adjust_x] , xe= [tau_xy_r_pos_x+arrow_adjust_x], ys=[tau_xy_r_pos_y+arrow_adjust_y+arrow_move_y] , ye=[tau_xy_r_pos_y-arrow_adjust_y+arrow_move_y]),rollover=1)
+        tau_xzn_r_pos_zn = -0.25           
+        if (Pzn<-30):
+            TauArrowSource2.stream(dict(xs=[tau_xzn_r_pos_x+arrow_adjust_x] , xe= [tau_xzn_r_pos_x+arrow_adjust_x], zns=[tau_xzn_r_pos_zn-arrow_adjust_zn+arrow_move_zn] , zne=[tau_xzn_r_pos_zn+arrow_adjust_zn+arrow_move_zn]),rollover=1)
+        elif (Pzn>30):
+            TauArrowSource2.stream(dict(xs=[tau_xzn_r_pos_x+arrow_adjust_x] , xe= [tau_xzn_r_pos_x+arrow_adjust_x], zns=[tau_xzn_r_pos_zn+arrow_adjust_zn+arrow_move_zn] , zne=[tau_xzn_r_pos_zn-arrow_adjust_zn+arrow_move_zn]),rollover=1)
         else:            
-            TauArrowSource2.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            TauArrowSource2.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
 
         ## ARROWS UPPER BORDER:
-        tau_xy_u_pos_y = 0.0            
+        tau_xzn_u_pos_zn = 0.0            
         # New arrow scaling and positioning for upper tau stress
-        if (max(abs(tau_xy_u_scaled)) >= 0.3):
+        if (max(abs(tau_xzn_u_scaled)) >= 0.3):
             arrow_adjust_x = 0.3
         else:
-            arrow_adjust_x = max(abs(tau_xy_u_scaled))
+            arrow_adjust_x = max(abs(tau_xzn_u_scaled))
         if (glCantileverCrossSection==3):
-            arrow_adjust_y = max(abs(tau_xy_u_scaled))/2.0 + 1.0/6.0
+            arrow_adjust_zn = max(abs(tau_xzn_u_scaled))/2.0 + 1.0/6.0
         else:            
-            arrow_adjust_y = max(abs(tau_xy_u_scaled))/2.0
-        if (Py<-30):
-            TauArrowSource3.stream(dict(xs=[(tau_xy_u_pos_x-0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)+arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y]),rollover=1)
-            TauArrowSource4.stream(dict(xs=[(tau_xy_u_pos_x+0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)+arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y]),rollover=1)                     
-        elif (Py>30):
-            TauArrowSource3.stream(dict(xs=[(tau_xy_u_pos_x-0.5)+arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)-arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y]),rollover=1)
-            TauArrowSource4.stream(dict(xs=[(tau_xy_u_pos_x+0.5)+arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)-arrow_adjust_x], ys=[tau_xy_u_pos_y+arrow_adjust_y] , ye=[tau_xy_u_pos_y+arrow_adjust_y]),rollover=1)
+            arrow_adjust_zn = max(abs(tau_xzn_u_scaled))/2.0
+        if (Pzn<-30):
+            TauArrowSource3.stream(dict(xs=[(tau_xy_u_pos_x-0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)+arrow_adjust_x], zns=[tau_xzn_u_pos_zn+arrow_adjust_zn] , zne=[tau_xzn_u_pos_zn+arrow_adjust_zn]),rollover=1)
+            TauArrowSource4.stream(dict(xs=[(tau_xy_u_pos_x+0.5)-arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)+arrow_adjust_x], zns=[tau_xzn_u_pos_zn+arrow_adjust_zn] , zne=[tau_xzn_u_pos_zn+arrow_adjust_zn]),rollover=1)                     
+        elif (Pzn>30):
+            TauArrowSource3.stream(dict(xs=[(tau_xy_u_pos_x-0.5)+arrow_adjust_x] , xe= [(tau_xy_u_pos_x-0.5)-arrow_adjust_x], zns=[tau_xzn_u_pos_zn+arrow_adjust_zn] , zne=[tau_xzn_u_pos_zn+arrow_adjust_zn]),rollover=1)
+            TauArrowSource4.stream(dict(xs=[(tau_xy_u_pos_x+0.5)+arrow_adjust_x] , xe= [(tau_xy_u_pos_x+0.5)-arrow_adjust_x], zns=[tau_xzn_u_pos_zn+arrow_adjust_zn] , zne=[tau_xzn_u_pos_zn+arrow_adjust_zn]),rollover=1)
         else:
-            TauArrowSource3.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)        
-            TauArrowSource4.stream(dict(xs=[] , xe= [], ys=[] , ye=[]),rollover=-1)
+            TauArrowSource3.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)        
+            TauArrowSource4.stream(dict(xs=[] , xe= [], zns=[] , zne=[]),rollover=-1)
 
 
-
-# The function to be excuted whenever the force in the y direction changes
-def fun_change_Py(attrname, old, new):
-    global Py,Pz, listDeformedElementsXY
+# The function to be excuted whenever the force in the zn direction changes
+def fun_change_Pzn(attrname, old, new):
+    global Pzn,Pyn, listDeformedElementsXZn
     
     # Change the value of the applied force according to the slider value
-    Py = Yforce_slider.value*100.0
+    Pzn = Znforce_slider.value*100.0
 
     # Recalculate the deformed beam's shape
-    (listDeformedElementsXY, XCoordsDefXY,
-     YCoordsDefXY, listValuesUpperXY, colorListDeformedXY,
-     biggestValue, smallestValue) = deformed_cantilever_beam_determiner_XY( 
-                                   length, height, thickness, E, Py, Pz,
-                                   noElementsX, noElementsY, noElementsZ,
-                                   elementSizeX, elementSizeY, elementSizeZ,
+    (listDeformedElementsXZn, XCoordsDefXZn,
+     YCoordsDefXZn, listValuesUpperXZn, colorListDeformedXZn,
+     biggestValue, smallestValue) = deformed_cantilever_beam_determiner_XZn( 
+                                   length, height, thickness, E, Pzn, Pyn,
+                                   noElementsX, noElementsZn, noElementsYn,
+                                   elementSizeX, elementSizeZn, elementSizeYn,
                                    amplificationFactor
                                )
     
     # Update the global variable the describes the deformed elements
-    listDeformedElementsXY = listDeformedElementsXY
+    listDeformedElementsXZn = listDeformedElementsXZn
     
-    # Determine the change of the color in the other view (XZ plane)
-    colorListDeformedXZ = functions.elements_color_determiner(
+    # Determine the change of the color in the other view (XY plane)
+    colorListDeformedXYn = functions.elements_color_determiner(
                                                                   True,
-                                                                  'XZ',
-                                                                  listDeformedElementsXZ,
+                                                                  'XY',
+                                                                  listDeformedElementsXYn,
                                                                   noElementsX,
-                                                                  noElementsZ,
+                                                                  noElementsYn,
                                                                   E, thickness, height,
-                                                                  length, Py, Pz, 
+                                                                  length, Pzn, Pyn, 
                                                                   biggestValue, smallestValue,
-                                                                  listValuesUpperXY,
+                                                                  listValuesUpperXZn,
                                                                   glCantileverCrossSection
                                                              )
     
     # Update the source files of the deforemd beams
-    sourceXZdef.data   = dict( x=sourceXZdef.data['x'], y=sourceXZdef.data['y'], c=colorListDeformedXZ, a=alphaList)
-    sourceXYdef.data   = dict( x=XCoordsDefXY,   y=YCoordsDefXY,   c =colorListDeformedXY,   a=alphaList )
+    sourceXYndef.data   = dict( x=sourceXYndef.data['x'], zn=sourceXYndef.data['zn'], c=colorListDeformedXYn, a=alphaList)
+    sourceXZndef.data   = dict( x=XCoordsDefXZn,   zn=YCoordsDefXZn,   c =colorListDeformedXZn,   a=alphaList )
     
     # Update the source data file of the force arrow and the force label
     # The first part of the if-statement is excuted whenever the beam is 
     # deforming downwards
 
-    if Py == 0:
-        sourceArrowXY.stream(dict(xs=[], ys=[],xe=[], ye=[]),rollover=-1)
-        sourceFyLabel.data = dict(x= [],y= [],f= [])                                 
+    if Pzn == 0:
+        sourceArrowXZn.stream(dict(xs=[], zns=[],xe=[], zne=[]),rollover=-1)
+        sourceFznLabel.data = dict(x= [], zn= [],f= [])                                 
     else:
-        if sourceXYdef.data['y'][0][3] <= 0:
-            sourceArrowXY.stream(dict(
-                                      xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
-                                      ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Py)/5000+0.25],
-                                      xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
-                                      ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
+        if sourceXZndef.data['zn'][0][3] <= 0:
+            sourceArrowXZn.stream(dict(
+                                      xs=[sourceXZndef.data['x'][len( sourceXYndef.data['x'])-2][2]], 
+                                      zns=[sourceXZndef.data['zn'][len( sourceXYndef.data['zn'])-2][2]+1],
+                                      xe=[sourceXZndef.data['x'][len( sourceXYndef.data['x'])-2][2]], 
+                                      zne=[sourceXZndef.data['zn'][len( sourceXYndef.data['zn'])-2][2]],
                                  ),rollover=1)
-            sourceFyLabel.stream(dict(
-                                      x= sourceArrowXY.data['xs'],
-                                      y= [sourceArrowXY.data['ys'][0] + 0.5],
-                                      f= ['Fy']
+            sourceFznLabel.stream(dict(
+                                      x= [sourceArrowXZn.data['xs'][0] + 0.4],
+                                      zn= [sourceArrowXZn.data['zns'][0]],
+                                      f= ['Fzn']
                                  ),rollover=1)
         else:
-            sourceArrowXY.stream(dict(
-                                      xs=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
-                                      ys=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Py)/5000-0.25],
-                                      xe=[sourceXYdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
-                                      ye=[sourceXYdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
+            sourceArrowXZn.stream(dict(
+                                      xs=[sourceXZndef.data['x'][len( sourceXYndef.data['x'])-1][2]], 
+                                      zns=[sourceXZndef.data['zn'][len( sourceXYndef.data['zn'])-1][2]-1],
+                                      xe=[sourceXZndef.data['x'][len( sourceXYndef.data['x'])-1][2]], 
+                                      zne=[sourceXZndef.data['zn'][len( sourceXYndef.data['zn'])-1][2]],
                                  ),rollover=1)
-            sourceFyLabel.stream(dict(
-                                      x= sourceArrowXY.data['xs'],
-                                      y= [sourceArrowXY.data['ys'][0] - 0.5],
-                                      f= ['Fy']
+            sourceFznLabel.stream(dict(
+                                      x= [sourceArrowXZn.data['xs'][0] + 0.4],
+                                      zn= [sourceArrowXZn.data['zns'][0]],
+                                      f= ['Fzn']
                                  ),rollover=1)
         
     update_colorBar_extremas(smallestValue,biggestValue)
-    fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSection,Py,Pz)
+    fun_update_xzn_element_stresses(length,height,thickness,glCantileverCrossSection,Pzn,Pyn)
     
 
 # The function to be excuted whenever the force in the z direction changes
-def fun_change_Pz(attrname, old, new):
-    global Py,Pz, listDeformedElementsXZ
+def fun_change_Pyn(attrname, old, new):
+    global Pzn,Pyn, listDeformedElementsXYn
     
     # Change the value of the applied force according to the slider value
-    Pz = Zforce_slider.value*100.0
+    Pyn = Ynforce_slider.value*100.0
 
     # Recalculate the deformed beam's shape
-    (listDeformedElementsXZ, XCoordsDefXZ, YCoordsDefXZ, 
-     listValuesLowerXZ, colorListDeformedXZ, biggestValue, smallestValue) = deformed_cantilever_beam_determiner_XZ( 
-                                   length, height, thickness, E, Py, Pz,
-                                   noElementsX, noElementsY, noElementsZ,
-                                   elementSizeX, elementSizeY, elementSizeZ,
+    (listDeformedElementsXYn, XCoordsDefXYn, YCoordsDefXYn, 
+     listValuesLowerXYn, colorListDeformedXYn, biggestValue, smallestValue) = deformed_cantilever_beam_determiner_XYn( 
+                                   length, height, thickness, E, Pzn, Pyn,
+                                   noElementsX, noElementsZn, noElementsYn,
+                                   elementSizeX, elementSizeZn, elementSizeYn,
                                    amplificationFactor
                                )
     
     # Update the global variable the describes the deformed elements
-    listDeformedElementsXZ = listDeformedElementsXZ
+    listDeformedElementsXYn = listDeformedElementsXYn
     
-    # Determine the change of the color in the other view (XY plane)
-    colorListDeformedXY = functions.elements_color_determiner(
+    # Determine the change of the color in the other view (XZ plane)
+    colorListDeformedXZn = functions.elements_color_determiner(
                                                                   True,
-                                                                  'XY',
-                                                                  listDeformedElementsXY,
+                                                                  'XZ',
+                                                                  listDeformedElementsXZn,
                                                                   noElementsX,
-                                                                  noElementsY,
+                                                                  noElementsZn,
                                                                   E, thickness, height,
-                                                                  length, Py, Pz,
+                                                                  length, Pzn, Pyn,
                                                                   biggestValue, smallestValue,
-                                                                  listValuesLowerXZ,
+                                                                  listValuesLowerXYn,
                                                                   glCantileverCrossSection
                                                              )
     
     # Update the source files of the deforemd beams
-    sourceXYdef.data   = dict( x=sourceXYdef.data['x'], y=sourceXYdef.data['y'], c=colorListDeformedXY, a=alphaList)
-    sourceXZdef.data   = dict( x=XCoordsDefXZ,   y=YCoordsDefXZ,   c =colorListDeformedXZ,   a=alphaList )
+    sourceXZndef.data   = dict( x=sourceXZndef.data['x'], zn=sourceXZndef.data['zn'], c=colorListDeformedXZn, a=alphaList)
+    sourceXYndef.data   = dict( x=XCoordsDefXYn,   zn=YCoordsDefXYn,   c =colorListDeformedXYn,   a=alphaList )
     
     # Update the source data file of the force arrow and the force label
     # The first part of the if-statement is excuted whenever the beam is 
     # deforming downwards
 
-    if Pz == 0:
-        sourceArrowXZ.stream(dict(xs=[],ys=[],xe=[],ye=[]),rollover=-1)
-        sourceFzLabel.data = dict(x=[],y=[],f=[])
+    if Pyn == 0:
+        sourceArrowXYn.stream(dict(xs=[],zns=[],xe=[],zne=[]),rollover=-1)
+        sourceFynLabel.data = dict(x=[],zn=[],f=[])
     else:
-        if sourceXZdef.data['y'][0][3] <= 0:
-            sourceArrowXZ.stream(dict(
-                                      xs=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
-                                      ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]+1.5*abs(Pz)/5000.0+0.25],
-                                      xe=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-2][2]], 
-                                      ye=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-2][2]],
+        if sourceXYndef.data['zn'][0][3] <= 0:
+            sourceArrowXYn.stream(dict(
+                                      xs=[sourceXYndef.data['x'][len( sourceXYndef.data['x'])-2][2]], 
+                                      zns=[sourceXYndef.data['zn'][len( sourceXYndef.data['zn'])-2][2]+1],
+                                      xe=[sourceXYndef.data['x'][len( sourceXYndef.data['x'])-2][2]], 
+                                      zne=[sourceXYndef.data['zn'][len( sourceXYndef.data['zn'])-2][2]],
                                  ),rollover=1)
-            sourceFzLabel.stream(dict(
-                                      x= sourceArrowXZ.data['xs'],
-                                      y= [sourceArrowXZ.data['ys'][0] + 0.5],
-                                      f= ['Fz']
+            sourceFynLabel.stream(dict(
+                                      x= [sourceArrowXYn.data['xs'][0] + 0.4],
+                                      zn= [sourceArrowXYn.data['zns'][0]],
+                                      f= ['Fyn']
                                  ),rollover=1)
         else:
-            sourceArrowXZ.stream(dict(
-                                      xs=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
-                                      ys=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]-1.5*abs(Pz)/5000.0-0.25],
-                                      xe=[sourceXZdef.data['x'][len( sourceXZdef.data['x'])-1][2]], 
-                                      ye=[sourceXZdef.data['y'][len( sourceXZdef.data['y'])-1][2]],
+            sourceArrowXYn.stream(dict(
+                                      xs=[sourceXYndef.data['x'][len( sourceXYndef.data['x'])-1][2]], 
+                                      zns=[sourceXYndef.data['zn'][len( sourceXYndef.data['zn'])-1][2]-1],
+                                      xe=[sourceXYndef.data['x'][len( sourceXYndef.data['x'])-1][2]], 
+                                      zne=[sourceXYndef.data['zn'][len( sourceXYndef.data['zn'])-1][2]],
                                  ),rollover=1)
-            sourceFzLabel.stream(dict(
-                                      x= sourceArrowXZ.data['xs'],
-                                      y= [sourceArrowXZ.data['ys'][0] - 0.5],
-                                      f= ['Fz']
+            sourceFynLabel.stream(dict(
+                                      x= [sourceArrowXYn.data['xs'][0] + 0.4],
+                                      zn= [sourceArrowXYn.data['zns'][0]],
+                                      f= ['Fyn']
                                  ),rollover=1)
         
     update_colorBar_extremas(smallestValue,biggestValue)
-    fun_update_xy_element_stresses(length,height,thickness,glCantileverCrossSection,Py,Pz)
+    fun_update_xzn_element_stresses(length,height,thickness,glCantileverCrossSection,Pzn,Pyn)
 
 # Function that is called, when change in selected cross section occurs
 def fun_change_Cross_Section(attrname, old, new):
     if (radio_button_group.active == 0 ):
-        CrossSectionSource1.data = dict(sp1=[CrossSection1], x = [0], y = [0])
-        CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
-        CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
-        CrossSectionSource4.data = dict(sp4=[], x = [], y = [])
-        CoordArrowXYSource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)
-        CoordArrowXZSource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)
-        CoordArrowXYESource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)
-        labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])  
-        labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3], text=['z','x'])      
-        labelXYElement.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                          
-        XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])   
-        XYElement2Source.data = dict(sp4=[], x = [], y = [])          
+        (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
+        colorDistributionNoteSource.data=dict(x=[5.9] , zn=[-2.8], note=['non-linear color distribution!'])
+        CrossSectionSource1.data = dict(sp1=[CrossSection1], x = [0], zn = [0])
+        CrossSectionSource2.data = dict(sp2=[], x = [], zn = [])
+        CrossSectionSource3.data = dict(sp3=[], x = [], zn = [])
+        CrossSectionSource4.data = dict(sp4=[], x = [], zn = [])
+        CoordArrowXZnSource.stream(dict( xs=[-0.5], zns=[0.0],xe=[5.9], zne=[0.0]),rollover=1)
+        CoordArrowXYnSource.stream(dict( xs=[-0.5], zns=[0.0],xe=[5.9], zne=[0.0]),rollover=1)
+        CoordArrowXZnESource.stream(dict( xs=[-0.5], zns=[0.0],xe=[5.9], zne=[0.0]),rollover=1)
+        labelXZn.data=dict(x=[-.3,5.8], zn=[-2.7,-.3], text=['zn','x'])  
+        labelXYn.data=dict(x=[-.3,5.8], zn=[-2.7,-.3], text=['yn','x'])      
+        labelXZnElement.data=dict(x=[-.3,5.8], zn=[-2.7,-.3], text=['zn','x'])                          
+        XZElementSource.data = dict(sp4=[XZElement], x = [0], zn = [0])   
+        XZElement2Source.data = dict(sp4=[], x = [], zn = [])          
     elif (radio_button_group.active == 1):
-        CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
-        CrossSectionSource2.data = dict(sp2=[CrossSection2], x = [0], y = [0])
-        CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
-        CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
-        CoordArrowXYSource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)   
-        CoordArrowXYESource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)  
-        labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                           
-        labelXYElement.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                                         
-        XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])           
-        XYElement2Source.data = dict(sp4=[], x = [], y = [])        
+        (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
+        colorDistributionNoteSource.data=dict(x=[] , zn=[], note=[])
+        CrossSectionSource1.data = dict(sp1=[], x = [], zn = [])
+        CrossSectionSource2.data = dict(sp2=[CrossSection2], x = [0], zn = [0])
+        CrossSectionSource3.data = dict(sp3=[], x = [], zn = [])
+        CrossSectionSource4.data = dict(sp4=[], x = [], zn = [])        
+        CoordArrowXZnSource.stream(dict( xs=[-0.5], zns=[0.0],xe=[5.9], zne=[0.0]),rollover=1)   
+        CoordArrowXZnESource.stream(dict( xs=[-0.5], zns=[0.0],xe=[5.9], zne=[0.0]),rollover=1)  
+        labelXZn.data=dict(x=[-.3,5.8], zn=[-2.7,-.3], text=['zn','x'])                           
+        labelXZnElement.data=dict(x=[-.3,5.8], zn=[-2.7,-.3], text=['zn','x'])                                         
+        XZElementSource.data = dict(sp4=[XZElement], x = [0], zn = [0])           
+        XZElement2Source.data = dict(sp4=[], x = [], zn = [])        
     elif (radio_button_group.active == 2):
-        CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
-        CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
-        CrossSectionSource3.data = dict(sp3=[CrossSection3], x = [0], y = [0])
-        CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
-        CoordArrowXYSource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)
-        CoordArrowXYESource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)            
-        labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])                         
-        labelXYElement.data=dict(x=[-.3,5.8], y=[2.7,-.3], text=['y','x'])    
-        XYElementSource.data = dict(sp4=[XYElement], x = [0], y = [0])   
-        XYElement2Source.data = dict(sp4=[], x = [], y = [])                                            
+        (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
+        colorDistributionNoteSource.data=dict(x=[] , zn=[], note=[])
+        CrossSectionSource1.data = dict(sp1=[], x = [], zn = [])
+        CrossSectionSource2.data = dict(sp2=[], x = [], zn = [])
+        CrossSectionSource3.data = dict(sp3=[CrossSection3], x = [0], zn = [0])
+        CrossSectionSource4.data = dict(sp4=[], x = [], zn = [])        
+        CoordArrowXZnSource.stream(dict( xs=[-0.5], zns=[0.0],xe=[5.9], zne=[0.0]),rollover=1)
+        CoordArrowXZnESource.stream(dict( xs=[-0.5], zns=[0.0],xe=[5.9], zne=[0.0]),rollover=1)            
+        labelXZn.data=dict(x=[-.3,5.8], zn=[-2.7,-.3], text=['zn','x'])                         
+        labelXZnElement.data=dict(x=[-.3,5.8], zn=[-2.7,-.3], text=['zn','x'])    
+        XZElementSource.data = dict(sp4=[XZElement], x = [0], zn = [0])   
+        XZElement2Source.data = dict(sp4=[], x = [], zn = [])                                            
     elif (radio_button_group.active == 3):
-        CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
-        CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
-        CrossSectionSource3.data = dict(sp3=[], x = [], y = [])       
-        CrossSectionSource4.data = dict(sp4=[CrossSection4], x = [0], y = [0]) 
-        CoordArrowXYSource.stream(dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0]),rollover=1)
-        CoordArrowXYESource.stream(dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0]),rollover=1)   
-        labelXY.data=dict(x=[-.3,5.8], y=[2.7,-.3+1.0/6.0], text=['y','x'])
-        labelXYElement.data=dict(x=[-.3,5.8], y=[2.7,-.3+1.0/6.0], text=['y','x'])    
-        XYElementSource.data = dict(sp4=[], x =[], y = []) 
-        XYElement2Source.data = dict(sp4=[XYElement], x = [0], y = [0])                                            
+        (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
+        colorDistributionNoteSource.data=dict(x=[] , zn=[], note=[])
+        CrossSectionSource1.data = dict(sp1=[], x = [], zn = [])
+        CrossSectionSource2.data = dict(sp2=[], x = [], zn = [])
+        CrossSectionSource3.data = dict(sp3=[], x = [], zn = [])       
+        CrossSectionSource4.data = dict(sp4=[CrossSection4], x = [0], zn = [0]) 
+        CoordArrowXZnSource.stream(dict( xs=[-0.5], zns=[1.0/6.0],xe=[5.9], zne=[1.0/6.0]),rollover=1)
+        CoordArrowXZnESource.stream(dict( xs=[-0.5], zns=[1.0/6.0],xe=[5.9], zne=[1.0/6.0]),rollover=1)   
+        labelXZn.data=dict(x=[-.3,5.8], zn=[-2.7,-.3+1.0/6.0], text=['zn','x'])
+        labelXZnElement.data=dict(x=[-.3,5.8], zn=[-2.7,-.3+1.0/6.0], text=['zn','x'])    
+        XZElementSource.data = dict(sp4=[], x =[], zn = []) 
+        XZElement2Source.data = dict(sp4=[XZElement], x = [0], zn = [0])                                            
+
+    # Update Color Bar
+    colorBarSource.data = dict( x=colorBarXCoords, zn=colorBarYCoords, c=colorBarColorList, a=colorBarAlphaList )
 
     global glCantileverCrossSection
     glCantileverCrossSection = radio_button_group.active
     global glCantileverStress
     glCantileverStress = radio_button_group2.active
 
+
+
 # Function to initialize data
 def init_data():
-    Yforce_slider.value = 0
-    Zforce_slider.value = 0
+    Znforce_slider.value = 0
+    Ynforce_slider.value = 0
     radio_button_group.active = 0
     radio_button_group2.active = 0
 
 
-    fun_change_Py(None,None, None)
-    fun_change_Pz(None,None, None)
+    fun_change_Pzn(None,None, None)
+    fun_change_Pyn(None,None, None)
     fun_change_Cross_Section(None,None,None)
     
 
 # Construct the source file of all the beams
-sourceXYdef   = ColumnDataSource(data=dict( x=XCoordsDefXY,   y=YCoordsDefXY,   c =colorListDeformedXY,   a=alphaList ))
-sourceXZdef   = ColumnDataSource(data=dict( x=XCoordsDefXZ,   y=YCoordsDefXZ,   c =colorListDeformedXZ,   a=alphaList ))
+sourceXZndef   = ColumnDataSource(data=dict( x=XCoordsDefXZn,   zn=YCoordsDefXZn,   c =colorListDeformedXZn,   a=alphaList ))
+sourceXYndef   = ColumnDataSource(data=dict( x=XCoordsDefXYn,   zn=YCoordsDefXYn,   c =colorListDeformedXYn,   a=alphaList ))
 
 # Construct the source file of both the arrows
-sourceArrowXY = ColumnDataSource(
+sourceArrowXZn = ColumnDataSource(
                                      data=dict( 
-                                                   xs=[sourceXYdef.data['x'][len( sourceXYdef.data['x'])-2][2]], 
-                                                   ys=[1.5],
-                                                   xe=[sourceXYdef.data['x'][len( sourceXYdef.data['x'])-2][2]], 
-                                                   ye=[sourceXYdef.data['y'][len( sourceXYdef.data['y'])-2][2]],                            
+                                                   xs=[sourceXZndef.data['x'][len( sourceXZndef.data['x'])-2][2]], 
+                                                   zns=[1.5],
+                                                   xe=[sourceXZndef.data['x'][len( sourceXZndef.data['x'])-2][2]], 
+                                                   zne=[sourceXZndef.data['zn'][len( sourceXZndef.data['zn'])-2][2]],                            
                                               )
                                 )
-sourceArrowXZ = ColumnDataSource(
+sourceArrowXYn = ColumnDataSource(
                                      data=dict( 
-                                                   xs=[sourceXZdef.data['x'][len( sourceXYdef.data['x'])-2][2]], 
-                                                   ys=[1.5],
-                                                   xe=[sourceXZdef.data['x'][len( sourceXYdef.data['x'])-2][2]], 
-                                                   ye=[sourceXZdef.data['y'][len( sourceXYdef.data['y'])-2][2]],                            
+                                                   xs=[sourceXYndef.data['x'][len( sourceXYndef.data['x'])-2][2]], 
+                                                   zns=[1.5],
+                                                   xe=[sourceXYndef.data['x'][len( sourceXYndef.data['x'])-2][2]], 
+                                                   zne=[sourceXYndef.data['zn'][len( sourceXYndef.data['zn'])-2][2]],                            
                                               )
                                 )
 
 # Construct the force sliders
-Yforce_slider = LatexSlider(title= 'F_y =   ', value=0.0, start=-1.0, end=1.0, step=0.1, value_unit='\cdot F_{y,max}')
-Zforce_slider = LatexSlider(title= 'F_z =  ', value=0.0, start=-1.0, end=1.0, step=0.1, value_unit='\cdot F_{z,max}')
+Znforce_slider = LatexSlider(title= 'F_zn =   ', value=0.0, start=-1.0, end=1.0, step=0.25, value_unit='\cdot F_{zn,max}')
+Ynforce_slider = LatexSlider(title= 'F_yn =  ', value=0.0, start=-1.0, end=1.0, step=0.25, value_unit='\cdot F_{yn,max}')
 
 # Construct radio button to choose between geometries of cross section
 radio_button_group = RadioButtonGroup(name="Geometry of cross section",labels=["Quadratic", "Double-T", "Circular","Triangular"], active=glCantileverCrossSection)
 
-# Construct radio button to choose between plot of sigma(y) or tau(y)
+# Construct radio button to choose between plot of sigma(zn) or tau(zn)
 radio_button_group2 = RadioButtonGroup(name="Plot of sigma or tau",labels=["Normal Stresses", "Shear Stresses"], active=glCantileverStress)
 
 # Construct reset button
@@ -733,8 +749,8 @@ Reset_button = Button(label="Reset", button_type="success")
 
 
 
-############ PLOT 1: YZ Cross Section PLOT ###############
-plotDefYZ = Figure(    
+############ PLOT 1: ZYn Cross Section PLOT ###############
+plotDefZY = Figure(    
                        plot_width=300    , 
                        plot_height=300   ,
                        x_range = ( -5,5 ) ,
@@ -742,44 +758,45 @@ plotDefYZ = Figure(
                        title = 'Selected Cross Section',
                        tools = ''
                   )
-plotDefYZ.xaxis.major_tick_line_color=None
-plotDefYZ.xaxis.major_label_text_color=None
-plotDefYZ.xaxis.minor_tick_line_color=None
-plotDefYZ.xaxis.axis_line_color=None
-plotDefYZ.yaxis.major_tick_line_color=None
-plotDefYZ.yaxis.major_label_text_color=None
-plotDefYZ.yaxis.minor_tick_line_color=None
-plotDefYZ.yaxis.axis_line_color=None
-plotDefYZ.grid.visible = False
-plotDefYZ.toolbar.logo = None
-plotDefYZ.title.text_font_size="12.5pt"
 
-plotDefYZ.add_glyph(CrossSectionSource1,ImageURL(url="sp1", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
-plotDefYZ.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
-plotDefYZ.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
-plotDefYZ.add_glyph(CrossSectionSource4,ImageURL(url="sp4", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+plotDefZY.xaxis.major_tick_line_color=None
+plotDefZY.xaxis.major_label_text_color=None
+plotDefZY.xaxis.minor_tick_line_color=None
+plotDefZY.xaxis.axis_line_color=None
+plotDefZY.yaxis.major_tick_line_color=None
+plotDefZY.yaxis.major_label_text_color=None
+plotDefZY.yaxis.minor_tick_line_color=None
+plotDefZY.yaxis.axis_line_color=None
+plotDefZY.grid.visible = False
+plotDefZY.toolbar.logo = None
+plotDefZY.title.text_font_size="12.5pt"
+
+plotDefZY.add_glyph(CrossSectionSource1,ImageURL(url="sp1", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+plotDefZY.add_glyph(CrossSectionSource2,ImageURL(url="sp2", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+plotDefZY.add_glyph(CrossSectionSource3,ImageURL(url="sp3", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
+plotDefZY.add_glyph(CrossSectionSource4,ImageURL(url="sp4", x=-3*5.0/3.0+0.05, y=3*5.0/3.0, w=3*10.0/3.0, h=3*10.0/3.0))
 
 labelYZ = ColumnDataSource(data=dict(x=[0.5,-4.0],
-                                     y=[4.0,-0.6],
-                                     text=['y','z']))
-plotDefYZ.add_layout( 
+                                     zn=[-4.0,-0.6],
+                                     text=['zn','yn']))
+plotDefZY.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_start=0, 
-                           y_start=-4.5, 
+                           y_start=4.5, 
                            x_end=0, 
-                           y_end=4.5, 
+                           y_end=-4.5, 
                            ))
 
-plotDefYZ.add_layout( 
+plotDefZY.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_end=-4.5, 
                            y_start=0, 
                            x_start=4.5, 
                            y_end=0, 
                            ))
-plotDefYZ.add_layout(
+plotDefZY.add_layout(
                       LabelSet(
-                                  x='x', y='y',
+                                  x='x', y='zn',
                                   text='text',
                                   text_color='black',text_font_size="12pt",
                                   level='glyph',text_baseline="middle",text_align="center",
@@ -788,77 +805,8 @@ plotDefYZ.add_layout(
                     )
 
 
-############ PLOT 2: XY PLOT ###############
-plotDefXY = Figure(    
-                       plot_width=400    , 
-                       plot_height=400   ,
-                       x_range = ( -.5,6 ) ,
-                       y_range= ( -3,3 ) ,
-                       title = 'Deformation in XY-View',
-                       tools = ''
-                  )
-plotDefXY.xaxis.major_tick_line_color=None
-plotDefXY.xaxis.major_label_text_color=None
-plotDefXY.xaxis.minor_tick_line_color=None
-plotDefXY.xaxis.axis_line_color=None
-plotDefXY.yaxis.major_tick_line_color=None
-plotDefXY.yaxis.major_label_text_color=None
-plotDefXY.yaxis.minor_tick_line_color=None
-plotDefXY.yaxis.axis_line_color=None
-plotDefXY.grid.visible = False
-plotDefXY.toolbar.logo = None
-plotDefXY.title.text_font_size="12.5pt"
-
-plotDefXY.add_layout( 
-                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                           x_start=0, 
-                           y_start=-3, 
-                           x_end=0, 
-                           y_end=2.9, 
-                           ))
-plotDefXY.add_layout(
-                      LabelSet(
-                                  x='x', y='y',
-                                  text='text',
-                                  text_color='black',text_font_size="12pt",
-                                  level='glyph',text_baseline="middle",text_align="center",
-                                  source=labelXY
-                                )
-                    )
-
-# Construct the arrows
-plotDefXY.add_layout( 
-                     Arrow(end=NormalHead(line_color="black",line_width=3,size=10),
-                           line_width=3,
-                           x_start=['xs'][0],
-                           y_start=['ys'][0],
-                           x_end=['xe'][0], 
-                           y_end=['ye'][0], 
-                           source = sourceArrowXY) 
-                    )
-plotDefXY.add_layout( 
-                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
-                           x_start='xs',
-                           y_start='ys',
-                           x_end='xe', 
-                           y_end='ye', 
-                           source = CoordArrowXYSource) 
-                    )
-
-# Construct the force labels
-plotDefXY.add_layout(
-                      LabelSet(
-                                  x='x', y='y',
-                                  text='f',
-                                  text_color='black',text_font_size="12pt",
-                                  level='glyph',text_baseline="middle",text_align="center",
-                                  source=sourceFyLabel
-                              )
-                    )
-
-
-############ PLOT 3: XZ PLOT ###############
-plotDefXZ = Figure(    
+############ PLOT 2: XZn PLOT ###############
+plotDefXZn = Figure(    
                        plot_width=400    , 
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
@@ -866,69 +814,160 @@ plotDefXZ = Figure(
                        title = 'Deformation in XZ-View',
                        tools = ''
                   )
-plotDefXZ.xaxis.major_tick_line_color=None
-plotDefXZ.xaxis.major_label_text_color=None
-plotDefXZ.xaxis.minor_tick_line_color=None
-plotDefXZ.xaxis.axis_line_color=None
-plotDefXZ.yaxis.major_tick_line_color=None
-plotDefXZ.yaxis.major_label_text_color=None
-plotDefXZ.yaxis.minor_tick_line_color=None
-plotDefXZ.yaxis.axis_line_color=None
-plotDefXZ.grid.visible = False
-plotDefXZ.toolbar.logo = None
-plotDefXZ.title.text_font_size="12.5pt"
+plotDefXZn.xaxis.major_tick_line_color=None
+plotDefXZn.xaxis.major_label_text_color=None
+plotDefXZn.xaxis.minor_tick_line_color=None
+plotDefXZn.xaxis.axis_line_color=None
+plotDefXZn.yaxis.major_tick_line_color=None
+plotDefXZn.yaxis.major_label_text_color=None
+plotDefXZn.yaxis.minor_tick_line_color=None
+plotDefXZn.yaxis.axis_line_color=None
+plotDefXZn.grid.visible = False
+plotDefXZn.toolbar.logo = None
+plotDefXZn.title.text_font_size="12.5pt"
 
-plotDefXZ.add_layout( 
+plotDefXZn.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_start=0, 
                            y_start=3, 
                            x_end=0, 
-                           y_end=-2.9, 
+                           y_end=-2.8, 
                            ))
-
-plotDefXZ.add_layout(
+plotDefXZn.add_layout(
                       LabelSet(
-                                  x='x', y='y',
+                                  x='x', y='zn',
                                   text='text',
                                   text_color='black',text_font_size="12pt",
                                   level='glyph',text_baseline="middle",text_align="center",
-                                  source=labelXZ
+                                  source=labelXZn
+                                )
+                    )
+
+# Add color distribution note
+plotDefXZn.add_layout(
+                      LabelSet(
+                                  x='x', y='zn',
+                                  text='note',
+                                  text_color='grey',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="right",
+                                  source=colorDistributionNoteSource
                                 )
                     )
 
 # Construct the arrows
-plotDefXZ.add_layout( 
+plotDefXZn.add_layout( 
                      Arrow(end=NormalHead(line_color="black",line_width=3,size=10),
                            line_width=3,
-                           x_start=['xs'][0], 
-                           y_start=['ys'][0], 
+                           x_start=['xs'][0],
+                           y_start=['zns'][0],
                            x_end=['xe'][0], 
-                           y_end=['ye'][0], 
-                           source = sourceArrowXZ)
+                           y_end=['zne'][0], 
+                           source = sourceArrowXZn) 
                     )
-
-plotDefXZ.add_layout( 
+plotDefXZn.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_start='xs',
-                           y_start='ys',
+                           y_start='zns',
                            x_end='xe', 
-                           y_end='ye', 
-                           source = CoordArrowXZSource) 
-                    )             
+                           y_end='zne', 
+                           source = CoordArrowXZnSource) 
+                    )
 
 # Construct the force labels
-plotDefXZ.add_layout(LabelSet(
-                                  x='x', y='y',
+plotDefXZn.add_layout(
+                      LabelSet(
+                                  x='x', y='zn',
                                   text='f',
                                   text_color='black',text_font_size="12pt",
                                   level='glyph',text_baseline="middle",text_align="center",
-                                  source=sourceFzLabel
+                                  source=sourceFznLabel
                               )
                     )
 
 
-############ PLOT 4: XY ELEMENT PLOT ###############
-plotXYElement = Figure(    
+############ PLOT 3: XYn PLOT ###############
+plotDefXYn = Figure(    
+                       plot_width=400    , 
+                       plot_height=400   ,
+                       x_range = ( -.5,6 ) ,
+                       y_range= ( -3,3 ) ,
+                       title = 'Deformation in XY-View',
+                       tools = ''
+                  )
+plotDefXYn.xaxis.major_tick_line_color=None
+plotDefXYn.xaxis.major_label_text_color=None
+plotDefXYn.xaxis.minor_tick_line_color=None
+plotDefXYn.xaxis.axis_line_color=None
+plotDefXYn.yaxis.major_tick_line_color=None
+plotDefXYn.yaxis.major_label_text_color=None
+plotDefXYn.yaxis.minor_tick_line_color=None
+plotDefXYn.yaxis.axis_line_color=None
+plotDefXYn.grid.visible = False
+plotDefXYn.toolbar.logo = None
+plotDefXYn.title.text_font_size="12.5pt"
+
+plotDefXYn.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_start=0, 
+                           y_start=3, 
+                           x_end=0, 
+                           y_end=-2.8, 
+                           ))
+
+plotDefXYn.add_layout(
+                      LabelSet(
+                                  x='x', y='zn',
+                                  text='text',
+                                  text_color='black',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=labelXYn
+                                )
+                    )
+
+# Add color distribution note
+plotDefXYn.add_layout(
+                      LabelSet(
+                                  x='x', y='zn',
+                                  text='note',
+                                  text_color='grey',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="right",
+                                  source=colorDistributionNoteSource
+                                )
+                    )
+
+# Construct the arrows
+plotDefXYn.add_layout( 
+                     Arrow(end=NormalHead(line_color="black",line_width=3,size=10),
+                           line_width=3,
+                           x_start=['xs'][0], 
+                           y_start=['zns'][0], 
+                           x_end=['xe'][0], 
+                           y_end=['zne'][0], 
+                           source = sourceArrowXYn)
+                    )
+
+plotDefXYn.add_layout( 
+                     Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
+                           x_start='xs',
+                           y_start='zns',
+                           x_end='xe', 
+                           y_end='zne', 
+                           source = CoordArrowXYnSource) 
+                    )             
+
+# Construct the force labels
+plotDefXYn.add_layout(LabelSet(
+                                  x='x', y='zn',
+                                  text='f',
+                                  text_color='black',text_font_size="12pt",
+                                  level='glyph',text_baseline="middle",text_align="center",
+                                  source=sourceFynLabel
+                              )
+                    )
+
+
+############ PLOT 4: XZn ELEMENT PLOT ###############
+plotXZnElement = Figure(    
                        plot_width=400    , 
                        plot_height=400   ,
                        x_range = ( -.5,6 ) ,
@@ -936,99 +975,99 @@ plotXYElement = Figure(
                        title = 'Stresses along detached Element',
                        tools = ''
                   )
-plotXYElement.xaxis.major_tick_line_color=None
-plotXYElement.xaxis.major_label_text_color=None
-plotXYElement.xaxis.minor_tick_line_color=None
-plotXYElement.xaxis.axis_line_color=None
-plotXYElement.yaxis.major_tick_line_color=None
-plotXYElement.yaxis.major_label_text_color=None
-plotXYElement.yaxis.minor_tick_line_color=None
-plotXYElement.yaxis.axis_line_color=None
-plotXYElement.grid.visible = False
-plotXYElement.toolbar.logo = None
-plotXYElement.title.text_font_size="12.5pt"
+plotXZnElement.xaxis.major_tick_line_color=None
+plotXZnElement.xaxis.major_label_text_color=None
+plotXZnElement.xaxis.minor_tick_line_color=None
+plotXZnElement.xaxis.axis_line_color=None
+plotXZnElement.yaxis.major_tick_line_color=None
+plotXZnElement.yaxis.major_label_text_color=None
+plotXZnElement.yaxis.minor_tick_line_color=None
+plotXZnElement.yaxis.axis_line_color=None
+plotXZnElement.grid.visible = False
+plotXZnElement.toolbar.logo = None
+plotXZnElement.title.text_font_size="12.5pt"
 
-plotXYElement.add_layout( 
+plotXZnElement.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_start=0, 
-                           y_start=-3, 
+                           y_start=3, 
                            x_end=0, 
-                           y_end=2.9, 
+                           y_end=-2.8, 
                            ))
 
-plotXYElement.add_layout( 
+plotXZnElement.add_layout( 
                      Arrow(end=VeeHead(line_color="black",line_width=3,size=5),
                            x_start='xs',
-                           y_start='ys',
+                           y_start='zns',
                            x_end='xe', 
-                           y_end='ye', 
-                           source = CoordArrowXYESource) 
+                           y_end='zne', 
+                           source = CoordArrowXZnESource) 
                     )
 
 
 
-plotXYElement.add_layout(
+plotXZnElement.add_layout(
                       LabelSet(
-                                  x='x', y='y',
+                                  x='x', y='zn',
                                   text='text',
                                   text_color='black',text_font_size="12pt",
                                   level='glyph',text_baseline="middle",text_align="center",
-                                  source=labelXYElement
+                                  source=labelXZnElement
                                 )
                     )                    
 
                         
-plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
-                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource1))
-plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
-                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource2))
-plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
-                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource3))
-plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
-                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource4))
-plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
-                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource5))
-plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
-                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = SigmaArrowSource6))
+plotXZnElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['zns'][0], x_end=['xe'][0], y_end=['zne'][0], source = SigmaArrowSource1))
+plotXZnElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['zns'][0], x_end=['xe'][0], y_end=['zne'][0], source = SigmaArrowSource2))
+plotXZnElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['zns'][0], x_end=['xe'][0], y_end=['zne'][0], source = SigmaArrowSource3))
+plotXZnElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['zns'][0], x_end=['xe'][0], y_end=['zne'][0], source = SigmaArrowSource4))
+plotXZnElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['zns'][0], x_end=['xe'][0], y_end=['zne'][0], source = SigmaArrowSource5))
+plotXZnElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['zns'][0], x_end=['xe'][0], y_end=['zne'][0], source = SigmaArrowSource6))
 
-plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
-                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = TauArrowSource1))
-plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
-                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = TauArrowSource2))
-plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
-                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = TauArrowSource3))
-plotXYElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
-                           line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = TauArrowSource4))
+plotXZnElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['zns'][0], x_end=['xe'][0], y_end=['zne'][0], source = TauArrowSource1))
+plotXZnElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['zns'][0], x_end=['xe'][0], y_end=['zne'][0], source = TauArrowSource2))
+plotXZnElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['zns'][0], x_end=['xe'][0], y_end=['zne'][0], source = TauArrowSource3))
+plotXZnElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
+                           line_width=1,x_start=['xs'][0], y_start=['zns'][0], x_end=['xe'][0], y_end=['zne'][0], source = TauArrowSource4))
 
-plotXYElement.add_glyph(XYBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1.04))
-plotXYElement.add_glyph(XYElementSource,ImageURL(url="sp4", x=1.5, y=0, w=2, h=0.535))
-plotXYElement.add_glyph(XYElement2Source,ImageURL(url="sp4", x=1.5, y=1.0/6.0, w=2, h=0.535*(1+1.0/3.0)))
+plotXZnElement.add_glyph(XZBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1.04))
+plotXZnElement.add_glyph(XZElementSource,ImageURL(url="sp4", x=1.5, y=0, w=2, h=0.535))
+plotXZnElement.add_glyph(XZElement2Source,ImageURL(url="sp4", x=1.5, y=1.0/6.0, w=2, h=0.535*(1+1.0/3.0)))
 
-Sigmaplot_l_Glyph = Patch(x="x", y="y", fill_color='#0065BD', fill_alpha=0.5)
-plotXYElement.add_glyph(Sigmaplot_l_Source, Sigmaplot_l_Glyph)
+Sigmaplot_l_Glyph = Patch(x="x", y="zn", fill_color='#0065BD', fill_alpha=0.5)
+plotXZnElement.add_glyph(Sigmaplot_l_Source, Sigmaplot_l_Glyph)
 
-Sigmaplot_r_Glyph = Patch(x="x", y="y", fill_color='#0065BD', fill_alpha=0.5)
-plotXYElement.add_glyph(Sigmaplot_r_Source, Sigmaplot_r_Glyph)
+Sigmaplot_r_Glyph = Patch(x="x", y="zn", fill_color='#0065BD', fill_alpha=0.5)
+plotXZnElement.add_glyph(Sigmaplot_r_Source, Sigmaplot_r_Glyph)
 
-Tauplot_l_Glyph = Patch(x="x", y="y", fill_color='#E37222', fill_alpha=0.5)
-plotXYElement.add_glyph(Tauplot_l_Source, Tauplot_l_Glyph)
+Tauplot_l_Glyph = Patch(x="x", y="zn", fill_color='#E37222', fill_alpha=0.5)
+plotXZnElement.add_glyph(Tauplot_l_Source, Tauplot_l_Glyph)
 
-Tauplot_r_Glyph = Patch(x="x", y="y", fill_color='#E37222', fill_alpha=0.5)
-plotXYElement.add_glyph(Tauplot_r_Source, Tauplot_r_Glyph)
+Tauplot_r_Glyph = Patch(x="x", y="zn", fill_color='#E37222', fill_alpha=0.5)
+plotXZnElement.add_glyph(Tauplot_r_Source, Tauplot_r_Glyph)
 
-Tauplot_u_Glyph = Patch(x="x", y="y", fill_color='#E37222', fill_alpha=0.5)
-plotXYElement.add_glyph(Tauplot_u_Source, Tauplot_u_Glyph)
+Tauplot_u_Glyph = Patch(x="x", y="zn", fill_color='#E37222', fill_alpha=0.5)
+plotXZnElement.add_glyph(Tauplot_u_Source, Tauplot_u_Glyph)
 
 Sigmaplot_Labels = LatexLabelSet(
-    x='x', y='y', text='names', source=Sigmaplot_Label_Source, 
+    x='x', y='zn', text='names', source=Sigmaplot_Label_Source, 
     text_color ="#0065BD", level='glyph', x_offset=0, y_offset=0)
 
 Tauplot_Labels = LatexLabelSet(
-    x='x', y='y', text='names', source=Tauplot_Label_Source, 
+    x='x', y='zn', text='names', source=Tauplot_Label_Source, 
     text_color ="#E37222", level='glyph', x_offset=0, y_offset=0)    
 
-plotXYElement.add_layout(Sigmaplot_Labels)
-plotXYElement.add_layout(Tauplot_Labels)
+plotXZnElement.add_layout(Sigmaplot_Labels)
+plotXZnElement.add_layout(Tauplot_Labels)
 
 ############## PLOT 5: Color Bar ##########################
 # Construct the color-bar figure
@@ -1046,49 +1085,53 @@ colorBar.yaxis.visible = False
 colorBar.toolbar.logo = None
 colorBar.title.text_font_size="12pt"
 
-## Create colorBar patches with node coords 
-colorBarXCoords = list()
-colorBarYCoords = list()
-for i in range(50):
-    lowerLeft = [float(i)/10, -0.5]
-    upperLeft = [float(i)/10, 0.5]
-    lowerRight= [float(i)/10 + 1.0/10.0, -0.5]
-    upperRight= [float(i)/10 + 1.0/10.0, 0.5]
+def update_colorBar(glCantileverCrossSection):
+    ## Create colorBar patches with node coords 
+    colorBarXCoords = []
+    colorBarYCoords = []
+    for i in range(50):
+        lowerLeft = [float(i)/10, -0.5]
+        upperLeft = [float(i)/10, 0.5]
+        lowerRight= [float(i)/10 + 1.0/10.0, -0.5]
+        upperRight= [float(i)/10 + 1.0/10.0, 0.5]
 
-    colorBarXCoords.append([lowerLeft[0], upperLeft[0], upperRight[0], lowerRight[0]])
-    colorBarYCoords.append([lowerLeft[1], upperLeft[1], upperRight[1], lowerRight[1]])
-colorBarColorList = list()
-colorBarAlphaList = list()
+        colorBarXCoords.append([lowerLeft[0], upperLeft[0], upperRight[0], lowerRight[0]])
+        colorBarYCoords.append([lowerLeft[1], upperLeft[1], upperRight[1], lowerRight[1]])
 
-## Determine the color distribution in the color bar
-smallestValue,biggestValue = 0.0,10.0
-valuesRange = list()
-## Create equidistant vector with 50 members between smallestValue and biggestValue:
-for i in range(50):
-    valuesRange.append(smallestValue + (float(i)/49.0)*(biggestValue - smallestValue))
-## Create vector with 50 colors corresponding to varluesRange-vector:
-for i in range(50):
-    colorBarColorList.append(functions.color_determiner( smallestValue, biggestValue, valuesRange[i] ))
-    colorBarAlphaList.append( 1 )
+    colorBarColorList = []
+    colorBarAlphaList = []
+    ## Determine the color distribution in the color bar
+    smallestValue,biggestValue = -10.0,10.0
+    valuesRange = []
+    ## Create equidistant vector with 50 members between smallestValue and biggestValue:
+    for i in range(50):
+        valuesRange.append(smallestValue + (float(i)/49.0)*(biggestValue - smallestValue))
+    ## Create vector with 50 colors corresponding to varluesRange-vector:
+    for i in range(50):
+        colorBarColorList.append(functions.color_determiner( smallestValue, biggestValue, valuesRange[i], glCantileverCrossSection ))
+        colorBarAlphaList.append( 1 )
+
+    return colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList
+
+## Construct the source file for the color bar
+(colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(glCantileverCrossSection)
+colorBarSource.data = dict( x=colorBarXCoords, zn=colorBarYCoords, c=colorBarColorList, a=colorBarAlphaList )
 
 ## Label colorbar min-max stess range
 def update_colorBar_extremas(smallesValue, biggestValue):
     colorBar.title.text =  " "*15  + "-" + " "*55 + "Normal Stress" + " "*55 + "+"
 
-## Construct the source file for the color bar
-colorBarSource = ColumnDataSource(data=dict( x=colorBarXCoords, y=colorBarYCoords, c =colorBarColorList, a=colorBarAlphaList ))
-
 # Construct the patches 
-colorBar.patches( xs='x', ys='y', source=colorBarSource, color = 'c', alpha = 'a' )
-plotDefXY.patches  (xs='x', ys='y', source=sourceXYdef  , color = 'c', alpha = 'a')
-plotDefXZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
+colorBar.patches( xs='x', ys='zn', source=colorBarSource, color = 'c', alpha = 'a' )
+plotDefXZn.patches  (xs='x', ys='zn', source=sourceXZndef  , color = 'c', alpha = 'a')
+plotDefXYn.patches  (xs='x', ys='zn', source=sourceXYndef  , color = 'c', alpha = 'a')
 
 # Notify the corresponding functions to carry out the changes characterized by
 # the sliders
-Yforce_slider.on_change('value',fun_change_Py)
-Zforce_slider.on_change('value',fun_change_Pz)
-radio_button_group.on_change('active',fun_change_Cross_Section,fun_change_Py,fun_change_Pz)
-radio_button_group2.on_change('active',fun_change_Cross_Section,fun_change_Py,fun_change_Pz)
+Znforce_slider.on_change('value',fun_change_Pzn)
+Ynforce_slider.on_change('value',fun_change_Pyn)
+radio_button_group.on_change('active',fun_change_Cross_Section,fun_change_Pzn,fun_change_Pyn)
+radio_button_group2.on_change('active',fun_change_Cross_Section,fun_change_Pzn,fun_change_Pyn)
 Reset_button.on_click(init_data)
 
 init_data()    
@@ -1104,6 +1147,6 @@ Scheme = Div( text = "<img src='/2D_cantilever_beam/static/images/3DBeam.png' wi
 
 
 curdoc().add_root(column(row(Spacer(height=650),description, column(Spacer(height=100),Scheme)),row(
-    column(plotDefYZ,widgetbox(radio_button_group),Yforce_slider,Zforce_slider,Reset_button),
-    column(row(column(plotXYElement,row(Spacer(width=80),radio_button_group2)),column(row(plotDefXY, plotDefXZ),colorBar))))))
+    column(plotDefZY,widgetbox(radio_button_group),Znforce_slider,Ynforce_slider,Reset_button),
+    column(row(column(plotXZnElement,row(Spacer(width=40),radio_button_group2)),column(row(plotDefXZn, plotDefXYn),colorBar))))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
