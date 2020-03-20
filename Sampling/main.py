@@ -244,16 +244,16 @@ def initialize():
 
     update()
 
-    plot_original_scatter = plot_original.scatter('t', 'x', source=x_sampled_source)
-    plot_original_line = plot_original.line('t', 'x', color='red', source=x_analytical_source, line_width=.5)
+    plot_original_scatter = plot_original.scatter('t', 'x', source=x_sampled_source, color='#64A0C8')
+    plot_original_line = plot_original.line('t', 'x', color='#E37222', source=x_analytical_source, line_width=.5)
     plot_original.add_layout(LatexLegend(items=[("\\text{samples}",[plot_original_scatter]),("x(t)",[plot_original_line])]))
 
-    plot_transform_imag_scatter = plot_transform_imag.scatter('frequency', 'X_imag', source=X_sampled_source)
-    plot_transform_imag_line = plot_transform_imag.line('frequency', 'X_imag', color='red', source=X_analytical_source, line_width=.5)
+    plot_transform_imag_scatter = plot_transform_imag.scatter('frequency', 'X_imag', source=X_sampled_source, color='#64A0C8')
+    plot_transform_imag_line = plot_transform_imag.line('frequency', 'X_imag', color='#E37222', source=X_analytical_source, line_width=.5)
     plot_transform_imag.add_layout(LatexLegend(items=[("\mathrm{Im}[X(f)] - DFT",[plot_transform_imag_scatter]),("\mathrm{Im}[X(f)]",[plot_transform_imag_line])]))
 
-    plot_transform_real_scatter = plot_transform_real.scatter('frequency', 'X_real', source=X_sampled_source)
-    plot_transform_real_line = plot_transform_real.line('frequency', 'X_real', color='red', source=X_analytical_source, line_width=.5)
+    plot_transform_real_scatter = plot_transform_real.scatter('frequency', 'X_real', source=X_sampled_source, color='#64A0C8')
+    plot_transform_real_line = plot_transform_real.line('frequency', 'X_real', color='#E37222', source=X_analytical_source, line_width=.5)
     plot_transform_real.add_layout(LatexLegend(items=[("\mathrm{Re}[X(f)] - DFT",[plot_transform_real_scatter]),("\mathrm{Re}[X(f)]",[plot_transform_real_line])]))
 
     if color_interval:
