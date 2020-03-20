@@ -280,10 +280,10 @@ plot.line(x=[col2.xstart,col2.xstart], y=[zstart,zstart+col2.h], color='gray',li
 plot.line(x=[col3.xstart,col3.xstart], y=[zstart,zstart+col3.h], color='gray',line_width=5, line_dash="6 4 2 4")
 plot.line(x=[col4.xstart,col4.xstart], y=[zstart,zstart+col4.h], color='gray',line_width=5, line_dash="6 4 2 4")
 # current column form
-plot.line(x='x', y='y', source = col1.pts, color='#003359',line_width=5)        #Column 1
-plot.line(x='x', y='y', source = col2.pts, color='#003359',line_width=5)        #Column 2
-plot.line(x='x', y='y', source = col3.pts, color='#003359',line_width=5)        #Column 3
-plot.line(x='x', y='y', source = col4.pts, color='#003359',line_width=5)        #Column 4
+plot.line(x='x', y='y', source = col1.pts, color='#0065BD',line_width=5)        #Column 1
+plot.line(x='x', y='y', source = col2.pts, color='#0065BD',line_width=5)        #Column 2
+plot.line(x='x', y='y', source = col3.pts, color='#0065BD',line_width=5)        #Column 3
+plot.line(x='x', y='y', source = col4.pts, color='#0065BD',line_width=5)        #Column 4
 #Create the floors for each column:
 plot.line(x='x', y='y', source = col1.floor, color='black',line_width=6)
 plot.line(x='x', y='y', source = col2.floor, color='black',line_width=6)
@@ -294,19 +294,19 @@ plot.line(x='x', y='y', source = col2.wall, color='black',line_width=6)
 plot.line(x='x', y='y', source = col3.wall, color='black',line_width=6)
 plot.multi_line(xs='x', ys='y', source = col4.wall, color='black',line_width=6)
 #Create circles for columns that have pins:
-plot.circle(x='x', y='y', source = col2.cir1, color='black',size = 10)
-plot.circle(x='x', y='y', source = col2.cir2, color='black',size = 10)
-plot.circle(x='x', y='y', source = col3.cir2, color='black',size = 10)
+plot.circle(x='x', y='y', source = col2.cir1, color='#0065BD',size = 10)
+plot.circle(x='x', y='y', source = col2.cir2, color='#0065BD',size = 10)
+plot.circle(x='x', y='y', source = col3.cir2, color='#0065BD',size = 10)
 #Create the shapes of the ends of the columns:
 plot.triangle(x='x', y='y', source = col2.tri1, color='black',angle =0.0,fill_alpha =0, size = 20)
 plot.triangle(x='x', y='y', source = col2.tri2, color='black',angle =np.pi/2,fill_alpha =0, size = 20)
 plot.triangle(x='x', y='y', source = col3.tri2, color='black',angle =np.pi/2,fill_alpha = 0, size = 20)
 plot.square(x='x', y='y', source = col4.square, color='black',size = 20)
 # Plot buckling lenghts
-plot.line(x='x', y='y', source = col1.sk, color='orange',line_width=2)
-plot.line(x='x', y='y', source = col2.sk, color='orange',line_width=2)
-plot.line(x='x', y='y', source = col3.sk, color='orange',line_width=2)
-plot.line(x='x', y='y', source = col4.sk, color='orange',line_width=2)
+plot.line(x='x', y='y', source = col1.sk, color='#A2AD00',line_width=2)
+plot.line(x='x', y='y', source = col2.sk, color='#A2AD00',line_width=2)
+plot.line(x='x', y='y', source = col3.sk, color='#A2AD00',line_width=2)
+plot.line(x='x', y='y', source = col4.sk, color='#A2AD00',line_width=2)
 
 #Main plot properties:
 plot.axis.visible = False
@@ -332,23 +332,23 @@ labels4 = LatexLabelSet(x='x', y='y', text='name', level='glyph',
               x_offset=-20, y_offset=0, source=col4.labels, render_mode='canvas')
 
 #Arrow Glyph Section:
-col1_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
-x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col1.arrow,line_color="#A2AD00")
-col2_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
-x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col2.arrow,line_color="#A2AD00")
-col3_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
-x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col3.arrow,line_color="#A2AD00")
-col4_a = Arrow(end=NormalHead(line_color="#A2AD00",line_width= 4, size=10),
-x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col4.arrow,line_color="#A2AD00")
+col1_a = Arrow(end=NormalHead(line_color="#E37222",line_width= 4, size=10),
+x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col1.arrow,line_color="#E37222")
+col2_a = Arrow(end=NormalHead(line_color="#E37222",line_width= 4, size=10),
+x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col2.arrow,line_color="#E37222")
+col3_a = Arrow(end=NormalHead(line_color="#E37222",line_width= 4, size=10),
+x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col3.arrow,line_color="#E37222")
+col4_a = Arrow(end=NormalHead(line_color="#E37222",line_width= 4, size=10),
+x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=col4.arrow,line_color="#E37222")
 
 # buckling length
-sk_l1 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+sk_l1 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="#A2AD00",
               x_offset=-12, y_offset=15,    source=col1.sk_labels, render_mode='canvas', display_mode=True)
-sk_l2 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+sk_l2 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="#A2AD00",
               x_offset=-12, y_offset=15,    source=col2.sk_labels, render_mode='canvas', display_mode=True)
-sk_l3 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+sk_l3 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="#A2AD00",
               x_offset=-28, y_offset=50,    source=col3.sk_labels, render_mode='canvas', display_mode=True)
-sk_l4 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
+sk_l4 = LatexLabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="#A2AD00",
               x_offset=-28, y_offset=2,    source=col4.sk_labels, render_mode='canvas', display_mode=True)
 #sk_l1 = LabelSet(x='x', y='y', text='name', level='glyph', angle=np.pi*0.5, text_color="orange",
 #              x_offset=-10, y_offset=0,    source=col1.sk_labels, render_mode='canvas')
