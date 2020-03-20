@@ -800,7 +800,7 @@ def re_plot():
                 time_slider.value = time_slider.start
                 
         structure.update_system(displacement)
-    play()
+    
 
 re_plot_button = Button(label="Refresh", button_type="success")
 re_plot_button.on_click(re_plot)
