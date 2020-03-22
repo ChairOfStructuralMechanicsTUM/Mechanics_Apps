@@ -25,7 +25,7 @@ class coords():
     def __init__( self, data):
         self.data = data
     
-def construct_deformed_beam_centerLine( Pzn, Pyn, E,
+def construct_deformed_beam_centerLine( Pz, Py, E,
                                         noElementsX,
                                         thickness, height, length, elementSizeX,
                                         amplificationFactor, glCantileverCrossSection):
@@ -36,89 +36,88 @@ def construct_deformed_beam_centerLine( Pzn, Pyn, E,
     ## Determine moment of inertia depending on active cross section:
     ## Iy = Sum(Iz_i) + Sum(ez_i^2*A_i)
     if(glCantileverCrossSection==0):
-        Iyn = thickness*height**3.0/12.0
+        Iy = thickness*height**3.0/12.0
     if(glCantileverCrossSection==1):        
-        Iyn = 2*(height*(height/10.0)**3.0/12.0) + (height-2*height/10.0)**3*height/10.0/12.0 + 2.0*((height/2.0-height/20)**2.0*height*height/10.0)        
+        Iy = 2*(height*(height/10.0)**3.0/12.0) + (height-2*height/10.0)**3*height/10.0/12.0 + 2.0*((height/2.0-height/20)**2.0*height*height/10.0)        
     if(glCantileverCrossSection==2):
-        Iyn = math.pi*(height)**4.0/64.0
+        Iy = math.pi*(height)**4.0/64.0
     if(glCantileverCrossSection==3):
-        Iyn = thickness**4.0/36.0  
+        Iy = thickness**4.0/36.0  
 
     ## Iz = Sum(Iy_i) + Sum(ey_i^2*A_i) = Sum(Iy_i) + 0 
     if(glCantileverCrossSection==0):
-        Izn = height*thickness**3.0/12.0
+        Iz = height*thickness**3.0/12.0
     if(glCantileverCrossSection==1):
-        Izn = 2*(height/10.0*height**3.0/12.0) + (height/10.0)**3.0*(height-2*height/10.0)/12.0        
+        Iz = 2*(height/10.0*height**3.0/12.0) + (height/10.0)**3.0*(height-2*height/10.0)/12.0        
     if(glCantileverCrossSection==2):
-        Izn = math.pi*(height)**4.0/64.0
+        Iz = math.pi*(height)**4.0/64.0
     if(glCantileverCrossSection==3):
-        Izn = thickness**4.0/48.0    
+        Iz = thickness**4.0/48.0    
     
     
-    ###### DEFORMATION IN XZn DIRECTION ######
+    ###### DEFORMATION IN XZ DIRECTION ######
 
-    ## Define list for deformed XZn-centerline
-    deformedBeamXZn = list()
+    ## Define list for deformed XZ-centerline
+    deformedBeamXZ = list()
 
     ## Calculate deformation and append element coordinates to list. 
     # Take into account decreasing x-distance between elements due to deformation.
     xComponent = 0.0
-    znComponent = 0.0
+    zComponent = 0.0
     for i in range(noElementsX + 1):
-        znComponent = - amplificationFactor*Pzn*xComponent*xComponent*( 3.0*length - xComponent )/(6.0*E*Iyn)
-        deformedBeamXZn.append( [xComponent, znComponent] )
-        angle = np.arctan( ( Pzn/E*Iyn )*( length*xComponent - xComponent*xComponent/2.0) )
+        zComponent = - amplificationFactor*Pz*xComponent*xComponent*( 3.0*length - xComponent )/(6.0*E*Iy)
+        deformedBeamXZ.append( [xComponent, zComponent] )
+        angle = np.arctan( ( Pz/E*Iy )*( length*xComponent - xComponent*xComponent/2.0) )
         xIncrement = elementSizeX*np.cos( angle )
         xComponent += xIncrement
 
 
-    ###### DEFORMATION IN XYn DIRECTION ######
+    ###### DEFORMATION IN XY DIRECTION ######
 
-    ## Define list for deformed XYn-centerline
-    deformedBeamXYn = list()
+    ## Define list for deformed XY-centerline
+    deformedBeamXY = list()
     
     ## Calculate deformation and append element coordinates to list. 
     # Take into account decreasing x-distance between elements due to deformation.
     xComponent = 0.0
-    ynComponent = 0.0
+    yComponent = 0.0
     for i in range(noElementsX + 1):
-        ynComponent = - amplificationFactor*Pyn*xComponent*xComponent*( 3.0*length - xComponent )/(6.0*E*Izn)
-        deformedBeamXYn.append( [xComponent, ynComponent] )
-        angle = np.arctan( ( Pyn/E*Izn )*( length*xComponent - xComponent*xComponent/2.0 ) )
+        yComponent = - amplificationFactor*Py*xComponent*xComponent*( 3.0*length - xComponent )/(6.0*E*Iz)
+        deformedBeamXY.append( [xComponent, yComponent] )
+        angle = np.arctan( ( Py/E*Iz )*( length*xComponent - xComponent*xComponent/2.0 ) )
         xIncrement = elementSizeX*np.cos( angle )
         xComponent += xIncrement
 
     ### PRINTSTART
     if (glCantileverPrint == 1): 
-        if xComponent > 5.0 and Pyn==100.0 and Pzn==100.0:
+        if xComponent > 5.0 and Py==100.0 and Pz==100.0:
             if glCantileverCrossSection == 0:
                 print ("Rectangular CS")
                 print ("(length, width, height) = ", "(", length, ", ", thickness, ", ", height, ")")
-                print ("Iz = ", Iyn)
-                print ("Iy = ", Izn)                
+                print ("Iy = ", Iy)
+                print ("Iz = ", Iz)                
             elif glCantileverCrossSection == 1:
                 print ("Double-T CS")
                 print ("(length, width_total, width_elements, height) = ", "(", length, ", ", thickness, ", ", thickness/10, ", ", height, ")" )               
-                print ("Iz = ", Iyn)
-                print ("Iy = ", Izn)                
+                print ("Iy = ", Iy)
+                print ("Iz = ", Iz)                
             elif glCantileverCrossSection == 2:
                 print ("Circular CS")
                 print ("(length, d) = ", "(", length, ", ", thickness, ")")                
-                print ("Iz = ", Iyn)
-                print ("Iy = ", Izn)                
+                print ("Iy = ", Iy)
+                print ("Iz = ", Iz)                
             elif glCantileverCrossSection == 3:
                 print ("Triangular CS")
                 print ("(length, width, height) = ", "(", length, ", ", thickness, ", ", height, ")" )               
-                print ("Iz = ", Iyn)
-                print ("Iy = ", Izn)                     
-            print ("Py = ", Pzn)
-            print ("Pz = ", Pyn)
-            print ("u_y(x=5, y=0, z=0) = ", znComponent/amplificationFactor)
-            print ("u_z(x=5, y=0, z=0) = ", ynComponent/amplificationFactor)
+                print ("Iy = ", Iy)
+                print ("Iz = ", Iz)                     
+            print ("Pz = ", Pz)
+            print ("Py = ", Py)
+            print ("u_y(x=5, y=0, z=0) = ", zComponent/amplificationFactor)
+            print ("u_z(x=5, y=0, z=0) = ", yComponent/amplificationFactor)
     ### PRINTEND
 
-
-    return deformedBeamXZn, deformedBeamXYn
+    return deformedBeamXZ, deformedBeamXY
 
 
 ## Return color depending on range and current value:
@@ -262,7 +261,7 @@ def construct_normal_vectors( deformedBeam ):
     
     return averageNormalVector1, averageNormalVector2
 
-def values_determiner( Pzn, Pyn, length, height, thickness, E, elementSizeX, glCantileverCrossSection):
+def values_determiner( Pz, Py, length, height, thickness, E, elementSizeX, glCantileverCrossSection):
     
     biggestValue = 1.5*calculate_normal_stress(0.0, 0.0, height/2.0, length, height, thickness, 2, 0, 100)
     smallestValue = 1.5*calculate_normal_stress(0.0, 0.0, -height/2.0, length, height, thickness, 2, 0, 100)
@@ -273,10 +272,10 @@ def values_determiner( Pzn, Pyn, length, height, thickness, E, elementSizeX, glC
 
     for i in range( int(rangeSize) ):
 
-        valueUpperXY = calculate_normal_stress(i*elementSizeX, height/2.0, 0.0, length, height, thickness, glCantileverCrossSection, Pzn, Pyn)         
+        valueUpperXY = calculate_normal_stress(i*elementSizeX, height/2.0, 0.0, length, height, thickness, glCantileverCrossSection, Pz, Py)         
         listValuesUpperXY.append( valueUpperXY )
 
-        valueLowerXZ = calculate_normal_stress(i*elementSizeX, 0.0, thickness/2.0, length, height, thickness, glCantileverCrossSection, Pzn, Pyn)        
+        valueLowerXZ = calculate_normal_stress(i*elementSizeX, 0.0, thickness/2.0, length, height, thickness, glCantileverCrossSection, Pz, Py)        
         listValuesLowerXZ.append( valueLowerXZ )
 
     return biggestValue, smallestValue, listValuesUpperXY, listValuesLowerXZ
@@ -286,10 +285,10 @@ def elements_color_determiner( deformed,
                                orientation,
                                listElements, 
                                noElementsX ,
-                               noElementsZn ,
+                               noElementsZ ,
                                E , height  ,
                                thickness   ,
-                               length, Pzn, Pyn,
+                               length, Pz, Py,
                                biggestValue,
                                smallestValue,
                                listAdditionalValues,
@@ -309,7 +308,7 @@ def elements_color_determiner( deformed,
         if orientation == 'XZ':
             # For loop  to             
             for i in range( int( len(listElements)/2 ) ):
-                if i %(noElementsZn/2) == 0 and i != 0:
+                if i %(noElementsZ/2) == 0 and i != 0:
                 # update verticalMultiplier to the original value
                     verticalMultiplier = 1.0
                     xIncrement += elementSize
@@ -319,25 +318,25 @@ def elements_color_determiner( deformed,
             
                 x_pos = xIncrement              
                 if glCantileverCrossSection==0:
-                    yn_pos = -thickness/2.0
-                    zn_pos = ((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0
+                    y_pos = -thickness/2.0
+                    z_pos = ((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0
                 elif glCantileverCrossSection==1:
-                    zn_pos = ((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0
-                    if abs(zn_pos) < height*4.0/10.0:
-                        yn_pos = -thickness/10.0/2.0
+                    z_pos = ((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0
+                    if abs(z_pos) < height*4.0/10.0:
+                        y_pos = -thickness/10.0/2.0
                     else:
-                        yn_pos = -thickness/2.0
+                        y_pos = -thickness/2.0
                 elif glCantileverCrossSection==2:
-                    zn_pos = ((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0
-                    yn_pos = -np.cos(np.arcsin(zn_pos/(thickness/2.0)))
+                    z_pos = ((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0
+                    y_pos = -np.cos(np.arcsin(z_pos/(thickness/2.0)))
                 elif glCantileverCrossSection==3:
-                    zn_pos = ((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)*1.0/2.0-(1.0/6.0)*height                      
-                    yn_pos = -(2.0/3.0 + ((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0-(1.0/6.0)*height)*0.5
-                strainXXup = calculate_normal_stress(x_pos, zn_pos, yn_pos, length, height, thickness, glCantileverCrossSection, Pzn, Pyn) 
+                    z_pos = ((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)*1.0/2.0-(1.0/6.0)*height                      
+                    y_pos = -(2.0/3.0 + ((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0-(1.0/6.0)*height)*0.5
+                strainXXup = calculate_normal_stress(x_pos, z_pos, y_pos, length, height, thickness, glCantileverCrossSection, Pz, Py) 
 
                 ### PRINTSTART
                 if (glCantileverPrint == 1): 
-                    if (x_pos > 1.45 and x_pos < 1.55 and zn_pos > 0.45 and Pzn==100 and Pyn==100):
+                    if (x_pos > 1.45 and x_pos < 1.55 and z_pos > 0.45 and Pz==100 and Py==100):
                         if (glCantileverCrossSection==0):
                             print ("Sigma(x=1.5, y=0.5, z=0.5) = ", strainXXup)
                         elif (glCantileverCrossSection==1):
@@ -345,29 +344,29 @@ def elements_color_determiner( deformed,
                         elif (glCantileverCrossSection==2):
                             print ("Sigma(x=1.5, y=0.5, z=0.0) = ", strainXXup)  
                     if (glCantileverCrossSection==3):
-                            if (x_pos > 1.45 and x_pos < 1.55 and zn_pos > 0.33 and Pzn==100 and Pyn==100):
+                            if (x_pos > 1.45 and x_pos < 1.55 and z_pos > 0.33 and Pz==100 and Py==100):
                                 print ("Sigma(x=1.5, y=0.33, z=0.5) = ", strainXXup)
                 ### PRINTEND
 
 
                 x_pos = xIncrement
                 if glCantileverCrossSection==0:
-                    zn_pos = -((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0
-                    yn_pos = -thickness/2.0
+                    z_pos = -((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0
+                    y_pos = -thickness/2.0
                 elif glCantileverCrossSection==1:
-                    zn_pos = -((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0
-                    if abs(zn_pos) < height*4.0/10.0:
-                        yn_pos = -thickness/10.0/2.0
+                    z_pos = -((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0
+                    if abs(z_pos) < height*4.0/10.0:
+                        y_pos = -thickness/10.0/2.0
                     else:
-                        yn_pos = -thickness/2.0
+                        y_pos = -thickness/2.0
                 elif glCantileverCrossSection==2:
-                    zn_pos = -((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0
-                    yn_pos = -np.cos(np.arcsin(zn_pos/(thickness/2.0)))
+                    z_pos = -((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0
+                    y_pos = -np.cos(np.arcsin(z_pos/(thickness/2.0)))
                 elif glCantileverCrossSection==3:
-                    zn_pos = -((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)*1.0/2.0-(1.0/6.0)*height                  
-                    yn_pos = -(2.0/3.0 - ((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0-(1.0/6.0)*height)*0.5
+                    z_pos = -((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)*1.0/2.0-(1.0/6.0)*height                  
+                    y_pos = -(2.0/3.0 - ((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0-(1.0/6.0)*height)*0.5
 
-                strainXXbottom = calculate_normal_stress(x_pos, zn_pos, yn_pos, length, height, thickness, glCantileverCrossSection, Pzn, Pyn) 
+                strainXXbottom = calculate_normal_stress(x_pos, z_pos, y_pos, length, height, thickness, glCantileverCrossSection, Pz, Py) 
 
                 elementColor = color_determiner( smallestValue , biggestValue , strainXXup, glCantileverCrossSection )
                 colorList.append(elementColor)
@@ -380,7 +379,7 @@ def elements_color_determiner( deformed,
         if orientation == 'XY':
 
             for i in range( int( len(listElements)/2 ) ):
-                if i %(noElementsZn/2) == 0 and i != 0:
+                if i %(noElementsZ/2) == 0 and i != 0:
                 # update verticalMultiplier to the original value
                     verticalMultiplier = 1.0
                     xIncrement += elementSize
@@ -390,36 +389,36 @@ def elements_color_determiner( deformed,
             
                 x_pos = xIncrement
                 if glCantileverCrossSection==0:
-                    yn_pos = -((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0
-                    zn_pos = height/2.0
+                    y_pos = -((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0
+                    z_pos = height/2.0
                 elif glCantileverCrossSection==1:
-                    yn_pos = -((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0                    
-                    zn_pos = height/2.0
+                    y_pos = -((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0                    
+                    z_pos = height/2.0
                 elif glCantileverCrossSection==2:
-                    yn_pos = -((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0
-                    zn_pos = np.sin(np.arccos(abs(yn_pos)/(height/2.0)))
+                    y_pos = -((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0
+                    z_pos = np.sin(np.arccos(abs(y_pos)/(height/2.0)))
                 elif glCantileverCrossSection==3:
-                    yn_pos = -((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)*1.0/2.0
-                    zn_pos = height*1.0/3.0                    
+                    y_pos = -((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)*1.0/2.0
+                    z_pos = height*1.0/3.0                    
 
-                strainXXbottom = calculate_normal_stress(x_pos, zn_pos, yn_pos, length, height, thickness, glCantileverCrossSection, Pzn, Pyn)        
+                strainXXbottom = calculate_normal_stress(x_pos, z_pos, y_pos, length, height, thickness, glCantileverCrossSection, Pz, Py)        
 
 
                 x_pos = xIncrement
                 if glCantileverCrossSection==0:
-                    yn_pos = ((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0
-                    zn_pos = height/2.0
+                    y_pos = ((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0
+                    z_pos = height/2.0
                 elif glCantileverCrossSection==1:
-                    yn_pos = ((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0
-                    zn_pos = height/2.0
+                    y_pos = ((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0
+                    z_pos = height/2.0
                 elif glCantileverCrossSection==2:
-                    yn_pos = ((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)/2.0
-                    zn_pos = np.sin(np.arccos(abs(yn_pos)/(height/2.0)))
+                    y_pos = ((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)/2.0
+                    z_pos = np.sin(np.arccos(abs(y_pos)/(height/2.0)))
                 elif glCantileverCrossSection==3:
-                    yn_pos = ((verticalMultiplier-1.0)*height)/(noElementsZn/2.0-1.0)*1.0/2.0
-                    zn_pos = height*1.0/3.0                    
+                    y_pos = ((verticalMultiplier-1.0)*height)/(noElementsZ/2.0-1.0)*1.0/2.0
+                    z_pos = height*1.0/3.0                    
 
-                strainXXup = calculate_normal_stress(x_pos, zn_pos, yn_pos, length, height, thickness, glCantileverCrossSection, Pzn, Pyn)       
+                strainXXup = calculate_normal_stress(x_pos, z_pos, y_pos, length, height, thickness, glCantileverCrossSection, Pz, Py)       
             
                 elementColor = color_determiner( smallestValue , biggestValue , strainXXup , glCantileverCrossSection )
                 colorList.append(elementColor)
@@ -439,7 +438,7 @@ def construct_deformed_elements( deformedBeam         ,
                                  axialDirElementSize  ,
                                  lateralDirElementSize,
                                  noElementsX          , 
-                                 noElementsZn          ,
+                                 noElementsZ          ,
                                  normalVectors1       ,
                                  normalVectors2
                                ):
@@ -447,7 +446,7 @@ def construct_deformed_elements( deformedBeam         ,
     listDeformedElements = list()
 
     for i in range(noElementsX):
-        for j in range(int(noElementsZn/2)):
+        for j in range(int(noElementsZ/2)):
 
             lowerLeftPos1  = [ deformedBeam[i][0]   + float(j)  *axialDirElementSize  *normalVectors1[i][0]  ,
                                deformedBeam[i][1]   + float(j)  *lateralDirElementSize  *normalVectors1[i][1]   ]
@@ -490,13 +489,13 @@ def create_coordinates_list( listElements):
 
     return listXCoord , listYCoord
 
-def calculate_stresses_xzn_element(x_pos, zn_pos, length, height, thickness, glCantileverCrossSection, Pzn, Pyn):
+def calculate_stresses_xz_element(x_pos, z_pos, length, height, thickness, glCantileverCrossSection, Pz, Py):
     sigma_x_l = list()
     sigma_x_r = list()
-    tau_xzn = list() 
+    tau_xz = list() 
 
     ##Element Properties:
-    yn_pos = 0
+    y_pos = 0
     length_of_element = 2.0
 
     if(glCantileverCrossSection==3):
@@ -505,25 +504,25 @@ def calculate_stresses_xzn_element(x_pos, zn_pos, length, height, thickness, glC
         height_of_element = height/2.0
     
     ## Determine moment of inertia depending on active cross section:
-    ## Iyn = Sum(Iz_i) + Sum(ez_i^2*A_i)
-    if(glCantileverCrossSection==0): #0,08333333
-        Iyn = thickness*height**3.0/12.0
-    if(glCantileverCrossSection==1): #0,04493333
-        Iyn = 2*(height*(height/10.0)**3.0/12.0) + (height-2*height/10.0)**3*height/10.0/12.0 + 2.0*((height/2.0-height/20)**2.0*height*height/10.0)        
-    if(glCantileverCrossSection==2): #0,04908734
-        Iyn = math.pi*(height)**4.0/64.0
-    if(glCantileverCrossSection==3): #0,02777777
-        Iyn = thickness**4.0/36.0  
+    ## Iy = Sum(Iz_i) + Sum(ez_i^2*A_i)
+    if(glCantileverCrossSection==0): 
+        Iy = thickness*height**3.0/12.0
+    if(glCantileverCrossSection==1): 
+        Iy = 2*(height*(height/10.0)**3.0/12.0) + (height-2*height/10.0)**3*height/10.0/12.0 + 2.0*((height/2.0-height/20)**2.0*height*height/10.0)        
+    if(glCantileverCrossSection==2): 
+        Iy = math.pi*(height)**4.0/64.0
+    if(glCantileverCrossSection==3): 
+        Iy = thickness**4.0/36.0  
 
-    ## Izn = Sum(Iy_i) + Sum(ey_i^2*A_i) = Sum(Iy_i) + 0 
+    ## Iz = Sum(Iy_i) + Sum(ey_i^2*A_i) = Sum(Iy_i) + 0 
     if(glCantileverCrossSection==0):
-        Izn = height*thickness**3.0/12.0
+        Iz = height*thickness**3.0/12.0
     if(glCantileverCrossSection==1):
-        Izn = 2*(height/10.0*height**3.0/12.0) + (height/10.0)**3.0*(height-2*height/10.0)/12.0        
+        Iz = 2*(height/10.0*height**3.0/12.0) + (height/10.0)**3.0*(height-2*height/10.0)/12.0        
     if(glCantileverCrossSection==2):
-        Izn = math.pi*(height)**4.0/64.0
+        Iz = math.pi*(height)**4.0/64.0
     if(glCantileverCrossSection==3):
-        Izn = thickness**4.0/48.0    
+        Iz = thickness**4.0/48.0    
     
     ## Iyz = Sum(Iyz_i) + Sum(ey_i*ez_i*A_i) = 0 + Sum(ey_i*ez_i*A_i) - Deviation momentum is zero because of symmetry of cross sections
     if(glCantileverCrossSection==0):
@@ -536,52 +535,52 @@ def calculate_stresses_xzn_element(x_pos, zn_pos, length, height, thickness, glC
         Iyz = 0.0     
 
     ## Calculation of Momentum M_y & M_z
-    M_yn_l = -(length-(x_pos-length_of_element/2.0)) * Pzn
-    M_yn_r = -(length-(x_pos+length_of_element/2.0)) * Pzn
-    M_zn_l = -(length-(x_pos-length_of_element/2.0)) * Pyn
-    M_zn_r = -(length-(x_pos+length_of_element/2.0)) * Pyn
+    M_y_l = -(length-(x_pos-length_of_element/2.0)) * Pz
+    M_y_r = -(length-(x_pos+length_of_element/2.0)) * Pz
+    M_z_l = -(length-(x_pos-length_of_element/2.0)) * Py
+    M_z_r = -(length-(x_pos+length_of_element/2.0)) * Py
 
     ## Calculation of sigma(x,y,z) 
     n=11
     for i in range(n):
         # sigma(x,y,z) = (N(x)/A) + (My*Iz-Mz*Iyz)/(Iy*Iz-Iyz**2)*z + (Mz*Iy-My*Iyz)/(Iy*Iz-Iyz**2)*y
-        sigma_x_l.append(M_zn_l/Izn*yn_pos + M_yn_l/Iyn*((i-n+1)/20.0))        
-        sigma_x_r.append(M_zn_r/Izn*yn_pos + M_yn_r/Iyn*((i-n+1)/20.0))
+        sigma_x_l.append(M_z_l/Iz*y_pos + M_y_l/Iy*((i-n+1)/20.0))        
+        sigma_x_r.append(M_z_r/Iz*y_pos + M_y_r/Iy*((i-n+1)/20.0))
 
-    ## Calculation of tau_xzn
+    ## Calculation of tau_xz
     m=10
     s_pos=0 #starting at the bottom
     if glCantileverCrossSection == 0:
         for i in range(m):
             s_pos=float(i)/float(m)*height_of_element
-            tau_xzn.append( - Pzn/Izn * 1/2 * (height*s_pos-s_pos**2) )
+            tau_xz.append( - Pz/Iz * 1/2 * (height*s_pos-s_pos**2) )
     elif glCantileverCrossSection == 1:
         for i in range(m):
             s_pos=float(i)/float(m)*height_of_element
-            tau_xzn.append( - Pzn/Izn * 1/2 * (height*s_pos-s_pos**2) )
+            tau_xz.append( - Pz/Iz * 1/2 * (height*s_pos-s_pos**2) )
     elif glCantileverCrossSection == 2:
         for i in range(m):
             s_pos=height_of_element-float(i)/float(m)*height_of_element
-            tau_xzn.append( - Pzn * 4/(3*math.pi) * ((height/2)**2-s_pos**2)/((height/2)**4 ) )
+            tau_xz.append( - Pz * 4/(3*math.pi) * ((height/2)**2-s_pos**2)/((height/2)**4 ) )
     elif glCantileverCrossSection == 3:
         for i in range(m):
             s_pos=float(i)/float(m)*height_of_element
-            tau_xzn.append( - Pzn/Izn * 1/3 * (height*s_pos-s_pos**2) )
+            tau_xz.append( - Pz/Iz * 1/3 * (height*s_pos-s_pos**2) )
 
 ### PRINTSTART
     if (glCantileverPrint == 1): 
-        if (Pzn==100 and Pyn==100):
+        if (Pz==100 and Py==100):
             if(glCantileverCrossSection==3):
                 print ("Sigma_xx(x=1.5, y=-0,66, z=0) = ", -1*(sigma_x_l[0]))
             else:
                 print ("Sigma_xx(x=1.5, y=-0,5, z=0) = ", -1*(sigma_x_l[0]))
-            print ("Tau_xy(x=1.5, y=0, z=0) = ", tau_xzn[-1])
+            print ("Tau_xz(x=1.5, y=0, z=0) = ", tau_xz[-1])
             print ("")               
 ### PRINTEND
 
-    return sigma_x_l,sigma_x_r,tau_xzn
+    return sigma_x_l,sigma_x_r,tau_xz
 
-def calculate_normal_stress(x_pos, zn_pos, yn_pos, length, height, thickness, glCantileverCrossSection, Pzn, Pyn):
+def calculate_normal_stress(x_pos, z_pos, y_pos, length, height, thickness, glCantileverCrossSection, Pz, Py):
     
     ## Declare and initialize sigma:
     sigma = 0
@@ -590,23 +589,23 @@ def calculate_normal_stress(x_pos, zn_pos, yn_pos, length, height, thickness, gl
     ## Determine moment of inertia depending on active cross section:
     ## Iy = Sum(Iz_i) + Sum(ez_i^2*A_i)
     if(glCantileverCrossSection==0):
-        Iyn = thickness*height**3.0/12.0
+        Iy = thickness*height**3.0/12.0
     if(glCantileverCrossSection==1):        
-        Iyn = 2*(height*(height/10.0)**3.0/12.0) + (height-2*height/10.0)**3*height/10.0/12.0 + 2.0*((height/2.0-height/20)**2.0*height*height/10.0)       
+        Iy = 2*(height*(height/10.0)**3.0/12.0) + (height-2*height/10.0)**3*height/10.0/12.0 + 2.0*((height/2.0-height/20)**2.0*height*height/10.0)       
     if(glCantileverCrossSection==2):
-        Iyn = math.pi*(height)**4.0/64.0
+        Iy = math.pi*(height)**4.0/64.0
     if(glCantileverCrossSection==3):
-        Iyn = thickness**4.0/36.0  
+        Iy = thickness**4.0/36.0  
 
     ## Iz = Sum(Iy_i) + Sum(ey_i^2*A_i) = Sum(Iy_i) + 0 
     if(glCantileverCrossSection==0):
-        Izn = height*thickness**3.0/12.0
+        Iz = height*thickness**3.0/12.0
     if(glCantileverCrossSection==1):
-        Izn = 2*(height/10.0*height**3.0/12.0) + (height/10.0)**3.0*(height-2*height/10.0)/12.0      
+        Iz = 2*(height/10.0*height**3.0/12.0) + (height/10.0)**3.0*(height-2*height/10.0)/12.0      
     if(glCantileverCrossSection==2):
-        Izn = math.pi*(height)**4.0/64.0
+        Iz = math.pi*(height)**4.0/64.0
     if(glCantileverCrossSection==3):
-        Izn = thickness**4.0/48.0    
+        Iz = thickness**4.0/48.0    
     
 
     #  Calculation of Iyz:   Iyz = Sum(Iyz_i) + Sum(ey_i*ez_i*A_i) = 0 + Sum(ey_i*ez_i*A_i) 
@@ -621,11 +620,11 @@ def calculate_normal_stress(x_pos, zn_pos, yn_pos, length, height, thickness, gl
         Iyz = 0.0
 
     ## Calculation of momentum M_y and M_z:
-    M_zn = (length-x_pos) * Pyn
-    M_yn = (length-x_pos) * Pzn
+    M_z = (length-x_pos) * Py
+    M_y = (length-x_pos) * Pz
 
     ## Calculation of sigma(x,y,z):
     #  Formula: sigma(x,y,z) = (N(x)/A) + (My*Iz-Mz*Iyz)/(Iy*Iz-Iyz**2)*z + (Mz*Iy-My*Iyz)/(Iy*Iz-Iyz**2)*y
-    sigma = M_zn/Izn*yn_pos + M_yn/Iyn*zn_pos 
+    sigma = M_z/Iz*y_pos + M_y/Iy*z_pos 
                     
     return sigma
