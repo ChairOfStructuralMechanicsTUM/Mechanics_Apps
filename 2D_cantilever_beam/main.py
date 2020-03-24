@@ -40,7 +40,7 @@ noElementsY = 20
 elementSizeX = length / noElementsX
 elementSizeZ = height / noElementsZ
 elementSizeY = thickness / noElementsY
-amplificationFactor = 100
+amplificationFactor = 200
 
 
 # Cross Section Source:
@@ -107,7 +107,6 @@ TauArrowSource4     = ColumnDataSource(data = dict(xs=[], ys=[], xe=[], ye=[]))
 
 # colorBar source plot:
 colorBarSource = ColumnDataSource(data = dict( x=[], y=[], c=[], a=[] ))
-colorDistributionNoteSource  = ColumnDataSource(data=dict(x=[5.9] , y=[-2.8], note=['non-linear color distribution!']))
 
 
 def deformed_cantilever_beam_determiner_XZ( 
@@ -636,7 +635,6 @@ def fun_change_Py(attrname, old, new):
 def fun_change_Cross_Section(attrname, old, new):
     if (radio_button_group.active == 0 ):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
-        colorDistributionNoteSource.data=dict(x=[5.9] , y=[-2.8], note=['non-linear color distribution!'])
         CrossSectionSource1.data = dict(sp1=[CrossSection1], x = [0], y = [0])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
@@ -651,7 +649,6 @@ def fun_change_Cross_Section(attrname, old, new):
         XZElement2Source.data = dict(sp4=[], x = [], y = [])          
     elif (radio_button_group.active == 1):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
-        colorDistributionNoteSource.data=dict(x=[] , y=[], note=[])
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[CrossSection2], x = [0], y = [0])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
@@ -664,7 +661,6 @@ def fun_change_Cross_Section(attrname, old, new):
         XZElement2Source.data = dict(sp4=[], x = [], y = [])        
     elif (radio_button_group.active == 2):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
-        colorDistributionNoteSource.data=dict(x=[] , y=[], note=[])
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[CrossSection3], x = [0], y = [0])
@@ -677,7 +673,6 @@ def fun_change_Cross_Section(attrname, old, new):
         XZElement2Source.data = dict(sp4=[], x = [], y = [])                                            
     elif (radio_button_group.active == 3):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
-        colorDistributionNoteSource.data=dict(x=[] , y=[], note=[])
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])       
@@ -842,17 +837,6 @@ plotDefXZ.add_layout(
                                 )
                     )
 
-# Add color distribution note
-plotDefXZ.add_layout(
-                      LabelSet(
-                                  x='x', y='y',
-                                  text='note',
-                                  text_color='grey',text_font_size="12pt",
-                                  level='glyph',text_baseline="middle",text_align="right",
-                                  source=colorDistributionNoteSource
-                                )
-                    )
-
 # Construct the arrows
 plotDefXZ.add_layout( 
                      Arrow(end=NormalHead(line_color="black",line_width=3,size=10),
@@ -920,17 +904,6 @@ plotDefXY.add_layout(
                                   text_color='black',text_font_size="12pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                                   source=labelXY
-                                )
-                    )
-
-# Add color distribution note
-plotDefXY.add_layout(
-                      LabelSet(
-                                  x='x', y='y',
-                                  text='note',
-                                  text_color='grey',text_font_size="12pt",
-                                  level='glyph',text_baseline="middle",text_align="right",
-                                  source=colorDistributionNoteSource
                                 )
                     )
 
@@ -1147,5 +1120,5 @@ Scheme = Div( text = "<img src='/2D_cantilever_beam/static/images/3DBeam.png' wi
 
 curdoc().add_root(column(row(Spacer(height=650),description, column(Spacer(height=100),Scheme)),row(
     column(plotDefZY,widgetbox(radio_button_group),Zforce_slider,Yforce_slider,Reset_button),
-    column(row(column(plotXZElement,row(Spacer(width=40),radio_button_group2)),column(row(plotDefXZ, plotDefXY),colorBar))))))
+    column(row(column(plotXZElement,row(Spacer(width=40),radio_button_group2)),column(row(column(plotDefXZ), column(plotDefXY)),colorBar))))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
