@@ -9,15 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
+   width="190.5mm"
+   height="190.5mm"
    id="svg2"
    version="1.1"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="Circular.svg"
    inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
-   inkscape:export-xdpi="300"
-   inkscape:export-ydpi="300">
+   inkscape:export-xdpi="600"
+   inkscape:export-ydpi="600">
   <defs
      id="defs4">
     <clipPath
@@ -39,9 +39,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.47977778"
-     inkscape:cx="568.48164"
-     inkscape:cy="550.88012"
+     inkscape:zoom="0.67850824"
+     inkscape:cx="541.8962"
+     inkscape:cy="213.14698"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -49,7 +49,8 @@
      inkscape:window-height="1003"
      inkscape:window-x="-9"
      inkscape:window-y="-9"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     inkscape:snap-object-midpoints="true" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -58,17 +59,18 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(0,-402.51969)">
     <g
        id="g3036"
-       transform="translate(-1.4738216,-2.2369118)"
+       transform="translate(-23.476184,366.86098)"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300">
@@ -89,21 +91,17 @@
         </g>
       </g>
     </g>
-    <path
-       sodipodi:type="arc"
-       style="fill:#c3c3c3;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.44473886;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:21.99599991"
+    <circle
+       style="fill:#c3c3c3;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:21.99600029;stroke-opacity:1"
        id="path3765"
-       sodipodi:cx="393.9595"
-       sodipodi:cy="708.91034"
-       sodipodi:rx="145.46196"
-       sodipodi:ry="145.46196"
-       d="m 539.42146,708.91034 a 145.46196,145.46196 0 1 1 -290.92392,0 145.46196,145.46196 0 1 1 290.92392,0 z"
-       transform="matrix(1.0226041,0,0,1.0226041,-24.35464,-334.55082)"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
+       inkscape:export-ydpi="300"
+       cx="359.35028"
+       cy="764.73444"
+       r="148.75" />
     <rect
-       style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.50000000000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:25"
+       style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:25;stroke-opacity:1"
        id="rect5293"
        width="600"
        height="587.14288"
@@ -113,32 +111,32 @@
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000083, 20.00000083;stroke-dashoffset:25.00000105"
-       d="m 403.94838,237.42955 222.60275,0"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:20.00000083, 20.00000083;stroke-dashoffset:25.00000191;stroke-opacity:1"
+       d="M 384.7887,611.7802 H 607.39145"
        id="path3777-4"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 601.65085,212.21573 0,357.89776"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 582.49117,586.56638 V 944.46414"
        id="path3797"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 581.15951,219.51868 c 36.90508,36.90508 39.07596,39.07597 39.07596,39.07597"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 561.99983,593.86933 c 36.90508,36.90508 39.07596,39.07597 39.07596,39.07597"
        id="path3799"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 581.77604,522.4088 c 36.90507,36.90508 39.07596,39.07597 39.07596,39.07597"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 562.61636,896.75945 c 36.90507,36.90508 39.07596,39.07597 39.07596,39.07597"
        id="path3799-9"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
@@ -147,28 +145,28 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       x="611.61676"
-       y="431.13153"
+       x="592.45709"
+       y="805.48218"
        id="text3819"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"><tspan
          sodipodi:role="line"
          id="tspan3821"
-         x="611.61676"
-         y="431.13153"
+         x="592.45709"
+         y="805.48218"
          style="font-size:32.23602295px;line-height:1.25;font-family:sans-serif">a</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000083, 20.00000083;stroke-dashoffset:25.00000105"
-       d="m 402.90583,541.81111 222.60275,0"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:20.00000083, 20.00000083;stroke-dashoffset:25.00000191;stroke-opacity:1"
+       d="M 383.74615,916.16176 H 606.3489"
        id="path3777-4-0"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#e37222;stroke-width:12.00000095000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:21.99599990999999800;opacity:0.75"
-       d="m 378.20684,237.02687 c -83.92633,0 -151.94584,68.01951 -151.94584,151.94584 0,83.92632 68.01951,151.97941 151.94584,151.97941 l 0,-303.92525 z"
+       style="opacity:0.75;fill:none;stroke:#e37222;stroke-width:12.00000095;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:21.99600029;stroke-opacity:1"
+       d="m 359.04716,611.37752 c -83.92633,0 -151.94584,68.01951 -151.94584,151.94584 0,83.92632 68.01951,151.97941 151.94584,151.97941 z"
        id="path3765-0"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
@@ -179,8 +177,8 @@
        id="rect4569"
        width="41.854317"
        height="301.05566"
-       x="363.63348"
-       y="238.98283"
+       x="344.47382"
+       y="613.33344"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
@@ -189,14 +187,14 @@
        id="rect4571"
        width="17.762049"
        height="294.64694"
-       x="370.77628"
-       y="239.786"
+       x="351.61661"
+       y="614.1366"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#0065bf;stroke-width:7.00000047999999970;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:21.99599990999999800;opacity:0.75"
-       d="m 230.13158,391.68967 c 0,-83.92633 66.81709,-151.94584 149.2598,-151.94584 82.44271,0 149.29278,68.01951 149.29278,151.94584 l -298.55258,0 z"
+       style="opacity:0.75;fill:none;stroke:#0065bf;stroke-width:7.00000048;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:21.99600029;stroke-opacity:1"
+       d="m 210.9719,766.04032 c 0,-83.92633 66.81709,-151.94584 149.2598,-151.94584 82.44271,0 149.29278,68.01951 149.29278,151.94584 z"
        id="path3765-0-4"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
@@ -207,31 +205,31 @@
        id="rect4571-6"
        width="10.435413"
        height="291.0907"
-       x="386.72672"
-       y="-525.01648"
-       transform="matrix(0,1,-1,0,0,0)"
+       x="761.07733"
+       y="-505.85681"
+       transform="rotate(90)"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#0065bd;fill-opacity:1;stroke:none"
-       x="103.317"
-       y="160.92361"
+       x="29.999512"
+       y="542.08026"
        id="text3900-4"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"><tspan
          sodipodi:role="line"
-         x="103.317"
-         y="160.92361"
+         x="29.999512"
+         y="542.08026"
          id="tspan3904-6"
          style="font-size:30px;line-height:1.25;font-family:sans-serif">XY-View</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a2ad00;fill-opacity:1;stroke:none"
-       x="103.31749"
-       y="98.568619"
+       x="30"
+       y="479.72528"
        id="text3900-4-6"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
@@ -239,37 +237,47 @@
        inkscape:transform-center-x="-83.239746"
        inkscape:transform-center-y="10.913086"><tspan
          sodipodi:role="line"
-         x="103.31749"
-         y="98.568619"
+         x="30"
+         y="479.72528"
          id="tspan3904-6-1"
          style="font-size:30px;line-height:1.25;font-family:sans-serif">Detached Element</tspan><tspan
          sodipodi:role="line"
-         x="103.31749"
-         y="136.06862"
+         x="30"
+         y="517.22528"
          id="tspan3009"
          style="font-size:30px;line-height:1.25;font-family:sans-serif"> </tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#e37222;fill-opacity:1;stroke:none"
-       x="103.317"
-       y="129.45062"
+       x="29.999512"
+       y="510.6073"
        id="text3900-1"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"><tspan
          sodipodi:role="line"
-         x="103.317"
-         y="129.45062"
+         x="29.999512"
+         y="510.6073"
          id="tspan3904-4"
          style="font-size:30px;line-height:1.25;font-family:sans-serif">XZ-View</tspan></text>
     <path
-       style="fill:none;stroke:#a2ad00;stroke-width:11.47940922;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 378.4273,538.83648 C 378.4089,392.37863 378.4087,390.3159 378.4087,390.3159"
+       style="fill:none;stroke:#a2ad00;stroke-width:11.47940922;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 359.26762,913.18713 c -0.0184,-146.45785 -0.0186,-148.52058 -0.0186,-148.52058"
        id="path3021-3-8-4-1"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\Circular_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"
        inkscape:transform-center-y="74.103884" />
-  </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot196"
+       style="fill:black;fill-opacity:1;stroke:none;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;letter-spacing:0px;word-spacing:0px"><flowRegion
+         id="flowRegion198"><rect
+           id="rect200"
+           width="483.41342"
+           height="157.6989"
+           x="-97.272217"
+           y="2.248956" /></flowRegion><flowPara
+         id="flowPara202"></flowPara></flowRoot>  </g>
 </svg>

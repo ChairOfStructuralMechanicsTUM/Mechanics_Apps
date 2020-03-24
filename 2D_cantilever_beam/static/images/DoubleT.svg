@@ -9,8 +9,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
+   width="190.5mm"
+   height="190.5mm"
    id="svg2"
    version="1.1"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -27,9 +27,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.8101934"
-     inkscape:cx="106.76028"
-     inkscape:cy="908.29134"
+     inkscape:zoom="0.64000001"
+     inkscape:cx="422.75422"
+     inkscape:cy="254.64313"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -48,17 +48,18 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(0,-402.51969)">
     <g
        id="g3036"
-       transform="translate(-1.4738216,-2.2369118)"
+       transform="translate(-23.291418,368.36363)"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300">
@@ -82,22 +83,22 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#0065bd;fill-opacity:1;stroke:none"
-       x="103.317"
-       y="160.92361"
+       x="29.648438"
+       y="542.08026"
        id="text3900-4"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"><tspan
          sodipodi:role="line"
-         x="103.317"
-         y="160.92361"
+         x="29.648438"
+         y="542.08026"
          id="tspan3904-6"
          style="font-size:30px;line-height:1.25;font-family:sans-serif">XY-View</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a2ad00;fill-opacity:1;stroke:none"
-       x="103.31749"
-       y="98.568619"
+       x="29.648926"
+       y="479.72522"
        id="text3900-4-6"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
@@ -105,39 +106,39 @@
        inkscape:transform-center-x="-83.239746"
        inkscape:transform-center-y="10.913086"><tspan
          sodipodi:role="line"
-         x="103.31749"
-         y="98.568619"
+         x="29.648926"
+         y="479.72522"
          id="tspan3904-6-1"
          style="font-size:30px;line-height:1.25;font-family:sans-serif">Detached Element</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#e37222;fill-opacity:1;stroke:none"
-       x="103.317"
-       y="129.45062"
+       x="29.648438"
+       y="510.60721"
        id="text3900-1"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"><tspan
          sodipodi:role="line"
-         x="103.317"
-         y="129.45062"
+         x="29.648438"
+         y="510.60721"
          id="tspan3904-4"
          style="font-size:30px;line-height:1.25;font-family:sans-serif">XZ-View</tspan></text>
     <g
        id="g3764"
-       transform="matrix(1.001733,0,0,0.94213586,1.0703603,28.96766)"
-       style="fill:#9b9b9b;fill-opacity:1;stroke:#000000;stroke-width:2.57340002;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       transform="matrix(1.001733,0,0,0.94213586,-16.117139,403.53015)"
+       style="fill:#9b9b9b;fill-opacity:1;stroke:#000000;stroke-width:2.57340002;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300">
       <g
-         style="fill:#9b9b9b;fill-opacity:1;stroke:#000000;stroke-width:2.57340002;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         style="fill:#9b9b9b;fill-opacity:1;stroke:#000000;stroke-width:2.57340002;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="g2990"
          inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
          inkscape:export-xdpi="300"
          inkscape:export-ydpi="300">
         <g
-           style="fill:#9b9b9b;fill-opacity:1;stroke:#000000;stroke-width:2.57340002;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           style="fill:#9b9b9b;fill-opacity:1;stroke:#000000;stroke-width:2.57340002;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="g2985">
           <rect
              y="223.82921"
@@ -145,21 +146,21 @@
              height="40"
              width="296.98486"
              id="rect3769"
-             style="fill:#9b9b9b;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.57340002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:21.99599991" />
+             style="fill:#9b9b9b;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.57340002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:21.99600029;stroke-opacity:1" />
           <rect
              y="260.40045"
              x="355.30701"
              height="242.43661"
              width="40"
              id="rect3773"
-             style="fill:#9b9b9b;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.57340002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:21.99599991" />
+             style="fill:#9b9b9b;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.57340002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:21.99600029;stroke-opacity:1" />
           <rect
              y="499.60107"
              x="228.29401"
              height="40"
              width="296.98486"
              id="rect3769-3"
-             style="fill:#9b9b9b;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.57340002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:21.99599991" />
+             style="fill:#9b9b9b;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.57340002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:21.99600029;stroke-opacity:1" />
         </g>
       </g>
     </g>
@@ -168,8 +169,8 @@
        id="rect3771"
        width="37.531509"
        height="14.985946"
-       x="358.017"
-       y="490.25677"
+       x="340.8295"
+       y="864.81927"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
@@ -178,16 +179,16 @@
        id="rect3771-5"
        width="37.531509"
        height="14.985946"
-       x="358.39633"
-       y="264.86945"
+       x="341.20883"
+       y="639.43195"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
        inkscape:connector-curvature="0"
        id="path3021-3-8"
-       d="m 356.28336,500.95896 c 1.48772,-222.11796 1.50876,-225.24644 1.50876,-225.24644"
-       style="fill:none;stroke:#e37222;stroke-width:11.98056507000000100;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;opacity:0.75"
+       d="m 339.09586,875.52145 c 1.48772,-222.11796 1.50876,-225.24644 1.50876,-225.24644"
+       style="opacity:0.75;fill:none;stroke:#e37222;stroke-width:11.98056507;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
@@ -196,8 +197,8 @@
        id="rect3777"
        width="7.4953938"
        height="9.9623995"
-       x="387.59705"
-       y="488.80627"
+       x="370.40955"
+       y="863.36877"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
@@ -206,8 +207,8 @@
        id="rect3771-5-4"
        width="37.912701"
        height="14.985946"
-       x="348.3898"
-       y="261.16724"
+       x="331.2023"
+       y="635.72974"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
@@ -216,38 +217,38 @@
        id="rect3771-5-4-9"
        width="37.912701"
        height="14.985946"
-       x="377.39969"
-       y="261.20023"
+       x="360.21219"
+       y="635.7627"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
        inkscape:connector-curvature="0"
        id="path3021"
-       d="m 231.69931,539.21388 c 0,-40.44794 0,-41.01761 0,-41.01761"
-       style="fill:none;stroke:#e37222;stroke-width:11.71661091000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;opacity:0.75"
+       d="m 214.51181,913.77637 c 0,-40.44794 0,-41.01761 0,-41.01761"
+       style="opacity:0.75;fill:none;stroke:#e37222;stroke-width:11.71661091;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
        inkscape:connector-curvature="0"
        id="path3021-8"
-       d="m 231.93143,278.93337 c 0,-41.66048 0,-42.24726 0,-42.24726"
-       style="fill:none;stroke:#e37222;stroke-width:12.18051529000000100;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;opacity:0.75"
+       d="m 214.74393,653.49586 c 0,-41.66048 0,-42.24726 0,-42.24726"
+       style="opacity:0.75;fill:none;stroke:#e37222;stroke-width:12.18051529;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
        inkscape:connector-curvature="0"
        id="path3021-3-8-6"
-       d="m 230.31217,235.18668 c 294.17553,0.0103 298.31901,0.0105 298.31901,0.0105"
-       style="fill:none;stroke:#0065bd;stroke-width:12.00000095000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;opacity:0.75"
+       d="m 213.12467,609.74917 c 294.17553,0.0103 298.31901,0.0105 298.31901,0.0105"
+       style="opacity:0.75;fill:none;stroke:#0065bd;stroke-width:12.00000095;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000048;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 112.65928,290.89018 0,-65.52654"
+       style="fill:none;stroke:#000000;stroke-width:2.50000048;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 95.471781,665.45267 V 599.92613"
        id="path3797-3"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
@@ -256,36 +257,36 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       x="55.151848"
-       y="251.63103"
+       x="37.964348"
+       y="626.19354"
        id="text3819-5"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"><tspan
          sodipodi:role="line"
          id="tspan3821-4"
-         x="55.151848"
-         y="251.63103"
+         x="37.964348"
+         y="626.19354"
          style="font-size:26.0198288px;line-height:1.25;font-family:sans-serif"> a</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000048;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:30.00000078, 30.00000078;stroke-dashoffset:18.25000045"
-       d="m 223.64513,239.14802 -142.639529,0"
+       style="fill:none;stroke:#000000;stroke-width:2.50000048;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:30.00000078, 30.00000078;stroke-dashoffset:18.25;stroke-opacity:1"
+       d="M 206.45763,613.71051 H 63.818102"
        id="path3777-4-6-2"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000048;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 104.30324,247.30451 c 15.93087,-15.93089 16.86798,-16.868 16.86798,-16.868"
+       style="fill:none;stroke:#000000;stroke-width:2.50000048;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 87.115741,621.867 C 103.04661,605.93611 103.98372,604.999 103.98372,604.999"
        id="path3799-15-6"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000048;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 104.30365,285.11056 c 15.93088,-15.93089 16.86799,-16.868 16.86799,-16.868"
+       style="fill:none;stroke:#000000;stroke-width:2.50000048;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 87.116151,659.67305 c 15.930879,-15.93089 16.867989,-16.868 16.867989,-16.868"
        id="path3799-15-6-4"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
@@ -294,8 +295,8 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       x="28.395254"
-       y="355.48523"
+       x="16.20118"
+       y="883.42957"
        id="text3819-5-6"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
@@ -303,26 +304,26 @@
        transform="scale(1.409496,0.70947345)"><tspan
          sodipodi:role="line"
          id="tspan3821-4-1"
-         x="28.395254"
-         y="355.48523"
+         x="16.20118"
+         y="883.42957"
          style="font-size:36.67484283px;line-height:1.25;font-family:sans-serif"> _</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       x="54.111443"
-       y="279.21005"
+       x="36.923943"
+       y="653.77252"
        id="text3819-5-4"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"><tspan
          sodipodi:role="line"
          id="tspan3821-4-0"
-         x="54.111443"
-         y="279.21005"
+         x="36.923943"
+         y="653.77252"
          style="font-size:26.0198288px;line-height:1.25;font-family:sans-serif">10</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.50000048;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:30.00000078, 30.00000078;stroke-dashoffset:18.25000045"
-       d="m 224.79463,276.58921 -142.639549,0"
+       style="fill:none;stroke:#000000;stroke-width:2.50000048;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:30.00000078, 30.00000078;stroke-dashoffset:18.25;stroke-opacity:1"
+       d="M 207.60713,651.1517 H 64.967582"
        id="path3777-4-6-2-5"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
@@ -331,7 +332,8 @@
     <flowRoot
        xml:space="preserve"
        id="flowRoot3892"
-       style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:none;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
+       style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:none;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="translate(-48.791016,381.15662)"><flowRegion
          id="flowRegion3894"
          style="font-family:sans-serif"><rect
            id="rect3896"
@@ -342,32 +344,32 @@
            style="font-family:sans-serif;fill:none" /></flowRegion><flowPara
          id="flowPara3898"
          style="font-size:22px;line-height:1.25;font-family:sans-serif"> </flowPara></flowRoot>    <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000073, 20.00000073;stroke-dashoffset:25.00000093"
-       d="m 524.493,237.42923 102.0576,0"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:20.00000073, 20.00000073;stroke-dashoffset:25;stroke-opacity:1"
+       d="M 507.3055,611.99172 H 609.3631"
        id="path3777-4-1"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 601.6503,212.21541 0,357.89777"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 584.4628,586.7779 V 944.67567"
        id="path3797-7"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 581.159,219.51836 c 36.905,36.90508 39.0759,39.07597 39.0759,39.07597"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 563.9715,594.08085 c 36.905,36.90508 39.0759,39.07597 39.0759,39.07597"
        id="path3799-4"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 581.7755,522.40848 c 36.9051,36.9051 39.076,39.076 39.076,39.076"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 564.588,896.97097 c 36.9051,36.9051 39.076,39.076 39.076,39.076"
        id="path3799-9-0"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
@@ -376,52 +378,52 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       x="611.61627"
-       y="431.13116"
+       x="594.42877"
+       y="805.69366"
        id="text3819-9"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"><tspan
          sodipodi:role="line"
          id="tspan3821-48"
-         x="611.61627"
-         y="431.13116"
+         x="594.42877"
+         y="805.69366"
          style="font-size:32.23602295px;line-height:1.25;font-family:sans-serif">a</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000093, 20.00000093;stroke-dashoffset:25.00000118"
-       d="m 526.9664,541.81078 98.5417,0"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:20.00000093, 20.00000093;stroke-dashoffset:25.00000191;stroke-opacity:1"
+       d="m 509.7789,916.37327 h 98.5417"
        id="path3777-4-0-1"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000073, 20.00000073;stroke-dashoffset:25.00000093"
-       d="m 225.7824,542.48995 0,102.0576"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:20.00000073, 20.00000073;stroke-dashoffset:25;stroke-opacity:1"
+       d="M 208.5949,917.05244 V 1019.11"
        id="path3777-4-1-8"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 200.56858,619.64725 357.89777,0"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 183.38108,994.20974 H 541.27885"
        id="path3797-7-7"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 207.87153,638.23185 c 36.90508,-36.905 39.07597,-39.0759 39.07597,-39.0759"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 190.68403,1012.7943 C 227.58911,975.88934 229.76,973.71844 229.76,973.71844"
        id="path3799-4-6"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 510.76165,638.84845 c 36.9051,-36.9051 39.076,-39.076 39.076,-39.076"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 493.57415,1013.4109 c 36.9051,-36.90506 39.076,-39.07596 39.076,-39.07596"
        id="path3799-9-0-7"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
@@ -430,28 +432,28 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
-       x="402.13071"
-       y="646.96686"
+       x="384.94321"
+       y="1021.5294"
        id="text3819-9-7"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300"><tspan
          sodipodi:role="line"
          id="tspan3821-48-5"
-         x="402.13071"
-         y="646.96686"
+         x="384.94321"
+         y="1021.5294"
          style="font-size:32.23602295px;line-height:1.25;font-family:sans-serif">a</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20.00000093, 20.00000093;stroke-dashoffset:25.00000118"
-       d="m 530.16395,544.96335 0,98.5417"
+       style="fill:none;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:20.00000093, 20.00000093;stroke-dashoffset:25.00000191;stroke-opacity:1"
+       d="m 512.97645,919.52584 v 98.54166"
        id="path3777-4-0-1-3"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <path
-       style="fill:none;stroke:#a2ad00;stroke-width:11.47940922;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 378.4273,538.83648 C 378.4089,392.37863 378.4087,390.3159 378.4087,390.3159"
+       style="fill:none;stroke:#a2ad00;stroke-width:11.47940922;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 361.2398,913.39897 C 361.2214,766.94112 361.2212,764.87839 361.2212,764.87839"
        id="path3021-3-8-4-1"
        inkscape:connector-curvature="0"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\DoubleT_with_measure_and_views.png"

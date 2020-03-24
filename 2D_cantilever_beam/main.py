@@ -44,23 +44,23 @@ amplificationFactor = 200
 
 
 # Cross Section Source:
-CrossSection1 = "2D_cantilever_beam/static/images/Rectangular.png"
-CrossSection2 = "2D_cantilever_beam/static/images/DoubleT.png"
-CrossSection3 = "2D_cantilever_beam/static/images/Circular.png"
-CrossSection4 = "2D_cantilever_beam/static/images/Triangular.png"
+CrossSection1 = "2D_cantilever_beam/static/images/Rectangular.svg"
+CrossSection2 = "2D_cantilever_beam/static/images/DoubleT.svg"
+CrossSection3 = "2D_cantilever_beam/static/images/Circular.svg"
+CrossSection4 = "2D_cantilever_beam/static/images/Triangular.svg"
 CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , y=[]))
 CrossSectionSource4 = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
 
 # Source & Initialization of Internal Element Plot:
-XZElement = "2D_cantilever_beam/static/images/XZElement.png"
+XZElement = "2D_cantilever_beam/static/images/XZElement.svg"
 XZElementSource = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
 XZElementSource.data = dict(sp4=[XZElement], x = [0], y = [0])
-XZElement2 = "2D_cantilever_beam/static/images/XZElement.png"
+XZElement2 = "2D_cantilever_beam/static/images/XZElement.svg"
 XZElement2Source = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
 XZElement2Source.data = dict(sp4=[XZElement], x = [0], y = [0])
-XZBeam = "2D_cantilever_beam/static/images/XZBeam.png"
+XZBeam = "2D_cantilever_beam/static/images/XZBeam.svg"
 XZBeamSource = ColumnDataSource(data=dict(sp5=[], x=[] , y=[]))
 XZBeamSource.data = dict(sp5=[XZBeam], x = [0], y = [0])
 
@@ -1011,9 +1011,9 @@ plotXZElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,s
 plotXZElement.add_layout( Arrow(end=NormalHead(line_color="black",line_width=1,size=2),
                            line_width=1,x_start=['xs'][0], y_start=['ys'][0], x_end=['xe'][0], y_end=['ye'][0], source = TauArrowSource4))
 
-plotXZElement.add_glyph(XZBeamSource,ImageURL(url="sp5", x=0, y=0.5, w=5, h=1.04))
-plotXZElement.add_glyph(XZElementSource,ImageURL(url="sp4", x=1.5, y=0, w=2, h=0.535))
-plotXZElement.add_glyph(XZElement2Source,ImageURL(url="sp4", x=1.5, y=1.0/6.0, w=2, h=0.535*(1+1.0/3.0)))
+plotXZElement.add_glyph(XZBeamSource,ImageURL(url="sp5", x=-0.02, y=0.5, w=5, h=1.04))
+plotXZElement.add_glyph(XZElementSource,ImageURL(url="sp4", x=1.48, y=0, w=2, h=0.535))
+plotXZElement.add_glyph(XZElement2Source,ImageURL(url="sp4", x=1.48, y=1.0/6.0, w=2, h=0.535*(1+1.0/3.0)))
 
 Sigmaplot_l_Glyph = Patch(x="x", y="y", fill_color='#0065BD', fill_alpha=0.5)
 plotXZElement.add_glyph(Sigmaplot_l_Source, Sigmaplot_l_Glyph)
@@ -1113,7 +1113,7 @@ description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=950)
 
 # add beam definition image
-Scheme = Div( text = "<img src='/2D_cantilever_beam/static/images/3DBeam.png' width=550 height=405>",
+Scheme = Div( text = "<img src='/2D_cantilever_beam/static/images/3DBeam.svg' width=550 height=405>",
             width = 550,
             height = 405 )
 
