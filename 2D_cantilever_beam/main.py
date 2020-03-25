@@ -32,6 +32,7 @@ glCantileverCrossSection = 0
 global glCantileverStress
 glCantileverStress = 0
 
+global_vars = dict(path="<img src='/2D_cantilever_beam/static/images/3DBeam.svg' width=550 height=405>")
 
 # Define mesh for visualization
 noElementsX = 80
@@ -52,6 +53,7 @@ CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , y=[]))
 CrossSectionSource4 = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
+CrossSectionSource_3D = ColumnDataSource(data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam.svg"]))
 
 # Source & Initialization of Internal Element Plot:
 XZElement = "2D_cantilever_beam/static/images/XZElement.svg"
@@ -635,6 +637,7 @@ def fun_change_Py(attrname, old, new):
 def fun_change_Cross_Section(attrname, old, new):
     if (radio_button_group.active == 0 ):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
+        CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam.svg"])
         CrossSectionSource1.data = dict(sp1=[CrossSection1], x = [0], y = [0])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
@@ -649,6 +652,7 @@ def fun_change_Cross_Section(attrname, old, new):
         XZElement2Source.data = dict(sp4=[], x = [], y = [])          
     elif (radio_button_group.active == 1):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
+        CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_doubleT.svg"])
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[CrossSection2], x = [0], y = [0])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
@@ -793,7 +797,7 @@ plotDefZY.add_layout(
                                   x='x', y='y',
                                   text='text',
                                   text_color='black',text_font_size="12pt",
-                                  level='glyph',text_baseline="middle",text_align="center",
+                                  text_baseline="middle",text_align="center",
                                   source=labelYZ
                                 )
                     )
@@ -1098,6 +1102,26 @@ colorBar.patches( xs='x', ys='y', source=colorBarSource, color = 'c', alpha = 'a
 plotDefXZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
 plotDefXY.patches  (xs='x', ys='y', source=sourceXYdef  , color = 'c', alpha = 'a')
 
+############## PLOT 6: 3D ##########################
+plot3DBeam = Figure(    
+                       plot_width=550    , 
+                       plot_height=405   ,
+                       x_range = ( 0,550 ) ,
+                       y_range= ( 0,405 ) ,
+                       tools = ''
+                  )
+plot3DBeam.axis.major_tick_line_color=None
+plot3DBeam.axis.major_label_text_color=None
+plot3DBeam.axis.minor_tick_line_color=None
+plot3DBeam.axis.axis_line_color=None
+plot3DBeam.grid.visible = False
+plot3DBeam.toolbar.logo = None
+plot3DBeam.outline_line_color = None
+
+plot3DBeam.add_glyph(CrossSectionSource_3D,ImageURL(url='img_url', x=0, y=405, w=550, h=405))
+
+
+
 # Notify the corresponding functions to carry out the changes characterized by
 # the sliders
 Zforce_slider.on_change('value',fun_change_Pz)
@@ -1113,12 +1137,11 @@ description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=950)
 
 # add beam definition image
-Scheme = Div( text = "<img src='/2D_cantilever_beam/static/images/3DBeam.svg' width=550 height=405>",
-            width = 550,
-            height = 405 )
+#Scheme = Div( text = "<img src='/2D_cantilever_beam/static/images/3DBeam.svg' width=550 height=405>",
+            #width = 550,
+            #height = 405 )
 
-
-curdoc().add_root(column(row(Spacer(height=650),description, column(Spacer(height=100),Scheme)),row(
+curdoc().add_root(column(row(Spacer(height=650),description, column(Spacer(height=100),plot3DBeam)),row(
     column(plotDefZY,widgetbox(radio_button_group),Zforce_slider,Yforce_slider,Reset_button),
     column(row(column(plotXZElement,row(Spacer(width=40),radio_button_group2)),column(row(column(plotDefXZ), column(plotDefXY)),colorBar))))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
