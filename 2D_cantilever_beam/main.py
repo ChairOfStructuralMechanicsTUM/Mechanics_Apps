@@ -32,8 +32,6 @@ glCantileverCrossSection = 0
 global glCantileverStress
 glCantileverStress = 0
 
-global_vars = dict(path="<img src='/2D_cantilever_beam/static/images/3DBeam.svg' width=550 height=405>")
-
 # Define mesh for visualization
 noElementsX = 80
 noElementsZ = 20
@@ -53,7 +51,7 @@ CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , y=[]))
 CrossSectionSource4 = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
-CrossSectionSource_3D = ColumnDataSource(data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam.svg"]))
+CrossSectionSource_3D = ColumnDataSource(data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS0.png"]))
 
 # Source & Initialization of Internal Element Plot:
 XZElement = "2D_cantilever_beam/static/images/XZElement.svg"
@@ -637,7 +635,7 @@ def fun_change_Py(attrname, old, new):
 def fun_change_Cross_Section(attrname, old, new):
     if (radio_button_group.active == 0 ):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
-        CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam.svg"])
+        CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS0.png"])
         CrossSectionSource1.data = dict(sp1=[CrossSection1], x = [0], y = [0])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
@@ -652,7 +650,7 @@ def fun_change_Cross_Section(attrname, old, new):
         XZElement2Source.data = dict(sp4=[], x = [], y = [])          
     elif (radio_button_group.active == 1):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
-        CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_doubleT.svg"])
+        CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS1.png"])
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[CrossSection2], x = [0], y = [0])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
@@ -665,6 +663,7 @@ def fun_change_Cross_Section(attrname, old, new):
         XZElement2Source.data = dict(sp4=[], x = [], y = [])        
     elif (radio_button_group.active == 2):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
+        CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS2.png"])
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[CrossSection3], x = [0], y = [0])
@@ -677,6 +676,7 @@ def fun_change_Cross_Section(attrname, old, new):
         XZElement2Source.data = dict(sp4=[], x = [], y = [])                                            
     elif (radio_button_group.active == 3):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
+        CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS3.png"])
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])       
@@ -1104,10 +1104,10 @@ plotDefXY.patches  (xs='x', ys='y', source=sourceXYdef  , color = 'c', alpha = '
 
 ############## PLOT 6: 3D ##########################
 plot3DBeam = Figure(    
-                       plot_width=550    , 
-                       plot_height=405   ,
-                       x_range = ( 0,550 ) ,
-                       y_range= ( 0,405 ) ,
+                       plot_width=549    , 
+                       plot_height=342   ,
+                       x_range = ( 0,549 ) ,
+                       y_range= ( 0,342 ) ,
                        tools = ''
                   )
 plot3DBeam.axis.major_tick_line_color=None
@@ -1118,9 +1118,7 @@ plot3DBeam.grid.visible = False
 plot3DBeam.toolbar.logo = None
 plot3DBeam.outline_line_color = None
 
-plot3DBeam.add_glyph(CrossSectionSource_3D,ImageURL(url='img_url', x=0, y=405, w=550, h=405))
-
-
+plot3DBeam.add_glyph(CrossSectionSource_3D,ImageURL(url='img_url', x=0, y=342, w=549, h=342))
 
 # Notify the corresponding functions to carry out the changes characterized by
 # the sliders
@@ -1136,8 +1134,9 @@ init_data()
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=950)
 
+# Old version: only 3D picture of rectangular cross section
 # add beam definition image
-#Scheme = Div( text = "<img src='/2D_cantilever_beam/static/images/3DBeam.svg' width=550 height=405>",
+#Scheme = Div( text = "<img src='/2D_cantilever_beam/static/images/3DBeam_CS0.svg' width=550 height=405>",
             #width = 550,
             #height = 405 )
 
