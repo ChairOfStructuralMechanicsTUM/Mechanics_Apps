@@ -14,7 +14,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir  = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
-from latex_support import LatexLabelSet, LatexSlider, LatexLabel
+from latex_support import LatexLabelSet, LatexSlider, LatexLabel,LatexDiv
 
 
 # Initialise Variables
@@ -284,7 +284,7 @@ def updateLine():
     line1_source.data = dict (x=[x1, xS],y=[y1, yS])
     line2_source.data = dict (x=[x1, xE],y=[y1, yE])
 
-Conjugate_button = Button(label="conjugate Z₁ and Z₂", button_type="success",width=100)
+Conjugate_button = Button(label="Z₂ = complex conjugate of Z₁", button_type="success",width=100)
 
 def conjugate():
     [theta1]  = glob_theta1.data["val"]  # input/
@@ -354,20 +354,22 @@ columns2 = [
 ]
 valueZ3Z4_table = DataTable(source=ValueZ3_Z6, columns=columns2, reorderable=False, sortable=False, selectable=False, index_position=None, width=400, height=150)
 
-
+description_filename = join(dirname(__file__), "description.html")
+description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
+    
     # adding the vectors to the plot
 Vector1_glyph = Arrow(end=NormalHead(line_color="#A2AD00",fill_color="#A2AD00", line_width=2,size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Vector1_source,line_color="#A2AD00",line_width=3)
-Vector2_glyph = Arrow(end=NormalHead(line_color="#0065BD", fill_color="#0065BD", line_width=2,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Vector2_source,line_color="#0065BD",line_width=3)
-VectorSum_glyph = Arrow(end=NormalHead(line_color="#E37222",fill_color="#E37222", line_width=2,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=VectorSum_source,line_color="#E37222",line_width=3)
-VectorSub_glyph = Arrow(end=NormalHead(line_color="#E37222",fill_color="#E37222", line_width=2,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=VectorSub_source,line_color="#E37222",line_width=3)
-VectorMul_glyph = Arrow(end=NormalHead(line_color="#E37222",fill_color="#E37222", line_width=2,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=VectorMul_source,line_color="#E37222",line_width=3)
-VectorDiv_glyph = Arrow(end=NormalHead(line_color="#E37222",fill_color="#E37222", line_width=2,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=VectorDiv_source,line_color="#E37222",line_width=3)
+Vector2_glyph = Arrow(end=NormalHead(line_color="#E37222", fill_color="#E37222", line_width=2,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Vector2_source,line_color="#E37222",line_width=3)
+VectorSum_glyph = Arrow(end=NormalHead(line_color="#0065BD",fill_color="#0065BD", line_width=2,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=VectorSum_source,line_color="#0065BD",line_width=3)
+VectorSub_glyph = Arrow(end=NormalHead(line_color="#005293",fill_color="#005293", line_width=2,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=VectorSub_source,line_color="#005293",line_width=3)
+VectorMul_glyph = Arrow(end=NormalHead(line_color="#64A0C8",fill_color="#64A0C8", line_width=2,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=VectorMul_source,line_color="#64A0C8",line_width=3)
+VectorDiv_glyph = Arrow(end=NormalHead(line_color="#98C6EA",fill_color="#98C6EA", line_width=2,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=VectorDiv_source,line_color="#98C6EA",line_width=3)
 
 V1_label_glyph         = LabelSet(x='x', y='y',text='Z1',text_font_size="15pt",level='overlay',source=V1_label_source)
 V2_label_glyph         = LabelSet(x='x', y='y',text='Z2',text_font_size="15pt",level='overlay',source=V2_label_source)
@@ -383,7 +385,7 @@ vline = Span(location=0, dimension='height', line_color='#333333',line_dash='das
 hline = Span(location=0, dimension='width', line_color='#333333',line_dash='dashed')
 
 p = figure( x_range=(-100,100), y_range=(-100,100),plot_width=500, plot_height=500,\
-    toolbar_location="right", tools=["wheel_zoom,xwheel_pan,pan,reset"],x_axis_label="x")
+    toolbar_location="right", tools=["wheel_zoom,xwheel_pan,pan,reset"],x_axis_label="Realpart")
 line1_glyph=p.line(x='x',y='y',line_dash='dashed',source= line1_source, color="black")
 line2_glyph=p.line(x='x',y='y',line_dash='dashed',source= line2_source, color="black")
 p.title.text_font_size="20pt"
@@ -391,7 +393,7 @@ p.axis.major_label_text_font_size="10pt"
 p.axis.axis_label_text_font_style="normal"
 p.axis.axis_label_text_font_size="20pt"
 #p.xaxis.axis_label="xxxxxx"
-p.yaxis.axis_label="yi"
+p.yaxis.axis_label=" Imagirary Part"
 #p.axis.fixed_location=0
 p.add_layout(Vector1_glyph)
 p.add_layout(Vector2_glyph)
@@ -495,4 +497,4 @@ AngleVector2Slider = LatexSlider(title='\\alpha_{Z2}=',value_unit='^{\\circ}', v
 AngleVector2Slider.on_change('value',changetheta2)
 
 
-curdoc().add_root(column(Spacer(height=100),column(row(Spacer(width=100),column(p,Spacer(height=50),row(column(Spacer(height=30),calculate_selection),valueZ3Z4_table)),column(Vector1Slider,Vector2Slider,AngleVector1Slider,AngleVector2Slider,valueZ1Z2_table,Conjugate_button)))))
+curdoc().add_root(column(Spacer(height=50),description,column(row(Spacer(width=100),column(p,Spacer(height=50),row(column(Spacer(height=30),calculate_selection),valueZ3Z4_table)),column(Vector1Slider,Vector2Slider,AngleVector1Slider,AngleVector2Slider,valueZ1Z2_table,Conjugate_button)))))
