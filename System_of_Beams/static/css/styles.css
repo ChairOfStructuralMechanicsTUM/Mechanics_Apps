@@ -1,11 +1,11 @@
 .SUPPORT_CLAMPED button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_clamped.png);
+    background-image: url("../images/support_clamped.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .SUPPORT_CLAMPED_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_clamped.png);
+    background-image: url("../images/support_clamped.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -13,13 +13,13 @@
 }
 
 .SUPPORT_NORMAL_FORCE button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_normal.png);
+    background-image: url("../images/support_normal.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .SUPPORT_NORMAL_FORCE_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_normal.png);
+    background-image: url("../images/support_normal.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -27,13 +27,13 @@
 }
 
 .SUPPORT_TRANSVERSE_FORCE button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_transverse.png);
+    background-image: url("../images/support_transverse.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .SUPPORT_TRANSVERSE_FORCE_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_transverse.png);
+    background-image: url("../images/support_transverse.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -41,13 +41,13 @@
 }
 
 .SUPPORT_FIXED_CONTINUOUS button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_fixed_conti.png);
+    background-image: url("../images/support_fixed_conti.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .SUPPORT_FIXED_CONTINUOUS_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_fixed_conti.png);
+    background-image: url("../images/support_fixed_conti.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -55,13 +55,13 @@
 }
 
 .SUPPORT_FIXED_JOINT button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_fixed_joint.png);
+    background-image: url("../images/support_fixed_joint.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .SUPPORT_FIXED_JOINT_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_fixed_joint.png);
+    background-image: url("../images/support_fixed_joint.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -69,13 +69,13 @@
 }
 
 .SUPPORT_ROLLER_CONTINUOUS button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_roller_conti.png);
+    background-image: url("../images/support_roller_conti.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .SUPPORT_ROLLER_CONTINUOUS_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_roller_conti.png);
+    background-image: url("../images/support_roller_conti.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -83,13 +83,13 @@
 }
 
 .SUPPORT_ROLLER_JOINT button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_roller_joint.png);
+    background-image: url("../images/support_roller_joint.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .SUPPORT_ROLLER_JOINT_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/support_roller_joint.png);
+    background-image: url("../images/support_roller_joint.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -97,13 +97,13 @@
 }
 
 .SPRING_SUPPORT button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/spring_support.png);
+    background-image: url("../images/spring_support.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .SPRING_SUPPORT_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/spring_support.png);
+    background-image: url("../images/spring_support.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -111,13 +111,13 @@
 }
 
 .SPRING_MOMENT_SUPPORT button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/spring_moment.png);
+    background-image: url("../images/spring_moment.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .SPRING_MOMENT_SUPPORT_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/spring_moment.png);
+    background-image: url("../images/spring_moment.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -125,13 +125,13 @@
 }
 
 .NODE button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/node.png);
+    background-image: url("../images/node.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .NODE_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/node.png);
+    background-image: url("../images/node.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -139,13 +139,13 @@
 }
 
 .JOINT button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/joint.png);
+    background-image: url("../images/joint.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .JOINT_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/joint.png);
+    background-image: url("../images/joint.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -153,13 +153,13 @@
 }
 
 .JOINT_NORMAL_FORCE button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/joint_normal.png);
+    background-image: url("../images/joint_normal.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .JOINT_NORMAL_FORCE_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/joint_normal.png);
+    background-image: url("../images/joint_normal.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -167,13 +167,13 @@
 }
 
 .JOINT_TRANSVERSE_FORCE button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/joint_transverse.png);
+    background-image: url("../images/joint_transverse.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .JOINT_TRANSVERSE_FORCE_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/joint_transverse.png);
+    background-image: url("../images/joint_transverse.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -181,13 +181,13 @@
 }
 
 .SPRING button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/spring.png);
+    background-image: url("../images/spring.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .SPRING_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/spring.png);
+    background-image: url("../images/spring.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -195,13 +195,13 @@
 }
 
 .ROD button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/rod.png);
+    background-image: url("../images/rod.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .ROD_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/rod.png);
+    background-image: url("../images/rod.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -209,26 +209,26 @@
 }
 
 .BEAM button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/beam.png);
+    background-image: url("../images/beam.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .BEAM_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/beam.png);
+    background-image: url("../images/beam.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .LOAD_POINT button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/load_point.png);
+    background-image: url("../images/load_point.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .LOAD_POINT_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/load_point.png);
+    background-image: url("../images/load_point.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -236,13 +236,13 @@
 }
 
 .LOAD_MOMENT button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/moment.png);
+    background-image: url("../images/moment.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .LOAD_MOMENT_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/moment.png);
+    background-image: url("../images/moment.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -250,13 +250,13 @@
 }
 
 .LOAD_LINE button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/load_line.png);
+    background-image: url("../images/load_line.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .LOAD_LINE_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/load_line.png);
+    background-image: url("../images/load_line.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -264,13 +264,13 @@
 }
 
 .LOAD_TEMP button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/load_temp.png);
+    background-image: url("../images/load_temp.png");
     background-repeat: no-repeat;
     background-size: contain;
     border:5px solid white;
 }
 .LOAD_TEMP_selected button.bk.bk-btn.bk-btn-default {
-    background-image: url(System_of_Beams/static/images/load_temp.png);
+    background-image: url("../images/load_temp.png");
     background-color: #DCDCDC;
     background-repeat: no-repeat;
     background-size: contain;
@@ -286,13 +286,13 @@
     text_align: right
     overflow-x: hidden;
     overflow-y: auto;
-    transform: rotate(180deg);
+    transform: rotate(180deg");
     direction: rtl;
 }
 ul{
     direction: ltr;
     overflow: hidden;
-    transform: rotate(180deg);
+    transform: rotate(180deg");
 }
 .MSG_BOX_RED {
     background-color: #FF4500;
@@ -304,7 +304,7 @@ ul{
     text_align: right
     overflow-x: hidden;
     overflow-y: auto;
-    transform: rotate(180deg);
+    transform: rotate(180deg");
     direction: rtl;
 }
 .MSG_BOX_ORANGE {
@@ -317,7 +317,7 @@ ul{
     text_align: right
     overflow-x: hidden;
     overflow-y: auto;
-    transform: rotate(180deg);
+    transform: rotate(180deg");
     direction: rtl;
 }
 
@@ -327,5 +327,5 @@ ul{
 }
 
 .ELINFO_VERTICAL_TEXT {
-    transform: rotate(-90deg);
+    transform: rotate(-90deg");
 }
