@@ -460,6 +460,4 @@ AngleVector2Slider = LatexSlider(title='\\alpha_{Z2}=',value_unit='^{\\circ}', v
 AngleVector2Slider.on_change('value',changetheta2)
 
 
-#curdoc().add_root(column(Spacer(height=50),description,column(row(Spacer(width=100),column(p,Spacer(height=50),row(column(Spacer(height=30),calculate_selection),value_table)),column(Vector1Slider,Vector2Slider,AngleVector1Slider,AngleVector2Slider,Conjugate_button)))))
-#curdoc().add_root(column(Spacer(height=20),description,column(row(Spacer(width=40),column(p,Spacer(height=50),row(column(Spacer(height=30),column(Vector1Slider,Vector2Slider,AngleVector1Slider,AngleVector2Slider,Conjugate_button)),value_table)),calculate_selection))))
 curdoc().add_root(column(description,row(p,Spacer(width=40),calculate_selection),row(Spacer(width=20),column(Vector1Slider,Vector2Slider,AngleVector1Slider,AngleVector2Slider,Spacer(height=10),Conjugate_button),Spacer(width=20),value_table)))
