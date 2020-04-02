@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
+   width="153mm"
+   height="49mm"
    id="svg4290"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
-   sodipodi:docname="XYElement.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="XZElement.svg"
    inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\XYBeam.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300">
@@ -27,16 +27,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="216.15788"
-     inkscape:cy="438.5316"
+     inkscape:zoom="1.4"
+     inkscape:cx="223.42211"
+     inkscape:cy="55.281495"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="657"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-width="1920"
+     inkscape:window-height="1003"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata4295">
@@ -46,21 +46,22 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(0,-937.32284)">
     <rect
-       style="fill:#646464;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4.90000009999999970;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:39.20000076000000200, 19.60000038000000100;stroke-dashoffset:0"
+       style="fill:#646464;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4.9000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:39.20000076, 19.60000038;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4813"
        width="571.42859"
        height="178.02045"
-       x="85.565605"
-       y="421.45694"
+       x="3.3338835"
+       y="940.42804"
        inkscape:export-filename="C:\Users\Muster\Documents\GitHub\Mechanics_Apps\2D_cantilever_beam\static\images\XYElement.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
