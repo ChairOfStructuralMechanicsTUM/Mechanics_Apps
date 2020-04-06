@@ -25,7 +25,6 @@ initial_mod = "Shifting"
 x0 = -7.0
 x = np.linspace(x0, 7.0, 1401)
 x_Im = np.linspace(x0, 7.0, 1401) # needed for "Multiplication with exponential function"
-x2 = np.linspace(0.01, 7.0, 700) # needed for functions with an asymptote at x = 0
 
 y = []
 y_mod = []
@@ -34,7 +33,6 @@ y_FT_Im = []
 y_FT_Re_mod = []
 y_FT_Im_mod = []
 y_mod_Im = []
-y_FT_Im_mod2 = np.zeros(700)
 
 ## initial setting
 text_mod = ["f^{*}(t)=f(t-\\lambda)"]
@@ -65,6 +63,12 @@ for i in range(0,1401):
 ## with λ = 0, so that f*(t) = f(t)
 def changeFunc(attr,old,new):
     global y, y_FT_Im, y_FT_Re, y_mod, y_FT_Im_mod, y_FT_Re_mod
+    if new == "\u03B4(t)":
+        mod_select.options = ["Shifting","Scaling", "Multiplication with exponential function", "Multiplication with other function", "Convolution with other function",
+        "Linear combination"]
+    else:
+        mod_select.options = ["Shifting","Scaling", "Multiplication with exponential function", "Multiplication with other function", "Convolution with other function",
+        "Differentiation","Linear combination"]
     if new == "rect(t)":
         for i in range(0,1401):
             t = x[i]
@@ -160,7 +164,6 @@ arrow_source_Im2 = ColumnDataSource(data = dict(x1=[],y1=[],x2=[],y2=[]))
 arrow_line_source = ColumnDataSource(data=dict(x=[0],y=[0]))
 mod_freq_Re_source = ColumnDataSource(data=dict(x=x,y=y_FT_Re_mod))
 mod_freq_Im_source = ColumnDataSource(data=dict(x=x,y=y_FT_Im_mod))
-mod_freq_Im_source2 = ColumnDataSource(data=dict(x=x2,y=y_FT_Im_mod2))
 mod_arrow_source = ColumnDataSource(data = dict(x1=[],y1=[],x2=[],y2=[]))
 mod_arrow_source2 = ColumnDataSource(data = dict(x1=[],y1=[],x2=[],y2=[]))
 mod_arrow_source_Re = ColumnDataSource(data = dict(x1=[],y1=[],x2=[],y2=[]))
@@ -231,7 +234,6 @@ mod_freq_plot.axis.axis_label_text_font_style="normal"
 mod_freq_plot.toolbar.logo = None
 mod_freq_plot.line(x='x',y='y', source = mod_freq_Re_source, color='#e37222', legend_label='Re(F)',line_width=2)
 mod_freq_plot.line(x='x',y='y', source = mod_freq_Im_source, color='#a2ad00', legend_label='Im(F)',line_dash='dashed',line_width=2)
-mod_freq_plot.line(x='x',y='y', source = mod_freq_Im_source2, color='#a2ad00',line_dash='dashed',line_width=2)
 mod_freq_plot.add_layout(Arrow(end=NormalHead(fill_color="#e37222",line_color="#e37222",size=10),line_color="#e37222",line_width=2,
     x_start='x1',y_start='y1',x_end='x2',y_end='y2',source=mod_arrow_source_Re))
 mod_freq_plot.add_layout(Arrow(end=NormalHead(fill_color="#a2ad00",line_color="#a2ad00",size=10),line_color="#a2ad00",line_dash='dashed',line_width=2,
@@ -275,20 +277,14 @@ modification.add_layout(LabelSet(x=68,y=-0.5,text="t",text_color='black',text_fo
 
 ## if the modification is changed, the rule and the slider/drop-down changes
 def changeMod(attr, old, new):
-    global text_mod, text_FT_mod, lambda_input, layout, modification, with_text, x2, x_Im, y_mod_Im, y_mod, y_FT_Im_mod, y_FT_Re_mod, y_FT_Im_mod2
+    global text_mod, text_FT_mod, lambda_input, layout, modification, with_text, x_Im, y_mod_Im, y_mod, y_FT_Im_mod, y_FT_Re_mod
     if new == "Multiplication with exponential function":
         x_Im = np.linspace(x0, 7.0, 1401)
         y_mod_Im = np.zeros(1401)
     else:
         x_Im = []
         y_mod_Im = []
-    if new == "Integration":
-        if func_select.value == "rect(t)" or func_select.value == "sinc(t)" or func_select.value == "\u03B4(t)":
-            x2 = np.linspace(0.01, 7.0, 700)
-            y_FT_Im_mod2 = np.zeros(700)
-    else:
-        x2 = []
-        y_FT_Im_mod2 = []
+    
     if new == "Scaling":
         text_mod = ["f^{*}(t)=f(\\lambda t)"]
         text_FT_mod = ["\\frac{1}{|\\lambda|}F\\left(\\frac{\\omega}{\\lambda}\\right)"]
@@ -315,6 +311,12 @@ def changeMod(attr, old, new):
         text_FT_mod = ["\\frac{1}{2\\pi}(F(\\omega)*G(\\omega))"]
         g_select = Select(title="g(t):", value="1", options=["rect(t)","sinc(t)", "\u03B4(t)", "1", "sin(t)", "cos(t)"], width = 100)
         g_select.on_change('value',change_g_mult)
+        if func_select.value == "rect(t)":
+            g_select.options = ["sinc(t)", "\u03B4(t)", "1", "sin(t)", "cos(t)"]
+        elif func_select.value == "\u03B4(t)":
+            g_select.options = ["rect(t)", "sinc(t)", "1", "sin(t)", "cos(t)"]
+        else:
+            g_select.options = ["rect(t)", "sinc(t)", "\u03B4(t)", "1", "sin(t)", "cos(t)"]
         with_text =["with"]
         layout.children[5] = row(Spacer(width=35),modification, column(Spacer(height=19),g_select)) 
     elif new == "Convolution with other function":
@@ -322,6 +324,16 @@ def changeMod(attr, old, new):
         text_FT_mod = ["F(\\omega)\\cdot G(\\omega))"]
         g_select = Select(title="g(t):", value="\u03B4(t)", options=["rect(t)","sinc(t)", "\u03B4(t)", "1", "sin(t)", "cos(t)"], width = 100)
         g_select.on_change('value',change_g_conv)
+        if func_select.value == "sinc(t)":
+            g_select.options = ["rect(t)", "\u03B4(t)", "1", "sin(t)", "cos(t)"]
+        elif func_select.value == "1":
+            g_select.options = ["rect(t)", "sinc(t)",  "\u03B4(t)"]
+        elif func_select.value == "sin(t)":
+            g_select.options = ["rect(t)", "sinc(t)", "\u03B4(t)"]
+        elif func_select.value == "cos(t)":
+            g_select.options = ["rect(t)", "sinc(t)",  "\u03B4(t)"]
+        else:
+            g_select.options = ["rect(t)", "sinc(t)", "\u03B4(t)", "1", "sin(t)", "cos(t)"]
         with_text =["with"]
         layout.children[5] = row(Spacer(width=35),modification, column(Spacer(height=19),g_select))         
     elif new == "Differentiation":
@@ -375,90 +387,7 @@ def changeMod(attr, old, new):
             mod_arrow_source_Im.stream(dict(x1=[-1],y1=[0],x2=[-1],y2=[-pi]),rollover=1)
             mod_arrow_source_Im2.stream(dict(x1=[1],y1=[0],x2=[1],y2=[pi]),rollover=1)
             mod_arrow_line_source1.data = dict(x=[1,1],y=[0,pi])
-        update_mod_functions(x2, x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod, y_FT_Im_mod2)
-    elif new == "Integration":
-        text_mod = ["f^{*}(t)=\\int f(t)dt"]
-        text_FT_mod = ["\\frac{1}{i\\omega}F(\\omega)"]
-        with_text =[""]
-        layout.children[5] = row(Spacer(width=35),modification)  
-        delete_mod_arrows()
-        if func_select.value == "rect(t)":
-            for i in range(0,1401):
-                t = x[i]    
-                if t < -0.5 or t > 0.5:
-                    y_mod[i]=0
-                elif t>=-0.5 and t<=0.5:
-                    y_mod[i]=t  
-                y_FT_Re_mod[i]=0
-            for i in range(0,700):
-                t = x[i]
-                y_FT_Im_mod[i]=-2*sin(0.5*t)/(t*t)
-            for i in range(701,1401):
-                t = x[i]
-                y_FT_Im_mod[i]=10000
-                y_FT_Im_mod2[i-701]=-2*sin(0.5*t)/(t*t)
-            y_FT_Im_mod[700] = 10000
-        elif func_select.value == "sinc(t)":
-            for i in range(0,1401):
-                t = x[i]
-                (si,_) = sici(t)
-                y_mod[i]=si
-                y_FT_Re_mod[i]=0
-            for i in range(0,700):
-                t = x[i]
-                if t < -1:
-                    y_FT_Im_mod[i]=0
-                elif t>=-1:
-                    y_FT_Im_mod[i]=-pi/t 
-            for i in range(701,1401):
-                t = x[i]
-                y_FT_Im_mod[i]=10000
-                if t > 1:
-                    y_FT_Im_mod2[i-701]=0
-                elif t<=1:
-                    y_FT_Im_mod2[i-701]=-pi/t 
-            y_FT_Im_mod[700] = 10000
-        elif func_select.value == "\u03B4(t)":
-            for i in range(0,1401):
-                t = x[i]
-                if t < 0:
-                    y_mod[i]=0
-                elif t >= 0:
-                    y_mod[i]=1
-            for i in range(0,700):
-                t = x[i]
-                y_FT_Im_mod[i]=-1/t
-            for i in range(701,1401):
-                t = x[i]
-                y_FT_Im_mod[i]=10000
-                y_FT_Im_mod2[i-701]=-1/t
-            y_FT_Im_mod[700]=10000
-            y_FT_Re_mod = 0.85*pi*signal.unit_impulse(1401,700)
-            mod_arrow_source_Re.stream(dict(x1=[0],y1=[0],x2=[0],y2=[pi]),rollover=1)
-        elif func_select.value == "1":
-            for i in range(0,1401):
-                t = x[i]
-                y_mod[i]=t
-                y_FT_Re_mod[i]=0
-                y_FT_Im_mod[i]=0
-        elif func_select.value == "sin(t)":
-            for i in range(0,1401):
-                t = x[i] 
-                y_mod[i]=-cos(t)
-                y_FT_Im_mod[i]=0.0
-            y_FT_Re_mod = -0.85*pi*signal.unit_impulse(1401,600)-0.85*pi*signal.unit_impulse(1401,800)
-            mod_arrow_source_Re.stream(dict(x1=[-1],y1=[0],x2=[-1],y2=[-pi]),rollover=1)
-            mod_arrow_source_Re2.stream(dict(x1=[1],y1=[0],x2=[1],y2=[-pi]),rollover=1)
-        elif func_select.value == "cos(t)":
-            for i in range(0,1401):
-                t = x[i]
-                y_mod[i]=sin(t)  
-                y_FT_Re_mod[i]=0.0
-            y_FT_Im_mod = 0.9*pi*signal.unit_impulse(1401,600)
-            mod_arrow_source_Im.stream(dict(x1=[-1],y1=[0],x2=[-1],y2=[pi]),rollover=1)
-            mod_arrow_source_Im2.stream(dict(x1=[1],y1=[0],x2=[1],y2=[-pi]),rollover=1)
-            mod_arrow_line_source1.data = dict(x=[1,1],y=[0,-pi])
-        update_mod_functions(x2, x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod, y_FT_Im_mod2)
+        update_mod_functions(x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod)
     elif new == "Linear combination":
         text_mod = ["f^{*}(t)=f(t)+g(t)"]
         text_FT_mod = ["F(\\omega)+G(\\omega)"]
@@ -468,7 +397,7 @@ def changeMod(attr, old, new):
         layout.children[5] = row(Spacer(width=35),modification, column(Spacer(height=19),g_select))
     modification_source.data = dict(t=text_mod)
     modification_result_source.data = dict(t=text_FT_mod)
-    if new == "Differentiation" or new == "Integration":
+    if new == "Differentiation":
         ""
     else:
         reset_mod_functions(x_Im,y,y_mod,y_mod_Im,y_FT_Im,y_FT_Re,y_FT_Im_mod,y_FT_Re_mod)
@@ -478,7 +407,7 @@ def changeMod(attr, old, new):
 ## define all possible modifications       
 mod_select = Select(title="Modification of input function f(t):", value=initial_mod,
     options=["Shifting","Scaling", "Multiplication with exponential function", "Multiplication with other function", "Convolution with other function",
-    "Differentiation","Integration","Linear combination"], width = 430)
+    "Differentiation","Linear combination"], width = 430)
 mod_select.on_change('value',changeMod)
 
 ## app layout
@@ -487,12 +416,12 @@ layout = column(description, row(Spacer(width=35), func_select), row(func_time_p
     lambda_input)), Spacer(height=10),row(mod_time_plot, column(Spacer(height=64),fig), mod_freq_plot))
 
 ## update modified functions f*(t) and F*(ω)
-def update_mod_functions(x2, x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod, y_FT_Im_mod2):
+def update_mod_functions(x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod):
     mod_time_source.data = dict(x=x,y=y_mod)
     mod_freq_Re_source.data = dict(x=x,y=y_FT_Re_mod) 
     mod_freq_Im_source.data = dict(x=x, y=y_FT_Im_mod)
     mod_time_Im_source.data = dict(x=x_Im, y=y_mod_Im)
-    mod_freq_Im_source2.data = dict(x=x2, y=y_FT_Im_mod2)
+
 
 ## reset modified function: f*(t) = f(t) and F*(ω) = F(ω)
 def reset_mod_functions(x_Im,y,y_mod,y_mod_Im,y_FT_Im,y_FT_Re,y_FT_Im_mod,y_FT_Re_mod):
@@ -500,7 +429,7 @@ def reset_mod_functions(x_Im,y,y_mod,y_mod_Im,y_FT_Im,y_FT_Re,y_FT_Im_mod,y_FT_R
         y_mod[i]=y[i]
         y_FT_Im_mod[i]=y_FT_Im[i]
         y_FT_Re_mod[i]=y_FT_Re[i]
-    update_mod_functions(x2, x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod, y_FT_Im_mod2)
+    update_mod_functions(x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod)
 
 ## update all functions
 def update_functions(y, y_mod, y_FT_Re, y_FT_Im, y_FT_Re_mod, y_FT_Im_mod):
@@ -646,7 +575,7 @@ def change_lambda_scaling(attr,old,new):
                 y_FT_Re_mod[i]=1/abs(new)
     elif func_select.value == "1":
         mod_arrow_source_Re.stream(dict(x1=[0],y1=[0],x2=[0],y2=[pi*2]),rollover=1)
-    update_mod_functions(x2, x_Im, y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod, y_FT_Im_mod2)
+    update_mod_functions(x_Im, y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod)
 
 ## update modificated plots when f(t) is shifted by λ: f*(t) = f(t-λ)
 def change_lambda_shifting(attr,old,new):
@@ -713,7 +642,7 @@ def change_lambda_shifting(attr,old,new):
             mod_arrow_source_Im2.stream(dict(x1=[1],y1=[0],x2=[1],y2=[pi*sin(-new)]),rollover=1)
         mod_arrow_source_Re.stream(dict(x1=[-1],y1=[0],x2=[-1],y2=[pi*cos(new)]),rollover=1)
         mod_arrow_source_Re2.stream(dict(x1=[1],y1=[0],x2=[1],y2=[pi*cos(-new)]),rollover=1)
-    update_mod_functions(x2, x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod, y_FT_Im_mod2)
+    update_mod_functions(x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod)
 
 ## update modificated plots when f(t) is multiplicated with an exponential function exp(iωλ) 
 def change_lambda_exp(attr,old,new):
@@ -775,7 +704,7 @@ def change_lambda_exp(attr,old,new):
         y_FT_Re_mod=0.95*pi*signal.unit_impulse(1401,int(600+new*100))+0.95*pi*signal.unit_impulse(1401,int(800+new*100))
         mod_arrow_source_Re.stream(dict(x1=[-1+new],y1=[0],x2=[-1+new],y2=[pi]),rollover=1)
         mod_arrow_source_Re2.stream(dict(x1=[1+new],y1=[0],x2=[1+new],y2=[pi]),rollover=1)
-    update_mod_functions(x2, x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod, y_FT_Im_mod2)
+    update_mod_functions(x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod)
 
 ## update modificated plots when f(t) is multiplicated with another function g(t) 
 def change_g_mult(attr,old,new):
@@ -788,7 +717,7 @@ def change_g_mult(attr,old,new):
                 y_mod[i]=0.0
             elif t>=-0.5 and t<=0.5:
                 y_mod[i]=y[i]
-        if func_select.value == "rect(t)" or func_select.value == "1":
+        if func_select.value == "1":
             for i in range(0,1401):
                 t = x[i]
                 if t < -0.5 or t > 0.5:
@@ -1018,7 +947,7 @@ def change_g_mult(attr,old,new):
             mod_arrow_source_Re.stream(dict(x1=[-2],y1=[0],x2=[-2],y2=[pi/2]),rollover=1)
             mod_arrow_source_Re2.stream(dict(x1=[0],y1=[0],x2=[0],y2=[pi]),rollover=1)
             mod_arrow_source_Re3.stream(dict(x1=[2],y1=[0],x2=[2],y2=[pi/2]),rollover=1)
-    update_mod_functions(x2, x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod, y_FT_Im_mod2)
+    update_mod_functions(x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod)
 
 ## update modificated plots when f(t) is convolved with another function g(t) 
 def change_g_conv(attr,old,new):
@@ -1169,9 +1098,6 @@ def change_g_conv(attr,old,new):
             mod_arrow_line_source2.data = dict(x=[1,1],y=[0,-pi*pi/2])
             mod_arrow_source_Im.stream(dict(x1=[-1],y1=[0],x2=[-1],y2=[pi*pi/2]),rollover=1)
             mod_arrow_source_Im2.stream(dict(x1=[1],y1=[0],x2=[1],y2=[-pi*pi/2]),rollover=1)
-        elif func_select.value == "cos(t)":
-            mod_arrow_line_source1.data = dict(x=[-1,-1],y=[0,pi*pi])
-            mod_arrow_line_source2.data = dict(x=[1,1],y=[0,-pi*pi])
         elif func_select.value == "\u03B4(t)":
             for i in range(0,1401):
                 t = x[i]
@@ -1180,8 +1106,6 @@ def change_g_conv(attr,old,new):
             mod_arrow_source_Im2.stream(dict(x1=[1],y1=[0],x2=[1],y2=[-pi]),rollover=1)
             mod_arrow_line_source1.data = dict(x=[-1,-1],y=[0,pi])
             mod_arrow_line_source2.data = dict(x=[1,1],y=[0,-pi])
-        elif func_select.value == "sin(t)":
-            y_FT_Re_mod = -pi*pi*signal.unit_impulse(1401,600)-pi*pi*signal.unit_impulse(1401,800)
     elif new == "cos(t)":
         for i in range(0,1401):
             t = x[i]
@@ -1208,10 +1132,7 @@ def change_g_conv(attr,old,new):
                 y_mod[i]=cos(t)
             mod_arrow_source_Re.stream(dict(x1=[-1],y1=[0],x2=[-1],y2=[pi]),rollover=1)
             mod_arrow_source_Re2.stream(dict(x1=[1],y1=[0],x2=[1],y2=[pi]),rollover=1)
-        elif func_select.value == "sin(t)":
-            mod_arrow_line_source1.data = dict(x=[-1,-1],y=[0,pi*pi])
-            mod_arrow_line_source2.data = dict(x=[1,1],y=[0,-pi*pi])
-    update_mod_functions(x2, x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod, y_FT_Im_mod2)
+    update_mod_functions(x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod)
 
 ## update modificated plots when f(t) is added to another function g(t) --> Linear combination
 def change_g_comb(attr,old,new):
@@ -1368,7 +1289,7 @@ def change_g_comb(attr,old,new):
         elif func_select.value == "cos(t)":
             mod_arrow_source_Re.stream(dict(x1=[-1],y1=[0],x2=[-1],y2=[2*pi]),rollover=1)
             mod_arrow_source_Re2.stream(dict(x1=[1],y1=[0],x2=[1],y2=[2*pi]),rollover=1)
-    update_mod_functions(x2, x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod, y_FT_Im_mod2)
+    update_mod_functions(x_Im,y_mod, y_mod_Im, y_FT_Re_mod, y_FT_Im_mod)
 
 ## set initial modification to "Shifting"
 changeMod(0,0,"Shifting")
