@@ -31,7 +31,7 @@ F2_source = ColumnDataSource(dict(xS=[l_beam], xE=[l_beam], yS=[F_total/2], yE=[
 support_source = ColumnDataSource(dict(x = [20], y = [-2.0*h_beam], src = ["Seesaw/static/images/simple_support.svg"]))
 
 # Plot
-plot = figure(title="", tools="", x_range=(-2,42), y_range=(-50,50))
+plot = figure(title="", tools="", x_range=(-2,42), y_range=(-30,40))
 plot.toolbar.logo = None
 plot.axis.axis_label_text_font_style="normal"
 plot.axis.axis_label_text_font_size="14pt"
