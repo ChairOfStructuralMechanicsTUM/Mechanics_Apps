@@ -84,24 +84,24 @@ VectorDiv_label_source.data = dict (x=[xE6],y=[yE6],R=["Z6"])
 line1_source.data = dict (x=[xE1, xE3],y=[yE1, yE3])
 line2_source.data = dict (x=[xE1, xE4],y=[yE1, yE4])
 
-xE1=round(xE1,2)
-xE2=round(xE2,2)
-yE1=round(yE1,2)
-yE2=round(yE2,2)
-xE3=round(xE3,2)
-xE4=round(xE4,2)
-yE3=round(yE3,2)
-yE4=round(yE4,2)
-xE5=round(xE5,2)
-xE6=round(xE6,2)
-yE5=round(yE5,2)
-yE6=round(yE6,2)
-valuesZ1='{x}+{y}i'.format(x=xE1,y=yE1)
-valuesZ2='{x}+{y}i'.format(x=xE2,y=yE2)
-valuesZ3='{x}+{y}i'.format(x=xE3,y=yE3)
-valuesZ4='{x}+{y}i'.format(x=xE4,y=yE4)
-valuesZ5='{x}+{y}i'.format(x=xE5,y=yE5)
-valuesZ6='{x}+{y}i'.format(x=xE6,y=yE6)
+xE1 = round(xE1,2)
+xE2 = round(xE2,2)
+yE1 = round(yE1,2)
+yE2 = round(yE2,2)
+xE3 = round(xE3,2)
+xE4 = round(xE4,2)
+yE3 = round(yE3,2)
+yE4 = round(yE4,2)
+xE5 = round(xE5,2)
+xE6 = round(xE6,2)
+yE5 = round(yE5,2)
+yE6 = round(yE6,2)
+valuesZ1 = '{x}+{y}i'.format(x=xE1,y=yE1)
+valuesZ2 = '{x}+{y}i'.format(x=xE2,y=yE2)
+valuesZ3 = '{x}+{y}i'.format(x=xE3,y=yE3)
+valuesZ4 = '{x}+{y}i'.format(x=xE4,y=yE4)
+valuesZ5 = '{x}+{y}i'.format(x=xE5,y=yE5)
+valuesZ6 = '{x}+{y}i'.format(x=xE6,y=yE6)
 #ValueZ1_Z2.data= dict(names=['Z₁','Z₂'],valuesZ=[valuesZ1,valuesZ2])
 #ValueZ3_Z6.data= dict(names=['Z₃','Z₄','Z₅','Z₆'],valuesZ=[valuesZ3,valuesZ4,valuesZ5,valuesZ6])
 ValueZ1_Z6 = ColumnDataSource(data=dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],valuesZ=[valuesZ1,valuesZ2,valuesZ3,valuesZ4,valuesZ5,valuesZ6]))
@@ -115,24 +115,24 @@ def updateVector1 ():
        Vector1_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=-1)
        V1_label_source.data = dict (x=[],y=[],Z1=[])
     else:
-        xE = Vector1*cos(theta1)
-        yE = Vector1*sin(theta1)
-        Vector1_source.stream(dict(xS=[0], yS=[0], xE=[xE], yE=[yE]), rollover=1)
-        V1_label_source.data = dict (x=[xE],y=[yE],Z1=["Z1"])
+        xE1 = Vector1*cos(theta1)
+        yE1 = Vector1*sin(theta1)
+        Vector1_source.stream(dict(xS=[0], yS=[0], xE=[xE1], yE=[yE1]), rollover=1)
+        V1_label_source.data = dict (x=[xE1],y=[yE1],Z1=["Z1"])
     
     
 
 def updateVector2 ():
     [theta2]  = glob_theta2.data["val"]  # input/
     [Vector2] = glob_Vector2.data["val"] # input/
-    if (Vector2== 0):
+    if (Vector2 == 0):
         Vector2_source.stream(dict(xS=[],yS=[],xE=[],yE=[]), rollover=1)
         V2_label_source.data = dict (x=[],y=[],Z2=[])
     else:
-        xE = Vector2*cos(theta2)
-        yE = Vector2*sin(theta2)
-        Vector2_source.stream(dict(xS=[0], yS=[0], xE=[xE], yE=[yE]), rollover=1)
-        V2_label_source.data = dict (x=[xE],y=[yE],Z2=["Z2"])
+        xE2 = Vector2*cos(theta2)
+        yE2 = Vector2*sin(theta2)
+        Vector2_source.stream(dict(xS=[0], yS=[0], xE=[xE2], yE=[yE2]), rollover=1)
+        V2_label_source.data = dict (x=[xE2],y=[yE2],Z2=["Z2"])
 
 
 def updatevalues():
@@ -153,25 +153,25 @@ def updatevalues():
     denominator=xE2*xE2+yE2*yE2
     xE6 = (xE1*xE2+yE1*yE2)/denominator
     yE6 = (xE1*yE2-xE2*yE1)/denominator
-    xE1=round(xE1,2)
-    xE2=round(xE2,2)
-    yE1=round(yE1,2)
-    yE2=round(yE2,2)
-    xE3=round(xE3,2)
-    xE4=round(xE4,2)
-    yE3=round(yE3,2)
-    yE4=round(yE4,2)
-    xE5=round(xE5,2)
-    xE6=round(xE6,2)
-    yE5=round(yE5,2)
-    yE6=round(yE6,2)
-    valuesZ1='{x}+{y}i'.format(x=xE1,y=yE1)
-    valuesZ2='{x}+{y}i'.format(x=xE2,y=yE2)
-    valuesZ3='{x}+{y}i'.format(x=xE3,y=yE3)
-    valuesZ4='{x}+{y}i'.format(x=xE4,y=yE4)
-    valuesZ5='{x}+{y}i'.format(x=xE5,y=yE5)
-    valuesZ6='{x}+{y}i'.format(x=xE6,y=yE6)   
-    ValueZ1_Z6.data= dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],valuesZ=[valuesZ1,valuesZ2,valuesZ3,valuesZ4,valuesZ5,valuesZ6])
+    xE1 = round(xE1,2)
+    xE2 = round(xE2,2)
+    yE1 = round(yE1,2)
+    yE2 = round(yE2,2)
+    xE3 = round(xE3,2)
+    xE4 = round(xE4,2)
+    yE3 = round(yE3,2)
+    yE4 = round(yE4,2)
+    xE5 = round(xE5,2)
+    xE6 = round(xE6,2)
+    yE5 = round(yE5,2)
+    yE6 = round(yE6,2)
+    valuesZ1 = '{x}+{y}i'.format(x=xE1,y=yE1)
+    valuesZ2 = '{x}+{y}i'.format(x=xE2,y=yE2)
+    valuesZ3 = '{x}+{y}i'.format(x=xE3,y=yE3)
+    valuesZ4 = '{x}+{y}i'.format(x=xE4,y=yE4)
+    valuesZ5 = '{x}+{y}i'.format(x=xE5,y=yE5)
+    valuesZ6 = '{x}+{y}i'.format(x=xE6,y=yE6)   
+    ValueZ1_Z6.data = dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],valuesZ=[valuesZ1,valuesZ2,valuesZ3,valuesZ4,valuesZ5,valuesZ6])
 
 
 def updateSum():
@@ -180,16 +180,34 @@ def updateSum():
     [Vector1] = glob_Vector1.data["val"] # input/
     [Vector2] = glob_Vector2.data["val"] # input/
     
-    xE = Vector1*cos(theta1)+Vector2*cos(theta2)
-    yE = Vector1*sin(theta1)+Vector2*sin(theta2)
+    xE3 = Vector1*cos(theta1)+Vector2*cos(theta2)
+    yE3 = Vector1*sin(theta1)+Vector2*sin(theta2)
     
-    R  = round(sqrt(xE**2.0+yE**2.0),1)
+    R  = round(sqrt(xE3**2.0+yE3**2.0),1)
     if (abs(R) < 1e-3):
-        VectorSum_source.stream(dict(xS=[0], yS=[0], xE=[xE], yE=[yE]), rollover=1)
+        VectorSum_source.stream(dict(xS=[0], yS=[0], xE=[xE3], yE=[yE3]), rollover=1)
         VectorSum_label_source.data = dict(x=[], y=[], R=[])
     else:
-        VectorSum_source.stream(dict(xS=[0], yS=[0], xE=[xE], yE=[yE]), rollover=1)
-        VectorSum_label_source.data=dict (x=[xE],y=[yE],R=["Z3"])
+        VectorSum_source.stream(dict(xS=[0], yS=[0], xE=[xE3], yE=[yE3]), rollover=1)
+        VectorSum_label_source.data=dict (x=[xE3],y=[yE3],R=["Z3"])
+
+def updateSub():
+    [theta1]  = glob_theta1.data["val"]  # input/
+    [theta2]  = glob_theta2.data["val"]  # input/
+    [Vector1] = glob_Vector1.data["val"] # input/
+    [Vector2] = glob_Vector2.data["val"] # input/
+    
+    xE4 = Vector1*cos(theta1)-Vector2*cos(theta2)
+    yE4 = Vector1*sin(theta1)-Vector2*sin(theta2)
+
+    R  = round(sqrt(xE4**2.0+yE4**2.0),1)
+    if (abs(R) < 1e-3):
+        VectorSub_source.stream(dict(xS=[0], yS=[0], xE=[x4E], yE=[yE4]), rollover=1)
+        VectorSub_label_source.data = dict(x=[], y=[], R=[])
+
+    else:
+        VectorSub_source.stream(dict(xS=[0], yS=[0], xE=[xE4], yE=[yE4]), rollover=1)
+        VectorSub_label_source.data = dict (x=[xE4],y=[yE4],R=["Z4"])  
 
 def updateMul():
     [theta1]  = glob_theta1.data["val"]  # input/
@@ -232,23 +250,6 @@ def updateDiv():
         VectorDiv_source.stream(dict(xS=[0], yS=[0], xE=[xE6], yE=[yE6]), rollover=1)
         VectorDiv_label_source.data=dict (x=[xE6],y=[yE6],R=["Z6"])
 
-def updateSub():
-    [theta1]  = glob_theta1.data["val"]  # input/
-    [theta2]  = glob_theta2.data["val"]  # input/
-    [Vector1] = glob_Vector1.data["val"] # input/
-    [Vector2] = glob_Vector2.data["val"] # input/
-    
-    xE = Vector1*cos(theta1)-Vector2*cos(theta2)
-    yE = Vector1*sin(theta1)-Vector2*sin(theta2)
-
-    R  = round(sqrt(xE**2.0+yE**2.0),1)
-    if (abs(R) < 1e-3):
-        VectorSub_source.stream(dict(xS=[0], yS=[0], xE=[xE], yE=[yE]), rollover=1)
-        VectorSub_label_source.data = dict(x=[], y=[], R=[])
-
-    else:
-        VectorSub_source.stream(dict(xS=[0], yS=[0], xE=[xE], yE=[yE]), rollover=1)
-        VectorSub_label_source.data = dict (x=[xE],y=[yE],R=["Z4"])  
 
 def updateLine():
     [theta1]  = glob_theta1.data["val"]  # input/
@@ -272,14 +273,16 @@ def conjugate():
     [Vector1] = glob_Vector1.data["val"] # input
     xE1 = Vector1*cos(theta1)
     yE1 = Vector1*sin(theta1)
-    glob_theta2.data["val"]=[2*pi-theta1]
-    glob_Vector2.data["val"]=[Vector1]
+    glob_theta2.data["val"] = [-theta1]
+    glob_Vector2.data["val"] = [Vector1]
+    Vector2Slider.value = Vector1
+    AngleVector2Slider.value = -theta1*180/pi
     xE2 = xE1
     yE2 = -yE1
-    xE3=xE2+xE1
-    yE3=yE2+yE1
-    xE4=xE1-xE2
-    yE4=yE1-yE2
+    xE3 = xE2+xE1
+    yE3 = yE2+yE1
+    xE4 = xE1-xE2
+    yE4 = yE1-yE2
     xE5 = xE1*xE2-yE1*yE2
     yE5 = xE1*yE2+xE2*yE1
     denominator=xE2*xE2+yE2*yE2
@@ -288,33 +291,36 @@ def conjugate():
     Vector2_source.stream(dict(xS=[0], yS=[0], xE=[xE2], yE=[yE2]), rollover=1)
     V2_label_source.data = dict (x=[xE2+3],y=[yE2-3],Z2=["Z2"])
     VectorSum_source.stream(dict(xS=[0], yS=[0], xE=[xE3], yE=[yE3]), rollover=1)
-    VectorSum_label_source.data=dict (x=[xE3],y=[yE3],R=["Z3"])
+    VectorSum_label_source.data = dict (x=[xE3],y=[yE3],R=["Z3"])
     VectorSub_source.stream(dict(xS=[0], yS=[0], xE=[xE4], yE=[yE4]), rollover=1)
-    VectorSub_label_source.data=dict (x=[xE4],y=[yE4],R=["Z4"])
+    VectorSub_label_source.data = dict (x=[xE4],y=[yE4],R=["Z4"])
     VectorMul_source.stream(dict(xS=[0], yS=[0], xE=[xE5], yE=[yE5]), rollover=1)
-    VectorMul_label_source.data=dict (x=[xE5],y=[yE5],R=["Z5"])
+    VectorMul_label_source.data = dict (x=[xE5],y=[yE5],R=["Z5"])
     VectorDiv_source.stream(dict(xS=[0], yS=[0], xE=[xE6], yE=[yE6]), rollover=1)
-    VectorDiv_label_source.data=dict (x=[xE6],y=[yE6],R=["Z6"])
-    xE1=round(xE1,1)
-    xE2=round(xE2,1)
-    yE1=round(yE1,1)
-    yE2=round(yE2,1)
-    xE3=round(xE3,1)
-    xE4=round(xE4,1)
-    yE3=round(yE3,1)
-    yE4=round(yE4,1)
-    xE5=round(xE5,1)
-    xE6=round(xE6,1)
-    yE5=round(yE5,1)
-    yE6=round(yE6,1)
-    valuesZ3='{x}+{y}i'.format(x=xE3,y=yE3)
-    valuesZ4='{x}+{y}i'.format(x=xE4,y=yE4)
-    valuesZ5='{x}+{y}i'.format(x=xE5,y=yE5)
-    valuesZ6='{x}+{y}i'.format(x=xE6,y=yE6)   
-    ValueZ1_Z6.data= dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],valuesZ=[valuesZ1,valuesZ2,valuesZ3,valuesZ4,valuesZ5,valuesZ6])
+    VectorDiv_label_source.data = dict (x=[xE6],y=[yE6],R=["Z6"])
+    xE1 = round(xE1, 1)
+    xE2 = round(xE2, 1)
+    yE1 = round(yE1, 1)
+    yE2 = round(yE2, 1)
+    xE3 = round(xE3, 1)
+    xE4 = round(xE4, 1)
+    yE3 = round(yE3, 1)
+    yE4 = round(yE4, 1)
+    xE5 = round(xE5, 1)
+    xE6 = round(xE6, 1)
+    yE5 = round(yE5, 1)
+    yE6 = round(yE6, 1)
+    valuesZ3 = '{x}+{y}i'.format(x=xE3,y=yE3)
+    valuesZ4 = '{x}+{y}i'.format(x=xE4,y=yE4)
+    valuesZ5 = '{x}+{y}i'.format(x=xE5,y=yE5)
+    valuesZ6 = '{x}+{y}i'.format(x=xE6,y=yE6)   
+    ValueZ1_Z6.data = dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],valuesZ=[valuesZ1,valuesZ2,valuesZ3,valuesZ4,valuesZ5,valuesZ6])
     line1_source.data = dict (x=[xE1, xE3],y=[yE1, yE3])
     line2_source.data = dict (x=[xE1, xE4],y=[yE1, yE4])
     updatevalues()
+
+
+    
 Conjugate_button.on_click(conjugate)
 
 #table  
@@ -403,7 +409,7 @@ def choose_calculate(attr, old, new):
 
 calculate_selection.on_change('active',choose_calculate)
 
-def changeVector1(attr,old,new):
+def changeVector1(attr,old,new):      
     glob_Vector1.data = dict(val=[new]) #      /output
     updateVector1()
     updateSum()
@@ -447,17 +453,16 @@ def changetheta2(attr,old,new):
     updateDiv()
     
 
-Vector1Slider = LatexSlider(title="|Z1|=", value=8.0,  start=0, end=10.0, step=0.2)
+Vector1Slider = LatexSlider(title="|Z1|=", value=Vector1,  start=0, end=10.0, step=0.2)
 
 Vector1Slider.on_change('value',changeVector1)
-Vector2Slider = LatexSlider(title="|Z2|=", value=4.0,  start=0.0, end=10.0, step=0.2)
+Vector2Slider = LatexSlider(title="|Z2|=", value=Vector2,  start=0.0, end=10.0, step=0.2)
 
 Vector2Slider.on_change('value',changeVector2)
 
-AngleVector1Slider = LatexSlider(title='\\alpha_{Z1}=', value_unit='^{\\circ}', value=60.0, start=-180, end=180, step=5)
+AngleVector1Slider = LatexSlider(title='\\alpha_{Z1}=', value_unit='^{\\circ}', value=theta1/pi*180, start=-180, end=180, step=5)
 AngleVector1Slider.on_change('value',changetheta1)
-AngleVector2Slider = LatexSlider(title='\\alpha_{Z2}=',value_unit='^{\\circ}', value=140.0, start=-180, end=180, step=5)
+AngleVector2Slider = LatexSlider(title='\\alpha_{Z2}=',value_unit='^{\\circ}', value=theta2/pi*180, start=-180, end=180, step=5)
 AngleVector2Slider.on_change('value',changetheta2)
 
-
-curdoc().add_root(column(description,row(p,Spacer(width=40),calculate_selection),row(Spacer(width=20),column(Vector1Slider,Vector2Slider,AngleVector1Slider,AngleVector2Slider,Spacer(height=10),Conjugate_button),Spacer(width=20),value_table)))
+curdoc().add_root(column(description,row(p,Spacer(width=40),calculate_selection,column(column(Vector1Slider,Vector2Slider,AngleVector1Slider,AngleVector2Slider,Spacer(height=10),Conjugate_button),Spacer(height=20),value_table))))
