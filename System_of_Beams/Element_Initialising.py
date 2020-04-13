@@ -57,8 +57,8 @@ def CalculationElement(elementlist):
                   Symbol('phi_0' + str(i)), Symbol('w_0' + str(i)), Symbol('N_1' + str(i)), Symbol('u_1' + str(i)),\
                   Symbol('Q_1' + str(i)), Symbol('M_1' + str(i)), Symbol('phi_1' + str(i)), Symbol('w_1' + str(i))])
         i = i+1
-    # print_arr(rb)
-    # print_arr(eq)
+    #print_arr(rb)
+    #print_arr(eq)
     try:
         """The matrix is solved"""
         result = solve(eq, rb)

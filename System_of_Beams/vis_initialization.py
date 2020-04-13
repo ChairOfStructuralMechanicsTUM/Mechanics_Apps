@@ -179,7 +179,7 @@ def initialize(max_indep_elements=20, catch_radius=0.15):
 
     # Div object showing hints for the graphical input into the input plot through the element buttons
     div_input_width = plot_input.plot_width - div_xy.width - 10
-    div_input = Div(width=div_input_width, height=div_xy.height)
+    div_input       = Div(width=div_input_width, height=div_xy.height)
 
     # Div object showing general text messages to the user
     div_msg = Div(css_classes=["MSG_BOX"], text=" ", width=plot_input.plot_width, height=100)
@@ -210,31 +210,31 @@ def initialize(max_indep_elements=20, catch_radius=0.15):
     ###############################
     '''
     # initialize plots for the output after calculations
-    plot_output_width = 800
-    plot_output_height = 250
-    plot_normal_f = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
+    plot_output_width   = 800
+    plot_output_height  = 250
+    plot_normal_f       = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
     plot_normal_f.title.text = 'Normal force'
-    plot_normal_disp = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
+    plot_normal_disp    = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
     plot_normal_disp.title.text = 'Normal displacement'
-    plot_shear_f = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
+    plot_shear_f        = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
     plot_shear_f.title.text = 'Shear force'
-    plot_moment = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
+    plot_moment         = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
     plot_moment.title.text = 'Bending moment'
-    plot_shear_disp = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
+    plot_shear_disp     = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
     plot_shear_disp.title.text = 'Shear displacement'
-    plot_shear_angle = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
+    plot_shear_angle    = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
     plot_shear_angle.title.text = 'Rotation angle'
     plot_list = [plot_normal_f, plot_normal_disp, plot_shear_f, plot_moment, plot_shear_angle, plot_shear_disp]
 
     # add plot renderer
     ds = ColumnDataSource(data=dict(x=[], y=[]))
-    plot_normal_f.circle('x', 'y', source=ds)
-    plot_normal_disp.circle('x', 'y', source=ds)
-    plot_shear_f.circle('x', 'y', source=ds)
-    plot_moment.circle('x', 'y', source=ds)
-    plot_shear_disp.circle('x', 'y', source=ds)
-    plot_normal_f.circle('x', 'y', source=ds)
-    plot_shear_angle.circle('x', 'y', source=ds)
+    plot_normal_f.      circle('x', 'y', source=ds)
+    plot_normal_disp.   circle('x', 'y', source=ds)
+    plot_shear_f.       circle('x', 'y', source=ds)
+    plot_moment.        circle('x', 'y', source=ds)
+    plot_shear_disp.    circle('x', 'y', source=ds)
+    plot_normal_f.      circle('x', 'y', source=ds)
+    plot_shear_angle.   circle('x', 'y', source=ds)
 
     '''
     ###############################
@@ -270,12 +270,12 @@ def initialize(max_indep_elements=20, catch_radius=0.15):
     ###############################
     '''
     # titles for groups of mechanical elements
-    text_supports = Div(text="Supports:", width=100, height=20)
-    text_springs = Div(text="Springs:", width=100, height=20)
-    text_node = Div(text="Node:", width=100, height=20)
-    text_joints = Div(text="Joints:", width=100, height=20)
-    text_elements = Div(text="Line elements:", width=100, height=20)
-    text_loads = Div(text="Loads:", width=100, height=20)
+    text_supports   = Div(text="Supports:", width=100, height=20)
+    text_springs    = Div(text="Springs:", width=100, height=20)
+    text_node       = Div(text="Node:", width=100, height=20)
+    text_joints     = Div(text="Joints:", width=100, height=20)
+    text_elements   = Div(text="Line elements:", width=100, height=20)
+    text_loads      = Div(text="Loads:", width=100, height=20)
 
     b_height = 50
     b_line_width = 72
@@ -402,38 +402,38 @@ def initialize(max_indep_elements=20, catch_radius=0.15):
     elinfo_input_width = 60
 
     # labels for values of an element of the input plot
-    text_elinfo_name = Div(text="name:", width=elinfo_label_width1, height=elinfo_object_height)
-    text_elinfo_x = Div(text="x:", width=elinfo_label_width1, height=elinfo_object_height)
+    text_elinfo_name    = Div(text="name:", width=elinfo_label_width1, height=elinfo_object_height)
+    text_elinfo_x       = Div(text="x:", width=elinfo_label_width1, height=elinfo_object_height)
     div_element_info["x"] = text_elinfo_x
-    text_elinfo_y = Div(text="y:", width=elinfo_label_width1, height=elinfo_object_height)
+    text_elinfo_y       = Div(text="y:", width=elinfo_label_width1, height=elinfo_object_height)
     div_element_info["y"] = text_elinfo_y
-    text_elinfo_angle1 = Div(text="angle:", width=elinfo_label_width1, height=elinfo_object_height)
-    text_elinfo_angle2 = Div(text="°", width=elinfo_label_width2-20, height=elinfo_object_height)
-    spacer_y_a = Div(text="", width=text_elinfo_angle2.width, height=elinfo_object_height)
-    text_elinfo_k1 = Div(text="spring:", width=elinfo_label_width1, height=elinfo_object_height)
-    text_elinfo_k2 = Div(text="* k", width=elinfo_label_width2, height=elinfo_object_height)
+    text_elinfo_angle1  = Div(text="angle:", width=elinfo_label_width1, height=elinfo_object_height)
+    text_elinfo_angle2  = Div(text="°", width=elinfo_label_width2-20, height=elinfo_object_height)
+    spacer_y_a          = Div(text="", width=text_elinfo_angle2.width, height=elinfo_object_height)
+    text_elinfo_k1      = Div(text="spring:", width=elinfo_label_width1, height=elinfo_object_height)
+    text_elinfo_k2      = Div(text="* k", width=elinfo_label_width2, height=elinfo_object_height)
     text_elinfo_length1 = Div(text="length:", width=elinfo_label_width1, height=elinfo_object_height)
     text_elinfo_length2 = Div(text="* l", width=elinfo_label_width2, height=elinfo_object_height)
-    text_elinfo_force1 = Div(text="force:", width=elinfo_label_width1, height=elinfo_object_height)
-    text_elinfo_force2 = Div(text="* F", width=elinfo_label_width2, height=elinfo_object_height)
+    text_elinfo_force1  = Div(text="force:", width=elinfo_label_width1, height=elinfo_object_height)
+    text_elinfo_force2  = Div(text="* F", width=elinfo_label_width2, height=elinfo_object_height)
     text_elinfo_moment1 = Div(text="moment:", width=elinfo_label_width1, height=elinfo_object_height)
     text_elinfo_moment2 = Div(text="* M", width=elinfo_label_width2, height=elinfo_object_height)
-    text_elinfo_beam = Div(text="BEAM", width=elinfo_object_height, height=elinfo_label_width1,
+    text_elinfo_beam    = Div(text="BEAM", width=elinfo_object_height, height=elinfo_label_width1,
                            css_classes=["ELINFO_VERTICAL_TEXT"])
-    text_elinfo_h = Div(text="* h", width=elinfo_label_width2, height=elinfo_object_height)
-    text_elinfo_ei = Div(text="* EI", width=elinfo_label_width2, height=elinfo_object_height)
-    text_elinfo_ea = Div(text="* EA", width=elinfo_label_width2, height=elinfo_object_height)
-    text_elinfo_lineload = Div(text="LINE LOAD", width=elinfo_object_height, height=elinfo_label_width1,
+    text_elinfo_h       = Div(text="* h", width=elinfo_label_width2, height=elinfo_object_height)
+    text_elinfo_ei      = Div(text="* EI", width=elinfo_label_width2, height=elinfo_object_height)
+    text_elinfo_ea      = Div(text="* EA", width=elinfo_label_width2, height=elinfo_object_height)
+    text_elinfo_lineload= Div(text="LINE LOAD", width=elinfo_object_height, height=elinfo_label_width1,
                                css_classes=["ELINFO_VERTICAL_TEXT"])
-    text_elinfo_xn = Div(text="* n", width=elinfo_label_width2-10, height=elinfo_object_height)
+    text_elinfo_xn      = Div(text="* n", width=elinfo_label_width2-10, height=elinfo_object_height)
     div_element_info["xn"] = text_elinfo_xn
-    text_elinfo_yq = Div(text="* q", width=elinfo_label_width2-10, height=elinfo_object_height)
+    text_elinfo_yq      = Div(text="* q", width=elinfo_label_width2-10, height=elinfo_object_height)
     div_element_info["yq"] = text_elinfo_yq
     text_elinfo_temp = Div(text="TEMP.", width=elinfo_object_height, height=elinfo_label_width1,
                            css_classes=["ELINFO_VERTICAL_TEXT"])
-    text_elinfo_dt = Div(text="* dT", width=elinfo_label_width2, height=elinfo_object_height)
-    text_elinfo_tt = Div(text="* T", width=elinfo_label_width2, height=elinfo_object_height)
-    text_elinfo_at = Div(text="* &alpha;T", width=elinfo_label_width2, height=elinfo_object_height)
+    text_elinfo_dt      = Div(text="* dT", width=elinfo_label_width2, height=elinfo_object_height)
+    text_elinfo_tt      = Div(text="* T", width=elinfo_label_width2, height=elinfo_object_height)
+    text_elinfo_at      = Div(text="* &alpha;T", width=elinfo_label_width2, height=elinfo_object_height)
 
     # text inputs showing the current value of an input plot element and taking input for a value change
     # name

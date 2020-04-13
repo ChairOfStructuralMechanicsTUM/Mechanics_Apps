@@ -1,13 +1,15 @@
+import math
+
 class Knot:
-    def __init__(self, kn_id, x, y, kn_type, k=[0, 0, 0], pointload=[0, 0, 0], angleSupport=0):
+    def __init__(self, kn_id, x, y, kn_type, angleSupport, k=[0, 0, 0], pointload=[0, 0, 0]):
         self.id = kn_id
         self.x_ = x
         self.y_ = y
         self.pointLoad_ = pointload
         self.type = kn_type
-        self.angle = angleSupport    # in degree
-        self.coupled_el = []        # connected elements, stores IDs
-        self.k = k              # spring stiffness
+        self.angle = math.degrees(angleSupport) # in degree
+        self.coupled_el = []                    # connected elements, stores IDs
+        self.k = k                              # spring stiffness
 
     def __repr__(self):
         return str(self.id)

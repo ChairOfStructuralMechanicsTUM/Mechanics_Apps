@@ -48,7 +48,7 @@ def get_all_node_from_indep(ds_indep):
     for i in range(len(ds_indep.data["type"])):
         _, el_type, num = ElSupEnum.value_in_enum(ElSupEnum.ElSupEnum, ds_indep.data["type"][i])
         # print("Knot" + str(i) + ": " + str(ds_indep.data["name"][i]) + " type: " + str(el_type))
-        kn = Knot(ds_indep.data["name"][i], ds_indep.data["x"][i], ds_indep.data["y"][i], ds_indep.data["type"][i])
+        kn = Knot(ds_indep.data["name"][i], ds_indep.data["x"][i], ds_indep.data["y"][i], ds_indep.data["type"][i], ds_indep.data["angle"][i])
         node_list.append(kn)
         # print("Successful created: ")
         # print(kn)
@@ -116,8 +116,8 @@ def extract_point_load(ds_nodedep, indice, node_list):
     knot_1, _ = get_related_knots_for_elements(ds_nodedep, indice, node_list)
     F = float(ds_nodedep.data["f"][indice]) * Symbol("F")
     mom = float(ds_nodedep.data["moment"][indice]) * Symbol("M")
-    angle = float(ds_nodedep.data["angle"][indice]) * m.pi / 180  # convert from degree to radian
-    F_x = symbbox.round_expr(F * -m.sin(angle), 5)
+    angle = float(ds_nodedep.data["angle"][indice])
+    F_x = symbbox.round_expr(F * m.sin(angle), 5)
     F_y = symbbox.round_expr(F * m.cos(angle), 5)
     knot_1.set_pointload(F_x, F_y, mom)
     return F_x, F_y, mom
@@ -158,9 +158,10 @@ def extract_line_load(ds_nodedep, indice, node_list):
 
 def extract_temp_loads(ds_nodedep, indice, node_list):
     dT_T = ds_nodedep.data["dT_T"][indice]
+    T  = Symbol("T")
     dT = Symbol("dT")
     aT = Symbol("aT")
-    return TempProps(dT_T[1], dT_T[0] * dT, dT_T[2] * aT)
+    return TempProps(dT_T[1] * T, dT_T[0] * dT, dT_T[2] * aT)
 
 
 def calc_line_load(ll_local, ll_x_n, ll_y_q, x_1, x_2, len_symb, angle_glob=0, round_prec=6):
@@ -176,18 +177,20 @@ def calc_line_load(ll_local, ll_x_n, ll_y_q, x_1, x_2, len_symb, angle_glob=0, r
     """
     n = Symbol('n')
     q = Symbol('q')
-    n_func = N((ll_x_n[1] - ll_x_n[0])/(x_2 - x_1) * len_symb + ll_x_n[0] - (ll_x_n[1] - ll_x_n[0])/(x_2 - x_1)*x_1)
-    q_func = N((ll_y_q[1] - ll_y_q[0]) / (x_2 - x_1) * len_symb + ll_y_q[0] - (ll_y_q[1] - ll_y_q[0]) / (x_2 - x_1) * x_1)
+    l = Symbol('l')
+    n_func = N((ll_x_n[1] - ll_x_n[0]) / ( l * (x_2 - x_1)) * len_symb + ll_x_n[0] - (ll_x_n[1] - ll_x_n[0]) / ( l * (x_2 - x_1)) * x_1)
+    q_func = N((ll_y_q[1] - ll_y_q[0]) / ( l * (x_2 - x_1)) * len_symb + ll_y_q[0] - (ll_y_q[1] - ll_y_q[0]) / ( l * (x_2 - x_1)) * x_1)
     if not ll_local:
         print("line_load transferred to local coordinate system")
-        n_func_loc = N(n_func * m.cos(angle_glob) + q_func * m.sin(angle_glob))
+        n_func_loc =   N(n_func * m.cos(angle_glob) + q_func * m.sin(angle_glob))
         q_func_loc = - N(n_func * m.sin(angle_glob) + q_func * m.cos(angle_glob))
     else:
         n_func_loc = n_func
         q_func_loc = q_func
     n_func_loc = n_func_loc * n
     q_func_loc = q_func_loc * q
-    return symbbox.round_expr(-n_func_loc, round_prec), symbbox.round_expr(-q_func_loc, round_prec)
+    print(n_func)
+    return symbbox.round_expr(n_func_loc, round_prec), symbbox.round_expr(-q_func_loc, round_prec)
 
 
 def adjust_nodes_for_calc(node_list):
@@ -304,7 +307,6 @@ def interface(ds_indep, ds_nodedep):
             knot_1, knot_2 = get_related_knots_for_elements(ds_nodedep, i, node_list)
             load_line_dict.update({prhlp.get_id_from_knots(knot_1, knot_2): load})
             # print("Lineload successfully created: " + str(prhlp.get_id_from_knots(knot_1, knot_2)))
-            # print(load)
 
         # get point springs
         elif ElSupEnum.check_point_spring(el_type):
