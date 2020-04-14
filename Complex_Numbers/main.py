@@ -37,8 +37,8 @@ VectorSum_label_source                      = ColumnDataSource(data=dict(x=[],y=
 VectorMul_label_source                      = ColumnDataSource(data=dict(x=[],y=[],R=[]))
 VectorSum_values_source                     = ColumnDataSource(data=dict(x=[],y=[],names=[]))
 VectorSub_values_source                     = ColumnDataSource(data=dict(x=[],y=[],names=[]))     
-line1_source                                = ColumnDataSource(data=dict(x=[],y=[]))
-line2_source                                = ColumnDataSource(data=dict(x=[],y=[]))
+#line1_source                                = ColumnDataSource(data=dict(x=[],y=[]))
+#line2_source                                = ColumnDataSource(data=dict(x=[],y=[]))
 
 #ValueZ1_Z2                                  = ColumnDataSource(data=dict(names1=['Z₁'],names2=['Z₂'],valuesZ1=[],valuesZ2=[]))
 #ValueZ3_Z6                                  = ColumnDataSource(data=dict(names1=['Z₃'],names2=['Z₄'],names3=['Z₅'],names4=['Z₆'],valuesZ3=[],valuesZ4=[],valuesZ5=[],valuesZ6=[]))
@@ -81,8 +81,8 @@ VectorDiv_source.stream(dict(xS=[0], yS=[0], xE=[xE6], yE=[yE6]), rollover=1)
 VectorMul_label_source.data = dict (x=[xE5],y=[yE5],R=["Z5"])
 VectorDiv_label_source.data = dict (x=[xE6],y=[yE6],R=["Z6"])
 
-line1_source.data = dict (x=[xE1, xE3],y=[yE1, yE3])
-line2_source.data = dict (x=[xE1, xE4],y=[yE1, yE4])
+#line1_source.data = dict (x=[xE1, xE3],y=[yE1, yE3])
+#line2_source.data = dict (x=[xE1, xE4],y=[yE1, yE4])
 
 xE1 = round(xE1,2)
 xE2 = round(xE2,2)
@@ -202,7 +202,7 @@ def updateSub():
 
     R  = round(sqrt(xE4**2.0+yE4**2.0),1)
     if (abs(R) < 1e-3):
-        VectorSub_source.stream(dict(xS=[0], yS=[0], xE=[x4E], yE=[yE4]), rollover=1)
+        VectorSub_source.stream(dict(xS=[0], yS=[0], xE=[xE4], yE=[yE4]), rollover=1)
         VectorSub_label_source.data = dict(x=[], y=[], R=[])
 
     else:
@@ -263,8 +263,8 @@ def updateLine():
     xE = Vector1*cos(theta1)-Vector2*cos(theta2)
     yE = Vector1*sin(theta1)-Vector2*sin(theta2)
 
-    line1_source.data = dict (x=[x1, xS],y=[y1, yS])
-    line2_source.data = dict (x=[x1, xE],y=[y1, yE])
+    #line1_source.data = dict (x=[x1, xS],y=[y1, yS])
+    #line2_source.data = dict (x=[x1, xE],y=[y1, yE])
 
 Conjugate_button = Button(label="Z2 = complex conjugate of Z1", button_type="success",width=100)
 
@@ -315,8 +315,8 @@ def conjugate():
     valuesZ5 = '{x}+{y}i'.format(x=xE5,y=yE5)
     valuesZ6 = '{x}+{y}i'.format(x=xE6,y=yE6)   
     ValueZ1_Z6.data = dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],valuesZ=[valuesZ1,valuesZ2,valuesZ3,valuesZ4,valuesZ5,valuesZ6])
-    line1_source.data = dict (x=[xE1, xE3],y=[yE1, yE3])
-    line2_source.data = dict (x=[xE1, xE4],y=[yE1, yE4])
+    #line1_source.data = dict (x=[xE1, xE3],y=[yE1, yE3])
+    #line2_source.data = dict (x=[xE1, xE4],y=[yE1, yE4])
     updatevalues()
 
 
@@ -360,9 +360,9 @@ vline = Span(location=0, dimension='height', line_color='#333333',line_dash='das
 hline = Span(location=0, dimension='width', line_color='#333333',line_dash='dashed')
 
 p = figure( x_range=(-12,12), y_range=(-12,12),plot_width=500, plot_height=500,\
-    toolbar_location="right", tools=["wheel_zoom,xwheel_pan,pan,reset"],x_axis_label="Realpart")
-line1_glyph=p.line(x='x',y='y',line_dash='dashed',source= line1_source, color="black")
-line2_glyph=p.line(x='x',y='y',line_dash='dashed',source= line2_source, color="black")
+    toolbar_location="right", tools=["wheel_zoom,xwheel_pan,pan,reset"],x_axis_label="Real Part")
+#line1_glyph=p.line(x='x',y='y',line_dash='dashed',source= line1_source, color="black")
+#line2_glyph=p.line(x='x',y='y',line_dash='dashed',source= line2_source, color="black")
 p.toolbar.logo = None
 p.title.text_font_size="20pt"
 p.axis.major_label_text_font_size="10pt"
@@ -400,8 +400,8 @@ def choose_calculate(attr, old, new):
     VectorSub_glyph.visible        = 1 in calculate_selection.active 
     VectorSum_label_glyph.visible  = 0 in calculate_selection.active
     VectorSub_label_glyph.visible  = 1 in calculate_selection.active
-    line1_glyph.visible            = 0 in calculate_selection.active 
-    line2_glyph.visible            = 1 in calculate_selection.active 
+    #line1_glyph.visible            = 0 in calculate_selection.active 
+    #line2_glyph.visible            = 1 in calculate_selection.active 
     VectorMul_glyph.visible        = 2 in calculate_selection.active
     VectorDiv_glyph.visible        = 3 in calculate_selection.active
     V5_label_glyph.visible         = 2 in calculate_selection.active
