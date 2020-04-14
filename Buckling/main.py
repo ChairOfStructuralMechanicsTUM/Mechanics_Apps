@@ -103,7 +103,7 @@ class Column(object):
         name                = [force_label,"\\mathrm{"+self.name+"}"]
         self.labels.data    = dict(x = x, y = y, name = name)
 
-weight_slide = Slider(title="Force Ratio (F/Fcrit)", value=0, start=0, end=f_end, step=step, width=450)    #slider created to change weight on columns
+weight_slide = Slider(title="Force Ratio (F/Fcrit,2)", value=0, start=0, end=f_end, step=step, width=450)    #slider created to change weight on columns
 
 def drange(start,stop,step):
     '''Function created to provide float range'''
