@@ -95,7 +95,9 @@ export class LatexLabelSetView extends TextAnnotationView {
 
     if (!this.model.visible) {
       undisplay(this.el)
-    }
+    } else{
+      display(this.el)
+     }
 
     
     const draw = this._v_css_text.bind(this)
