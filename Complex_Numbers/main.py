@@ -10,7 +10,7 @@ from bokeh.io import curdoc
 from math import radians, cos, sin, sqrt, atan, pi
 from bokeh.models.widgets import DataTable, TableColumn,CheckboxGroup,HTMLTemplateFormatter
 import yaml 
-from os.path import dirname, join, abspath # no split required, managed in strings.json
+from os.path import dirname, join, abspath, split
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir  = join(dirname(currentdir), "shared/")
@@ -466,3 +466,6 @@ AngleVector2Slider = LatexSlider(title='\\alpha_{Z2}=',value_unit='^{\\circ}', v
 AngleVector2Slider.on_change('value',changetheta2)
 
 curdoc().add_root(column(description,row(p,Spacer(width=40),calculate_selection,column(column(Vector1Slider,Vector2Slider,AngleVector1Slider,AngleVector2Slider,Spacer(height=10),Conjugate_button),Spacer(height=20),value_table))))
+
+## get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  
