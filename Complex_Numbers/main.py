@@ -5,17 +5,17 @@ Python Bokeh program calculate the complex number
 
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
-from bokeh.models import ColumnDataSource, Arrow, Button, Div, NormalHead,LabelSet,Span
+from bokeh.models import ColumnDataSource, Arrow, Button, Div, NormalHead, LabelSet, Span
 from bokeh.io import curdoc
-from math import radians, cos, sin, sqrt, atan, pi
-from bokeh.models.widgets import DataTable, TableColumn,CheckboxGroup,HTMLTemplateFormatter
+from math import radians, cos, sin, sqrt, pi
+from bokeh.models.widgets import DataTable, TableColumn, CheckboxGroup, NumberFormatter
 
 from os.path import dirname, join, abspath, split
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir  = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
-from latex_support import LatexLabelSet, LatexSlider, LatexLabel,LatexDiv
+from latex_support import LatexLabelSet, LatexSlider, LatexLabel, LatexDiv
 
 
 # Initialise Variables
@@ -84,18 +84,6 @@ VectorDiv_label_source.data = dict (x=[xE6],y=[yE6],R=["Z6"])
 line1_source.data = dict (x=[xE1, xE3],y=[yE1, yE3])
 line2_source.data = dict (x=[xE1, xE4],y=[yE1, yE4])
 
-xE1 = round(xE1,2)
-xE2 = round(xE2,2)
-yE1 = round(yE1,2)
-yE2 = round(yE2,2)
-xE3 = round(xE3,2)
-xE4 = round(xE4,2)
-yE3 = round(yE3,2)
-yE4 = round(yE4,2)
-xE5 = round(xE5,2)
-xE6 = round(xE6,2)
-yE5 = round(yE5,2)
-yE6 = round(yE6,2)
 ValueZ1_Z6 = ColumnDataSource(data=dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],realZ=[xE1,xE2,xE3,xE4,xE5,xE6],imagZ=[yE1,yE2,yE3,yE4,yE5,yE6]))
 
 def updateVector1 ():
@@ -142,18 +130,6 @@ def updatevalues():
     denominator=xE2*xE2+yE2*yE2
     xE6 = (xE1*xE2+yE1*yE2)/denominator
     yE6 = (xE1*yE2-xE2*yE1)/denominator
-    xE1 = round(xE1,2)
-    xE2 = round(xE2,2)
-    yE1 = round(yE1,2)
-    yE2 = round(yE2,2)
-    xE3 = round(xE3,2)
-    xE4 = round(xE4,2)
-    yE3 = round(yE3,2)
-    yE4 = round(yE4,2)
-    xE5 = round(xE5,2)
-    xE6 = round(xE6,2)
-    yE5 = round(yE5,2)
-    yE6 = round(yE6,2)
     ValueZ1_Z6.data = dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],realZ=[xE1,xE2,xE3,xE4,xE5,xE6],imagZ=[yE1,yE2,yE3,yE4,yE5,yE6])
 
 
@@ -281,18 +257,6 @@ def conjugate():
     VectorMul_label_source.data = dict (x=[xE5],y=[yE5],R=["Z5"])
     VectorDiv_source.stream(dict(xS=[0], yS=[0], xE=[xE6], yE=[yE6]), rollover=1)
     VectorDiv_label_source.data = dict (x=[xE6],y=[yE6],R=["Z6"])
-    xE1 = round(xE1, 1)
-    xE2 = round(xE2, 1)
-    yE1 = round(yE1, 1)
-    yE2 = round(yE2, 1)
-    xE3 = round(xE3, 1)
-    xE4 = round(xE4, 1)
-    yE3 = round(yE3, 1)
-    yE4 = round(yE4, 1)
-    xE5 = round(xE5, 1)
-    xE6 = round(xE6, 1)
-    yE5 = round(yE5, 1)
-    yE6 = round(yE6, 1)
     ValueZ1_Z6.data = dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],realZ=[xE1,xE2,xE3,xE4,xE5,xE6],imagZ=[yE1,yE2,yE3,yE4,yE5,yE6])
     line1_source.data = dict (x=[xE1, xE3],y=[yE1, yE3])
     line2_source.data = dict (x=[xE1, xE4],y=[yE1, yE4])
@@ -305,10 +269,12 @@ Conjugate_button.on_click(conjugate)
 
 columns2 = [
     TableColumn(field="names", title="Complex Number"),
-    TableColumn(field="realZ", title="Real Part 'a'"),
-    TableColumn(field="imagZ", title="Imaginary Part 'b'"),
+    TableColumn(field="realZ", title="Real Part 'a'", formatter=NumberFormatter(format='0.00')),
+    TableColumn(field="imagZ", title="Imaginary Part 'b'", formatter=NumberFormatter(format='0.00')),
 ]
-value_table = DataTable(source=ValueZ1_Z6, columns=columns2, reorderable=False, sortable=False, selectable=False, index_position=None, width=400, height=400)
+value_table = DataTable(source=ValueZ1_Z6, columns=columns2,
+    reorderable=False, sortable=False, selectable=False, index_position=None,
+    width=400, height=400)
 
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
@@ -367,11 +333,7 @@ p.add_layout(VectorSub_label_glyph)
 p.add_layout(vline)
 p.add_layout(hline)
 
-
-
 calculate_selection = CheckboxGroup(labels=["Addition Z3", "Subtraction Z4","Multiplication Z5","Division Z6"], active = [0,1,2,3])
-print(calculate_selection.labels)
-print(calculate_selection.active)
 
 
 def choose_calculate(attr, old, new):
