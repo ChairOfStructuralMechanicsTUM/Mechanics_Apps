@@ -368,7 +368,7 @@ p.title.text_font_size="20pt"
 p.axis.major_label_text_font_size="10pt"
 p.axis.axis_label_text_font_style="normal"
 p.axis.axis_label_text_font_size="14pt"
-p.yaxis.axis_label=" Imagirary Part"
+p.yaxis.axis_label=" Imaginary Part"
 p.add_layout(Vector1_glyph)
 p.add_layout(Vector2_glyph)
 p.add_layout(VectorSum_glyph)
