@@ -5,17 +5,17 @@ Python Bokeh program calculate the complex number
 
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
-from bokeh.models import ColumnDataSource, Arrow, Button, Div, NormalHead,LabelSet,Span
+from bokeh.models import ColumnDataSource, Arrow, Button, Div, NormalHead, LabelSet, Span
 from bokeh.io import curdoc
-from math import radians, cos, sin, sqrt, atan, pi
-from bokeh.models.widgets import DataTable, TableColumn,CheckboxGroup,HTMLTemplateFormatter
-import yaml 
+from math import radians, cos, sin, sqrt, pi
+from bokeh.models.widgets import DataTable, TableColumn, CheckboxGroup, NumberFormatter
+
 from os.path import dirname, join, abspath, split
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir  = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
-from latex_support import LatexLabelSet, LatexSlider, LatexLabel,LatexDiv
+from latex_support import LatexLabelSet, LatexSlider, LatexLabel, LatexDiv
 
 
 # Initialise Variables
@@ -28,7 +28,7 @@ Vector2_source                              = ColumnDataSource(data=dict(xS=[], 
 VectorSum_source                            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
 VectorSub_source                            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
 VectorMul_source                            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
-VectorDiv_source                            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))  
+VectorDiv_source                            = ColumnDataSource(data=dict(xS=[], xE=[], yS=[],yE=[]))
 V1_label_source                             = ColumnDataSource(data=dict(x=[],y=[],Z1=[]))
 V2_label_source                             = ColumnDataSource(data=dict(x=[],y=[],Z2=[]))
 VectorSub_label_source                      = ColumnDataSource(data=dict(x=[],y=[],R=[]))
@@ -36,7 +36,7 @@ VectorDiv_label_source                      = ColumnDataSource(data=dict(x=[],y=
 VectorSum_label_source                      = ColumnDataSource(data=dict(x=[],y=[],R=[]))
 VectorMul_label_source                      = ColumnDataSource(data=dict(x=[],y=[],R=[]))
 VectorSum_values_source                     = ColumnDataSource(data=dict(x=[],y=[],names=[]))
-VectorSub_values_source                     = ColumnDataSource(data=dict(x=[],y=[],names=[]))     
+VectorSub_values_source                     = ColumnDataSource(data=dict(x=[],y=[],names=[]))
 line1_source                                = ColumnDataSource(data=dict(x=[],y=[]))
 line2_source                                = ColumnDataSource(data=dict(x=[],y=[]))
 
@@ -75,7 +75,7 @@ V2_label_source.data = dict (x=[xE2],y=[yE2],Z2=["Z2"])
 VectorSum_source.stream(dict(xS=[0], yS=[0], xE=[xE3], yE=[yE3]), rollover=1)
 VectorSum_label_source.data=dict (x=[xE3],y=[yE3],R=["Z3"])
 VectorSub_source.stream(dict(xS=[0], yS=[0], xE=[xE4], yE=[yE4]), rollover=1)
-VectorSub_label_source.data = dict (x=[xE4],y=[yE4],R=["Z4"])  
+VectorSub_label_source.data = dict (x=[xE4],y=[yE4],R=["Z4"])
 VectorMul_source.stream(dict(xS=[0], yS=[0], xE=[xE5], yE=[yE5]), rollover=1)
 VectorDiv_source.stream(dict(xS=[0], yS=[0], xE=[xE6], yE=[yE6]), rollover=1)
 VectorMul_label_source.data = dict (x=[xE5],y=[yE5],R=["Z5"])
@@ -84,33 +84,12 @@ VectorDiv_label_source.data = dict (x=[xE6],y=[yE6],R=["Z6"])
 line1_source.data = dict (x=[xE1, xE3],y=[yE1, yE3])
 line2_source.data = dict (x=[xE1, xE4],y=[yE1, yE4])
 
-xE1 = round(xE1,2)
-xE2 = round(xE2,2)
-yE1 = round(yE1,2)
-yE2 = round(yE2,2)
-xE3 = round(xE3,2)
-xE4 = round(xE4,2)
-yE3 = round(yE3,2)
-yE4 = round(yE4,2)
-xE5 = round(xE5,2)
-xE6 = round(xE6,2)
-yE5 = round(yE5,2)
-yE6 = round(yE6,2)
-valuesZ1 = '{x}+{y}i'.format(x=xE1,y=yE1)
-valuesZ2 = '{x}+{y}i'.format(x=xE2,y=yE2)
-valuesZ3 = '{x}+{y}i'.format(x=xE3,y=yE3)
-valuesZ4 = '{x}+{y}i'.format(x=xE4,y=yE4)
-valuesZ5 = '{x}+{y}i'.format(x=xE5,y=yE5)
-valuesZ6 = '{x}+{y}i'.format(x=xE6,y=yE6)
-#ValueZ1_Z2.data= dict(names=['Z₁','Z₂'],valuesZ=[valuesZ1,valuesZ2])
-#ValueZ3_Z6.data= dict(names=['Z₃','Z₄','Z₅','Z₆'],valuesZ=[valuesZ3,valuesZ4,valuesZ5,valuesZ6])
-ValueZ1_Z6 = ColumnDataSource(data=dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],valuesZ=[valuesZ1,valuesZ2,valuesZ3,valuesZ4,valuesZ5,valuesZ6]))
-
+ValueZ1_Z6 = ColumnDataSource(data=dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],realZ=[xE1,xE2,xE3,xE4,xE5,xE6],imagZ=[yE1,yE2,yE3,yE4,yE5,yE6]))
 
 def updateVector1 ():
     [theta1]  = glob_theta1.data["val"]  # input/
     [Vector1] = glob_Vector1.data["val"] # input/
-    
+
     if (Vector1== 0):
        Vector1_source.stream(dict(xS=[],yS=[],xE=[],yE=[]),rollover=-1)
        V1_label_source.data = dict (x=[],y=[],Z1=[])
@@ -119,8 +98,6 @@ def updateVector1 ():
         yE1 = Vector1*sin(theta1)
         Vector1_source.stream(dict(xS=[0], yS=[0], xE=[xE1], yE=[yE1]), rollover=1)
         V1_label_source.data = dict (x=[xE1],y=[yE1],Z1=["Z1"])
-    
-    
 
 def updateVector2 ():
     [theta2]  = glob_theta2.data["val"]  # input/
@@ -147,31 +124,13 @@ def updatevalues():
     xE3 = Vector1*cos(theta1)+Vector2*cos(theta2)
     yE3 = Vector1*sin(theta1)+Vector2*sin(theta2)
     xE4 = Vector1*cos(theta1)-Vector2*cos(theta2)
-    yE4 = Vector1*sin(theta1)-Vector2*sin(theta2)  
+    yE4 = Vector1*sin(theta1)-Vector2*sin(theta2)
     xE5 = xE1*xE2-yE1*yE2
     yE5 = xE1*yE2+xE2*yE1
     denominator=xE2*xE2+yE2*yE2
     xE6 = (xE1*xE2+yE1*yE2)/denominator
     yE6 = (xE1*yE2-xE2*yE1)/denominator
-    xE1 = round(xE1,2)
-    xE2 = round(xE2,2)
-    yE1 = round(yE1,2)
-    yE2 = round(yE2,2)
-    xE3 = round(xE3,2)
-    xE4 = round(xE4,2)
-    yE3 = round(yE3,2)
-    yE4 = round(yE4,2)
-    xE5 = round(xE5,2)
-    xE6 = round(xE6,2)
-    yE5 = round(yE5,2)
-    yE6 = round(yE6,2)
-    valuesZ1 = '{x}+{y}i'.format(x=xE1,y=yE1)
-    valuesZ2 = '{x}+{y}i'.format(x=xE2,y=yE2)
-    valuesZ3 = '{x}+{y}i'.format(x=xE3,y=yE3)
-    valuesZ4 = '{x}+{y}i'.format(x=xE4,y=yE4)
-    valuesZ5 = '{x}+{y}i'.format(x=xE5,y=yE5)
-    valuesZ6 = '{x}+{y}i'.format(x=xE6,y=yE6)   
-    ValueZ1_Z6.data = dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],valuesZ=[valuesZ1,valuesZ2,valuesZ3,valuesZ4,valuesZ5,valuesZ6])
+    ValueZ1_Z6.data = dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],realZ=[xE1,xE2,xE3,xE4,xE5,xE6],imagZ=[yE1,yE2,yE3,yE4,yE5,yE6])
 
 
 def updateSum():
@@ -179,10 +138,10 @@ def updateSum():
     [theta2]  = glob_theta2.data["val"]  # input/
     [Vector1] = glob_Vector1.data["val"] # input/
     [Vector2] = glob_Vector2.data["val"] # input/
-    
+
     xE3 = Vector1*cos(theta1)+Vector2*cos(theta2)
     yE3 = Vector1*sin(theta1)+Vector2*sin(theta2)
-    
+
     R  = round(sqrt(xE3**2.0+yE3**2.0),1)
     if (abs(R) < 1e-3):
         VectorSum_source.stream(dict(xS=[0], yS=[0], xE=[xE3], yE=[yE3]), rollover=1)
@@ -196,7 +155,7 @@ def updateSub():
     [theta2]  = glob_theta2.data["val"]  # input/
     [Vector1] = glob_Vector1.data["val"] # input/
     [Vector2] = glob_Vector2.data["val"] # input/
-    
+
     xE4 = Vector1*cos(theta1)-Vector2*cos(theta2)
     yE4 = Vector1*sin(theta1)-Vector2*sin(theta2)
 
@@ -207,14 +166,14 @@ def updateSub():
 
     else:
         VectorSub_source.stream(dict(xS=[0], yS=[0], xE=[xE4], yE=[yE4]), rollover=1)
-        VectorSub_label_source.data = dict (x=[xE4],y=[yE4],R=["Z4"])  
+        VectorSub_label_source.data = dict (x=[xE4],y=[yE4],R=["Z4"])
 
 def updateMul():
     [theta1]  = glob_theta1.data["val"]  # input/
     [theta2]  = glob_theta2.data["val"]  # input/
     [Vector1] = glob_Vector1.data["val"] # input/
     [Vector2] = glob_Vector2.data["val"] # input/
-    
+
     xE1 = Vector1*cos(theta1)
     yE1 = Vector1*sin(theta1)
     xE2 = Vector2*cos(theta2)
@@ -234,7 +193,7 @@ def updateDiv():
     [theta2]  = glob_theta2.data["val"]  # input/
     [Vector1] = glob_Vector1.data["val"] # input/
     [Vector2] = glob_Vector2.data["val"] # input/
-    
+
     xE1 = Vector1*cos(theta1)
     yE1 = Vector1*sin(theta1)
     xE2 = Vector2*cos(theta2)
@@ -255,7 +214,7 @@ def updateLine():
     [theta1]  = glob_theta1.data["val"]  # input/
     [theta2]  = glob_theta2.data["val"]  # input/
     [Vector1] = glob_Vector1.data["val"] # input/
-    [Vector2] = glob_Vector2.data["val"]   
+    [Vector2] = glob_Vector2.data["val"]
     x1 = Vector1*cos(theta1)
     y1 = Vector1*sin(theta1)
     xS = Vector1*cos(theta1)+Vector2*cos(theta2)
@@ -298,43 +257,29 @@ def conjugate():
     VectorMul_label_source.data = dict (x=[xE5],y=[yE5],R=["Z5"])
     VectorDiv_source.stream(dict(xS=[0], yS=[0], xE=[xE6], yE=[yE6]), rollover=1)
     VectorDiv_label_source.data = dict (x=[xE6],y=[yE6],R=["Z6"])
-    xE1 = round(xE1, 1)
-    xE2 = round(xE2, 1)
-    yE1 = round(yE1, 1)
-    yE2 = round(yE2, 1)
-    xE3 = round(xE3, 1)
-    xE4 = round(xE4, 1)
-    yE3 = round(yE3, 1)
-    yE4 = round(yE4, 1)
-    xE5 = round(xE5, 1)
-    xE6 = round(xE6, 1)
-    yE5 = round(yE5, 1)
-    yE6 = round(yE6, 1)
-    valuesZ3 = '{x}+{y}i'.format(x=xE3,y=yE3)
-    valuesZ4 = '{x}+{y}i'.format(x=xE4,y=yE4)
-    valuesZ5 = '{x}+{y}i'.format(x=xE5,y=yE5)
-    valuesZ6 = '{x}+{y}i'.format(x=xE6,y=yE6)   
-    ValueZ1_Z6.data = dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],valuesZ=[valuesZ1,valuesZ2,valuesZ3,valuesZ4,valuesZ5,valuesZ6])
+    ValueZ1_Z6.data = dict(names=['Z1','Z2','Z3','Z4','Z5','Z6'],realZ=[xE1,xE2,xE3,xE4,xE5,xE6],imagZ=[yE1,yE2,yE3,yE4,yE5,yE6])
     line1_source.data = dict (x=[xE1, xE3],y=[yE1, yE3])
     line2_source.data = dict (x=[xE1, xE4],y=[yE1, yE4])
     updatevalues()
 
 
-    
 Conjugate_button.on_click(conjugate)
 
-#table  
+#table
 
 columns2 = [
     TableColumn(field="names", title="Complex Number"),
-    TableColumn(field="valuesZ", title="Value"),
+    TableColumn(field="realZ", title="Real Part 'a'", formatter=NumberFormatter(format='0.00')),
+    TableColumn(field="imagZ", title="Imaginary Part 'b'", formatter=NumberFormatter(format='0.00')),
 ]
-value_table = DataTable(source=ValueZ1_Z6, columns=columns2, reorderable=False, sortable=False, selectable=False, index_position=None, width=400, height=400)
+value_table = DataTable(source=ValueZ1_Z6, columns=columns2,
+    reorderable=False, sortable=False, selectable=False, index_position=None,
+    width=400, height=400)
 
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
-    
-    # adding the vectors to the plot
+
+# adding the vectors to the plot
 Vector1_glyph = Arrow(end=NormalHead(line_color="#A2AD00",fill_color="#A2AD00", line_width=2,size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=Vector1_source,line_color="#A2AD00",line_width=3)
 Vector2_glyph = Arrow(end=NormalHead(line_color="#E37222", fill_color="#E37222", line_width=2,size=10),
@@ -388,20 +333,16 @@ p.add_layout(VectorSub_label_glyph)
 p.add_layout(vline)
 p.add_layout(hline)
 
-
-
 calculate_selection = CheckboxGroup(labels=["Addition Z3", "Subtraction Z4","Multiplication Z5","Division Z6"], active = [0,1,2,3])
-print(calculate_selection.labels)
-print(calculate_selection.active)
 
 
 def choose_calculate(attr, old, new):
-    VectorSum_glyph.visible        = 0 in calculate_selection.active   
-    VectorSub_glyph.visible        = 1 in calculate_selection.active 
+    VectorSum_glyph.visible        = 0 in calculate_selection.active
+    VectorSub_glyph.visible        = 1 in calculate_selection.active
     VectorSum_label_glyph.visible  = 0 in calculate_selection.active
     VectorSub_label_glyph.visible  = 1 in calculate_selection.active
-    line1_glyph.visible            = 0 in calculate_selection.active 
-    line2_glyph.visible            = 1 in calculate_selection.active 
+    line1_glyph.visible            = 0 in calculate_selection.active
+    line2_glyph.visible            = 1 in calculate_selection.active
     VectorMul_glyph.visible        = 2 in calculate_selection.active
     VectorDiv_glyph.visible        = 3 in calculate_selection.active
     V5_label_glyph.visible         = 2 in calculate_selection.active
@@ -409,16 +350,16 @@ def choose_calculate(attr, old, new):
 
 calculate_selection.on_change('active',choose_calculate)
 
-def changeVector1(attr,old,new):      
+def changeVector1(attr,old,new):
     glob_Vector1.data = dict(val=[new]) #      /output
     updateVector1()
     updateSum()
     updateSub()
     updateLine()
-    updatevalues()  
+    updatevalues()
     updateMul()
     updateDiv()
- 
+
 #Changing Vector2
 def changeVector2(attr,old,new):
     glob_Vector2.data = dict(val=[new]) #      /output
@@ -429,7 +370,7 @@ def changeVector2(attr,old,new):
     updatevalues()
     updateMul()
     updateDiv()
-   
+
 #changing theta1
 def changetheta1(attr,old,new):
     glob_theta1.data = dict(val=[radians(new)]) #      /output
@@ -440,7 +381,7 @@ def changetheta1(attr,old,new):
     updatevalues()
     updateMul()
     updateDiv()
-  
+
 #changing theta2
 def changetheta2(attr,old,new):
     glob_theta2.data = dict(val=[radians(new)]) #      /output
@@ -451,7 +392,7 @@ def changetheta2(attr,old,new):
     updatevalues()
     updateMul()
     updateDiv()
-    
+
 
 Vector1Slider = LatexSlider(title="|Z1|=", value=Vector1,  start=0, end=10.0, step=0.2)
 
@@ -468,4 +409,4 @@ AngleVector2Slider.on_change('value',changetheta2)
 curdoc().add_root(column(description,row(p,Spacer(width=40),calculate_selection,column(column(Vector1Slider,Vector2Slider,AngleVector1Slider,AngleVector2Slider,Spacer(height=10),Conjugate_button),Spacer(height=20),value_table))))
 
 ## get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
-curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  
+curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')
