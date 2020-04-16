@@ -6,7 +6,6 @@
 import vis_initialization as vis_init
 from testing_collection import test_runner as test_lib
 
-
 ###############################
 # INITIALIZATION
 ###############################

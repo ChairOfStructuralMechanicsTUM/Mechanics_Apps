@@ -981,33 +981,56 @@ def cb_get_textinput(attr, old, new, key):
     elif key == "xn_start" or key == "xn_end" or key == "yq_start" or key == "yq_end":
         nodedep_llxn = ds_nodedep_elements.data['ll_x_n']
         nodedep_llyq = ds_nodedep_elements.data['ll_y_q']
+        elinfo = vis_init.input_element_info
         if key == "xn_start":
             xn_start = value
             xn_end = nodedep_llxn[element_index][1]
             yq_start = nodedep_llyq[element_index][0]
             yq_end = nodedep_llyq[element_index][1]
+            if (xn_start > 0 and xn_end <= 0):
+                xn_end = 0
+                elinfo["xn_end"].value = "%3.1f" % xn_end
+            elif (xn_start < 0 and xn_end >= 0):
+                xn_end = 0
+                elinfo["xn_end"].value = "%3.1f" % xn_end
         elif key == "xn_end":
             xn_start = nodedep_llxn[element_index][0]
             xn_end = value
             yq_start = nodedep_llyq[element_index][0]
             yq_end = nodedep_llyq[element_index][1]
+            if (xn_end > 0 and xn_start <= 0):
+                xn_start = 0
+                elinfo["xn_start"].value = "%3.1f" % xn_start
+            elif (xn_end < 0 and xn_start >= 0):
+                xn_start = 0
+                elinfo["xn_start"].value = "%3.1f" % xn_start
         elif key == "yq_start":
             xn_start = nodedep_llxn[element_index][0]
             xn_end = nodedep_llxn[element_index][1]
             yq_start = value
             yq_end = nodedep_llyq[element_index][1]
+            if (yq_start > 0 and yq_end <= 0):
+                yq_end = 0
+                elinfo["yq_end"].value = "%3.1f" % yq_end
+            elif (yq_start < 0 and yq_end >= 0):
+                yq_end = 0
+                elinfo["yq_end"].value = "%3.1f" % yq_end
         else:
             xn_start = nodedep_llxn[element_index][0]
             xn_end = nodedep_llxn[element_index][1]
             yq_start = nodedep_llyq[element_index][0]
             yq_end = value
+            if (yq_end > 0 and yq_start <= 0):
+                yq_start = 0
+                elinfo["yq_start"].value = "%3.1f" % yq_start
+            elif (yq_end < 0 and yq_start >= 0):
+                yq_start = 0
+                elinfo["yq_start"].value = "%3.1f" % yq_start
         # check lineload before change
         # one value has to be non-zero and start end are either >=0 or <=0
-        # TODO: idea - change acceptance of line load values? the way it is right now, one value needs to be zero before
+        # TODO (Done): idea - change acceptance of line load values? the way it is right now, one value needs to be zero before
         #  load direction can be changed
-        if not(xn_start == 0 and xn_end == 0 and yq_start == 0 and yq_end == 0) \
-                and ((xn_start >= 0 and xn_end >= 0) or (xn_start <= 0 and xn_end <= 0)) \
-                and ((yq_start >= 0 and yq_end >= 0) or (yq_start <= 0 and yq_end <= 0)):
+        if not(xn_start == 0 and xn_end == 0 and yq_start == 0 and yq_end == 0):
             load_x_n = (xn_start, xn_end)
             load_y_q = (yq_start, yq_end)
             # change data source
@@ -1017,7 +1040,7 @@ def cb_get_textinput(attr, old, new, key):
             local = ds_nodedep_elements.data['ll_local'][element_index]
             vis_editEl.draw_lineload(element_name, load_x_n, load_y_q, local, element_index)
         else:
-            vis_init.div_input.text = "Error: Invalid line load values!"
+            vis_init.div_input.text = "Error: Invalid line load values, one value has to be non-zero!"
             return
     elif key == "dT":
         tt = ds_nodedep_elements.data['dT_T'][element_index][1]
