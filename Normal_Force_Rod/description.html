@@ -33,44 +33,24 @@ code {
 <h1>Normal Force Rod</h1>
 
 <p>
-<!-- SASCHA: This app visualizes the forces acting in a loaded beam.
-The beam is double supported, whereby the support on the left is fixed and the right one movable.
-Beneath the main plot, both shear stresses and torque are visualized troughout the length of the beam.
-The user has the options to choose between a single load, a linear load and a triangular load. Different positions of the load and its direction can be set by
-changing the sliders on the left of the plots. With another slider, the position of the movable support can be varied. Here, if the position of the 
-movable support is set to zero, the beam will be supported in form of a cantilever. 
-With a click on the respective additional buttons, the forces acting on the supports can be plotted or hidden or the setup will be resetted. -->
-
-
-<!--
-The App visualizes the internal forces of a beam in bending under a user defined loading. The beam of lenght L is supported by a fixed support on the left and by a movable support with adjustable position on the right. If the user sets the position of the movable support to zero, the beam is clamped.
+ The app visualizes the normal force $N(x)$ and the horizontal displacement $u(x)$ of a rod under a user defined loading and support configuration.
 <br>
-Beneath the system, the course of the shear force and the bending moment over the lenght of the beam is plotted.
-
-<p> The interactivity parameters are </p>
-<ul>
-<li> Load type (Point Load, Line Load, Triangular Load</li>
-<li> Load position/length </li>
-<li> Load Amplitude </li>
-<li> Position of movable support</li>
-<li> Revealing/Hiding support forces</li>
-</ul>
--->
-
-description text description text description text description text description text description text description text description text description text description text description text description text description text description text description text description text description text description text description text description text description text description text description text description text 
-
-
-</p>
-
+Beneath the system, the normal force and the horizontal displacement over the lenght $L$ of the rod is plotted.
 <p>
-The first picture displays the beam and its supports as well as the position of the applied load. </br>
-The type of load can be selected by clicking on one of the buttons on the left. Use the radio buttons to change the support types, and the slider
-to move the load position. </br>
-The second and third picture shows the resulting normal force and deformation respectively. Using the tools on the right one can zoom in and out along the y-axis
-to have a better look at the graphs. </br>
-Since every zero crossing of the normal force graph corresponds to an extreme value of the deformation at this point, 
-you can click on "Show line" to check this observation. </br>
-Use the reset button to restore the standard settings. 
+The calculations are based on the following differential equation: 
+$u^{''}(x) = \left ( \frac{N(x)}{EA} \right)^{'} + \left( \alpha_T T(x) \right )^{'}$; <br>
+the Young's modulus $E$, the cross section $A$ and the temperature coefficient $\alpha_T$ are assumed to be constant along the length of the rod.
+</p>   
+    <p> The interactivity parameters are </p>
+    <ul>
+    <li> Load type (point load, line load, triangular load, temperature load)</li>
+    <li> Load position/length </li>
+    <li> Load amplitude </li>
+    <li> Support configuration</li>
+    </ul>
+ 
+If the rod is supported by two fixed supports the, user can click on "Show line" to check on the magnitude $u_{max}(x_a)$ and position $x_a$ of the maximum horizontal displacement along the rod.
 </p>
+
 
 
