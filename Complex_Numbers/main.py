@@ -248,7 +248,7 @@ def conjugate():
     xE6 = (xE1*xE2+yE1*yE2)/denominator
     yE6 = (xE1*yE2-xE2*yE1)/denominator
     Vector2_source.stream(dict(xS=[0], yS=[0], xE=[xE2], yE=[yE2]), rollover=1)
-    V2_label_source.data = dict (x=[xE2+3],y=[yE2-3],Z2=["Z2"])
+    V2_label_source.data = dict (x=[xE2],y=[yE2],Z2=["Z2"])
     VectorSum_source.stream(dict(xS=[0], yS=[0], xE=[xE3], yE=[yE3]), rollover=1)
     VectorSum_label_source.data = dict (x=[xE3],y=[yE3],R=["Z3"])
     VectorSub_source.stream(dict(xS=[0], yS=[0], xE=[xE4], yE=[yE4]), rollover=1)
