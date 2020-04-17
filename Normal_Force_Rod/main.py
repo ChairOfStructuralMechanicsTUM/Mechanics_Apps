@@ -178,28 +178,36 @@ def move_aux_line():
     #y_value   = graph_U.data['y']
     roots     = []
 
-    # find the zero crossings
-    for i in range(0,len(y_samples)-1):
-        if y_samples[i]*y_samples[i+1] < 0: # sign changes => root
-            r = 0.5*(x_samples[i+1]-x_samples[i]) + x_samples[i]
-            #print(r, 0.5*abs((y_value[i+1]-y_value[i]))+np.sign(y_value[i])*max(abs(y_value[i]), abs(y_value[i+1])) )
-            roots.append([r,r])
+    # find u_max
+    if radio_button_group.active!=3:
+        for i in range(0,len(y_samples)-1):
+            if y_samples[i]*y_samples[i+1] < 0: # sign changes => root
+                r = 0.5*(x_samples[i+1]-x_samples[i]) + x_samples[i]
+                #print(r, 0.5*abs((y_value[i+1]-y_value[i]))+np.sign(y_value[i])*max(abs(y_value[i]), abs(y_value[i+1])) )
+                roots.append([r,r])
+    elif radio_button_group.active==3 and radio_group_left.active==0 and radio_group_right.active==0:
+        r = load_position_slider.value
+        roots.append([r,r])
 
     if roots!=[] and radio_group_left.active==0 and radio_group_right.active==0: # fixed/fixed
         a = -1 if radio_group_ampl.active==0 else 1 # set the sign
         k = load_position_slider.value
         ## point load labels
         if radio_button_group.active==0:
-            new_data_zero    = dict(x=[0], y=[-2*a], text=["x_0="+n2str(k/10)+"L"])
-            new_data_extreme = dict(x=[0], y=[-2*a], text=["u(x_0)="+n2str( -k*(k/10 - 1)/10 )+"\\frac{F L}{EA}"])
+            new_data_zero    = dict(x=[0], y=[-2*a], text=["x_a="+n2str(k/10)+"L"])
+            new_data_extreme = dict(x=[0], y=[-2*a], text=["u_{max}(x_a)="+n2str( -k*(k/10 - 1)/10 )+"\\frac{F L}{EA}"])
         ## constant load labels
         elif radio_button_group.active==1:
-            new_data_zero    = dict(x=[0], y=[-2*a], text=["x_0="+n2str((20*k-k**2)/200)+"L"])
-            new_data_extreme = dict(x=[0], y=[-2*a], text=["u(x_0)="+n2str(a*(k**2 * (k/20-1)**2)/200)+"\\frac{p L^2}{EA}"])
+            new_data_zero    = dict(x=[0], y=[-2*a], text=["x_a="+n2str((20*k-k**2)/200)+"L"])
+            new_data_extreme = dict(x=[0], y=[-2*a], text=["u_{max}(x_0)="+n2str(a*(k**2 * (k/20-1)**2)/200)+"\\frac{p L^2}{EA}"])
         ## triangular load labels
         elif radio_button_group.active==2:
-            new_data_zero    = dict(x=[0], y=[-2*a], text=["x_0="+n2str(-k*((k/30)**(1/2) - 1)/10)+"L"])
-            new_data_extreme = dict(x=[0], y=[-2*a], text=["u(x_0)="+n2str( a*(k**2*((30**(1/2)*k**(3/2))/15 - 3*k + 30))/18000 )+"\\frac{p L^2}{EA}"])
+            new_data_zero    = dict(x=[0], y=[-2*a], text=["x_a="+n2str(-k*((k/30)**(1/2) - 1)/10)+"L"])
+            new_data_extreme = dict(x=[0], y=[-2*a], text=["u_{max}(x_a)="+n2str( a*(k**2*((30**(1/2)*k**(3/2))/15 - 3*k + 30))/18000 )+"\\frac{p L^2}{EA}"])
+        ## temperature
+        elif radio_button_group.active==3:
+            new_data_zero    = dict(x=[0], y=[-2*a], text=["x_a="+n2str(k/10)+"L"])
+            new_data_extreme = dict(x=[0], y=[-2*a], text=["u_{max}(x_a)="+n2str( a*(k/10*(1-k/10)) )+"\\alpha_T T L"])
         else:
             new_data_zero    = dict(x=[], y=[], text=[])
             new_data_extreme = dict(x=[], y=[], text=[])
