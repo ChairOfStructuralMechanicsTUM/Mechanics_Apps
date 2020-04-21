@@ -156,6 +156,7 @@ p1.add_glyph(support_src,ImageURL(url="sp1", x=1.0, y=0.35, w=1.8, h=1.8, anchor
     
 legend1 = LatexLegend(items=[
     ("\\text{Eigenvalue Problem: } \\sin(\\lambda) = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = \\sin(i \\cdot \\pi \\xi)"   , [eigenmodes_beam1]),
+    ("\\lambda_i = i \\pi"   , [eigenmodes_beam1]),
 ], location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
 
 p1.add_layout(legend1, 'above')
@@ -189,6 +190,7 @@ legend2 = LatexLegend(items=[
     ("\\text{Solution part: } \\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\cdot \\sinh(\\lambda \\xi)", [eigenmodes_beam2sinh]),
     ("\\text{Solution part: } \\frac{1}{2} \\cos(\\lambda \\cdot \\xi)", [eigenmodes_beam2cos]),
     ("\\text{Solution part: } - \\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\cdot \\sin(\\lambda \\xi)", [eigenmodes_beam2sin]),
+    ("\\lambda_i = 4.730041, 7.853205, 10.995610, (i + \\frac{1}{2}) \\pi"  , [eigenmodes_beam2]),
 ], location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
 
 p2.add_layout(legend2, 'above')
@@ -223,6 +225,7 @@ legend3 = LatexLegend(items=[
     ("\\text{Solution part: } \\frac{1}{2} \\frac{C(\\lambda)}{S(\\lambda)} \\cdot \\sinh(\\lambda \\xi)", [eigenmodes_beam3sinh]),
     ("\\text{Solution part: } \\frac{1}{2} \\cos(\\lambda \\cdot \\xi)", [eigenmodes_beam3cos]),
     ("\\text{Solution part: } - \\frac{1}{2} \\frac{C(\\lambda)}{S(\\lambda)} \\cdot \\sin(\\lambda \\xi)", [eigenmodes_beam3sin]),
+    ("\\lambda_i = 1.875104, 4.694091, 7.854760, (i - \\frac{1}{2}) \\pi"  , [eigenmodes_beam3]),
 ], location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
 
 p3.add_layout(legend3, 'above')
