@@ -19,8 +19,8 @@ HOW TO: ADD NEW TEST CASE TO DROPDOWN MENU
 
 
 def single_beam_lineload_visu():
-    start_knot = Knot.Knot(0, 1, 1, ElSupEnum.SUPPORT_FIXED_END.value, [0, 0, 0], [0, 0, 0], 0)
-    end_knot = Knot.Knot(1, 3, 1, ElSupEnum.SUPPORT_ROLLER_END.value, [0, 0, 0], [0, 0, 0], 0)
+    start_knot = Knot.Knot(0, 1, 1, ElSupEnum.SUPPORT_FIXED_END.value, 0, [0, 0, 0], [0, 0, 0])
+    end_knot = Knot.Knot(1, 3, 1, ElSupEnum.SUPPORT_ROLLER_END.value,  0, [0, 0, 0], [0, 0, 0])
     q = Symbol('p')
     l = gc.knot_dist(start_knot, end_knot) * Symbol('l')
     lineload = [0, q]
@@ -35,9 +35,9 @@ def single_beam_lineload_visu():
 
 
 def two_beam_lineload_visu():
-    start_knot = Knot.Knot(0, 1, 1, ElSupEnum.SUPPORT_ROLLER_END.value)
-    middle_knot = Knot.Knot(1, 2, 1, ElSupEnum.SUPPORT_FIXED_CONTINUOUS.value)
-    end_knot = Knot.Knot(2, 3, 1, ElSupEnum.SUPPORT_ROLLER_END.value)
+    start_knot = Knot.Knot(0, 1, 1, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
+    middle_knot = Knot.Knot(1, 2, 1, ElSupEnum.SUPPORT_FIXED_CONTINUOUS.value, 0)
+    end_knot = Knot.Knot(2, 3, 1, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
     q = Symbol('p')
     l = Symbol('l')
     lineload = [0, q]
@@ -59,9 +59,9 @@ def two_beam_lineload_visu():
 def final_structure_software_lab():
     f = Symbol('F')
     k = Symbol('k')
-    start_knot = Knot.Knot(0, 1, 3, ElSupEnum.SUPPORT_CLAMPED.value)
-    middle_knot = Knot.Knot(1, 2, 3, ElSupEnum.JOINT.value, [0, 0, 0], [0, f, 0])
-    end_knot = Knot.Knot(2, 3, 2, ElSupEnum.SUPPORT_ROLLER_END.value, [0, 0, k])
+    start_knot = Knot.Knot(0, 1, 3, ElSupEnum.SUPPORT_CLAMPED.value, 0)
+    middle_knot = Knot.Knot(1, 2, 3, ElSupEnum.JOINT.value, 0, [0, 0, 0], [0, f, 0])
+    end_knot = Knot.Knot(2, 3, 2, ElSupEnum.SUPPORT_ROLLER_END.value, 0, [0, 0, k])
     q = Symbol('q')
     l = Symbol('l')
     h = Symbol('h')
@@ -94,10 +94,10 @@ def final_structure_software_lab():
 def example_unterlagen_visu():
     q = Symbol('q')
     l = Symbol('l')
-    start_knot = Knot.Knot(0, 0.5, 2, ElSupEnum.SUPPORT_ROLLER_END.value, [0, 0, 0], [0, 0, 0], 0)
-    middle_knot1 = Knot.Knot(1, 2.5, 2, ElSupEnum.JOINT.value, [0, 0, 0], [0, 0, 0], 0)
-    middle_knot2 = Knot.Knot(2, 2.5, 1, ElSupEnum.THROUGH_ELEMENT.value, [0, 0, 0], [0, 0, - 2 * q * l**2], 0)
-    end_knot = Knot.Knot(3, 4.5, 1, ElSupEnum.SUPPORT_CLAMPED.value)
+    start_knot = Knot.Knot(0, 0.5, 2, ElSupEnum.SUPPORT_ROLLER_END.value, 0, [0, 0, 0], [0, 0, 0])
+    middle_knot1 = Knot.Knot(1, 2.5, 2, ElSupEnum.JOINT.value, 0, [0, 0, 0], [0, 0, 0])
+    middle_knot2 = Knot.Knot(2, 2.5, 1, ElSupEnum.THROUGH_ELEMENT.value, 0, [0, 0, 0], [0, 0, - 2 * q * l**2])
+    end_knot = Knot.Knot(3, 4.5, 1, ElSupEnum.SUPPORT_CLAMPED.value, 0)
     lineload = [0, q]
     temp_prop = TempProps.TempProps(0, 0, 0)
     knot_list = []

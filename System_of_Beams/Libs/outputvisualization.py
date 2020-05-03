@@ -113,38 +113,23 @@ def plot_structure_from_knots(plot, knot_list, plot_list, line_width=6):
     return
 
 
-'''
-########################### WARNING ###########################
-The lambdify uses the eval statement
-make sure, this function only gets sanitized input
-'''
-def plot_symbolic_func(plot, symb_func, symb_to_plot_over, l_val, start_knot, end_knot, plot_list, line_color="#f46d43",line_width=4):
+def calc_xy(symb_func, symb_to_plot_over, l_val, start_knot, end_knot):
     """
-    Gets a symbolic function and plots it for a running symbol from 0 to 1 and moves it to the position between two knots
-    :param plot: plot to print the function to
+    Calculate the x- and y-coordinates for the plot
     :param symb_func: function that needs to be plotted
     :param symb_to_plot_over: running variable from 0 to 1, type(symb_to_plot_over) == type(sympy.Symbol())
     :param l_val: Defines length of the complete element
     :param start_knot: start knot for the function
     :param end_knot: end knot of the function
-    :param plot_list: collects all elements that exist in this plot (needed to delete everything)
     """
     if symb_func is None:
-        return None, None
+        return None, None, False
     free_symbs = symb_func.free_symbols
     len_el = gc.knot_dist(start_knot, end_knot)
-    prec_plot = 100
-    tol = 1e-15
+    prec_plot = 50
 
-    # Plot a zero in the middle of the structure, if function is zero
     if symb_func == 0:
-        x_val = start_knot.x_ + (end_knot.x_-start_knot.x_)/2
-        y_val = start_knot.y_ + (end_knot.y_-start_knot.y_)/2
-        name = str(start_knot.id) + str(end_knot.id) + str(time.time())
-        plot.text([x_val], [y_val], ["0"], text_color=line_color, name=name,
-                  text_font_size='4em', text_align='center', text_alpha=1, text_baseline='middle')
-        plot_list.append(name)
-        return None, None
+        return None, None, False
 
     x_length = float(symbbox.remove_free_symbols(l_val, None))
     x_vals = np.linspace(0, x_length, round(prec_plot*len_el))
@@ -156,19 +141,74 @@ def plot_symbolic_func(plot, symb_func, symb_to_plot_over, l_val, start_knot, en
 
     else:
         y_vals = np.full((len(x_vals, )), float(symb_func))
+    
+    return x_vals, y_vals, True
 
+def scale_y_values(y_data, y_reference, y_max):
+    """
+    Scale the plot in y direction, to prevent extreme values.
+    :param y_data:      the y data of the plot
+    :param y_reference: the maximum value of the plot series (e.g. Normal force), which will be scaled to y_max
+    :param y_max:       the maximum y value for the plot (e.g. if y_max=1, no y value in the plot will be greater than 1)
+    """
+    multipl_factor = y_max / y_reference
+    for i in range(len(y_data)):
+        y_data[i] = y_data[i] * multipl_factor
+    return y_data, multipl_factor
+
+'''
+########################### WARNING ###########################
+The lambdify uses the eval statement
+make sure, this function only gets sanitized input
+'''
+def plot_symbolic_func(plot, symb_func, symb_to_plot_over, l_val, start_knot, end_knot, xy_data, y_reference, plot_list, line_color="#f46d43",line_width=4):
+    """
+    Gets a symbolic function and plots it for a running symbol from 0 to 1 and moves it to the position between two knots
+    :param plot: plot to print the function to
+    :param symb_func: function that needs to be plotted
+    :param symb_to_plot_over: running variable from 0 to 1, type(symb_to_plot_over) == type(sympy.Symbol())
+    :param l_val: Defines length of the complete element
+    :param start_knot: start knot for the function
+    :param end_knot: end knot of the function
+    :param xy_data: x- and y-coordinates for the plot
+    :param y_reference: the maximum value of the plot series (e.g. Normal force), which will be scaled to y_max
+    :param plot_list: collects all elements that exist in this plot (needed to delete everything)
+    """
+    y_max = 1 # the maximum y value for the plot (e.g. if y_max=1, no y value in the plot will be greater than 1)
+    print('symb_func: ')
+    print(symb_func)
+    if symb_func is None:
+        return None, None, 0
+    free_symbs = symb_func.free_symbols
+    len_el = gc.knot_dist(start_knot, end_knot)
+    prec_plot = 50
+    tol = 1e-15
+
+    # Plot a zero in the middle of the structure, if function is zero
+    if symb_func == 0:
+        x_val = start_knot.x_ + (end_knot.x_-start_knot.x_)/2
+        y_val = start_knot.y_ + (end_knot.y_-start_knot.y_)/2
+        name = str(start_knot.id) + str(end_knot.id) + str(time.time())
+        plot.text([x_val], [y_val], ["0"], text_color=line_color, name=name,
+                  text_font_size='4em', text_align='center', text_alpha=1, text_baseline='middle')
+        plot_list.append(name)
+        return None, None, 0
+
+    x_vals, y_vals = xy_data[0], xy_data[1]
     # Rotate, translate and scale function to beam to plot over
+    y_vals, multipl_factor = scale_y_values(y_vals, y_reference, y_max)
     x_vals = np.linspace(start_knot.x_, start_knot.x_+len_el, round(prec_plot*len_el))
     y_vals += start_knot.y_
+    print([x_vals, y_vals])
     x_vals, y_vals = gc.rotate_x_y_values(x_vals, y_vals, start_knot, end_knot, tol)
-
+    
     x_vals = np.concatenate([[start_knot.x_], x_vals, [end_knot.x_]])
     y_vals = np.concatenate([[start_knot.y_], y_vals, [end_knot.y_]])
     name = str(start_knot.id) + str(end_knot.id) + str(time.time())
     plot.line(x_vals, y_vals, line_color=line_color, line_width=line_width, line_alpha=0.6, name=name)
     plot_list.append(name)
 
-    return x_vals, y_vals
+    return x_vals, y_vals, multipl_factor
 
 
 def func_is_const(func, symb_to_plot_over):
@@ -209,7 +249,7 @@ def print_charac_val_to_console(name, x, y):
     print("Name: {}\t x: {}\t y: {}".format(name, x, y))
 
 
-def plot_characteristic_vals(plot, func, symb_to_plot_over, l_val, start_knot, end_knot, x_vals, y_vals, plot_list, mirror_y_values=False, line_color="#f46d43"):
+def plot_characteristic_vals(plot, func, symb_to_plot_over, l_val, start_knot, end_knot, x_vals, y_vals, multipl_factor, plot_list, mirror_y_values=False, line_color="#f46d43"):
     """
     Calculates all characteristic values for a given function and visualises them
     Visibility of Start/ end values is by default 1
@@ -220,6 +260,7 @@ def plot_characteristic_vals(plot, func, symb_to_plot_over, l_val, start_knot, e
     :param l_val: length variable of the element
     :param x_vals: array of all x values of the function
     :param y_vals: array of all y_values rotated to the end configuration
+    :param multipl_factor: scaling of y coordinates
     :param plot_list: collects all elements that exist in this plot (needed to delete everything)
     :param mirror_y_values: If True, changes the sign of the text value
     :return:
@@ -262,7 +303,7 @@ def plot_characteristic_vals(plot, func, symb_to_plot_over, l_val, start_knot, e
             if 0 < root < kn_dist:
                 diff_text = symbbox.get_str_from_func(sign * symbbox.round_expr(func.subs(symb_to_plot_over, root * len_symbol), 2))
                 x_point = x_vals[0] + float(root)
-                y_point = float(func_without_free_symbs.subs(symb_to_plot_over, root)) + y_vals[0]
+                y_point = float(func_without_free_symbs.subs(symb_to_plot_over, root))*multipl_factor + y_vals[0]
                 x_point, y_point = gc.rotate_x_y_values(x_point, y_point, start_knot, end_knot)
                 # print_charac_val_to_console(diff_text, x_point, y_point)
                 if plot in plot_data.char_vals_dict:
@@ -348,27 +389,65 @@ def plot_output_functions(plot_list, function_list, knot_list, symb_to_plot_over
     for i in range(num_plots):
         plot_structure_from_knots(plot_list[i], knot_list, plot_data.plot_el_lists[i])
 
+    xy_data = []
+    y_max   = []
+    for i in range(0, num_plots):
+        xy_data.extend( [[]] )
+        y_max.extend(   [[]] )
+
+    for i in range(0, len(function_list)):
+        l_val = l_list[i]
+        x_vals, y_vals, res = calc_xy(norm_f_funcs[i],      symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1])
+        xy_data[0].extend([[x_vals, y_vals]])
+        if res == True: y_max[0].append(max(abs(y_vals)))
+
+        x_vals, y_vals, res = calc_xy(norm_disp_func[i],    symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1])
+        xy_data[1].extend([[x_vals, y_vals]])
+        if res == True: y_max[1].append(max(abs(y_vals)))
+        
+        x_vals, y_vals, res = calc_xy(shear_f_funcs[i],     symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1])
+        xy_data[2].extend([[x_vals, y_vals]])
+        if res == True: y_max[2].append(max(abs(y_vals)))
+        
+        x_vals, y_vals, res = calc_xy(moment_funcs[i],      symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1])
+        xy_data[3].extend([[x_vals, y_vals]])
+        if res == True: y_max[3].append(max(abs(y_vals)))
+        
+        x_vals, y_vals, res = calc_xy(shear_disp_funcs[i],  symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1])
+        xy_data[4].extend([[x_vals, y_vals]])
+        if res == True: y_max[4].append(max(abs(y_vals)))
+        
+        x_vals, y_vals, res = calc_xy(shear_angle_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1])
+        xy_data[5].extend([[x_vals, y_vals]])
+        if res == True: y_max[5].append(max(abs(y_vals)))
+
+    for i in range(0, num_plots):
+        if len(y_max[i]) != 0:
+            y_max[i] = max(y_max[i])
+        else:
+            y_max[i] = 0
+
     plot_ind = 0
     for i in range(0, len(function_list)):
         l_val = l_list[i]
         col = htmlcol.plot_cols[plot_ind].value
-        x_vals, y_vals = plot_symbolic_func(plot_list[0], norm_f_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], plot_data.plot_el_lists[0], line_color=col)
-        plot_characteristic_vals(plot_list[0], norm_f_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], x_vals, y_vals, plot_data.plot_el_lists[0], line_color=col)
+        x_vals, y_vals, multipl_factor = plot_symbolic_func(plot_list[0], norm_f_funcs[i],      symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], xy_data[0][i] , y_max[0], plot_data.plot_el_lists[0], line_color=col)
+        plot_characteristic_vals(plot_list[0], norm_f_funcs[i],      symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], x_vals, y_vals, multipl_factor, plot_data.plot_el_lists[0], line_color=col)
 
-        x_vals, y_vals = plot_symbolic_func(plot_list[1], norm_disp_func[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], plot_data.plot_el_lists[1], line_color=col)
-        plot_characteristic_vals(plot_list[1], norm_disp_func[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], x_vals, y_vals, plot_data.plot_el_lists[1], line_color=col)
+        x_vals, y_vals, multipl_factor = plot_symbolic_func(plot_list[1], norm_disp_func[i],    symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], xy_data[1][i] , y_max[1], plot_data.plot_el_lists[1], line_color=col)
+        plot_characteristic_vals(plot_list[1], norm_disp_func[i],    symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], x_vals, y_vals, multipl_factor, plot_data.plot_el_lists[1], line_color=col)
 
-        x_vals, y_vals = plot_symbolic_func(plot_list[2], shear_f_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], plot_data.plot_el_lists[2], line_color=col)
-        plot_characteristic_vals(plot_list[2], shear_f_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], x_vals, y_vals, plot_data.plot_el_lists[2], line_color=col)
+        x_vals, y_vals, multipl_factor = plot_symbolic_func(plot_list[2], shear_f_funcs[i],     symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], xy_data[2][i] , y_max[2], plot_data.plot_el_lists[2], line_color=col)
+        plot_characteristic_vals(plot_list[2], shear_f_funcs[i],     symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], x_vals, y_vals, multipl_factor, plot_data.plot_el_lists[2], line_color=col)
 
-        x_vals, y_vals = plot_symbolic_func(plot_list[3], moment_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], plot_data.plot_el_lists[3], line_color=col)
-        plot_characteristic_vals(plot_list[3], moment_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], x_vals, y_vals, plot_data.plot_el_lists[3], mirror_y_values=True, line_color=col)
+        x_vals, y_vals, multipl_factor = plot_symbolic_func(plot_list[3], moment_funcs[i],      symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], xy_data[3][i] , y_max[3], plot_data.plot_el_lists[3], line_color=col)
+        plot_characteristic_vals(plot_list[3], moment_funcs[i],      symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], x_vals, y_vals, multipl_factor, plot_data.plot_el_lists[3], mirror_y_values=True, line_color=col)
 
-        x_vals, y_vals = plot_symbolic_func(plot_list[4], shear_disp_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], plot_data.plot_el_lists[4], line_color=col)
-        plot_characteristic_vals(plot_list[4], shear_disp_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], x_vals, y_vals, plot_data.plot_el_lists[4], line_color=col)
+        x_vals, y_vals, multipl_factor = plot_symbolic_func(plot_list[4], shear_disp_funcs[i],  symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], xy_data[4][i] , y_max[4], plot_data.plot_el_lists[4], line_color=col)
+        plot_characteristic_vals(plot_list[4], shear_disp_funcs[i],  symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], x_vals, y_vals, multipl_factor, plot_data.plot_el_lists[4], line_color=col)
 
-        x_vals, y_vals = plot_symbolic_func(plot_list[5], shear_angle_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], plot_data.plot_el_lists[5], line_color=col)
-        plot_characteristic_vals(plot_list[5], shear_angle_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], x_vals, y_vals, plot_data.plot_el_lists[5], mirror_y_values=True, line_color=col)
+        x_vals, y_vals, multipl_factor = plot_symbolic_func(plot_list[5], shear_angle_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], xy_data[5][i] , y_max[5], plot_data.plot_el_lists[5], line_color=col)
+        plot_characteristic_vals(plot_list[5], shear_angle_funcs[i], symb_to_plot_over, l_val, knot_list[i][0], knot_list[i][1], x_vals, y_vals, multipl_factor, plot_data.plot_el_lists[5], mirror_y_values=True, line_color=col)
         plot_ind += 1
         if plot_ind >= len(htmlcol.plot_cols):
             plot_ind = 0

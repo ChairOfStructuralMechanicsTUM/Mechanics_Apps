@@ -10,7 +10,9 @@ https://www.w3schools.com/colors/colors_picker.asp
 class HtmlColors(Enum):
     white = "#ffffff"
     BLACK = "#000000"       # x and y axis in input plot
-    BLUE_TUM = "#3070b3"    # used for invisible tooltip circles
+    BLUE_TUM    = "#3070b3" # used for invisible tooltip circles
+    ORANGE_TUM  = '#e37222' # used for output plot
+    GREEN_TUM   = '#a2ad00' # used for output plot
     accent1 = "#98C6EA"     # light light blue
     accent2 = "#64A0C8"     # light blue
     accent3 = "#DAD7CB"     # ivory
@@ -34,5 +36,4 @@ class HtmlColors(Enum):
     plot_col10 = "#BDB76B"
 
 
-plot_cols = [HtmlColors.BLUE_TUM, HtmlColors.accent4, HtmlColors.plot_col5, HtmlColors.plot_col6, HtmlColors.plot_col8,
-             HtmlColors.accent2, HtmlColors.plot_col7, HtmlColors.plot_col4, HtmlColors.plot_col9, HtmlColors.plot_col10]
+plot_cols = [HtmlColors.BLUE_TUM, HtmlColors.GREEN_TUM, HtmlColors.ORANGE_TUM]

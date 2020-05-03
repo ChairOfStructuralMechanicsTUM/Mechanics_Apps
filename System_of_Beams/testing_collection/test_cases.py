@@ -11,8 +11,8 @@ from testing_collection import testingtoolbox as testbox
 
 
 def single_beam_lineload_test():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, [0, 0, 0], [0, 0, 0], 0)
-    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, [0, 0, 0], [0, 0, 0], 0)
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value,0, [0, 0, 0], [0, 0, 0])
+    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value,0, [0, 0, 0], [0, 0, 0])
     q = Symbol('p')
     l = Symbol('l')
     lineload = [0, q]
@@ -61,8 +61,8 @@ def single_beam_lineload_test():
 
 
 def single_beam_normal_lineload_test():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, [0, 0, 0], [0, 0, 0], 0)
-    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, [0, 0, 0], [0, 0, 0], 0)
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0, [0, 0, 0], [0, 0, 0])
+    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0, [0, 0, 0], [0, 0, 0])
     q = Symbol('n')
     l = Symbol('l')
     x = Symbol('x')
@@ -79,8 +79,8 @@ def single_beam_normal_lineload_test():
 
 
 def single_beam_lineload_vertical_test():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value)
-    end_knot = Knot.Knot(1, 0, 1, ElSupEnum.SUPPORT_ROLLER_END.value, [0, 0, 0], [0, 0, 0], 90)
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
+    end_knot = Knot.Knot(1, 0, 1, ElSupEnum.SUPPORT_ROLLER_END.value, 90, [0, 0, 0], [0, 0, 0])
     q = Symbol('p')
     l = Symbol('l')
     lineload = [0, q]
@@ -97,8 +97,8 @@ def single_beam_lineload_vertical_test():
 
 
 def single_beam_single_load_vertical_test():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, [0, 0, 0], [0, 0, 0], 90)
-    end_knot = Knot.Knot(1, 0, 1, ElSupEnum.SUPPORT_ROLLER_END.value, [0, 0, 0], [0, Symbol('F'), 0], 90)        # in globalen Koordinaten
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 90, [0, 0, 0], [0, 0, 0])
+    end_knot = Knot.Knot(1, 0, 1, ElSupEnum.SUPPORT_ROLLER_END.value, 90, [0, 0, 0], [0, Symbol('F'), 0])        # in globalen Koordinaten
     q = Symbol('p')
     l = Symbol('l')
     lineload = [0, 0]
@@ -114,8 +114,8 @@ def single_beam_single_load_vertical_test():
 
 
 def single_beam_trapezload_test():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value)
-    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value)
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
+    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value,  0)
     q = Symbol('p')
     x = Symbol('x')
     l = Symbol('l')
@@ -132,8 +132,8 @@ def single_beam_trapezload_test():
 
 
 def single_beam_temperature_test():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value)
-    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_FIXED_END.value)
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
+    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
     q = Symbol('p')
     l = Symbol('l')
     lineload = [0, 0]
@@ -149,8 +149,8 @@ def single_beam_temperature_test():
 
 
 def single_clamping_left_side_temperature():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_CLAMPED.value)
-    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.FREE_END.value)
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_CLAMPED.value, 0)
+    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.FREE_END.value, 0)
     q = Symbol('p')
     l = Symbol('l')
     lineload = [0, 0]
@@ -166,8 +166,8 @@ def single_clamping_left_side_temperature():
 
 
 def single_beam_lineload_test_overdefined():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value)
-    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_FIXED_END.value)
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
+    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
     q = Symbol('p')
     l = Symbol('l')
     lineload = [0, q]
@@ -183,8 +183,8 @@ def single_beam_lineload_test_overdefined():
 
 
 def single_beam_lineload_test_underdefined():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_ROLLER_END.value)
-    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, [0, 0, 0], [0, 0, 0])
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
+    end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0, [0, 0, 0], [0, 0, 0])
     q = Symbol('p')
     l = Symbol('l')
     lineload = [0, q]
@@ -200,9 +200,9 @@ def single_beam_lineload_test_underdefined():
 
 
 def two_beam_lineload_test():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_ROLLER_END.value)
-    middle_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_FIXED_CONTINUOUS.value)
-    end_knot = Knot.Knot(2, 2, 0, ElSupEnum.SUPPORT_ROLLER_END.value)
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
+    middle_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_FIXED_CONTINUOUS.value, 0)
+    end_knot = Knot.Knot(2, 2, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
     q = Symbol('p')
     l = Symbol('l')
     lineload = [0, q]
@@ -224,9 +224,9 @@ def two_beam_lineload_test():
 
 
 def two_beam_combined_to_one_complete_lineload_test():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value)
-    middle_knot = Knot.Knot(1, 0.5, 0, ElSupEnum.THROUGH_ELEMENT.value)
-    end_knot = Knot.Knot(2, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value)
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
+    middle_knot = Knot.Knot(1, 0.5, 0, ElSupEnum.THROUGH_ELEMENT.value, 0)
+    end_knot = Knot.Knot(2, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
     q = Symbol('p')
     l = Symbol('l')
     lineload = [0, q]
@@ -248,9 +248,9 @@ def two_beam_combined_to_one_complete_lineload_test():
 
 
 def two_beam_combined_to_one_complete_lineload_test_2l():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value)
-    middle_knot = Knot.Knot(1, 0.5, 0, ElSupEnum.THROUGH_ELEMENT.value)
-    end_knot = Knot.Knot(2, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value)
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
+    middle_knot = Knot.Knot(1, 0.5, 0, ElSupEnum.THROUGH_ELEMENT.value, 0)
+    end_knot = Knot.Knot(2, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
     q = Symbol('p')
     l = Symbol('l')
     lineload = [0, q]
@@ -271,9 +271,9 @@ def two_beam_combined_to_one_complete_lineload_test_2l():
 
 
 def two_beam_combined_to_one_single_load_middle():
-    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value)
-    middle_knot = Knot.Knot(1, 0.5, 0, ElSupEnum.THROUGH_ELEMENT.value, [0, 0, 0], [0, Symbol('F'), 0])
-    end_knot = Knot.Knot(2, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value)
+    start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
+    middle_knot = Knot.Knot(1, 0.5, 0, ElSupEnum.THROUGH_ELEMENT.value, 0, [0, 0, 0], [0, Symbol('F'), 0])
+    end_knot = Knot.Knot(2, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
     q = Symbol('p')
     l = Symbol('l')
     lineload = [0, 0]

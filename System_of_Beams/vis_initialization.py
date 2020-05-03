@@ -202,6 +202,7 @@ def initialize(max_indep_elements=20, catch_radius=0.15):
         match_aspect=True, aspect_scale=1.0,
         tooltips=tooltips,
     )
+    plot_input.toolbar.logo = None
     configure_input_plot(plot_input, div_xy, max_indep_elements)
 
     '''
@@ -213,17 +214,23 @@ def initialize(max_indep_elements=20, catch_radius=0.15):
     plot_output_width   = 800
     plot_output_height  = 250
     plot_normal_f       = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
-    plot_normal_f.title.text = 'Normal force'
+    plot_normal_f.toolbar.logo      = None
+    plot_normal_f.title.text        = 'Normal force'
     plot_normal_disp    = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
-    plot_normal_disp.title.text = 'Normal displacement'
+    plot_normal_disp.toolbar.logo   = None
+    plot_normal_disp.title.text     = 'Normal displacement'
     plot_shear_f        = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
-    plot_shear_f.title.text = 'Shear force'
+    plot_shear_f.toolbar.logo       = None
+    plot_shear_f.title.text         = 'Shear force'
     plot_moment         = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
-    plot_moment.title.text = 'Bending moment'
+    plot_moment.toolbar.logo        = None
+    plot_moment.title.text          = 'Bending moment'
     plot_shear_disp     = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
-    plot_shear_disp.title.text = 'Shear displacement'
+    plot_shear_disp.toolbar.logo    = None
+    plot_shear_disp.title.text      = 'Shear displacement'
     plot_shear_angle    = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
-    plot_shear_angle.title.text = 'Rotation angle'
+    plot_shear_angle.toolbar.logo   = None
+    plot_shear_angle.title.text     = 'Rotation angle'
     plot_list = [plot_normal_f, plot_normal_disp, plot_shear_f, plot_moment, plot_shear_angle, plot_shear_disp]
 
     # add plot renderer
@@ -593,6 +600,30 @@ def initialize(max_indep_elements=20, catch_radius=0.15):
 
     '''
     ###############################
+    # IMAGES: SIGN CONVENTION
+    ###############################
+    '''
+    sign_convention_N = Div( text = "<img src='/System_of_Beams/static/images/sign_convention_N_u.png' width=100 height=60>",
+            width = 100,
+            height = 60 )
+    sign_convention_u = Div( text = "<img src='/System_of_Beams/static/images/sign_convention_N_u.png' width=100 height=60>",
+            width = 100,
+            height = 60 )
+    sign_convention_SF = Div( text = "<img src='/System_of_Beams/static/images/sign_convention_SF_w.png' width=100 height=60>",
+            width = 100,
+            height = 60 )
+    sign_convention_M = Div( text = "<img src='/System_of_Beams/static/images/sign_convention_M.png' width=100 height=60>",
+            width = 100,
+            height = 60 )
+    sign_convention_phi = Div( text = "<img src='/System_of_Beams/static/images/sign_convention_phi.png' width=100 height=60>",
+            width = 100,
+            height = 60 )
+    sign_convention_w = Div( text = "<img src='/System_of_Beams/static/images/sign_convention_SF_w.png' width=100 height=60>",
+            width = 100,
+            height = 60 )
+
+    '''
+    ###############################
     # HTML  LATEX DESCRIPTION
     ###############################
     '''
@@ -664,12 +695,12 @@ def initialize(max_indep_elements=20, catch_radius=0.15):
 
     # output plots and check boxes for characteristic values
     user_output = column(
-        row(plot_normal_f, spacer, column(spacer, check_plot_nf, text_plot_nf)),
-        row(plot_normal_disp, spacer, column(spacer, check_plot_nd, text_plot_nd)),
-        row(plot_shear_f, spacer, column(spacer, check_plot_sf, text_plot_sf)),
-        row(plot_moment, spacer, column(spacer, check_plot_mo, text_plot_mo)),
-        row(plot_shear_angle, spacer, column(spacer, check_plot_sa, text_plot_sa)),
-        row(plot_shear_disp, spacer, column(spacer, check_plot_sd, text_plot_sd)))
+        row(plot_normal_f   , spacer, column(spacer, check_plot_nf, sign_convention_N   )),
+        row(plot_normal_disp, spacer, column(spacer, check_plot_nd, sign_convention_u   )),
+        row(plot_shear_f    , spacer, column(spacer, check_plot_sf, sign_convention_SF  )),
+        row(plot_moment     , spacer, column(spacer, check_plot_mo, sign_convention_M   )),
+        row(plot_shear_angle, spacer, column(spacer, check_plot_sa, sign_convention_phi )),
+        row(plot_shear_disp , spacer, column(spacer, check_plot_sd, sign_convention_w   )))
 
     # assemble complete layout
     doc_layout = column(spacer, row(spacer, spacer, dropdown_tc),
