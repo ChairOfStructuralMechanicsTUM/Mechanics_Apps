@@ -17,6 +17,9 @@ class ColumnDataSources_storage:
         self.ds_element_info                 = None
         self.ds_indep_elements               = None
         self.ds_nodedep_elements             = None
+        self.cb_get_selected_                = None
+        self.cb_plot_tap_                    = None
+        self.cb_plot_xy_                     = None
         # vis_elementToPlot
         self.ds_images = None
         # vis_initalization

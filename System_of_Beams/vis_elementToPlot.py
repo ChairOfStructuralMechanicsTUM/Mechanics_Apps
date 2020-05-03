@@ -1,3 +1,5 @@
+
+
 import numpy as np
 import math
 
@@ -10,10 +12,8 @@ import vis_callbacks as vis_cbs
 import vis_initialization as vis_init
 import vis_editElement as vis_editEl
 from Classes import ElementSupportEnum as eLnum
+from ColumnDataSources  import ColumnDataSources
 
-
-# mapping of enum_type to position in ds_images used for image url, sizes and offsets of bokeh image glyphs
-url = "System_of_Beams/static/images/"
 map_enum2images = {eLnum.ElSupEnum.SUPPORT_CLAMPED.value: 0, eLnum.ElSupEnum.SUPPORT_NORMAL_FORCE.value: 1,
                    eLnum.ElSupEnum.SUPPORT_TRANSVERSE_FORCE.value: 2, eLnum.ElSupEnum.SUPPORT_FIXED_CONTINUOUS.value: 3,
                    eLnum.ElSupEnum.SUPPORT_FIXED_JOINT.value: 4, eLnum.ElSupEnum.SUPPORT_ROLLER_CONTINUOUS.value: 5,
@@ -24,19 +24,7 @@ map_enum2images = {eLnum.ElSupEnum.SUPPORT_CLAMPED.value: 0, eLnum.ElSupEnum.SUP
                    eLnum.ElSupEnum.SPRING.value: 14, eLnum.ElSupEnum.LOAD_POINT.value: 15,
                    eLnum.ElSupEnum.LOAD_MOMENT.value: 16,  # load_moment_negative
                    eLnum.ElSupEnum.LOAD_TEMP.value: 18}
-ds_images = ColumnDataSource(dict(
-    url=[url+"support_clamped_p.png", url+"support_normal_p.png", url+"support_transverse_p.png",
-         url+"support_fixed_conti_p.png", url+"support_fixed_joint_p.png", url+"support_roller_conti_p.png",
-         url+"support_roller_joint_p.png", url+"spring_support_p.png", url+"spring_moment_p.png",
-         url+"spring_moment_neg_p.png", url+"node_p.png", url+"joint_p.png", url+"joint_normal_p.png",
-         url+"joint_transverse_p.png", url+"spring_p.png", url+"load_point_p.png", url+"moment_p.png",
-         url+"moment_neg_p.png", url+"load_temp_p.png"],
-    x_mod=[+0.03, 0, 0, 0, 0, 0, 0,      0, 0, 0,          0, 0, 0, 0,              0,     0, 0, 0,        0.2],
-    y_mod=[0, 0, 0, -0.1, -0.1, -0.1, -0.1,     -0.1, -0.1, -0.1,  0, 0, 0, 0,              0,     0.2, 0.2, 0.2, -0.2],
-    w=[0.30, 0.50, 0.35, 0.35, 0.35, 0.35, 0.35, 0.35, 0.35, 0.35, 0.024, 0.11, 0.25, 0.25, 1.0,  0.16, 0.4, 0.4, 0.18],
-    h=[0.37, 0.30, 0.37, 0.3, 0.3, 0.3, 0.3,     0.3, 0.3, 0.3,    0.11, 0.11, 0.08, 0.15, 0.24, 0.4, 0.16, 0.16, 0.25],
-))         # supports                            # springs         # node, joints          # sp  # point, moment  # temp
-
+ds_images = ColumnDataSources.ds_images
 
 def add_indep(x, y, enum_type, name, angle=0.0):
     """

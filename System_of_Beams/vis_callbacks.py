@@ -5,14 +5,29 @@ from bokeh.models.callbacks import CustomJS
 from bokeh.models import ColumnDataSource
 
 # import local files
-import vis_initialization as vis_init
-import vis_elementToPlot as vis_elToP
-import vis_editElement as vis_editEl
-from Libs import interface
-from Classes import ElementSupportEnum as eLnum
-from Libs import outputvisualization as vis_output
+import vis_initialization   as vis_init
+import vis_elementToPlot    as vis_elToP
+import vis_editElement      as vis_editEl
+from Libs               import interface
+from Classes            import ElementSupportEnum as eLnum
+from Libs               import outputvisualization as vis_output
 from testing_collection import test_cases, visualisation_tests
+from ColumnDataSources  import ColumnDataSources
 
+ds_input                         = ColumnDataSources.ds_input
+ds_glyph_images                  = ColumnDataSources.ds_glyph_images
+ds_glyph_beam                    = ColumnDataSources.ds_glyph_beam
+ds_glyph_lineload                = ColumnDataSources.ds_glyph_lineload
+ds_arrow_lineload                = ColumnDataSources.ds_arrow_lineload
+ds_glyph_springsPointMomentTemp  = ColumnDataSources.ds_glyph_springsPointMomentTemp
+ds_input_selected                = ColumnDataSources.ds_input_selected
+ds_active_button                 = ColumnDataSources.ds_active_button
+ds_element_count                 = ColumnDataSources.ds_element_count
+ds_chosen_node                   = ColumnDataSources.ds_chosen_node
+ds_1st_chosen                    = ColumnDataSources.ds_1st_chosen
+ds_element_info                  = ColumnDataSources.ds_element_info
+ds_indep_elements                = ColumnDataSources.ds_indep_elements
+ds_nodedep_elements              = ColumnDataSources.ds_nodedep_elements
 
 # variable for the currently activated element button for the input plot
 button_activated = -1
@@ -36,49 +51,6 @@ test_case_count_indep = 0
 # used to adapt plot elements when entries in ds_input were deleted
 len_ds_input = 0
 
-# datasource for the node independent elements of the input plot
-ds_input = ColumnDataSource(data=dict(x=[], y=[], type=[], name_user=[]))
-
-# data source for all image glyphs plotted in the input plot
-ds_glyph_images = ColumnDataSource(data=dict())
-
-# data source for beam glyphs plotted in the input plot
-ds_glyph_beam = ColumnDataSource(data=dict(x=[], y=[], width=[], angle=[], name_user=[]))
-
-# data source for line load patch glyphs of the input plot
-ds_glyph_lineload = ColumnDataSource(data=dict(patch_x=[], patch_y=[], glyph_x=[], glyph_y=[],
-                                               x=[], y=[], name_user=[]))
-# data source for line load arrows
-ds_arrow_lineload = ColumnDataSource(data=dict(xs=[], ys=[], name_user=[]))
-
-# data source for info about image glyphs of nodedependent elements for tooltips and element info box
-ds_glyph_springsPointMomentTemp = ColumnDataSource(data=dict(glyph_x=[], glyph_y=[], x=[], y=[],
-                                                             name_user=[]))
-
-# data source for the selected node independent elements of the input plot
-ds_input_selected = ColumnDataSource(data=dict(x=[], y=[]))
-
-# ColumnDataSource necessary for the JavaScript callbacks
-# data source for the activated element button
-ds_active_button = ColumnDataSource(data=dict(type=[-1]))
-# data source for the current number of elements in the plot
-ds_element_count = ColumnDataSource(data=dict(count=[0]))
-
-# data source for tap in input plot for node dependend glyphs (transfer)
-ds_chosen_node = ColumnDataSource(data=dict(type=[-1], tap_x=[0.0], tap_y=[0.0]))
-# data source for taps on existing nodes in input plot to create a new node dependent glyph
-ds_1st_chosen = ColumnDataSource(data=dict(type=[], node_x=[], node_y=[], name_node1=[]))
-
-# data source for tap in input plot for showing element info when no button is activated (transfer)
-ds_element_info = ColumnDataSource(data=dict(tap_x=[0.0], tap_y=[0.0]))
-
-# data source for image glyphs of node independent elements, that need to be plotted (collection)
-ds_indep_elements = ColumnDataSource(data=dict(x=[], y=[], type=[], name=[], same=[], angle=[]))
-
-# data source for image glyphs of node dependent elements, that need to be plotted (collection)
-ds_nodedep_elements = ColumnDataSource(data=dict(name_node1=[], name_node2=[], type=[], name=[], x=[], y=[], length=[],
-                                                 dT_T=[], k=[], h=[], ei=[], ea=[], moment=[], f=[],
-                                                 ll_local=[], ll_x_n=[], ll_y_q=[], angle=[]))
 
 # node dependent enum element values of the plot to distinguish in the java script callback cb_plot_tap()
 nodedep_element_values = [eLnum.ElSupEnum.SPRING_SUPPORT.value, eLnum.ElSupEnum.SPRING_MOMENT_SUPPORT.value,
@@ -95,68 +67,17 @@ def cb_plot_tap(div_input, max_indep_elements):
     :return: none
     """
     global ds_chosen_node, ds_input, ds_active_button, ds_element_count, ds_element_info, indep_element_values
+    cb_plot_tap_ = ColumnDataSources.cb_plot_tap_
+    cb_plot_tap_.args['div']                 = div_input
+    cb_plot_tap_.args['ds']                  = ds_input
+    cb_plot_tap_.args['activated']           = ds_active_button
+    cb_plot_tap_.args['element_count']       = ds_element_count
+    cb_plot_tap_.args['max_number_elements'] = max_indep_elements
+    cb_plot_tap_.args['ds_c_n']              = ds_chosen_node
+    cb_plot_tap_.args['ds_e_i']              = ds_element_info
+    cb_plot_tap_.args['nodedep']             = nodedep_element_values
 
-    return CustomJS(args=dict(div=div_input, ds=ds_input, activated=ds_active_button, element_count=ds_element_count,
-                              max_number_elements=max_indep_elements, ds_c_n=ds_chosen_node, ds_e_i=ds_element_info,
-                              nodedep=nodedep_element_values), code="""
-    //JavaScript code:
-    var div = div;
-    var nodedep = nodedep;
-    var active = activated.data['type'][0];
-    var count = element_count.data['count'][0];
-    var str_count = count.toFixed(0);
-    var count_data = element_count.data;
-    var max_element = max_number_elements;
-    var ds_data = ds.data;
-    var ds_c_n_data = ds_c_n.data;
-    var ds_e_i_data = ds_e_i.data;
-    var active_is_independent = true;
-    
-    // get x and y position of tap in plot, restricted to one decimal
-    var x = Math.round(Number(cb_obj['x']) * 10) / 10;
-    var y = Math.round(Number(cb_obj['y']) * 10) / 10;
-    
-    // check if active element belongs to the node dependent ones (springs, loads, beam)
-    for (i = 0; i < nodedep.length; i++) {
-       if (nodedep[i] == active) {
-          active_is_independent = false;
-          break;
-       }
-    }
-    
-    // tell user if no element button is active and add tap to datasource of element info 
-    if (active == -1) { 
-        ds_e_i_data['tap_x'] = [x];
-        ds_e_i_data['tap_y'] = [y];
-        ds_e_i.data = ds_e_i_data;
-    // add element to datasource of input plot and element info if element is node independent 
-    // and maximum amount of elements is not already reached
-    } else if (active_is_independent == true) {  
-        if (count == max_element) {
-            div.text = "<span style=%r>You already reached the maximum number of nodes (" + str_count + ")!</span>";
-        } else {   
-           ds_data['x'].push(x);
-           ds_data['y'].push(y);
-           ds_data['type'].push(active);
-           ds_data['name_user'].push(0);
-           ds.data = ds_data;
-           
-           ds_e_i_data['tap_x'] = [x];
-           ds_e_i_data['tap_y'] = [y];
-           ds_e_i.data = ds_e_i_data;
-        
-           count_data['count'] = [count + 1];
-           element_count.data = count_data;
-        }
-    // add element to datasource of chosen node if element is node dependent
-    } else {
-        ds_c_n_data['type'] = [active];
-        ds_c_n_data['tap_x'] = [x];
-        ds_c_n_data['tap_y'] = [y];
-        ds_c_n.data = ds_c_n_data;
-    }
-    ds.change.emit();
-    """)
+    return cb_plot_tap_
 
 
 def cb_adapt_plot_indep(attr, old, new):
@@ -376,12 +297,9 @@ def cb_plot_xy(div_xy, style='float:left;clear:left;font_size=10pt'):
     :param style: style of the message for div_xy (string)
     :return:
     """
-    return CustomJS(args=dict(div=div_xy), code="""
-    //JavaScript code:
-    //get x and y of plot when mouse hovers in plot and show it
-    var text = Number(cb_obj['x']).toFixed(1) + ',' + Number(cb_obj['y']).toFixed(1);        
-    div.text = "<span style=%r>(" + text + ")</span>";
-    """ % style)
+    cb_plot_xy_ = ColumnDataSources.cb_plot_xy_
+    cb_plot_xy_.args['div'] = div_xy
+    return cb_plot_xy_
 
 
 def cb_show_selected(attr, old, new):
@@ -424,20 +342,11 @@ def cb_get_selected(div_input):
     :return: none
     """
     global ds_input, ds_input_selected
-    return CustomJS(args=dict(div=div_input, ds=ds_input, selected=ds_input_selected), code="""
-    //JavaScript code:
-    var inds = cb_obj.indices;
-    var ds_x = ds.data['x'];
-    var ds_y = ds.data['y'];
-
-    //get selected elements of plot and add them to the datasource for the selected input plot elements
-    s = {'x': [], 'y': []}
-    for (var i = 0; i < inds.length; i++) {
-        s['x'].push(ds_x[inds[i]])
-        s['y'].push(ds_y[inds[i]])
-    }
-    selected.data = s
-    """)
+    cb_get_selected_ = ColumnDataSources.cb_get_selected_
+    cb_get_selected_.args['div'] = div_input
+    cb_get_selected_.args['ds'] = ds_input
+    cb_get_selected_.args['selected'] = ds_input_selected
+    return cb_get_selected_ 
 
 
 def cb_button_calculation(button_calc):

@@ -1,24 +1,25 @@
-from functools import partial
-import numpy as np
-from os.path import dirname, join, abspath, split
+from functools  import partial
+import numpy        as np
+from os.path    import dirname, join, abspath, split
 import sys
 import inspect
 
 # import bokeh modules
-from bokeh.io import curdoc
-from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource
-from bokeh.models.glyphs import Line
-from bokeh.models.ranges import Range1d
-from bokeh.layouts import column, row
+from bokeh.io             import curdoc
+from bokeh.plotting       import figure
+from bokeh.models         import ColumnDataSource
+from bokeh.models.glyphs  import Line
+from bokeh.models.ranges  import Range1d
+from bokeh.layouts        import column, row
 from bokeh.models.widgets import Button, Div, TextInput, Dropdown, CheckboxGroup, RadioGroup
 from bokeh.models.tickers import AdaptiveTicker
-from bokeh.events import Tap, MouseMove
+from bokeh.events         import Tap, MouseMove
 
 # import local files
-import vis_callbacks as vis_cbs
-from Classes import ElementSupportEnum as eLnum
-from Libs import HtmlColors as coL
+import vis_callbacks        as vis_cbs
+from Classes            import ElementSupportEnum as eLnum
+from Libs               import HtmlColors as coL
+from ColumnDataSources  import ColumnDataSources
 
 # import local latex_support
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
@@ -82,10 +83,8 @@ def configure_input_plot(p, div_xy, max_indep_elements):
     p.ygrid.minor_grid_line_alpha = 0.2
 
     # add darker lines to be able to distinguish the x and y axis clearly after moving the plot
-    axis_line = np.linspace(-100, 100, 2)
-    axis_zero = axis_line * 0
-    ds_x_axis = ColumnDataSource(dict(x=axis_line, y=axis_zero))
-    ds_y_axis = ColumnDataSource(dict(x=axis_zero, y=axis_line))
+    ds_x_axis = ColumnDataSources.ds_x_axis
+    ds_y_axis = ColumnDataSources.ds_y_axis
     x_axis_line = Line(x="x", y="y", line_color=coL.HtmlColors.BLACK.value, line_width=1, line_alpha=0.8)
     y_axis_line = Line(x="x", y="y", line_color=coL.HtmlColors.BLACK.value, line_width=1, line_alpha=0.8)
     p.add_glyph(ds_x_axis, x_axis_line)
