@@ -2,7 +2,6 @@ from __future__ import division
 from tmd_spring import Spring
 from tmd_dashpot import Dashpot
 from tmd_mass import RectangularMass
-from tmd_integrator import Integrator
 from tmd_coord import Coord
 
 from tmd_functions import Calculate_MagnificationFactor_PhaseAngle, Calculate_Current_Amplification_PhaseAngle
@@ -104,7 +103,7 @@ topMass_displacementTime_source = ColumnDataSource(data=dict(x=[0],y=[0]))  #ini
 forceTime_source = ColumnDataSource(data=dict(x=[0],y=[-1]))                #initial force acting on main mass
 
 ## plot-boundaries
-displacement_range = Range1d(-6,6)
+displacement_range = Range1d(-40,40)
 force_range = Range1d(-1.2,1.2)
 time_range = Range1d(0,20)
 
@@ -113,7 +112,7 @@ displacementTime_plot = figure(title="",tools=["ywheel_zoom,xwheel_pan,pan,reset
     y_range  = displacement_range)
 displacementTime_plot.axis.axis_label_text_font_size="12pt"
 displacementTime_plot.axis.axis_label_text_font_style="normal"
-displacementTime_plot.yaxis.axis_label="Normalized Displacement u/(F/k)"
+displacementTime_plot.yaxis.axis_label="Normalized Displacement u/(F/k₁)"
 displacementTime_plot.line(x='x',y='y', source = mainMass_displacementTime_source, color='#e37222', legend_label='Main Mass')
 displacementTime_plot.line(x='x',y='y', source = topMass_displacementTime_source, color='#3070b3', legend_label='Top Mass')
 displacementTime_plot.toolbar.logo = None
@@ -248,9 +247,11 @@ def evolve():
     velNew = velOld+(1-gamma)*dt*accOld+gamma*dt*accNew
     dispNew = dispOld+dt*velOld+dt*dt*(0.5-beta)*accOld+dt*dt*beta*accNew
     
-    mainMass.move(Coord(0,dispNew[0]-dispOld[0])*baseSpring.kappa)      #move main mass by calculated displacement normalized with spring stiffness
-    topMass.move(Coord(0,dispNew[1]-dispOld[1])*spring.kappa)           #move top mass by calculated displacement normalized with spring stiffness
-   
+
+
+    mainMass.move(Coord(0,dispNew[0]-dispOld[0])*baseSpring.kappa/3)  #move main mass by calculated displacement normalized with base spring stiffness    
+    topMass.move(Coord(0,dispNew[1]-dispOld[1])*baseSpring.kappa/3)   #move top mass by calculated displacement normalized with base spring stiffness
+
     accOld = accNew         #a_n for next time step
     velOld = velNew         #v_n for next time step
     dispOld = dispNew       #d_n for next time step
@@ -260,8 +261,8 @@ def evolve():
     
     mainMass_position = mainMass.currentPos['y'][0]
     topMass_position = topMass.currentPos['y'][0]
-    mainMass_displacement = mainMass_position - x1
-    topMass_displacement = topMass_position - x2
+    mainMass_displacement = (mainMass_position - x1)*3
+    topMass_displacement = (topMass_position - x2)*3
     mainMass_displacementTime_source.stream(dict(x=[t],y=[mainMass_displacement]))
     topMass_displacementTime_source.stream(dict(x=[t],y=[topMass_displacement]))
     forceTime_source.stream(dict(x=[t],y=[F1_next]))                                       
