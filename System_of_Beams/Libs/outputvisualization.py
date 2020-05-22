@@ -128,20 +128,17 @@ def calc_xy(symb_func, symb_to_plot_over, l_val, start_knot, end_knot):
     len_el = gc.knot_dist(start_knot, end_knot)
     prec_plot = 50
 
-    if symb_func == 0:
-        return None, None, False
-
     x_length = float(symbbox.remove_free_symbols(l_val, None))
     x_vals = np.linspace(0, x_length, round(prec_plot*len_el))
     symb_func = symbbox.remove_free_symbols(symb_func, symb_to_plot_over)
+    if symb_func == 0:
+        return None, None, False
     if symb_to_plot_over in free_symbs:
         # evaluate function from zero to one with symb_to_plot_over
         func_lambdified = lambdify(symb_to_plot_over, symb_func, "numpy")
         y_vals = func_lambdified(x_vals)
-
     else:
-        y_vals = np.full((len(x_vals, )), float(symb_func))
-    
+        y_vals = np.full(len(x_vals), float(symb_func))
     return x_vals, y_vals, True
 
 def scale_y_values(y_data, y_reference, y_max):
@@ -175,11 +172,8 @@ def plot_symbolic_func(plot, symb_func, symb_to_plot_over, l_val, start_knot, en
     :param plot_list: collects all elements that exist in this plot (needed to delete everything)
     """
     y_max = 1 # the maximum y value for the plot (e.g. if y_max=1, no y value in the plot will be greater than 1)
-    print('symb_func: ')
-    print(symb_func)
     if symb_func is None:
         return None, None, 0
-    free_symbs = symb_func.free_symbols
     len_el = gc.knot_dist(start_knot, end_knot)
     prec_plot = 50
     tol = 1e-15
@@ -195,11 +189,13 @@ def plot_symbolic_func(plot, symb_func, symb_to_plot_over, l_val, start_knot, en
         return None, None, 0
 
     x_vals, y_vals = xy_data[0], xy_data[1]
+    if y_vals is None:
+        return None, None, 0
+        
     # Rotate, translate and scale function to beam to plot over
     y_vals, multipl_factor = scale_y_values(y_vals, y_reference, y_max)
     x_vals = np.linspace(start_knot.x_, start_knot.x_+len_el, round(prec_plot*len_el))
     y_vals += start_knot.y_
-    print([x_vals, y_vals])
     x_vals, y_vals = gc.rotate_x_y_values(x_vals, y_vals, start_knot, end_knot, tol)
     
     x_vals = np.concatenate([[start_knot.x_], x_vals, [end_knot.x_]])
@@ -265,7 +261,7 @@ def plot_characteristic_vals(plot, func, symb_to_plot_over, l_val, start_knot, e
     :param mirror_y_values: If True, changes the sign of the text value
     :return:
     """
-    if func is None or x_vals is None:
+    if func is None or x_vals is None or y_vals is None:
         return
 
     sign = 1

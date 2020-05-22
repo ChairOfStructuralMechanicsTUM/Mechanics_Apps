@@ -18,6 +18,7 @@ def remove_free_symbols(func, symb_to_remain):
     """
     if isinstance(func, int) or isinstance(func, float):
         return func
+    func = replace_temp_loads(func)
     free_symbols = func.free_symbols
     if symb_to_remain in free_symbols:
         free_symbols.remove(symb_to_remain)
@@ -26,6 +27,17 @@ def remove_free_symbols(func, symb_to_remain):
     set_to_one = dict(zip(free_symbols, val_to_assign))
     return func.subs(set_to_one)
 
+def replace_temp_loads(func, value=1/3):
+    """
+    Replaces temperature symbols in a symbolic function with param value. This prevents irritating output plots.
+    :param func: func to be refactored
+    :return: refactored function
+    """
+    temperature_symbols = {'dT', 'T'}
+
+    val_to_assign = [value] * len(temperature_symbols)
+    set_to_value = dict(zip(temperature_symbols, val_to_assign))
+    return func.subs(set_to_value)
 
 def get_free_symbols(func, symbs_to_ignore=None):
     """
