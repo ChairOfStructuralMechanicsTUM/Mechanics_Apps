@@ -260,14 +260,14 @@ frequency_ratio_input.on_change('value',change_frequency_ratio)
 def play_pause():
     [callback_id] = glob_callback_id.data["callback_id"]
     if play_pause_button.label == "Play":
-        callback_id = curdoc().add_periodic_callback(evolve,dt*1000)
         play_pause_button.label = "Pause" # change label
+        callback_id = curdoc().add_periodic_callback(evolve,dt*1000)
         Force_select.disabled = True # disable selection during simulation run
         damping_coefficient_input.disabled = True  # disable slider during simulation run
         frequency_ratio_input.disabled = True # disable slider during simulation run
     elif play_pause_button.label == "Pause":
-        curdoc().remove_periodic_callback(callback_id)
         play_pause_button.label = "Play" # change label
+        curdoc().remove_periodic_callback(callback_id)
     glob_callback_id.data = dict(callback_id = [callback_id])
 
 def reset(): # resets values to initial cofiguration
