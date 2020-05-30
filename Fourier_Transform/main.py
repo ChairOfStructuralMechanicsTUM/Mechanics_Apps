@@ -753,11 +753,10 @@ def change_lambda_scaling(attr,old,new):
             for i in range(0,len(x_FT)):
                 y_FT_Re_mod[i]=0.0
                 y_FT_Im_mod[i]=0.0
-            arrow_mod_freq_Im_source.stream(dict(x1=[-new*w0],y1=[0],x2=[-new*w0],y2=[pi/abs(new)]),rollover=1)
-            arrow_mod_freq_Im_source2.stream(dict(x1=[new*w0],y1=[0],x2=[new*w0],y2=[-pi/abs(new)]),rollover=1)
+            arrow_mod_freq_Im_source.stream(dict(x1=[-new*w0],y1=[0],x2=[-new*w0],y2=[pi]),rollover=1)
+            arrow_mod_freq_Im_source2.stream(dict(x1=[new*w0],y1=[0],x2=[new*w0],y2=[-pi]),rollover=1)
             arrow_mod_freq_Im.visible = True
             arrow_mod_freq_Im2.visible = True
-            y_mod_freq = [-pi/abs(new), pi/abs(new)]
     elif func_select.value == "cos(12t)":
         if new == 0:
             for i in range(0,len(x)):
@@ -775,11 +774,10 @@ def change_lambda_scaling(attr,old,new):
             for i in range(0,len(x_FT)):
                 y_FT_Im_mod[i]=0.0
                 y_FT_Re_mod[i]=0
-            arrow_mod_freq_Re_source.stream(dict(x1=[-new*w0],y1=[0],x2=[-new*w0],y2=[pi/abs(new)]),rollover=1)
-            arrow_mod_freq_Re_source2.stream(dict(x1=[new*w0],y1=[0],x2=[new*w0],y2=[pi/abs(new)]),rollover=1)
+            arrow_mod_freq_Re_source.stream(dict(x1=[-new*w0],y1=[0],x2=[-new*w0],y2=[pi]),rollover=1)
+            arrow_mod_freq_Re_source2.stream(dict(x1=[new*w0],y1=[0],x2=[new*w0],y2=[pi]),rollover=1)
             arrow_mod_freq_Re.visible = True
             arrow_mod_freq_Re2.visible = True
-            y_mod_freq = [0, pi/abs(new)]
     elif func_select.value == "\u03B4(t)":
         if new == 0:
             line_mod_freq_Re.visible = False
