@@ -3,12 +3,14 @@ IMPORTS
 ###############################'''
 # General Imports
 from bokeh.models           import ColumnDataSource
+from bokeh.io             import curdoc
 from bokeh.models.callbacks import CustomJS
 import numpy                    as np
 # Local Imports
 from ColumnDataSources  import ColumnDataSources
 from Classes            import ElementSupportEnum as eLnum
-
+import vis_global_vars as glob_var
+from Classes import DocElement as doc_el
 
 '''###############################
 Define ColumnDataSources
@@ -32,8 +34,8 @@ ds_glyph_lineload = ColumnDataSource(data=dict(patch_x=[], patch_y=[], glyph_x=[
 # data source for line load arrows
 ds_arrow_lineload = ColumnDataSource(data=dict(xs=[], ys=[], name_user=[]))
 
-# data source for line load arrows
-ds_arrow_lineload = ColumnDataSource(data=dict(xs=[], ys=[], name_user=[]))
+# # data source for line load arrows
+# ds_arrow_lineload = ColumnDataSource(data=dict(xs=[], ys=[], name_user=[]))
 
 # data source for info about image glyphs of nodedependent elements for tooltips and element info box
 ds_glyph_springsPointMomentTemp = ColumnDataSource(data=dict(glyph_x=[], glyph_y=[], x=[], y=[],
@@ -213,6 +215,7 @@ ColumnDataSources.ds_y_axis                       = ds_y_axis
 from testing_collection     import test_runner as test_lib
 import vis_initialization       as vis_init
 
+glob_var.init(curdoc())
 vis_init.initialize(max_indep_elements=20, catch_radius=0.15)
 
 run_tests = False  # run tests or not

@@ -14,51 +14,54 @@ from Classes            import ElementSupportEnum as eLnum
 from Libs               import outputvisualization as vis_output
 from testing_collection import test_cases, visualisation_tests
 from ColumnDataSources  import ColumnDataSources
+import vis_global_vars as glob_var
 
-ds_input                         = ColumnDataSources.ds_input
-ds_glyph_images                  = ColumnDataSources.ds_glyph_images
-ds_glyph_beam                    = ColumnDataSources.ds_glyph_beam
-ds_glyph_lineload                = ColumnDataSources.ds_glyph_lineload
-ds_arrow_lineload                = ColumnDataSources.ds_arrow_lineload
-ds_glyph_springsPointMomentTemp  = ColumnDataSources.ds_glyph_springsPointMomentTemp
-ds_input_selected                = ColumnDataSources.ds_input_selected
-ds_active_button                 = ColumnDataSources.ds_active_button
-ds_element_count                 = ColumnDataSources.ds_element_count
-ds_chosen_node                   = ColumnDataSources.ds_chosen_node
-ds_1st_chosen                    = ColumnDataSources.ds_1st_chosen
-ds_element_info                  = ColumnDataSources.ds_element_info
-ds_indep_elements                = ColumnDataSources.ds_indep_elements
-ds_nodedep_elements              = ColumnDataSources.ds_nodedep_elements
+# ds_input                         = ColumnDataSources.ds_input
+# ds_glyph_images                  = ColumnDataSources.ds_glyph_images
+# ds_glyph_beam                    = ColumnDataSources.ds_glyph_beam
+# ds_glyph_lineload                = ColumnDataSources.ds_glyph_lineload
+# ds_arrow_lineload                = ColumnDataSources.ds_arrow_lineload
+# ds_glyph_springsPointMomentTemp  = ColumnDataSources.ds_glyph_springsPointMomentTemp
+# ds_input_selected                = ColumnDataSources.ds_input_selected
+# ds_active_button                 = ColumnDataSources.ds_active_button
+# ds_element_count                 = ColumnDataSources.ds_element_count
+# ds_chosen_node                   = ColumnDataSources.ds_chosen_node
+# ds_1st_chosen                    = ColumnDataSources.ds_1st_chosen
+# ds_element_info                  = ColumnDataSources.ds_element_info
+# ds_indep_elements                = ColumnDataSources.ds_indep_elements
+# ds_nodedep_elements              = ColumnDataSources.ds_nodedep_elements
+#
+# # variable for the currently activated element button for the input plot
+# button_activated = -1
+#
+# # radius to select specific element in input plot
+# catch_radius = 0.15
+#
+# # used for automatic naming of the elements in the plot using a consecutive number
+# object_id = 0
+#
+# # current element in the element info box, used to be able to delte the single element - Tupel(name, indep, index)
+# elinfo_current_element = (False, False, False)
+# # whether user input of element info box is blocked
+# elinfo_input_blocked = False
+#
+# # whether currently a test case is plotted - independent element should get angle and elinfo shouldn't react
+# plotting_test_case = False
+# test_case_angle = []
+# test_case_count_indep = 0
+#
+# # used to adapt plot elements when entries in ds_input were deleted
+# len_ds_input = 0
+#
+#
+# # node dependent enum element values of the plot to distinguish in the java script callback cb_plot_tap()
+# nodedep_element_values = [eLnum.ElSupEnum.SPRING_SUPPORT.value, eLnum.ElSupEnum.SPRING_MOMENT_SUPPORT.value,
+#                           eLnum.ElSupEnum.SPRING.value, eLnum.ElSupEnum.BEAM.value, eLnum.ElSupEnum.LOAD_POINT.value,
+#                           eLnum.ElSupEnum.LOAD_MOMENT.value, eLnum.ElSupEnum.LOAD_LINE.value,
+#                           eLnum.ElSupEnum.LOAD_TEMP.value]
 
-# variable for the currently activated element button for the input plot
-button_activated = -1
-
-# radius to select specific element in input plot
-catch_radius = 0.15
-
-# used for automatic naming of the elements in the plot using a consecutive number
-object_id = 0
-
-# current element in the element info box, used to be able to delte the single element - Tupel(name, indep, index)
-elinfo_current_element = (False, False, False)
-# whether user input of element info box is blocked
-elinfo_input_blocked = False
-
-# whether currently a test case is plotted - independent element should get angle and elinfo shouldn't react
-plotting_test_case = False
-test_case_angle = []
-test_case_count_indep = 0
-
-# used to adapt plot elements when entries in ds_input were deleted
-len_ds_input = 0
-
-
-# node dependent enum element values of the plot to distinguish in the java script callback cb_plot_tap()
-nodedep_element_values = [eLnum.ElSupEnum.SPRING_SUPPORT.value, eLnum.ElSupEnum.SPRING_MOMENT_SUPPORT.value,
-                          eLnum.ElSupEnum.SPRING.value, eLnum.ElSupEnum.BEAM.value, eLnum.ElSupEnum.LOAD_POINT.value,
-                          eLnum.ElSupEnum.LOAD_MOMENT.value, eLnum.ElSupEnum.LOAD_LINE.value,
-                          eLnum.ElSupEnum.LOAD_TEMP.value]
-
+# dat_src = glob_var.DataSources
+# doc = glob_var.doc
 
 def cb_plot_tap(div_input, max_indep_elements):
     """
@@ -67,16 +70,18 @@ def cb_plot_tap(div_input, max_indep_elements):
     :param max_indep_elements: maximum number of node independent elements accepted in the input plot (int)
     :return: none
     """
-    global ds_chosen_node, ds_input, ds_active_button, ds_element_count, ds_element_info, indep_element_values
+    # global ds_chosen_node, ds_input, ds_active_button, ds_element_count, ds_element_info, indep_element_values
+    # dat_src = glob_var.DataSources
+    dat_src = glob_var.DataSources
     cb_plot_tap_ = ColumnDataSources.cb_plot_tap_
     cb_plot_tap_.args['div']                 = div_input
-    cb_plot_tap_.args['ds']                  = ds_input
-    cb_plot_tap_.args['activated']           = ds_active_button
-    cb_plot_tap_.args['element_count']       = ds_element_count
+    cb_plot_tap_.args['ds']                  = dat_src.ds_input
+    cb_plot_tap_.args['activated']           = dat_src.ds_active_button
+    cb_plot_tap_.args['element_count']       = dat_src.ds_element_count
     cb_plot_tap_.args['max_number_elements'] = max_indep_elements
-    cb_plot_tap_.args['ds_c_n']              = ds_chosen_node
-    cb_plot_tap_.args['ds_e_i']              = ds_element_info
-    cb_plot_tap_.args['nodedep']             = nodedep_element_values
+    cb_plot_tap_.args['ds_c_n']              = dat_src.ds_chosen_node
+    cb_plot_tap_.args['ds_e_i']              = dat_src.ds_element_info
+    cb_plot_tap_.args['nodedep']             = dat_src.nodedep_element_values
 
     return cb_plot_tap_
 
@@ -89,24 +94,27 @@ def cb_adapt_plot_indep(attr, old, new):
     :param new: updated ds_input.data (dict)
     :return: none
     """
-    global ds_indep_elements, object_id, ds_input, len_ds_input, \
-        plotting_test_case, test_case_angle, test_case_count_indep
+    dat_src = glob_var.DataSources
+    doc = glob_var.doc
+    # global ds_indep_elements, object_id, ds_input, len_ds_input, \
+    #     plotting_test_case, test_case_angle, test_case_count_indep
+    # dat_src = glob_var.DataSources
 
     # check if element was added or deleted or just edited
-    if not len(new['x']) == len_ds_input:
-        len_ds_input = len(new['x'])
+    if not len(new['x']) == dat_src.len_ds_input:
+        dat_src.len_ds_input = len(new['x'])
 
         # reset "same" of plot elements, used to check which entries of ds_input still exist and are plotted
-        ds_indep_elements.data['same'] = [False] * len(ds_indep_elements.data['same'])
+        dat_src.ds_indep_elements.data['same'] = [False] * len(dat_src.ds_indep_elements.data['same'])
 
         ds_input_x = new['x']
         ds_input_y = new['y']
         ds_input_t = new['type']
-        ds_indep_x = ds_indep_elements.data['x']
-        ds_indep_y = ds_indep_elements.data['y']
-        ds_indep_t = ds_indep_elements.data['type']
-        ds_indep_n = ds_indep_elements.data['name']
-        ds_indep_s = ds_indep_elements.data['same']
+        ds_indep_x = dat_src.ds_indep_elements.data['x']
+        ds_indep_y = dat_src.ds_indep_elements.data['y']
+        ds_indep_t = dat_src.ds_indep_elements.data['type']
+        ds_indep_n = dat_src.ds_indep_elements.data['name']
+        ds_indep_s = dat_src.ds_indep_elements.data['same']
 
         # get image glyphs that were already there before ds_input changed
         same = [False] * len(ds_input_x)
@@ -119,7 +127,7 @@ def cb_adapt_plot_indep(attr, old, new):
                         same[i] = True
                     else:
                         same[i] = True
-                        vis_init.div_input.text = "An object already exists at this position. " \
+                        doc.div_input.text = "An object already exists at this position. " \
                                                   "New object wasn't created!"
                     break
 
@@ -138,21 +146,21 @@ def cb_adapt_plot_indep(attr, old, new):
         for i in range(len(ds_input_x)):
             if not same[i]:
                 # configure name and increse object id
-                name = str(ds_input_t[i]) + "-" + str(object_id)
-                object_id += 1
+                name = str(ds_input_t[i]) + "-" + str(dat_src.object_id)
+                dat_src.object_id += 1
 
                 # adapt name in ds_input
-                ds_input_data = ds_input.data.copy()
+                ds_input_data = dat_src.ds_input.data.copy()
                 ds_input_data['name_user'][i] = name
-                ds_input.data = ds_input_data
-                # ds_input.trigger('data', ds_input.data, ds_input_data)
+                dat_src.ds_input.data = ds_input_data
+                # dat_src.ds_input.trigger('data', dat_src.ds_input.data, ds_input_data)
 
-                if plotting_test_case:
+                if dat_src.plotting_test_case:
                     try:
-                        angle = test_case_angle[test_case_count_indep]
+                        angle = dat_src.test_case_angle[dat_src.test_case_count_indep]
                     except:
                         angle = 0.0
-                    test_case_count_indep += 1
+                    dat_src.test_case_count_indep += 1
                 else:
                     angle = 0.0
                 # add node independent element
@@ -167,12 +175,13 @@ def check_for_similar(enum_type, node1, node2=None):
     :param node2: name of second node of line element (string)
     :return: True if similiar object already exists (bool)
     """
-    global ds_nodedep_elements
+    # global ds_nodedep_elements
+    dat_src = glob_var.DataSources
     similiar = []
 
-    plot_n1 = ds_nodedep_elements.data["name_node1"]
-    plot_n2 = ds_nodedep_elements.data["name_node2"]
-    plot_t = ds_nodedep_elements.data["type"]
+    plot_n1 = dat_src.ds_nodedep_elements.data["name_node1"]
+    plot_n2 = dat_src.ds_nodedep_elements.data["name_node2"]
+    plot_t = dat_src.ds_nodedep_elements.data["type"]
 
     # get enum_types of elements that have the same two nodes
     for i in range(len(plot_n1)):
@@ -212,7 +221,9 @@ def cb_adapt_plot_nodedep(attr, old, new):
     :param new: updated ds_chosen_node.data (dict)
     :return: none
     """
-    global ds_indep_elements, ds_1st_chosen, ds_nodedep_elements, catch_radius
+    # global ds_indep_elements, ds_1st_chosen, dat_src.ds_nodedep_elements, catch_radius
+    dat_src = glob_var.DataSources
+    doc = glob_var.doc
 
     enum_type = new['type'][0]
     new_x = new['tap_x'][0]
@@ -220,22 +231,22 @@ def cb_adapt_plot_nodedep(attr, old, new):
     node_x = 0.0
     node_y = 0.0
 
-    ds_indep_x = ds_indep_elements.data['x']
-    ds_indep_y = ds_indep_elements.data['y']
-    ds_indep_n = ds_indep_elements.data['name']
+    ds_indep_x = dat_src.ds_indep_elements.data['x']
+    ds_indep_y = dat_src.ds_indep_elements.data['y']
+    ds_indep_n = dat_src.ds_indep_elements.data['name']
 
-    ds_1st_t = ds_1st_chosen.data['type']
-    ds_1st_x = ds_1st_chosen.data['node_x']
-    ds_1st_y = ds_1st_chosen.data['node_y']
-    ds_1st_n = ds_1st_chosen.data['name_node1']
+    ds_1st_t = dat_src.ds_1st_chosen.data['type']
+    ds_1st_x = dat_src.ds_1st_chosen.data['node_x']
+    ds_1st_y = dat_src.ds_1st_chosen.data['node_y']
+    ds_1st_n = dat_src.ds_1st_chosen.data['name_node1']
 
-    ds_dep_n1 = ds_nodedep_elements.data['name_node1']
-    ds_dep_n2 = ds_nodedep_elements.data['name_node2']
+    ds_dep_n1 = dat_src.ds_nodedep_elements.data['name_node1']
+    ds_dep_n2 = dat_src.ds_nodedep_elements.data['name_node2']
 
     # look for the clicked point for an existing x, y in the plotted independent node elements (ds_indep_elements)
     new_name = None
     for i in range(0, len(ds_indep_x)):
-        if abs(ds_indep_x[i] - new_x) < catch_radius and abs(ds_indep_y[i] - new_y) < catch_radius:
+        if abs(ds_indep_x[i] - new_x) < dat_src.catch_radius and abs(ds_indep_y[i] - new_y) < dat_src.catch_radius:
             new_name = ds_indep_n[i]
             node_x = ds_indep_x[i]
             node_y = ds_indep_y[i]
@@ -248,7 +259,7 @@ def cb_adapt_plot_nodedep(attr, old, new):
                 or enum_type == eLnum.ElSupEnum.SPRING_SUPPORT.value \
                 or enum_type == eLnum.ElSupEnum.SPRING_MOMENT_SUPPORT.value:
             if check_for_similar(enum_type, new_name):
-                vis_init.div_input.text = "Element of this category already exists at this node. " \
+                doc.div_input.text = "Element of this category already exists at this node. " \
                                           "Please choose another node."
             else:
                 ds_dep_n1.append(new_name)
@@ -259,10 +270,10 @@ def cb_adapt_plot_nodedep(attr, old, new):
             if enum_type == ds_1st_t[0]:
                 # tell user to choose another node if same node was chosen twice for one element
                 if node_x == ds_1st_x[0] and node_y == ds_1st_y[0]:
-                    vis_init.div_input.text = "Node already chosen. Please choose second node."
+                    doc.div_input.text = "Node already chosen. Please choose second node."
                 # tell user to choose another node if same/similiar object already exists between nodes
                 elif check_for_similar(enum_type, new_name, ds_1st_n[0]):
-                    vis_init.div_input.text = "Element of this category already exists between these two nodes. " \
+                    doc.div_input.text = "Element of this category already exists between these two nodes. " \
                                           "Please choose another node."
                 # add nodedependent element
                 else:
@@ -280,15 +291,15 @@ def cb_adapt_plot_nodedep(attr, old, new):
                     vis_elToP.add_nodedep(enum_type, center[0], center[1], length, angle)
                     # reset first chosen node
                     data = dict(type=[], node_x=[], node_y=[], name_node1=[])
-                    ds_1st_chosen.data = data
+                    dat_src.ds_1st_chosen.data = data
         else:
             # remember chosen node as fist one
             data = dict(type=[enum_type], node_x=[node_x], node_y=[node_y], name_node1=[new_name])
-            ds_1st_chosen.data = data
+            dat_src.ds_1st_chosen.data = data
             # tell user to choose a second node
-            vis_init.div_input.text = "First node chosen. Please choose second one."
+            doc.div_input.text = "First node chosen. Please choose second one."
     else:
-        vis_init.div_input.text = "Please choose an existing node in the plot."
+        doc.div_input.text = "Please choose an existing node in the plot."
 
 
 def cb_plot_xy(div_xy, style='float:left;clear:left;font_size=10pt'):
@@ -311,14 +322,15 @@ def cb_show_selected(attr, old, new):
     :param new: changed ds_input_selected.data with selected independent elements of the input plot (dict)
     :return: none
     """
-    global ds_indep_elements
+    # global ds_indep_elements
+    dat_src = glob_var.DataSources
 
     selected_x = new['x']
     selected_y = new['y']
 
-    ds_indep_x = ds_indep_elements.data['x']
-    ds_indep_y = ds_indep_elements.data['y']
-    ds_indep_n = ds_indep_elements.data['name']
+    ds_indep_x = dat_src.ds_indep_elements.data['x']
+    ds_indep_y = dat_src.ds_indep_elements.data['y']
+    ds_indep_n = dat_src.ds_indep_elements.data['name']
 
     # get selected elements from the datasource of the independent elements
     for i in range(len(ds_indep_x)):
@@ -342,11 +354,12 @@ def cb_get_selected(div_input):
     :param div_input: bokeh Div for messages concerning the input plot (Div)
     :return: none
     """
-    global ds_input, ds_input_selected
+    # global ds_input, ds_input_selected
+    dat_src = glob_var.DataSources
     cb_get_selected_ = ColumnDataSources.cb_get_selected_
     cb_get_selected_.args['div'] = div_input
-    cb_get_selected_.args['ds'] = ds_input
-    cb_get_selected_.args['selected'] = ds_input_selected
+    cb_get_selected_.args['ds'] = dat_src.ds_input
+    cb_get_selected_.args['selected'] = dat_src.ds_input_selected
     return cb_get_selected_ 
 
 
@@ -357,12 +370,13 @@ def cb_button_calculation(button_calc):
     results in the output plots.
     :return: none
     """
+    dat_src = glob_var.DataSources
     # feedback to user that calculations are initialized
     button_calc.label = "Calculating..."
     vis_init.expand_msg2user("Starting calculation...")
 
     # convert databases from the input plot to mechanical elements for calculations
-    interface.interface(ds_indep_elements, ds_nodedep_elements)
+    interface.interface(dat_src.ds_indep_elements, dat_src.ds_nodedep_elements)
 
     # show user that button action stopped
     button_calc.label = "Calculate"
@@ -377,51 +391,52 @@ def cb_button_delete(all_selected=False, single=False):
     (name (string), indep (bool), index (int))
     :return: none
     """
-    global button_activated, object_id, ds_input, ds_1st_chosen, elinfo_current_element
+    # global button_activated, object_id, dat_src.ds_input, ds_1st_chosen, elinfo_current_element
+    dat_src = glob_var.DataSources
 
     if all_selected:
-        object_id = 0
+        dat_src.object_id = 0
         # delete all entries of the ColumnDataSource corresponding to the input plot and update the plot
         data = dict(x=[], y=[], type=[], name_user=[])
-        ds_input.data = data
-        ds_input.trigger('data', ds_input.data, ds_input.data)
+        dat_src.ds_input.data = data
+        dat_src.ds_input.trigger('data', dat_src.ds_input.data, dat_src.ds_input.data)
         # deactivate currently activated button element
-        if not button_activated == -1:
-            found, button_enum = eLnum.get_enum_of_value(eLnum.ElSupEnum, button_activated)
+        if not dat_src.button_activated == -1:
+            found, button_enum = eLnum.get_enum_of_value(eLnum.ElSupEnum, dat_src.button_activated)
             cb_button_element_click(button_enum)
     elif single:
-        if elinfo_current_element[1]:
-            del ds_input.data['x'][elinfo_current_element[2]]
-            del ds_input.data['y'][elinfo_current_element[2]]
-            del ds_input.data['type'][elinfo_current_element[2]]
-            del ds_input.data['name_user'][elinfo_current_element[2]]
-            ds_input.trigger('data', ds_input.data, ds_input.data)
+        if dat_src.elinfo_current_element[1]:
+            del dat_src.ds_input.data['x'][dat_src.elinfo_current_element[2]]
+            del dat_src.ds_input.data['y'][dat_src.elinfo_current_element[2]]
+            del dat_src.ds_input.data['type'][dat_src.elinfo_current_element[2]]
+            del dat_src.ds_input.data['name_user'][dat_src.elinfo_current_element[2]]
+            dat_src.ds_input.trigger('data', dat_src.ds_input.data, dat_src.ds_input.data)
         else:
-            vis_elToP.delete_nodedep(name_nodedep=elinfo_current_element[0], index_nodedep=elinfo_current_element[2])
+            vis_elToP.delete_nodedep(name_nodedep=dat_src.elinfo_current_element[0], index_nodedep=dat_src.elinfo_current_element[2])
     else:
-        s_x = ds_input_selected.data['x']
-        s_y = ds_input_selected.data['y']
+        s_x = dat_src.ds_input_selected.data['x']
+        s_y = dat_src.ds_input_selected.data['y']
         len_s = len(s_x)
-        len_ds = len(ds_input.data['x'])
+        len_ds = len(dat_src.ds_input.data['x'])
 
-        # delete selected elements from the datasource of the input plot (ds_input) and update
+        # delete selected elements from the datasource of the input plot (dat_src.ds_input) and update
         for i in range(len_s):
             for j in range(len_ds):
-                if s_x[i] == ds_input.data['x'][j] and s_y[i] == ds_input.data['y'][j]:
-                    del ds_input.data['x'][j]
-                    del ds_input.data['y'][j]
-                    del ds_input.data['type'][j]
-                    del ds_input.data['name_user'][j]
+                if s_x[i] == dat_src.ds_input.data['x'][j] and s_y[i] == dat_src.ds_input.data['y'][j]:
+                    del dat_src.ds_input.data['x'][j]
+                    del dat_src.ds_input.data['y'][j]
+                    del dat_src.ds_input.data['type'][j]
+                    del dat_src.ds_input.data['name_user'][j]
                     len_ds -= 1
                     break
-        ds_input.trigger('data', ds_input.data, ds_input.data)
+        dat_src.ds_input.trigger('data', dat_src.ds_input.data, dat_src.ds_input.data)
 
         # reset datasource for selected element
-        ds_input_selected.data = dict(x=[], y=[])
+        dat_src.ds_input_selected.data = dict(x=[], y=[])
 
     # reset datasource for first node for line elements
     data = dict(type=[], node_x=[], node_y=[], name_node1=[])
-    ds_1st_chosen.data = data
+    dat_src.ds_1st_chosen.data = data
 
 
 def cb_button_element_click(button_enum):
@@ -432,42 +447,44 @@ def cb_button_element_click(button_enum):
     :param button_enum: Enum that corresponds to the button that was clicked (ElementSupportEnum)
     :return: none
     """
-    global button_activated
+    # global button_activated
+    dat_src = glob_var.DataSources
+    doc = glob_var.doc
 
     # unselect button if same button is selected again
-    if not button_activated == -1 and button_activated == button_enum.value:
+    if not dat_src.button_activated == -1 and dat_src.button_activated == button_enum.value:
         button_style = button_enum.name
-        vis_init.buttons[button_activated].css_classes = [button_style]
+        doc.buttons[dat_src.button_activated].css_classes = [button_style]
 
         # update the currently activated button to none
-        button_activated = -1
-        ds_active_button.data['type'] = [-1]
-        ds_active_button.trigger('data', ds_active_button.data, ds_active_button.data)
+        dat_src.button_activated = -1
+        dat_src.ds_active_button.data['type'] = [-1]
+        dat_src.ds_active_button.trigger('data', dat_src.ds_active_button.data, dat_src.ds_active_button.data)
 
         # reset datasource for first node for line elements
         data = dict(type=[], node_x=[], node_y=[], name_node1=[])
-        ds_1st_chosen.data = data
+        dat_src.ds_1st_chosen.data = data
         return
 
     # unselect previously selected button, if one was selected before at all
-    if not button_activated == -1:
-        found, button_style, value = eLnum.value_in_enum(eLnum.ElSupEnum, button_activated)
-        vis_init.buttons[button_activated].css_classes = [button_style]
+    if not dat_src.button_activated == -1:
+        found, button_style, value = eLnum.value_in_enum(eLnum.ElSupEnum, dat_src.button_activated)
+        doc.buttons[dat_src.button_activated].css_classes = [button_style]
     else:
         reset_element_info()
 
     # change background color of newly selected element button
     button_style = button_enum.name + '_selected'
-    vis_init.buttons[button_enum.value].css_classes = [button_style]
+    doc.buttons[button_enum.value].css_classes = [button_style]
 
     # update the currently activated button
-    button_activated = button_enum.value
-    ds_active_button.data['type'] = [button_activated]
-    ds_active_button.trigger('data', ds_active_button.data, ds_active_button.data)
+    dat_src.button_activated = button_enum.value
+    dat_src.ds_active_button.data['type'] = [dat_src.button_activated]
+    dat_src.ds_active_button.trigger('data', dat_src.ds_active_button.data, dat_src.ds_active_button.data)
 
     # reset datasource for first node for line elements
     data = dict(type=[], node_x=[], node_y=[], name_node1=[])
-    ds_1st_chosen.data = data
+    dat_src.ds_1st_chosen.data = data
 
 
 def cb_toggle_characteristic_values(attr, old, new, output_plot, div):
@@ -506,10 +523,11 @@ def get_indep_name_from_position(x, y):
     :param y: y position of the element (double)
     :return: name of the element or None if no element was found at that position (string or None)
     """
-    global ds_indep_elements
-    ds_indep_x = ds_indep_elements.data['x']
-    ds_indep_y = ds_indep_elements.data['y']
-    ds_indep_n = ds_indep_elements.data['name']
+    # global ds_indep_elements
+    dat_src = glob_var.DataSources
+    ds_indep_x = dat_src.ds_indep_elements.data['x']
+    ds_indep_y = dat_src.ds_indep_elements.data['y']
+    ds_indep_n = dat_src.ds_indep_elements.data['name']
 
     x = round(x, 1)
     y = round(y, 1)
@@ -530,10 +548,11 @@ def cb_plot_testcase(attr, old, new):
     :param new: changed attribute 'value' of the dropdown menu testcases (string)
     :return: none
     """
-    global plotting_test_case
+    # global plotting_test_case
+    dat_src = glob_var.DataSources
 
     # bool to show callbacks that a testcase is being plotted
-    plotting_test_case = True
+    dat_src.plotting_test_case = True
 
     # clear input plot
     cb_button_delete(all_selected=True)
@@ -550,7 +569,7 @@ def cb_plot_testcase(attr, old, new):
         visualisation_tests.example_unterlagen_visu()
 
     # testcase plotting done
-    plotting_test_case = False
+    dat_src.plotting_test_case = False
 
 
 def reset_element_info():
@@ -562,13 +581,14 @@ def reset_element_info():
     # vis_init.layout_element_info.visible = False
     # reset widgets in element info box (WARNING: too slow!)
     # vis_init.layout_element_info.children[1].children = []
+    doc = glob_var.doc
 
-    elinfo = vis_init.input_element_info
+    elinfo = doc.input_element_info
     for key in elinfo:
         elinfo[key].disabled = True
         elinfo[key].value = "-"
-    vis_init.group_element_info["beam"].disabled = True
-    vis_init.group_element_info["ll"].disabled = True
+    doc.group_element_info["beam"].disabled = True
+    doc.group_element_info["ll"].disabled = True
 
 
 # TODO: idea - add button "adapt angle to beam" for independent elements like a clamped support
@@ -584,47 +604,49 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
     :param nodedep: True if just added element is a node independent one (bool)
     :return: none
     """
-    global catch_radius, ds_indep_elements, ds_nodedep_elements, \
-        ds_glyph_springsPointMomentTemp, ds_glyph_beam, ds_glyph_lineload, \
-        elinfo_current_element, elinfo_input_blocked
+    # global catch_radius, dat_src.ds_indep_elements, dat_src.ds_nodedep_elements, \
+    #     ds_glyph_springsPointMomentTemp, ds_glyph_beam, ds_glyph_lineload, \
+    #     dat_src.elinfo_current_element, elinfo_input_blocked
+    dat_src = glob_var.DataSources
+    doc = glob_var.doc
 
     # block user input while element info box gets changed (because of cb_get_textinput)
-    elinfo_input_blocked = True
+    dat_src.elinfo_input_blocked = True
 
     reset_element_info()
-    elinfo = vis_init.input_element_info
+    elinfo = doc.input_element_info
 
-    indep_x = ds_indep_elements.data['x']
-    indep_y = ds_indep_elements.data['y']
-    indep_t = ds_indep_elements.data['type']
-    indep_n = ds_indep_elements.data['name']
-    indep_a = ds_indep_elements.data['angle']
+    indep_x = dat_src.ds_indep_elements.data['x']
+    indep_y = dat_src.ds_indep_elements.data['y']
+    indep_t = dat_src.ds_indep_elements.data['type']
+    indep_n = dat_src.ds_indep_elements.data['name']
+    indep_a = dat_src.ds_indep_elements.data['angle']
 
-    nodedep_n1 = ds_nodedep_elements.data['name_node1']
-    nodedep_n2 = ds_nodedep_elements.data['name_node2']
-    nodedep_t = ds_nodedep_elements.data['type']
-    nodedep_n = ds_nodedep_elements.data['name']
-    nodedep_x = ds_nodedep_elements.data['x']
-    nodedep_y = ds_nodedep_elements.data['y']
-    nodedep_l = ds_nodedep_elements.data['length']
-    nodedep_dt = ds_nodedep_elements.data['dT_T']
-    nodedep_k = ds_nodedep_elements.data['k']
-    nodedep_h = ds_nodedep_elements.data['h']
-    nodedep_ei = ds_nodedep_elements.data['ei']
-    nodedep_ea = ds_nodedep_elements.data['ea']
-    nodedep_m = ds_nodedep_elements.data['moment']
-    nodedep_f = ds_nodedep_elements.data['f']
-    nodedep_lll = ds_nodedep_elements.data['ll_local']
-    nodedep_llxn = ds_nodedep_elements.data['ll_x_n']
-    nodedep_llyq = ds_nodedep_elements.data['ll_y_q']
-    nodedep_a = ds_nodedep_elements.data['angle']
+    nodedep_n1 = dat_src.ds_nodedep_elements.data['name_node1']
+    nodedep_n2 = dat_src.ds_nodedep_elements.data['name_node2']
+    nodedep_t = dat_src.ds_nodedep_elements.data['type']
+    nodedep_n = dat_src.ds_nodedep_elements.data['name']
+    nodedep_x = dat_src.ds_nodedep_elements.data['x']
+    nodedep_y = dat_src.ds_nodedep_elements.data['y']
+    nodedep_l = dat_src.ds_nodedep_elements.data['length']
+    nodedep_dt = dat_src.ds_nodedep_elements.data['dT_T']
+    nodedep_k = dat_src.ds_nodedep_elements.data['k']
+    nodedep_h = dat_src.ds_nodedep_elements.data['h']
+    nodedep_ei = dat_src.ds_nodedep_elements.data['ei']
+    nodedep_ea = dat_src.ds_nodedep_elements.data['ea']
+    nodedep_m = dat_src.ds_nodedep_elements.data['moment']
+    nodedep_f = dat_src.ds_nodedep_elements.data['f']
+    nodedep_lll = dat_src.ds_nodedep_elements.data['ll_local']
+    nodedep_llxn = dat_src.ds_nodedep_elements.data['ll_x_n']
+    nodedep_llyq = dat_src.ds_nodedep_elements.data['ll_y_q']
+    nodedep_a = dat_src.ds_nodedep_elements.data['angle']
 
     # check if element was just added
     if indep:
         index = len(indep_x) - 1
         name = indep_n[index]
     elif nodedep:
-        index = len(ds_nodedep_elements.data['x']) - 1
+        index = len(dat_src.ds_nodedep_elements.data['x']) - 1
         name = nodedep_n[index]
     # search for element in data sources if it was not just added
     else:
@@ -635,7 +657,7 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
         tap_y = new['tap_y'][0]
         # check if tap was on an node independent element in the input plot
         for i in range(0, len(indep_x)):
-            if abs(indep_x[i] - tap_x) < catch_radius and abs(indep_y[i] - tap_y) < catch_radius:
+            if abs(indep_x[i] - tap_x) < dat_src.catch_radius and abs(indep_y[i] - tap_y) < dat_src.catch_radius:
                 index = i
                 name = indep_n[index]
                 indep = True
@@ -643,29 +665,29 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
         # check if tap was on a node dependent element
         else:
             # search in glyph data source of type spring, load_point, load_moment or temp
-            ds_glyph = ds_glyph_springsPointMomentTemp
+            ds_glyph = dat_src.ds_glyph_springsPointMomentTemp
             ds_glyph_x = ds_glyph.data['glyph_x']
             ds_glyph_y = ds_glyph.data['glyph_y']
             for j in range(len(ds_glyph_x)):
-                if abs(ds_glyph_x[j] - tap_x) < catch_radius and abs(ds_glyph_y[j] - tap_y) < catch_radius:
+                if abs(ds_glyph_x[j] - tap_x) < dat_src.catch_radius and abs(ds_glyph_y[j] - tap_y) < dat_src.catch_radius:
                     name = ds_glyph.data['name_user'][j]
                     break
             # search in glyph data source of beams
             else:
-                ds_glyph = ds_glyph_beam
+                ds_glyph = dat_src.ds_glyph_beam
                 ds_glyph_x = ds_glyph.data['x']
                 ds_glyph_y = ds_glyph.data['y']
                 for j in range(len(ds_glyph_x)):
-                    if abs(ds_glyph_x[j] - tap_x) < catch_radius and abs(ds_glyph_y[j] - tap_y) < catch_radius:
+                    if abs(ds_glyph_x[j] - tap_x) < dat_src.catch_radius and abs(ds_glyph_y[j] - tap_y) < dat_src.catch_radius:
                         name = ds_glyph.data['name_user'][j]
                         break
                 # search in glyph data source of line loads
                 else:
-                    ds_glyph = ds_glyph_lineload
+                    ds_glyph = dat_src.ds_glyph_lineload
                     ds_glyph_x = ds_glyph.data['glyph_x']
                     ds_glyph_y = ds_glyph.data['glyph_y']
                     for j in range(len(ds_glyph_x)):
-                        if abs(ds_glyph_x[j] - tap_x) < catch_radius and abs(ds_glyph_y[j] - tap_y) < catch_radius:
+                        if abs(ds_glyph_x[j] - tap_x) < dat_src.catch_radius and abs(ds_glyph_y[j] - tap_y) < dat_src.catch_radius:
                             name = ds_glyph.data['name_user'][j]
                             break
             # get index of element in data source of node dependent elements
@@ -677,15 +699,15 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
 
     # reaction if no element was found for that tap
     if index == -1:
-        vis_init.div_input.text = "No button element active and no element of graph clicked."
+        doc.div_input.text = "No button element active and no element of graph clicked."
         return
 
     # make information about current element global for the callbacks and get enum_type
     if indep:
-        elinfo_current_element = (name, True, index)
+        dat_src.elinfo_current_element = (name, True, index)
         enum_type = indep_t[index]
     else:
-        elinfo_current_element = (name, False, index)
+        dat_src.elinfo_current_element = (name, False, index)
         enum_type = nodedep_t[index]
 
     # adapt element info box
@@ -693,9 +715,9 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
     if indep:
         # set values
         elinfo["x"].value = "%3.1f" % indep_x[index]
-        vis_init.div_element_info["x"].text = "x:"
+        doc.div_element_info["x"].text = "x:"
         elinfo["y"].value = "%3.1f" % indep_y[index]
-        vis_init.div_element_info["y"].text = "y:"
+        doc.div_element_info["y"].text = "y:"
         # enable input
         if not enum_type == eLnum.ElSupEnum.NODE.value and not enum_type == eLnum.ElSupEnum.JOINT.value:
             elinfo["angle"].disabled = False
@@ -703,9 +725,9 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
     elif enum_type == eLnum.ElSupEnum.SPRING_SUPPORT.value or enum_type == eLnum.ElSupEnum.SPRING_MOMENT_SUPPORT.value:
         # set values
         elinfo["x"].value = "%3.1f" % nodedep_x[index]
-        vis_init.div_element_info["x"].text = "x:"
+        doc.div_element_info["x"].text = "x:"
         elinfo["y"].value = "%3.1f" % nodedep_y[index]
-        vis_init.div_element_info["y"].text = "y:"
+        doc.div_element_info["y"].text = "y:"
         elinfo["angle"].value = "%3.1f" % math.degrees(nodedep_a[index])
         elinfo["k"].value = "%3.1f" % nodedep_k[index]
         # enable input
@@ -714,9 +736,9 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
     elif enum_type == eLnum.ElSupEnum.SPRING.value:
         # set values
         elinfo["x"].value = nodedep_n1[index]
-        vis_init.div_element_info["x"].text = "node 1:"
+        doc.div_element_info["x"].text = "node 1:"
         elinfo["y"].value = nodedep_n2[index]
-        vis_init.div_element_info["y"].text = "node 2:"
+        doc.div_element_info["y"].text = "node 2:"
         elinfo["angle"].value = "%3.1f" % math.degrees(nodedep_a[index])
         elinfo["k"].value = "%3.1f" % nodedep_k[index]
         # enable input
@@ -724,9 +746,9 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
     elif enum_type == eLnum.ElSupEnum.LOAD_POINT.value:
         # set values
         elinfo["x"].value = "%3.1f" % nodedep_x[index]
-        vis_init.div_element_info["x"].text = "x:"
+        doc.div_element_info["x"].text = "x:"
         elinfo["y"].value = "%3.1f" % nodedep_y[index]
-        vis_init.div_element_info["y"].text = "y:"
+        doc.div_element_info["y"].text = "y:"
         elinfo["angle"].value = "%3.1f" % math.degrees(nodedep_a[index])
         elinfo["force"].value = "%3.1f" % nodedep_f[index]
         # enable input
@@ -735,18 +757,18 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
     elif enum_type == eLnum.ElSupEnum.LOAD_MOMENT.value:
         # set values
         elinfo["x"].value = "%3.1f" % nodedep_x[index]
-        vis_init.div_element_info["x"].text = "x:"
+        doc.div_element_info["x"].text = "x:"
         elinfo["y"].value = "%3.1f" % nodedep_y[index]
-        vis_init.div_element_info["y"].text = "y:"
+        doc.div_element_info["y"].text = "y:"
         elinfo["moment"].value = "%3.1f" % nodedep_m[index]
         # enable input
         elinfo["moment"].disabled = False
     elif enum_type == eLnum.ElSupEnum.LOAD_TEMP.value:
         # set values
         elinfo["x"].value = nodedep_n1[index]
-        vis_init.div_element_info["x"].text = "node 1:"
+        doc.div_element_info["x"].text = "node 1:"
         elinfo["y"].value = nodedep_n2[index]
-        vis_init.div_element_info["y"].text = "node 2:"
+        doc.div_element_info["y"].text = "node 2:"
         elinfo["dT"].value = "%3.1f" % nodedep_dt[index][0]
         elinfo["T"].value = "%3.1f" % nodedep_dt[index][1]
         elinfo["aT"].value = "%3.1f" % nodedep_dt[index][2]
@@ -757,9 +779,9 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
     elif enum_type == eLnum.ElSupEnum.BEAM.value:
         # set values
         elinfo["x"].value = nodedep_n1[index]
-        vis_init.div_element_info["x"].text = "node 1:"
+        doc.div_element_info["x"].text = "node 1:"
         elinfo["y"].value = nodedep_n2[index]
-        vis_init.div_element_info["y"].text = "node 2:"
+        doc.div_element_info["y"].text = "node 2:"
         elinfo["angle"].value = "%3.1f" % math.degrees(nodedep_a[index])
         elinfo["length"].value = "%3.1f" % nodedep_l[index]
         elinfo["h"].value = "%3.1f" % nodedep_h[index]
@@ -777,16 +799,16 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
         else:
             elinfo["ei"].value = "%3.1f" % ei
             elinfo["ei"].disabled = False
-        vis_init.group_element_info["beam"].active = active
+        doc.group_element_info["beam"].active = active
         # enable input
-        vis_init.group_element_info["beam"].disabled = False
+        doc.group_element_info["beam"].disabled = False
         elinfo["h"].disabled = False
     elif enum_type == eLnum.ElSupEnum.LOAD_LINE.value:
         # set values
         elinfo["x"].value = nodedep_n1[index]
-        vis_init.div_element_info["x"].text = "node 1:"
+        doc.div_element_info["x"].text = "node 1:"
         elinfo["y"].value = nodedep_n2[index]
-        vis_init.div_element_info["y"].text = "node 2:"
+        doc.div_element_info["y"].text = "node 2:"
         elinfo["length"].value = "%3.1f" % nodedep_l[index]
         elinfo["xn_start"].value = "%3.1f" % nodedep_llxn[index][0]
         elinfo["xn_end"].value = "%3.1f" % nodedep_llxn[index][1]
@@ -794,15 +816,15 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
         elinfo["yq_end"].value = "%3.1f" % nodedep_llyq[index][1]
         local = nodedep_lll[index]
         if local:
-            vis_init.group_element_info["ll"].active = 0
-            vis_init.div_element_info["xn"].text = "* n"
-            vis_init.div_element_info["yq"].text = "* q"
+            doc.group_element_info["ll"].active = 0
+            doc.div_element_info["xn"].text = "* n"
+            doc.div_element_info["yq"].text = "* q"
         else:
-            vis_init.group_element_info["ll"].active = 1
-            vis_init.div_element_info["xn"].text = "* p<sub>x</sub>"
-            vis_init.div_element_info["yq"].text = "* p<sub>y</sub>"
+            doc.group_element_info["ll"].active = 1
+            doc.div_element_info["xn"].text = "* p<sub>x</sub>"
+            doc.div_element_info["yq"].text = "* p<sub>y</sub>"
         # enable input
-        vis_init.group_element_info["ll"].disabled = False
+        doc.group_element_info["ll"].disabled = False
         elinfo["xn_start"].disabled = False
         elinfo["xn_end"].disabled = False
         elinfo["yq_start"].disabled = False
@@ -821,7 +843,7 @@ def cb_show_element_info(attr, old, new, indep=False, nodedep=False):
     # vis_init.layout_element_info.visible = True
 
     # release for user input
-    elinfo_input_blocked = False
+    dat_src.elinfo_input_blocked = False
 
 
 # TODO: idea - input of different symbols, e.g. also allow "F*l" not only "M" for a moment
@@ -834,20 +856,22 @@ def cb_get_textinput(attr, old, new, key):
     :param key: key of the specific TextInput (string)
     :return: none
     """
-    global elinfo_current_element, elinfo_input_blocked, ds_indep_elements, ds_nodedep_elements
+    # global dat_src.elinfo_current_element, dat_src.elinfo_input_blocked, dat_src.ds_indep_elements, ds_nodedep_elements
+    dat_src = glob_var.DataSources
+    doc = glob_var.doc
 
     # check whether user input is blocked
-    if elinfo_input_blocked:
+    if dat_src.elinfo_input_blocked:
         return
 
-    element_name = elinfo_current_element[0]
-    element_indep = elinfo_current_element[1]
-    element_index = elinfo_current_element[2]
+    element_name = dat_src.elinfo_current_element[0]
+    element_indep = dat_src.elinfo_current_element[1]
+    element_index = dat_src.elinfo_current_element[2]
 
     try:
         value = float(new)
     except ValueError:
-        vis_init.div_input.text = "Error: Please enter a number!"
+        doc.div_input.text = "Error: Please enter a number!"
         return
 
     # TODO: idea - don't accept zeros as TextInput for some keys?
@@ -861,38 +885,38 @@ def cb_get_textinput(attr, old, new, key):
         # convert angle to radians and call method to adapt the angle in the input plot
         angle = math.radians(value)
         if element_indep:
-            ds_indep_elements.data['angle'][element_index] = angle
+            dat_src.ds_indep_elements.data['angle'][element_index] = angle
             vis_editEl.change_angle_indep(element_name, angle, element_index)
         else:
-            ds_nodedep_elements.data['angle'][element_index] = angle
+            dat_src.dat_src.ds_nodedep_elements.data['angle'][element_index] = angle
             vis_editEl.change_angle_nodedep(element_name, angle, element_index)
     elif key == "k":
-        k = ds_nodedep_elements.data['k'][element_index]
-        ds_nodedep_elements.data['k'][element_index] = value
+        k = dat_src.dat_src.ds_nodedep_elements.data['k'][element_index]
+        dat_src.dat_src.ds_nodedep_elements.data['k'][element_index] = value
         if value < 0 <= k:
             vis_editEl.draw_moment_negative(element_name, element_index, negative=True)
         elif value > 0 >= k:
             vis_editEl.draw_moment_negative(element_name, element_index, negative=False)
     elif key == "force":
-        ds_nodedep_elements.data['f'][element_index] = value
+        dat_src.dat_src.ds_nodedep_elements.data['f'][element_index] = value
     elif key == "moment":
-        moment = ds_nodedep_elements.data['moment'][element_index]
-        ds_nodedep_elements.data['moment'][element_index] = value
+        moment = dat_src.dat_src.ds_nodedep_elements.data['moment'][element_index]
+        dat_src.dat_src.ds_nodedep_elements.data['moment'][element_index] = value
         if value < 0 <= moment:
             vis_editEl.draw_moment_negative(element_name, element_index, negative=True)
         elif value > 0 >= moment:
             vis_editEl.draw_moment_negative(element_name, element_index, negative=False)
     elif key == "h":
-        ds_nodedep_elements.data['h'][element_index] = value
+        dat_src.dat_src.ds_nodedep_elements.data['h'][element_index] = value
     elif key == "ea":
-        ds_nodedep_elements.data['ea'][element_index] = value
+        dat_src.dat_src.ds_nodedep_elements.data['ea'][element_index] = value
     elif key == "ei":
-        ds_nodedep_elements.data['ei'][element_index] = value
+        dat_src.dat_src.ds_nodedep_elements.data['ei'][element_index] = value
     elif key == "xn_start" or key == "xn_end" or key == "yq_start" or key == "yq_end":
-        nodedep_llxn = ds_nodedep_elements.data['ll_x_n']
-        nodedep_llyq = ds_nodedep_elements.data['ll_y_q']
-        elinfo = vis_init.input_element_info
-        elinfo_input_blocked = True
+        nodedep_llxn = dat_src.dat_src.ds_nodedep_elements.data['ll_x_n']
+        nodedep_llyq = dat_src.dat_src.ds_nodedep_elements.data['ll_y_q']
+        elinfo = doc.input_element_info
+        dat_src.elinfo_input_blocked = True
         if key == "xn_start":
             xn_start = value
             xn_end = nodedep_llxn[element_index][1]
@@ -941,7 +965,7 @@ def cb_get_textinput(attr, old, new, key):
             elif (yq_end > 0 and yq_start <= 0) or (yq_end < 0 and yq_start >= 0):
                 yq_start = 0
                 elinfo["yq_start"].value = "%3.1f" % yq_start
-        elinfo_input_blocked = False
+        dat_src.elinfo_input_blocked = False
         # check lineload before change
         # one value has to be non-zero and start end are either >=0 or <=0
         # TODO (Done): idea - change acceptance of line load values? the way it is right now, one value needs to be zero before
@@ -953,26 +977,26 @@ def cb_get_textinput(attr, old, new, key):
             nodedep_llxn[element_index] = load_x_n
             nodedep_llyq[element_index] = load_y_q
             # draw adapted line load
-            local = ds_nodedep_elements.data['ll_local'][element_index]
+            local = dat_src.dat_src.ds_nodedep_elements.data['ll_local'][element_index]
             vis_editEl.draw_lineload(element_name, load_x_n, load_y_q, local, element_index)
         else:
-            vis_init.div_input.text = "Error: Invalid line load values, one value has to be non-zero!"
+            doc.div_input.text = "Error: Invalid line load values, one value has to be non-zero!"
             return
     elif key == "dT":
-        tt = ds_nodedep_elements.data['dT_T'][element_index][1]
-        at = ds_nodedep_elements.data['dT_T'][element_index][2]
-        ds_nodedep_elements.data['dT_T'][element_index] = (value, tt, at)
+        tt = dat_src.dat_src.ds_nodedep_elements.data['dT_T'][element_index][1]
+        at = dat_src.dat_src.ds_nodedep_elements.data['dT_T'][element_index][2]
+        dat_src.dat_src.ds_nodedep_elements.data['dT_T'][element_index] = (value, tt, at)
     elif key == "T":
-        dt = ds_nodedep_elements.data['dT_T'][element_index][0]
-        at = ds_nodedep_elements.data['dT_T'][element_index][2]
-        ds_nodedep_elements.data['dT_T'][element_index] = (dt, value, at)
+        dt = dat_src.dat_src.ds_nodedep_elements.data['dT_T'][element_index][0]
+        at = dat_src.dat_src.ds_nodedep_elements.data['dT_T'][element_index][2]
+        dat_src.dat_src.ds_nodedep_elements.data['dT_T'][element_index] = (dt, value, at)
     elif key == "aT":
-        dt = ds_nodedep_elements.data['dT_T'][element_index][0]
-        tt = ds_nodedep_elements.data['dT_T'][element_index][1]
-        ds_nodedep_elements.data['dT_T'][element_index] = (dt, tt, value)
+        dt = dat_src.dat_src.ds_nodedep_elements.data['dT_T'][element_index][0]
+        tt = dat_src.dat_src.ds_nodedep_elements.data['dT_T'][element_index][1]
+        dat_src.dat_src.ds_nodedep_elements.data['dT_T'][element_index] = (dt, tt, value)
 
     # tell user about changed value
-    vis_init.div_input.text = "New value accepted!"
+    doc.div_input.text = "New value accepted!"
 
 
 def cb_elinfo_beam(attr, old, new):
@@ -984,44 +1008,46 @@ def cb_elinfo_beam(attr, old, new):
     :param new: changed attribute 'active' of the beam CheckboxGroup (list)
     :return: none
     """
-    global elinfo_current_element, elinfo_input_blocked, ds_nodedep_elements
+    # global dat_src.elinfo_current_element, dat_src.elinfo_input_blocked, dat_src.ds_nodedep_elements
+    dat_src = glob_var.DataSources
+    doc = glob_var.doc
 
     # block user input while element info box gets changed (because of cb_get_textinput)
-    elinfo_input_blocked = True
+    dat_src.elinfo_input_blocked = True
 
-    elinfo = vis_init.input_element_info
-    element_index = elinfo_current_element[2]
+    elinfo = doc.input_element_info
+    element_index = dat_src.elinfo_current_element[2]
 
     # get current state of EA and EI
     ea_infinite = False
     ei_infinite = False
-    if ds_nodedep_elements.data['ea'][element_index] == float("inf"):
+    if dat_src.dat_src.ds_nodedep_elements.data['ea'][element_index] == float("inf"):
         ea_infinite = True
-    if ds_nodedep_elements.data['ei'][element_index] == float("inf"):
+    if dat_src.dat_src.ds_nodedep_elements.data['ei'][element_index] == float("inf"):
         ei_infinite = True
 
     # EA was changed to infinite
     if 0 in new and not ea_infinite:
-        ds_nodedep_elements.data['ea'][element_index] = float("inf")
+        dat_src.dat_src.ds_nodedep_elements.data['ea'][element_index] = float("inf")
         elinfo["ea"].disabled = True
     # EA was changed to finite
     elif 0 not in new and ea_infinite:
-        ds_nodedep_elements.data['ea'][element_index] = 1.0
+        dat_src.dat_src.ds_nodedep_elements.data['ea'][element_index] = 1.0
         elinfo["ei"].value = "%3.1f" % 1.0
         elinfo["ea"].disabled = False
 
     # EI was changed to infinite
     if 1 in new and not ei_infinite:
-        ds_nodedep_elements.data['ei'][element_index] = float("inf")
+        dat_src.dat_src.ds_nodedep_elements.data['ei'][element_index] = float("inf")
         elinfo["ei"].disabled = True
     # EI was changed to finite
     elif 1 not in new and ei_infinite:
-        ds_nodedep_elements.data['ei'][element_index] = 1.0
+        dat_src.dat_src.ds_nodedep_elements.data['ei'][element_index] = 1.0
         elinfo["ei"].value = "%3.1f" % 1.0
         elinfo["ei"].disabled = False
 
     # release for user input
-    elinfo_input_blocked = False
+    dat_src.elinfo_input_blocked = False
 
 
 def cb_elinfo_lineload(attr, old, new):
@@ -1033,22 +1059,24 @@ def cb_elinfo_lineload(attr, old, new):
     :param new: changed attribute 'active' of the line load radio group (int)
     :return: none
     """
-    global elinfo_current_element, ds_nodedep_elements
+    # global dat_src.elinfo_current_element, dat_src.ds_nodedep_elements
+    dat_src = glob_var.DataSources
+    doc = glob_var.doc
 
-    element_name = elinfo_current_element[0]
-    element_index = elinfo_current_element[2]
-    load_x_n = ds_nodedep_elements.data['ll_x_n'][element_index]
-    load_y_q = ds_nodedep_elements.data['ll_y_q'][element_index]
+    element_name = dat_src.elinfo_current_element[0]
+    element_index = dat_src.elinfo_current_element[2]
+    load_x_n = dat_src.dat_src.ds_nodedep_elements.data['ll_x_n'][element_index]
+    load_y_q = dat_src.dat_src.ds_nodedep_elements.data['ll_y_q'][element_index]
 
     # load is locally defined
     if new == 0:
-        vis_init.div_element_info["xn"].text = "* n"
-        vis_init.div_element_info["yq"].text = "* q"
-        ds_nodedep_elements.data['ll_local'][element_index] = True
+        doc.div_element_info["xn"].text = "* n"
+        doc.div_element_info["yq"].text = "* q"
+        dat_src.dat_src.ds_nodedep_elements.data['ll_local'][element_index] = True
         vis_editEl.draw_lineload(element_name, load_x_n, load_y_q, True, element_index)
     # load is globally defined
     elif new == 1:
-        vis_init.div_element_info["xn"].text = "* p<sub>x</sub>"
-        vis_init.div_element_info["yq"].text = "* p<sub>y</sub>"
-        ds_nodedep_elements.data['ll_local'][element_index] = False
+        doc.div_element_info["xn"].text = "* p<sub>x</sub>"
+        doc.div_element_info["yq"].text = "* p<sub>y</sub>"
+        dat_src.dat_src.ds_nodedep_elements.data['ll_local'][element_index] = False
         vis_editEl.draw_lineload(element_name, load_x_n, load_y_q, False, element_index)

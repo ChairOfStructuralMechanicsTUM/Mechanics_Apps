@@ -11,6 +11,7 @@ from Libs import outputvisualization as outvis
 from Libs import symbolictoolbox as symbbox
 from Libs import print_function_helpers as prhlp
 from Libs import geometriccalc as gc
+import vis_global_vars as glob_var
 
 
 def get_indices(variable, x):  # x = list
@@ -256,6 +257,7 @@ def interface(ds_indep, ds_nodedep):
     :param ds_nodedep: all elements, which are related to the independent elements (elements, loads, springs)
     :return:
     """
+    doc = glob_var.doc
     print('Start calc interface')
     vis_init.expand_msg2user("Start data conversion")
 
@@ -353,6 +355,6 @@ def interface(ds_indep, ds_nodedep):
     prhlp.print_knot_and_element_list(prhlp.list_with_every_knot_only_once(node_list), element_list)
     func_list, val, l_list = CalculationElement(element_list)
     vis_init.expand_msg2user("Start visualisation of results")
-    outvis.plot_output_functions(vis_init.plot_list, func_list, node_list_to_plot, val, l_list)
+    outvis.plot_output_functions(doc.plot_list, func_list, node_list_to_plot, val, l_list)
     vis_init.expand_msg2user("Visualisation successful")
 

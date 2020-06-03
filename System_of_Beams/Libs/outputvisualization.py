@@ -11,10 +11,7 @@ from Classes import LinePlot
 from Libs import geometriccalc as gc
 from Libs import symbolictoolbox as symbbox
 from Libs import print_function_helpers as prhlp
-from Classes.OutputData import OutputVisu
-
-# Class, that collects all necessary data collections for visualisation
-plot_data = OutputVisu()
+import vis_global_vars as glob_var
 
 
 def add_el_to_dict(dict_to_add, key, value):
@@ -49,6 +46,7 @@ def toggle_extreme_values(plot, vals_active=True):
     :param vals_active: Boolean to define if values shell be plotted or not
     :return:
     """
+    plot_data = glob_var.plot_data
     # toggle extreme values
     toggle_visibility_of_glyphs(plot, plot_data.extreme_vals_dict, "text", vals_active)
     toggle_visibility_of_glyphs(plot, plot_data.extreme_vals_cross_dict, "line", vals_active)
@@ -56,11 +54,13 @@ def toggle_extreme_values(plot, vals_active=True):
 
 def toggle_bound_vals(plot, vals_active=True):
     # toggle boundary values
+    plot_data = glob_var.plot_data
     toggle_visibility_of_glyphs(plot, plot_data.bound_vals_dict, "text", vals_active)
 
 
 def toggle_zero_crossing(plot, vals_active=True):
     # toggle zero_crossing
+    plot_data = glob_var.plot_data
     toggle_visibility_of_glyphs(plot, plot_data.zero_cross_dict, "text", vals_active)
     toggle_visibility_of_glyphs(plot, plot_data.zero_cross_cross_dict, "line", vals_active)
 
@@ -141,6 +141,7 @@ def calc_xy(symb_func, symb_to_plot_over, l_val, start_knot, end_knot):
         y_vals = np.full(len(x_vals), float(symb_func))
     return x_vals, y_vals, True
 
+
 def scale_y_values(y_data, y_reference, y_max):
     """
     Scale the plot in y direction, to prevent extreme values.
@@ -152,6 +153,7 @@ def scale_y_values(y_data, y_reference, y_max):
     for i in range(len(y_data)):
         y_data[i] = y_data[i] * multipl_factor
     return y_data, multipl_factor
+
 
 '''
 ########################### WARNING ###########################
@@ -230,6 +232,7 @@ def plot_bound_val(x_val, y_val, text, plot, bound_val_name, color, rel_tol, abs
     :param rel_tol: tolerance to check if already a element exists in the plot at this position
     :param abs_tol: see rel_tol
     """
+    plot_data = glob_var.plot_data
     if plot in plot_data.char_vals_dict:
         points_to_check = plot_data.char_vals_dict[plot]
         # if gc.is_close_position(x_val, y_val, points_to_check, rel_tol, abs_tol):
@@ -261,6 +264,7 @@ def plot_characteristic_vals(plot, func, symb_to_plot_over, l_val, start_knot, e
     :param mirror_y_values: If True, changes the sign of the text value
     :return:
     """
+    plot_data = glob_var.plot_data
     if func is None or x_vals is None or y_vals is None:
         return
 
@@ -361,6 +365,7 @@ def plot_output_functions(plot_list, function_list, knot_list, symb_to_plot_over
     :param l_list: list of all length values for the given element
     :return:
     """
+    plot_data = glob_var.plot_data
     num_plots = 6
     norm_f_funcs = []
     norm_disp_func = []

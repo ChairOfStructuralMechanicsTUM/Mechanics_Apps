@@ -2,15 +2,13 @@ import math
 import copy
 from sympy import Symbol
 
-from Libs import geometriccalc as gc
 from Libs import symbolictoolbox as symbbox
 from Libs import outputvisualization as out_vis
 from Libs import print_function_helpers as prhlp
-import vis_initialization as vis_init
 import vis_elementToPlot as vis_el
-import vis_callbacks as vis_call
 from Classes import ElementSupportEnum as ElSupEnum
 from Element_Calculation import ElementCalculation
+import vis_global_vars as glob_var
 
 
 def print_graphs(functions, x, l_list, knot_list):
@@ -21,7 +19,8 @@ def print_graphs(functions, x, l_list, knot_list):
     :param l_list: list of all length values for every element
     :param knot_list: list of knots [[start_knot_1, end_knot_1], ... , [start_knot_n, end_knot_n]]
     """
-    out_vis.plot_output_functions(vis_init.plot_list, functions, knot_list, x, l_list)
+    doc = glob_var.doc
+    out_vis.plot_output_functions(doc.plot_list, functions, knot_list, x, l_list)
 
 
 def vis_structure_from_input(nodeindep_list, nodedep_list):
@@ -69,12 +68,13 @@ def add_nodeindep_single_el(x, y, el_type, name, angle):
     """
     Adds a nodeindep element to the data sources
     """
-    vis_call.test_case_angle.append(angle)
-    vis_call.ds_input.data['x'].append(round(x, 1))
-    vis_call.ds_input.data['y'].append(round(y, 1))
-    vis_call.ds_input.data['type'].append(el_type)
-    vis_call.ds_input.data['name_user'].append(name)
-    vis_call.ds_input.trigger('data', vis_call.ds_input.data, vis_call.ds_input.data)
+    dat_src = glob_var.DataSources
+    dat_src.test_case_angle.append(angle)
+    dat_src.ds_input.data['x'].append(round(x, 1))
+    dat_src.ds_input.data['y'].append(round(y, 1))
+    dat_src.ds_input.data['type'].append(el_type)
+    dat_src.ds_input.data['name_user'].append(name)
+    dat_src.ds_input.trigger('data', dat_src.ds_input.data, dat_src.ds_input.data)
 
 
 def symb2float(el):
@@ -111,8 +111,9 @@ def add_knots_to_visu(knot1, knot2):
     Adds two knots to the nodedep data source
     :return:
     """
-    vis_call.ds_nodedep_elements.data['name_node1'].append(knot1)
-    vis_call.ds_nodedep_elements.data['name_node2'].append(knot2)
+    dat_src = glob_var.DataSources
+    dat_src.ds_nodedep_elements.data['name_node1'].append(knot1)
+    dat_src.ds_nodedep_elements.data['name_node2'].append(knot2)
 
 
 def add_nodedep_two_knots(el, el_type):
@@ -122,10 +123,11 @@ def add_nodedep_two_knots(el, el_type):
     :param el_type: type of the element
     :return:
     """
+    dat_src = glob_var.DataSources
     left_node, right_node, (x_middle, y_middle), length, angle = \
         vis_el.get_1st2nd_center_length_angle(el.x1_, el.y1_, el.x2_, el.y2_)
-    knot1 = get_knot_name_from_nodeindep_list(vis_call.ds_indep_elements, left_node[0], left_node[1])
-    knot2 = get_knot_name_from_nodeindep_list(vis_call.ds_indep_elements, right_node[0], right_node[1])
+    knot1 = get_knot_name_from_nodeindep_list(dat_src.ds_indep_elements, left_node[0], left_node[1])
+    knot2 = get_knot_name_from_nodeindep_list(dat_src.ds_indep_elements, right_node[0], right_node[1])
     # print("knot1: " + str(knot1))
     # print("el_type: {}\t x_middle: {}\t y_middle: {}".format(el_type, x_middle, y_middle))
     if ElSupEnum.check_beams_and_rods(el_type):
@@ -168,9 +170,10 @@ def add_nodedep_single_knot(el):
     Adds all point forces and point springs to the visualisation plot
     :param el: needs a knot as input
     """
+    dat_src = glob_var.DataSources
     if not (el.has_pointload() or el.is_spring()):
         return
-    knot1 = get_knot_name_from_nodeindep_list(vis_call.ds_indep_elements, el.x_, el.y_)
+    knot1 = get_knot_name_from_nodeindep_list(dat_src.ds_indep_elements, el.x_, el.y_)
     # print("knot1: " + str(knot1))
     if el.has_pointload():
         n = q = 0
