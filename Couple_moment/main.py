@@ -41,7 +41,7 @@ plot.yaxis.axis_label="Force [N]"
 
 # plot bar and support
 plot.line([0, 40], [0, 0], line_width=10, color='#3070B3')
-plot.add_glyph(support_source,ImageURL(url="src", x='x', y='y', w=5, h=5, anchor="top_center"))
+plot.add_glyph(support_source,ImageURL(url="src", x='x', y='y', w=3.3, h=5, anchor="top_center"))
 
 # plot distance
 dist_a = Arrow(end=TeeHead(line_color="#808080", line_width=1, size=10),
