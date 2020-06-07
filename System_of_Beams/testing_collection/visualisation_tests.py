@@ -6,6 +6,7 @@ from Classes import Knot, TempProps
 from Classes.ElementSupportEnum import ElSupEnum
 from Element_Calculation import ElementCalculation
 from testing_collection import testingtoolbox as testbox
+from Classes.CurrentDocument import CurrentDoc
 
 
 """
@@ -13,12 +14,12 @@ HOW TO: ADD NEW TEST CASE TO DROPDOWN MENU
 1.) Create new structure, that needs to be visualised in this script
 2.) Go to file: vis_initialization.py and add new test case to the variable menu_tc in the following style:
     Needs sets, for every test case: ("name shown by the dropdown menu", "internal_handled_name")
-3.) Go to file: vis_callbacks.py, function: cb_plot_testcase(attr, old, new)
+3.) Go to file: vis_callbacks.py, function: cb_plot_testcase(attr, old, new, curr_doc: CurrentDoc)
     add new testcase to by creating a new if statement, that tests for the internal_handled_name
 """
 
 
-def single_beam_lineload_visu():
+def single_beam_lineload_visu(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 1, 1, ElSupEnum.SUPPORT_FIXED_END.value, 0, [0, 0, 0], [0, 0, 0])
     end_knot = Knot.Knot(1, 3, 1, ElSupEnum.SUPPORT_ROLLER_END.value,  0, [0, 0, 0], [0, 0, 0])
     q = Symbol('p')
@@ -31,10 +32,10 @@ def single_beam_lineload_visu():
     start_knot.add_coupled_el(0)
     end_knot.add_coupled_el(0)
     elementlist.append(ele)
-    testbox.vis_structure_from_input(knot_list, elementlist)
+    testbox.vis_structure_from_input(curr_doc, knot_list, elementlist)
 
 
-def two_beam_lineload_visu():
+def two_beam_lineload_visu(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 1, 1, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
     middle_knot = Knot.Knot(1, 2, 1, ElSupEnum.SUPPORT_FIXED_CONTINUOUS.value, 0)
     end_knot = Knot.Knot(2, 3, 1, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
@@ -53,10 +54,10 @@ def two_beam_lineload_visu():
     middle_knot.add_coupled_el([0, 1])
     end_knot.add_coupled_el(1)
     knot_list.append([middle_knot, end_knot])
-    testbox.vis_structure_from_input(knot_list, elementlist)
+    testbox.vis_structure_from_input(curr_doc, knot_list, elementlist)
 
 
-def final_structure_software_lab():
+def final_structure_software_lab(curr_doc: CurrentDoc):
     f = Symbol('F')
     k = Symbol('k')
     start_knot = Knot.Knot(0, 1, 3, ElSupEnum.SUPPORT_CLAMPED.value, 0)
@@ -88,10 +89,10 @@ def final_structure_software_lab():
     knot_list.append([middle_knot, end_knot])
 
     # VIS STRUCTURE
-    testbox.vis_structure_from_input(knot_list, elementlist)
+    testbox.vis_structure_from_input(curr_doc, knot_list, elementlist)
 
 
-def example_unterlagen_visu():
+def example_unterlagen_visu(curr_doc: CurrentDoc):
     q = Symbol('q')
     l = Symbol('l')
     start_knot = Knot.Knot(0, 0.5, 2, ElSupEnum.SUPPORT_ROLLER_END.value, 0, [0, 0, 0], [0, 0, 0])
@@ -120,10 +121,10 @@ def example_unterlagen_visu():
     end_knot.add_coupled_el(2)
 
     # VIS STRUCTURE
-    testbox.vis_structure_from_input(knot_list, elementlist)
+    testbox.vis_structure_from_input(curr_doc, knot_list, elementlist)
 
 
-def vis_all_possible_nodedep_ele():
+def vis_all_possible_nodedep_ele(curr_doc: CurrentDoc):
     # Visualises: beam, lineload, spring, spring_support, spring_moment, temp_prop
     f = Symbol('f')
     start_knot = Knot.Knot(0, 1.2, 1.7, ElSupEnum.SUPPORT_FIXED_END.value, k=[0, 0, 0], pointload=[0, 0, 0], angleSupport=-30)
@@ -159,5 +160,5 @@ def vis_all_possible_nodedep_ele():
     ele = ElementCalculation(2, spring_sup, spring_mom, l1, [0, 0, 0], temp_prop, ei=ei, ea=ea, h=h)
     elementlist.append(ele)
     knot_list.append([spring_sup, spring_mom])
-    testbox.vis_structure_from_input(knot_list, elementlist)
+    testbox.vis_structure_from_input(curr_doc, knot_list, elementlist)
 

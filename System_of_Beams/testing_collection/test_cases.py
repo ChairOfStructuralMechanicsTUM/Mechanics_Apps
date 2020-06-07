@@ -8,9 +8,10 @@ from Classes.ElementSupportEnum import ElSupEnum
 from Element_Initialising import CalculationElement
 from Element_Calculation import ElementCalculation
 from testing_collection import testingtoolbox as testbox
+from Classes.CurrentDocument import CurrentDoc
 
 
-def single_beam_lineload_test():
+def single_beam_lineload_test(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value,0, [0, 0, 0], [0, 0, 0])
     end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value,0, [0, 0, 0], [0, 0, 0])
     q = Symbol('p')
@@ -27,7 +28,7 @@ def single_beam_lineload_test():
     testbox.print_graphs(functions, x, l_list, knot_list)
     testbox.vis_structure_from_input(knot_list, elementlist)
 
-# def single_beam_lineload_test_infinity():
+# def single_beam_lineload_test_infinity(curr_doc: CurrentDoc):
 #     tim = []
 #     for count in range(3, 50):
 #         knots = array([])
@@ -60,7 +61,7 @@ def single_beam_lineload_test():
     # print(tim)
 
 
-def single_beam_normal_lineload_test():
+def single_beam_normal_lineload_test(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0, [0, 0, 0], [0, 0, 0])
     end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0, [0, 0, 0], [0, 0, 0])
     q = Symbol('n')
@@ -78,7 +79,7 @@ def single_beam_normal_lineload_test():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def single_beam_lineload_vertical_test():
+def single_beam_lineload_vertical_test(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
     end_knot = Knot.Knot(1, 0, 1, ElSupEnum.SUPPORT_ROLLER_END.value, 90, [0, 0, 0], [0, 0, 0])
     q = Symbol('p')
@@ -96,7 +97,7 @@ def single_beam_lineload_vertical_test():
     testbox.vis_structure_from_input(knot_list, elementlist)
 
 
-def single_beam_single_load_vertical_test():
+def single_beam_single_load_vertical_test(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 90, [0, 0, 0], [0, 0, 0])
     end_knot = Knot.Knot(1, 0, 1, ElSupEnum.SUPPORT_ROLLER_END.value, 90, [0, 0, 0], [0, Symbol('F'), 0])        # in globalen Koordinaten
     q = Symbol('p')
@@ -113,7 +114,7 @@ def single_beam_single_load_vertical_test():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def single_beam_trapezload_test():
+def single_beam_trapezload_test(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
     end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value,  0)
     q = Symbol('p')
@@ -131,7 +132,7 @@ def single_beam_trapezload_test():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def single_beam_temperature_test():
+def single_beam_temperature_test(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
     end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
     q = Symbol('p')
@@ -148,7 +149,7 @@ def single_beam_temperature_test():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def single_clamping_left_side_temperature():
+def single_clamping_left_side_temperature(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_CLAMPED.value, 0)
     end_knot = Knot.Knot(1, 1, 0, ElSupEnum.FREE_END.value, 0)
     q = Symbol('p')
@@ -165,7 +166,7 @@ def single_clamping_left_side_temperature():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def single_beam_lineload_test_overdefined():
+def single_beam_lineload_test_overdefined(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
     end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
     q = Symbol('p')
@@ -182,7 +183,7 @@ def single_beam_lineload_test_overdefined():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def single_beam_lineload_test_underdefined():
+def single_beam_lineload_test_underdefined(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
     end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0, [0, 0, 0], [0, 0, 0])
     q = Symbol('p')
@@ -199,7 +200,7 @@ def single_beam_lineload_test_underdefined():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def two_beam_lineload_test():
+def two_beam_lineload_test(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
     middle_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_FIXED_CONTINUOUS.value, 0)
     end_knot = Knot.Knot(2, 2, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
@@ -223,7 +224,7 @@ def two_beam_lineload_test():
     testbox.vis_structure_from_input(knot_list, elementlist)
 
 
-def two_beam_combined_to_one_complete_lineload_test():
+def two_beam_combined_to_one_complete_lineload_test(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
     middle_knot = Knot.Knot(1, 0.5, 0, ElSupEnum.THROUGH_ELEMENT.value, 0)
     end_knot = Knot.Knot(2, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
@@ -247,7 +248,7 @@ def two_beam_combined_to_one_complete_lineload_test():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def two_beam_combined_to_one_complete_lineload_test_2l():
+def two_beam_combined_to_one_complete_lineload_test_2l(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
     middle_knot = Knot.Knot(1, 0.5, 0, ElSupEnum.THROUGH_ELEMENT.value, 0)
     end_knot = Knot.Knot(2, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
@@ -270,7 +271,7 @@ def two_beam_combined_to_one_complete_lineload_test_2l():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def two_beam_combined_to_one_single_load_middle():
+def two_beam_combined_to_one_single_load_middle(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, 0)
     middle_knot = Knot.Knot(1, 0.5, 0, ElSupEnum.THROUGH_ELEMENT.value, 0, [0, 0, 0], [0, Symbol('F'), 0])
     end_knot = Knot.Knot(2, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value, 0)
@@ -293,7 +294,7 @@ def two_beam_combined_to_one_single_load_middle():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def single_clamping_left_side():                # TODO:  Aufpassen mit den Richtungen, spinnt, wenn mann die Koordinaten vertauscht
+def single_clamping_left_side(curr_doc: CurrentDoc):                # TODO:  Aufpassen mit den Richtungen, spinnt, wenn mann die Koordinaten vertauscht
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_CLAMPED.value)
     end_knot = Knot.Knot(1, 1, 0, ElSupEnum.FREE_END.value, [0, 0, 0], [0, Symbol('F'), 0])
     q = Symbol('p')
@@ -310,7 +311,7 @@ def single_clamping_left_side():                # TODO:  Aufpassen mit den Richt
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def single_clamping_left_side_single_load():
+def single_clamping_left_side_single_load(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_CLAMPED.value)
     end_knot = Knot.Knot(1, 1, 0, ElSupEnum.FREE_END.value, [0, 0, 0], [0, Symbol('F'), 0])
     q = Symbol('p')
@@ -327,7 +328,7 @@ def single_clamping_left_side_single_load():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def single_beam_lineload_test_seperated_elements():
+def single_beam_lineload_test_seperated_elements(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value)
     end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value)
     start_knot2 = Knot.Knot(3, 0, 1, ElSupEnum.SUPPORT_FIXED_END.value)
@@ -353,7 +354,7 @@ def single_beam_lineload_test_seperated_elements():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def two_beam_combined_to_one_single_load_middle_joint():
+def two_beam_combined_to_one_single_load_middle_joint(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_CLAMPED.value)
     middle_knot = Knot.Knot(1, 0.5, 0, ElSupEnum.JOINT.value)  #, [0, 0, 0], [0, Symbol('F'), 0]
     end_knot = Knot.Knot(2, 1, 0, ElSupEnum.SUPPORT_ROLLER_END.value)
@@ -376,7 +377,7 @@ def two_beam_combined_to_one_single_load_middle_joint():
     functions, x, l_list = CalculationElement(elementlist)
     testbox.print_graphs(functions, x, l_list, knot_list)
 
-def example_from_sheet_2_4():
+def example_from_sheet_2_4(curr_doc: CurrentDoc):
     l = Symbol('l')
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value)
     middle_knot = Knot.Knot(1, 1, 0, ElSupEnum.THROUGH_ELEMENT.value, [2 * Symbol('EA')/l, 0, 0])
@@ -399,7 +400,7 @@ def example_from_sheet_2_4():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def two_beam_triangle_load_middle():
+def two_beam_triangle_load_middle(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value)
     middle_knot = Knot.Knot(1, math.sqrt(0.5), math.sqrt(0.5), ElSupEnum.JOINT.value, [0, 0, 0], [0, Symbol('F'), 0])
     end_knot = Knot.Knot(2, 2 * math.sqrt(0.5), 0, ElSupEnum.SUPPORT_FIXED_END.value)
@@ -422,7 +423,7 @@ def two_beam_triangle_load_middle():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def two_beam_triangle_load_middle_not_symmetrical():
+def two_beam_triangle_load_middle_not_symmetrical(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value)
     middle_knot = Knot.Knot(1, 2, 1, ElSupEnum.JOINT.value, [0, 0, 0], [0, Symbol('F'), 0], 0)
     end_knot = Knot.Knot(2, 3, 0, ElSupEnum.SUPPORT_FIXED_END.value, [0, 0, 0], [0, 0, 0], 0)
@@ -445,7 +446,7 @@ def two_beam_triangle_load_middle_not_symmetrical():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def two_beam_corner_line_load():
+def two_beam_corner_line_load(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value)
     middle_knot = Knot.Knot(1, 0, 1, ElSupEnum.JOINT.value, [0, 0, 0], [0, 0, 0])
     end_knot = Knot.Knot(2, 1, 1, ElSupEnum.SUPPORT_FIXED_END.value)
@@ -469,7 +470,7 @@ def two_beam_corner_line_load():
     testbox.vis_structure_from_input(knot_list, elementlist)
 
 
-def single_beam_schraeg():
+def single_beam_schraeg(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, [0, 0, 0], [0, 0, 0], 45)
     end_knot = Knot.Knot(1, math.sqrt(0.5), math.sqrt(0.5), ElSupEnum.SUPPORT_ROLLER_END.value, [0, 0, 0], [0, Symbol('F'), 0], 45)
     q = Symbol('p')
@@ -486,7 +487,7 @@ def single_beam_schraeg():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def example_ss13():
+def example_ss13(curr_doc: CurrentDoc):
     q = Symbol('p')
     l = Symbol('l')
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_TRANSVERSE_FORCE.value, [0, 0, 0], [0, 2 * q * l, (-1) * 2 * q * l**2], 0)
@@ -514,7 +515,7 @@ def example_ss13():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def example_ss12():
+def example_ss12(curr_doc: CurrentDoc):
     q = Symbol('p')
     l = Symbol('l')
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_CLAMPED.value)
@@ -542,7 +543,7 @@ def example_ss12():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def example_ss12_vereinfacht():
+def example_ss12_vereinfacht(curr_doc: CurrentDoc):
     q = Symbol('p')
     l = Symbol('l')
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_CLAMPED.value)
@@ -565,7 +566,7 @@ def example_ss12_vereinfacht():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def example_ss11():
+def example_ss11(curr_doc: CurrentDoc):
     q = Symbol('p')
     l = Symbol('l')
     x = Symbol('x')
@@ -589,7 +590,7 @@ def example_ss11():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def example_ss14():
+def example_ss14(curr_doc: CurrentDoc):
     q = Symbol('p')
     l = Symbol('l')
     k = Symbol('k')
@@ -622,7 +623,7 @@ def example_ss14():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def example_unterlagen_test():
+def example_unterlagen_test(curr_doc: CurrentDoc):
     q = Symbol('q')
     l = Symbol('l')
     m = Symbol('M')
@@ -652,7 +653,7 @@ def example_unterlagen_test():
     testbox.vis_structure_from_input(knot_list, elementlist)
 
 
-def example_unterlagen_test_vereinfacht():
+def example_unterlagen_test_vereinfacht(curr_doc: CurrentDoc):
     q = Symbol('p')
     l = Symbol('l')
     middle_knot1 = Knot.Knot(1, 2, 1, ElSupEnum.FREE_END.value, [0, 0, 0], [0, q * l, 0], 0)
@@ -675,7 +676,7 @@ def example_unterlagen_test_vereinfacht():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def single_beam_cos_test():
+def single_beam_cos_test(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_ROLLER_END.value)
     end_knot = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_FIXED_END.value)
     q = Symbol('p')
@@ -693,7 +694,7 @@ def single_beam_cos_test():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def multiple_elements():
+def multiple_elements(curr_doc: CurrentDoc):
     l = Symbol('l')
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, [0, 0, 0], [0, 0, 0], 0)
     middle_knot = Knot.Knot(1, 1, 0, ElSupEnum.THROUGH_ELEMENT.value)
@@ -722,7 +723,7 @@ def multiple_elements():
 
 
 
-def example_2_23():
+def example_2_23(curr_doc: CurrentDoc):
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_ROLLER_END.value, [Symbol('k'), 0, 0], [0, 0, 0], 0)
     middle_knot = Knot.Knot(1, 1, 0, ElSupEnum.THROUGH_ELEMENT.value)
     end_knot = Knot.Knot(2, 2, 0, ElSupEnum.SUPPORT_ROLLER_END.value, [2 * Symbol('k'), 0, 0], [0, 0, 0], 0)
@@ -748,7 +749,7 @@ def example_2_23():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def example_2_3_neu():
+def example_2_3_neu(curr_doc: CurrentDoc):
     l = Symbol('l')
     start_knot = Knot.Knot(0, 0, 0, ElSupEnum.SUPPORT_FIXED_END.value, [0, 0, 0], [0, 0, 0], 0)
     middle_knot1 = Knot.Knot(1, 1, 0, ElSupEnum.SUPPORT_ROLLER_JOINT.value, [0, 0, 0], [0, 0, 0])
@@ -776,7 +777,7 @@ def example_2_3_neu():
     testbox.vis_structure_from_input(knot_list, elementlist)
 
 
-def example_ss15():
+def example_ss15(curr_doc: CurrentDoc):
     q = Symbol('p')
     l = Symbol('l')
     x = Symbol('x')
@@ -806,7 +807,7 @@ def example_ss15():
     testbox.vis_structure_from_input(knot_list, elementlist)
 
 
-def example_SS_16():
+def example_SS_16(curr_doc: CurrentDoc):
     q = Symbol('p')
     x = Symbol('x')
     l = Symbol('l')
@@ -832,7 +833,7 @@ def example_SS_16():
     testbox.print_graphs(functions, x, l_list, knot_list)
 
 
-def final_structure_software_lab():
+def final_structure_software_lab(curr_doc: CurrentDoc):
     f = Symbol('F')
     k = Symbol('k')
     start_knot = Knot.Knot(0, 1, 3, ElSupEnum.SUPPORT_CLAMPED.value)

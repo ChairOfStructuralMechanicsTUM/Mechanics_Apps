@@ -6,7 +6,7 @@ import vis_initialization as vis_init
 import time
 
 
-def CalculationElement(elementlist):
+def CalculationElement(curr_doc, elementlist):
     """
     :param elementlist: list of all elements
     :return:
@@ -66,7 +66,7 @@ def CalculationElement(elementlist):
         # print(result)
     except:
         """Calculation failed, error message to user and None values for plotting"""
-        vis_init.expand_msg2user('The calculation failed, the most likely error is a movable system', "orange")
+        vis_init.expand_msg2user(curr_doc, 'The calculation failed, the most likely error is a movable system', "orange")
         for el in elementlist:
             for ind in range(0, 6):
                 functions = append(functions, None)
@@ -75,7 +75,7 @@ def CalculationElement(elementlist):
 
     if result == []:
         """Calculation failed, error message to user and None values for plotting"""
-        vis_init.expand_msg2user('The calculation failed, the most likely error is a movable system', "orange")
+        vis_init.expand_msg2user(curr_doc, 'The calculation failed, the most likely error is a movable system', "orange")
         for el in elementlist:
             for ind in range(0, 6):
                 functions = append(functions, None)
@@ -84,7 +84,7 @@ def CalculationElement(elementlist):
 
     elif result == 0:
         """Calculation failed, error message to user and None values for plotting"""
-        vis_init.expand_msg2user('The load function can not be handeled', "orange")
+        vis_init.expand_msg2user(curr_doc, 'The load function can not be handeled', "orange")
         for el in elementlist:
             all_functions = append(all_functions, [None, None, None, None, None, None])
         return all_functions, x, l_list
@@ -112,7 +112,7 @@ def CalculationElement(elementlist):
         print_arr(all_functions)
         if len(rb) <= 0:
             rb.clear()
-        vis_init.expand_msg2user("Calculation was successful")
+        vis_init.expand_msg2user(curr_doc, "Calculation was successful")
 
         return all_functions, x, l_list
 

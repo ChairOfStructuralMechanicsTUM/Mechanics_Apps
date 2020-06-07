@@ -11,7 +11,6 @@ from Libs import outputvisualization as outvis
 from Libs import symbolictoolbox as symbbox
 from Libs import print_function_helpers as prhlp
 from Libs import geometriccalc as gc
-import vis_global_vars as glob_var
 
 
 def get_indices(variable, x):  # x = list
@@ -226,7 +225,7 @@ def adjust_nodes_for_calc(node_list):
                 # print("Changed node to middle node")
 
 
-def add_loads_to_elements(beam_dict, load_dict, load_type="lineload"):
+def add_loads_to_elements(curr_doc, beam_dict, load_dict, load_type="lineload"):
     """
     Adds distributed loads to a element. Can handle lineloads or temploads
     The loads and beams can be put together based on the same key in the dictionaries.
@@ -245,10 +244,10 @@ def add_loads_to_elements(beam_dict, load_dict, load_type="lineload"):
                 el_to_add.set_temp_props(load)
                 # print("temp load succesfully added")
         except:
-            vis_init.expand_msg2user("WARNING: No beam element was found!", bg_color="orange")
+            vis_init.expand_msg2user(curr_doc, "WARNING: No beam element was found!", bg_color="orange")
 
 
-def interface(ds_indep, ds_nodedep):
+def interface(curr_doc, ds_indep, ds_nodedep):
     """
     Gets the input from the graph and sorts this input into several list due to the properties
     Calls the ElementCalculation class with the correct input
@@ -257,9 +256,8 @@ def interface(ds_indep, ds_nodedep):
     :param ds_nodedep: all elements, which are related to the independent elements (elements, loads, springs)
     :return:
     """
-    doc = glob_var.doc
     print('Start calc interface')
-    vis_init.expand_msg2user("Start data conversion")
+    vis_init.expand_msg2user(curr_doc, "Start data conversion")
 
     # get all knots
     node_list = get_all_node_from_indep(ds_indep)
@@ -338,14 +336,14 @@ def interface(ds_indep, ds_nodedep):
             # print(load)
 
     # Add loads to the Beams and rods
-    add_loads_to_elements(beam_dict, load_line_dict, load_type="lineload")
-    add_loads_to_elements(beam_dict, load_temp_dict, load_type="tempload")
+    add_loads_to_elements(curr_doc, beam_dict, load_line_dict, load_type="lineload")
+    add_loads_to_elements(curr_doc, beam_dict, load_temp_dict, load_type="tempload")
 
     # Refactor knot ids and change supports to calc supports
     adjust_nodes_for_calc(node_list)
 
     node_list_to_plot = []
-    vis_init.expand_msg2user("Data conversion successful")
+    vis_init.expand_msg2user(curr_doc, "Data conversion successful")
     for el in element_list:
         el.start_calculation()
         node_list_to_plot.append([el.start_knot, el.end_knot])
@@ -353,8 +351,8 @@ def interface(ds_indep, ds_nodedep):
         el.set_start_end_knot_correctly()
         el.start_calculation()
     prhlp.print_knot_and_element_list(prhlp.list_with_every_knot_only_once(node_list), element_list)
-    func_list, val, l_list = CalculationElement(element_list)
-    vis_init.expand_msg2user("Start visualisation of results")
-    outvis.plot_output_functions(doc.plot_list, func_list, node_list_to_plot, val, l_list)
-    vis_init.expand_msg2user("Visualisation successful")
+    func_list, val, l_list = CalculationElement(curr_doc, element_list)
+    vis_init.expand_msg2user(curr_doc, "Start visualisation of results")
+    outvis.plot_output_functions(curr_doc, func_list, node_list_to_plot, val, l_list)
+    vis_init.expand_msg2user(curr_doc, "Visualisation successful")
 

@@ -4,16 +4,14 @@ import numpy as np
 import math
 
 # import bokeh modules
-from bokeh.models import ColumnDataSource
 from bokeh.models.glyphs import ImageURL
 
 # import local files
 import vis_callbacks as vis_cbs
-import vis_initialization as vis_init
 import vis_editElement as vis_editEl
 from Classes import ElementSupportEnum as eLnum
-from ColumnDataSources  import ColumnDataSources
-import vis_global_vars as glob_var
+from Classes.ColumnDataSources import ColumnDataSources
+from Classes.CurrentDocument import CurrentDoc
 
 map_enum2images = {eLnum.ElSupEnum.SUPPORT_CLAMPED.value: 0, eLnum.ElSupEnum.SUPPORT_NORMAL_FORCE.value: 1,
                    eLnum.ElSupEnum.SUPPORT_TRANSVERSE_FORCE.value: 2, eLnum.ElSupEnum.SUPPORT_FIXED_CONTINUOUS.value: 3,
@@ -25,10 +23,10 @@ map_enum2images = {eLnum.ElSupEnum.SUPPORT_CLAMPED.value: 0, eLnum.ElSupEnum.SUP
                    eLnum.ElSupEnum.SPRING.value: 14, eLnum.ElSupEnum.LOAD_POINT.value: 15,
                    eLnum.ElSupEnum.LOAD_MOMENT.value: 16,  # load_moment_negative
                    eLnum.ElSupEnum.LOAD_TEMP.value: 18}
-ds_images = ColumnDataSources.ds_images
+# ds_images = ColumnDataSources.ds_images
 
 
-def add_indep(x, y, enum_type, name, angle=0.0):
+def add_indep(curr_doc: CurrentDoc, x, y, enum_type, name, angle=0.0):
     """
     Add node independent element to the input plot.
     :param x: x value of node (double)
@@ -38,9 +36,7 @@ def add_indep(x, y, enum_type, name, angle=0.0):
     :param angle: angle of the element to the x axis (double)
     :return: none
     """
-    dat_src = glob_var.DataSources
-    doc = glob_var.doc
-    indep = dat_src.ds_indep_elements
+    indep = curr_doc.data_sources.ds_indep_elements
     indep_x = indep.data['x']
     indep_y = indep.data['y']
     indep_t = indep.data['type']
@@ -59,26 +55,26 @@ def add_indep(x, y, enum_type, name, angle=0.0):
     indep_a.append(angle)
 
     # add image glyph to plot and display information
-    p = doc.plot_input
-    image = ImageURL(url=dict(value=ds_images.data['url'][ds_img_location]),
-                     x=x + ds_images.data['x_mod'][ds_img_location], y=y + ds_images.data['y_mod'][ds_img_location],
-                     w=ds_images.data['w'][ds_img_location], h=ds_images.data['h'][ds_img_location],
+    p = curr_doc.plot_input
+    image = ImageURL(url=dict(value=curr_doc.data_sources.ds_images.data['url'][ds_img_location]),
+                     x=x + curr_doc.data_sources.ds_images.data['x_mod'][ds_img_location], y=y + curr_doc.data_sources.ds_images.data['y_mod'][ds_img_location],
+                     w=curr_doc.data_sources.ds_images.data['w'][ds_img_location], h=curr_doc.data_sources.ds_images.data['h'][ds_img_location],
                      anchor="center")
-    p.add_glyph(dat_src.ds_glyph_images, image, name=name)
+    p.add_glyph(curr_doc.data_sources.ds_glyph_images, image, name=name)
 
     # change angle of image glyph if non-zero
     if angle:
-        vis_editEl.change_angle_indep(name, angle=angle, index=len(indep_a)-1)
+        vis_editEl.change_angle_indep(curr_doc, name, angle=angle, index=len(indep_a)-1)
 
     # notify user that the new object was created
-    doc.div_input.text = "Object " + str(name) + " created at: (" + str(x) + "," + str(y) + ")"
+    curr_doc.div_input.text = "Object " + str(name) + " created at: (" + str(x) + "," + str(y) + ")"
 
     # show element info of the added element in element info box if not test case
-    if not dat_src.plotting_test_case:
-        vis_cbs.cb_show_element_info(0, 0, 0, indep=True)
+    if not curr_doc.plotting_test_case:
+        vis_cbs.cb_show_element_info(0, 0, 0, curr_doc, indep=True)
 
 
-def add_nodedep(enum_type, x, y, length=0.0, angle=0.0,
+def add_nodedep(curr_doc: CurrentDoc, enum_type, x, y, length=0.0, angle=0.0,
                 dt_t=(1.0, 0.0, 1.0), k=1.0, h=1.0, ei=1.0, ea=1.0, moment=1.0, f=1.0,
                 ll_local=True, ll_x_n=(0.0, 0.0), ll_y_q=(-1.0, -1.0)):
     """
@@ -101,17 +97,14 @@ def add_nodedep(enum_type, x, y, length=0.0, angle=0.0,
     :param ll_y_q: start and end values of the line load in y or shear direction (Tuple)
     :return:
     """
-    global ds_images
-    dat_src = glob_var.DataSources
-    doc = glob_var.doc
     # datasource for nodedependent elements
-    nodedep = dat_src.ds_nodedep_elements
+    nodedep = curr_doc.data_sources.ds_nodedep_elements
 
     # bokeh object: input plot
-    p = doc.plot_input
+    p = curr_doc.plot_input
 
-    name = str(enum_type) + "-" + str(dat_src.object_id)
-    dat_src.object_id += 1
+    name = str(enum_type) + "-" + str(curr_doc.object_id)
+    curr_doc.object_id += 1
 
     # name_node1 and name_node2 already added in vis_cbs.cb_adapt_plot_nodedep()
     nodedep.data['type'].append(enum_type)
@@ -154,9 +147,9 @@ def add_nodedep(enum_type, x, y, length=0.0, angle=0.0,
         # mapped position in data source for image glyph
         ds_img_location = map_enum2images[enum_type]
         # add element to datasource of nodedep image glyph info
-        ds_glyph = dat_src.ds_glyph_springsPointMomentTemp
-        ds_glyph.data['glyph_x'].append(x + ds_images.data['x_mod'][ds_img_location] * 1.5)
-        ds_glyph.data['glyph_y'].append(y + ds_images.data['y_mod'][ds_img_location] * 1.5)
+        ds_glyph = curr_doc.data_sources.ds_glyph_springsPointMomentTemp
+        ds_glyph.data['glyph_x'].append(x + curr_doc.data_sources.ds_images.data['x_mod'][ds_img_location] * 1.5)
+        ds_glyph.data['glyph_y'].append(y + curr_doc.data_sources.ds_images.data['y_mod'][ds_img_location] * 1.5)
         ds_glyph.data['x'].append(x)
         ds_glyph.data['y'].append(y)
         ds_glyph.data['name_user'].append(name)
@@ -170,51 +163,51 @@ def add_nodedep(enum_type, x, y, length=0.0, angle=0.0,
             y_mod = - abs(angle) / 15.7
             x_mod = x_mod - length / 2 * math.cos(angle)
             y_mod = y_mod - length / 2 * math.sin(angle)
-            image = ImageURL(url=dict(value=ds_images.data['url'][ds_img_location]),
-                             x=x + x_mod, y=y + y_mod, w=length, h=ds_images.data['h'][ds_img_location],
+            image = ImageURL(url=dict(value=curr_doc.data_sources.ds_images.data['url'][ds_img_location]),
+                             x=x + x_mod, y=y + y_mod, w=length, h=curr_doc.data_sources.ds_images.data['h'][ds_img_location],
                              anchor="center_left", angle=angle)
         else:
-            image = ImageURL(url=dict(value=ds_images.data['url'][ds_img_location]),
-                             x=x + ds_images.data['x_mod'][ds_img_location],
-                             y=y + ds_images.data['y_mod'][ds_img_location], w=ds_images.data['w'][ds_img_location],
-                             h=ds_images.data['h'][ds_img_location], anchor="center", angle=0.0)
+            image = ImageURL(url=dict(value=curr_doc.data_sources.ds_images.data['url'][ds_img_location]),
+                             x=x + curr_doc.data_sources.ds_images.data['x_mod'][ds_img_location],
+                             y=y + curr_doc.data_sources.ds_images.data['y_mod'][ds_img_location], w=curr_doc.data_sources.ds_images.data['w'][ds_img_location],
+                             h=curr_doc.data_sources.ds_images.data['h'][ds_img_location], anchor="center", angle=0.0)
             # add image glyph to plot
-        p.add_glyph(dat_src.ds_glyph_images, image, name=name)
+        p.add_glyph(curr_doc.data_sources.ds_glyph_images, image, name=name)
         # adapt angle of image glyph at one node if angle given
         if angle and not enum_type == eLnum.ElSupEnum.SPRING.value:
-            vis_editEl.change_angle_nodedep(name, angle, index=index, index_glyph=len(ds_glyph.data['x']) - 1)
+            vis_editEl.change_angle_nodedep(curr_doc, name, angle, index=index, index_glyph=len(ds_glyph.data['x']) - 1)
         # adapt image glyph of moment if it depicts a negative value
         if k < 0 and enum_type == eLnum.ElSupEnum.SPRING_MOMENT_SUPPORT.value:
-            vis_editEl.draw_moment_negative(name, index, negative=True)
+            vis_editEl.draw_moment_negative(curr_doc, name, index, negative=True)
 
     # settings and image glyphs for moment, point load, temperature load
     elif enum_type == eLnum.ElSupEnum.LOAD_POINT.value or enum_type == eLnum.ElSupEnum.LOAD_MOMENT.value \
             or enum_type == eLnum.ElSupEnum.LOAD_TEMP.value:
-        ds_glyph = dat_src.ds_glyph_springsPointMomentTemp
+        ds_glyph = curr_doc.data_sources.ds_glyph_springsPointMomentTemp
         ds_img_location = map_enum2images[enum_type]
         # create and add image glyph to plot
-        image = ImageURL(url=dict(value=ds_images.data['url'][ds_img_location]),
-                         x=x + ds_images.data['x_mod'][ds_img_location], y=y + ds_images.data['y_mod'][ds_img_location],
-                         w=ds_images.data['w'][ds_img_location], h=ds_images.data['h'][ds_img_location],
+        image = ImageURL(url=dict(value=curr_doc.data_sources.ds_images.data['url'][ds_img_location]),
+                         x=x + curr_doc.data_sources.ds_images.data['x_mod'][ds_img_location], y=y + curr_doc.data_sources.ds_images.data['y_mod'][ds_img_location],
+                         w=curr_doc.data_sources.ds_images.data['w'][ds_img_location], h=curr_doc.data_sources.ds_images.data['h'][ds_img_location],
                          anchor="center", angle=0.0)
-        p.add_glyph(dat_src.ds_glyph_images, image, name=name)
+        p.add_glyph(curr_doc.data_sources.ds_glyph_images, image, name=name)
         # adapt ds_nodedep_element and image glyphs based on the input
         # also adapt glyph position for load_point and load_moment to make both selectable
         if enum_type == eLnum.ElSupEnum.LOAD_POINT.value:
             nodedep_f[index] = f
-            ds_glyph.data['glyph_x'].append(x + ds_images.data['x_mod'][ds_img_location] * 1.5)
-            ds_glyph.data['glyph_y'].append(y + ds_images.data['y_mod'][ds_img_location] * 1.5)
+            ds_glyph.data['glyph_x'].append(x + curr_doc.data_sources.ds_images.data['x_mod'][ds_img_location] * 1.5)
+            ds_glyph.data['glyph_y'].append(y + curr_doc.data_sources.ds_images.data['y_mod'][ds_img_location] * 1.5)
         elif enum_type == eLnum.ElSupEnum.LOAD_MOMENT.value:
             nodedep_m[index] = moment
-            ds_glyph.data['glyph_x'].append(x + ds_images.data['x_mod'][ds_img_location] - 0.1)
-            ds_glyph.data['glyph_y'].append(y + ds_images.data['y_mod'][ds_img_location])
+            ds_glyph.data['glyph_x'].append(x + curr_doc.data_sources.ds_images.data['x_mod'][ds_img_location] - 0.1)
+            ds_glyph.data['glyph_y'].append(y + curr_doc.data_sources.ds_images.data['y_mod'][ds_img_location])
             # adapt image glyph of moment if it depicts a negative value
             if moment < 0:
-                vis_editEl.draw_moment_negative(name, index, negative=True)
+                vis_editEl.draw_moment_negative(curr_doc, name, index, negative=True)
         else:
             nodedep_dt[index] = dt_t
-            ds_glyph.data['glyph_x'].append(x + ds_images.data['x_mod'][ds_img_location])
-            ds_glyph.data['glyph_y'].append(y + ds_images.data['y_mod'][ds_img_location])
+            ds_glyph.data['glyph_x'].append(x + curr_doc.data_sources.ds_images.data['x_mod'][ds_img_location])
+            ds_glyph.data['glyph_y'].append(y + curr_doc.data_sources.ds_images.data['y_mod'][ds_img_location])
 
         # add element to datasource of nodedep image glyph info
         ds_glyph.data['x'].append(x)
@@ -223,7 +216,7 @@ def add_nodedep(enum_type, x, y, length=0.0, angle=0.0,
         ds_glyph.trigger('data', ds_glyph.data, ds_glyph.data)
         # adapt angle of image glyph at one node if angle given
         if angle and enum_type == eLnum.ElSupEnum.LOAD_POINT.value:
-            vis_editEl.change_angle_nodedep(name, angle, index=index, index_glyph=len(ds_glyph.data['x']) - 1)
+            vis_editEl.change_angle_nodedep(curr_doc, name, angle, index=index, index_glyph=len(ds_glyph.data['x']) - 1)
 
     # settings and non-image glyphs for beam
     elif enum_type == eLnum.ElSupEnum.BEAM.value:
@@ -233,12 +226,12 @@ def add_nodedep(enum_type, x, y, length=0.0, angle=0.0,
         nodedep_ea[index] = ea
 
         # create glyph
-        dat_src.ds_glyph_beam.data['x'].append(x)
-        dat_src.ds_glyph_beam.data['y'].append(y)
-        dat_src.ds_glyph_beam.data['width'].append(length)
-        dat_src.ds_glyph_beam.data['angle'].append(angle)
-        dat_src.ds_glyph_beam.data['name_user'].append(name)
-        dat_src.ds_glyph_beam.trigger('data', dat_src.ds_glyph_beam.data, dat_src.ds_glyph_beam.data)
+        curr_doc.data_sources.ds_glyph_beam.data['x'].append(x)
+        curr_doc.data_sources.ds_glyph_beam.data['y'].append(y)
+        curr_doc.data_sources.ds_glyph_beam.data['width'].append(length)
+        curr_doc.data_sources.ds_glyph_beam.data['angle'].append(angle)
+        curr_doc.data_sources.ds_glyph_beam.data['name_user'].append(name)
+        curr_doc.data_sources.ds_glyph_beam.trigger('data', curr_doc.data_sources.ds_glyph_beam.data, curr_doc.data_sources.ds_glyph_beam.data)
 
     # settings and non-image glyph for line load
     else:
@@ -247,27 +240,25 @@ def add_nodedep(enum_type, x, y, length=0.0, angle=0.0,
         nodedep_llxn[index] = ll_x_n
         nodedep_llyq[index] = ll_y_q
         # create glyph and add element to datasource of line load info
-        vis_editEl.draw_lineload(name, load_x_n=nodedep_llxn[index], load_y_q=nodedep_llyq[index],
+        vis_editEl.draw_lineload(curr_doc, name, load_x_n=nodedep_llxn[index], load_y_q=nodedep_llyq[index],
                                  local=nodedep_lll[index], index=index, create_element=True)
 
     # notify user that the new object was created
-    doc.div_input.text = "Object " + str(name) + " created."
+    curr_doc.div_input.text = "Object " + str(name) + " created."
 
     # show element info of the added element in element info box if not a test case
-    if not dat_src.plotting_test_case:
-        vis_cbs.cb_show_element_info(0, 0, 0, nodedep=True)
+    if not curr_doc.plotting_test_case:
+        vis_cbs.cb_show_element_info(0, 0, 0, curr_doc, nodedep=True)
 
 
-def delete_indep(name, index=False):
+def delete_indep(curr_doc: CurrentDoc, name, index=False):
     """
     Delete a node independent element from the data source and the input plot.
     :param name: name of the node independent element that has to be deleted (string)
     :param index: index in the node independent data source for that element (int)
     :return: none
     """
-    dat_src = glob_var.DataSources
-    doc = glob_var.doc
-    indep = dat_src.ds_indep_elements
+    indep = curr_doc.data_sources.ds_indep_elements
     indep_x = indep.data['x']
     indep_y = indep.data['y']
     indep_t = indep.data['type']
@@ -283,10 +274,10 @@ def delete_indep(name, index=False):
                 break
 
     # delete connected node dependent elements
-    delete_nodedep(name)
+    delete_nodedep(curr_doc, name)
 
     # delete corresponding glyph in input plot
-    p = doc.plot_input
+    p = curr_doc.plot_input
     image_glyph = p.select(name=indep_n[index])
     p.renderers.remove(image_glyph[0])
     del indep_x[index]
@@ -298,11 +289,11 @@ def delete_indep(name, index=False):
 
     # trigger data source changed and reduce count of plot elements
     indep.trigger('data', indep.data, indep.data)
-    dat_src.ds_element_count.data['count'][0] -= 1
-    dat_src.ds_element_count.trigger('data', dat_src.ds_element_count.data, dat_src.ds_element_count.data)
+    curr_doc.data_sources.ds_element_count.data['count'][0] -= 1
+    curr_doc.data_sources.ds_element_count.trigger('data', curr_doc.data_sources.ds_element_count.data, curr_doc.data_sources.ds_element_count.data)
 
 
-def delete_nodedep(name_indep=False, name_nodedep=False, index_nodedep=False):
+def delete_nodedep(curr_doc: CurrentDoc, name_indep=False, name_nodedep=False, index_nodedep=False):
     """
     Delete nodedependent element glyphs that are connected to a node with the name "name_indep".
     :param name_indep: name of the node independent element that was deleted (string)
@@ -310,15 +301,13 @@ def delete_nodedep(name_indep=False, name_nodedep=False, index_nodedep=False):
     :param index_nodedep: index of the node dependent element (int)
     :return: none
     """
-    dat_src = glob_var.DataSources
-    doc = glob_var.doc
     if not name_indep and not name_nodedep:
         return
 
     # bokeh object: input plot
-    p = doc.plot_input
+    p = curr_doc.plot_input
 
-    nodedep = dat_src.ds_nodedep_elements
+    nodedep = curr_doc.data_sources.ds_nodedep_elements
     nodedep_n1 = nodedep.data['name_node1']
     nodedep_n2 = nodedep.data['name_node2']
     nodedep_t = nodedep.data['type']
@@ -349,8 +338,8 @@ def delete_nodedep(name_indep=False, name_nodedep=False, index_nodedep=False):
 
     if name_nodedep:
         if type(index_nodedep) == bool:
-            for i in range(len(dat_src.ds_nodedep_elements.data['name'])):
-                if dat_src.ds_nodedep_elements.data['name'][i] == name_nodedep:
+            for i in range(len(curr_doc.data_sources.ds_nodedep_elements.data['name'])):
+                if curr_doc.data_sources.ds_nodedep_elements.data['name'][i] == name_nodedep:
                     index_nodedep = i
                     break
             else:
@@ -364,7 +353,7 @@ def delete_nodedep(name_indep=False, name_nodedep=False, index_nodedep=False):
         glyph_index = -1
 
         if enum_type == eLnum.ElSupEnum.BEAM.value:
-            ds_glyph = dat_src.ds_glyph_beam
+            ds_glyph = curr_doc.data_sources.ds_glyph_beam
             # find element in tooltips and element info data source
             for j in range(len(ds_glyph.data['name_user'])):
                 if name == ds_glyph.data['name_user'][j]:
@@ -379,7 +368,7 @@ def delete_nodedep(name_indep=False, name_nodedep=False, index_nodedep=False):
                 del ds_glyph.data['name_user'][glyph_index]
 
         elif enum_type == eLnum.ElSupEnum.LOAD_LINE.value:
-            ds_glyph = dat_src.ds_glyph_lineload
+            ds_glyph = curr_doc.data_sources.ds_glyph_lineload
             # find element in glyph and info data source
             for j in range(len(ds_glyph.data['name_user'])):
                 if name == ds_glyph.data['name_user'][j]:
@@ -396,7 +385,7 @@ def delete_nodedep(name_indep=False, name_nodedep=False, index_nodedep=False):
                 del ds_glyph.data['name_user'][glyph_index]
 
             # delete entry for y/ normal load and afterwards for y/ shear load
-            ds_arrow = dat_src.ds_arrow_lineload
+            ds_arrow = curr_doc.data_sources.ds_arrow_lineload
             arrow_index = glyph_index * 2
             if not glyph_index == -1:
                 del ds_arrow.data['xs'][arrow_index]
@@ -408,7 +397,7 @@ def delete_nodedep(name_indep=False, name_nodedep=False, index_nodedep=False):
                 ds_arrow.trigger('data', ds_arrow.data, ds_arrow.data)
 
         else:
-            ds_glyph = dat_src.ds_glyph_springsPointMomentTemp
+            ds_glyph = curr_doc.data_sources.ds_glyph_springsPointMomentTemp
             # find element in tooltips and element info data source
             for j in range(len(ds_glyph.data['name_user'])):
                 if name == ds_glyph.data['name_user'][j]:

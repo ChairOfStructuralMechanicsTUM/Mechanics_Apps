@@ -5,7 +5,7 @@ import vis_callbacks as vis_cbs
 import vis_initialization as vis_init
 import vis_elementToPlot as vis_elToP
 from Classes import ElementSupportEnum as eLnum
-import vis_global_vars as glob_var
+from Classes.CurrentDocument import CurrentDoc
 
 # used to normalize all line loads with their maximum value and the maximum height in the input plot
 line_load_max_height = 0.2
@@ -14,7 +14,7 @@ line_load_max_value = 1.0
 distance_beam = 0.08
 
 
-def change_angle_indep(name_indep, angle, index):
+def change_angle_indep(curr_doc: CurrentDoc, name_indep, angle, index):
     """
     Change the angle of a node independent element. Updates the glyph of the plot and the glyph data source.
     :param name_indep: name of the node independent element (string)
@@ -22,15 +22,13 @@ def change_angle_indep(name_indep, angle, index):
     :param index: index of the element in ds_indep_elements (int)
     :return: True if angle of element was adapted (bool)
     """
-    dat_src = glob_var.DataSources
-    doc = glob_var.doc
-    enum_type = dat_src.ds_indep_elements.data['type'][index]
+    enum_type = curr_doc.data_sources.ds_indep_elements.data['type'][index]
 
     if enum_type == eLnum.ElSupEnum.JOINT.value or enum_type == eLnum.ElSupEnum.NODE.value:
         return False
 
-    width = vis_elToP.ds_images.data['w'][vis_elToP.map_enum2images[enum_type]]
-    height = vis_elToP.ds_images.data['h'][vis_elToP.map_enum2images[enum_type]]
+    width = curr_doc.data_sources.ds_images.data['w'][vis_elToP.map_enum2images[enum_type]]
+    height = curr_doc.data_sources.ds_images.data['h'][vis_elToP.map_enum2images[enum_type]]
 
     # get offset for x and y through rotation
     if enum_type == eLnum.ElSupEnum.SUPPORT_ROLLER_JOINT.value \
@@ -38,7 +36,7 @@ def change_angle_indep(name_indep, angle, index):
             or enum_type == eLnum.ElSupEnum.SUPPORT_FIXED_JOINT.value \
             or enum_type == eLnum.ElSupEnum.SUPPORT_FIXED_CONTINUOUS.value:
         # get y_mod for 0°
-        y_mod = vis_elToP.ds_images.data['y_mod'][vis_elToP.map_enum2images[enum_type]]
+        y_mod = curr_doc.data_sources.ds_images.data['y_mod'][vis_elToP.map_enum2images[enum_type]]
 
         # calculate offset for x and y through rotation (center offset and fitted equation)
         x_mod = - y_mod * math.sin(angle) + 0.23 * math.sin(angle - 2.3) + width / 2
@@ -48,14 +46,14 @@ def change_angle_indep(name_indep, angle, index):
         y_mod = 0.15 * math.sin(angle - 3.65) - height / 2
 
     # set angle and offset of image glyph for given name
-    image_glyph = doc.plot_input.select(name=name_indep)
+    image_glyph = curr_doc.plot_input.select(name=name_indep)
     image_glyph[0].glyph.update(angle=angle)
-    image_glyph[0].glyph.update(x=dat_src.ds_indep_elements.data['x'][index] + x_mod)
-    image_glyph[0].glyph.update(y=dat_src.ds_indep_elements.data['y'][index] + y_mod)
+    image_glyph[0].glyph.update(x=curr_doc.data_sources.ds_indep_elements.data['x'][index] + x_mod)
+    image_glyph[0].glyph.update(y=curr_doc.data_sources.ds_indep_elements.data['y'][index] + y_mod)
     return True
 
 
-def change_angle_nodedep(name_nodedep, angle, index, index_glyph=False):
+def change_angle_nodedep(curr_doc: CurrentDoc, name_nodedep, angle, index, index_glyph=False):
     """
     Change the angle of a nodedependent element of the enum_type spring_support, spring_moment_support or load_point.
     All other enum_types can only be changed if one of their nodes changed position.
@@ -66,16 +64,14 @@ def change_angle_nodedep(name_nodedep, angle, index, index_glyph=False):
     :param index_glyph: index of the element in its glyph data source (int)
     :return: True if angle of element was adapted (bool)
     """
-    dat_src = glob_var.DataSources
-    doc = glob_var.doc
-    enum_type = dat_src.ds_nodedep_elements.data['type'][index]
+    enum_type = curr_doc.data_sources.ds_nodedep_elements.data['type'][index]
 
     if enum_type == eLnum.ElSupEnum.SPRING_SUPPORT.value or enum_type == eLnum.ElSupEnum.SPRING_MOMENT_SUPPORT.value \
             or enum_type == eLnum.ElSupEnum.LOAD_POINT.value:
         # get y_mod for 0° (center offset)
-        y_mod_center = vis_elToP.ds_images.data['y_mod'][vis_elToP.map_enum2images[enum_type]]
-        width = vis_elToP.ds_images.data['w'][vis_elToP.map_enum2images[enum_type]]
-        height = vis_elToP.ds_images.data['h'][vis_elToP.map_enum2images[enum_type]]
+        y_mod_center = curr_doc.data_sources.ds_images.data['y_mod'][vis_elToP.map_enum2images[enum_type]]
+        width = curr_doc.data_sources.ds_images.data['w'][vis_elToP.map_enum2images[enum_type]]
+        height = curr_doc.data_sources.ds_images.data['h'][vis_elToP.map_enum2images[enum_type]]
 
         angle_sin = math.sin(angle)
         angle_cos = math.cos(angle)
@@ -88,16 +84,16 @@ def change_angle_nodedep(name_nodedep, angle, index, index_glyph=False):
             y_mod = y_mod_center * angle_cos + 0.24 * math.sin(angle - 3.85) - height / 2
 
         # get x and y position of node
-        x = dat_src.ds_nodedep_elements.data['x'][index]
-        y = dat_src.ds_nodedep_elements.data['y'][index]
+        x = curr_doc.data_sources.ds_nodedep_elements.data['x'][index]
+        y = curr_doc.data_sources.ds_nodedep_elements.data['y'][index]
 
         # set angle and offset of image glyph for given name
-        image_glyph = doc.plot_input.select(name=name_nodedep)
+        image_glyph = curr_doc.plot_input.select(name=name_nodedep)
         image_glyph[0].glyph.update(angle=angle)
         image_glyph[0].glyph.update(x=x+x_mod)
         image_glyph[0].glyph.update(y=y+y_mod)
 
-        ds_glyph = dat_src.ds_glyph_springsPointMomentTemp
+        ds_glyph = curr_doc.data_sources.ds_glyph_springsPointMomentTemp
         # get index of element in glyph data source if not given
         if not index_glyph:
             for i in range(len(ds_glyph.data['name_user'])):
@@ -133,7 +129,7 @@ def change_angle_nodedep(name_nodedep, angle, index, index_glyph=False):
 #
 #
 # TODO: idea - allow an arbitory angle and a user-defined function as input
-def draw_lineload(name, load_x_n, load_y_q, local, index, index_glyph=False, create_element=False):
+def draw_lineload(curr_doc: CurrentDoc, name, load_x_n, load_y_q, local, index, index_glyph=False, create_element=False):
     """
     Draw a new or change a line load element with its patch glyph arrows and data sources. Therefore the single points
     of the line load patch glyphs and the arrows as line are calculated.
@@ -147,7 +143,6 @@ def draw_lineload(name, load_x_n, load_y_q, local, index, index_glyph=False, cre
     :param create_element: False if element already was created and only needs adaptation (bool)
     :return: none
     """
-    dat_src = glob_var.DataSources
     global line_load_max_value, line_load_max_height, distance_beam
 
     # check which load directions are non zero
@@ -183,10 +178,10 @@ def draw_lineload(name, load_x_n, load_y_q, local, index, index_glyph=False, cre
         end_yq = load_y_q[1] * line_load_max_height / line_load_max_value
 
     # get values of nodedependent element data source
-    x = dat_src.ds_nodedep_elements.data['x'][index]
-    y = dat_src.ds_nodedep_elements.data['y'][index]
-    length = dat_src.ds_nodedep_elements.data['length'][index]
-    angle = dat_src.ds_nodedep_elements.data['angle'][index]
+    x = curr_doc.data_sources.ds_nodedep_elements.data['x'][index]
+    y = curr_doc.data_sources.ds_nodedep_elements.data['y'][index]
+    length = curr_doc.data_sources.ds_nodedep_elements.data['length'][index]
+    angle = curr_doc.data_sources.ds_nodedep_elements.data['angle'][index]
     angle_sin = math.sin(angle)
     angle_cos = math.cos(angle)
 
@@ -234,34 +229,35 @@ def draw_lineload(name, load_x_n, load_y_q, local, index, index_glyph=False, cre
 
     # add element to datasource of line load glyphs and info
     if create_element:
-        dat_src.ds_glyph_lineload.data['patch_x'].append(patch_x)
-        dat_src.ds_glyph_lineload.data['patch_y'].append(patch_y)
+        curr_doc.data_sources.ds_glyph_lineload.data['patch_x'].append(patch_x)
+        curr_doc.data_sources.ds_glyph_lineload.data['patch_y'].append(patch_y)
         if valid_yq:
-            dat_src.ds_glyph_lineload.data['glyph_x'].append(x + x_mod * 1.8)
-            dat_src.ds_glyph_lineload.data['glyph_y'].append(y + y_mod * 1.8)
+            curr_doc.data_sources.ds_glyph_lineload.data['glyph_x'].append(x + x_mod * 1.8)
+            curr_doc.data_sources.ds_glyph_lineload.data['glyph_y'].append(y + y_mod * 1.8)
         else:
-            dat_src.ds_glyph_lineload.data['glyph_x'].append(x - x_mod * 1.8)
-            dat_src.ds_glyph_lineload.data['glyph_y'].append(y - y_mod * 1.8)
-        dat_src.ds_glyph_lineload.data['x'].append(x)
-        dat_src.ds_glyph_lineload.data['y'].append(y)
-        dat_src.ds_glyph_lineload.data['name_user'].append(name)
+            curr_doc.data_sources.ds_glyph_lineload.data['glyph_x'].append(x - x_mod * 1.8)
+            curr_doc.data_sources.ds_glyph_lineload.data['glyph_y'].append(y - y_mod * 1.8)
+        curr_doc.data_sources.ds_glyph_lineload.data['x'].append(x)
+        curr_doc.data_sources.ds_glyph_lineload.data['y'].append(y)
+        curr_doc.data_sources.ds_glyph_lineload.data['name_user'].append(name)
     else:
         if not index_glyph:
-            for i in range(len(dat_src.ds_glyph_lineload.data['name_user'])):
-                if dat_src.ds_glyph_lineload.data['name_user'][i] == name:
+            for i in range(len(curr_doc.data_sources.ds_glyph_lineload.data['name_user'])):
+                if curr_doc.data_sources.ds_glyph_lineload.data['name_user'][i] == name:
                     index_glyph = i
                     break
-        dat_src.ds_glyph_lineload.data['patch_x'][index_glyph] = patch_x
-        dat_src.ds_glyph_lineload.data['patch_y'][index_glyph] = patch_y
+        curr_doc.data_sources.ds_glyph_lineload.data['patch_x'][index_glyph] = patch_x
+        curr_doc.data_sources.ds_glyph_lineload.data['patch_y'][index_glyph] = patch_y
         if valid_yq:
-            dat_src.ds_glyph_lineload.data['glyph_x'][index_glyph] = x + x_mod * 1.8
-            dat_src.ds_glyph_lineload.data['glyph_y'][index_glyph] = y + y_mod * 1.8
+            curr_doc.data_sources.ds_glyph_lineload.data['glyph_x'][index_glyph] = x + x_mod * 1.8
+            curr_doc.data_sources.ds_glyph_lineload.data['glyph_y'][index_glyph] = y + y_mod * 1.8
         else:
-            dat_src.ds_glyph_lineload.data['glyph_x'][index_glyph] = x - x_mod * 1.8
-            dat_src.ds_glyph_lineload.data['glyph_y'][index_glyph] = y - y_mod * 1.8
-        dat_src.ds_glyph_lineload.data['x'][index_glyph] = x
-        dat_src.ds_glyph_lineload.data['y'][index_glyph] = y
-    dat_src.ds_glyph_lineload.trigger('data', dat_src.ds_glyph_lineload.data, dat_src.ds_glyph_lineload.data)
+            curr_doc.data_sources.ds_glyph_lineload.data['glyph_x'][index_glyph] = x - x_mod * 1.8
+            curr_doc.data_sources.ds_glyph_lineload.data['glyph_y'][index_glyph] = y - y_mod * 1.8
+        curr_doc.data_sources.ds_glyph_lineload.data['x'][index_glyph] = x
+        curr_doc.data_sources.ds_glyph_lineload.data['y'][index_glyph] = y
+    curr_doc.data_sources.ds_glyph_lineload.trigger('data', curr_doc.data_sources.ds_glyph_lineload.data,
+                                                    curr_doc.data_sources.ds_glyph_lineload.data)
 
     # length of arrow line and head and angle of arrow head
     arrow_length = 0.12
@@ -334,21 +330,22 @@ def draw_lineload(name, load_x_n, load_y_q, local, index, index_glyph=False, cre
     arrow_index = index_glyph * 2
     if create_element:
         # add arrow for x/ normal load
-        dat_src.ds_arrow_lineload.data['xs'].append(xs_xn)
-        dat_src.ds_arrow_lineload.data['ys'].append(ys_xn)
-        dat_src.ds_arrow_lineload.data['name_user'].append(name)
+        curr_doc.data_sources.ds_arrow_lineload.data['xs'].append(xs_xn)
+        curr_doc.data_sources.ds_arrow_lineload.data['ys'].append(ys_xn)
+        curr_doc.data_sources.ds_arrow_lineload.data['name_user'].append(name)
         # add arrow for y/ shear load
-        dat_src.ds_arrow_lineload.data['xs'].append(xs_yq)
-        dat_src.ds_arrow_lineload.data['ys'].append(ys_yq)
-        dat_src.ds_arrow_lineload.data['name_user'].append(name)
+        curr_doc.data_sources.ds_arrow_lineload.data['xs'].append(xs_yq)
+        curr_doc.data_sources.ds_arrow_lineload.data['ys'].append(ys_yq)
+        curr_doc.data_sources.ds_arrow_lineload.data['name_user'].append(name)
     else:
         # change arrow for x/ normal load
-        dat_src.ds_arrow_lineload.data['xs'][arrow_index] = xs_xn
-        dat_src.ds_arrow_lineload.data['ys'][arrow_index] = ys_xn
+        curr_doc.data_sources.ds_arrow_lineload.data['xs'][arrow_index] = xs_xn
+        curr_doc.data_sources.ds_arrow_lineload.data['ys'][arrow_index] = ys_xn
         # change arrow for y/ shear load
-        dat_src.ds_arrow_lineload.data['xs'][arrow_index + 1] = xs_yq
-        dat_src.ds_arrow_lineload.data['ys'][arrow_index + 1] = ys_yq
-    dat_src.ds_arrow_lineload.trigger('data', dat_src.ds_arrow_lineload.data, dat_src.ds_arrow_lineload.data)
+        curr_doc.data_sources.ds_arrow_lineload.data['xs'][arrow_index + 1] = xs_yq
+        curr_doc.data_sources.ds_arrow_lineload.data['ys'][arrow_index + 1] = ys_yq
+    curr_doc.data_sources.ds_arrow_lineload.trigger('data', curr_doc.data_sources.ds_arrow_lineload.data,
+                                                    curr_doc.data_sources.ds_arrow_lineload.data)
 
 
 def get_lineload_mod(distance, height, angle):
@@ -364,7 +361,7 @@ def get_lineload_mod(distance, height, angle):
     return x_mod, y_mod
 
 
-def draw_moment_negative(name, index, negative):
+def draw_moment_negative(curr_doc: CurrentDoc, name, index, negative):
     """
     Exchange image glyph with image glyph that depicts load_moment or spring_moment with a negative (if negative==True)
     or positive (if negative==False) value.
@@ -373,9 +370,7 @@ def draw_moment_negative(name, index, negative):
     :param negative: whether the image glyoh should show a positive or negative depiction of the moment (bool)
     :return: none
     """
-    dat_src = glob_var.DataSources
-    doc = glob_var.doc
-    enum_type = dat_src.ds_nodedep_elements.data['type'][index]
+    enum_type = curr_doc.data_sources.ds_nodedep_elements.data['type'][index]
 
     if not(enum_type == eLnum.ElSupEnum.SPRING_MOMENT_SUPPORT.value or enum_type == eLnum.ElSupEnum.LOAD_MOMENT.value):
         return
@@ -387,24 +382,22 @@ def draw_moment_negative(name, index, negative):
         ds_img_location = vis_elToP.map_enum2images[enum_type]
 
     # get glyph and exchange url
-    p = doc.plot_input
+    p = curr_doc.plot_input
     image_glyph = p.select(name=name)
-    image_glyph[0].glyph.update(url=dict(value=vis_elToP.ds_images.data['url'][ds_img_location]))
+    image_glyph[0].glyph.update(url=dict(value=curr_doc.data_sources.ds_images.data['url'][ds_img_location]))
 
 
-def set_glyph_opacity(name_indep, alpha):
+def set_glyph_opacity(curr_doc: CurrentDoc, name_indep, alpha):
     """
     Set the opacity of the stated node independent glyph and all connected nodedependent glyphs.
     :param name_indep: name of the glyph of the input plot (string)
     :param alpha: alpha value to set (double)
     :return: none
     """
-    dat_src = glob_var.DataSources
-    doc = glob_var.doc
     # bokeh object: input plot
-    p = doc.plot_input
+    p = curr_doc.plot_input
 
-    nodedep = dat_src.ds_nodedep_elements
+    nodedep = curr_doc.data_sources.ds_nodedep_elements
     nodedep_n1 = nodedep.data['name_node1']
     nodedep_n2 = nodedep.data['name_node2']
     nodedep_t = nodedep.data['type']

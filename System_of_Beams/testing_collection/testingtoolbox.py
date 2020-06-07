@@ -8,10 +8,10 @@ from Libs import print_function_helpers as prhlp
 import vis_elementToPlot as vis_el
 from Classes import ElementSupportEnum as ElSupEnum
 from Element_Calculation import ElementCalculation
-import vis_global_vars as glob_var
+from Classes.CurrentDocument import CurrentDoc
 
 
-def print_graphs(functions, x, l_list, knot_list):
+def print_graphs(curr_doc: CurrentDoc, functions, x, l_list, knot_list):
     """
     Visualises a given calculation results in the output
     :param functions: List of lists of resulting function. See comment plot_output_functions for structure
@@ -19,11 +19,10 @@ def print_graphs(functions, x, l_list, knot_list):
     :param l_list: list of all length values for every element
     :param knot_list: list of knots [[start_knot_1, end_knot_1], ... , [start_knot_n, end_knot_n]]
     """
-    doc = glob_var.doc
-    out_vis.plot_output_functions(doc.plot_list, functions, knot_list, x, l_list)
+    out_vis.plot_output_functions(curr_doc, functions, knot_list, x, l_list)
 
 
-def vis_structure_from_input(nodeindep_list, nodedep_list):
+def vis_structure_from_input(curr_doc: CurrentDoc, nodeindep_list, nodedep_list):
     """
     Visualises a structure being defined by nodeindep_list & nodedep_list
     :param nodeindep_list: all node independent elements
@@ -33,8 +32,8 @@ def vis_structure_from_input(nodeindep_list, nodedep_list):
     nodeindep_to_plot = prhlp.list_with_every_knot_only_once(nodeindep_list)
     nodedep_list.sort(key=lambda ele: ele.id_el_)
     prhlp.print_knot_and_element_list(nodeindep_to_plot, nodedep_list)
-    vis_nodeindep_elements(nodeindep_to_plot)
-    vis_nodedep_elements(nodedep_to_plot)
+    vis_nodeindep_elements(curr_doc, nodeindep_to_plot)
+    vis_nodedep_elements(curr_doc, nodedep_to_plot)
     print("VIS DONE")
 
 
@@ -64,17 +63,16 @@ def get_knot_name_from_nodeindep_list(nodeindep_list, x, y, tol=10e-3):
         return None
 
 
-def add_nodeindep_single_el(x, y, el_type, name, angle):
+def add_nodeindep_single_el(curr_doc: CurrentDoc, x, y, el_type, name, angle):
     """
     Adds a nodeindep element to the data sources
     """
-    dat_src = glob_var.DataSources
-    dat_src.test_case_angle.append(angle)
-    dat_src.ds_input.data['x'].append(round(x, 1))
-    dat_src.ds_input.data['y'].append(round(y, 1))
-    dat_src.ds_input.data['type'].append(el_type)
-    dat_src.ds_input.data['name_user'].append(name)
-    dat_src.ds_input.trigger('data', dat_src.ds_input.data, dat_src.ds_input.data)
+    curr_doc.test_case_angle.append(angle)
+    curr_doc.data_sources.ds_input.data['x'].append(round(x, 1))
+    curr_doc.data_sources.ds_input.data['y'].append(round(y, 1))
+    curr_doc.data_sources.ds_input.data['type'].append(el_type)
+    curr_doc.data_sources.ds_input.data['name_user'].append(name)
+    curr_doc.data_sources.ds_input.trigger('data', curr_doc.data_sources.ds_input.data, curr_doc.data_sources.ds_input.data)
 
 
 def symb2float(el):
@@ -106,33 +104,31 @@ def convert_lineload_to_input(n, q, n_symb, q_symb, length):
     return n_start, n_end, q_start, q_end
 
 
-def add_knots_to_visu(knot1, knot2):
+def add_knots_to_visu(curr_doc: CurrentDoc, knot1, knot2):
     """
     Adds two knots to the nodedep data source
     :return:
     """
-    dat_src = glob_var.DataSources
-    dat_src.ds_nodedep_elements.data['name_node1'].append(knot1)
-    dat_src.ds_nodedep_elements.data['name_node2'].append(knot2)
+    curr_doc.data_sources.ds_nodedep_elements.data['name_node1'].append(knot1)
+    curr_doc.data_sources.ds_nodedep_elements.data['name_node2'].append(knot2)
 
 
-def add_nodedep_two_knots(el, el_type):
+def add_nodedep_two_knots(curr_doc: CurrentDoc, el, el_type):
     """
     Visualises all beams, lineloads and springs
     :param el: Element to visualise type(el) = ElementCalculation
     :param el_type: type of the element
     :return:
     """
-    dat_src = glob_var.DataSources
     left_node, right_node, (x_middle, y_middle), length, angle = \
         vis_el.get_1st2nd_center_length_angle(el.x1_, el.y1_, el.x2_, el.y2_)
-    knot1 = get_knot_name_from_nodeindep_list(dat_src.ds_indep_elements, left_node[0], left_node[1])
-    knot2 = get_knot_name_from_nodeindep_list(dat_src.ds_indep_elements, right_node[0], right_node[1])
+    knot1 = get_knot_name_from_nodeindep_list(curr_doc.data_sources.ds_indep_elements, left_node[0], left_node[1])
+    knot2 = get_knot_name_from_nodeindep_list(curr_doc.data_sources.ds_indep_elements, right_node[0], right_node[1])
     # print("knot1: " + str(knot1))
     # print("el_type: {}\t x_middle: {}\t y_middle: {}".format(el_type, x_middle, y_middle))
     if ElSupEnum.check_beams_and_rods(el_type):
-        add_knots_to_visu(knot1, knot2)
-        vis_el.add_nodedep(el_type, x_middle, y_middle, length=length, angle=angle, h=symb2float(el.h_),
+        add_knots_to_visu(curr_doc, knot1, knot2)
+        vis_el.add_nodedep(curr_doc, el_type, x_middle, y_middle, length=length, angle=angle, h=symb2float(el.h_),
                            ei=symb2float(el.ei_), ea=symb2float(el.ea_))
         if el.lineloads[0] != 0 or el.lineloads[1] != 0:
             n_run_var = symbbox.get_free_symbols(el.lineloads[0], Symbol('n'))
@@ -147,33 +143,32 @@ def add_nodedep_two_knots(el, el_type):
                 q_run_var = 0
             n_start, n_end, q_start, q_end = convert_lineload_to_input(el.lineloads[0], el.lineloads[1], n_run_var, q_run_var, el.length_)
             # print("Forces: n_s: {}\t n_e: {}\t q_s: {}\t q_e: {}".format(n_start, n_end, q_start, q_end))
-            add_knots_to_visu(knot1, knot2)
-            vis_el.add_nodedep(ElSupEnum.ElSupEnum.LOAD_LINE.value, x_middle, y_middle, length=length, angle=angle,
+            add_knots_to_visu(curr_doc, knot1, knot2)
+            vis_el.add_nodedep(curr_doc, ElSupEnum.ElSupEnum.LOAD_LINE.value, x_middle, y_middle, length=length, angle=angle,
                                ll_local=True, ll_x_n=(n_start, n_end), ll_y_q=(-q_start, -q_end))   # minus q, due to the different axes
         if not el.temp_props.is_empty():
-            add_knots_to_visu(knot1, knot2)
+            add_knots_to_visu(curr_doc, knot1, knot2)
             start_temp = symb2float(symbbox.remove_free_symbols(el.temp_props.start_temp, None))
             grad_temp = symb2float(symbbox.remove_free_symbols(el.temp_props.grad_temp, None))
             temp_coeff = symb2float(symbbox.remove_free_symbols(el.temp_props.temp_coeff, None))
-            vis_el.add_nodedep(ElSupEnum.ElSupEnum.LOAD_TEMP.value, x_middle, y_middle, length=length, angle=angle,
+            vis_el.add_nodedep(curr_doc, ElSupEnum.ElSupEnum.LOAD_TEMP.value, x_middle, y_middle, length=length, angle=angle,
                                dt_t=(grad_temp, start_temp, temp_coeff))
     elif ElSupEnum.check_line_spring(el_type):
-        add_knots_to_visu(knot1, knot2)
-        vis_el.add_nodedep(el_type, x_middle, y_middle, length=length, angle=angle, k=symb2float(el.k_spring_),
+        add_knots_to_visu(curr_doc, knot1, knot2)
+        vis_el.add_nodedep(curr_doc, el_type, x_middle, y_middle, length=length, angle=angle, k=symb2float(el.k_spring_),
                            ei=symb2float(el.ei_), ea=symb2float(el.ea_))
 
     return
 
 
-def add_nodedep_single_knot(el):
+def add_nodedep_single_knot(curr_doc: CurrentDoc, el):
     """
     Adds all point forces and point springs to the visualisation plot
     :param el: needs a knot as input
     """
-    dat_src = glob_var.DataSources
     if not (el.has_pointload() or el.is_spring()):
         return
-    knot1 = get_knot_name_from_nodeindep_list(dat_src.ds_indep_elements, el.x_, el.y_)
+    knot1 = get_knot_name_from_nodeindep_list(curr_doc.data_sources.ds_indep_elements, el.x_, el.y_)
     # print("knot1: " + str(knot1))
     if el.has_pointload():
         n = q = 0
@@ -184,12 +179,12 @@ def add_nodedep_single_knot(el):
         if n != 0 or q != 0:
             angle = float(math.atan2(q, n))
             f = math.sqrt(n**2 + q**2)
-            add_knots_to_visu(knot1, None)
-            vis_el.add_nodedep(ElSupEnum.ElSupEnum.LOAD_POINT.value, el.x_, el.y_, angle=angle, f=f)
+            add_knots_to_visu(curr_doc, knot1, None)
+            vis_el.add_nodedep(curr_doc, ElSupEnum.ElSupEnum.LOAD_POINT.value, el.x_, el.y_, angle=angle, f=f)
         if el.pointLoad_[2] != 0:
             mom = float(symbbox.remove_free_symbols(el.pointLoad_[2], None))
-            add_knots_to_visu(knot1, None)
-            vis_el.add_nodedep(ElSupEnum.ElSupEnum.LOAD_MOMENT.value, el.x_, el.y_, moment=mom)
+            add_knots_to_visu(curr_doc, knot1, None)
+            vis_el.add_nodedep(curr_doc, ElSupEnum.ElSupEnum.LOAD_MOMENT.value, el.x_, el.y_, moment=mom)
     if el.is_spring():
         k_x = k_y = 0
         angle = el.angle * math.pi/180
@@ -200,15 +195,15 @@ def add_nodedep_single_knot(el):
         if k_x != 0 or k_y != 0:
             angle = float(math.atan2(k_x, k_y))
             k = math.sqrt(k_x ** 2 + k_y ** 2)
-            add_knots_to_visu(knot1, None)
-            vis_el.add_nodedep(ElSupEnum.ElSupEnum.SPRING_SUPPORT.value, el.x_, el.y_, angle=angle, k=k)
+            add_knots_to_visu(curr_doc, knot1, None)
+            vis_el.add_nodedep(curr_doc, ElSupEnum.ElSupEnum.SPRING_SUPPORT.value, el.x_, el.y_, angle=angle, k=k)
         if el.k[2] != 0:
             k_mom = float(symbbox.remove_free_symbols(el.k[2], None))
-            add_knots_to_visu(knot1, None)
-            vis_el.add_nodedep(ElSupEnum.ElSupEnum.SPRING_MOMENT_SUPPORT.value, el.x_, el.y_, angle=angle, k=k_mom)
+            add_knots_to_visu(curr_doc, knot1, None)
+            vis_el.add_nodedep(curr_doc, ElSupEnum.ElSupEnum.SPRING_MOMENT_SUPPORT.value, el.x_, el.y_, angle=angle, k=k_mom)
 
 
-def vis_nodeindep_elements(el_list):
+def vis_nodeindep_elements(curr_doc: CurrentDoc, el_list):
     """
     Takes a list of nodes as input and can visualize them in the input plot
     :param el_list: [knot1, knot2, ... knot_n]
@@ -223,12 +218,12 @@ def vis_nodeindep_elements(el_list):
         elif el_type == ElSupEnum.ElSupEnum.SUPPORT_ROLLER_END.value:
             el_type = ElSupEnum.ElSupEnum.SUPPORT_ROLLER_CONTINUOUS.value
         # name = str(el_type) + '-' + str(i)
-        add_nodeindep_single_el(el_to_plot.x_, el_to_plot.y_, el_type, name, el.angle * math.pi/180)
-        add_nodedep_single_knot(el_to_plot)
+        add_nodeindep_single_el(curr_doc, el_to_plot.x_, el_to_plot.y_, el_type, name, el.angle * math.pi/180)
+        add_nodedep_single_knot(curr_doc, el_to_plot)
         i += 1
 
 
-def vis_nodedep_elements(nodedep_list):
+def vis_nodedep_elements(curr_doc: CurrentDoc, nodedep_list):
     """
     Takes a list of nodedependent elements as input and visualizes them in the input plot
     """
@@ -241,7 +236,7 @@ def vis_nodedep_elements(nodedep_list):
             else:
                 # Is beam or rod
                 el_type = ElSupEnum.ElSupEnum.BEAM.value
-            add_nodedep_two_knots(el, el_type)
+            add_nodedep_two_knots(curr_doc, el, el_type)
 
 
 def convert_node_indep_type(node):

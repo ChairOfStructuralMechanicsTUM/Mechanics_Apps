@@ -4,8 +4,7 @@ class OutputVisu:
     """
     Contains all necessary information about the elements being plotted in the output plots
     """
-    def __init__(self, doc):
-        self.doc = doc
+    def __init__(self):
         self.init_dictionaries()
         self.init_plot_el_list()
 
