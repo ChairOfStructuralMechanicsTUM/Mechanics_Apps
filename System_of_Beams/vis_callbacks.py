@@ -1,61 +1,19 @@
+'''###############################
+IMPORTS
+###############################'''
+# general imports
 import math
 
-# import bokeh modules
-
 # import local files
-import vis_initialization   as vis_init
-import vis_elementToPlot    as vis_elToP
-import vis_editElement      as vis_editEl
-from Libs               import interface
-from Classes            import ElementSupportEnum as eLnum
-from Libs               import outputvisualization as vis_output
-from testing_collection import visualisation_tests
+import vis_initialization          as vis_init
+import vis_elementToPlot           as vis_elToP
+import vis_editElement             as vis_editEl
+from Libs                      import interface
+from Classes                   import ElementSupportEnum as eLnum
+from Libs                      import outputvisualization as vis_output
+from testing_collection        import visualisation_tests
 from Classes.ColumnDataSources import ColumnDataSources
-from Classes.CurrentDocument import CurrentDoc
-
-# ds_input                         = ColumnDataSources.ds_input
-# ds_glyph_images                  = ColumnDataSources.ds_glyph_images
-# ds_glyph_beam                    = ColumnDataSources.ds_glyph_beam
-# ds_glyph_lineload                = ColumnDataSources.ds_glyph_lineload
-# ds_arrow_lineload                = ColumnDataSources.ds_arrow_lineload
-# ds_glyph_springsPointMomentTemp  = ColumnDataSources.ds_glyph_springsPointMomentTemp
-# ds_input_selected                = ColumnDataSources.ds_input_selected
-# ds_active_button                 = ColumnDataSources.ds_active_button
-# ds_element_count                 = ColumnDataSources.ds_element_count
-# ds_chosen_node                   = ColumnDataSources.ds_chosen_node
-# ds_1st_chosen                    = ColumnDataSources.ds_1st_chosen
-# ds_element_info                  = ColumnDataSources.ds_element_info
-# ds_indep_elements                = ColumnDataSources.ds_indep_elements
-# ds_nodedep_elements              = ColumnDataSources.ds_nodedep_elements
-#
-# # variable for the currently activated element button for the input plot
-# button_activated = -1
-#
-# # radius to select specific element in input plot
-# catch_radius = 0.15
-#
-# # used for automatic naming of the elements in the plot using a consecutive number
-# object_id = 0
-#
-# # current element in the element info box, used to be able to delte the single element - Tupel(name, indep, index)
-# elinfo_current_element = (False, False, False)
-# # whether user input of element info box is blocked
-# elinfo_input_blocked = False
-#
-# # whether currently a test case is plotted - independent element should get angle and elinfo shouldn't react
-# plotting_test_case = False
-# test_case_angle = []
-# test_case_count_indep = 0
-#
-# # used to adapt plot elements when entries in ds_input were deleted
-# len_ds_input = 0
-#
-#
-# # node dependent enum element values of the plot to distinguish in the java script callback cb_plot_tap()
-# nodedep_element_values = [eLnum.ElSupEnum.SPRING_SUPPORT.value, eLnum.ElSupEnum.SPRING_MOMENT_SUPPORT.value,
-#                           eLnum.ElSupEnum.SPRING.value, eLnum.ElSupEnum.BEAM.value, eLnum.ElSupEnum.LOAD_POINT.value,
-#                           eLnum.ElSupEnum.LOAD_MOMENT.value, eLnum.ElSupEnum.LOAD_LINE.value,
-#                           eLnum.ElSupEnum.LOAD_TEMP.value]
+from Classes.CurrentDocument   import CurrentDoc
 
 
 
@@ -229,7 +187,7 @@ def cb_adapt_plot_nodedep(attr, old, new, curr_doc: CurrentDoc):
     # look for the clicked point for an existing x, y in the plotted independent node elements (ds_indep_elements)
     new_name = None
     for i in range(0, len(ds_indep_x)):
-        if abs(ds_indep_x[i] - new_x) < curr_doc.data_sources.catch_radius and abs(ds_indep_y[i] - new_y) < curr_doc.data_sources.catch_radius:
+        if abs(ds_indep_x[i] - new_x) < curr_doc.catch_radius and abs(ds_indep_y[i] - new_y) < curr_doc.catch_radius:
             new_name = ds_indep_n[i]
             node_x = ds_indep_x[i]
             node_y = ds_indep_y[i]
@@ -587,24 +545,24 @@ def cb_show_element_info(attr, old, new, curr_doc: CurrentDoc, indep=False, node
     indep_n = curr_doc.data_sources.ds_indep_elements.data['name']
     indep_a = curr_doc.data_sources.ds_indep_elements.data['angle']
 
-    nodedep_n1 = curr_doc.data_sources.ds_nodedep_elements.data['name_node1']
-    nodedep_n2 = curr_doc.data_sources.ds_nodedep_elements.data['name_node2']
-    nodedep_t = curr_doc.data_sources.ds_nodedep_elements.data['type']
-    nodedep_n = curr_doc.data_sources.ds_nodedep_elements.data['name']
-    nodedep_x = curr_doc.data_sources.ds_nodedep_elements.data['x']
-    nodedep_y = curr_doc.data_sources.ds_nodedep_elements.data['y']
-    nodedep_l = curr_doc.data_sources.ds_nodedep_elements.data['length']
-    nodedep_dt = curr_doc.data_sources.ds_nodedep_elements.data['dT_T']
-    nodedep_k = curr_doc.data_sources.ds_nodedep_elements.data['k']
-    nodedep_h = curr_doc.data_sources.ds_nodedep_elements.data['h']
-    nodedep_ei = curr_doc.data_sources.ds_nodedep_elements.data['ei']
-    nodedep_ea = curr_doc.data_sources.ds_nodedep_elements.data['ea']
-    nodedep_m = curr_doc.data_sources.ds_nodedep_elements.data['moment']
-    nodedep_f = curr_doc.data_sources.ds_nodedep_elements.data['f']
-    nodedep_lll = curr_doc.data_sources.ds_nodedep_elements.data['ll_local']
+    nodedep_n1   = curr_doc.data_sources.ds_nodedep_elements.data['name_node1']
+    nodedep_n2   = curr_doc.data_sources.ds_nodedep_elements.data['name_node2']
+    nodedep_t    = curr_doc.data_sources.ds_nodedep_elements.data['type']
+    nodedep_n    = curr_doc.data_sources.ds_nodedep_elements.data['name']
+    nodedep_x    = curr_doc.data_sources.ds_nodedep_elements.data['x']
+    nodedep_y    = curr_doc.data_sources.ds_nodedep_elements.data['y']
+    nodedep_l    = curr_doc.data_sources.ds_nodedep_elements.data['length']
+    nodedep_dt   = curr_doc.data_sources.ds_nodedep_elements.data['dT_T']
+    nodedep_k    = curr_doc.data_sources.ds_nodedep_elements.data['k']
+    nodedep_h    = curr_doc.data_sources.ds_nodedep_elements.data['h']
+    nodedep_ei   = curr_doc.data_sources.ds_nodedep_elements.data['ei']
+    nodedep_ea   = curr_doc.data_sources.ds_nodedep_elements.data['ea']
+    nodedep_m    = curr_doc.data_sources.ds_nodedep_elements.data['moment']
+    nodedep_f    = curr_doc.data_sources.ds_nodedep_elements.data['f']
+    nodedep_lll  = curr_doc.data_sources.ds_nodedep_elements.data['ll_local']
     nodedep_llxn = curr_doc.data_sources.ds_nodedep_elements.data['ll_x_n']
     nodedep_llyq = curr_doc.data_sources.ds_nodedep_elements.data['ll_y_q']
-    nodedep_a = curr_doc.data_sources.ds_nodedep_elements.data['angle']
+    nodedep_a    = curr_doc.data_sources.ds_nodedep_elements.data['angle']
 
     # check if element was just added
     if indep:
@@ -929,9 +887,6 @@ def cb_get_textinput(attr, old, new, curr_doc: CurrentDoc, key):
                 elinfo["yq_start"].value = "%3.1f" % yq_start
         curr_doc.elinfo_input_blocked = False
         # check lineload before change
-        # one value has to be non-zero and start end are either >=0 or <=0
-        # TODO (Done): idea - change acceptance of line load values? the way it is right now, one value needs to be zero before
-        #  load direction can be changed
         if not(xn_start == 0 and xn_end == 0 and yq_start == 0 and yq_end == 0):
             load_x_n = (xn_start, xn_end)
             load_y_q = (yq_start, yq_end)

@@ -1,9 +1,16 @@
-from sympy import Symbol
-from numpy import array, append
-from Libs.print_function_helpers import print_arr, print_results
-from sympy import solve, integrate, Eq
-import vis_initialization as vis_init
+'''###############################
+IMPORTS
+###############################'''
+# general imports
+from sympy      import Symbol
+from sympy      import solve, integrate, Eq
+from numpy      import array, append
 import time
+
+# import local files
+from Libs.print_function_helpers import print_arr, print_results
+import vis_initialization            as vis_init
+
 
 
 def CalculationElement(curr_doc, elementlist):

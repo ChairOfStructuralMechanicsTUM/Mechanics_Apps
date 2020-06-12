@@ -1,17 +1,19 @@
-
-
-import numpy as np
+'''###############################
+IMPORTS
+###############################'''
+# general imports
+import numpy                        as np
 import math
 
 # import bokeh modules
-from bokeh.models.glyphs import ImageURL
+from bokeh.models.glyphs        import ImageURL
 
 # import local files
-import vis_callbacks as vis_cbs
-import vis_editElement as vis_editEl
-from Classes import ElementSupportEnum as eLnum
-from Classes.ColumnDataSources import ColumnDataSources
-from Classes.CurrentDocument import CurrentDoc
+import vis_callbacks                as vis_cbs
+import vis_editElement              as vis_editEl
+from Classes                    import ElementSupportEnum as eLnum
+from Classes.ColumnDataSources  import ColumnDataSources
+from Classes.CurrentDocument    import CurrentDoc
 
 map_enum2images = {eLnum.ElSupEnum.SUPPORT_CLAMPED.value: 0, eLnum.ElSupEnum.SUPPORT_NORMAL_FORCE.value: 1,
                    eLnum.ElSupEnum.SUPPORT_TRANSVERSE_FORCE.value: 2, eLnum.ElSupEnum.SUPPORT_FIXED_CONTINUOUS.value: 3,
@@ -23,7 +25,6 @@ map_enum2images = {eLnum.ElSupEnum.SUPPORT_CLAMPED.value: 0, eLnum.ElSupEnum.SUP
                    eLnum.ElSupEnum.SPRING.value: 14, eLnum.ElSupEnum.LOAD_POINT.value: 15,
                    eLnum.ElSupEnum.LOAD_MOMENT.value: 16,  # load_moment_negative
                    eLnum.ElSupEnum.LOAD_TEMP.value: 18}
-# ds_images = ColumnDataSources.ds_images
 
 
 def add_indep(curr_doc: CurrentDoc, x, y, enum_type, name, angle=0.0):
@@ -113,30 +114,30 @@ def add_nodedep(curr_doc: CurrentDoc, enum_type, x, y, length=0.0, angle=0.0,
     nodedep.data['y'].append(y)
     nodedep.data['angle'].append(angle)
 
-    nodedep_l = nodedep.data['length']
-    nodedep_dt = nodedep.data['dT_T']
-    nodedep_k = nodedep.data['k']
-    nodedep_h = nodedep.data['h']
-    nodedep_ei = nodedep.data['ei']
-    nodedep_ea = nodedep.data['ea']
-    nodedep_m = nodedep.data['moment']
-    nodedep_f = nodedep.data['f']
-    nodedep_lll = nodedep.data['ll_local']
+    nodedep_l    = nodedep.data['length']
+    nodedep_dt   = nodedep.data['dT_T']
+    nodedep_k    = nodedep.data['k']
+    nodedep_h    = nodedep.data['h']
+    nodedep_ei   = nodedep.data['ei']
+    nodedep_ea   = nodedep.data['ea']
+    nodedep_m    = nodedep.data['moment']
+    nodedep_f    = nodedep.data['f']
+    nodedep_lll  = nodedep.data['ll_local']
     nodedep_llxn = nodedep.data['ll_x_n']
     nodedep_llyq = nodedep.data['ll_y_q']
 
     # append values to all dict entries and adapt with index
-    nodedep_l.append(False)
-    nodedep_dt.append(False)
-    nodedep_k.append(False)
-    nodedep_h.append(False)
-    nodedep_ei.append(False)
-    nodedep_ea.append(False)
-    nodedep_m.append(False)
-    nodedep_f.append(False)
-    nodedep_lll.append(False)
-    nodedep_llxn.append(False)
-    nodedep_llyq.append(False)
+    nodedep_l.    append(False)
+    nodedep_dt.   append(False)
+    nodedep_k.    append(False)
+    nodedep_h.    append(False)
+    nodedep_ei.   append(False)
+    nodedep_ea.   append(False)
+    nodedep_m.    append(False)
+    nodedep_f.    append(False)
+    nodedep_lll.  append(False)
+    nodedep_llxn. append(False)
+    nodedep_llyq. append(False)
 
     index = len(nodedep_l) - 1
 
@@ -171,7 +172,7 @@ def add_nodedep(curr_doc: CurrentDoc, enum_type, x, y, length=0.0, angle=0.0,
                              x=x + curr_doc.data_sources.ds_images.data['x_mod'][ds_img_location],
                              y=y + curr_doc.data_sources.ds_images.data['y_mod'][ds_img_location], w=curr_doc.data_sources.ds_images.data['w'][ds_img_location],
                              h=curr_doc.data_sources.ds_images.data['h'][ds_img_location], anchor="center", angle=0.0)
-            # add image glyph to plot
+        # add image glyph to plot
         p.add_glyph(curr_doc.data_sources.ds_glyph_images, image, name=name)
         # adapt angle of image glyph at one node if angle given
         if angle and not enum_type == eLnum.ElSupEnum.SPRING.value:
@@ -307,25 +308,25 @@ def delete_nodedep(curr_doc: CurrentDoc, name_indep=False, name_nodedep=False, i
     # bokeh object: input plot
     p = curr_doc.plot_input
 
-    nodedep = curr_doc.data_sources.ds_nodedep_elements
-    nodedep_n1 = nodedep.data['name_node1']
-    nodedep_n2 = nodedep.data['name_node2']
-    nodedep_t = nodedep.data['type']
-    nodedep_n = nodedep.data['name']
-    nodedep_x = nodedep.data['x']
-    nodedep_y = nodedep.data['y']
-    nodedep_l = nodedep.data['length']
-    nodedep_dt = nodedep.data['dT_T']
-    nodedep_k = nodedep.data['k']
-    nodedep_h = nodedep.data['h']
-    nodedep_ei = nodedep.data['ei']
-    nodedep_ea = nodedep.data['ea']
-    nodedep_m = nodedep.data['moment']
-    nodedep_f = nodedep.data['f']
-    nodedep_lll = nodedep.data['ll_local']
+    nodedep      = curr_doc.data_sources.ds_nodedep_elements
+    nodedep_n1   = nodedep.data['name_node1']
+    nodedep_n2   = nodedep.data['name_node2']
+    nodedep_t    = nodedep.data['type']
+    nodedep_n    = nodedep.data['name']
+    nodedep_x    = nodedep.data['x']
+    nodedep_y    = nodedep.data['y']
+    nodedep_l    = nodedep.data['length']
+    nodedep_dt   = nodedep.data['dT_T']
+    nodedep_k    = nodedep.data['k']
+    nodedep_h    = nodedep.data['h']
+    nodedep_ei   = nodedep.data['ei']
+    nodedep_ea   = nodedep.data['ea']
+    nodedep_m    = nodedep.data['moment']
+    nodedep_f    = nodedep.data['f']
+    nodedep_lll  = nodedep.data['ll_local']
     nodedep_llxn = nodedep.data['ll_x_n']
     nodedep_llyq = nodedep.data['ll_y_q']
-    nodedep_a = nodedep.data['angle']
+    nodedep_a    = nodedep.data['angle']
 
     # delete complete node dependent element, when any of its nodes was deleted (cb_adapt_plot_indep)
     indices = []

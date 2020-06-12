@@ -1,12 +1,19 @@
+'''###############################
+IMPORTS
+###############################'''
+# general imports
 import math
 
 # import local files
-import vis_callbacks as vis_cbs
-import vis_initialization as vis_init
-import vis_elementToPlot as vis_elToP
-from Classes import ElementSupportEnum as eLnum
+import vis_callbacks             as vis_cbs
+import vis_initialization        as vis_init
+import vis_elementToPlot         as vis_elToP
+from Classes                 import ElementSupportEnum as eLnum
 from Classes.CurrentDocument import CurrentDoc
 
+'''###############################
+Define default values
+###############################'''
 # used to normalize all line loads with their maximum value and the maximum height in the input plot
 line_load_max_height = 0.2
 line_load_max_value = 1.0
@@ -114,20 +121,20 @@ def change_angle_nodedep(curr_doc: CurrentDoc, name_nodedep, angle, index, index
 #
 #     :return:
 #     """
-#
-#
+
+
 # def change_position_indep(name_indep, new_x, new_y):
 #     change_position_nodedep(name_indep)
 #     change_angle_nodedep(name_indep)
-#
-#
+
+
 # def change_position_nodedep(name_indep):
 #     """
 #
 #     :return:
 #     """
-#
-#
+
+
 # TODO: idea - allow an arbitory angle and a user-defined function as input
 def draw_lineload(curr_doc: CurrentDoc, name, load_x_n, load_y_q, local, index, index_glyph=False, create_element=False):
     """

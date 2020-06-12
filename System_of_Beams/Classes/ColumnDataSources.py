@@ -1,10 +1,22 @@
-import numpy as np
-from bokeh.models import ColumnDataSource
+'''###############################
+IMPORTS
+###############################'''
+# general imports
+import numpy                    as np
+
+# import bokeh modules
+from bokeh.models           import ColumnDataSource
 from bokeh.models.callbacks import CustomJS
 
 
 class ColumnDataSources:
+    """
+    Contains all ColumnDataSources and JavaScript Callbacks
+    """
     def __init__(self):
+        # -> ColumnDataSources for vis_callbacks
+        ########################################
+
         # datasource for the node independent elements of the input plot
         self.ds_input = ColumnDataSource(data=dict(x=[], y=[], type=[], name_user=[]))
 

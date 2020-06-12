@@ -1,8 +1,15 @@
-from Libs.geometriccalc import knot_dist
-from Libs import geometriccalc as gc
-from sympy import Symbol, integrate, Eq
+'''###############################
+IMPORTS
+###############################'''
+# general imports
+from sympy                      import Symbol, integrate, Eq
 import math
-from numpy import array, append
+from numpy                      import array, append
+
+# import local files
+from Libs.geometriccalc         import knot_dist
+from Libs                       import geometriccalc as gc
+
 # from Bending_Beam_modified.Classes.ElementSupportEnum import ElSupEnum
 import re
 from Classes.ElementSupportEnum import ElSupEnum

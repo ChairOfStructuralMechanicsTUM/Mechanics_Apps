@@ -1,64 +1,37 @@
-from functools  import partial
-from os.path    import dirname, join, abspath, split
+'''###############################
+IMPORTS
+###############################'''
+# general imports
+from functools                 import partial
+from os.path                   import dirname, join, abspath, split
 import sys
 import inspect
 
 # import bokeh modules
-from bokeh.plotting       import figure
-from bokeh.models         import ColumnDataSource
-from bokeh.models.glyphs  import Line
-from bokeh.models.ranges  import Range1d
-from bokeh.layouts        import column, row
-from bokeh.models.widgets import Button, Div, TextInput, Dropdown, CheckboxGroup, RadioGroup
-from bokeh.models.tickers import AdaptiveTicker
-from bokeh.events         import Tap
+from bokeh.plotting            import figure
+from bokeh.models              import ColumnDataSource
+from bokeh.models.glyphs       import Line
+from bokeh.models.ranges       import Range1d
+from bokeh.layouts             import column, row
+from bokeh.models.widgets      import Button, Div, TextInput, Dropdown, CheckboxGroup, RadioGroup
+from bokeh.models.tickers      import AdaptiveTicker
+from bokeh.events              import Tap
 
 # import local files
-import vis_callbacks        as vis_cbs
-from Classes            import ElementSupportEnum as eLnum
-from Libs               import HtmlColors as coL
+import vis_callbacks               as vis_cbs
+from Classes                   import ElementSupportEnum as eLnum
+from Libs                      import HtmlColors as coL
 from Classes.ColumnDataSources import ColumnDataSources
-from Classes.CurrentDocument import CurrentDoc
+from Classes.CurrentDocument   import CurrentDoc
 
 # import local latex_support
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0, parentdir)
+
 # from latex_support import LatexDiv, LatexLabel, LatexSlider, LatexLabelSet, LatexLegend
 # TODO update Latex support
 
-# # input plot, the user can add elements to it and combine them to a mechanical system
-# plot_input = figure()
-#
-# # dict containing all element bokeh buttons and their corresponding ElementSupportEnum as key
-# buttons = {}
-#
-# # dict containing all element-info-box inputs
-# input_element_info = {}
-# # dict containing some element-info-box Divs
-# div_element_info = {}
-# # dict containing some element-info-box radio- or checkbox-groups
-# group_element_info = {}
-# # dict containing children of layout_element_info
-# children_element_info = {}
-# # layout of the element-info-box
-# layout_element_info = row()
-#
-# # bokeh Div for showing messages to the user like warnings and errors and initial text string that gets expanded
-# div_msg = 0
-# msg2user = ""
-#
-# # bokeh Div for showing messages concerning the input plot to the user
-# div_input = 0
-#
-# # output plots used after calculations
-# plot_list = []
-# plot_normal_f = figure()
-# plot_normal_disp = figure()
-# plot_shear_f = figure()
-# plot_moment = figure()
-# plot_shear_disp = figure()
-# plot_shear_angle = figure()
 
 
 def configure_input_plot(curr_doc, p, div_xy, max_indep_elements):
@@ -210,21 +183,27 @@ def initialize(curr_doc: CurrentDoc, max_indep_elements=20, catch_radius=0.15):
     curr_doc.plot_normal_f = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
     curr_doc.plot_normal_f.toolbar.logo = None
     curr_doc.plot_normal_f.title.text = 'Normal force'
+    
     curr_doc.plot_normal_disp = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
     curr_doc.plot_normal_disp.toolbar.logo = None
     curr_doc.plot_normal_disp.title.text = 'Normal displacement'
+    
     curr_doc.plot_shear_f = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
     curr_doc.plot_shear_f.toolbar.logo = None
     curr_doc.plot_shear_f.title.text = 'Shear force'
+    
     curr_doc.plot_moment = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
     curr_doc.plot_moment.toolbar.logo = None
     curr_doc.plot_moment.title.text = 'Bending moment'
+    
     curr_doc.plot_shear_disp = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
     curr_doc.plot_shear_disp.toolbar.logo = None
     curr_doc.plot_shear_disp.title.text = 'Shear displacement'
+    
     curr_doc.plot_shear_angle = figure(plot_width=plot_output_width, plot_height=plot_output_height, active_scroll="wheel_zoom")
     curr_doc.plot_shear_angle.toolbar.logo = None
     curr_doc.plot_shear_angle.title.text = 'Rotation angle'
+    
     curr_doc.plot_list = [curr_doc.plot_normal_f, curr_doc.plot_normal_disp, curr_doc.plot_shear_f,
                           curr_doc.plot_moment, curr_doc.plot_shear_angle, curr_doc.plot_shear_disp]
 
@@ -268,9 +247,9 @@ def initialize(curr_doc: CurrentDoc, max_indep_elements=20, catch_radius=0.15):
     button_del_all.on_click(partial(vis_cbs.cb_button_delete, curr_doc=curr_doc, all_selected=True))
 
     '''
-    ###############################
+    ############################################
     # BOX OF ELEMENTS TO SELECT FOR INPUT PLOT
-    ###############################
+    ############################################
     '''
     # titles for groups of mechanical elements
     text_supports = Div(text="Supports:", width=100, height=20)
@@ -622,9 +601,9 @@ def initialize(curr_doc: CurrentDoc, max_indep_elements=20, catch_radius=0.15):
     # description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=910)
 
     '''
-    ###############################
+    ####################################
     # CREATE LAYOUT AND START DOCUMENT
-    ###############################
+    ####################################
     '''
     spacer = Div(text="", width=20, height=20)
     minispacer = Div(text="", width=0, height=0)

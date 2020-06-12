@@ -36,7 +36,7 @@ class OutputVisu:
         if not list_of_els:
             return
         for el in list_of_els:
-            print("el: " + str(el))
+            #print("el: " + str(el))
             glyph = plot.select(name=el)
             plot.renderers.remove(glyph[0])
         list_of_els.clear()
