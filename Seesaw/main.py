@@ -38,7 +38,7 @@ plot.axis.axis_label_text_font_size="14pt"
 
 # plot bar and support
 plot.line([0, l_beam], [-h_beam, -h_beam], line_width=10, color='#3070B3')
-plot.add_glyph(support_source,ImageURL(url="src", x='x', y='y', w=5, h=5, anchor="top_center"))
+plot.add_glyph(support_source,ImageURL(url="src", x='x', y='y', w=3.8, h=5, anchor="top_center"))
 
 # plot distance
 dist_source = ColumnDataSource(dict(xS=[0], xE=[20], yS=[-15], yE=[-15], xL=[20.0/2.0-0.3], yL=[-13.5], text=["a"]))
