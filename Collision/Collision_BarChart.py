@@ -77,11 +77,16 @@ class Collision_BarChart(object):
         self.fig.xaxis[0].ticker=FixedTicker(ticks=label_places)
         # save vals in ColumnDataSource so ticker_func can use it as default val
         index_obj = ColumnDataSource(data=index)
+        #print(index_obj.data)
         # define function which assigns values to tick labels
-        def ticker_func(labels=index_obj):
-            return labels.data[str(tick*100)]
+        # def ticker_func(labels=index_obj):
+        #     return labels.data[str(tick*100)]
+        ticker_func_JS = """
+            var idx = tick*100;
+            return labels.data[idx.toString()]
+        """
         # call ticker_func
-        self.fig.xaxis[0].formatter = FuncTickFormatter.from_py_func(ticker_func)
+        self.fig.xaxis[0].formatter = FuncTickFormatter(code=ticker_func_JS, args=dict(labels=index_obj))
     
     def setTitle(self,title):
         self.fig.title=title

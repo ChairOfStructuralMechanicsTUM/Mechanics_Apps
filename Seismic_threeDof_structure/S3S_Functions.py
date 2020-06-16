@@ -225,8 +225,10 @@ class S3S_Mode( S3S_Structure ):
         self.locationInERS = ColumnDataSource(data=dict(x=[0],y=[0])) # with default values
         self.participationFactor = 0 # 0 is a default value
         
-        self.multiplier_text = LatexDiv(text=" $\\displaystyle\\frac{\\beta S_a(T) }{ \\omega^2} ="+ str(0) + "$")
-        self.frequency_text  = LatexDiv(text="""<b>Natural Frequency =</b> """)
+        self.multiplier_text = LatexDiv(text=" $\\displaystyle\\frac{\\beta S_a(T) }{ \\omega^2} ="+ str(0) + "$",
+                                        width=240, height=20)
+        self.frequency_text  = LatexDiv(text="""<b>Natural Frequency =</b> """,
+                                        width=240, height=20)
     
     def get_maximum_displacement( self, siesmicParameters ):
         r = np.ones(3)

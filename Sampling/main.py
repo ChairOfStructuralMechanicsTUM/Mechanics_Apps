@@ -82,7 +82,7 @@ N_input = TextInput(value='2^6',
 nyquist_label_default = "show sampling- and Nyquist-frequency"
 nyquist_button = CheckboxButtonGroup(labels=[nyquist_label_default],
                                      active=[],
-                                     sizing_mode="stretch_both")
+                                     sizing_mode="fixed", width=240, height=32)
 
 ###########
 # FIGURES #
@@ -244,16 +244,16 @@ def initialize():
 
     update()
 
-    plot_original_scatter = plot_original.scatter('t', 'x', source=x_sampled_source)
-    plot_original_line = plot_original.line('t', 'x', color='red', source=x_analytical_source, line_width=.5)
+    plot_original_scatter = plot_original.scatter('t', 'x', source=x_sampled_source, color='#64A0C8')
+    plot_original_line = plot_original.line('t', 'x', color='#E37222', source=x_analytical_source, line_width=.5)
     plot_original.add_layout(LatexLegend(items=[("\\text{samples}",[plot_original_scatter]),("x(t)",[plot_original_line])]))
 
-    plot_transform_imag_scatter = plot_transform_imag.scatter('frequency', 'X_imag', source=X_sampled_source)
-    plot_transform_imag_line = plot_transform_imag.line('frequency', 'X_imag', color='red', source=X_analytical_source, line_width=.5)
+    plot_transform_imag_scatter = plot_transform_imag.scatter('frequency', 'X_imag', source=X_sampled_source, color='#64A0C8')
+    plot_transform_imag_line = plot_transform_imag.line('frequency', 'X_imag', color='#E37222', source=X_analytical_source, line_width=.5)
     plot_transform_imag.add_layout(LatexLegend(items=[("\mathrm{Im}[X(f)] - DFT",[plot_transform_imag_scatter]),("\mathrm{Im}[X(f)]",[plot_transform_imag_line])]))
 
-    plot_transform_real_scatter = plot_transform_real.scatter('frequency', 'X_real', source=X_sampled_source)
-    plot_transform_real_line = plot_transform_real.line('frequency', 'X_real', color='red', source=X_analytical_source, line_width=.5)
+    plot_transform_real_scatter = plot_transform_real.scatter('frequency', 'X_real', source=X_sampled_source, color='#64A0C8')
+    plot_transform_real_line = plot_transform_real.line('frequency', 'X_real', color='#E37222', source=X_analytical_source, line_width=.5)
     plot_transform_real.add_layout(LatexLegend(items=[("\mathrm{Re}[X(f)] - DFT",[plot_transform_real_scatter]),("\mathrm{Re}[X(f)]",[plot_transform_real_line])]))
 
     if color_interval:
@@ -326,7 +326,7 @@ def on_function_changed(attr, old, new):
     reset_views()
 
 
-def sample_fun_input_changed(self):
+def sample_fun_input_changed(attr, old, new):
     """
     Called if the sample function is changed.
     :param self:
@@ -334,7 +334,7 @@ def sample_fun_input_changed(self):
     """
 
     # get the id
-    sample_function_id = sample_fun_input_f.value
+    sample_function_id = new #sample_fun_input_f.value
     # get the corresponding sample function
     sample_function = sample_functions[sample_function_id][0]
     # write the sample function into the textbox
@@ -362,7 +362,7 @@ initialize()
 
 # add callback behaviour
 f_input.on_change('value', on_function_changed)
-sample_fun_input_f.on_click(sample_fun_input_changed)
+sample_fun_input_f.on_change('value',sample_fun_input_changed)
 t0_input.on_change('value', on_parameters_changed)
 N_input.on_change('value', on_parameters_changed)
 nyquist_button.on_change('active', on_nyquist_button_changed)

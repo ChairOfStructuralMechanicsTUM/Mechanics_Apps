@@ -124,10 +124,10 @@ def update_tangent(parametrization_type, is_active):
         quiver[parametrization_type].clear_quiver_data()
 
 
-def sample_curve_change(self):
+def sample_curve_change(attr, old, new):
     global update_callback
     # get sample function pair (first & second component of ode)
-    sample_curve_key = sample_curve_input.value
+    sample_curve_key = new #sample_curve_input.value
     sample_curve_x_component, sample_curve_y_component = arc_settings.sample_curves[sample_curve_key]
     # write new functions to u_input and v_input
     update_callback = False  # prevent callback
@@ -184,7 +184,7 @@ y_component_input.on_change('value', curve_change)
 # dropdown menu for selecting one of the sample curves
 sample_curve_input = Dropdown(label="choose a sample function pair or enter one below",
                               menu=arc_settings.sample_curve_names)
-sample_curve_input.on_click(sample_curve_change)
+sample_curve_input.on_change('value', sample_curve_change)
 
 
 # initialize plot
@@ -196,14 +196,14 @@ plot = Figure(plot_height=400, plot_width=400, tools=toolset,
               y_range=[arc_settings.y_min_view, arc_settings.y_max_view])
 
 # Plot the line by the x,y values in the source property
-plot.line('x', 'y', source=source_curve, line_width=3, line_alpha=1, color='black', legend='curve')
+plot.line('x', 'y', source=source_curve, line_width=3, line_alpha=1, color='black', legend_label='curve')
 # quiver related to normal length parametrization
 quiver = 2*[None]
 quiver[0] = my_bokeh_utils.Quiver(plot, fix_at_middle=False, line_width=2, color='blue')
-plot.scatter('x', 'y', source=source_point_normal, color='blue', legend='original parametrization')
+plot.scatter('x', 'y', source=source_point_normal, color='blue', legend_label='original parametrization')
 # quiver related to arc length parametrization
 quiver[1] = my_bokeh_utils.Quiver(plot, fix_at_middle=False, line_width=2, color='red')
-plot.scatter('x', 'y', source=source_point_arc, color='red', legend='arc length parametrization')
+plot.scatter('x', 'y', source=source_point_arc, color='red', legend_label='arc length parametrization')
 
 # calculate data
 update_curve()

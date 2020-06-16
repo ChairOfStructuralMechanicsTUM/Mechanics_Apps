@@ -1,0 +1,97 @@
+<style>
+    h1 {
+        margin: 2em 0 0 0;
+        color: #2e484c;
+        font-family: 'Julius Sans One', sans-serif;
+        font-size: 1.8em;
+        text-transform: uppercase;
+    }
+
+    a:link {
+        font-weight: bold;
+        text-decoration: none;
+        color: #0d8ba1;
+    }
+
+    a:visited {
+        font-weight: bold;
+        text-decoration: none;
+        color: #1a5952;
+    }
+
+    a:hover,
+    a:focus,
+    a:active {
+        text-decoration: underline;
+        color: #9685BA;
+    }
+
+    p {
+        font: "Libre Baskerville", sans-serif;
+        text-align: justify;
+        text-justify: inter-word;
+    }
+
+    code {
+        color: #336699;
+    }
+</style>
+
+<h1>Template</h1>
+
+<p>
+    This app provides a template for the fast start of developing a new app. <br>
+    It can also be used as a reference resource for specific models when enhancing existing apps.
+</p>
+
+
+<h2>Directories</h2>
+
+<h3>main.py - mandatory</h3>
+<p>The main file where the magic of the app happens. <br>
+   All other files will find together here, for example the description, images or helper functions. <br>
+   Most importantly - apart from all the imports - the final page layout is set up in the main.
+</p>
+
+<h3>description.html - mandatory</h3>
+<p>An html-file describing the app must be loaded in <i>main.py</i>.<br>
+   Multiple html-files for descriptions before, after or between certain plots/tools can also be used. <br>
+   However the main description at the start of every app must always be provided.
+</p>
+
+<h3>TA_constants.py</h3>
+<p>All constants that are used throughout the app should be defined here. <br>
+   Constants could be repeatedly used strings, initial slider settings, standard width and height for your widgets, image links, etc. <br>
+   It is highly encouraged to include such a separate file for constants since it facilitates possible future adjustments without having to look through the rest of the code.
+</p>
+
+<h3>TA_custom_class.py</h3>
+<p>This file contains a custom class with detailed description. <br>
+   Separating complex functionalities in new files makes the code easier to understand.
+</p>
+
+<h3>/static/images</h3>
+<p>All images used in the app must be placed and loaded from here. <br>
+   Since different heights and widths may be needed in different figures and ranges, we urge to use images in svg format.
+</p>
+
+<h3>/static/strings.json</h3>
+<p>If multiple languages should be supported, define the text in this file. All definitions need to match object names used in your python files.<br>
+   Load this file into python via <i>yaml.safe_load</i> (needs the yaml package). Refer to the <i>Seesaw App</i> for an example.
+</p>
+
+<h3>/templates</h3>
+<p>If you need to apply a special design on one of your objects but no built-in attribute exists in Bokeh (see their reference pages), you can define a custom CSS style in
+   this location. Load it with an <i>index.html</i> in the same folder and call it using the <i>css_classes</i> attribute in your python file.
+</p>
+
+<h2>App description</h2>
+<p>The buttons and slider used here have no functionality on purpose.
+   This template should only provide standard elements used in several apps and suggest a clear code layout. <br>
+   For running examples please have a look at the <i>Dummy App</i> or browse through other existing apps.
+</p>
+
+
+
+
+

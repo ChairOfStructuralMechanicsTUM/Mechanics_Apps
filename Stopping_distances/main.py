@@ -1,7 +1,19 @@
-from SD_Problem import SD_Problem
-from SD_Graphs import SD_Graphs
+"""
+Stopping Distances - compare time and distance dependent description of motion
+
+"""
+# general imports
+
+# bokeh imports
+from bokeh.io      import curdoc
+from bokeh.layouts import column, row
+
+# internal imports
+from SD_Problem       import SD_Problem
+from SD_Graphs        import SD_Graphs
 from SD_Visualisation import SD_Visualisation
 
+# latex integration
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
@@ -9,8 +21,8 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv
 
-from bokeh.io import curdoc
-from bokeh.layouts import column, row
+#---------------------------------------------------------------------#
+
 
 
 # create each part of the window
