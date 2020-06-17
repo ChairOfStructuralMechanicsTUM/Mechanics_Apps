@@ -8,7 +8,7 @@ from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
 from bokeh.models import Slider, Button, Div, ColumnDataSource
 
-from math import sin, radians, sqrt, pi, pow
+from math import sin, radians, sqrt, pi, pow, atan2
 from copy import deepcopy
 import numpy as np
 
@@ -32,11 +32,14 @@ initial_lambda_value = 5.0
 Omega = 20*pi/27 #Excitation Frequency Omega = (2*pi/9)*(10/3)
 eta = np.linspace(0,3,301)
 V = []
+PhaseShift = []
 current_eta = Omega/sqrt(initial_kappa_value/initial_mass_value)
 for i in range (0,301):
     x = eta[i]
     V.append(pow(x,2)/sqrt(pow(1-pow(x,2),2)+pow(2*x*initial_lambda_value/(2*sqrt(initial_mass_value*initial_kappa_value)),2)))
+    PhaseShift.append(abs(atan2(-initial_lambda_value*x/sqrt(initial_mass_value*initial_kappa_value), 1-pow(x,2))))
 current_V = pow(current_eta,2)/sqrt(pow(1-pow(current_eta,2),2)+pow(2*current_eta*initial_lambda_value/(2*sqrt(initial_mass_value*initial_kappa_value)),2))
+current_PhaseShift = abs(atan2(-initial_lambda_value*current_eta/sqrt(initial_mass_value*initial_kappa_value), 1-pow(current_eta,2)))
 
 mass = RectangularMass(initial_mass_value,-4,16,8,2)     # an object of RectangularMass class (mass, x, y, w, h)
 spring = Spring((-2,16),(-2,9),7,initial_kappa_value)   # an object of Spring class (start,end,x0,kappa,spacing)
@@ -52,7 +55,10 @@ Wheel_source = ColumnDataSource(data = dict(x=[0],y=[5]))
 Floor = ColumnDataSource(data = dict(x=[],y=[]))
 Floor_source = ColumnDataSource(data = dict(x=[],y=[]))
 amplification_function = ColumnDataSource(data = dict(eta=eta, V=V))
-current_ratio = ColumnDataSource(data = dict(eta=[current_eta], V=[current_V]))
+current_eta_V = ColumnDataSource(data = dict(eta=[current_eta], V=[current_V]))
+phase_angle = ColumnDataSource(data = dict(eta=eta, PhaseShift=PhaseShift))
+current_eta_PhaseShift = ColumnDataSource(data = dict(eta=[current_eta], PhaseShift=[current_PhaseShift]))
+
 dt=0.0075
 t=0     # time = 0
 s=0     # mass displacement = 0
@@ -147,6 +153,7 @@ def change_mass(attr,old,new):
         InitialFloor()  # update position of static equilibrium for the new mass
     update_current_ratio()
     update_amplification_function()
+    update_phase_angle()
 ## Create slider to choose mass of blob
 mass_input = LatexSlider(title="\\text{Mass} \\left[ \\mathrm{kg} \\right]: ", value=5, start=0.3, end=10.0, step=0.1, width=400)
 mass_input.on_change('value',change_mass)
@@ -157,6 +164,7 @@ def change_kappa(attr,old,new):
         InitialFloor()  # update position of static equilibrium for the new mass
     update_current_ratio()
     update_amplification_function()
+    update_phase_angle()
 ## Create slider to choose spring constant
 kappa_input = LatexSlider(title="\\text{Spring stiffness} \\left[ \\frac{\\mathrm{N}}{\\mathrm{m}} \\right]: ", value=100, start=10.0, end=200, step=10, width=400)
 kappa_input.on_change('value',change_kappa)
@@ -167,6 +175,7 @@ def change_lam(attr,old,new):
         InitialFloor()  # update position of static equilibrium for the new mass
     update_current_ratio()
     update_amplification_function()
+    update_phase_angle()
 ## Create slider to choose damper coefficient
 lam_input = LatexSlider(title="\\text{Damper Coefficient} \\left[ \\frac{\\mathrm{Ns}}{\\mathrm{m}} \\right]: ", value=5, start=0.0, end=10, step=0.1, width=400)
 lam_input.on_change('value',change_lam)
@@ -174,14 +183,18 @@ lam_input.on_change('value',change_lam)
 InitialFloor() # call floor definition after defining necessary variables
 
 def update_current_ratio():
-    [current_eta] = current_ratio.data["eta"] 
-    [current_V] = current_ratio.data["V"] 
+    [current_eta] = current_eta_V.data["eta"] 
+    [current_V] = current_eta_V.data["V"] 
+    [current_PhaseShift] = current_eta_PhaseShift.data["PhaseShift"]
     current_eta = Omega/sqrt(kappa_input.value/mass_input.value)
     if current_eta == 1 and lam_input.value == 0:
         current_V = 1000
+        current_PhaseShift = pi/2
     else:
         current_V = pow(current_eta,2)/sqrt(pow(1-pow(current_eta,2),2)+pow(2*current_eta*lam_input.value/(2*sqrt(mass_input.value*kappa_input.value)),2))
-    current_ratio.data = dict(eta=[current_eta], V=[current_V])
+        current_PhaseShift = abs(atan2(-lam_input.value*current_eta/sqrt(mass_input.value*kappa_input.value), 1-pow(current_eta,2)))
+    current_eta_V.data = dict(eta=[current_eta], V=[current_V])
+    current_eta_PhaseShift.data = dict(eta=[current_eta], PhaseShift=[current_PhaseShift])
 
 def update_amplification_function():
     V = amplification_function.data["V"]
@@ -192,6 +205,16 @@ def update_amplification_function():
         else: 
             V[i] = pow(x,2)/sqrt(pow(1-pow(x,2),2)+pow(2*x*lam_input.value/(2*sqrt(mass_input.value*kappa_input.value)),2))
     amplification_function.data = dict(eta=eta, V=V)
+
+def update_phase_angle():
+    PhaseShift = phase_angle.data["PhaseShift"]
+    for i in range (0,301):
+        x = eta[i]
+        if x == 1 and lam_input.value == 0:
+            PhaseShift[i] = pi/2
+        else:
+            PhaseShift[i] = abs(atan2(-lam_input.value*x/sqrt(mass_input.value*kappa_input.value), 1-pow(x,2)))
+    phase_angle.data = dict(eta=eta, PhaseShift=PhaseShift)
 
 def disable_all_sliders(d=True):
     mass_input.disabled = d
@@ -283,13 +306,21 @@ p.yaxis.axis_label="Relative Displacement [m]"
 p.toolbar.logo = None
 
 # Plot amplification function
-amp = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=300, height=300)
+amp = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=250, height=218)
 amp.line(x="eta", y="V", source=amplification_function, color="#a2ad00")
-amp.circle(x='eta', y='V', size=10, color="#e37222", source=current_ratio)
+amp.circle(x='eta', y='V', size=10, color="#e37222", source=current_eta_V)
 amp.yaxis.axis_label="Amplification"
 amp.toolbar.logo = None #removes bokeh logo
-amp.xaxis.axis_label="Excitation Frequency Ratio"
 amp.axis.axis_label_text_font_style="normal"
+
+# Plot phase angle
+pa = figure(title="", tools="", x_range=(0,3.0), y_range=(0,3.5), width=250, height=218)
+pa.line(x="eta", y="PhaseShift", source=phase_angle, color="#a2ad00")
+pa.circle(x='eta', y='PhaseShift', size=10, color="#e37222", source=current_eta_PhaseShift)
+pa.yaxis.axis_label="Phase angle [rad]"
+pa.toolbar.logo = None #removes bokeh logo
+pa.xaxis.axis_label="Excitation Frequency Ratio"
+pa.axis.axis_label_text_font_style="normal"
 
 # Define buttons and what happens when clicked
 play_pause_button = Button(label="Play", button_type="success",width=100)
@@ -303,7 +334,7 @@ stop_button.on_click(stop)
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1010)
 
-curdoc().add_root(column(description,row(column(Spacer(height=100),play_pause_button,stop_button,reset_button),Spacer(width=10),fig,p, column(Spacer(height=137), amp)),
+curdoc().add_root(column(description,row(column(Spacer(height=100),play_pause_button,stop_button,reset_button),Spacer(width=10),fig,p, column(amp, Spacer(height=1), pa)),
     row(mass_input),row(kappa_input),row(lam_input)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 
