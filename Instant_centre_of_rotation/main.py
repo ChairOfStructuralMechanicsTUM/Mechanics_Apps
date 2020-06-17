@@ -99,8 +99,8 @@ displacement_u_label = LabelSet( x='x', y='y', text='text', source=displacement_
 fig_1.add_layout(displacement_u_label)                                                                      #displacement u label
 
 # -> add support images
-fig_1.add_glyph(support_A_img_source , ImageURL(url="sp_img", x="x", y="y",  w=0.66, h=0.4, anchor="center", angle=3/2*math.pi))
-fig_1.add_glyph(support_B_img_source , ImageURL(url="sp_img", x="x", y="y",  w=0.66, h=0.4, anchor="center"))
+fig_1.add_glyph(support_A_img_source , ImageURL(url="sp_img", x="x", y="y",  w=0.50, h=0.4, anchor="center", angle=3/2*math.pi))
+fig_1.add_glyph(support_B_img_source , ImageURL(url="sp_img", x="x", y="y",  w=0.50, h=0.4, anchor="center"))
 
 # -> plott ICR
 fig_1.circle(x='x', y='y', source=current_coords, radius=0.05, line_color=c_orange, fill_color=c_orange) #ICR
@@ -144,8 +144,8 @@ def slider_func(attr, old, new):
     displacement_w_source.stream(           dict( xS=[0], xE=[0], yS=[y_current], yE=[y_current-0.8]), rollover=-1)
     displacement_u_source.stream(           dict( xS=[x_current], xE=[x_current+0.8], yS=[0], yE=[0]), rollover=-1)
     if global_vars['show'] == 1:
-        support_A_img_source.data           = dict( sp_img=[slide_support_img], x=[0.4] , y=[y_current+0.14] )
-        support_B_img_source.data           = dict( sp_img=[slide_support_img], x=[x_current] , y=[-0.14] )
+        support_A_img_source.data           = dict( sp_img=[slide_support_img], x=[0.33] , y=[y_current+0.05] )
+        support_B_img_source.data           = dict( sp_img=[slide_support_img], x=[x_current] , y=[-0.13] )
         wall_horizontal_hatching.data       = dict(x=[], y=[])
         wall_vertical_hatching.data         = dict(x=[], y=[])
     else:

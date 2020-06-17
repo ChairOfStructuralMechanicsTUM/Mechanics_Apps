@@ -151,8 +151,8 @@ beam1=p1.line(x='x', y='y', source=beam1,line_width=5,line_color='black')
 eigenmodes_beam1=p1.line(x='x', y='y', source=source1,
                          line_width=3,line_color='#3070b3') # TUM color pantone 300
 eigenmodes_beam1.visible=True
-p1.add_glyph(support_src,ImageURL(url="sp2", x=0.0, y=0.35, w=2, h=2, anchor="top_center"))
-p1.add_glyph(support_src,ImageURL(url="sp1", x=1.0, y=0.35, w=1.8, h=1.8, anchor="top_center"))
+p1.add_glyph(support_src,ImageURL(url="sp2", x=0.0, y=0.35, w=0.08, h=2, anchor="top_center"))
+p1.add_glyph(support_src,ImageURL(url="sp1", x=1.0, y=0.35, w=0.072, h=1.8, anchor="top_center"))
     
 legend1 = LatexLegend(items=[
     ("\\text{Eigenvalue Problem: } \\sin(\\lambda) = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = \\sin(i \\cdot \\pi \\xi)"   , [eigenmodes_beam1]),
@@ -181,8 +181,8 @@ eigenmodes_beam2cos=p2.line(x='x', y='y', source=source2cos,
                          line_width=1,line_color='#64A0C8') # TUM color pantone 542 
 eigenmodes_beam2sin=p2.line(x='x', y='y', source=source2sin,
                          line_width=1,line_color='#98C6EA') # TUM color pantone 283
-p2.add_glyph(support_src,ImageURL(url="sp3", x=-0.0105, y=0.0, w=2, h=2, anchor="center"))
-p2.add_glyph(support_src,ImageURL(url="sp4", x=1.0105, y=0.0, w=2, h=2, anchor="center"))
+p2.add_glyph(support_src,ImageURL(url="sp3", x=-0.0105, y=0.0, w=0.025, h=2, anchor="center"))
+p2.add_glyph(support_src,ImageURL(url="sp4", x=1.0105, y=0.0, w=0.025, h=2, anchor="center"))
 
 legend2 = LatexLegend(items=[
     ("\\text{Eigenvalue Problem: } \cosh(\\lambda) \cdot \cos(\\lambda) -1 = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = c(\\lambda_i \\xi) - \\frac{c(\\lambda_i)}{s(\\lambda_i)} \\cdot s(\\lambda_i \\xi)", [eigenmodes_beam2]),
@@ -207,7 +207,7 @@ p3.outline_line_color = "black"
 p3.title.text_font_size="13pt"
 
 beam3=p3.line(x='x', y='y', source=beam3,line_width=5,line_color='black') 
-p3.add_glyph(support_src,ImageURL(url="sp3", x=-0.0105, y=0.0, w=2, h=2, anchor="center"))
+p3.add_glyph(support_src,ImageURL(url="sp3", x=-0.0105, y=0.0, w=0.025, h=2, anchor="center"))
 eigenmodes_beam3=p3.line(x='x', y='y', source=source3,
                          line_width=3,line_color='#3070b3') # TUM color pantone 300
 eigenmodes_beam3cosh=p3.line(x='x', y='y', source=source3cosh,
