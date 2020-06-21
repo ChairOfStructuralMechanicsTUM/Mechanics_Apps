@@ -394,7 +394,7 @@ class ElementCalculation:
                                   0] * self.u1_beta))
             condition = append(condition, Eq(self.u1_beta, el[self.ids_start[0]].u2_beta))
             condition = append(condition, Eq(self.Q1_beta,
-                              0 + k[1] * (self.w1_beta - self.adding_functions_of_elements(1, 'w', el, self.ids_start))))
+                              0 + k[1] * (self.w1_beta - el[self.ids_start[0]].w2_beta)))
             condition = append(condition, Eq(Symbol('M_0' + str(self.id_el_)),
                               self.adding_multiple_elements(self.ids_start, 'M_1', el) - forces[2] - k[2] * Symbol(
                                   'phi_0' + str(self.id_el_))))
