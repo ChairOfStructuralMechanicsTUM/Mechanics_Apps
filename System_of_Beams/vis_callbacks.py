@@ -347,6 +347,7 @@ def cb_button_delete(curr_doc: CurrentDoc, all_selected=False, single=False):
             curr_doc.data_sources.ds_input.trigger('data', curr_doc.data_sources.ds_input.data, curr_doc.data_sources.ds_input.data)
         else:
             vis_elToP.delete_nodedep(curr_doc, name_nodedep=curr_doc.elinfo_current_element[0], index_nodedep=curr_doc.elinfo_current_element[2])
+        reset_element_info(curr_doc)
     else:
         s_x = curr_doc.data_sources.ds_input_selected.data['x']
         s_y = curr_doc.data_sources.ds_input_selected.data['y']

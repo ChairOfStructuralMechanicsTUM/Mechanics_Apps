@@ -130,10 +130,13 @@ def calc_xy(symb_func, symb_to_plot_over, l_val, start_knot, end_knot):
     symb_func = symbbox.remove_free_symbols(symb_func, symb_to_plot_over)
     if symb_func == 0:
         return None, None, False
-    if symb_to_plot_over in free_symbs:
+    if symb_to_plot_over in free_symbs and symb_to_plot_over in symb_func.free_symbols:
         # evaluate function from zero to one with symb_to_plot_over
         func_lambdified = lambdify(symb_to_plot_over, symb_func, "numpy")
         y_vals = func_lambdified(x_vals)
+    elif symb_to_plot_over in free_symbs and symb_to_plot_over not in symb_func.free_symbols:
+        print('function can not be displayed correctly. e.g : f(x)=1+x*(M-F*l) -> f(x)=1+x*(0)')
+        y_vals = np.full(len(x_vals), float(symb_func))
     else:
         y_vals = np.full(len(x_vals), float(symb_func))
     return x_vals, y_vals, True

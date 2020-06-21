@@ -119,7 +119,7 @@ def extract_point_load(ds_nodedep, indice, node_list):
     angle = float(ds_nodedep.data["angle"][indice])
     F_x = symbbox.round_expr(F * m.sin(angle), 5)
     F_y = symbbox.round_expr(F * m.cos(angle), 5)
-    knot_1.set_pointload(F_x, F_y, mom)
+    knot_1.add_pointload(F_x, F_y, mom)
     return F_x, F_y, mom
 
 
