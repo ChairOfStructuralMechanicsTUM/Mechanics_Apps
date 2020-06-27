@@ -14,6 +14,7 @@ from Libs                      import outputvisualization as vis_output
 from testing_collection        import visualisation_tests
 from Classes.ColumnDataSources import ColumnDataSources
 from Classes.CurrentDocument   import CurrentDoc
+from Classes.ElementSupportEnum import ElSupEnum
 
 
 
@@ -202,6 +203,8 @@ def cb_adapt_plot_nodedep(attr, old, new, curr_doc: CurrentDoc):
             if check_for_similar(curr_doc, enum_type, new_name):
                 curr_doc.div_input.text = "Element of this category already exists at this node. " \
                                           "Please choose another node."
+            elif enum_type == eLnum.ElSupEnum.LOAD_MOMENT.value and new_name[0] == str(ElSupEnum.JOINT.value):
+                curr_doc.div_input.text = "Element of this category can not be placed on joint. "
             else:
                 ds_dep_n1.append(new_name)
                 ds_dep_n2.append(None)
