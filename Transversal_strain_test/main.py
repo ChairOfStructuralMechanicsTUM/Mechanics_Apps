@@ -121,11 +121,11 @@ def cb_show_hide_symbols(event):
     if deformable_object.children_vis == 1:
         width, fill = 1, c_black
         # state = True (not supported for Patch in bokeh 1.4.0)
-        button.label = 'hide symbols'
+        button.label = 'Hide symbols'
     else:
         width, fill = 0, None
         # state = False (not supported for Patch in bokeh 1.4.0)
-        button.label = 'show symbols'
+        button.label = 'Show symbols'
     for child in children_visual:
         child.line_width, child.fill_color = width, fill
         # child.visible = state (not supported for Patch in bokeh 1.4.0)
@@ -203,11 +203,11 @@ E_slider.   on_change('value', cb_change_material)
 nu_slider.  on_change('value', cb_change_material)
 
 # button to show/hide symbols on object
-button    = Button(label='show symbols', button_type='success', width=200)
+button    = Button(label='Show symbols', button_type='success', width=200)
 button.     on_click(cb_show_hide_symbols)
 
 # radio button to choose material
-materials = RadioGroup(name='Material parameters:',labels=['rubber', 'lead', 'aluminium', 'steel', 'custom'], active=0)
+materials = RadioGroup(name='Material parameters:',labels=['Rubber', 'Lead', 'Aluminium', 'Steel', 'Custom'], active=0)
 materials.  on_change('active', cb_change_material)
 
 
