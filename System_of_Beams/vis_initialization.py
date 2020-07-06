@@ -223,7 +223,7 @@ def initialize(curr_doc: CurrentDoc, max_indep_elements=20, catch_radius=0.15):
     ###############################
     '''
     menu_tc = [("Single beam load", "single_beam_load"), ("Two beam lineload", "two_beam_lineload"),
-               ("Final structure Software Lab", "fin_struc_soft_lab")]
+               ("Angled structure", "fin_struc_soft_lab")]
     dropdown_tc = Dropdown(label="Show test case", menu=menu_tc, width=150)
     dropdown_tc.on_change('value', partial(vis_cbs.cb_plot_testcase, curr_doc=curr_doc))
     # partial(vis_cbs.cb_get_textinput, key=key_elinfo_n)
