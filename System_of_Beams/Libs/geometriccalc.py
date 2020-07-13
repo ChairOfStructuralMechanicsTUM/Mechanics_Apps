@@ -117,7 +117,7 @@ def find_zero_crossings(func, elem_length, round_pos, n=10):
         if (y_vals[i] <= 0 and y_vals[i+1] >= 0) or (y_vals[i] >= 0 and y_vals[i+1] <= 0):
             # newton's method
             x_it  = (x_vals[i] + x_vals[i+1])/2
-            acc   = 0.0000001
+            acc   = 0.00000000001
             delta = 0.01
             while True:
                 f_val = f(x_it)
