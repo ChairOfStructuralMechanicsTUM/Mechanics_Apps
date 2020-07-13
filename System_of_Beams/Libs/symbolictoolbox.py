@@ -63,7 +63,7 @@ def round_expr(expr, num_digits):
     Round function that can be used for symbolic expressions
     """
     if isinstance(expr, float) or isinstance(expr, int):
-        return round(expr, 2)
+        return round(expr, num_digits)
     return expr.xreplace({n: round(n, num_digits) for n in expr.atoms(Number)})
 
 
@@ -81,7 +81,7 @@ def get_symbol_from_string(inp):
         raise Exception('Symbol cannot be created')
 
 
-def get_str_from_func(func, round_prec=1):
+def get_str_from_func(func, round_func=False, round_prec=2):
     """
     Converts a function to a string and refactors the string to make it more readable
     """
@@ -89,7 +89,8 @@ def get_str_from_func(func, round_prec=1):
     # return pretty(func)
 
     # round function
-    func = round_expr(func, round_prec)
+    if round_func:
+        func = round_expr(func, round_prec)
 
     func_str = str(func)
     # replace ** with ^
