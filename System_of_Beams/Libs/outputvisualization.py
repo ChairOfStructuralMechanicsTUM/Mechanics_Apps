@@ -246,6 +246,18 @@ def plot_bound_val(curr_doc: CurrentDoc, x_val, y_val, text, plot, bound_val_nam
 def print_charac_val_to_console(name, x, y):
     print("Name: {}\t x: {}\t y: {}".format(name, x, y))
 
+def round_expression(expr, min_digits, max_digits):
+    """
+    Rounds the symbolic expression expr(param) to given min_digits(param), if the expression is rounded to zero, the function increases the number of digits up to a maximum of max_digits(param).
+    :return: rounded expr
+    """
+    digits = min_digits
+    rounded_expr = symbbox.round_expr(expr, digits)
+    if rounded_expr == 0 and symbbox.round_expr(expr, max_digits) != 0:
+        while rounded_expr == 0 or digits == max_digits:
+            digits += 1
+            rounded_expr = symbbox.round_expr(expr, digits)
+    return rounded_expr
 
 def plot_characteristic_vals(curr_doc: CurrentDoc, plot, func, symb_to_plot_over, l_val, start_knot, end_knot, x_vals, y_vals, multipl_factor, plot_list, mirror_y_values=False, line_color="#f46d43"):
     """
@@ -277,14 +289,16 @@ def plot_characteristic_vals(curr_doc: CurrentDoc, plot, func, symb_to_plot_over
     abs_tol = 1e-1
 
     # BOUNDARY VALUES
-    start_text = symbbox.get_str_from_func(sign * symbbox.round_expr(func.subs(symb_to_plot_over, 0), 2))
+    expr = round_expression(func.subs(symb_to_plot_over, 0), 2, 6)
+    start_text = symbbox.get_str_from_func(sign * expr)
     x_point_start = x_vals[1]
     y_point_start = y_vals[1]
     start_bound_name = "bound_start_" + prhlp.get_id_from_knots(start_knot, end_knot)
     plot_bound_val(curr_doc, x_point_start, y_point_start, start_text, plot, start_bound_name, line_color, rel_tol, abs_tol)
     plot_list.append(start_bound_name)
 
-    end_text = symbbox.get_str_from_func(sign * symbbox.round_expr(func.subs(symb_to_plot_over, l_val), 2))
+    expr = round_expression(func.subs(symb_to_plot_over, l_val), 2, 6)
+    end_text = symbbox.get_str_from_func(sign * expr)
     x_point_end = x_vals[-2]
     y_point_end = y_vals[-2]
     end_bound_name = "bound_end_" + prhlp.get_id_from_knots(start_knot, end_knot)
@@ -295,11 +309,12 @@ def plot_characteristic_vals(curr_doc: CurrentDoc, plot, func, symb_to_plot_over
     if not func_is_const(func, symb_to_plot_over):
         # print("EXTREME VALUES")
         diff_func_without_symbs = diff(func_without_free_symbs, symb_to_plot_over)
-        roots = gc.get_real_roots(diff_func_without_symbs, symb_to_plot_over)
+        roots = gc.get_real_roots(diff_func_without_symbs, symb_to_plot_over, kn_dist)
         i = 0
         for root in roots:
             if 0 < root < kn_dist:
-                diff_text = symbbox.get_str_from_func(sign * symbbox.round_expr(func.subs(symb_to_plot_over, root * len_symbol), 2))
+                expr = round_expression(func.subs(symb_to_plot_over, root * len_symbol), 2, 6)
+                diff_text = symbbox.get_str_from_func(sign * expr)
                 x_point = x_vals[0] + float(root)
                 y_point = float(func_without_free_symbs.subs(symb_to_plot_over, root))*multipl_factor + y_vals[0]
                 x_point, y_point = gc.rotate_x_y_values(x_point, y_point, start_knot, end_knot)
@@ -325,10 +340,10 @@ def plot_characteristic_vals(curr_doc: CurrentDoc, plot, func, symb_to_plot_over
     # ZERO CROSSING VALUES
     i = 0
     if not func_is_const(func, symb_to_plot_over):
-        roots = gc.get_real_roots(func_without_free_symbs, symb_to_plot_over)
+        roots = gc.get_real_roots(func_without_free_symbs, symb_to_plot_over, kn_dist)
         for root in roots:
             if 0 < root < kn_dist:
-                zero_cross_text = symbbox.get_str_from_func(root * kn_dist * len_symbol)
+                zero_cross_text = symbbox.get_str_from_func(round(root,2) * len_symbol, round_func=True)
                 x_point = x_vals[0] + root
                 y_point = y_vals[0] + 0
                 x_point, y_point = gc.rotate_x_y_values(x_point, y_point, start_knot, end_knot)

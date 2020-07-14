@@ -4,7 +4,8 @@ This file contains all geometric functions needed during different calculations
 import math
 import numpy as np
 from Classes import Knot
-from sympy import solveset, S, EmptySet, FiniteSet, ConditionSet, nsimplify
+from sympy import solveset, S, EmptySet, FiniteSet, ConditionSet, nsimplify, symbols
+from sympy.utilities.lambdify import lambdify
 
 # from System_of_Beams import vis_initialization as vis_init
 
@@ -90,34 +91,82 @@ def is_close_position(x_val, y_val, list_of_vals, rel_tol=1e-9, abs_tol=0.0):
             return True
     return False
 
+def find_zero_crossings(func, elem_length, round_pos, n=10):
+    """
+    Calculates the zero crossings between zero and the element length with newton's method.
+    :param func: function
+    :elem_length: length of element
+    :param round_pos: defines the accuracy of rounding
+    :param n: element will be divided in n parts to search for zero crossings
+    :return: list of the zero crossings [root1, root2, ... , root_n]
+    """
+    f              = lambdify(symbols('x'), func)
+    zero_crossings = []
+    x_vals         = []
+    y_vals         = []
+    current_x      = 0
 
-def get_real_roots(func, root_symb, round_pos=2):
+    for i in range(n+1):
+        x_vals.append(current_x)
+        current_x += elem_length/n
+
+    for x in x_vals:
+        y_vals.append(f(x))
+
+    for i in range(len(x_vals)-1):
+        if (y_vals[i] <= 0 and y_vals[i+1] >= 0) or (y_vals[i] >= 0 and y_vals[i+1] <= 0):
+            # newton's method
+            x_it  = (x_vals[i] + x_vals[i+1])/2
+            acc   = 0.00000000001
+            delta = 0.01
+            while True:
+                f_val = f(x_it)
+                if -acc <= f_val and f_val <= acc:
+                    if round(x_it, 2) > 0 and round(x_it, 2) < round(elem_length,2):
+                        if x_it not in zero_crossings:
+                            x_it = round(x_it, round_pos)
+                            zero_crossings.append(x_it)
+                    break
+                else:
+                    x    = [x_it+delta/2,x_it-delta/2]
+                    f_d  = (f(x[0])-f(x[1])) / delta
+                    x_it = x_it - f_val/f_d
+    return zero_crossings
+
+def get_real_roots(func, root_symb, elem_length, round_pos=4):
     """
     Calculates all real roots of a symbolic function. Returns floats
     :param func: function find the roots in
     :param root_symb: the symbol the function runs over. eg: f(x)=2*x, then root_symb=x
+    :elem_length: length of element
     :param round_pos: defines the accuracy of rounding
     :return: list of all real roots [root1, root2, ... , root_n]
     """
-    root_vec = []
-    func = nsimplify(func)
-    roots = solveset(func, root_symb, S.Reals)
-    if roots.is_empty:
-        return root_vec
-    if isinstance(roots, FiniteSet):
-        for root in roots:
-            try:
-                root_vec.append(round(float(root), round_pos))
-            except:
-                continue  # necessary, to handle complex roots
-        return root_vec
-    elif isinstance(roots, ConditionSet):
-        '''
-        TODO 
-        If sin, cos function is used, a condition set will be created.
-        This needs to be handeled differently, but is not implemented yet
-        '''
-        # vis_init.expand_msg2user("Due to the complex input function, characteristic values cannot be successfully calculated")
+    # -> numerical version
+    root_vec = find_zero_crossings(func, elem_length, round_pos) 
+    
+    # -> analytic version (has problems to find some zero crossings)
+
+    #root_vec = []
+
+    #func = nsimplify(func)
+    #roots = solveset(func, root_symb, S.Reals)
+    #if roots.is_empty:
+    #    return root_vec
+    #if isinstance(roots, FiniteSet):
+    #    for root in roots:
+    #        try:
+    #            root_vec.append(round(float(root), round_pos))
+    #        except:
+    #            continue  # necessary, to handle complex roots
+    #    return root_vec
+    #elif isinstance(roots, ConditionSet):
+    #    '''
+    #    TODO 
+    #    If sin, cos function is used, a condition set will be created.
+    #    This needs to be handeled differently, but is not implemented yet
+    #    '''
+    #    # vis_init.expand_msg2user("Due to the complex input function, characteristic values cannot be successfully calculated")
     return root_vec
 
 
