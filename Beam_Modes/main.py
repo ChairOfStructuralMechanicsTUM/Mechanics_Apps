@@ -63,23 +63,25 @@ def change_matrix(length_left,length_right,EI,lam):                             
         M_line_2 = [0, 1, 0, -1, 0, 0, 0, 0]                                      # boundry condition momentum on the left support  = 0
         M_line_8 = [0, 0, 0, 0, sin(lam*length_right), cos(lam*length_right),     # boundry condition momentum on the right support = 0
                    -sinh(lam*length_right), -cosh(lam*length_right)]
-
-        support_source_left.data = dict(x = [-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])        # updates support image
-        support_source_right.data = dict(x = [L-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])      # updates support image
+        # updates support image
+        support_source_left.data = dict(x = [-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])        
+        support_source_right.data = dict(x = [L-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])      
 
     elif selection == 1:                                                          # fixed-pinned beam
         M_line_2 = [1, 0, 1, 0, 0, 0, 0, 0]                                       # boundry condition distortion of the left support = 0
         M_line_8 = [0, 0, 0, 0, sin(lam*length_right), cos(lam*length_right),     # boundry condition momentum on the right support  = 0
                    -sinh(lam*length_right), -cosh(lam*length_right)]
-        support_source_left.data = dict(x = [-0.05], y = [y_fixed], src = [fixed_support_left_img], w = [img_w_fixed] , h = [img_h])    # updates support image
-        support_source_right.data = dict(x = [L-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])      # updates support image
+        # updates support image
+        support_source_left.data = dict(x = [-0.05], y = [y_fixed], src = [fixed_support_left_img], w = [img_w_fixed] , h = [img_h])    
+        support_source_right.data = dict(x = [L-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])      
 
     else:                                                                         # fixed-fixed beam
         M_line_2 = [1,0,1,0,0,0,0,0]                                              # boundry condition distortion of the left support  = 0
         M_line_8 = [0,0,0,0,cos(lam*length_right),-sin(lam*length_right),         # boundry condition distortion of the right support = 0
                    cosh(lam*length_right),sinh(lam*length_right)]
-        support_source_left.data = dict(x = [-0.05], y = [y_fixed], src = [fixed_support_left_img], w = [img_w_fixed] , h = [img_h])    # updates support image
-        support_source_right.data = dict(x = [L+0.05], y = [y_fixed], src = [fixed_support_right_img], w = [img_w_fixed] , h = [img_h]) # updates support image
+        # updates support image
+        support_source_left.data = dict(x = [-0.05], y = [y_fixed], src = [fixed_support_left_img], w = [img_w_fixed] , h = [img_h])    
+        support_source_right.data = dict(x = [L+0.05], y = [y_fixed], src = [fixed_support_right_img], w = [img_w_fixed] , h = [img_h]) 
 
     return M_line_2,M_line_8
 
@@ -121,25 +123,25 @@ def get_amp():                                                                  
 
 def get_values(n,F,L,length_left,length_right,omega,EI,lam,plot_values, X,Y):     # calculates the deflection for every point of the beam
     global selection
-    if length_left == 0 or length_right == 0 or omega == 0 or lam == 0:         # precludes conditions, where no calculation is needed    
+    if length_left == 0 or length_right == 0:                                     # precludes conditions, where no calculation is needed    
         Y = np.zeros(n)
         change_matrix(length_left,length_right,EI,lam)
     else:
-        [M_2,M_8] = change_matrix(length_left,length_right,EI,lam)              # gets the variable matrix lines
+        [M_2,M_8] = change_matrix(length_left,length_right,EI,lam)                # gets the variable matrix lines
         A1,A2,A3,A4,B1,B2,B3,B4 = get_variables(length_left,length_right,EI,lam,F) 
 
         X = np.linspace(0,L,n)
         Y = np.zeros(n)
         i = 0
         while i < n:
-            if X[i] <= length_left: # for the subsystem on the left
+            if X[i] <= length_left:                                               # for the subsystem on the left
                 Y[i] = -1*(A1*sin(lam*X[i])+A2*cos(lam*X[i])+A3*sinh(lam*X[i])+A4*cosh(lam*X[i]))
                 
-            else:                   # for the subsystem on the right
+            else:                                                                 # for the subsystem on the right
                 Y[i] = -1*(B1*sin(lam*(X[i]-length_left))+B2*cos(lam*(X[i]-length_left))+B3*sinh(lam*(X[i]-length_left))+B4*cosh(lam*(X[i]-length_left)))
             i+=1
         max_value = np.amax(np.absolute(Y))
-        Y = Y * (3/max_value)       # scales the deflection to a maximum amplitude of 3 
+        Y = Y * (3/max_value)                                                     # scales the deflection to a maximum amplitude of 3 
 
     plot_values.data = dict(y = Y, x = X)          # updates plot values
 
@@ -268,7 +270,7 @@ slider_location_freq.on_change('value',change_location_NAF)
 
 # slider for the excitation frequency
 slider_frequency = LatexSlider(title="\\text{Frequency of the load}=", value_unit="\\frac{1}{s}", value=5, 
-                               start=0, end=max_omega, step=1, width=185,height=40, bar_color = c_blue, 
+                               start=1, end=max_omega, step=1, width=185,height=40, bar_color = c_blue, 
                                css_classes=["slider"]) 
 slider_frequency.on_change('value',change_frequency)
 
