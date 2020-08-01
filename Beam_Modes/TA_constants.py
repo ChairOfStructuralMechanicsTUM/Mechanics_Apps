@@ -31,7 +31,7 @@ c_gray_warm   = "#8f8f8f"
 
 F = 80                  # maximum force of the dynamic load
 L = 5.0                 # length of the beam
-EI = 10000.0            # Youngs Modulus * area moment of inertia 
+EI = 10000.0            # Youngs Modulus * area moment of inertia
 mue = 1.0               # mue
 
 ###################################
@@ -55,7 +55,8 @@ Y = np.zeros(n)
 X_Amp =                 np.linspace(1,max_omega,max_omega)
 Y_Amp =                 np.zeros(max_omega)
 
-# start coordinates for the indicator of the displayed amplitude location
+# start coordinates for the indicator 
+# of the displayed amplitude location
 X_NAF =                 [0.0,0.0]
 Y_NAF =                 [-L,L]
 
