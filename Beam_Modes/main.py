@@ -35,7 +35,7 @@ length_left =           2.0                                     # distance betwe
 length_right =          L-length_left                           # distance between the load and the right support
                                                       
 omega=5.0                                                       # excitation frequency
-lam =                   (mue*(omega**2)/EI)**(1/4)              # lambda (the length of the beam is already integrated in the corresponding calculations)
+lam =                   (mue*(omega**2)/EI)**(1/4)              # lambda (the length of the beam is already integrated in the coresponding calculations)
 
 plot_values =           cds(data=dict(x=X,y=Y))                 # beam deflection coordinates
 
@@ -105,7 +105,7 @@ def get_amp():                                                                  
     global n,F,L,length_left,length_right,EI,X,Y,max_omega,F, mue
 
     if length_left == 0 or length_right == 0 or float(NAF_values.data['x'][0]) == 0 or float(NAF_values.data['x'][0]) == L:
-       Amp_values.data['y'] = np.zeros(max_omega+1)     # precludes conditions, where no calculation is needed
+       Amp_values.data['y'] = np.zeros(max_omega)     # precludes conditions, where no calculation is needed
     else:
         j = 1
         Y_temp = np.zeros(max_omega)
@@ -113,10 +113,10 @@ def get_amp():                                                                  
             lam_temp = (mue*(j**2)/EI)**(1/4)           # calculates lambda for every frequency      
             A1,A2,A3,A4,B1,B2,B3,B4 = get_variables(length_left,length_right,EI,lam_temp,F)
             if NAF_values.data['x'][0] <= length_left:  # for the subsystem on the left
-                Y_temp[j] = -1*j*(A1*sin(lam_temp*NAF_values.data['x'][0])+A2*cos(lam_temp*NAF_values.data['x'][0])
+                Y_temp[j] = -1*(A1*sin(lam_temp*NAF_values.data['x'][0])+A2*cos(lam_temp*NAF_values.data['x'][0])
                                  +A3*sinh(lam_temp*NAF_values.data['x'][0])+A4*cosh(lam_temp*NAF_values.data['x'][0]))
             else:                                       # for the subsystem on the right
-                Y_temp[j] = -1*j*(B1*sin(lam_temp*(NAF_values.data['x'][0]-length_left))+B2*cos(lam_temp*(NAF_values.data['x'][0]-length_left))
+                Y_temp[j] = -1*(B1*sin(lam_temp*(NAF_values.data['x'][0]-length_left))+B2*cos(lam_temp*(NAF_values.data['x'][0]-length_left))
                                  +B3*sinh(lam_temp*(NAF_values.data['x'][0]-length_left))+B4*cosh(lam_temp*(NAF_values.data['x'][0]-length_left)))
             j+=1
         Amp_values.data['y'] = np.absolute(Y_temp)      # calculates the absolute values
@@ -171,7 +171,7 @@ def change_frequency (attr,old,new):                                            
     omega = new                                                 # adjusts omega to the new value
     lam = (mue*(omega**2)/EI)**(1/4)                            # calculates the new lambda  
     get_values(n,F,L,length_left,length_right,omega,EI,lam,plot_values, X,Y)
-    freq_location.data = dict(x = [new,new], y = [0.001,max_amp_plot])
+    freq_location.data = dict(x = [new,new], y = [0.00001,max_amp_plot])
 
 def disable_plot_sliders ():                                                      # disables / enables sliders coresponding to the frequency / load and frequency locations
     if switch_button.label == "Change load and\nshown location":# case 1: "Change load..." is displayed while pushing the button
@@ -229,7 +229,7 @@ plot.add_layout(arrow_load)
 #####        SECONDARY PLOT        #####
 ########################################
 
-disp_freq = figure(x_range = [0,max_omega],y_axis_type="log", y_range = [0.001,max_amp_plot],
+disp_freq = figure(x_range = [0,max_omega],y_axis_type="log", y_range = [0.00001,max_amp_plot],
                    height = 345, width = 250,toolbar_location = None, tools = "")
 
 # cosmetics
