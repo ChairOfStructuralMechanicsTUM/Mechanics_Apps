@@ -35,7 +35,7 @@ length_left =           2.0                                     # distance betwe
 length_right =          L-length_left                           # distance between the load and the right support
                                                       
 omega=5.0                                                       # excitation frequency
-lam =                   (mue*(omega**2)/EI)**(1/4)              # lambda
+lam =                   (mue*(omega**2)/EI)**(1/4)              # lambda (the length of the beam is already integrated in the corresponding calculations)
 
 plot_values =           cds(data=dict(x=X,y=Y))                 # beam deflection coordinates
 
