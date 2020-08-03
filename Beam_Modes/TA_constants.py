@@ -41,7 +41,7 @@ mue = 1.0               # mue
 
 n = 401                         # value of fragmentation of the beam
 max_omega = 500                 # maximum of displayable frequency
-max_amp_plot = 5000.0           # highest displayable deflection
+max_amp_plot = 100.0         # highest displayable deflection
 
 ###################################
 #           coordinates           #
@@ -62,7 +62,7 @@ Y_NAF =                 [-L,L]
 
 # start coordinates for the current frequency pointer
 X_freq =                [0.0,0.0]
-Y_freq =                [0.001,max_amp_plot]
+Y_freq =                [0.00001,max_amp_plot]
 
 
 ##################################
