@@ -21,9 +21,13 @@ bottom_of_sample_source = ColumnDataSource(data=dict(x=[], y=[]))
 top_of_mounting_source = ColumnDataSource(data=dict(x=[], y=[]))
 top_line_source = ColumnDataSource(data=dict(x=[], y=[]))
 top_force_arrow_source = ColumnDataSource(data=dict(xS=[], yS=[], xE=[], yE=[]))
+bottom_force_arrow_source = ColumnDataSource(data=dict(xS=[], yS=[], xE=[], yE=[]))
 top_force_label_source = ColumnDataSource(data=dict(x=[], y=[], F=[]))
+bottom_force_label_source = ColumnDataSource(data=dict(x=[], y=[], F=[]))
 stress_strain_source = ColumnDataSource(data=dict(eps=[], sig=[]))
 stress_strain_true_source = ColumnDataSource(data=dict(eps=[], sig=[]))
+stress_strain_load_source = ColumnDataSource(data=dict(eps=[], sig=[]))
+stress_strain_unload_source = ColumnDataSource(data=dict(eps=[], sig=[]))
 white_patch_left_source = ColumnDataSource(data=dict(x=[], y=[]))
 white_patch_right_source = ColumnDataSource(data=dict(x=[], y=[]))
 glob_callback_id = ColumnDataSource(data = dict(callback_id = [None]))
@@ -40,16 +44,31 @@ A3_label_source = ColumnDataSource(data=dict(x=[], y=[], A=[]))
 A_t_source = ColumnDataSource(data=dict(x=[], y=[]))
 A4_label_source = ColumnDataSource(data=dict(x=[], y=[], A=[]))
 t_label_source = ColumnDataSource(data=dict(x=[], y=[], t=[]))
-
+current_data_source = ColumnDataSource(data=dict(x=[], y=[]))
 
 steel_data_eps = linspace(0, 13, num=131)
-rubber_data_eps = linspace(0, 16, num=161)
+steel_data_unload_eps = linspace(5.5, 2.8, num=28)
+steel_data_unload_eps[27] = 2.86
+rubber_data_load_eps = linspace(0, 10, num=101)
+rubber_data_unload_eps = linspace(10, 0.2, num=99)
+rubber_data_eps = linspace(0.2, 16, num=159)
 cfrp_data_eps = linspace(0, 4, num=41)
+cfrp_data_unload_eps = linspace(3.5, 0.8, num=28)
+cfrp_data_unload_eps[27] = 0.885
 
-steel_data_sig = loadtxt('Tensile_test/steel_data_sig.txt')
-steel_data_true_sig = loadtxt('Tensile_test/steel_data_true_sig.txt')
-rubber_data_sig = loadtxt('Tensile_test/rubber_data_sig.txt')
-cfrp_data_sig = loadtxt('Tensile_test/cfrp_data_sig.txt')
+steel_data = loadtxt('Tensile_test/steel_data_sig.txt')
+steel_data_sig = steel_data[0]
+steel_data_true_sig = steel_data[1]
+steel_data_unload_sig = loadtxt('Tensile_test/steel_data_unload_sig.txt')
+rubber_data = loadtxt('Tensile_test/rubber_data_sig.txt')
+rubber_data_sig = rubber_data[0]
+rubber_data_true_sig = rubber_data[1]
+rubber_data_load_sig = loadtxt('Tensile_test/rubber_data_load_sig.txt')
+rubber_data_unload_sig = loadtxt('Tensile_test/rubber_data_unload_sig.txt')
+cfrp_data = loadtxt('Tensile_test/cfrp_data_sig.txt')
+cfrp_data_sig = cfrp_data[0]
+cfrp_data_true_sig = cfrp_data[1]
+cfrp_data_unload_sig = loadtxt('Tensile_test/cfrp_data_unload_sig.txt')
 
 def changeMaterial(attr,old,new):
     reset()
@@ -89,13 +108,13 @@ def changeMaterial(attr,old,new):
         y_t = [0.1]
     elif new == "Rubber":
         x_R_m = [0, 16]
-        y_R_m = [3.82, 3.82]
+        y_R_m = [4.09, 4.09]
         x_R3 = [0.5]
-        y_R3 = [3.92]
+        y_R3 = [4.19]
         x_m = [0.8]
-        y_m = [3.82]
+        y_m = [4.09]
         x_A_t = [16, 16]
-        y_A_t = [0, 3.82]
+        y_A_t = [0, 4.09]
         x_A4 = [15.4]
         y_A4 = [0.2]
         x_t = [15.7]
@@ -130,10 +149,14 @@ def init():
     y_mounting = [10, 10, 9, 8, 8, 9]
     x_line = [-1, 6]
     y_line = [8, 8]
-    xS=[2.5]
-    xE=[2.5]
-    yS=[9]
-    yE=[11]
+    xS_top=[2.5]
+    xE_top=[2.5]
+    yS_top=[9]
+    yE_top=[9]
+    xS_bottom=[2.5]
+    xE_bottom=[2.5]
+    yS_bottom=[2]
+    yE_bottom=[2]
     xS_L=[0]
     xE_L=[0]
     yS_L=[3]
@@ -145,41 +168,50 @@ def init():
     x_left = [1, 2, 2, 1]
     x_right = [3, 4, 4, 3]
     y = [3, 3, 15, 15]
-    x_F= [2.7]
-    y_F = [10.1]
+    x_F_top = [2.7]
+    y_F_top = [8.6]
+    x_F_bottom = [2.7]
+    y_F_bottom = [1.8]
     x_L = [-0.5]
     y_L = [5.1]
     x_S = [2.35]
     y_S = [4.3]
     xs = [[2, 2], [3, 3]]
     ys = [[4.8, 5.2], [4.8, 5.2]]
+    x_circle = [0]
+    y_circle = [0]
     if material_select.value == "Steel":
-        x_sample = [2, 3, 3, 2.875, 2.65, 2.35, 2.125, 2]
-        y_sample_top = [8, 8, 4.25, 4.25, 3.25, 3.25, 4.25, 4.25]
-        y_sample_bottom = [3, 3, 6.75, 6.75, 7.75, 7.75, 6.75, 6.75]
+        x_sample = [2, 3, 3, 2.85, 2.65, 2.35, 2.15, 2]
+        y_sample_top = [8, 8, 4.375, 4.375, 3.56, 3.56, 4.375, 4.375]
+        y_sample_bottom = [3, 3, 6.625, 6.625, 7.44, 7.44, 6.625, 6.625]
     elif material_select.value == "Rubber":
         x_sample = [2, 3, 3, 2]
-        y_sample_top = [8, 8, 2, 2]
-        y_sample_bottom = [3, 3, 9, 9]
+        y_sample_top = [8, 8, 2.31, 2.31]
+        y_sample_bottom = [3, 3, 8.69, 8.69]
     elif material_select.value == "CFRP":
         x_sample = [2, 3, 3, 2]
-        y_sample_top = [8, 8, 4.5, 4.5]
-        y_sample_bottom = [3, 3, 6.5, 6.5]
+        y_sample_top = [8, 8, 4.71, 4.71]
+        y_sample_bottom = [3, 3, 6.29, 6.29]
     top_of_mounting_source.data = dict(x=x_mounting, y=y_mounting)
     top_of_sample_source.data = dict(x=x_sample, y=y_sample_top)
     bottom_of_sample_source.data = dict(x=x_sample, y=y_sample_bottom)
     top_line_source.data = dict(x=x_line, y=y_line)
-    top_force_arrow_source.stream(dict(xS=xS, yS=yS, xE=xE, yE=yE), rollover=1)
+    top_force_arrow_source.stream(dict(xS=xS_top, yS=yS_top, xE=xE_top, yE=yE_top), rollover=1)
+    bottom_force_arrow_source.stream(dict(xS=xS_bottom, yS=yS_bottom, xE=xE_bottom, yE=yE_bottom), rollover=1)
     stress_strain_source.data = dict(eps=[], sig=[])
     stress_strain_true_source.data = dict(eps=[], sig=[])
+    stress_strain_load_source.data = dict(eps=[], sig=[])
+    stress_strain_unload_source.data = dict(eps=[], sig=[])
     white_patch_left_source.data = dict(x=x_left, y=y)
     white_patch_right_source.data = dict(x=x_right, y=y) 
-    top_force_label_source.data = dict(x=x_F, y=y_F, F=["F"])
+    top_force_label_source.data = dict(x=x_F_top, y=y_F_top, F=["F"])
+    top_force_label_source.data = dict(x=x_F_bottom, y=y_F_bottom, F=["F"])
     L_arrow_source.stream(dict(xS=xS_L, yS=yS_L, xE=xE_L, yE=yE_L), rollover=1)
     L_label_source.data = dict(x=x_L, y=y_L, L=["L"])
     S_arrow_source.stream(dict(xS=xS_S, yS=yS_S, xE=xE_S, yE=yE_S), rollover=1)
     S_label_source.data = dict(x=x_S, y=y_S, S=["S"])
     S_multiline_source.data = dict(xs=xs, ys=ys)
+    current_data_source.data = dict(x=x_circle, y=y_circle)
 
     R_eH.visible = False
     R1_label.visible = False
@@ -206,6 +238,10 @@ def init():
     p_label.visible = False
     A_p.visible = False
     A_p_label.visible = False
+    top_force_arrow.visible = False
+    bottom_force_arrow.visible = False
+    top_force_label.visible = False
+    bottom_force_label.visible = False
 
 
     
@@ -228,10 +264,14 @@ def evolve():
     y_mounting = [10, 10, 9, 8, 8, 9]
     x_line = [-1, 6]
     y_line = [8, 8]
-    xS=[2.5]
-    xE=[2.5]
-    yS=[9]
-    yE=[11]
+    xS_top=[2.5]
+    xE_top=[2.5]
+    yS_top=[9]
+    yE_top=[9]
+    xS_bottom=[2.5]
+    xE_bottom=[2.5]
+    yS_bottom=[2]
+    yE_bottom=[2]
     xS_L=[0]
     xE_L=[0]
     yS_L=[3]
@@ -240,20 +280,93 @@ def evolve():
     xE_S=[3]
     yS_S=[5]
     yE_S=[5]
-    x_F = [2.7]
-    y_F = [10.1]
+    x_F_top = [2.7]
+    y_F_top = [8.6]
+    x_F_bottom = [2.7]
+    y_F_bottom = [1.8]
     x_L = [-0.5]
     y_L = [5.1]
     x_S = [2.35]
     y_S = [4.3]
     
     if material_select.value == "Steel":
-        x_sample = [2, 3, 3, 2.875, 2.65, 2.35, 2.125, 2]
-        y_sample_top = [8, 8, 4.25, 4.25, 3.25, 3.25, 4.25, 4.25]
-        eps = steel_data_eps[0:i]
-        sig = steel_data_sig[0:i]
-        sig_true = steel_data_true_sig[0:i]
-        
+        x_sample = [2, 3, 3, 2.85, 2.65, 2.35, 2.15, 2]
+        y_sample_top = [8, 8, 4.375, 4.375, 3.56, 3.56, 4.375, 4.375]
+        eps_load = []
+        sig_load = []
+        if i == 1 or i == 84 or i == 85:
+            top_force_arrow.visible = False
+            bottom_force_arrow.visible = False
+            top_force_label.visible = False
+            bottom_force_label.visible = False
+        else:
+            top_force_arrow.visible = True
+            bottom_force_arrow.visible = True
+            top_force_label.visible = True
+            bottom_force_label.visible = True
+        if i > 0 and i <= 56: 
+            eps = steel_data_eps[0:i]
+            sig = steel_data_sig[0:i]
+            sig_true = steel_data_true_sig[0:i]
+            eps_unload = steel_data_unload_eps[0:0]
+            sig_unload = steel_data_unload_sig[0:0]
+            x_circle = [eps[i-1]]
+            y_circle = [sig[i-1]]
+            dx = dx+11/5600
+            dL = dL+33/1120
+            if i <= 21 or i > 33:
+                yE_top[0] = yE_top[0]+dL+(2/7)*sig[i-1]
+                yE_bottom[0] = yE_bottom[0]-(2/7)*sig[i-1]
+                y_F_top[0] = y_F_top[0]+dL+(2/7)*sig[i-1]
+                y_F_bottom[0] = y_F_bottom[0]-(2/7)*sig[i-1]
+            elif i > 21 and i <= 33:
+                yE_top[0] = yE_top[0]+dL+(2/7)*sig[20]
+                yE_bottom[0] = yE_bottom[0]-(2/7)*sig[20]
+                y_F_top[0] = y_F_top[0]+dL+(2/7)*sig[20]
+                y_F_bottom[0] = y_F_bottom[0]-(2/7)*sig[20]
+        elif i > 56 and i <= 84:
+            eps = steel_data_eps[0:56]
+            sig = steel_data_sig[0:56]
+            sig_true = steel_data_true_sig[0:56]
+            eps_unload = steel_data_unload_eps[0:i-56]
+            sig_unload = steel_data_unload_sig[0:i-56]
+            x_circle = [eps_unload[i-56-1]]
+            y_circle = [sig_unload[i-56-1]]
+            dx = dx-11/5600
+            dL = dL-33/1120
+            yE_top[0] = yE_top[0]+dL+(2/7)*sig_unload[i-56-1]
+            yE_bottom[0] = yE_bottom[0]-(2/7)*sig_unload[i-56-1]
+            y_F_top[0] = y_F_top[0]+dL+(2/7)*sig_unload[i-56-1]
+            y_F_bottom[0] = y_F_bottom[0]-(2/7)*sig_unload[i-56-1]
+        elif i > 84 and i <= 112:
+            eps = steel_data_eps[0:56]
+            sig = steel_data_sig[0:56]
+            sig_true = steel_data_true_sig[0:56]
+            eps_unload = steel_data_unload_eps[0:28]
+            sig_unload = steel_data_unload_sig[0:28]
+            x_circle = [eps_unload[112-i]]
+            y_circle = [sig_unload[112-i]]
+            dx = dx+11/5600
+            dL = dL+33/1120
+            yE_top[0] = yE_top[0]+dL+(2/7)*sig_unload[112-i]
+            yE_bottom[0] = yE_bottom[0]-(2/7)*sig_unload[112-i]
+            y_F_top[0] = y_F_top[0]+dL+(2/7)*sig_unload[112-i]
+            y_F_bottom[0] = y_F_bottom[0]-(2/7)*sig_unload[112-i]
+        elif i > 112 and i <= 187:
+            eps = steel_data_eps[0:i-56]
+            sig = steel_data_sig[0:i-56]
+            sig_true = steel_data_true_sig[0:i-56]
+            eps_unload = steel_data_unload_eps[0:28]
+            sig_unload = steel_data_unload_sig[0:28]
+            x_circle = [eps[i-56-1]]
+            y_circle = [sig[i-56-1]]
+            dL = dL+0.03
+            yE_top[0] = yE_top[0]+dL+(2/7)*sig[i-56-1]
+            yE_bottom[0] = yE_bottom[0]-(2/7)*sig[i-56-1]
+            y_F_top[0] = y_F_top[0]+dL+(2/7)*sig[i-56-1]
+            y_F_bottom[0] = y_F_bottom[0]-(2/7)*sig[i-56-1]
+        if i > 112 and i <= 132:
+            dx = dx+0.002
         if i == 21:
             R_eH.visible = True
             R1_label.visible = True
@@ -265,39 +378,34 @@ def evolve():
             A_L.visible = True
             A1_label.visible = True
             L_label.visible = True
-        if i == 76:
+        if i == 132:
             R_m.visible = True
             R3_label.visible = True
             m_label.visible = True
             A_g.visible = True
             A2_label.visible = True
             g_label.visible = True
-        if i == 131:
+        if i == 187:
             A.visible = True
             A3_label.visible = True
             A_t.visible = True
             A4_label.visible = True
             t_label.visible = True
-        if i == 132:
             pause()
             play_pause_button.disabled = True
-        if i <= 76:
-            dx = dx+1/608
-            dL = dL+5/152
+        if i <= 132:
             xS_S[0] = xS_S[0]+dx
             xE_S[0] = xE_S[0]-dx
             xs = [[2+dx, 2+dx], [3-dx, 3-dx]]
             ys = [[4.8+dL/2, 5.2+dL/2], [4.8+dL/2, 5.2+dL/2]]
-        elif i > 76: 
-            dL = dL+2/55
-            xS_S[0] = xS_S[0]+dx+(i-76)*9/2200
-            xE_S[0] = xE_S[0]-dx-(i-76)*9/2200
-            xs = [[2+dx+(i-76)*9/2200, 2+dx+(i-76)*9/2200], [3-dx-(i-76)*9/2200, 3-dx-(i-76)*9/2200]]
-            if i <= 91:
-                ys = [[4.8+dL/2, 5.2+dL/2+(i-76)*0.015], [4.8+dL/2, 5.2+dL/2+(i-76)*0.015]]
+        elif i > 132: 
+            xS_S[0] = xS_S[0]+dx+(i-132)*1/275
+            xE_S[0] = xE_S[0]-dx-(i-132)*1/275
+            xs = [[2+dx+(i-132)*1/275, 2+dx+(i-132)*1/275], [3-dx-(i-132)*1/275, 3-dx-(i-132)*1/275]]
+            if i <= 147:
+                ys = [[4.8+dL/2, 5.2+dL/2+(i-132)*0.015], [4.8+dL/2, 5.2+dL/2+(i-132)*0.015]]
             else:
-                ys = [[4.8+dL/2, 5.2+dL/2+0.225+(i-91)*0.002], [4.8+dL/2, 5.2+dL/2+0.225+(i-91)*0.002]]
-        stress_strain_true_source.data = dict(eps=eps, sig=sig_true)
+                ys = [[4.8+dL/2, 5.2+dL/2+0.225+(i-147)*0.002], [4.8+dL/2, 5.2+dL/2+0.225+(i-147)*0.002]]
         for j in range(0, 8):
             y_sample_top[j] = y_sample_top[j]+dL  
         yS_S[0] = yS_S[0]+dL/2
@@ -305,16 +413,82 @@ def evolve():
         y_S[0] = y_S[0]+dL/2 
     elif material_select.value == "CFRP":
         x_sample = [2, 3, 3, 2]
-        y_sample_top = [8, 8, 4.5, 4.5]
-        eps = cfrp_data_eps[0:i]
-        sig = cfrp_data_sig[0:i]
+        y_sample_top = [8, 8, 4.71, 4.71]
+        eps_load = []
+        sig_load = []
+        if i == 1 or i == 64 or i == 65:
+            top_force_arrow.visible = False
+            bottom_force_arrow.visible = False
+            top_force_label.visible = False
+            bottom_force_label.visible = False
+        else:
+            top_force_arrow.visible = True
+            bottom_force_arrow.visible = True
+            top_force_label.visible = True
+            bottom_force_label.visible = True
+        if i > 0 and i <= 36: 
+            eps = cfrp_data_eps[0:i]
+            sig = cfrp_data_sig[0:i]
+            sig_true = cfrp_data_true_sig[0:i]
+            eps_unload = cfrp_data_unload_eps[0:0]
+            sig_unload = cfrp_data_unload_sig[0:0]
+            x_circle = [eps[i-1]]
+            y_circle = [sig[i-1]]
+            dx = dx+7/3600
+            dL = dL+7/180
+            yE_top[0] = yE_top[0]+dL+(2.6/9.37)*sig[i-1]
+            yE_bottom[0] = yE_bottom[0]-(2.6/9.37)*sig[i-1]
+            y_F_top[0] = y_F_top[0]+dL+(2.6/9.37)*sig[i-1]
+            y_F_bottom[0] = y_F_bottom[0]-(2.6/9.37)*sig[i-1]
+        elif i > 36 and i <= 64:
+            eps = cfrp_data_eps[0:36]
+            sig = cfrp_data_sig[0:36]
+            sig_true = cfrp_data_true_sig[0:36]
+            eps_unload = cfrp_data_unload_eps[0:i-36]
+            sig_unload = cfrp_data_unload_sig[0:i-36]
+            x_circle = [eps_unload[i-36-1]]
+            y_circle = [sig_unload[i-36-1]]
+            dx = dx-7/3600
+            dL = dL-7/180
+            yE_top[0] = yE_top[0]+dL+(2.6/9.37)*sig_unload[i-36-1]
+            yE_bottom[0] = yE_bottom[0]-(2.6/9.37)*sig_unload[i-36-1]
+            y_F_top[0] = y_F_top[0]+dL+(2.6/9.37)*sig_unload[i-36-1]
+            y_F_bottom[0] = y_F_bottom[0]-(2.6/9.37)*sig_unload[i-36-1]
+        elif i > 64 and i <= 92:
+            eps = cfrp_data_eps[0:36]
+            sig = cfrp_data_sig[0:36]
+            sig_true = cfrp_data_true_sig[0:36]
+            eps_unload = cfrp_data_unload_eps[0:28]
+            sig_unload = cfrp_data_unload_sig[0:28]
+            x_circle = [eps_unload[92-i]]
+            y_circle = [sig_unload[92-i]]
+            dx = dx+7/3600
+            dL = dL+7/180
+            yE_top[0] = yE_top[0]+dL+(2.6/9.37)*sig_unload[92-i]
+            yE_bottom[0] = yE_bottom[0]-(2.6/9.37)*sig_unload[92-i]
+            y_F_top[0] = y_F_top[0]+dL+(2.6/9.37)*sig_unload[92-i]
+            y_F_bottom[0] = y_F_bottom[0]-(2.6/9.37)*sig_unload[92-i]
+        elif i > 92:
+            eps = cfrp_data_eps[0:i-56]
+            sig = cfrp_data_sig[0:i-56]
+            sig_true = cfrp_data_true_sig[0:i-56]
+            eps_unload = cfrp_data_unload_eps[0:28]
+            sig_unload = cfrp_data_unload_sig[0:28]
+            x_circle = [eps[i-56-1]]
+            y_circle = [sig[i-56-1]]
+            dx = dx+0.002
+            dL = dL+0.04
+            yE_top[0] = yE_top[0]+dL+(2.6/9.37)*sig[i-56-1]
+            yE_bottom[0] = yE_bottom[0]-(2.6/9.37)*sig[i-56-1]
+            y_F_top[0] = y_F_top[0]+dL+(2.6/9.37)*sig[i-56-1]
+            y_F_bottom[0] = y_F_bottom[0]-(2.6/9.37)*sig[i-56-1]
         if i == 25:
             R_p.visible = True
             R4_label.visible = True
             p_label.visible = True
             A_p.visible = True
             A_p_label.visible = True
-        if i == 41:
+        if i == 97:
             R_m.visible = True
             R3_label.visible = True
             m_label.visible = True
@@ -323,11 +497,8 @@ def evolve():
             A_t.visible = True
             A4_label.visible = True
             t_label.visible = True
-        if i == 42:
             pause()
-            play_pause_button.disabled = True
-        dx = dx+1/410
-        dL = dL+2/41
+            play_pause_button.disabled = True     
         xS_S[0] = xS_S[0]+dx
         xE_S[0] = xE_S[0]-dx
         xs = [[2+dx, 2+dx], [3-dx, 3-dx]]
@@ -339,21 +510,74 @@ def evolve():
         y_S[0] = y_S[0]+dL/2 
     elif material_select.value == "Rubber":
         x_sample = [2, 3, 3, 2]
-        y_sample_top = [8, 8, 2, 2]
-        eps = rubber_data_eps[0:i]
-        sig = rubber_data_sig[0:i]
-        if i == 161:
+        y_sample_top = [8, 8, 2.31, 2.31]
+        if i == 1 or i == 200 or i == 201:
+            top_force_arrow.visible = False
+            bottom_force_arrow.visible = False
+            top_force_label.visible = False
+            bottom_force_label.visible = False
+        else:
+            top_force_arrow.visible = True
+            bottom_force_arrow.visible = True
+            top_force_label.visible = True
+            bottom_force_label.visible = True
+        if i > 0 and i <= 101: 
+            eps = []
+            sig = []
+            sig_true = []
+            eps_unload = []
+            sig_unload = []
+            eps_load = rubber_data_load_eps[0:i]
+            sig_load = rubber_data_load_sig[0:i]
+            x_circle = [eps_load[i-1]]
+            y_circle = [sig_load[i-1]]
+            dx = dx+3/2020
+            dL = dL+4/101
+            yE_top[0] = yE_top[0]+dL+(1.2/4.09)*sig_load[i-1]
+            yE_bottom[0] = yE_bottom[0]-(1.2/4.09)*sig_load[i-1]
+            y_F_top[0] = y_F_top[0]+dL+(1.2/4.09)*sig_load[i-1]
+            y_F_bottom[0] = y_F_bottom[0]-(1.2/4.09)*sig_load[i-1]
+        elif i > 101 and i <= 200:
+            eps = []
+            sig = []
+            sig_true = []
+            eps_unload = rubber_data_unload_eps[0:i-101]
+            sig_unload = rubber_data_unload_sig[0:i-101]
+            eps_load = rubber_data_load_eps[0:101]
+            sig_load = rubber_data_load_sig[0:101]
+            x_circle = [eps_unload[i-101-1]]
+            y_circle = [sig_unload[i-101-1]]
+            dx = dx-3/2020
+            dL = dL-4/101
+            yE_top[0] = yE_top[0]+dL+(1.2/4.09)*sig_unload[i-101-1]
+            yE_bottom[0] = yE_bottom[0]-(1.2/4.09)*sig_unload[i-101-1]
+            y_F_top[0] = y_F_top[0]+dL+(1.2/4.09)*sig_unload[i-101-1]
+            y_F_bottom[0] = y_F_bottom[0]-(1.2/4.09)*sig_unload[i-101-1]
+        elif i > 200:
+            eps = rubber_data_eps[0:i-200]
+            sig = rubber_data_sig[0:i-200]
+            sig_true = rubber_data_true_sig[0:i-200]
+            eps_unload = rubber_data_unload_eps[0:99]
+            sig_unload = rubber_data_unload_sig[0:99]
+            eps_load = rubber_data_load_eps[0:101]
+            sig_load = rubber_data_load_sig[0:101]
+            x_circle = [eps[i-201]]
+            y_circle = [sig[i-201]]
+            dx = dx+399/267650
+            dL = dL+1064/26765
+            yE_top[0] = yE_top[0]+dL+(1.2/4.09)*sig[i-201]
+            yE_bottom[0] = yE_bottom[0]-(1.2/4.09)*sig[i-201]
+            y_F_top[0] = y_F_top[0]+dL+(1.2/4.09)*sig[i-201]
+            y_F_bottom[0] = y_F_bottom[0]-(1.2/4.09)*sig[i-201]
+        if i == 359:
             R_m.visible = True
             R3_label.visible = True
             m_label.visible = True
             A_t.visible = True
             A4_label.visible = True
             t_label.visible = True
-        if i == 162:
             pause()
             play_pause_button.disabled = True
-        dx = dx+1/805
-        dL = dL+1/23
         for j in range(0, 4):
             y_sample_top[j] = y_sample_top[j]+dL  
         xS_S[0] = xS_S[0]+dx
@@ -363,6 +587,7 @@ def evolve():
         yS_S[0] = yS_S[0]+dL/1.9
         yE_S[0] = yE_S[0]+dL/1.9
         y_S[0] = y_S[0]+dL/1.9
+
     for j in range(0, 4):
         x_left[j] = x_left[j]+dx
         x_right[j] = x_right[j]-dx
@@ -370,9 +595,7 @@ def evolve():
         y_mounting[j] = y_mounting[j]+dL
     for j in range(0, 2):
         y_line[j] = y_line[j]+dL
-    yS[0] = yS[0]+dL
-    yE[0] = yE[0]+dL
-    y_F[0] = y_F[0]+dL
+    yS_top[0] = yS_top[0]+dL
     yE_L[0] = yE_L[0]+dL
     y_L[0] = y_L[0]+dL/2
     
@@ -381,17 +604,23 @@ def evolve():
     white_patch_right_source.data = dict(x=x_right, y=y)
     glob_dx.data = dict(dx=[dx])
     stress_strain_source.data = dict(eps=eps, sig=sig)
+    stress_strain_true_source.data = dict(eps=eps, sig=sig_true)
+    stress_strain_load_source.data = dict(eps=eps_load, sig=sig_load)
+    stress_strain_unload_source.data = dict(eps=eps_unload, sig=sig_unload)
     glob_dL.data = dict(dL=[dL])
     top_of_mounting_source.data = dict(x=x_mounting, y=y_mounting)
     top_of_sample_source.data = dict(x=x_sample, y=y_sample_top)
     top_line_source.data = dict(x=x_line, y=y_line)
-    top_force_arrow_source.stream(dict(xS=xS, yS=yS, xE=xE, yE=yE), rollover=1)
-    top_force_label_source.data = dict(x=x_F, y=y_F, F=["F"])
+    top_force_arrow_source.stream(dict(xS=xS_top, yS=yS_top, xE=xE_top, yE=yE_top), rollover=1)
+    bottom_force_arrow_source.stream(dict(xS=xS_bottom, yS=yS_bottom, xE=xE_bottom, yE=yE_bottom), rollover=1)
+    top_force_label_source.data = dict(x=x_F_top, y=y_F_top, F=["F"])
+    bottom_force_label_source.data = dict(x=x_F_bottom, y=y_F_bottom, F=["F"])
     L_arrow_source.stream(dict(xS=xS_L, yS=yS_L, xE=xE_L, yE=yE_L), rollover=1)
     L_label_source.data = dict(x=x_L, y=y_L, L=["L"])
     S_arrow_source.stream(dict(xS=xS_S, yS=yS_S, xE=xE_S, yE=yE_S), rollover=1)
     S_label_source.data = dict(x=x_S, y=y_S, S=["S"])
     S_multiline_source.data = dict(xs=xs, ys=ys)
+    current_data_source.data = dict(x=x_circle, y=y_circle)
 
     i = i+1
     glob_i.data = dict(i=[i])
@@ -399,7 +628,7 @@ def evolve():
 
 ## Draw sample
 #  initialise drawing area
-p = figure(title="", tools="", x_range=(-2,7), y_range=(0,18.1), width = 360, height = 600)
+p = figure(title="", tools="", x_range=(-2,7), y_range=(-0.7,18.1), width = 360, height = 620)
 #  remove graph lines
 p.axis.visible = False
 p.grid.visible = False
@@ -420,12 +649,16 @@ p.add_layout(Label(x=0.5,y=5.1,text='L\u2080',text_color='#A2AD00'))
 p.add_layout(Arrow(start=NormalHead(fill_color='#A2AD00',line_color="#A2AD00",line_width=1,size=10), end=NormalHead(fill_color='#A2AD00',line_color="#A2AD00",line_width=1,size=10),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_color="#A2AD00", line_width=2, source=L_arrow_source))
 p.add_layout(LabelSet(x='x',y='y',text='L',text_color='#A2AD00', source=L_label_source))
-p.add_layout(Arrow(end=NormalHead(fill_color='#E37222',line_color="#E37222",line_width=1,size=10),
-    x_start=2.5, y_start=2, x_end=2.5, y_end=0, line_color="#E37222", line_width=2))
-p.add_layout(Arrow(end=NormalHead(fill_color='#E37222',line_color="#E37222",line_width=1,size=10),
-    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=top_force_arrow_source,line_color="#E37222",line_width=2))
-p.add_layout(Label(x=2.7,y=0.3,text='F',text_color='#E37222'))
-p.add_layout(LabelSet(x='x',y='y',text='F',text_color='#E37222', source=top_force_label_source))
+bottom_force_arrow = Arrow(end=NormalHead(fill_color='#E37222',line_color="#E37222",line_width=1,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=bottom_force_arrow_source,line_color="#E37222", line_width=2)
+p.add_layout(bottom_force_arrow)
+top_force_arrow = Arrow(end=NormalHead(fill_color='#E37222',line_color="#E37222",line_width=1,size=10),
+    x_start='xS', y_start='yS', x_end='xE', y_end='yE',source=top_force_arrow_source,line_color="#E37222",line_width=2)
+p.add_layout(top_force_arrow)
+bottom_force_label = LabelSet(x='x',y='y',text='F',text_color='#E37222', source=bottom_force_label_source)
+p.add_layout(bottom_force_label)
+top_force_label = LabelSet(x='x',y='y',text='F',text_color='#E37222', source=top_force_label_source)
+p.add_layout(top_force_label)
 p.add_layout(Arrow(start=NormalHead(fill_color='#E37222',line_color="#E37222",line_width=1,size=4), end=NormalHead(fill_color='#E37222',line_color="#E37222",line_width=1,size=4),
     x_start=2, y_start=4, x_end=3, y_end=4, line_color="#E37222", line_width=2))
 p.add_layout(Label(x=2.3,y=3.3,text='S\u2080',text_color='#E37222'))
@@ -444,7 +677,7 @@ plot.xaxis.axis_label_text_font_size="12pt"
 plot.yaxis.axis_label_text_font_size="12pt"
 plot.xaxis.axis_label_text_font_style="normal"
 plot.yaxis.axis_label_text_font_style="normal"
-plot.xaxis.axis_label = "\u03B5 [-]"
+plot.xaxis.axis_label = "\u03B5 [%]"
 plot.yaxis.axis_label = "\u03C3 [N/mm\u00B2]"
 plot.xaxis.major_tick_line_color = None  # turn off x-axis major ticks
 plot.xaxis.minor_tick_line_color = None  # turn off x-axis minor ticks
@@ -454,6 +687,8 @@ plot.xaxis.major_label_text_font_size = '0pt'  # turn off x-axis tick labels
 plot.yaxis.major_label_text_font_size = '0pt'  # turn off y-axis tick labels
 plot.line(x='eps', y='sig', source=stress_strain_source, legend_label="F/S\u2080", color='#0065BD', line_width=2)
 plot.line(x='eps', y='sig', source=stress_strain_true_source, legend_label="F/S", color='#0065BD', line_width=2, line_dash='dashed')
+plot.line(x='eps', y='sig', source=stress_strain_load_source, color='#0065BD', line_width=2)
+plot.line(x='eps', y='sig', source=stress_strain_unload_source, color='#0065BD', line_width=2)
 R_eH = plot.line([0, 2], [5, 5], color='#E37222')
 R1_label = Label(x=0.5,y=5.1,text='R',text_color='#E37222')
 eH_label = Label(x=0.8,y=5,text='eH',text_color='#E37222', text_font_size='10pt')
@@ -495,6 +730,7 @@ plot.add_layout(p_label)
 A_p = plot.line(x=[2.4-18/7, 2.4], y=[-0.95, 8.05], color='#A2AD00', line_dash='dashed')
 A_p_label = Label(x=0.3,y=0.2,text='0,2%',text_color='#A2AD00')
 plot.add_layout(A_p_label)
+plot.circle(x='x', y='y', fill_color='black', line_color='black', radius=0.1, source=current_data_source)
 
 
 def reset():
