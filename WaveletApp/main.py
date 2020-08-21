@@ -23,7 +23,7 @@ from latex_support import LatexDiv, LatexLegend
 function_source = ColumnDataSource(data=dict(t=[],y=[]))
 WaveLet_source = ColumnDataSource(data={'a': [],'b':[],'W':[]})
 Wavelet_Function_source = ColumnDataSource(data=dict(t=[],y=[]))
-
+global_var = dict(wavelet_plot=None, wavelet_func_legend='')
 
 ###########
 # FIGURES #
@@ -52,6 +52,11 @@ plot_Wavelet_Function = Figure(x_range=(-10, 10), y_range=(-2, 2),
 # plot_Wavelet_Function.yaxis.axis_label = ""u"\u03A8 (t)" 
 plot_Wavelet_Function.toolbar.logo = None
 
+# Wavelet Function
+global_var['wavelet_plot'] = plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
+global_var['wavelet_func_legend'] = LatexLegend(items = [('', [global_var['wavelet_plot']])], label_text_font_size='12pt', label_height= 20, label_width=40)
+plot_Wavelet_Function.add_layout( global_var['wavelet_func_legend'] )
+        
 # sample functions with corresponding id
 sample_f_names = [
     ("Heaviside function","Heaviside function"),
@@ -286,16 +291,13 @@ def Wavelet_fun_modified(attr, old, new):
         y= t * np.exp(-t**2)
         # Plot wavelet
         Wavelet_Function_source.data = dict(t=t, y=y)
-        WT = plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
-        plot_Wavelet_Function.add_layout(LatexLegend(items=[("                       {t} e^{-t^2}",[WT])], label_text_font_size='12pt', label_height= 20, label_width=40))
-        
+        global_var['wavelet_func_legend'].items = [("                       {t} e^{-t^2}", [global_var['wavelet_plot']])]
     else:
         y= np.exp(-(t**2)/2) * np.cos(5*t)
         # Plot wavelet
         Wavelet_Function_source.data = dict(t=t, y=y)
-        WT = plot_Wavelet_Function.line('t', 'y', color='red', source=Wavelet_Function_source, line_width=2)
-        plot_Wavelet_Function.add_layout(LatexLegend(items=[("e^{\\frac{t^2}{2}} \cos{(5t)}",[WT])], label_text_font_size='12pt', label_height= 20, label_width=40))
-        
+        global_var['wavelet_func_legend'].items = [("e^{\\frac{t^2}{2}} cos{(5t)}", [global_var['wavelet_plot']])]
+
 def Trig_fun_modified(attr, old, new):
     """
     Called to plot the new selected trigonometric function
