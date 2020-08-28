@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta charset="utf-8">
+      {{ bokeh_css }}
+      {{ bokeh_js }}
+      <link rel="stylesheet" type="text/css" href="System_of_Beams/static/css/styles.css">
+    </head>
+    <body style="padding:25px">
+    <h1>System of Beams</h1>
+
+    <p>
+        This web-app allows you to create your own statical system. So you could verify your hand calculations or just
+        try out different systems to understand the underlying statics better.
+        <br>
+
+        <table style="width:100%" cellspacing="10">
+        <tr>
+            <td><b>Graph</b></td>
+            <td>To the graph below all mechanical elements on its right side can be added.
+            </td>
+        </tr>
+        <tr>
+            <td><b><b>Info and (x,y)</b></b></td>
+            <td>You can see additional information and the current (x,y)-position of your cursor
+                displayed below the graph.
+            </td>
+        </tr>
+        <tr>
+            <td><b>Add an element</b></td>
+            <td>Add an element by clicking on the respective button and then into the graph at the position, at which
+                you want to have it. The active element button will be displayed with a gray background.
+            </td>
+        </tr>
+        <tr>
+            <td><b>Edit an element</b></td>
+            <td>You can set the parameters of a new element in the graph in an element-info-box right of the buttons.
+                To edit an existing element in the graph, first deactivate the currently active element button by
+                clicking on it. Then click on the center of the element you want to edit. It is possible to delete the
+                single element shown in the element-info-box aswell.
+            </td>
+        </tr>
+        <tr>
+            <td><b>Delete elements</b></td>
+            <td>To delete all elements click on the "Delete all" button. To "Delete selected" select elements with
+                the "Lasso Select" tool of the graph, that can be activated in the top right corner of the graph.
+                All node dependent elements will be deleted when one of the nodes they are connected to gets deleted!
+            </td>
+        </tr>
+        <tr>
+            <td><b>Calculations</b></td>
+            <td>When everything is set, simply click the "Calculate" button and examine the plots below.
+            </td>
+        </tr>
+        </table>
+
+        <br>
+        Check it out!
+        <br>
+
+        <p style="color:#E37222">
+        Please be aware of the following facts:<br>
+        - Kinematic systems are in exceptions not recognized by the animation. Please check yourself if the selected system is kinematic.<br>
+        - No moment loads may be applied to moment joints connecting two structural parts. The same applies to shear force joints and shear forces as well as normal force joints and normal forces.<br>
+        </p>
+    </p>
+      {{ plot_div|indent(8) }}
+      {{ plot_script|indent(8) }}
+
+    </body>
+</html>
+

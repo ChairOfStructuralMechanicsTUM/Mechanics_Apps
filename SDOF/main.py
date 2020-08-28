@@ -15,7 +15,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_support import LatexDiv
+from latex_support import LatexDiv, LatexSlider
 from math import sqrt, exp, pow, sin , cos, pi, atan2, sinh, cosh
 
 ## initial values
@@ -101,14 +101,22 @@ def evolve():
             s_p = -force_value/ (2*k) * ef*t*cos(ef*t)
             s_h = initial_displacement_value * cos(ef*t)+initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * sin(ef*t)
         else:
-            # particular (steady-state) part
-            s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
-                * ( ( 1-pow(frequency_ratio_value,2) ) * sin(excitation_frequency_value*t) - 2*D*frequency_ratio_value*cos(excitation_frequency_value*t) )
             # homogeneous (transient) part
             if D<1: 
-                s_h = exp(-D*ef*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) ) \
-                    + force_value * exp(-D*ef*t) / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
-                    * ( 2*D*frequency_ratio_value*cos(damped_ef*t) + ef/damped_ef * ( 2*frequency_ratio_value*pow(D,2) - frequency_ratio_value * (1-pow(frequency_ratio_value,2)) ) * sin(damped_ef*t) )
+                if frequency_ratio_value>1:
+                    s_h = exp(-D*ef*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) ) \
+                        + force_value * exp(-D*ef*t) / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
+                        * ( -2*D*frequency_ratio_value*cos(damped_ef*t) + ef/damped_ef * ( -2*frequency_ratio_value*pow(D,2) + frequency_ratio_value * (1-pow(frequency_ratio_value,2)) ) * sin(damped_ef*t) )
+
+                    s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
+                        * ( -( 1-pow(frequency_ratio_value,2) ) * sin(excitation_frequency_value*t) + 2*D*frequency_ratio_value*cos(excitation_frequency_value*t) )
+                else:
+                    s_h = exp(-D*ef*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) ) \
+                        + force_value * exp(-D*ef*t) / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
+                        * ( 2*D*frequency_ratio_value*cos(damped_ef*t) + ef/damped_ef * ( 2*frequency_ratio_value*pow(D,2) - frequency_ratio_value * (1-pow(frequency_ratio_value,2)) ) * sin(damped_ef*t) )
+
+                    s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
+                        * ( ( 1-pow(frequency_ratio_value,2) ) * sin(excitation_frequency_value*t) - 2*D*frequency_ratio_value*cos(excitation_frequency_value*t) )
             else:
                 print("how did we get there?") # even if this place is reached, there should be no bug
                 s_h = 0
@@ -272,16 +280,23 @@ def change_mass(attr,old,new):
     updateParameters()
     compute_amp_and_phase_angle()
 
-mass_input = Slider(title="Mass [kg]", value=initial_mass_value, start=0.5, end=10.0, step=0.5, width=400)
+mass_input = LatexSlider(title="\\text{Mass} \\left[ \\mathrm{kg} \\right]: ", value=initial_mass_value, start=0.5, end=10.0, step=0.5, width=400)
 mass_input.on_change('value',change_mass)
 
 ## Create slider to choose spring constant
 def change_spring_constant(attr,old,new):
     [spring] = glob_spring.data["spring"] # input/ouput -> class
+    spring_old = spring.getSpringConstant
     spring.changeSpringConst(float(new))
+    [initial_displacement_value] = glob_initial_displacement_value.data["initial_displacement_value"]
+    [initial_velocity_value] = glob_initial_velocity_value.data["initial_velocity_value"]
+    initial_displacement_value           = initial_displacement_value*spring_old / float(new)
+    glob_initial_displacement_value.data = dict(initial_displacement_value = [initial_displacement_value])
+    initial_velocity_value           = initial_velocity_value*spring_old / float(new)
+    glob_initial_velocity_value.data = dict(initial_velocity_value = [initial_velocity_value])
     updateParameters()
 
-spring_constant_input = Slider(title="Spring stiffness [N/m]", value=initial_spring_constant_value, start=10.0, end=200, step=10,width=400)
+spring_constant_input = LatexSlider(title="\\text{Spring stiffness} \\left[ \\frac{\\mathrm{N}}{\\mathrm{m}} \\right]: ", value=initial_spring_constant_value, start=10.0, end=200, step=10,width=400)
 spring_constant_input.on_change('value',change_spring_constant)
 
 ## Create slider to choose damping coefficient
@@ -291,7 +306,7 @@ def change_damping_coefficient(attr,old,new):
     updateParameters()
     compute_amp_and_phase_angle()
 
-damping_coefficient_input = Slider(title="Damping coefficient [Ns/m]", value=initial_damping_coefficient_value, callback_policy="mouseup", start=0.0, end=10, step=0.5,width=400)
+damping_coefficient_input = LatexSlider(title="\\text{Damping coefficient} \\left[ \\frac{\\mathrm{Ns}}{\\mathrm{m}} \\right]: ", value=initial_damping_coefficient_value, callback_policy="mouseup", start=0.0, end=10, step=0.5,width=400)
 damping_coefficient_input.on_change('value',change_damping_coefficient)
 
 ## Create slider to choose initial velocity
@@ -304,7 +319,7 @@ def change_initV(attr,old,new):
     glob_initial_velocity_value.data = dict(initial_velocity_value = [initial_velocity_value])
 
 
-initial_velocity_input = Slider(title="Initial velocity [m/s]", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
+initial_velocity_input = LatexSlider(title="\\text{Initial velocity factor } v_0\\cdot k \\left[ \\frac{\\mathrm{N}}{\\mathrm{s}} \\right]: ", value=initial_velocity_value, start=-10.0, end=10.0, step=0.5,width=400)
 initial_velocity_input.on_change('value',change_initV)
 
 ## Create slider to choose initial displacement
@@ -318,7 +333,7 @@ def change_initial_displacement(attr,old,new):
     move_system(-new)
     updateParameters()
 
-initial_displacement_input = Slider(title="Initial displacement [m]", value=initial_displacement_value, start=-2.0, end=2.0, step=0.5,width=400)
+initial_displacement_input = LatexSlider(title="\\text{Initial displacement factor } u_0\\cdot k \\left[ \\mathrm{N} \\right]: ", value=initial_displacement_value, start=-2.0, end=2.0, step=0.5,width=400)
 initial_displacement_input.on_change('value',change_initial_displacement)
 
 ## Create slider to choose the frequency ratio
@@ -331,7 +346,7 @@ def change_frequency_ratio(attr,old,new):
     updateParameters()
     plot_current_ratio()
 
-frequency_ratio_input = Slider(title="Frequency ratio", value=frequency_ratio_value, start=0.1, end=3.0, step=0.1,width=400)
+frequency_ratio_input = LatexSlider(title="\\text{Frequency ratio} : ", value=frequency_ratio_value, start=0.1, end=3.0, step=0.1,width=400)
 frequency_ratio_input.on_change('value',change_frequency_ratio)
 
 ## Create slider to choose the frequency ratio
@@ -351,7 +366,7 @@ def change_force_value(attr,old,new):
         arrow_line.stream(dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20]),rollover=1)
         arrow_offset.stream(dict(x1=[0],x2=[0],y1=[current_y1+20],y2=[current_y2+20]),rollover=1)
     
-force_value_input = Slider(title="Force", value=force_value, start=0, end=1.0, step=1,width=400)
+force_value_input = LatexSlider(title="\\text{Force} : ", value=force_value, start=0, end=1.0, step=1,width=400)
 force_value_input.on_change('value',change_force_value)
 #<<<<<<< HEAD -> Irfan
 # g1SDOF=None

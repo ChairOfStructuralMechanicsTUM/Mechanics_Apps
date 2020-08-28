@@ -31,14 +31,14 @@ F2_source = ColumnDataSource(dict(xS=[l_beam], xE=[l_beam], yS=[F_total/2], yE=[
 support_source = ColumnDataSource(dict(x = [20], y = [-2.0*h_beam], src = ["Seesaw/static/images/simple_support.svg"]))
 
 # Plot
-plot = figure(title="", tools="", x_range=(-2,42), y_range=(-50,50))
+plot = figure(title="", tools="", x_range=(-2,42), y_range=(-30,40))
 plot.toolbar.logo = None
 plot.axis.axis_label_text_font_style="normal"
 plot.axis.axis_label_text_font_size="14pt"
 
 # plot bar and support
 plot.line([0, l_beam], [-h_beam, -h_beam], line_width=10, color='#3070B3')
-plot.add_glyph(support_source,ImageURL(url="src", x='x', y='y', w=5, h=5, anchor="top_center"))
+plot.add_glyph(support_source,ImageURL(url="src", x='x', y='y', w=3.8, h=5, anchor="top_center"))
 
 # plot distance
 dist_source = ColumnDataSource(dict(xS=[0], xE=[20], yS=[-15], yE=[-15], xL=[20.0/2.0-0.3], yL=[-13.5], text=["a"]))

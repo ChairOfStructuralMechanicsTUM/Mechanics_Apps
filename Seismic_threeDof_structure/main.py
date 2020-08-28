@@ -526,9 +526,9 @@ curdoc().add_root(
                                                   )
                                            ),
                                         row(
-                                            column(mode_one,modes[2].frequency_text,modes[2].multiplier_text),
-                                            column(mode_two,modes[1].frequency_text,modes[1].multiplier_text),
-                                            column(mode_three,modes[0].frequency_text,modes[0].multiplier_text)
+                                            column(mode_one,   row(Spacer(width=40),modes[2].frequency_text), row(Spacer(width=40),modes[2].multiplier_text) ),
+                                            column(mode_two,   row(Spacer(width=40),modes[1].frequency_text), row(Spacer(width=40),modes[1].multiplier_text) ),
+                                            column(mode_three, row(Spacer(width=40),modes[0].frequency_text), row(Spacer(width=40),modes[0].multiplier_text) )
                                            )
                                       ),
                                 column(
