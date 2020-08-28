@@ -20,7 +20,7 @@ import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_support import LatexDiv, LatexLabel
+from latex_support import LatexDiv
 
 '''
 ###############################################################################

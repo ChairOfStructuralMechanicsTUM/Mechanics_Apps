@@ -1034,9 +1034,9 @@ plotXZElement.add_glyph(Tauplot_r_Source, Tauplot_r_Glyph)
 Tauplot_u_Glyph = Patch(x="x", y="y", fill_color='#E37222', fill_alpha=0.5)
 plotXZElement.add_glyph(Tauplot_u_Source, Tauplot_u_Glyph)
 
-#Sigmaplot_Labels = LatexLabelSet(
-    #x='x', y='y', text='names', source=Sigmaplot_Label_Source, 
-    #text_color ="#0065BD", level='glyph', x_offset=0, y_offset=0)
+Sigmaplot_Labels = LatexLabelSet(
+    x='x', y='y', text='names', source=Sigmaplot_Label_Source, 
+    text_color ="#0065BD", level='glyph', x_offset=0, y_offset=0)
 
 Tauplot_Labels = LatexLabelSet(
     x='x', y='y', text='names', source=Tauplot_Label_Source, 
