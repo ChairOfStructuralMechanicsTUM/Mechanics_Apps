@@ -89,6 +89,9 @@ def changeMaterial(attr,old,new):
         y_A4 = [0.2]
         x_t = [12.7]
         y_t = [0.1]
+        layout.children[1] = row(column(Spacer(height=50), material_select, steel_description, row(Spacer(width=75), play_pause_button), 
+                             row(Spacer(width=75), reset_button)), column(p), column(Spacer(height=89), column(plot)))
+        
     elif new == "CFRP":
         x_R_m = [0, 4]
         y_R_m = [9.37, 9.37]
@@ -106,6 +109,8 @@ def changeMaterial(attr,old,new):
         y_A4 = [0.2]
         x_t = [3.7]
         y_t = [0.1]
+        layout.children[1] = row(column(Spacer(height=50), material_select, cfrp_description, row(Spacer(width=75), play_pause_button), 
+                             row(Spacer(width=75), reset_button)), column(p), column(Spacer(height=89), column(plot)))
     elif new == "Rubber":
         x_R_m = [0, 16]
         y_R_m = [4.09, 4.09]
@@ -125,6 +130,8 @@ def changeMaterial(attr,old,new):
         A_t_source.data = dict(x=x_A_t, y=y_A_t)
         A4_label_source.data = dict(x=x_A4, y=y_A4, A=["A"])
         t_label_source.data = dict(x=x_t, y=y_t, t=["t"])
+        layout.children[1] = row(column(Spacer(height=50), material_select, rubber_description, row(Spacer(width=75), play_pause_button), 
+                             row(Spacer(width=75), reset_button)), column(p), column(Spacer(height=89), column(plot)))
     if new == "CFRP" or new == "Steel":
         R_m_source.data = dict(x=x_R_m, y=y_R_m)
         R3_label_source.data = dict(x=x_R3, y=y_R3, R=["R"])
@@ -134,15 +141,19 @@ def changeMaterial(attr,old,new):
         A_t_source.data = dict(x=x_A_t, y=y_A_t)
         A4_label_source.data = dict(x=x_A4, y=y_A4, A=["A"])
         t_label_source.data = dict(x=x_t, y=y_t, t=["t"])
-        
 
-material_select = Select(title="Material:", value="Steel",
-    options=["Steel","Rubber", "CFRP"], width = 100)
-material_select.on_change('value',changeMaterial)
 
 ## add app description
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
+
+steel_filename = join(dirname(__file__), "steel_description.html")
+steel_description = LatexDiv(text=open(steel_filename).read(), render_as_text=False, width=250)
+cfrp_filename = join(dirname(__file__), "cfrp_description.html")
+cfrp_description = LatexDiv(text=open(cfrp_filename).read(), render_as_text=False, width=250)
+rubber_filename = join(dirname(__file__), "rubber_description.html")
+rubber_description = LatexDiv(text=open(rubber_filename).read(), render_as_text=False, width=250)
+
 
 def init():
     x_mounting = [1, 4, 4, 3, 2, 1]
@@ -628,7 +639,7 @@ def evolve():
 
 ## Draw sample
 #  initialise drawing area
-p = figure(title="", tools="", x_range=(-2,7), y_range=(-0.7,18.1), width = 360, height = 620)
+p = figure(title="", tools="", x_range=(-2,6.5), y_range=(-0.7,18.1), width = 310, height = 565)
 #  remove graph lines
 p.axis.visible = False
 p.grid.visible = False
@@ -670,7 +681,7 @@ p.multi_line(xs='xs',ys='ys',color="#E37222",line_width=2, source=S_multiline_so
 ## Create Plot
 # seems like resize is not supported anymore
 #toolset = "pan,reset,resize,wheel_zoom"
-plot = figure(title="", tools="", x_range=[0,17], y_range=[0,11], width = 765, height = 495)
+plot = figure(title="", tools="", x_range=[0,17], y_range=[0,11], width = 700, height = 450)
 plot.outline_line_color = "#333333"
 plot.toolbar.logo = None
 plot.xaxis.axis_label_text_font_size="12pt"
@@ -724,14 +735,13 @@ plot.add_layout(A4_label)
 plot.add_layout(t_label)
 R_p = plot.line(x=[0, 2.4], y=[8.05, 8.05], color='#E37222')
 R4_label = Label(x=0.5,y=8.15,text='R',text_color='#E37222')
-p_label = Label(x=0.8,y=8.05,text='p0,2',text_color='#E37222', text_font_size='10pt')
+p_label = Label(x=0.8,y=8.05,text='p0.2',text_color='#E37222', text_font_size='10pt')
 plot.add_layout(R4_label)
 plot.add_layout(p_label)
 A_p = plot.line(x=[2.4-18/7, 2.4], y=[-0.95, 8.05], color='#A2AD00', line_dash='dashed')
-A_p_label = Label(x=0.3,y=0.2,text='0,2%',text_color='#A2AD00')
+A_p_label = Label(x=0.3,y=0.2,text='0.2%',text_color='#A2AD00')
 plot.add_layout(A_p_label)
 plot.circle(x='x', y='y', fill_color='black', line_color='black', radius=0.1, source=current_data_source)
-
 
 def reset():
     pause()
@@ -763,18 +773,24 @@ def pause():
     except ValueError:
         print("WARNING: callback_id was already removed")
 
-
 reset_button=Button(label="Reset", button_type="success", width = 100)
 reset_button.on_click(reset)
 
 play_pause_button=Button(label="Play", button_type="success", width = 100)
 play_pause_button.on_click(play_pause)
 
+material_select = Select(title="Material:", value="Steel",
+    options=["Steel","Rubber", "CFRP"], width = 250)
+material_select.on_change('value',changeMaterial)
+
+layout = column(description, row(column(Spacer(height=25), material_select, steel_description, row(Spacer(width=75), play_pause_button), 
+         row(Spacer(width=75), reset_button)), column(p), column(Spacer(height=89), column(plot))))
+
+
+
 changeMaterial(0, 0, "Steel")
 
 ## Send to window
-layout = column(description, row(column(Spacer(height=150), material_select, Spacer(height=100), play_pause_button, reset_button), 
-                column(p), column(Spacer(height=80), column(plot))))
 curdoc().add_root(layout)  
 
 ## get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
