@@ -2,20 +2,18 @@ from __future__ import division
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div, Arrow, OpenHead, Range1d, Label, Select, ColumnDataSource, NormalHead, LabelSet
-from os.path import dirname, join, split
+from bokeh.models import Button, Arrow, Label, Select, ColumnDataSource, NormalHead, LabelSet
+from os.path import dirname, join, split, abspath
 import numpy as np
 from numpy import linspace, loadtxt
 
-from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_support import LatexDiv, LatexSlider, LatexLabel, LatexLabelSet
+from latex_support import LatexDiv, LatexLabelSet
 
-## set up data sources for movable objects ##
-#     data sources for drawing
+## data sources 
 top_of_sample_source = ColumnDataSource(data=dict(x=[], y=[]))
 bottom_of_sample_source = ColumnDataSource(data=dict(x=[], y=[]))
 top_of_mounting_source = ColumnDataSource(data=dict(x=[], y=[]))
@@ -45,7 +43,11 @@ A_t_source = ColumnDataSource(data=dict(x=[], y=[]))
 A4_label_source = ColumnDataSource(data=dict(x=[], y=[], A=[]))
 t_label_source = ColumnDataSource(data=dict(x=[], y=[], t=[]))
 current_data_source = ColumnDataSource(data=dict(x=[], y=[]))
+glob_i = ColumnDataSource(data=dict(i=[]))
+glob_dx = ColumnDataSource(data=dict(dx=[]))
+glob_dL = ColumnDataSource(data=dict(dL=[]))
 
+## values for epsilon
 steel_data_eps = linspace(0, 13, num=131)
 steel_data_unload_eps = linspace(5.5, 2.8, num=28)
 steel_data_unload_eps[27] = 2.86
@@ -56,6 +58,7 @@ cfrp_data_eps = linspace(0, 4, num=41)
 cfrp_data_unload_eps = linspace(3.5, 0.8, num=28)
 cfrp_data_unload_eps[27] = 0.885
 
+## values for sigma
 steel_data = loadtxt('Tensile_test/steel_data_sig.txt')
 steel_data_sig = steel_data[0]
 steel_data_true_sig = steel_data[1]
@@ -70,6 +73,7 @@ cfrp_data_sig = cfrp_data[0]
 cfrp_data_true_sig = cfrp_data[1]
 cfrp_data_unload_sig = loadtxt('Tensile_test/cfrp_data_unload_sig.txt')
 
+## if the user chooses another material, the position of the coefficients is changed and the coefficient description is adapted
 def changeMaterial(attr,old,new):
     reset()
     if new == "Steel":
@@ -89,9 +93,8 @@ def changeMaterial(attr,old,new):
         y_A4 = [0.2]
         x_t = [12.7]
         y_t = [0.1]
-        layout.children[1] = row(column(Spacer(height=50), material_select, steel_description, row(Spacer(width=75), play_pause_button), 
+        layout.children[1] = row(column(Spacer(height=10), material_select, steel_description, row(Spacer(width=75), play_pause_button), 
                              row(Spacer(width=75), reset_button)), column(p), column(Spacer(height=89), column(plot)))
-        
     elif new == "CFRP":
         x_R_m = [0, 4]
         y_R_m = [9.37, 9.37]
@@ -109,7 +112,7 @@ def changeMaterial(attr,old,new):
         y_A4 = [0.2]
         x_t = [3.7]
         y_t = [0.1]
-        layout.children[1] = row(column(Spacer(height=50), material_select, cfrp_description, row(Spacer(width=75), play_pause_button), 
+        layout.children[1] = row(column(Spacer(height=10), material_select, cfrp_description, row(Spacer(width=75), play_pause_button), 
                              row(Spacer(width=75), reset_button)), column(p), column(Spacer(height=89), column(plot)))
     elif new == "Rubber":
         x_R_m = [0, 16]
@@ -124,29 +127,23 @@ def changeMaterial(attr,old,new):
         y_A4 = [0.2]
         x_t = [15.7]
         y_t = [0.1]
-        R_m_source.data = dict(x=x_R_m, y=y_R_m)
-        R3_label_source.data = dict(x=x_R3, y=y_R3, R=["R"])
-        m_label_source.data = dict(x=x_m, y=y_m, m=["m"])
-        A_t_source.data = dict(x=x_A_t, y=y_A_t)
-        A4_label_source.data = dict(x=x_A4, y=y_A4, A=["A"])
-        t_label_source.data = dict(x=x_t, y=y_t, t=["t"])
-        layout.children[1] = row(column(Spacer(height=50), material_select, rubber_description, row(Spacer(width=75), play_pause_button), 
+        layout.children[1] = row(column(Spacer(height=10), material_select, rubber_description, row(Spacer(width=75), play_pause_button), 
                              row(Spacer(width=75), reset_button)), column(p), column(Spacer(height=89), column(plot)))
     if new == "CFRP" or new == "Steel":
-        R_m_source.data = dict(x=x_R_m, y=y_R_m)
-        R3_label_source.data = dict(x=x_R3, y=y_R3, R=["R"])
-        m_label_source.data = dict(x=x_m, y=y_m, m=["m"])
         A_source.data = dict(x=x_A, y=y_A)
         A3_label_source.data = dict(x=x_A3, y=y_A3, A=["A"])
-        A_t_source.data = dict(x=x_A_t, y=y_A_t)
-        A4_label_source.data = dict(x=x_A4, y=y_A4, A=["A"])
-        t_label_source.data = dict(x=x_t, y=y_t, t=["t"])
-
+    R_m_source.data = dict(x=x_R_m, y=y_R_m)
+    R3_label_source.data = dict(x=x_R3, y=y_R3, R=["R"])
+    m_label_source.data = dict(x=x_m, y=y_m, m=["m"])
+    A_t_source.data = dict(x=x_A_t, y=y_A_t)
+    A4_label_source.data = dict(x=x_A4, y=y_A4, A=["A"])
+    t_label_source.data = dict(x=x_t, y=y_t, t=["t"])
 
 ## add app description
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1200)
 
+## add coefficient description
 steel_filename = join(dirname(__file__), "steel_description.html")
 steel_description = LatexDiv(text=open(steel_filename).read(), render_as_text=False, width=250)
 cfrp_filename = join(dirname(__file__), "cfrp_description.html")
@@ -154,8 +151,11 @@ cfrp_description = LatexDiv(text=open(cfrp_filename).read(), render_as_text=Fals
 rubber_filename = join(dirname(__file__), "rubber_description.html")
 rubber_description = LatexDiv(text=open(rubber_filename).read(), render_as_text=False, width=250)
 
-
+## initial values
 def init():
+    i = [1]
+    dx = [0]
+    dL = [0]
     x_mounting = [1, 4, 4, 3, 2, 1]
     y_mounting = [10, 10, 9, 8, 8, 9]
     x_line = [-1, 6]
@@ -203,9 +203,9 @@ def init():
         x_sample = [2, 3, 3, 2]
         y_sample_top = [8, 8, 4.71, 4.71]
         y_sample_bottom = [3, 3, 6.29, 6.29]
+    bottom_of_sample_source.data = dict(x=x_sample, y=y_sample_bottom)
     top_of_mounting_source.data = dict(x=x_mounting, y=y_mounting)
     top_of_sample_source.data = dict(x=x_sample, y=y_sample_top)
-    bottom_of_sample_source.data = dict(x=x_sample, y=y_sample_bottom)
     top_line_source.data = dict(x=x_line, y=y_line)
     top_force_arrow_source.stream(dict(xS=xS_top, yS=yS_top, xE=xE_top, yE=yE_top), rollover=1)
     bottom_force_arrow_source.stream(dict(xS=xS_bottom, yS=yS_bottom, xE=xE_bottom, yE=yE_bottom), rollover=1)
@@ -216,13 +216,16 @@ def init():
     white_patch_left_source.data = dict(x=x_left, y=y)
     white_patch_right_source.data = dict(x=x_right, y=y) 
     top_force_label_source.data = dict(x=x_F_top, y=y_F_top, F=["F"])
-    top_force_label_source.data = dict(x=x_F_bottom, y=y_F_bottom, F=["F"])
+    bottom_force_label_source.data = dict(x=x_F_bottom, y=y_F_bottom, F=["F"])
     L_arrow_source.stream(dict(xS=xS_L, yS=yS_L, xE=xE_L, yE=yE_L), rollover=1)
     L_label_source.data = dict(x=x_L, y=y_L, L=["L"])
     S_arrow_source.stream(dict(xS=xS_S, yS=yS_S, xE=xE_S, yE=yE_S), rollover=1)
     S_label_source.data = dict(x=x_S, y=y_S, S=["S"])
     S_multiline_source.data = dict(xs=xs, ys=ys)
     current_data_source.data = dict(x=x_circle, y=y_circle)
+    glob_i.data = dict(i=i)
+    glob_dx.data = dict(dx=dx)
+    glob_dL.data = dict(dL=dL)
 
     R_eH.visible = False
     R1_label.visible = False
@@ -254,16 +257,7 @@ def init():
     top_force_label.visible = False
     bottom_force_label.visible = False
 
-
-    
-
-i = 1
-dx = 0
-dL = 0
-glob_i = ColumnDataSource(data=dict(i=[i]))
-glob_dx = ColumnDataSource(data=dict(dx=[dx]))
-glob_dL = ColumnDataSource(data=dict(dL=[dL]))
-
+## draw stress-strain curve and deformation of the sample
 def evolve():
     [i] = glob_i.data["i"]
     [dx] = glob_dx.data["dx"]
@@ -299,7 +293,6 @@ def evolve():
     y_L = [5.1]
     x_S = [2.35]
     y_S = [4.3]
-    
     if material_select.value == "Steel":
         x_sample = [2, 3, 3, 2.85, 2.65, 2.35, 2.15, 2]
         y_sample_top = [8, 8, 4.375, 4.375, 3.56, 3.56, 4.375, 4.375]
@@ -598,7 +591,6 @@ def evolve():
         yS_S[0] = yS_S[0]+dL/1.9
         yE_S[0] = yE_S[0]+dL/1.9
         y_S[0] = y_S[0]+dL/1.9
-
     for j in range(0, 4):
         x_left[j] = x_left[j]+dx
         x_right[j] = x_right[j]-dx
@@ -609,21 +601,18 @@ def evolve():
     yS_top[0] = yS_top[0]+dL
     yE_L[0] = yE_L[0]+dL
     y_L[0] = y_L[0]+dL/2
-    
-
-    white_patch_left_source.data = dict(x=x_left, y=y)
-    white_patch_right_source.data = dict(x=x_right, y=y)
-    glob_dx.data = dict(dx=[dx])
-    stress_strain_source.data = dict(eps=eps, sig=sig)
-    stress_strain_true_source.data = dict(eps=eps, sig=sig_true)
-    stress_strain_load_source.data = dict(eps=eps_load, sig=sig_load)
-    stress_strain_unload_source.data = dict(eps=eps_unload, sig=sig_unload)
-    glob_dL.data = dict(dL=[dL])
+    i = i+1
     top_of_mounting_source.data = dict(x=x_mounting, y=y_mounting)
     top_of_sample_source.data = dict(x=x_sample, y=y_sample_top)
     top_line_source.data = dict(x=x_line, y=y_line)
     top_force_arrow_source.stream(dict(xS=xS_top, yS=yS_top, xE=xE_top, yE=yE_top), rollover=1)
     bottom_force_arrow_source.stream(dict(xS=xS_bottom, yS=yS_bottom, xE=xE_bottom, yE=yE_bottom), rollover=1)
+    stress_strain_source.data = dict(eps=eps, sig=sig)
+    stress_strain_true_source.data = dict(eps=eps, sig=sig_true)
+    stress_strain_load_source.data = dict(eps=eps_load, sig=sig_load)
+    stress_strain_unload_source.data = dict(eps=eps_unload, sig=sig_unload)
+    white_patch_left_source.data = dict(x=x_left, y=y)
+    white_patch_right_source.data = dict(x=x_right, y=y) 
     top_force_label_source.data = dict(x=x_F_top, y=y_F_top, F=["F"])
     bottom_force_label_source.data = dict(x=x_F_bottom, y=y_F_bottom, F=["F"])
     L_arrow_source.stream(dict(xS=xS_L, yS=yS_L, xE=xE_L, yE=yE_L), rollover=1)
@@ -632,15 +621,12 @@ def evolve():
     S_label_source.data = dict(x=x_S, y=y_S, S=["S"])
     S_multiline_source.data = dict(xs=xs, ys=ys)
     current_data_source.data = dict(x=x_circle, y=y_circle)
-
-    i = i+1
     glob_i.data = dict(i=[i])
-    
+    glob_dx.data = dict(dx=[dx])
+    glob_dL.data = dict(dL=[dL])   
 
 ## Draw sample
-#  initialise drawing area
 p = figure(title="", tools="", x_range=(-2,6.5), y_range=(-0.7,18.1), width = 310, height = 565)
-#  remove graph lines
 p.axis.visible = False
 p.grid.visible = False
 p.outline_line_color = None
@@ -678,9 +664,8 @@ p.add_layout(Arrow(start=NormalHead(fill_color='#E37222',line_color="#E37222",li
     x_start='xS', y_start='yS', x_end='xE', y_end='yE', source=S_arrow_source, line_color="#E37222", line_width=2))
 p.add_layout(LabelSet(x='x',y='y',text='S',text_color='#E37222', source=S_label_source))
 p.multi_line(xs='xs',ys='ys',color="#E37222",line_width=2, source=S_multiline_source)
+
 ## Create Plot
-# seems like resize is not supported anymore
-#toolset = "pan,reset,resize,wheel_zoom"
 plot = figure(title="", tools="", x_range=[0,17], y_range=[0,11], width = 700, height = 450)
 plot.outline_line_color = "#333333"
 plot.toolbar.logo = None
@@ -690,12 +675,12 @@ plot.xaxis.axis_label_text_font_style="normal"
 plot.yaxis.axis_label_text_font_style="normal"
 plot.xaxis.axis_label = "\u03B5 [%]"
 plot.yaxis.axis_label = "\u03C3 [N/mm\u00B2]"
-plot.xaxis.major_tick_line_color = None  # turn off x-axis major ticks
-plot.xaxis.minor_tick_line_color = None  # turn off x-axis minor ticks
-plot.yaxis.major_tick_line_color = None  # turn off y-axis major ticks
+plot.xaxis.major_tick_line_color = None 
+plot.xaxis.minor_tick_line_color = None 
+plot.yaxis.major_tick_line_color = None 
 plot.yaxis.minor_tick_line_color = None
-plot.xaxis.major_label_text_font_size = '0pt'  # turn off x-axis tick labels
-plot.yaxis.major_label_text_font_size = '0pt'  # turn off y-axis tick labels
+plot.xaxis.major_label_text_font_size = '0pt' 
+plot.yaxis.major_label_text_font_size = '0pt'  
 plot.line(x='eps', y='sig', source=stress_strain_source, legend_label="F/S\u2080", color='#0065BD', line_width=2)
 plot.line(x='eps', y='sig', source=stress_strain_true_source, legend_label="F/S", color='#0065BD', line_width=2, line_dash='dashed')
 plot.line(x='eps', y='sig', source=stress_strain_load_source, color='#0065BD', line_width=2)
@@ -747,12 +732,6 @@ def reset():
     pause()
     init()
     play_pause_button.disabled = False
-    i = 1
-    dx = 0
-    dL = 0
-    glob_i.data = dict(i=[i])
-    glob_dx.data = dict(dx=[dx])
-    glob_dL.data = dict(dL=[dL])
 
 def play_pause():
     if play_pause_button.label == "Play":
@@ -773,21 +752,20 @@ def pause():
     except ValueError:
         print("WARNING: callback_id was already removed")
 
+## define buttons and drop down menu
 reset_button=Button(label="Reset", button_type="success", width = 100)
 reset_button.on_click(reset)
-
 play_pause_button=Button(label="Play", button_type="success", width = 100)
 play_pause_button.on_click(play_pause)
-
 material_select = Select(title="Material:", value="Steel",
     options=["Steel","Rubber", "CFRP"], width = 250)
 material_select.on_change('value',changeMaterial)
 
-layout = column(description, row(column(Spacer(height=25), material_select, steel_description, row(Spacer(width=75), play_pause_button), 
+## app layout
+layout = column(description, row(column(Spacer(height=10), material_select, steel_description, row(Spacer(width=75), play_pause_button), 
          row(Spacer(width=75), reset_button)), column(p), column(Spacer(height=89), column(plot))))
 
-
-
+## set initial material to "Steel"
 changeMaterial(0, 0, "Steel")
 
 ## Send to window
