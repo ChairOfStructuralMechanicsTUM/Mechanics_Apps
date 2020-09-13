@@ -1,17 +1,22 @@
 """
 Mohr Circle - explains how Mohr's Circle can be used to identify different stresses
 """
+###################################
+# Imports
+###################################
+
 # general imports
 from math import pi, sin, cos, atan
+import yaml
 
 # bokeh imports
-from bokeh.io             import curdoc
-from bokeh.plotting       import figure
-from bokeh.layouts        import column, row, layout
-from bokeh.models         import ColumnDataSource, Slider, Arrow, OpenHead, NormalHead, Button
-from bokeh.models.markers import Square, Circle
-from bokeh.models.glyphs  import Wedge, Rect
-from bokeh.models.layouts import Spacer
+from bokeh.io                   import curdoc
+from bokeh.plotting             import figure
+from bokeh.layouts              import column, row, layout
+from bokeh.models               import ColumnDataSource, Slider, Arrow, OpenHead, NormalHead, Button
+from bokeh.models.markers       import Square, Circle
+from bokeh.models.glyphs        import Wedge, Rect
+from bokeh.models.layouts       import Spacer
 
 # internal imports
 from MC_figure_sources import fig1, fig2, fig3
@@ -35,8 +40,24 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
-# ----------------------------------------------------------------- #
 
+
+###################################
+# DataSources
+###################################
+
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Mohr_Circle/static/strings.json', encoding='utf-8'))
+
+figure_texts = ColumnDataSource(data=dict(text=["\\text{Normal Stresses}\\ \\sigma_x, \\sigma_z",
+                                                "\\text{Shear Stresses}\\ \\tau_{xz}",
+                                                "\\text{Normal Stresses}\\ \\sigma_{\overline{x}}, \\sigma_{\overline{z}}",
+                                                "\\text{Shear Stresses}\\ \\tau_{\overline{xz}}",
+                                                "Stress State A",
+                                                "Mohr's Circle",
+                                                "Stress State B",
+                                                ]))
 
 ### Initial Values
 radius   = initial_radius
@@ -56,6 +77,12 @@ global_vars = dict(MohrNx=initial_MohrNx, MohrNz=initial_MohrNz, MohrNxz=initial
 f1 = fig1()
 f2 = fig2()
 f3 = fig3()
+
+
+
+###################################
+# Callback Functions
+###################################
 
 def reset():
     Normal_X_slider.disabled      = False
@@ -291,6 +318,45 @@ def changePlaneAngle(attr,old,new):
         f3.ChangeRotatingPlane_Forces(global_vars)
 
 
+
+###################################
+# Change language
+###################################
+
+def update_figures():
+    legend1.items = [(figure_texts.data['text'][0], [dummy_normal_1]),
+                     (figure_texts.data['text'][1], [dummy_shear_1 ])]
+    legend3.items = [(figure_texts.data['text'][2], [dummy_normal_3]),
+                     (figure_texts.data['text'][3], [dummy_shear_3 ])]
+    figure1.title.text = figure_texts.data['text'][4]
+    figure2.title.text = figure_texts.data['text'][5]
+    figure3.title.text = figure_texts.data['text'][6]
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+    update_figures()
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+
+
+###################################
+# Figures
+###################################
+
 ### Figure 1, Define Geometry:
 NxP_arrow_glyph = Arrow(end=OpenHead(line_color=c_orange,line_width= 2, size=5),
     x_start='xS', y_start='yS', x_end='xE', y_end='yE',line_width= "lW", source=f1.NxP_arrow_source,line_color=c_orange)
@@ -313,7 +379,7 @@ NNP_rect_glphys = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_
 Nxz_rect_glyphs = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color=c_blue, fill_alpha=0.5)
 
 ### Figure 1, Define Figure and add Geometry:
-figure1 = figure(title="Stress State A", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
+figure1 = figure(title=figure_texts.data['text'][4], tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400)
 figure1.square([0], [0], size=75, color="black", alpha=0.5)
 figure1.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=25, y_end=0))
@@ -332,8 +398,8 @@ dummy_normal_1 = figure1.square([0.0],[0.0],size=0,fill_color=c_orange,fill_alph
 dummy_shear_1  = figure1.square([0.0],[0.0],size=0,fill_color=c_blue,fill_alpha=0.5)
 
 legend1 = LatexLegend(items=[
-    ("\\text{Normal Stresses}\\ \\sigma_x, \\sigma_z", [dummy_normal_1]),
-    ("\\text{Shear Stresses}\\ \\tau_{xz}",            [dummy_shear_1 ]),
+    (figure_texts.data['text'][0], [dummy_normal_1]),
+    (figure_texts.data['text'][1], [dummy_shear_1 ]),
 ], location='top_left', max_label_width = 220)
 figure1.add_layout(legend1)
 
@@ -348,7 +414,7 @@ figure1.add_layout(figure1_labels)
 Mohr_Circle_glyph = Circle(x='x',y='y',radius='radius', radius_dimension='y', fill_color='#c3c3c3', fill_alpha=0.5)
 Wedge_glyph       = Wedge(x="x", y="y", radius="radius", start_angle="sA", end_angle="eA", fill_color="firebrick", fill_alpha=0.6, direction="clock")
 ### Figure 2: Define Figure and add Geometry
-figure2 = figure(title="Mohr's Circle", tools="pan,save,wheel_zoom,reset", x_range=(-25.5,25.5), y_range=(-25.5,25.5),width=400,height=400, toolbar_location="right")
+figure2 = figure(title=figure_texts.data['text'][5], tools="pan,save,wheel_zoom,reset", x_range=(-25.5,25.5), y_range=(-25.5,25.5),width=400,height=400, toolbar_location="right")
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=-23, y_start=0, x_end=23, y_end=0))
 figure2.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
@@ -399,7 +465,7 @@ Nzetaeta4_arrow_glyph = Arrow(end=OpenHead(line_color=c_blue,line_width= 2, size
 Neta_rect_glyphs   = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color=c_orange, fill_alpha=0.5)
 Ntaeta_rect_glyphs = Rect(x="x", y="y", width="w", height="h", angle="angle", fill_color=c_blue, fill_alpha=0.5)
 ### Figure 3, Define Figure and add Geometry:
-figure3 = figure(title="Stress State B", tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400,)
+figure3 = figure(title=figure_texts.data['text'][6], tools="save", x_range=(-30,30), y_range=(-30,30),width=400,height=400,)
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
                    x_start=0, y_start=0, x_end=25, y_end=0))
 figure3.add_layout(Arrow(end=NormalHead(fill_color="black", size=15),
@@ -424,8 +490,8 @@ dummy_normal_3 = figure3.square([0.0],[0.0],size=0,fill_color=c_orange,fill_alph
 dummy_shear_3  = figure3.square([0.0],[0.0],size=0,fill_color=c_blue,fill_alpha=0.5)
 
 legend3 = LatexLegend(items=[
-    ("\\text{Normal Stresses}\\ \\sigma_x, \\sigma_z", [dummy_normal_3]),
-    ("\\text{Shear Stresses}\\ \\tau_{xz}",            [dummy_shear_3 ]),
+    (figure_texts.data['text'][2], [dummy_normal_3]),
+    (figure_texts.data['text'][3], [dummy_shear_3 ]),
 ], location='top_left', max_label_width = 220)
 figure3.add_layout(legend3)
 
@@ -451,6 +517,12 @@ def turn_off_grid(fig):
 turn_off_grid(figure1)
 turn_off_grid(figure2)
 turn_off_grid(figure3)
+
+
+
+###################################
+# Buttons and Sliders
+###################################
 
 ### Create  sliders to change Normal and Tangential Forces
 Normal_X_slider= LatexSlider(title="\\sigma_x=",value_unit='\\frac{\\mathrm{N}}{\\mathrm{mm}^2}',value = 0, start = -10, end = 10, step = 0.5)
@@ -479,6 +551,14 @@ draw_button.on_click(draw)
 show_button  = Button(label="Show/Hide principal stress + direction", button_type="success", disabled=True)
 show_button.on_click(show)
 
+lang_button = Button(label='Zu Deutsch wechseln', button_type="success")
+lang_button.on_click(changeLanguage)
+
+
+
+###################################
+# Page Layout
+###################################
 
 ### Add description from HTML file
 description_filename = join(dirname(__file__), "description.html")
@@ -486,7 +566,8 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 
 ### Arrange layout
 doc_layout = layout(children=[column(
-    row(Spacer(height=200,width=18),description),
+    row(Spacer(width=860),lang_button),
+    row(description),
     row(Spacer(height=30)),
     row(column(figure1,row(Spacer(height=10,width=50),column(Normal_X_slider,Normal_Z_slider,Tangential_XZ_slider))),column(figure2,row(Spacer(height=10,width=50),column(draw_button,show_button,reset_button))),column(figure3, row(Spacer(height=10,width=50),Plane_Angle_slider))))])
 curdoc().add_root(doc_layout)
