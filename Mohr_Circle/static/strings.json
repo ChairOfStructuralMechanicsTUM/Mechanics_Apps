@@ -20,18 +20,18 @@
     {
         "isCode": false,
         "en": "Reset",
-        "de": "zurücksetzten"
+        "de": "Zurücksetzen"
     },
     "draw_button.label":
     {
         "isCode": false,
         "en": "Draw",
-        "de": "Mohrscher Spannungskreis zeichnen"
+        "de": "Mohrschen Spannungskreis zeichnen"
     },
     "show_button.label":
     {
         "en": "Show/Hide principal stress + direction",
-        "de": "zeige/verberge Lage der Hauptspannungen"
+        "de": "Zeige/Verberge Lage der Hauptspannungen"
     },
     "figure_texts.data['text'][0]":
     {
