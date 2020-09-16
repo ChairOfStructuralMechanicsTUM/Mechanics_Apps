@@ -1,0 +1,40 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Instant centre of rotation",
+        "de": "Rotation um einen Hauptpol"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Instant_centre_of_rotation/description.html').read()",
+        "de": "open('Instant_centre_of_rotation/description_de.html', encoding='utf-8').read()"
+    },
+    "caption.text":
+    {
+        "isCode": true,
+        "en": "open('Instant_centre_of_rotation/caption.html').read()",
+        "de": "open('Instant_centre_of_rotation/caption_de.html', encoding='utf-8').read()"
+    },
+    "slider_angle.title":
+    {
+        "en": "\\\\text{Inclination of ladder:}",
+        "de": "\\\\text{Neigung der Leiter:}"
+    },
+    "button_structural_system.label":
+    {
+        "en": "Show/Hide structural system",
+        "de": "Zeige/Verberge statisches System"
+    },
+    "ICR_label_source.data['text'][0]":
+    {
+        "en": "ICR",
+        "de": "HP"
+    }
+}
