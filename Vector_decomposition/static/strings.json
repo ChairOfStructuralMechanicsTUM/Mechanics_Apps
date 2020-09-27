@@ -1,0 +1,58 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Vector Decomposition",
+        "de": "Vektorzerlegung"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('vector_decomposition/description.html').read()",
+        "de": "open('vector_decomposition/description_de.html', encoding='utf-8').read()"
+    },
+    "LineVector1Slider.title":
+    {
+        "en": "\\\\text {Direction 1: } \\\\alpha_1=",
+        "de": "\\\\text {Richtung 1: } \\\\alpha_1="
+    },
+    "LineVector2Slider.title":
+    {
+        "en": "\\\\text {Direction 2: } \\\\alpha_2=",
+        "de": "\\\\text {Richtung 2: } \\\\alpha_2="
+    },
+    "show_button.label":
+    {
+        "checkFlag": "show",
+        "on":
+        {
+            "en": "Hide components",
+            "de": "Zerlegung verbergen"
+        },
+        "off":
+        {
+            "en": "Show components",
+            "de": "Zerlegung zeigen"
+        }
+    },
+    "how_button.label":
+    {
+        "en": "Reset",
+        "de": "Zurücksetzen"
+    },
+    "LO1_label_source.data['V'][0]":
+    {
+        "en": "\\\\text {Direction 1}",
+        "de": "\\\\text {Richtung 1}"
+    },
+    "LO2_label_source.data['V'][0]":
+    {
+        "en": "\\\\text {Direction 2}",
+        "de": "\\\\text {Richtung 2}"
+    }
+}
