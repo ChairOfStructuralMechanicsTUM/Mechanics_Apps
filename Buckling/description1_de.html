@@ -1,0 +1,59 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+<h1>Knicken eines Stabes mit unterschiedliche Randbedingungen</h1>
+
+<p>
+Diese App befasst sich mit dem Statbilitätsverhalten von Stäben mit unterschiedlichen Lagerungen.
+Wird die Last auf die Stäbe, mithilfe des Schiebereglers, erhöht, kann beaobachtet werden, wie die Stäbe 
+von einem <bold>stabilen</bold> Zustand schlagartig in einen <bold>instabilen</bold> Zustand übergehen. 
+Dieses Phänomen wird als Knicken bezeichnet. Knicken ist ein Stabilitätsversagen das von mehreren Faktoren abhängig ist, unter
+anderem von der Länge, dem Querschnitt und dem Elastizitätsmodul des Stabes.</p>
+
+<p> Für die nachfolgende Visualisierung ist zu beachten:</p>
+<ul>
+<li> Die vier Stäbe haben alle die Länge \(L\). </li>
+<li> Die Last \(F\) wird im Verhältnis zur Knicklast \(F_{crit,2}\) der zweiten Lagerung (gelenkig-gelenkig) angegeben.
+<li> Die vier Querschnitte sind identisch: sie haben das gleiche Elastizitätsmodul und das gleiche Flächenträgheitsmoment.</li>
+<li> Der einizige Unterschied der vier Stäbe ist die Lagerung.</li>
+<li> Nachdem der Stab geknickt ist, wird die Knicklänge \(s_k\) des Stabes eingezeichnet.</li>
+<li> Die Last \(F\) kann nur erhöht und nicht reduziert werden. Mithilfe des "zurücksetzten"-Knopfs lässt sich die Ausgangssituation
+  wiederherstellen.</li>
+</ul>
+
+<!--<hr>-->
