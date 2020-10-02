@@ -1,0 +1,84 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Bending Beam",
+        "de": "Biegebalken"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Bending_Beam/description.html').read()",
+        "de": "open('Bending_Beam/description_de.html', encoding='utf-8').read()"
+    },
+    "p_loc_slide.title":
+    {
+        "en": "\\\\mathrm{Load \\ Position}",
+        "de": "\\\\mathrm{Lastposition}"
+    },
+    "p_mag_slide.title":
+    {
+        "en": "\\\\mathrm{Load \\ Amplitude}",
+        "de": "\\\\mathrm{Wirkungsrichtung \\ der \\ Last}"
+    },
+    "f2_loc_slide.title":
+    {
+        "en": "\\\\mathrm{Support \\ Position}",
+        "de": "\\\\mathrm{Auflagerposition}"
+    },
+    "radio_button_group.labels[0]":
+    {
+        "en": "Point Load",
+        "de": "Einzellast"
+    },
+    "radio_button_group.labels[1]":
+    {
+        "en": "Constant Load",
+        "de": "Linienlast"
+    },
+    "radio_button_group.labels[2]":
+    {
+        "en": "Triangular Load",
+        "de": "Dreieckslast"
+    },
+    "Reset_button.label":
+    {
+        "en": "Reset",
+        "de": "zurücksetzen"
+    },
+    "Show_button.label":
+    {
+            "en": "Show/Hide Support Forces",
+            "de": "zeige/verberge Auflagergrößen"
+    },
+    "plot.title.text":
+    {
+            "en": "Beam with Supports and Load",
+            "de": "statisches System"
+    },
+    "plot1.title.text":
+    {
+            "en": "Shear Force",
+            "de": "Querkraftverlauf"
+    },
+    "plot2.title.text":
+    {
+            "en": "Bending Moment",
+            "de": "Momentenverlauf"
+    },
+    "legend_text[0]":
+    {
+            "en": "\\\\mathrm{Shear \\ Force}",
+            "de": "\\\\mathrm{Querkraftverlauf}"
+    },
+    "legend_text[1]":
+    {
+            "en": "\\\\mathrm{Bending \\ Moment}",
+            "de": "\\\\mathrm{Momentenverlauf}"
+    }
+}
