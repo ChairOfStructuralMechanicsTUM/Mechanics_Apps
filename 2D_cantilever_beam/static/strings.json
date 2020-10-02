@@ -1,0 +1,86 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Cantilever Beam",
+        "de": "Kragträger"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('2d_cantilever_beam/description.html').read()",
+        "de": "open('2d_cantilever_beam/description_de.html', encoding='utf-8').read()"
+    },
+    "CrossSection3":
+    {
+        "isCode": true,
+        "en": "open('2D_cantilever_beam/static/images/Circular.svg').read()",
+        "de": "open('2D_cantilever_beam/static/images/Circular_de.svg').read()"
+    },
+    "radio_button_group.labels[0]":
+    {
+        "en": "Quadratic",
+        "de": "Quadrat"
+    },
+    "radio_button_group.labels[1]":
+    {
+        "en": "Double-T",
+        "de": "doppel-T-Träger"
+    },
+    "radio_button_group.labels[2]":
+    {
+        "en": "Circular",
+        "de": "Kreis"
+    },
+    "radio_button_group.labels[3]":
+    {
+        "en": "Triangular",
+        "de": "Dreieck"
+    },
+    "radio_button_group2.labels[0]":
+    {
+        "en": "Normal Stresses",
+        "de": "Normalspannungen"
+    },
+    "radio_button_group2.labels[1]":
+    {
+        "en": "Shear Stresses",
+        "de": "Schubspannungen"
+    },
+    "Reset_button.label":
+    {
+        "en": "Reset",
+        "de": "zurücksetzten"
+    },
+    "plotDefZY.title.text":
+    {
+        "en": "Selected Cross Section",
+        "de": "Gewählter Querschnitt"
+    },
+    "plotDefXZ.title.text":
+    {
+        "en": "Deformation in XZ-View",
+        "de": "Verformung in der XZ-Ansicht"
+    },
+    "plotDefXY.title.text":
+    {
+        "en": "Deformation in XY-View",
+        "de": "Verformung in der XY-Ansicht"
+    },
+    "plotXZElement.title.text":
+    {
+        "en": "Stresses along detached Element",
+        "de": "Spannungen entlang des her. Elements"
+    },
+    "colorBar.title.text":
+    {
+        "isCode": true,
+        "en": "' '*15  + '-' + ' '*55 + 'Normal Stress' + ' '*55 + '+'",
+        "de": "' '*15  + '-' + ' '*55 + 'Normalspannungen' + ' '*55 + '+'"
+    }
+}
