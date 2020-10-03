@@ -1,0 +1,68 @@
+<head>
+    <style>
+    h1 {
+        margin: 2em 0 0 0;
+        color: #2e484c;
+        font-family: 'Julius Sans One', sans-serif;
+        font-size: 1.8em;
+        text-transform: uppercase;
+    }
+    a:link {
+        font-weight: bold;
+        text-decoration: none;
+        color: #0d8ba1;
+    }
+    a:visited {
+        font-weight: bold;
+        text-decoration: none;
+        color: #1a5952;
+    }
+    a:hover, a:focus, a:active {
+        text-decoration: underline;
+        color: #9685BA;
+    }
+    p {
+        font: "Libre Baskerville", sans-serif;
+        text-align: justify;
+        text-justify: inter-word;
+    }
+    code {
+        color: #336699;
+    }
+    </style>
+    <head>
+    
+            <h1>Fußpunkterregte Schwingung</h1>
+    
+            <p>
+            In der Baudynamik sind oft fußpunkterregte Schwingungen vorzufinden, z.B. bei Erdbeben oder wenn 
+            ein Auto über eine unebene Straße fährt.
+            </p>
+            
+            <p>
+            Diese App zeigt die gedämpfte Schwingung einer Masse, die über eine Feder mit einem
+            Rad verbunden ist. Zu Beginn befindet sich die Masse im statischen Gleichgewicht.
+            Durch das klicken auf "abspielen" fährt das Rad über einen unebenen Boden, der durch eine Sinusfunktion beschrieben
+            werden kann, wodurch die Masse anfängt zu Schwingen.
+            </p>
+            
+            
+            <p>Es können die folgenden Parameter angepasst werden:</p>
+            <ul>
+            <li> Masse in $kg$ </li>
+            <li> Federsteifigkeit in $\frac{N}{m}$ </li>
+            <li> Dämpferkoeffizient in $\frac{Ns}{m}$ </li>
+            </ul>
+            <p>
+            Das Diagramm in der Mitte zeigt die Relativverschiebung zwischen der Masse und dem Rad in Abhängigkeit der Zeit. Die 
+            Relativverschiebung setzt sich aus einem homogenen und einem parikulären Anteil zusammen.
+            Die Absolutverschiebung der Masse kann durch das hinzuaddieren der Radverschiebung (Untergrundverschiebung) berechnet werden.
+            In der oberen rechten Ecke befinden sich einige Tools um z.B. in das Diagramm zu zoomen. Mithilfe des "Zurücksetzen"-Knopfs, kann
+            das System in seine Ausgangslage zurückversetzt werden.
+            </p>
+            <p>
+            Die Diagramme auf der rechten Seite zeigen die Vergrößerungsfunktion $V_r$ und den Phasenwinkel.
+            Die Vergrößerungsfunktion $V_r$ stellt den Zusammenhang zwischen der Amplitude der Relativverschiebung und der
+            Amplitude der Untergrundverschiebung her. Der Phasenwinkel gibt an, um wie viel die mit der Frequenz $\Omega$ ablaufende erzwungene
+            Schwingung der Erregung „nacheilt“. Der orange Punkt zeigt das aktuelle Frequenzverhältnis $\eta=\frac{\Omega}{\omega}$ an.
+            </p>

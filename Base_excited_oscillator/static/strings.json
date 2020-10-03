@@ -1,0 +1,83 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Base excited oscillator",
+        "de": "Fußpunkterregte Schwingung"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Base_excited_oscillator/description.html').read()",
+        "de": "open('Base_excited_oscillator/description_de.html', encoding='utf-8').read()"
+    },
+    "kappa_input.title":
+    {
+        "en": "\\\\text{Spring stiffness} \\\\left[ \\\\frac{\\\\mathrm{N}}{\\\\mathrm{m}} \\\\right]: ",
+        "de": "\\\\text{Federsteifigkeit} \\\\left[ \\\\frac{\\\\mathrm{N}}{\\\\mathrm{m}} \\\\right]: "
+    },
+    "lam_input.title":
+    {
+        "en": "\\\\text{Damper Coefficient} \\\\left[ \\\\frac{\\\\mathrm{Ns}}{\\\\mathrm{m}} \\\\right]: ",
+        "de": "\\\\text{Dämpferkoeffizient} \\\\left[ \\\\frac{\\\\mathrm{Ns}}{\\\\mathrm{m}} \\\\right]: "
+    },
+    "mass_input.title":
+    {
+        "en": "\\\\text{Mass} \\\\left[ \\\\mathrm{kg} \\\\right]: ",
+        "de": "\\\\text{Masse} \\\\left[ \\\\mathrm{kg} \\\\right]: "
+    },
+    "play_pause_button.label":
+    {
+        "checkFlag": "show",
+        "on":
+        {
+            "en": "Pause",
+            "de": "pausieren"
+        },
+        "off":
+        {
+            "en": "Play",
+            "de": "abspielen"
+        }
+    },
+    "reset_button.label":
+    {
+        "en": "Reset",
+        "de": "zurücksetzen"
+    },
+    "stop_button.label":
+    {
+        "en": "Stop",
+        "de": "stop"
+    },
+    "p.xaxis.axis_label":
+    {
+        "en": "Time [s]",
+        "de": "Zeit [s]"
+    },
+    "p.yaxis.axis_label":
+    {
+        "en": "Relative Displacement [m]",
+        "de": "Relativverschiebung [m]"
+    },
+    "amp.yaxis.axis_label":
+    {
+        "en": "Amplification",
+        "de": "Vergrößerung"
+    },
+    "pa.yaxis.axis_label":
+    {
+        "en": "Phase angle [rad]",
+        "de": "Phasenwinkel [rad]"
+    },
+    "pa.xaxis.axis_label":
+    {
+        "en": "Excitation Frequency Ratio",
+        "de": "Frequenzverhältnis"
+    }
+}
