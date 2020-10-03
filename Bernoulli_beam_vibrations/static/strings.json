@@ -1,0 +1,105 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Bernoulli beam vibrations",
+        "de": "Schwingung des Euler-Bernoulli Balkens"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Bernoulli_beam_vibrations/description.html').read()",
+        "de": "open('Bernoulli_beam_vibrations/description_de.html', encoding='utf-8').read()"
+    },
+    "p1.title.text":
+    {
+        "en": "Simply supported beam",
+        "de": "gelenkig gelagerter Einfeldträger"
+    },
+    "p2.title.text":
+    {
+        "en": "Beam fixed at both ends",
+        "de": "beidseitig eingespannter Einfeldträger"
+    },
+    "p3.title.text":
+    {
+        "en": "Cantilever beam",
+        "de": "Kragträger"
+    },
+    "ev_input1.title":
+    {
+        "en": "Eigenvalue/Eigenmode",
+        "de": "Eigenwert/Eigenform"
+    },
+    "ev_input2.title":
+    {
+        "en": "Eigenvalue/Eigenmode",
+        "de": "Eigenwert/Eigenform"
+    },
+    "ev_input3.title":
+    {
+        "en": "Eigenvalue/Eigenmode",
+        "de": "Eigenwert/Eigenform"
+    },
+    "legend_texts[0][0]":
+    {
+        "en": "\\\\text{Eigenvalue Problem: } \\\\sin(\\lambda) = 0 \\\\rightarrow \\\\text{Solution: } w_i(\\\\xi) = \\\\sin(i \\\\cdot \\\\pi \\\\xi)",
+        "de": "\\\\text{Eigenwertproblem: } \\\\sin(\\lambda) = 0 \\\\rightarrow \\\\text{Lösung: } w_i(\\\\xi) = \\\\sin(i \\\\cdot \\\\pi \\\\xi)"
+    },
+    "legend_texts[1][0]":
+    {
+        "en": "\\\\text{Eigenvalue Problem: } \\cosh(\\\\lambda) \\cdot \\cos(\\\\lambda) -1 = 0 \\\\rightarrow \\\\text{Solution: } w_i(\\\\xi) = c(\\\\lambda_i \\\\xi) - \\\\frac{c(\\\\lambda_i)}{s(\\\\lambda_i)} \\\\cdot s(\\\\lambda_i \\\\xi)",
+        "de": "\\\\text{Eigenwertproblem: } \\cosh(\\\\lambda) \\cdot \\cos(\\\\lambda) -1 = 0 \\\\rightarrow \\\\text{Lösung: } w_i(\\\\xi) = c(\\\\lambda_i \\\\xi) - \\\\frac{c(\\\\lambda_i)}{s(\\\\lambda_i)} \\\\cdot s(\\\\lambda_i \\\\xi)",
+    },
+    "legend_texts[1][1]":
+    {
+        "en": "\\\\text{Solution part: } - \\\\frac{1}{2} \\\\cosh(\\\\lambda \\\\cdot \\\\xi)",
+        "de": "\\\\text{Einzellösung: } - \\\\frac{1}{2} \\\\cosh(\\\\lambda \\\\cdot \\\\xi)"
+    },
+    "legend_texts[1][2]":
+    {
+        "en": "\\\\text{Solution part: } \\\\frac{1}{2} \\\\frac{c(\\\\lambda)}{s(\\\\lambda)} \\\\cdot \\\\sinh(\\\\lambda \\\\xi)",
+        "de": "\\\\text{Einzellösung: } \\\\frac{1}{2} \\\\frac{c(\\\\lambda)}{s(\\\\lambda)} \\\\cdot \\\\sinh(\\\\lambda \\\\xi)"
+    },
+    "legend_texts[1][3]":
+    {
+        "en": "\\\\text{Solution part: } \\\\frac{1}{2} \\\\cos(\\\\lambda \\\\cdot \\\\xi)",
+        "de": "\\\\text{Einzellösung: } \\\\frac{1}{2} \\\\cos(\\\\lambda \\\\cdot \\\\xi)"
+    },
+    "legend_texts[1][4]":
+    {
+        "en": "\\\\text{Solution part: } - \\\\frac{1}{2} \\\\frac{c(\\\\lambda)}{s(\\\\lambda)} \\\\cdot \\\\sin(\\\\lambda \\\\xi)",
+        "de": "\\\\text{Einzellösung: } - \\\\frac{1}{2} \\\\frac{c(\\\\lambda)}{s(\\\\lambda)} \\\\cdot \\\\sin(\\\\lambda \\\\xi)"
+    },
+    "legend_texts[2][0]":
+    {
+        "en": "\\\\text{Eigenvalue Problem: } \\cosh(\\lambda) \\cdot \\cos(\\\\lambda) +1 = 0 \\\\rightarrow \\\\text{Solution: } w_i(\\\\xi) = c(\\\\lambda_i \\\\xi) - \\\\frac{C(\\\\lambda_i)}{S(\\\\lambda_i)} \\\\cdot s(\\\\lambda_i \\\\xi)",
+        "de": "\\\\text{Eigenwertproblem: } \\cosh(\\lambda) \\cdot \\cos(\\\\lambda) +1 = 0 \\\\rightarrow \\\\text{Lösung: } w_i(\\\\xi) = c(\\\\lambda_i \\\\xi) - \\\\frac{C(\\\\lambda_i)}{S(\\\\lambda_i)} \\\\cdot s(\\\\lambda_i \\\\xi)"
+    },
+    "legend_texts[2][1]":
+    {
+        "en": "\\\\text{Solution part: } - \\\\frac{1}{2} \\\\cosh(\\\\lambda \\\\cdot \\\\xi)",
+        "de": "\\\\text{Einzellösung: } - \\\\frac{1}{2} \\\\cosh(\\\\lambda \\\\cdot \\\\xi)"
+    },
+    "legend_texts[2][2]":
+    {
+        "en": "\\\\text{Solution part: } \\\\frac{1}{2} \\\\frac{C(\\\\lambda)}{S(\\\\lambda)} \\\\cdot \\\\sinh(\\\\lambda \\\\xi)",
+        "de": "\\\\text{Einzellösung: } \\\\frac{1}{2} \\\\frac{C(\\\\lambda)}{S(\\\\lambda)} \\\\cdot \\\\sinh(\\\\lambda \\\\xi)"
+    },
+    "legend_texts[2][3]":
+    {
+        "en": "\\\\text{Solution part: } \\\\frac{1}{2} \\\\cos(\\\\lambda \\\\cdot \\\\xi)",
+        "de": "\\\\text{Einzellösung: } \\\\frac{1}{2} \\\\cos(\\\\lambda \\\\cdot \\\\xi)"
+    },
+    "legend_texts[2][4]":
+    {
+        "en": "\\\\text{Solution part: } - \\\\frac{1}{2} \\\\frac{C(\\\\lambda)}{S(\\\\lambda)} \\\\cdot \\\\sin(\\\\lambda \\\\xi)",
+        "de": "\\\\text{Einzellösung: } - \\\\frac{1}{2} \\\\frac{C(\\\\lambda)}{S(\\\\lambda)} \\\\cdot \\\\sin(\\\\lambda \\\\xi)"
+    }
+
+}
