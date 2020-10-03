@@ -1,0 +1,118 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Normal Force Rod",
+        "de": "Normalkraftstab"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Normal_Force_Rod/description.html').read()",
+        "de": "open('Normal_Force_Rod/description_de.html', encoding='utf-8').read()"
+    },
+    "radio_button_group.labels[0]":
+    {
+        "en": "Point Load",
+        "de": "Einzellast"
+    },
+    "radio_button_group.labels[1]":
+    {
+        "en": "Constant Load",
+        "de": "Linienlast"
+    },
+    "radio_button_group.labels[2]":
+    {
+        "en": "Triangular Load",
+        "de": "Dreieckslast"
+    },
+    "radio_button_group.labels[3]":
+    {
+        "en": "Temperature",
+        "de": "Temperaturlast"
+    },
+    "radio_group_left.labels[0]":
+    {
+        "en": "fixed",
+        "de": "fest"
+    },
+    "radio_group_left.labels[1]":
+    {
+        "en": "sliding",
+        "de": "verschieblich"
+    },
+    "radio_group_right.labels[0]":
+    {
+        "en": "fixed",
+        "de": "fest"
+    },
+    "radio_group_right.labels[1]":
+    {
+        "en": "sliding",
+        "de": "verschieblich"
+    },
+    "load_position_slider.title":
+    {
+        "en": "\\\\mathrm{Load \\ Position:}",
+        "de": "\\\\mathrm{Lastposition:}"
+    },
+    "reset_button.label":
+    {
+        "en": "Reset",
+        "de": "Zurücksetzen"
+    },
+    "p_rt1.text":
+    {
+        "en": "Left support:  ",
+        "de": "linkes Auflager:"
+    },
+    "p_rt2.text":
+    {
+        "en": "Right support: ",
+        "de": "rechtes Auflager:"
+    },
+    "p_rt4.text":
+    {
+        "en": "Load Amplitude:",
+        "de": "Wirkungsrichtung:"
+    },
+    "line_button.label":
+    {
+        "checkFlag": "show",
+        "on":
+        {
+            "en": "Hide line",
+            "de": "Verberge Linie"
+        },
+        "off":
+        {
+            "en": "Show line",
+            "de": "Zeige Linie"
+        }
+    },
+    "plot_main.title.text":
+    {
+        "en": "Rod with Supports and Load",
+        "de": "statisches System"
+    },
+    "plot_normalF.title.text":
+    {
+        "en": "Normal force N(x)",
+        "de": "Normalkraftverlauf N(x)"
+    },
+    "plot_deform.title.text":
+    {
+        "en": "Deformation u(x)",
+        "de": "Verschiebung u(x)"
+    },
+    "warning.text[0]":
+    {
+        "en": "Warning! - Kinematic, rod slides away!",
+        "de": "Achtung! - System ist kinematisch!"
+    }
+}
