@@ -173,42 +173,46 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
         diagram.add_layout( startingVelocityArrow )
     
     # Create labels for both the boat and the swimmers
-    diagram.add_layout( Label(
+    swimmer_labels = []
+    swimmer_labels.append( Label(
                                   x=5, y=-2,
                                   text='Boat',
                                   text_color='black',text_font_size="8pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                               ))
-    diagram.add_layout( Label(
+    swimmer_labels.append( Label(
                                   x=10, y=-2,
                                   text='Orange Swimmer',
                                   text_color='black',text_font_size="8pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                               ))
-    diagram.add_layout( Label(
+    swimmer_labels.append( Label(
                                   x=15, y=-2,
                                   text='Green Swimmer',
                                   text_color='black',text_font_size="8pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                               ))
-    diagram.add_layout( Label(
+    swimmer_labels.append( Label(
                                   x=20, y=-2,
                                   text='Blue Swimmer',
                                   text_color='black',text_font_size="8pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                               ))
-    diagram.add_layout( Label(
+    swimmer_labels.append( Label(
                                   x=25, y=-2,
                                   text='Yellow Swimmer',
                                   text_color='black',text_font_size="8pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                               ))
-    diagram.add_layout( Label(
+    swimmer_labels.append( Label(
                                   x=30, y=-2,
                                   text='Red Swimmer',
                                   text_color='black',text_font_size="8pt",
                                   level='glyph',text_baseline="middle",text_align="center",
                               ))
+
+    for label in swimmer_labels:
+        diagram.add_layout( label )
     '''
     swimmersLabels = list()
     for i in range(0,5):
@@ -223,7 +227,7 @@ def create_arrows_velocityDiagram( diagram, colors, boatSpeed ):
                              )
         diagram.add_layout( swimmersLabels[i] )
     '''
-    return boatArrows_sources, swimmerArrows_sources
+    return boatArrows_sources, swimmerArrows_sources, swimmer_labels
         
 def reset_arrows_velocityDiagram( boatArrows_sources, swimmerArrows_sources, boatSpeed ):
     for i in range(0,6):

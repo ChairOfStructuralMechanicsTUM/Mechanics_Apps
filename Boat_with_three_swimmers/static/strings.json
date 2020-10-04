@@ -1,0 +1,99 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Boat with three swimmers",
+        "de": "Boot mit Schwimmern an Bord"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Boat_with_three_swimmers/description.html').read()",
+        "de": "open('Boat_with_three_swimmers/description_de.html', encoding='utf-8').read()"
+    },
+    "boat_and_swimmers.text":
+    {
+        "isCode": true,
+        "en": "open('Boat_with_three_swimmers/boat_and_swimmers.html').read()",
+        "de": "open('Boat_with_three_swimmers/boat_and_swimmers_de.html', encoding='utf-8').read()"
+    },
+    "play_button.label":
+    {
+        "checkFlag": "show",
+        "on":
+        {
+            "en": "Pause",
+            "de": "pausieren"
+        },
+        "off":
+        {
+            "en": "Play",
+            "de": "abspielen"
+        }
+    },
+    "reset_button.label":
+    {
+        "en": "Reset",
+        "de": "zurücksetzten"
+    },
+    "jump_button.label":
+    {
+        "en": "Jump!",
+        "de": "abspringen!"
+    },
+    "numberPersonsSlider.title":
+    {
+        "en": "Number of swimmers on board ",
+        "de": "Anzahl der Schwimmer an Bord "
+    },
+    "scene.title.text":
+    {
+        "en": "Water Scene with the Boat and its Swimmers",
+        "de": "Boot mit Schwimmern"
+    },
+    "velocity_diagram.title.text":
+    {
+        "en": "Velocity Diagram",
+        "de": "Geschwindigkeitsdiagramm"
+    },
+    "velocity_diagram.yaxis.axis_label":
+    {
+        "en": "Velocity (m/s)",
+        "de": "Geschwindigkeit (m/s)"
+    },
+    "swimmer_labels[0].text":
+    {
+        "en": "Boat",
+        "de": "Boot"
+    },
+    "swimmer_labels[1].text":
+    {
+        "en": "Orange Swimmer",
+        "de": "oranger ..."
+    },
+    "swimmer_labels[2].text":
+    {
+        "en": "Green Swimmer",
+        "de": "grüner ..."
+    },
+    "swimmer_labels[3].text":
+    {
+        "en": "Blue Swimmer",
+        "de": "blauer ..."
+    },
+    "swimmer_labels[4].text":
+    {
+        "en": "Yellow Swimmer",
+        "de": "gelber ..."
+    },
+    "swimmer_labels[5].text":
+    {
+        "en": "Red Swimmer",
+        "de": "roter Schwimmer"
+    }
+}
