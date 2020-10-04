@@ -6,6 +6,19 @@ from math import pi, floor
 
 class Collision_BarChart(object):
     def __init__(self, xVals, yVals, colours = None, width=None):
+        self.xVals   = xVals
+        self.yVals   = yVals
+        self.colours = colours
+        self.width   = width
+
+        self.create_BarChart()
+        
+    def create_BarChart(self):
+        xVals   = self.xVals
+        yVals   = self.yVals
+        colours = self.colours
+        width   = self.width
+
         Max = 0
         Min=0
         N=len(xVals)
@@ -87,7 +100,7 @@ class Collision_BarChart(object):
         """
         # call ticker_func
         self.fig.xaxis[0].formatter = FuncTickFormatter(code=ticker_func_JS, args=dict(labels=index_obj))
-    
+
     def setTitle(self,title):
         self.fig.title=title
     
