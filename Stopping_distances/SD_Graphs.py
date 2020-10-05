@@ -1,6 +1,7 @@
 # general imports
 from math  import sqrt, isnan
 from numpy import linspace
+from copy  import copy
 
 # bokeh imports
 from bokeh.plotting import figure
@@ -201,10 +202,10 @@ class SD_Graphs:
     def swapSetup(self):
         # change between methods by figure
         if (self.s_or_t=='t'):
-            self.at.xaxis.axis_label = "Travelled Distance (m)"
+            self.at.xaxis.axis_label = copy(self.vs.xaxis.axis_label)
             self.at.x_range.end=30
             self.s_or_t='s'
         else:
-            self.at.xaxis.axis_label = "Time (s)"
+            self.at.xaxis.axis_label = copy(self.vt.xaxis.axis_label)
             self.at.x_range.end=10
             self.s_or_t='t'

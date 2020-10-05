@@ -1,0 +1,124 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Stopping distances",
+        "de": "Lineare Bewegung"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Stopping_distances/description.html').read()",
+        "de": "open('Stopping_distances/description_de.html', encoding='utf-8').read()"
+    },
+    "Plotter.vt.xaxis.axis_label":
+    {
+        "en": "Time (s)",
+        "de": "Zeit (s)"
+    },
+    "Plotter.vt.yaxis.axis_label":
+    {
+        "en": "Velocity (m/s)",
+        "de": "Geschwindigkeit (m/s)"
+    },
+    "Plotter.at.xaxis.axis_label":
+    {
+        "en": "Time (s)",
+        "de": "Zeit (s)"
+    },
+    "Plotter.at.yaxis.axis_label":
+    {
+        "en": "Acceleration (m/s\\u00B2)",
+        "de": "Beschleunigung (m/s\\u00B2)"
+    },
+    "Plotter.st.xaxis.axis_label":
+    {
+        "en": "Travelled Distance (m)",
+        "de": "zurückgelegte Distanz (m)"
+    },
+    "Plotter.st.yaxis.axis_label":
+    {
+        "en": "Time (s)",
+        "de": "Zeit (s)"
+    },
+    "Plotter.vs.xaxis.axis_label":
+    {
+        "en": "Travelled Distance (m)",
+        "de": "zurückgelegte Distanz (m)"
+    },
+    "Prob.Vs.title":
+    {
+        "en": "Initial Velocity",
+        "de": "Anfangsgeschwindigkeit"
+    },
+    "Prob.VMethod.value":
+    {
+        "en": "Initial Velocity",
+        "de": "Initial Velocity"
+    },
+    "Prob.VMethod.options[0]":
+    {
+        "en": "Initial Velocity",
+        "de": "Anfangsgeschwindigkeit"
+    },
+    "Prob.VMethod.options[1]":
+    {
+        "en": "Distance-dependent Velocity",
+        "de": "distanzabhängige Geschwindigkeit"
+    },
+    "Prob.UserAcceleration.title":
+    {
+        "en": "Acceleration :",
+        "de": "Beschleunigung :"
+    },
+    "Prob.startSim.label":
+    {
+        "en": "Start",
+        "de": "start"
+    },
+    "Prob.reset_button.label":
+    {
+        "en": "Reset",
+        "de": "zurücksetzten"
+    },
+    "Prob.TestEqs.label":
+    {
+        "en": "Check equations",
+        "de": "überprüfe Gleichungen"
+    },
+    "Prob.eq_selection.value":
+    {
+        "en": "Select an equation",
+        "de": "Select an equation"
+    },
+    "Prob.eq_selection.options[0]":
+    {
+        "en": "Select an equation",
+        "de": "wähle Gleichung aus"
+    },
+    "Prob.eq_selection.options[1]":
+    {
+        "en": "s(t) - time dependent distance",
+        "de": "s(t) - zeitabhängige Distanz"
+    },
+    "Prob.eq_selection.options[2]":
+    {
+        "en": "v(t) - time dependent velocity",
+        "de": "v(t) - zeitabhängige Geschwindigkeit"
+    },
+    "Prob.eq_selection.options[3]":
+    {
+        "en": "t(s) - distance dependent time",
+        "de": "t(s) - distanzabhängige Zeit"
+    },
+    "Prob.eq_selection.options[4]":
+    {
+        "en": "v(s) - distance dependent velocity",
+        "de": "v(s) - distanzabhängige Geschwindigkeit"
+    }
+}

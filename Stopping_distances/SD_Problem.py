@@ -405,12 +405,21 @@ class SD_Problem:
 
 
     def show_equation(self, attr, old, new):
-        if new == "Select an equation":
+        print(new)
+        if new == "Select an equation" or new == "wähle Gleichung aus":
             for k in self.equations.keys():
                 self.equations[k].visible = False
         else:
+            if new == "s(t) - time dependent distance" or new == "s(t) - zeitabhängige Distanz":
+                k = 'st'
+            elif new == "v(t) - time dependent velocity" or new == "v(t) - zeitabhängige Geschwindigkeit":
+                k = 'vt'
+            elif new == "t(s) - distance dependent time" or new == "t(s) - distanzabhängige Zeit":
+                k = 'ts'
+            elif new == "v(s) - distance dependent velocity" or new == "v(s) - distanzabhängige Geschwindigkeit":
+                k = 'vs'
             # get the key for the equations dict by extracting the first letters
-            k = new[:4].replace('(','').replace(')','')
+            # k = new[:4].replace('(','').replace(')','')
             # hide all other equations
             # remark: need to go through all keys, since value of "old" might be "Select..." which has no key
             for other_key in self.equations.keys():
@@ -418,7 +427,7 @@ class SD_Problem:
                     self.equations[other_key].visible = False
             # show the corresponding equation
             self.equations[k].visible = True
- 
+
 
     def add_math_op(self, event_obj):
         # get the Button which called this function
