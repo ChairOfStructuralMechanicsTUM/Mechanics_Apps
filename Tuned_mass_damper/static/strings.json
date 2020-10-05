@@ -1,0 +1,108 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Tuned mass damper",
+        "de": "Schwingungstilger"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Tuned_mass_damper/description.html').read()",
+        "de": "open('Tuned_mass_damper/description_de.html', encoding='utf-8').read()"
+    },
+    "stop_button.label":
+    {
+        "en": "Stop",
+        "de": "stop"
+    },
+    "reset_button.label":
+    {
+        "en": "Reset",
+        "de": "zurücksetzten"
+    },
+    "play_pause_button.label":
+    {
+        "checkFlag": "show",
+        "on":
+        {
+            "en": "Pause",
+            "de": "pausieren"
+        },
+        "off":
+        {
+            "en": "Play",
+            "de": "abspielen"
+        }
+    },
+    "mass_ratio_input.title":
+    {
+        "en": "\\\\text{Mass Ratio } \\mu = \\\\frac{m_2}{m_1} = ",
+        "de": "\\\\text{Massenverhältnis } \\mu = \\\\frac{m_2}{m_1} = "
+    },
+    "tuning_input.title":
+    {
+        "en": "\\\\text{TMD Tuning } \\kappa = \\\\frac{\\omega_2}{\\omega_1} = \\sqrt{\\\\frac{k_2 \\cdot m_1}{k_1 \\cdot m_2}} = ",
+        "de": "\\\\text{Eigenfrequenzverhältnis } \\kappa = \\\\frac{\\omega_2}{\\omega_1} = \\sqrt{\\\\frac{k_2 \\cdot m_1}{k_1 \\cdot m_2}} = "
+    },
+    "D1_input.title":
+    {
+        "en": "\\\\text{Percentage of Critical Damping of Main Mass } D_1 = \\\\frac{c_1}{2 \\cdot m_1 \\cdot \\omega_1} = ",
+        "de": "\\\\text{???? } D_1 = \\\\frac{c_1}{2 \\cdot m_1 \\cdot \\omega_1} = "
+    },
+    "D2_input.title":
+    {
+        "en": "\\\\text{Percentage of Critical Damping of Top Mass } D_2  = \\\\frac{c_2}{2 \\cdot m_2 \\cdot \\omega_2} = ",
+        "de": "\\\\text{???? } D_2  = \\\\frac{c_2}{2 \\cdot m_2 \\cdot \\omega_2} = "
+    },
+    "frequency_ratio_input.title":
+    {
+        "en": "\\\\text{Excitation Frequency Ratio } \\eta  = \\\\frac{\\Omega}{\\omega_1} = ",
+        "de": "\\\\text{Frequenzverhältnis } \\eta  = \\\\frac{\\Omega}{\\omega_1} = "
+    },
+    "forceTime_plot.xaxis.axis_label":
+    {
+        "en": "Time [s]",
+        "de": "Zeit [s]"
+    },
+    "forceTime_plot.yaxis.axis_label":
+    {
+        "en": "Force [N]",
+        "de": "Kraft [N]"
+    },
+    "Amplification_Frequency_plot.yaxis.axis_label":
+    {
+        "en": "Amplification",
+        "de": "Vergrößerung"
+    },
+    "PhaseAngle_Frequency_plot.xaxis.axis_label":
+    {
+        "en": "Excitation Frequency Ratio",
+        "de": "Frequenzverhältnis"
+    },
+    "PhaseAngle_Frequency_plot.yaxis.axis_label":
+    {
+        "en": "Phase Angle [rad]",
+        "de": "Phasenwinkel [rad]"
+    },
+    "displacementTime_plot.yaxis.axis_label":
+    {
+        "en": "Normalized Displacement u/(F/k₁)",
+        "de": "skalierte Verschiebung u/(F/k₁)"
+    },
+    "legend_text[0]":
+    {
+        "en": "Main Mass",
+        "de": "Hauptmasse"
+    },
+    "legend_text[1]":
+    {
+        "en": "Top Mass",
+        "de": "Nebenmasse"
+    }
+}

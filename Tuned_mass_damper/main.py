@@ -10,10 +10,11 @@ from tmd_functions import Clear_Time_History
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div, Arrow, NormalHead, Range1d, LabelSet, OpenHead, ColumnDataSource
+from bokeh.models import Slider, Button, Div, Arrow, NormalHead, Range1d, LabelSet, OpenHead, ColumnDataSource, Legend
 from math import cos, sin, radians, sqrt, pi, atan2
 
 import numpy as np
+import yaml
 from numpy.linalg import inv
 
 from os.path import dirname, join, split, abspath
@@ -22,6 +23,11 @@ currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv, LatexSlider
+
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Tuned_mass_damper/static/strings.json', encoding='utf-8'))
 
 ## set start parameters
 x1=6                #y-coordinate of main mass
@@ -83,7 +89,9 @@ dispOld = np.array([0.,0.])
 F0 = np.array([-1.,0.])
 accOld = inv(M).dot(F0-K.dot(dispOld)-C.dot(velOld))
 
-## create ColumnDataSources            
+## create ColumnDataSources
+legend_text = ['Main Mass','Top Mass']
+glob_active  = ColumnDataSource(data=dict(Active=[False]))
 arrow_line   = ColumnDataSource(data = dict(x1=[3],y1=[5+x1+5],x2=[3],y2=[x1+5]))   #arrow line showing initial force
 arrow_offset = ColumnDataSource(data = dict(x1=[3],y1=[x1+5+0.1],x2=[3],y2=[x1+5])) #arrow head showing initial force
 
@@ -113,9 +121,12 @@ displacementTime_plot = figure(title="",tools=["ywheel_zoom,xwheel_pan,pan,reset
 displacementTime_plot.axis.axis_label_text_font_size="12pt"
 displacementTime_plot.axis.axis_label_text_font_style="normal"
 displacementTime_plot.yaxis.axis_label="Normalized Displacement u/(F/k₁)"
-displacementTime_plot.line(x='x',y='y', source = mainMass_displacementTime_source, color='#e37222', legend_label='Main Mass')
-displacementTime_plot.line(x='x',y='y', source = topMass_displacementTime_source, color='#3070b3', legend_label='Top Mass')
+line_1 = displacementTime_plot.line(x='x',y='y', source = mainMass_displacementTime_source, color='#e37222')
+line_2 = displacementTime_plot.line(x='x',y='y', source = topMass_displacementTime_source, color='#3070b3')
 displacementTime_plot.toolbar.logo = None
+
+legend = Legend(items=[(legend_text[0],[line_1]),(legend_text[1],[line_2])], location='top_right')
+displacementTime_plot.add_layout(legend)
 
 ##force-time diagram
 forceTime_plot = figure(title="",tools=["ywheel_zoom,xwheel_pan,pan,reset"],width = 400,height= 300,x_range  = time_range,
@@ -356,25 +367,27 @@ def disable_all_sliders(d=True):
     frequency_ratio_input.disabled = d
 
 def play_pause():
-    if play_pause_button.label == "Play":
+    if not Active:
         play()
     else: 
         pause()
 
 def play():
+    [lang] = flags.data["lang"]
     global Active, g1BaseOscillator
     if (not Active):
         disable_all_sliders(True)       #while the app is running, it's not possible to change any values
         #Add a callback to be invoked on a session periodically
         g1BaseOscillator = curdoc().add_periodic_callback(evolve,dt*1000)
-        play_pause_button.label = "Pause"
+        play_pause_button.label = strings["play_pause_button.label"]['on'][lang]
         Active=True
 
 def pause():
+    [lang] = flags.data["lang"]
     global Active, g1BaseOscillator
     if (Active):
         curdoc().remove_periodic_callback(g1BaseOscillator)
-        play_pause_button.label = "Play"
+        play_pause_button.label = strings["play_pause_button.label"]['off'][lang]
         Active=False
 
 def stop():
@@ -425,8 +438,45 @@ stop_button.on_click(stop)
 Update_system()
 Update_current_state()
 
+
+######################################
+# Change language
+######################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+    if Active:
+        play_pause_button.label = strings["play_pause_button.label"]['on'][lang]
+    else:
+        play_pause_button.label = strings["play_pause_button.label"]['off'][lang]
+    
+    legend.items = [(legend_text[0],[line_1]),(legend_text[1],[line_2])]
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+######################################
+# Page layout
+######################################
+
 ## Send to window
-curdoc().add_root(column(description,row(column(Spacer(height=200),play_pause_button,stop_button,reset_button),fig,column(Amplification_Frequency_plot,PhaseAngle_Frequency_plot),
+curdoc().add_root(column(row(Spacer(width=900),lang_button),description,row(column(Spacer(height=200),play_pause_button,stop_button,reset_button),fig,column(Amplification_Frequency_plot,PhaseAngle_Frequency_plot),
 Spacer(width=50),column(displacementTime_plot,forceTime_plot)),
 Spacer(height=30),row(column(mass_ratio_input,tuning_input,column(D1_input,D2_input)),                                     
 Spacer(width=420),column(frequency_ratio_input))))
