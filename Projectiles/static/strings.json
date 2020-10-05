@@ -1,0 +1,109 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Projectiles",
+        "de": "vektorielle Umsetztung"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Projectiles/description.html').read()",
+        "de": "open('Projectiles/description_de.html', encoding='utf-8').read()"
+    },
+    "fire_button.label":
+    {
+        "en": "Fire!",
+        "de": "Feuer!"
+    },
+    "reset_button.label":
+    {
+        "en": "Reset",
+        "de": "zurücksetzten"
+    },
+    "angle_slider.title":
+    {
+        "en": "\\\\text{Angle \\u0398} \\\\left[ \\\\mathrm{°} \\\\right]: ",
+        "de": "\\\\text{Abschusswinkel \\u0398} \\\\left[ \\\\mathrm{°} \\\\right]: "
+    },
+    "speed_slider.title":
+    {
+        "en": "\\\\text{Velocity} \\\\left[ \\\\frac{\\\\mathrm{m}}{\\\\mathrm{s}} \\\\right]: ",
+        "de": "\\\\text{Abschussgeschwindigkeit} \\\\left[ \\\\frac{\\\\mathrm{m}}{\\\\mathrm{s}} \\\\right]: "
+    },
+    "mass_slider.title":
+    {
+        "en": "\\\\text{Mass} \\\\left[ \\\\mathrm{kg} \\\\right]: ",
+        "de": "\\\\text{Masse} \\\\left[ \\\\mathrm{kg} \\\\right]: "
+    },
+    "height_slider.title":
+    {
+        "en": "\\\\text{Height of base} \\\\left[ \\\\mathrm{m} \\\\right]: ",
+        "de": "\\\\text{Abschusshöhe} \\\\left[ \\\\mathrm{m} \\\\right]: "
+    },
+    "grav_select.options[0]":
+    {
+        "en": "Space",
+        "de": "Space"
+    },
+    "grav_select.options[1]":
+    {
+        "en": "Mercury",
+        "de": "Mercury"
+    },
+    "grav_select.options[2]":
+    {
+        "en": "Venus",
+        "de": "Venus"
+    },
+    "grav_select.options[3]":
+    {
+        "en": "Earth",
+        "de": "Earth"
+    },
+    "grav_select.options[4]":
+    {
+        "en": "Mars",
+        "de": "Mars"
+    },
+    "grav_select.options[5]":
+    {
+        "en": "Ceres",
+        "de": "Ceres"
+    },
+    "grav_select.options[6]":
+    {
+        "en": "Jupiter",
+        "de": "Jupiter"
+    },
+    "grav_select.options[7]":
+    {
+        "en": "Saturn",
+        "de": "Saturn"
+    },
+    "grav_select.options[8]":
+    {
+        "en": "Uranus",
+        "de": "Uranus"
+    },
+    "grav_select.options[9]":
+    {
+        "en": "Neptune",
+        "de": "Neptune"
+    },
+    "grav_select.options[10]":
+    {
+        "en": "Pluto",
+        "de": "Pluto"
+    },
+    "grav_select.value":
+    {
+        "en": "Earth",
+        "de": "Earth"
+    }
+}

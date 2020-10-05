@@ -1,7 +1,7 @@
 from __future__ import division
 from bokeh.plotting import figure
 from bokeh.models import Slider, Arrow, OpenHead, Select, Button, ColumnDataSource, Div
-from bokeh.layouts import column, row
+from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
 from Projectiles_drawingFuncs import monkeyLetGo, monkeyGrab
 from math import radians, cos, sin
@@ -10,10 +10,19 @@ from Projectiles_drawable import Projectiles_Drawable
 
 from os.path import dirname, join, split, abspath
 import sys, inspect
+import yaml
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv, LatexSlider
+
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Projectiles/static/strings.json', encoding='utf-8'))
+
+dropdown_list_text = ["Space", "Mercury", "Venus", "Earth", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
+change_language = ColumnDataSource(data=dict(active=[False]))
 
 # initialise variables
 aim_line      = ColumnDataSource(data=dict(x=[],y=[]))
@@ -123,7 +132,7 @@ def evolve():
         glob_active.data = dict(Active=[False]) #      /output
         glob_done.data   = dict(Done=[True])    #      /output
     # else if nothing is falling and the banana has exited the screen
-    elif grav_select.value == "Space" and yB > 105:
+    elif (grav_select.value == "Space" and yB > 105) or (grav_select.value == "Weltraum" and yB > 105):
         curdoc().remove_periodic_callback(g1Projectiles)
         glob_active.data = dict(Active=[False]) #      /output
         glob_done.data   = dict(Done=[True])    #      /output
@@ -253,21 +262,22 @@ height_slider = LatexSlider(title="\\text{Height of base} \\left[ \\mathrm{m} \\
 height_slider.on_change('value', changeHeight)
 
 def changeGrav(attr,old,new):
-    [Active] = glob_active.data["Active"] # input/
-    [g]      = glob_g.data["val"]         # input/output
-    # if it has been modified during the simulation
-    # move back == deactivated (does not exist in bokeh)
-    if (Active and g != PlanetGravity[new]):
-        grav_select.value=old
-    else:
-        # else reset and change gravity
-        g           = PlanetGravity[new]
-        glob_g.data = dict(val=[g])
-        p.background_fill_color = PlanetHue[new]
-        Reset()
+    if not change_language.data['active'][0]:
+        [Active] = glob_active.data["Active"] # input/
+        [g]      = glob_g.data["val"]         # input/output
+        # if it has been modified during the simulation
+        # move back == deactivated (does not exist in bokeh)
+        if (Active and g != PlanetGravity[new]):
+            grav_select.value=old
+        else:
+            # else reset and change gravity
+            g           = PlanetGravity[new]
+            glob_g.data = dict(val=[g])
+            p.background_fill_color = PlanetHue[new]
+            Reset()
 
 grav_select = Select(title="Planet:", value="Earth",
-    options=["Space", "Mercury", "Venus", "Earth", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"], css_classes=['b_play'])
+    options=dropdown_list_text, css_classes=['b_play'])
 grav_select.on_change('value',changeGrav)
 
 def Fire():
@@ -312,12 +322,46 @@ def Reset():
 reset_button = Button(label="Reset",button_type="success")
 reset_button.on_click(Reset)
 
+
+######################################
+# Change language
+######################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    change_language.data['active'][0] = True
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+    change_language.data['active'][0] = False
+    grav_select.options = dropdown_list_text
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+######################################
+# Page layout
+######################################
+
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1000)
 
 ## Send to window
-curdoc().add_root(column(description,
+curdoc().add_root(column(row(Spacer(width=700),lang_button),description,
                          row(p,column(angle_slider,speed_slider,mass_slider,height_slider,grav_select,fire_button,reset_button))
                         )
                  )
