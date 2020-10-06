@@ -39,14 +39,14 @@ Diese App zeigt die Verformung und die Spannungen eines Kragträgers der zweiaxi
 Die gezeigten Ergebnisse beruhen auf der Euler-Bernoulli Balkentheorie.
 <br>
 Durch zwei Ansichten kann die Verformung in der XZ- und XY-Ebene betrachtet werden. Die Farbgebung repräsentiert
-die größe der Spannungen.
+die Größe der Spannungen.
 <br>
-Außerdem ist in einer weiteren Darstellung der Verlauf der Normal- und Schubspannungen entlag des herausgeschnittenen 
-Element in der XZ-Ebene für y=0 zu sehen. 
+Außerdem ist in einer weiteren Darstellung der Verlauf der Normal- und Schubspannungen entlag eines herausgetrennten
+Elements in der XZ-Ebene für y=0 zu sehen. 
 </justify>
 </p>
 Laut der Euler-Bernoulli Balkentheorie können die Verformungen ($u_z$,$u_y$) durch eine vierfache Integration der 
-Belastungen ($q_z$,$q_y$) über die Blakenlänge berechnet werden: 
+Belastungen ($q_z$,$q_y$) über die Balkenlänge berechnet werden: 
 <br>
 $$ u_{z} = \frac{1}{EI_{y}}\int \int \int \int  q_{z} \, \, dx^{4}\; ,\; \; \; \; \; \; \; \; \; u_{y} = \frac{1}{EI_{z}}\int \int \int \int q_{y} \, \, dx^{4}, $$ 
 <br>
@@ -57,21 +57,21 @@ Die Normalspannung $\sigma (x,y,z)$ wird berechnet zu:
 <p>
 $$ \sigma (x,y,z) = \frac{M_{y}(x)\cdot I_{z}-M_z(x)\cdot I_{zy}}{I_{y} \cdot I_z - I_{zy}^2}\cdot z + \frac{M_{z}(x)\cdot I_{y}-M_y(x)\cdot I_{zy}}{I_{z} \cdot I_y - I_{zy}^2}\cdot y, $$
 <br>
-mit dem Zentrifugal- oder Deviationsmoment $I_{zy}$ und den Biegemomenten $M_{y}(x)$ und $M_{z}(x)$.
+mit dem Deviationsmoment $I_{zy}$ und den Biegemomenten $M_{y}(x)$ und $M_{z}(x)$.
 </p>
 
-<p> Nachfolgend können die folgenden Parameter gesteuert werden: </p>
+<p> Die folgenden Parameter können durch den Nutzer gesteuert werden: </p>
 <ul>
-<li> Querschnittstyp: Quadrat, doppel-T-Träger, Kreis, Dreieck </li>
+<li> Querschnittstyp: Quadrat, Doppel-T-Träger, Kreis, Dreieck </li>
 <li> Größe der Last in z-Richtung </li>
 <li> Größe der Last in y-Richtung </li>
-<li> Darstellen der Normalspannungen $\sigma$ oder der Schubspannungen $\tau$ entlang des herausgeschnittenen Elements</li>
+<li> Darstellen der Normalspannungen $\sigma$ oder der Schubspannungen $\tau$ entlang des herausgetrennten Elements</li>
 </ul>
 
 <p>Beachte: </p>
 <ul>
-<li> Alle wählbaren Querschnitte sind symmetrisch ($I_{zy}$ ist Null) </li>
-<li> Die Lasten $F_z$ und $F_y$ greifen im Schwerpunkt an </li>      
+<li> Alle wählbaren Querschnitte sind symmetrisch ($I_{zy}$ ist Null). </li>
+<li> Die Lasten $F_z$ und $F_y$ greifen im Schwerpunkt an. </li>      
 </ul>
 
 

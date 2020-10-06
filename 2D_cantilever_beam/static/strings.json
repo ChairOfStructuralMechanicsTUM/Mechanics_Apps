@@ -30,7 +30,7 @@
     "radio_button_group.labels[1]":
     {
         "en": "Double-T",
-        "de": "doppel-T-Träger"
+        "de": "Doppel-T-Träger"
     },
     "radio_button_group.labels[2]":
     {
@@ -55,7 +55,7 @@
     "Reset_button.label":
     {
         "en": "Reset",
-        "de": "zurücksetzten"
+        "de": "Zurücksetzen"
     },
     "plotDefZY.title.text":
     {
