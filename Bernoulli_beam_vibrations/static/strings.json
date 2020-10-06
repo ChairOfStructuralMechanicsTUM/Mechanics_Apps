@@ -19,12 +19,12 @@
     "p1.title.text":
     {
         "en": "Simply supported beam",
-        "de": "gelenkig gelagerter Einfeldträger"
+        "de": "Gelenkig gelagerter Einfeldträger"
     },
     "p2.title.text":
     {
         "en": "Beam fixed at both ends",
-        "de": "beidseitig eingespannter Einfeldträger"
+        "de": "Beidseitig eingespannter Einfeldträger"
     },
     "p3.title.text":
     {
@@ -54,7 +54,7 @@
     "legend_texts[1][0]":
     {
         "en": "\\\\text{Eigenvalue Problem: } \\cosh(\\\\lambda) \\cdot \\cos(\\\\lambda) -1 = 0 \\\\rightarrow \\\\text{Solution: } w_i(\\\\xi) = c(\\\\lambda_i \\\\xi) - \\\\frac{c(\\\\lambda_i)}{s(\\\\lambda_i)} \\\\cdot s(\\\\lambda_i \\\\xi)",
-        "de": "\\\\text{Eigenwertproblem: } \\cosh(\\\\lambda) \\cdot \\cos(\\\\lambda) -1 = 0 \\\\rightarrow \\\\text{Lösung: } w_i(\\\\xi) = c(\\\\lambda_i \\\\xi) - \\\\frac{c(\\\\lambda_i)}{s(\\\\lambda_i)} \\\\cdot s(\\\\lambda_i \\\\xi)",
+        "de": "\\\\text{Eigenwertproblem: } \\cosh(\\\\lambda) \\cdot \\cos(\\\\lambda) -1 = 0 \\\\rightarrow \\\\text{Lösung: } w_i(\\\\xi) = c(\\\\lambda_i \\\\xi) - \\\\frac{c(\\\\lambda_i)}{s(\\\\lambda_i)} \\\\cdot s(\\\\lambda_i \\\\xi)"
     },
     "legend_texts[1][1]":
     {
