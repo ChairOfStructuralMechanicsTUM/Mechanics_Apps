@@ -49,17 +49,17 @@
     "Reset_button.label":
     {
         "en": "Reset",
-        "de": "zurücksetzen"
+        "de": "Zurücksetzen"
     },
     "Show_button.label":
     {
             "en": "Show/Hide Support Forces",
-            "de": "zeige/verberge Auflagergrößen"
+            "de": "Zeige/Verberge Auflagergrößen"
     },
     "plot.title.text":
     {
             "en": "Beam with Supports and Load",
-            "de": "statisches System"
+            "de": "Statisches System"
     },
     "plot1.title.text":
     {
