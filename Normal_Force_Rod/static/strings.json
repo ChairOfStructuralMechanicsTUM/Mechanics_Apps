@@ -69,12 +69,12 @@
     "p_rt1.text":
     {
         "en": "Left support:  ",
-        "de": "linkes Auflager:"
+        "de": "Linkes Auflager:"
     },
     "p_rt2.text":
     {
         "en": "Right support: ",
-        "de": "rechtes Auflager:"
+        "de": "Rechtes Auflager:"
     },
     "p_rt4.text":
     {
@@ -98,7 +98,7 @@
     "plot_main.title.text":
     {
         "en": "Rod with Supports and Load",
-        "de": "statisches System"
+        "de": "Statisches System"
     },
     "plot_normalF.title.text":
     {
