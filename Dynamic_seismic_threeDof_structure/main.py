@@ -36,9 +36,10 @@ structure_plot = figure(
                                       plot_height=600,
                                       x_range=[xmin1,xmax1], 
                                       y_range=[ymin1,ymax1],
-                                      
+                                      tools="pan,box_zoom,wheel_zoom,save,reset",
                                       title = 'Structure',
                                   )
+structure_plot.toolbar.logo = None
 structure_plot.title.text_font_size = "25px"
 structure_plot.title.align = "center"
 structure_plot.grid.visible=False
@@ -57,9 +58,10 @@ signal_plot = figure(
                       plot_height=500,
                       x_range=[xmin2,xmax2], 
                       y_range=[ymin2,ymax2],
-                      #tools = '',
+                      tools="pan,box_zoom,wheel_zoom,save,reset",
                       title = 'Seismic Signals',
                     )
+signal_plot.toolbar.logo = None
 signal_plot.title.text_font_size = "25px"
 signal_plot.title.align = "center"
 signal_plot.grid.visible=False
@@ -78,9 +80,10 @@ max_displacement_plot = figure(
                                   plot_height=500,
                                   x_range=[xmin3,xmax3], 
                                   y_range=[ymin3,ymax3],
-                                  #tools = '',
+                                  tools="pan,box_zoom,wheel_zoom,save,reset",
                                   title = 'Structure Response (Third Storey Deflection)',
                               )
+max_displacement_plot.toolbar.logo = None
 max_displacement_plot.title.text_font_size = "25px"
 max_displacement_plot.title.align = "center"
 max_displacement_plot.grid.visible=False
@@ -97,9 +100,10 @@ ERSplot = figure(
                       plot_height=800,
                       x_range=[0,3.0], 
                       y_range=[0,3.0],
-                      
+                      tools="pan,box_zoom,wheel_zoom,save,reset",
                       title = 'Elastic Response Spectrum',
                    )
+ERSplot.toolbar.logo = None
 ERSplot.title.text_font_size = "25px"
 ERSplot.title.align = "center"
 ERSplot.grid.visible=True
