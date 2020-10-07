@@ -5,6 +5,7 @@ from copy  import copy
 
 # bokeh imports
 from bokeh.plotting import figure
+from bokeh.layouts  import column, row, Spacer
 from bokeh.layouts  import gridplot
 from bokeh.models   import ColumnDataSource
 
@@ -21,28 +22,28 @@ class SD_Graphs:
         ## create the 4 figures and set their visual properties
         # create velocity vs. time graph
         tmp_tools = "pan, wheel_zoom, reset"
-        self.vt=figure(tools=tmp_tools,x_range=(0,10),y_range=(0,10))
+        self.vt=figure(tools=tmp_tools,x_range=(0,10),y_range=(0,10),plot_width=300,plot_height=250)
         self.vt.axis.axis_label_text_font_size="14pt"
         self.vt.axis.major_label_text_font_size="12pt"
         #self.vt.axis.axis_label_text_font_style="normal"
         self.vt.xaxis.axis_label = "Time (s)"
         self.vt.yaxis.axis_label = "Velocity (m/s)"
         # create acceleration vs. time (or displacement) graph
-        self.at=figure(tools=tmp_tools,x_range=(0,10),y_range=(-10,0))
+        self.at=figure(tools=tmp_tools,x_range=(0,10),y_range=(-10,0),plot_width=300,plot_height=250)
         self.at.axis.axis_label_text_font_size="14pt"
         self.at.axis.major_label_text_font_size="12pt"
         #self.at.axis.axis_label_text_font_style="normal"
         self.at.xaxis.axis_label = "Time (s)"
         self.at.yaxis.axis_label = u"Acceleration (m/s\u00B2)"
         # create time vs. displacement graph
-        self.st=figure(tools=tmp_tools,x_range=(0,30),y_range=(0,10))
+        self.st=figure(tools=tmp_tools,x_range=(0,30),y_range=(0,10),plot_width=300,plot_height=250)
         self.st.axis.axis_label_text_font_size="14pt"
         self.st.axis.major_label_text_font_size="12pt"
         #self.st.axis.axis_label_text_font_style="normal"
         self.st.xaxis.axis_label = "Travelled Distance (m)"
         self.st.yaxis.axis_label = "Time (s)"
         # create velocity vs. displacement graph
-        self.vs=figure(tools=tmp_tools,x_range=(0,30),y_range=(0,10))
+        self.vs=figure(tools=tmp_tools,x_range=(0,30),y_range=(0,10),plot_width=300,plot_height=250)
         self.vs.axis.axis_label_text_font_size="14pt"
         self.vs.axis.major_label_text_font_size="12pt"
         #self.vs.axis.axis_label_text_font_style="normal"
@@ -66,7 +67,15 @@ class SD_Graphs:
         self.st.line(x='s',y='t',source=self.UserStSource,color="red")
         self.vs.line(x='s',y='v',source=self.UserVsSource,color="red")
         # place the graphs in a grid layout
+        ''' option 1 '''
+        # self.vt.toolbar.logo = None
+        # self.at.toolbar.logo = None
+        # self.st.toolbar.logo = None
+        # self.vs.toolbar.logo = None
+        # self.Layout = column(row(self.vt,self.at),row(self.st,self.vs))
+        ''' option 2'''
         self.Layout = gridplot([[self.vt,self.at],[self.st,self.vs]],plot_width=300,plot_height=250,toolbar_options=dict(logo=None))
+        
         # depending upon whether the user specifies the initial velocity or v(s)
         # either a(t) or a(s) is shown in figure=self.at
         # it is important to know what is being drawn
