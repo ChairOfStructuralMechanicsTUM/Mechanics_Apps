@@ -1,0 +1,83 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+
+<h1>Kragträger</h1>
+
+<p>
+<justify>
+Diese App zeigt die Verformung und die Spannungen eines Kragträgers der zweiaxial belastet wird.
+Die gezeigten Ergebnisse beruhen auf der Euler-Bernoulli Balkentheorie.
+<br>
+Durch zwei Ansichten kann die Verformung in der XZ- und XY-Ebene betrachtet werden. Die Farbgebung repräsentiert
+die Größe der Spannungen.
+<br>
+Außerdem ist in einer weiteren Darstellung der Verlauf der Normal- und Schubspannungen entlag eines herausgetrennten
+Elements in der XZ-Ebene für y=0 zu sehen. 
+</justify>
+</p>
+Laut der Euler-Bernoulli Balkentheorie können die Verformungen ($u_z$,$u_y$) durch eine vierfache Integration der 
+Belastungen ($q_z$,$q_y$) über die Balkenlänge berechnet werden: 
+<br>
+$$ u_{z} = \frac{1}{EI_{y}}\int \int \int \int  q_{z} \, \, dx^{4}\; ,\; \; \; \; \; \; \; \; \; u_{y} = \frac{1}{EI_{z}}\int \int \int \int q_{y} \, \, dx^{4}, $$ 
+<br>
+mit dem Elastizitätsmodul $E$ und den Flächenträgheitsmomenten $I_{z}$ und $I_{y}$.
+<br>
+Die Normalspannung $\sigma (x,y,z)$ wird berechnet zu:
+</p>
+<p>
+$$ \sigma (x,y,z) = \frac{M_{y}(x)\cdot I_{z}-M_z(x)\cdot I_{zy}}{I_{y} \cdot I_z - I_{zy}^2}\cdot z + \frac{M_{z}(x)\cdot I_{y}-M_y(x)\cdot I_{zy}}{I_{z} \cdot I_y - I_{zy}^2}\cdot y, $$
+<br>
+mit dem Deviationsmoment $I_{zy}$ und den Biegemomenten $M_{y}(x)$ und $M_{z}(x)$.
+</p>
+
+<p> Die folgenden Parameter können durch den Nutzer gesteuert werden: </p>
+<ul>
+<li> Querschnittstyp: Quadrat, Doppel-T-Träger, Kreis, Dreieck </li>
+<li> Größe der Last in z-Richtung </li>
+<li> Größe der Last in y-Richtung </li>
+<li> Darstellen der Normalspannungen $\sigma$ oder der Schubspannungen $\tau$ entlang des herausgetrennten Elements</li>
+</ul>
+
+<p>Beachte: </p>
+<ul>
+<li> Alle wählbaren Querschnitte sind symmetrisch ($I_{zy}$ ist Null). </li>
+<li> Die Lasten $F_z$ und $F_y$ greifen im Schwerpunkt an. </li>      
+</ul>
+
+
+
+
+
+
+
+

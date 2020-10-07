@@ -6,6 +6,7 @@ Normal Force Rod - presents the influence of different loads on force and deform
 from __future__ import division # float division only, like in python 3
 from math import ceil
 import numpy as np
+import yaml
 
 # bokeh imports
 from bokeh.io             import curdoc
@@ -36,7 +37,25 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
+
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Normal_Force_Rod/static/strings.json', encoding='utf-8'))
+
+
 # ----------------------------------------------------------------- #
+
+###############################
+#          Constants          #
+###############################
+
+class Warning:
+    def __init__(self, warnings):
+       self.text = warnings
+
+warning = Warning(["Warning! - Kinematic, rod slides away!"])
+
 
 ###############################
 #      ColumnDataSources      #
@@ -47,6 +66,7 @@ error_msg       = ColumnDataSource(data=dict(x=[],y=[],name=[]))  # error messag
 graph_N         = ColumnDataSource(data=dict(x=[0], y=[0]))       # data for force plot
 graph_U         = ColumnDataSource(data=dict(x=[0], y=[0]))       # data for deformation plot
 
+glob_active               = ColumnDataSource(data=dict(Active=[False])) # button on / off
 beam_measure_label_source = ColumnDataSource(data=dict(x=[], y=[], text=[])) # position and text for measure labels in the main plot
 zero_label_source         = ColumnDataSource(data=dict(x=[], y=[], text=[])) # position and text for the labels in force plot
 extrem_val_label_source   = ColumnDataSource(data=dict(x=[], y=[], text=[])) # position and text for the labels in deformation plot
@@ -126,19 +146,23 @@ def reset():
     aux_line.data                = dict(x=[], y=[])
     zero_label_source.data       = dict(x=[], y=[], text=[])
     extrem_val_label_source.data = dict(x=[], y=[], text=[])
-    line_button.label            = "Show line"
+    
     compute_new_scenario()
 
 
 def change_line_visibility():
-    if line_button.label == "Show line":
+    [lang] = flags.data["lang"]
+    glob_active.data["Active"][0] = not glob_active.data["Active"][0]
+
+    if glob_active.data["Active"][0]:
         move_aux_line()
-        line_button.label = "Hide line"
-    elif line_button.label == "Hide line":
+        line_button.label = strings["line_button.label"]['on'][lang]
+    else:
         aux_line.data                = dict(x=[], y=[])
         zero_label_source.data       = dict(x=[], y=[], text=[])
         extrem_val_label_source.data = dict(x=[], y=[], text=[])
-        line_button.label = "Show line"
+        line_button.label = strings["line_button.label"]['off'][lang]
+
 
 
 ################################
@@ -157,7 +181,7 @@ def compute_new_scenario():
     graph_U.data = dict(x=samples['x'], y=samples['yU'])
 
     # if the auxiliary line should be shown, the line button shows "Hide line"
-    if line_button.label == "Hide line":
+    if glob_active.data["Active"][0]:
         move_aux_line()
 
 
@@ -223,7 +247,7 @@ def move_aux_line():
 
 def show_error(show=True):
     if show:
-        error_msg.data       = dict(x=[2],y=[1.35],name=["Warning! - Kinematic, rod slides away!"])
+        error_msg.data = dict(x=[2],y=[1.35], name=[warning.text[0]])
         error_msg_frame.data = dict(x=[5], y=[1.5])
     else:
         error_msg.data       = dict(x=[], y=[], name=[])
@@ -402,6 +426,47 @@ compute_new_scenario()
 
 
 ###################################
+#        Change language          #
+###################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+    
+    # update button
+    [lang] = flags.data["lang"]
+    [Active] = glob_active.data["Active"]
+    if Active:
+        line_button.label = strings["line_button.label"]['on'][lang]
+    else:
+        line_button.label = strings["line_button.label"]['off'][lang]
+    
+    # update user warning
+    if len(error_msg.data['name']) != 0:
+        if error_msg.data['name'][0] != '':
+            error_msg.data = dict(x=[2],y=[1.35], name=[warning.text[0]])
+    else:
+        error_msg.data = dict(x=[],y=[], name=[])
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+
+###################################
 #           Page Layout           #
 ###################################
 
@@ -415,7 +480,8 @@ p_rt4 = Paragraph(text="""Load Amplitude:""")
 
 
 doc_layout = layout(children=[
-        column(description,
+        column(row(Spacer(width=700),lang_button),
+               description,
                row(column(
                        Spacer(height=20,width=400),
                        widgetbox(radio_button_group),
