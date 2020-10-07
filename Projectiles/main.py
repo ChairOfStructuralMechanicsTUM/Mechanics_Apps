@@ -7,6 +7,7 @@ from Projectiles_drawingFuncs import monkeyLetGo, monkeyGrab
 from math import radians, cos, sin
 from os.path import dirname, join, split
 from Projectiles_drawable import Projectiles_Drawable
+from copy   import deepcopy
 
 from os.path import dirname, join, split, abspath
 import sys, inspect
@@ -21,7 +22,9 @@ std_lang = 'en'
 flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
 strings  = yaml.safe_load(open('Projectiles/static/strings.json', encoding='utf-8'))
 
-dropdown_list_text = ["Space", "Mercury", "Venus", "Earth", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
+dropdown_list_text = dict(  en = ["Space", "Mercury", "Venus", "Earth", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"],
+                            de = ["Weltall", "Merkur", "Venus", "Erde", "Mars", "Ceres", "Jupiter", "Saturn", "Uranus", "Neptun", "Pluto"] )
+
 change_language = ColumnDataSource(data=dict(active=[False]))
 
 # initialise variables
@@ -263,21 +266,24 @@ height_slider.on_change('value', changeHeight)
 
 def changeGrav(attr,old,new):
     if not change_language.data['active'][0]:
+        [lang] = flags.data["lang"]
         [Active] = glob_active.data["Active"] # input/
         [g]      = glob_g.data["val"]         # input/output
         # if it has been modified during the simulation
         # move back == deactivated (does not exist in bokeh)
-        if (Active and g != PlanetGravity[new]):
+        index = dropdown_list_text[lang].index(grav_select.value)
+        g_new = list(PlanetGravity.values())[index]
+        if (Active and g != g_new):
             grav_select.value=old
         else:
             # else reset and change gravity
-            g           = PlanetGravity[new]
+            g           = g_new
             glob_g.data = dict(val=[g])
-            p.background_fill_color = PlanetHue[new]
+            p.background_fill_color = list(PlanetHue.values())[index]
             Reset()
 
 grav_select = Select(title="Planet:", value="Earth",
-    options=dropdown_list_text, css_classes=['b_play'])
+    options=dropdown_list_text['en'], css_classes=['b_play'])
 grav_select.on_change('value',changeGrav)
 
 def Fire():
@@ -288,7 +294,10 @@ def Fire():
             Reset()
         # if simulation is not already started
         # release branch and start simulation
-        monkeyLetGo(monkey, grav_select.value!="Earth")
+        space = True
+        if grav_select.value == "Earth" or grav_select.value == "Erde":
+            space = False
+        monkeyLetGo(monkey, space)
         g1Projectiles=curdoc().add_periodic_callback(evolve, 50)
         glob_callback.data = dict(cid=[g1Projectiles]) #      /output
         glob_active.data   = dict(Active=[True])
@@ -314,7 +323,10 @@ def Reset():
     monkey.move_to(monkey_init_pos)
 
     # make monkey grab branch again (also resets helmet)
-    monkeyGrab(monkey, grav_select.value != "Earth")
+    space = True
+    if grav_select.value == "Earth" or grav_select.value == "Erde":
+        space = False
+    monkeyGrab(monkey, space )
     # reset time
     glob_t.data = dict(val=[0])
 
@@ -330,12 +342,15 @@ reset_button.on_click(Reset)
 def changeLanguage():
     [lang] = flags.data["lang"]
     if lang == "en":
-        setDocumentLanguage('de')
+        setDocumentLanguage(lang, 'de')
     elif lang == "de":
-        setDocumentLanguage('en')
+        setDocumentLanguage(lang, 'en')
 
-def setDocumentLanguage(lang):
+def setDocumentLanguage(old_lang, lang):
     flags.patch( {'lang':[(0,lang)]} )
+
+    index = dropdown_list_text[old_lang].index(grav_select.value)
+
     change_language.data['active'][0] = True
     for s in strings:
         if 'checkFlag' in strings[s]:
@@ -347,7 +362,9 @@ def setDocumentLanguage(lang):
             exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
 
     change_language.data['active'][0] = False
-    grav_select.options = dropdown_list_text
+
+    grav_select.options = dropdown_list_text[lang]
+    grav_select.value = dropdown_list_text[lang][index]
 
 lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
 lang_button.on_click(changeLanguage)
