@@ -10,12 +10,19 @@ from bokeh.io import curdoc, output_file, show
 from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
 import numpy as np
 import math
+import yaml
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
+
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Bending_Beam/static/strings.json', encoding='utf-8'))
+legend_text = ['\\mathrm{Shear \ Force}','\\mathrm{Bending \\ Moment}']
 
 
 #####################################
@@ -288,9 +295,9 @@ def Fun_Update(attrname, old, new):
                 support_source2.data = dict(sp2=[support2], x = [f2_coord-0.33] , y = [-0.1])
                 support_source1.data = dict(sp1=[support1], x= [-0.325], y= [-0.1])
             else:
-                p_arrow_source1.data = dict(xS= [p_coord], xE= [p_coord], yS= [-1.1+(p_mag/2.3)], yE=[-1.1-(p_mag/2.3)], lW = [2] )
-                p_arrow_source2.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
-                p_arrow_source3.data = dict(xS= [], xE= [], yS= [], yE=[], lW = [] )
+                p_arrow_source1.stream(dict(xS= [p_coord], xE= [p_coord], yS= [-1.1+(p_mag/2.3)], yE=[-1.1-(p_mag/2.3)], lW = [2] ), rollover=1)
+                p_arrow_source2.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ), rollover=1)
+                p_arrow_source3.stream(dict(xS= [], xE= [], yS= [], yE=[], lW = [] ), rollover=1)
                 constant_load_source.data  = dict(x=[], y=[], w=[], h=[], angle=[])
                 triangular_load_source.data  = dict(x=[], y=[])                
                 labels_source.data = dict(x = [p_coord] , y = [-1.1],name = ['F'])
@@ -815,9 +822,9 @@ plot1_labels1 = LatexLabelSet(x='x', y='y', text='names', source=plot1_label_sou
 plot1.line(x='x', y='y', source=shear_source, color="#A2AD00",line_width=2)
 plot1.line(x= [x0-1,xf+1], y = [0, 0 ], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
 plot1.line(x= [xf/2,xf/2], y = [-1.5,1.5], color = 'black', line_width =2 ,line_alpha = 0.4, line_dash=[1])
-plot1.square([0.0],[0.0],size=0,fill_color="#A2AD00",fill_alpha=0.5,legend_label="Shear Force")
+obj_1 = plot1.square([0.0],[0.0],size=0,fill_color="#A2AD00",fill_alpha=0.5)
+legend1 = LatexLegend(items=[(legend_text[0], [obj_1])], location='top_right')
 # Set properties
-plot1.legend.location = 'top_right'
 plot1.toolbar.logo = None
 plot1.axis.visible = False
 plot1.outline_line_width = 2
@@ -825,6 +832,7 @@ plot1.outline_line_color = "Black"
 plot1.title.text_font_size="13pt"
 # Add layouts
 plot1.add_layout(plot1_labels1)
+plot1.add_layout(legend1)
 
 ###### PLOT 2 (MOMENT):
 # Define plot
@@ -839,11 +847,12 @@ plot2.axis.visible = False
 plot2.outline_line_width = 2
 plot2.outline_line_color = "Black"
 plot2.title.text_font_size="13pt"
-plot2.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5,legend_label="Bending Moment")
-plot2.legend.location = 'top_right'
+obj_2 = plot2.square([0.0],[0.0],size=0,fill_color="#E37222",fill_alpha=0.5)
+legend2 = LatexLegend(items=[(legend_text[1], [obj_2])], location='top_right')
 plot2.toolbar.logo=None
 # Add layouts
 plot2.add_layout(plot2_labels1)
+plot2.add_layout(legend2)
 
 ##### ON_CHANGE:
 p_loc_slide.on_change('value', Fun_Update)
@@ -853,6 +862,39 @@ radio_button_group.on_change('active', Fun_Update)
 Reset_button.on_click(initial)
 Show_button.on_click(show)
 
+######################################
+# Change language
+######################################
+def update_legends():
+    legend1.items = [(legend_text[0], [obj_1])]
+    legend2.items = [(legend_text[1], [obj_2])]
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+    update_legends()
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+######################################
+# Page layout
+######################################
+
 ##### ADD DESCRIPTION FROM HTML FILE
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=910)
@@ -860,6 +902,6 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 ##### INITIALIZE
 initial()
 ##### ARRANGE LAYOUT
-doc_layout = layout(children=[column(description,row(column(Spacer(height=20,width=350),widgetbox(radio_button_group), p_loc_slide, p_mag_slide, f2_loc_slide, widgetbox(Show_button), widgetbox(Reset_button)),  column(plot,plot1,plot2 ) ) ) ] )
+doc_layout = layout(children=[column(row(Spacer(width=600),lang_button),description,row(column(Spacer(height=20,width=350),widgetbox(radio_button_group), p_loc_slide, p_mag_slide, f2_loc_slide, widgetbox(Show_button), widgetbox(Reset_button)),  column(plot,plot1,plot2 ) ) ) ] )
 curdoc().add_root(doc_layout)
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

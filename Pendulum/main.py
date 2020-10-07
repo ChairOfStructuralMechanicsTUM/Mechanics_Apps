@@ -7,10 +7,16 @@ from math import sin, cos, pi, atan2, sqrt, acos
 from mpmath import csc
 from os.path import dirname, join, split, abspath
 import sys, inspect
+import yaml
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv, LatexSlider
+
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Pendulum/static/strings.json', encoding='utf-8'))
 
 # create column data sources
 Mass              = ColumnDataSource(data = dict(x=[],y=[]))
@@ -519,13 +525,44 @@ pendulum_type_input = RadioButtonGroup(
         labels=["Single pendulum", "Double pendulum"], active=0)
 pendulum_type_input.on_change('active',swapPendulumType)
 
+
+######################################
+# Change language
+######################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+
+######################################
+# Page layout
+######################################
+
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1000)
 
 ## Send to window
 hspace = 20
-curdoc().add_root(column(description, row(column(fig,row(Play_button,Spacer(width=hspace),Stop_button,Spacer(width=hspace),Reset_button),pendulum_type_input),phase_diagramm), \
+curdoc().add_root(column(row(Spacer(width=700),lang_button),description, row(column(fig,row(Play_button,Spacer(width=hspace),Stop_button,Spacer(width=hspace),Reset_button),pendulum_type_input),phase_diagramm), \
     row(mass_input,Spacer(width=hspace),lam_input,Spacer(width=hspace),phi0_input,Spacer(width=hspace),dphi0_input)))
 #g1Pendulum=curdoc().add_periodic_callback(evolve,100)  # for immediate play
 #glob_callback.data = dict(cid=[g1Pendulum])            # for immediate play
