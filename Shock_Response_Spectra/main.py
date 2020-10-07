@@ -161,7 +161,7 @@ def evolve():
 title_box = Div(text="""<h2 style="text-align:center;">Shock response spectra </h2>""",width=1000)
 
 # sdof drawing
-fig = figure(title="", tools="", x_range=(-7,7), y_range=(0,20),width=270,height=225)
+fig = figure(title="", tools="", x_range=(-7,7), y_range=(0,18),width=270,height=347)
 fig.title.text_font_size="20pt"
 fig.axis.visible = False
 fig.grid.visible = False
@@ -177,7 +177,7 @@ fig.toolbar.logo = None
 glob_vars["spring"].plot(fig,width=2)
 glob_vars["damper"].plot(fig,width=2)
 glob_vars["mass"].plot(fig)
-arrow = fig.add_layout(Arrow(end=NormalHead(fill_color="red", size=15), line_color="red", line_width=2,
+arrow = fig.add_layout(Arrow(end=NormalHead(fill_color="#E37222", size=15), line_color="#E37222", line_width=2,
     x_start='x1', y_start='y1', x_end='x2', y_end='y2', source=arrow_line))
 
 # time plot
