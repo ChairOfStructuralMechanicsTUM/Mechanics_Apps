@@ -19,12 +19,12 @@
     "stop_button.label":
     {
         "en": "Stop",
-        "de": "stop"
+        "de": "Stop"
     },
     "reset_button.label":
     {
         "en": "Reset",
-        "de": "zurücksetzen"
+        "de": "Zurücksetzen"
     },
     "play_pause_button.label":
     {
@@ -32,12 +32,12 @@
         "on":
         {
             "en": "Pause",
-            "de": "pausieren"
+            "de": "Pause"
         },
         "off":
         {
             "en": "Play",
-            "de": "abspielen"
+            "de": "Start"
         }
     },
     "mass_input.title":
@@ -108,12 +108,12 @@
     "legend_text[1]":
     {
         "en": "Particular Solution",
-        "de": "partikuläre Lösung"
+        "de": "Partikuläre Lösung"
     },
     "legend_text[2]":
     {
         "en": "Homogeneous Solution",
-        "de": "homogene Lösung"
+        "de": "Homogene Lösung"
     },
     "tabel_text[0]":
     {
