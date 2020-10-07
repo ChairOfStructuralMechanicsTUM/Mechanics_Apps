@@ -4,13 +4,14 @@
 """
 from __future__ import division
 import numpy as np
+import yaml
 
 from scipy.optimize import brentq # fast numerical solver for roots
 from bokeh.io import curdoc
-from bokeh.layouts import column, Spacer
+from bokeh.layouts import column, row, Spacer
 from bokeh.models import ColumnDataSource
 from bokeh.models.glyphs import ImageURL
-from bokeh.models.widgets import Slider
+from bokeh.models.widgets import Slider, Button
 from bokeh.plotting import figure
 from os.path import dirname, join, split, abspath
 
@@ -20,6 +21,29 @@ currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv, LatexLegend
+
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Bernoulli_beam_vibrations/static/strings.json', encoding='utf-8'))
+
+# legend texts
+legend_texts = [["\\text{Eigenvalue Problem: } \\sin(\\lambda) = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = \\sin(i \\cdot \\pi \\xi)",
+                 "\\lambda_i = i \\pi"] ,
+                ["\\text{Eigenvalue Problem: } \cosh(\\lambda) \cdot \cos(\\lambda) -1 = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = c(\\lambda_i \\xi) - \\frac{c(\\lambda_i)}{s(\\lambda_i)} \\cdot s(\\lambda_i \\xi)",
+                 "\\text{Solution part: } - \\frac{1}{2} \\cosh(\\lambda \\cdot \\xi)",
+                 "\\text{Solution part: } \\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\cdot \\sinh(\\lambda \\xi)",
+                 "\\text{Solution part: } \\frac{1}{2} \\cos(\\lambda \\cdot \\xi)",
+                 "\\text{Solution part: } - \\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\cdot \\sin(\\lambda \\xi)",
+                 "\\lambda_i = 4.730041, 7.853205, 10.995610, (i + \\frac{1}{2}) \\pi"] ,
+                ["\\text{Eigenvalue Problem: } \cosh(\\lambda) \cdot \cos(\\lambda) +1 = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = c(\\lambda_i \\xi) - \\frac{C(\\lambda_i)}{S(\\lambda_i)} \\cdot s(\\lambda_i \\xi)",
+                 "\\text{Solution part: } - \\frac{1}{2} \\cosh(\\lambda \\cdot \\xi)",
+                 "\\text{Solution part: } \\frac{1}{2} \\frac{C(\\lambda)}{S(\\lambda)} \\cdot \\sinh(\\lambda \\xi)",
+                 "\\text{Solution part: } \\frac{1}{2} \\cos(\\lambda \\cdot \\xi)",
+                 "\\text{Solution part: } - \\frac{1}{2} \\frac{C(\\lambda)}{S(\\lambda)} \\cdot \\sin(\\lambda \\xi)",
+                 "\\lambda_i = 1.875104, 4.694091, 7.854760, (i - \\frac{1}{2}) \\pi"]
+               ]
+
 
 # beam length
 l=1
@@ -155,8 +179,8 @@ p1.add_glyph(support_src,ImageURL(url="sp2", x=0.0, y=0.35, w=0.08, h=2, anchor=
 p1.add_glyph(support_src,ImageURL(url="sp1", x=1.0, y=0.35, w=0.072, h=1.8, anchor="top_center"))
     
 legend1 = LatexLegend(items=[
-    ("\\text{Eigenvalue Problem: } \\sin(\\lambda) = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = \\sin(i \\cdot \\pi \\xi)"   , [eigenmodes_beam1]),
-    ("\\lambda_i = i \\pi"   , [eigenmodes_beam1]),
+    (legend_texts[0][0], [eigenmodes_beam1]),
+    (legend_texts[0][1], [eigenmodes_beam1]),
 ], location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
 
 p1.add_layout(legend1, 'above')
@@ -185,12 +209,12 @@ p2.add_glyph(support_src,ImageURL(url="sp3", x=-0.0105, y=0.0, w=0.025, h=2, anc
 p2.add_glyph(support_src,ImageURL(url="sp4", x=1.0105, y=0.0, w=0.025, h=2, anchor="center"))
 
 legend2 = LatexLegend(items=[
-    ("\\text{Eigenvalue Problem: } \cosh(\\lambda) \cdot \cos(\\lambda) -1 = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = c(\\lambda_i \\xi) - \\frac{c(\\lambda_i)}{s(\\lambda_i)} \\cdot s(\\lambda_i \\xi)", [eigenmodes_beam2]),
-    ("\\text{Solution part: } - \\frac{1}{2} \\cosh(\\lambda \\cdot \\xi)", [eigenmodes_beam2cosh]),
-    ("\\text{Solution part: } \\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\cdot \\sinh(\\lambda \\xi)", [eigenmodes_beam2sinh]),
-    ("\\text{Solution part: } \\frac{1}{2} \\cos(\\lambda \\cdot \\xi)", [eigenmodes_beam2cos]),
-    ("\\text{Solution part: } - \\frac{1}{2} \\frac{c(\\lambda)}{s(\\lambda)} \\cdot \\sin(\\lambda \\xi)", [eigenmodes_beam2sin]),
-    ("\\lambda_i = 4.730041, 7.853205, 10.995610, (i + \\frac{1}{2}) \\pi"  , [eigenmodes_beam2]),
+    (legend_texts[1][0], [eigenmodes_beam2]),
+    (legend_texts[1][1], [eigenmodes_beam2cosh]),
+    (legend_texts[1][2], [eigenmodes_beam2sinh]),
+    (legend_texts[1][3], [eigenmodes_beam2cos]),
+    (legend_texts[1][4], [eigenmodes_beam2sin]),
+    (legend_texts[1][5], [eigenmodes_beam2]),
 ], location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
 
 p2.add_layout(legend2, 'above')
@@ -220,13 +244,13 @@ eigenmodes_beam3sin=p3.line(x='x', y='y', source=source3sin,
                          line_width=1,line_color='#98C6EA') # TUM color pantone 283
 
 legend3 = LatexLegend(items=[
-    ("\\text{Eigenvalue Problem: } \cosh(\\lambda) \cdot \cos(\\lambda) +1 = 0 \\rightarrow \\text{Solution: } w_i(\\xi) = c(\\lambda_i \\xi) - \\frac{C(\\lambda_i)}{S(\\lambda_i)} \\cdot s(\\lambda_i \\xi)", [eigenmodes_beam3]),
-    ("\\text{Solution part: } - \\frac{1}{2} \\cosh(\\lambda \\cdot \\xi)", [eigenmodes_beam3cosh]),
-    ("\\text{Solution part: } \\frac{1}{2} \\frac{C(\\lambda)}{S(\\lambda)} \\cdot \\sinh(\\lambda \\xi)", [eigenmodes_beam3sinh]),
-    ("\\text{Solution part: } \\frac{1}{2} \\cos(\\lambda \\cdot \\xi)", [eigenmodes_beam3cos]),
-    ("\\text{Solution part: } - \\frac{1}{2} \\frac{C(\\lambda)}{S(\\lambda)} \\cdot \\sin(\\lambda \\xi)", [eigenmodes_beam3sin]),
-    ("\\lambda_i = 1.875104, 4.694091, 7.854760, (i - \\frac{1}{2}) \\pi"  , [eigenmodes_beam3]),
-], location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
+    (legend_texts[2][0], [eigenmodes_beam3]),
+    (legend_texts[2][1], [eigenmodes_beam3cosh]),
+    (legend_texts[2][2], [eigenmodes_beam3sinh]),
+    (legend_texts[2][3], [eigenmodes_beam3cos]),
+    (legend_texts[2][4], [eigenmodes_beam3sin]),
+    (legend_texts[2][5], [eigenmodes_beam3])        ], 
+    location=(0, 5), label_height=27, border_line_width=2, border_line_color="black", max_label_width=865)
 
 p3.add_layout(legend3, 'above')
 p3.legend.click_policy="hide"
@@ -246,17 +270,70 @@ def update_fixed_beam(attrname, old, new):
 
 def update_cantilever_beam(attrname, old, new):
     beam_cantilever(ev_num=new)
-    
+
+def update_legend_texts():
+    legend1.items = [
+        (legend_texts[0][0], [eigenmodes_beam1]),
+        (legend_texts[0][1], [eigenmodes_beam1])]
+    legend2.items = [
+        (legend_texts[1][0], [eigenmodes_beam2]),
+        (legend_texts[1][1], [eigenmodes_beam2cosh]),
+        (legend_texts[1][2], [eigenmodes_beam2sinh]),
+        (legend_texts[1][3], [eigenmodes_beam2cos]),
+        (legend_texts[1][4], [eigenmodes_beam2sin]),
+        (legend_texts[1][5], [eigenmodes_beam2])]
+    legend3.items = [
+        (legend_texts[2][0], [eigenmodes_beam3]),
+        (legend_texts[2][1], [eigenmodes_beam3cosh]),
+        (legend_texts[2][2], [eigenmodes_beam3sinh]),
+        (legend_texts[2][3], [eigenmodes_beam3cos]),
+        (legend_texts[2][4], [eigenmodes_beam3sin]),
+        (legend_texts[2][5], [eigenmodes_beam3])]
+
 ev_input1.on_change('value',update_simple_beam)
 ev_input2.on_change('value',update_fixed_beam)
 ev_input3.on_change('value',update_cantilever_beam)
 
 
+
+######################################
+# Change language
+######################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+    update_legend_texts()
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+
+
+######################################
+# Page layout
+######################################
+
 # app description
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=862)
 
-curdoc().add_root(column(description, Spacer(height=50), \
+curdoc().add_root(column(row(Spacer(width=600),lang_button),description, Spacer(height=50), \
                   p1,ev_input1, Spacer(height=100), \
                   p2,ev_input2, Spacer(height=100), \
                   p3,ev_input3))
