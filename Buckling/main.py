@@ -11,12 +11,19 @@ from bokeh.models import ColumnDataSource, Slider, LabelSet, Arrow, NormalHead, 
 from bokeh.layouts import column, row, Spacer
 from bokeh.io import curdoc
 import numpy as np
+import yaml
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
-from latex_support import LatexDiv, LatexLabelSet
+from latex_support import LatexDiv, LatexLabelSet, LatexSlider
+
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Buckling/static/strings.json', encoding='utf-8'))
+
 
 #Global constant numbers:
 score           = 30
@@ -103,7 +110,7 @@ class Column(object):
         name                = [force_label,"\\mathrm{"+self.name+"}"]
         self.labels.data    = dict(x = x, y = y, name = name)
 
-weight_slide = Slider(title="Force Ratio (F/Fcrit,2)", value=0, start=0, end=f_end, step=step, width=450)    #slider created to change weight on columns
+weight_slide = LatexSlider(title="\\mathrm{Force \ Ratio \ }\\frac{\\mathrm{F}}{\\mathrm{F_{crit,2}}}\\mathrm{:}", value=0, start=0, end=f_end, step=step, width=450)    #slider created to change weight on columns
 
 def drange(start,stop,step):
     '''Function created to provide float range'''
@@ -389,6 +396,36 @@ plot.add_layout(col3_a)
 plot.add_layout(col4_a)
 
 
+
+######################################
+# Change language
+######################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+    
+    init()
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+
+
 ################################################################################
 
 #Create Reset Button:
@@ -412,6 +449,6 @@ description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=
 ####Output section
 ################################################################################
 #Output to the browser:
-curdoc().add_root(column(description1, column(plot, row(weight_slide, Spacer(width=50), button), description)))
+curdoc().add_root(column(row(Spacer(width=600),lang_button),description1, column(plot, row(weight_slide, Spacer(width=50), column(Spacer(height=18), button) ), description)))
 
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

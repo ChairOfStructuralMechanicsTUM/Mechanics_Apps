@@ -1,12 +1,14 @@
-from bokeh.plotting import Figure#, output_file , show
-from bokeh.models import ColumnDataSource, Slider, LabelSet, OpenHead, NormalHead, Arrow#, Div
-from bokeh.layouts import column, row#, widgetbox
-from bokeh.models.widgets import Button
-from bokeh.models.glyphs import Text
-from bokeh.io import curdoc
+from bokeh.plotting         import Figure#, output_file , show
+from bokeh.models           import ColumnDataSource, Slider, LabelSet, OpenHead, NormalHead, Arrow#, Div
+from bokeh.layouts          import column, row#, widgetbox
+from bokeh.models.widgets   import Button
+from bokeh.models.glyphs    import Text
+from bokeh.models.layouts   import Spacer
+from bokeh.io               import curdoc
 #import numpy as np
 from os.path import dirname, join, split, abspath
 import sys, inspect
+import yaml
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
@@ -18,6 +20,13 @@ import Maxwell_Constants as glc
 #import Maxwell_BettyDisplacements as MBD
 from Maxwell_BettyDisplacements import BettyDisplacements
 from Maxwell_Frame_Functions import create_prof, create_shift, create_wdline
+
+
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Maxwell_Reciprocity/static/strings.json', encoding='utf-8'))
+
 
 #################################################################################
 ##global constants:
@@ -388,6 +397,32 @@ plot.add_layout(labelsw21)
 #########
 
 
+######################################
+# Change language
+######################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+
 ################################################################################
 ###add app description
 ################################################################################
@@ -400,5 +435,5 @@ description1 = LatexDiv(text=open(description1_filename).read(), render_as_text=
 ################################################################################
 ###Send to the browser
 ################################################################################
-curdoc().add_root( column(description,column(plot,row(mag_slider, loc_slider), row(button,rbutton), description1 ) ))
+curdoc().add_root( column(row(Spacer(width=450),lang_button),description,column(plot,row(mag_slider, loc_slider), row(button,rbutton), description1 ) ))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
