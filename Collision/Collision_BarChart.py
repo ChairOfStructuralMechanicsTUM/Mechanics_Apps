@@ -98,8 +98,12 @@ class Collision_BarChart(object):
             var idx = tick*100;
             return labels.data[idx.toString()]
         """
+        self.index_obj = index_obj
         # call ticker_func
-        self.fig.xaxis[0].formatter = FuncTickFormatter(code=ticker_func_JS, args=dict(labels=index_obj))
+        self.fig.xaxis[0].formatter = FuncTickFormatter(code=ticker_func_JS, args=dict(labels=self.index_obj))
+
+    def change_label(self):
+        self.index_obj.data = {'50': [self.xVals[0]], '250': [self.xVals[1]], '450': [self.xVals[2]]}
 
     def setTitle(self,title):
         self.fig.title=title

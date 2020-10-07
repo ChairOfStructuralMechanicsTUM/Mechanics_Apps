@@ -561,6 +561,7 @@ def setDocumentLanguage(lang):
     else:
         playpause_button.label = strings["playpause_button.label"]['on'][lang]
 
+    barsFig.change_label()
 
     
 
