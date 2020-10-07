@@ -2,7 +2,7 @@
     "curdoc().title": 
     {
         "en": "Damped oscillator",
-        "de": "gedämpfter Einmassenschwinger"
+        "de": "Gedämpfter Einmassenschwinger"
     },
     "lang_button.label":
     {
@@ -19,12 +19,12 @@
     "stop_button.label":
     {
         "en": "Stop",
-        "de": "stop"
+        "de": "Stop"
     },
     "reset_button.label":
     {
         "en": "Reset",
-        "de": "zurücksetzen"
+        "de": "Zurücksetzen"
     },
     "play_pause_button.label":
     {
@@ -32,12 +32,12 @@
         "on":
         {
             "en": "Pause",
-            "de": "pausieren"
+            "de": "Pause"
         },
         "off":
         {
             "en": "Play",
-            "de": "abspielen"
+            "de": "Start"
         }
     },
     "mass_input.title":
