@@ -29,17 +29,17 @@
     "Play_button.label":
     {
         "en": "Play",
-        "de": "abspielen"
+        "de": "Start"
     },
     "Stop_button.label":
     {
         "en": "Stop",
-        "de": "stop"
+        "de": "Stop"
     },
     "Reset_button.label":
     {
         "en": "Reset",
-        "de": "zurücksetzten"
+        "de": "Zurücksetzen"
     },
     "mass_input.title":
     {
