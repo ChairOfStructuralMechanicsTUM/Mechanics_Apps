@@ -6,12 +6,13 @@ from SDOF_Mass import SDOF_CircularMass
 from bokeh.plotting import figure
 from bokeh.layouts import column, row, Spacer, gridplot
 from bokeh.io import curdoc
-from bokeh.models import Slider, Button, Div, HoverTool, Range1d, Arrow, NormalHead, ColumnDataSource
+from bokeh.models import Slider, Button, Div, HoverTool, Range1d, Arrow, NormalHead, ColumnDataSource, Legend
 from bokeh.models.tickers import FixedTicker
 from bokeh.models.widgets import DataTable, TableColumn
 
 from os.path import dirname, join, split, abspath
 import sys, inspect
+import yaml
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
@@ -33,9 +34,18 @@ D         = initial_damping_coefficient_value / (2.0*initial_mass_value*ef)
 damped_ef = ef * sqrt(1-pow(D,2))
 excitation_frequency_value = frequency_ratio_value * ef
 
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('SDOF/static/strings.json', encoding='utf-8'))
+
 s  = 0
 t  = 0
 dt = 0.03
+
+glob_active = ColumnDataSource(data=dict(Active=[False]))
+legend_text = ['Total Displacement','Particular Solution','Homogeneous Solution']
+tabel_text  = ['Parameter','Value','Parameter','Value']
 
 mass   = SDOF_CircularMass(initial_mass_value,0,10,2,2)
 spring = SDOF_Spring((-2,.75),(-2,8),7,initial_spring_constant_value)
@@ -178,16 +188,18 @@ fig.toolbar.logo = None #removes bokeh logo
 hover = HoverTool(tooltips=[("time","@t s"), ("displacement","@s m")])
 p = figure(title="", y_range=(2,-2), x_range=Range1d(bounds=(0,1000), start=0, end=20), height=550, \
     toolbar_location="right", tools=[hover,"ywheel_zoom,xwheel_pan,pan,reset"]) #ywheel_zoom,xwheel_pan,reset,
-p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,legend_label="Total Displacement",muted_color="#e37222",muted_alpha=0.2)
-p.line(x='t',y='s',source=displacement_particular,color="#a2ad00",legend_label="Particular Solution",muted_color="#98c6ea",muted_alpha=0.2)
-p.line(x='t',y='s',source=displacement_homogeneous,color="#64a0c8",legend_label="Homogeneous Solution",muted_color="#64a0c8",muted_alpha=0.2)
+line_1 = p.line(x='t',y='s',source=displacement,color="#e37222",line_width=2,muted_color="#e37222",muted_alpha=0.2)
+line_2 = p.line(x='t',y='s',source=displacement_particular,color="#a2ad00",muted_color="#98c6ea",muted_alpha=0.2)
+line_3 = p.line(x='t',y='s',source=displacement_homogeneous,color="#64a0c8",muted_color="#64a0c8",muted_alpha=0.2)
+
+legend = Legend(items=[(legend_text[0], [line_1]), (legend_text[1], [line_2]), (legend_text[2], [line_3]) ] )
+legend.click_policy="mute"
+p.add_layout(legend)
 p.axis.major_label_text_font_size="12pt"
 p.axis.axis_label_text_font_style="normal"
 p.axis.axis_label_text_font_size="14pt"
 p.xaxis.axis_label="Time [s]"
 p.yaxis.axis_label="Displacement [u/(F/k)]"
-p.legend.location="top_right"
-p.legend.click_policy="mute"
 p.toolbar.logo = None #removes bokeh logo
 
 # amplification function plot
@@ -396,14 +408,16 @@ def disable_all_sliders(d=True):
 
 def play_pause():
     # keep separate play and pause function since they are also called from other functions
-    if play_pause_button.label == "Play":
+    glob_active.data['Active'][0] = not glob_active.data['Active'][0]
+    if glob_active.data['Active'][0]:
         play()
     else:
         pause()
         
 def pause():
     [callback_id] = glob_callback_id.data["callback_id"] # input/
-    play_pause_button.label = "Play"
+    [lang] = flags.data["lang"]
+    play_pause_button.label = strings["play_pause_button.label"]['off'][lang]
     try:
         curdoc().remove_periodic_callback(callback_id)
     except ValueError:
@@ -416,7 +430,8 @@ def pause():
 def play():
     [callback_id] = glob_callback_id.data["callback_id"] # input/output    
     disable_all_sliders(True) # disable sliders if graph is being plotted
-    play_pause_button.label = "Pause"
+    [lang] = flags.data["lang"]
+    play_pause_button.label = strings["play_pause_button.label"]['on'][lang]
     callback_id = curdoc().add_periodic_callback(evolve,dt*1000) #dt in milliseconds
     glob_callback_id.data = dict(callback_id = [callback_id])
     
@@ -448,6 +463,7 @@ def stop():
         arrow_offset.stream(dict(x1=[0],x2=[0],y1=[35+drawing_displacement],y2=[32+drawing_displacement]),rollover=1)
 
 def reset():
+    glob_active.data['Active'][0]    = False
     stop()
     mass_input.value                 = initial_mass_value
     spring_constant_input.value      = initial_spring_constant_value
@@ -507,13 +523,59 @@ reset_button.on_click(reset)
 
 # add parameter output
 columns = [
-    TableColumn(field="names1", title="Parameter"),
-    TableColumn(field="values1", title="Value"),
-    TableColumn(title=""),
-    TableColumn(field="names2", title="Parameter"),
-    TableColumn(field="values2", title="Value")
-]
+        TableColumn(field="names1",  title=tabel_text[0]),
+        TableColumn(field="values1", title=tabel_text[1]),
+        TableColumn(title=""),
+        TableColumn(field="names2",  title=tabel_text[2]),
+        TableColumn(field="values2", title=tabel_text[3])  ]
+
 parameter_table = DataTable(source=parameters, columns=columns, reorderable=False, sortable=False, selectable=False, index_position=None, width=300, height=100)
+
+
+######################################
+# Change language
+######################################
+def update_texts():
+    legend.items = [(legend_text[0], [line_1]), (legend_text[1], [line_2]), (legend_text[2], [line_3])]
+    columns = [
+        TableColumn(field="names1",  title=tabel_text[0]),
+        TableColumn(field="values1", title=tabel_text[1]),
+        TableColumn(title=""),
+        TableColumn(field="names2",  title=tabel_text[2]),
+        TableColumn(field="values2", title=tabel_text[3])  ]
+    parameter_table.columns = columns
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+    [Active] = glob_active.data["Active"]
+    if Active:
+        play_pause_button.label = strings["play_pause_button.label"]['on'][lang]
+    else:
+        play_pause_button.label = strings["play_pause_button.label"]['off'][lang]
+    update_texts()
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+######################################
+# Page layout
+######################################
 
 # add app description
 description_filename = join(dirname(__file__), "description.html")
@@ -524,7 +586,7 @@ gp = gridplot([p_af,p_pa],ncols=1,plot_width=250,plot_height=250,merge_tools=Tru
 
 ## Send to window
 hspace = 20
-curdoc().add_root(column(description,\
+curdoc().add_root(column(row(Spacer(width=900),lang_button),description,\
     row(column(row(column(Spacer(height=200),play_pause_button,stop_button,reset_button),Spacer(width=10),fig),Spacer(height=hspace),row(Spacer(width=100),parameter_table)),p,Spacer(width=10),gp), \
     row(mass_input,Spacer(width=hspace),spring_constant_input,Spacer(width=hspace),damping_coefficient_input), \
     row(initial_displacement_input,Spacer(width=hspace),initial_velocity_input), \
