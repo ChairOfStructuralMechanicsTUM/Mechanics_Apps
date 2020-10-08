@@ -19,36 +19,36 @@
     "p.title.text":
     {
         "en": "Rotating disk with non accelerated particle",
-        "de": "rotierende Scheibe mit bewegtem Körper"
+        "de": "Rotierende Scheibe mit unbeschleunigtem Partikel"
     },
     "Referential_button.labels[0]":
     {
         "en": "Reference frame: Room",
-        "de": "Betrachtungsweise: Raum"
+        "de": "Bezugssytem: Raum"
     },
     "Referential_button.labels[1]":
     {
         "en": "Reference frame: Disk",
-        "de": "Betrachtungsweise: Scheibe"
+        "de": "Bezugssystem: Scheibe"
     },
     "play_button.label":
     {
         "en": "Play",
-        "de": "abspielen"
+        "de": "Start"
     },
     "reinit_button.label":
     {
         "en": "Re-initialise",
-        "de": "zurücksetzten (inkl. Schieberegler)"
+        "de": "Zurücksetzen"
     },
     "pause_button.label":
     {
         "en": "Pause",
-        "de": "pausieren"
+        "de": "Pause"
     },
     "reset_button.label":
     {
         "en": "Reset",
-        "de": "zurücksetzten"
+        "de": "Neu starten"
     }
 }
