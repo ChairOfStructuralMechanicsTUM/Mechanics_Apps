@@ -39,7 +39,7 @@
     "Plotter.st.xaxis.axis_label":
     {
         "en": "Travelled Distance (m)",
-        "de": "zurückgelegte Distanz (m)"
+        "de": "Zurückgelegte Distanz (m)"
     },
     "Plotter.st.yaxis.axis_label":
     {
@@ -49,7 +49,7 @@
     "Plotter.vs.xaxis.axis_label":
     {
         "en": "Travelled Distance (m)",
-        "de": "zurückgelegte Distanz (m)"
+        "de": "Zurückgelegte Distanz (m)"
     },
     "Prob.Vs.title":
     {
@@ -69,7 +69,7 @@
     "Prob.VMethod.options[1]":
     {
         "en": "Distance-dependent Velocity",
-        "de": "distanzabhängige Geschwindigkeit"
+        "de": "Distanzabhängige Geschwindigkeit"
     },
     "Prob.UserAcceleration.title":
     {
@@ -79,27 +79,27 @@
     "Prob.startSim.label":
     {
         "en": "Start",
-        "de": "start"
+        "de": "Start"
     },
     "Prob.reset_button.label":
     {
         "en": "Reset",
-        "de": "zurücksetzten"
+        "de": "Zurücksetzen"
     },
     "Prob.TestEqs.label":
     {
         "en": "Check equations",
-        "de": "überprüfe Gleichungen"
+        "de": "Überprüfe Gleichungen"
     },
     "Prob.eq_selection.value":
     {
         "en": "Select an equation",
-        "de": "Select an equation"
+        "de": "Wähle Gleichung aus"
     },
     "Prob.eq_selection.options[0]":
     {
         "en": "Select an equation",
-        "de": "wähle Gleichung aus"
+        "de": "Wähle Gleichung aus"
     },
     "Prob.eq_selection.options[1]":
     {
