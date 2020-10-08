@@ -2,7 +2,7 @@
     "curdoc().title": 
     {
         "en": "Projectiles",
-        "de": "vektorielle Umsetztung"
+        "de": "Vektorverschiebung"
     },
     "lang_button.label":
     {
@@ -24,7 +24,7 @@
     "reset_button.label":
     {
         "en": "Reset",
-        "de": "zurücksetzten"
+        "de": "Zurücksetzen"
     },
     "angle_slider.title":
     {
