@@ -28,23 +28,23 @@
         "on":
         {
             "en": "Pause",
-            "de": "pausieren"
+            "de": "Pause"
         },
         "off":
         {
             "en": "Play",
-            "de": "abspielen"
+            "de": "Start"
         }
     },
     "reset_button.label":
     {
         "en": "Reset",
-        "de": "zurücksetzten"
+        "de": "Zurücksetzen"
     },
     "jump_button.label":
     {
         "en": "Jump!",
-        "de": "abspringen!"
+        "de": "Abspringen!"
     },
     "numberPersonsSlider.title":
     {
