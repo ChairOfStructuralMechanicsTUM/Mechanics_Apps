@@ -1,0 +1,139 @@
+{
+    "curdoc().title": 
+    {
+        "en": "SDOF",
+        "de": "Krafterregte, gedämpfte Schwingung"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('SDOF/description.html').read()",
+        "de": "open('SDOF/description_de.html', encoding='utf-8').read()"
+    },
+    "stop_button.label":
+    {
+        "en": "Stop",
+        "de": "Stop"
+    },
+    "reset_button.label":
+    {
+        "en": "Reset",
+        "de": "Zurücksetzen"
+    },
+    "play_pause_button.label":
+    {
+        "checkFlag": "show",
+        "on":
+        {
+            "en": "Pause",
+            "de": "Pause"
+        },
+        "off":
+        {
+            "en": "Play",
+            "de": "Start"
+        }
+    },
+    "mass_input.title":
+    {
+        "en": "\\\\text{Mass} \\\\left[ \\\\mathrm{kg} \\\\right]: ",
+        "de": "\\\\text{Masse} \\\\left[ \\\\mathrm{kg} \\\\right]: "
+    },
+    "spring_constant_input.title":
+    {
+        "en": "\\\\text{Spring stiffness} \\\\left[ \\\\frac{\\\\mathrm{N}}{\\\\mathrm{m}} \\\\right]: ",
+        "de": "\\\\text{Federsteifigkeit} \\\\left[ \\\\frac{\\\\mathrm{N}}{\\\\mathrm{m}} \\\\right]: "
+    },
+    "damping_coefficient_input.title":
+    {
+        "en": "\\\\text{Damping coefficient} \\\\left[ \\\\frac{\\\\mathrm{Ns}}{\\\\mathrm{m}} \\\\right]: ",
+        "de": "\\\\text{Dämpferkoeffizient} \\\\left[ \\\\frac{\\\\mathrm{Ns}}{\\\\mathrm{m}} \\\\right]: "
+    },
+    "initial_velocity_input.title":
+    {
+        "en": "\\\\text{Initial velocity factor } v_0\\\\cdot k \\\\left[ \\\\frac{\\\\mathrm{N}}{\\\\mathrm{s}} \\\\right]: ",
+        "de": "\\\\text{Anfangsgeschwindigkeitsfaktor } v_0\\\\cdot k \\\\left[ \\\\frac{\\\\mathrm{N}}{\\\\mathrm{s}} \\\\right]: "
+    },
+    "initial_displacement_input.title":
+    {
+        "en": "\\\\text{Initial displacement factor } u_0\\\\cdot k \\\\left[ \\\\mathrm{N} \\\\right]: ",
+        "de": "\\\\text{Anfangsauslenkungsfaktor } u_0\\\\cdot k \\\\left[ \\\\mathrm{N} \\\\right]: "
+    },
+    "frequency_ratio_input.title":
+    {
+        "en": "\\\\text{Frequency ratio} : ",
+        "de": "\\\\text{Frequenzverhältnis} : "
+    },
+    "force_value_input.title":
+    {
+        "en": "\\\\text{Force} : ",
+        "de": "\\\\text{Kraft} : "
+    },
+    "p.xaxis.axis_label":
+    {
+        "en": "Time [s]",
+        "de": "Zeit [s]"
+    },
+    "p.yaxis.axis_label":
+    {
+        "en": "Displacement [u/(F/k)]",
+        "de": "Verschiebung [u/(F/k)]"
+    },
+    "p_af.yaxis.axis_label":
+    {
+        "en": "Amplification",
+        "de": "Vergrößerung"
+    },
+    "p_pa.xaxis.axis_label":
+    {
+        "en": "Frequency ratio",
+        "de": "Frequenzverhältnis"
+    },
+    "p_pa.yaxis.axis_label":
+    {
+        "en": "Phase angle",
+        "de": "Phasenwinkel"
+    },
+    "legend_text[0]":
+    {
+        "en": "Total Displacement",
+        "de": "Gesamtverschiebung"
+    },
+    "legend_text[1]":
+    {
+        "en": "Particular Solution",
+        "de": "Partikuläre Lösung"
+    },
+    "legend_text[2]":
+    {
+        "en": "Homogeneous Solution",
+        "de": "Homogene Lösung"
+    },
+    "tabel_text[0]":
+    {
+        "en": "Parameter",
+        "de": "Parameter"
+    },
+    "tabel_text[1]":
+    {
+        "en": "Value",
+        "de": "Wert"
+    },
+    "tabel_text[2]":
+    {
+        "en": "Parameter",
+        "de": "Parameter"
+    },
+    "tabel_text[3]":
+    {
+        "en": "Value",
+        "de": "Wert"
+    }
+    
+}
