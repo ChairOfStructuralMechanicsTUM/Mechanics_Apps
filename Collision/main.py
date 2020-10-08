@@ -4,6 +4,7 @@ Collision - simulate elastic and inelastic collisions of two masses
 """
 # general imports
 import numpy as np
+import yaml
 
 # bokeh imports
 from bokeh.io import curdoc
@@ -25,6 +26,11 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_support import LatexSlider
 
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Collision/static/strings.json', encoding='utf-8'))
+
 '''
 ###############################################################################
 Global variables
@@ -32,7 +38,7 @@ Global variables
 '''
 glCollision = dict(Crval=1.0, cid=None) # collision parameter and callback id
 slider_width = 300 # constant width for velocity sliders
-
+glob_active = ColumnDataSource(data=dict(Active=[False]))
 '''
 ###############################################################################
 Create the plotting domain
@@ -351,7 +357,9 @@ def Reset():
     particleOne.update_velocity(v_x1, v_y1)
     particleTwo.update_velocity(v_x2, v_y2)
 
-    playpause_button.label = "Play"
+    [lang] = flags.data["lang"]
+    glob_active.data["Active"][0] = False
+    playpause_button.label = strings["playpause_button.label"]['on'][lang]
     ballOneVelocityDirSlider.disabled = False
     ballOneVelocityMagSlider.disabled = False
     ballTwoVelocityDirSlider.disabled = False
@@ -366,10 +374,12 @@ reset_button.on_click(Reset)
 
 ########################### Creating play-pause button ##############################
 def playpause():
+    [lang] = flags.data["lang"]
     glCollision_id = glCollision["cid"] # input/output
-    if playpause_button.label == "Play":
+    if not glob_active.data["Active"][0]:
         glCollision_id = curdoc().add_periodic_callback(compute_trajectory, 10)
-        playpause_button.label = "Pause"
+        glob_active.data["Active"][0] = True
+        playpause_button.label = strings["playpause_button.label"]['off'][lang]
         ballOneVelocityDirSlider.disabled = True
         ballOneVelocityMagSlider.disabled = True
         ballTwoVelocityDirSlider.disabled = True    
@@ -379,7 +389,8 @@ def playpause():
     else: # "Pause"
         #for c in curdoc().session_callbacks:
         curdoc().remove_periodic_callback(glCollision_id)
-        playpause_button.label = "Play"
+        glob_active.data["Active"][0] = False
+        playpause_button.label = strings["playpause_button.label"]['on'][lang]
 
         #update sliders
         ballOneVelocityDirSlider.value = particleOne.get_direction()
@@ -515,10 +526,48 @@ crSlider.on_change('value',update_Cr_value)
 #################### Moving the balls through the mouse #######################
 
 def on_mouse_move(event):
-    if playpause_button.label == "Play":
+    if not glob_active.data["Active"][0]:
         system.modify_location(event)
 
 playGround.on_event(Pan, on_mouse_move)
+
+
+'''
+###############################################################################
+Change language
+###############################################################################
+'''
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+    
+    [Active] = glob_active.data["Active"]
+    if Active:
+        playpause_button.label = strings["playpause_button.label"]['off'][lang]
+    else:
+        playpause_button.label = strings["playpause_button.label"]['on'][lang]
+
+    barsFig.change_label()
+
+    
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
 
 '''
 ###############################################################################
@@ -527,26 +576,20 @@ Add all the components together and initiate the app
 '''
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-
 description = Div(text=open(description_filename).read(), render_as_text=False, width=1000)
 
-area_image = Div(text="""
-<h2>
-Particles' Parameters:
-</h2>
-<p>
-<img src="/Collision/static/images/particles_information.png" width=450>
-</p>
-""", render_as_text=False, width=450)
+particles_parameters_filename = join(dirname(__file__), "particles_parameters.html")
+particles_parameters = Div(text=open(particles_parameters_filename).read(), render_as_text=False, width=450)
 
 
 curdoc().add_root(
     column(
+        row(Spacer(width=700),lang_button),
         description,
         row(
             playGround,
             Spacer(width=130),
-            barsFig.getFig()
+            barsFig.fig
         ),
         row(
             column(
@@ -554,7 +597,7 @@ curdoc().add_root(
                     widgetbox(playpause_button, width=225),
                     widgetbox(reset_button, width=225)
                 ),
-                area_image),
+                column(particles_parameters)),
             column(
                 row(
                     ballOneVelocityDirSlider,

@@ -4,6 +4,7 @@ Boat with three swimmers - presents the principle of conservation of momentum
 """
 # general imports
 import numpy as np
+import yaml
 from os.path import dirname, join, split
 
 # bokeh imports
@@ -17,6 +18,11 @@ from BwtS_Person import create_people
 from BwtS_Person import create_arrows_velocityDiagram, reset_arrows_velocityDiagram, modify_swimmer_arrows
 
 # latex integration
+
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Boat_with_three_swimmers/static/strings.json', encoding='utf-8'))
 
 #---------------------------------------------------------------------#
 
@@ -169,7 +175,7 @@ personSource = ColumnDataSource(
 scene.patches(xs='x',ys='y',color='c',source = personSource )
 
 
-boatArrows_sources, swimmerArrows_sources = create_arrows_velocityDiagram(velocity_diagram, swimmers_colors, startBoatSpeed)
+boatArrows_sources, swimmerArrows_sources, swimmer_labels = create_arrows_velocityDiagram(velocity_diagram, swimmers_colors, startBoatSpeed)
 
 '''
 ###############################################################################
@@ -281,7 +287,7 @@ def updateNoPersons(attr,old,new):
         pass
     
 numberPersonsSlider = Slider(
-                                 title=u" Number of swimmers on board ", 
+                                 title="Number of swimmers on board", 
                                  value=1, start=1, end=5, step=1,width=300
                             )
 numberPersonsSlider.on_change('value',updateNoPersons)
@@ -307,19 +313,20 @@ def play():
     Active                  = glob_vars["Active"] # input/output
     g1Boatwiththreeswimmers = glob_vars["cid"]    # input/output
     numberPersonsSlider.disabled = True  # disable slider during simulation
+    [lang] = flags.data["lang"]
     # if inactive, reactivate animation
     if Active == True:
         jump_button.disabled = True
         g1Boatwiththreeswimmers=curdoc().remove_periodic_callback(g1Boatwiththreeswimmers)
         glob_vars["Active"] = False
         glob_vars["cid"]    = g1Boatwiththreeswimmers
-        play_button.label  = "Play"
+        play_button.label = strings["play_button.label"]['off'][lang]
     else:
         jump_button.disabled = False
         g1Boatwiththreeswimmers=curdoc().add_periodic_callback(move_boat, 50)
         glob_vars["Active"] = True
         glob_vars["cid"]    = g1Boatwiththreeswimmers
-        play_button.label   = "Pause"
+        play_button.label = strings["play_button.label"]['on'][lang]
 
 play_button = Button(label="Play", button_type="success")
 play_button.on_click(play)
@@ -341,7 +348,8 @@ def reset():
         glob_vars["Active"] = False
 
     #Reset Play Button and enable slider
-    play_button.label = "Play"
+    [lang] = flags.data["lang"]
+    play_button.label = strings["play_button.label"]['off'][lang]
     numberPersonsSlider.disabled = False
 
     # Reset the coordinates defining the boat in its source data file
@@ -454,31 +462,58 @@ jump_button.on_click(jump)
 
 '''
 ###############################################################################
+Change language
+###############################################################################
+'''
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+    
+    Active = glob_vars["Active"]
+    if Active:
+        play_button.label = strings["play_button.label"]['on'][lang]
+    else:
+        play_button.label = strings["play_button.label"]['off'][lang]
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+
+'''
+###############################################################################
 Add all the components together and initiate the app
 ###############################################################################
 '''
 # add app description
 description_filename = join(dirname(__file__), "description.html")
-
 description = Div(text=open(description_filename).read(), render_as_text=False, width=600)
 
-area_image = Div(text="""
-<h2>
-Technical Information for Boat and Swimmers
-</h2>
-<p>
-<img src="/Boat_with_three_swimmers/static/images/High_resolution_picture.png" width=400>
-</p>
-""", render_as_text=False, width=400)
+boat_and_swimmers_filename = join(dirname(__file__), "boat_and_swimmers.html")
+boat_and_swimmers = Div(text=open(boat_and_swimmers_filename).read(), render_as_text=False, width=400)
+
 
 curdoc().add_root(
-                  column(
+                  column(row(Spacer(width=800),lang_button),
                          row(
                              description,
                              Spacer(width=100),
                              column(
                                     Spacer(height=100),
-                                    area_image
+                                    boat_and_swimmers
                                    )
                             ),
                          Spacer(height=50),
