@@ -36,42 +36,36 @@ code {
 
 <p>
 Der Schwingungstilger ist ein dynamisches System, das aus zwei verbundenen Massen besteht. Eine der beiden Massen ist größer und durch 
-eine Feder und einen Dämpfer mit dem Boden verbunden, im folgenden wird diese Masse als Hauptmasse bezeichnet. Die andere Masse ist
-kleiner und ist durch eine Feder und einen Dämper mit der Hauptmasse verbunden, im folgenden wird diese Masse als Nebenmasse bezeichent.
-Schwingungstilger werden verwendet um das Schwingungsverhalten von System (bzw. der Hauptmasse) zu modifizieren. So können 
-beispielsweise gezielt Schwingfrequenzen eliminiert werden.
+eine Feder und einen Dämpfer mit dem Boden verbunden. Im Folgenden wird diese Masse als Hauptmasse bezeichnet. Die andere Masse ist
+kleiner und ist durch eine Feder und einen Dämper mit der Hauptmasse verbunden. Nachfolgend wird diese Masse als obere Masse bezeichent.
+Schwingungstilger werden verwendet, um das Schwingungsverhalten von Systemen (bzw. der Hauptmasse) zu modifizieren. 
 </p>
 <p>
-Diese App zeigt das Schwingverhalten eines Schwingungstilgers der durch eine harmonische Kraft angeregt wird,
-der Verlauf dieser Krafteinwirkung wird im Diagramm unten rechts dargestellt. Außerdem ist die skalierte Verschiebung, 
+Diese App zeigt das Schwingverhalten eines Schwingungstilgers der durch eine harmonische Kraft angeregt wird.
+Der Verlauf dieser Krafteinwirkung wird im Diagramm unten rechts dargestellt. Außerdem ist die skalierte Verschiebung, 
 die Vergrößerungsfunktion und der Phasenwinkel dargestellt.
 Der orange Punkt zeigt das aktuelle Frequenzverhältnis an.
 </p>
 <ul>
     <li> Die Vergrößerungsfunktion beschreibt den Zusammenhang zwischen der Amplitude der Verschiebung der Hauptmasse 
-        und der Federverlängerung unter statischer Last (statische Durchsenkung). </li>
-    <li> Das Frequenzverhältnis $\eta$ beschreibt das Verhältnis zwischen der erzwungenen Frequenz unter der einwirkenden Last
+        und der statischen Durchsenkung, welche der Lastamplitude geteilt durch die Federsteifigkeit der Hauptmasse entspricht. </li>
+    <li> Das Frequenzverhältnis $\eta$ beschreibt das Verhältnis zwischen der Erregerfrequenz der einwirkenden Last
         und der Eigenfrequenz der Hauptmasse.</li>
-    <li> Der Phasenwinkel gibt an, um wie viel die Frequenz der ablaufenden erzwungenen Schwingung 
-        der Erregung „nacheilt“. Ist der Phasenwinkel Null verlaufen die Schwingung und die Last „im gleichen Takt“.</li>
+    <li> Der Phasenwinkel gibt an, um wie viel die Frequenz der erzwungenen Schwingung 
+        der Erregung „nacheilt“. Ist der Phasenwinkel Null, verlaufen die Schwingung und die Last „im gleichen Takt“.</li>
     </ul>
 <p>
 Es können die folgenden Parameter angepasst werden:
 </p>
 <ul>
-    <li> das Verhältnis $\mu$: Quotient aus Neben- und Hauptmasse (die Hauptmasse hat eine unveränderliche Masse von 5 kg) </li>
-    <li> das Verhältnis $\kappa$: Quotient aus Eigenfrequenz der Nebenmasse und der Eigenfrequenz der Hauptmasse
+    <li> das Massenverhältnis $\mu$: Quotient aus oberer Masse und Hauptmasse (die Hauptmasse hat eine unveränderliche Masse von 5 kg) </li>
+    <li> das Eigenfrequenzverhältnis $\kappa$: Quotient aus Eigenfrequenz der oberen Masse und der Eigenfrequenz der Hauptmasse
         (die Hauptmasse hat eine unveränderliche Federsteifigkeit von 200 N/m)</li>
-    <li> ????
-        the percentage of critical damping of the main mass $D_1$: damper coefficient of the main mass divided by the 
-        critical damping, which is the product of the eigenfrequency and the mass of the main mass multiplicated by 2 </li>
-    <li> the percentage of critical damping of the top mass $D_2$: damper coefficient of the top mass divided by the critical 
-        damping, which is the product of the eigenfrequency and the mass of the top mass multiplicated by 2 ???? </li>    
+    <li> der Prozentuale Anteil der kritischen Dämpfung der Hauptmasse $D_1$: Dämpferkoeffizient der Hauptmasse geteilt durch kritische Dämpfung, welche dem Produkt aus Eigenfrequenz und Masse der Hauptmasse mal 2 entspricht.</li>
+    <li> der Prozentuale Anteil der kritischen Dämpfung der oberen Masse $D_2$: Dämpferkoeffizient der oberen Masse geteilt durch kritische Dämpfung, welche dem Produkt aus Eigenfrequenz und Masse der oberen Masse mal 2 entspricht.</li>    
     <li> das Frequenzverhältnis $\eta$ </li>
     </ul>
 <p>
-In der oberen rechten Ecke des Verschiebungsdiagramms und des Kraftdiagramms befinden sich einige Tools um z.B. 
-in das Diagramm zu zoomen. 
-Mithilfe des "zurücksetzen"-Knopfs, kann das System in seine Ausgangslage zurückversetzt werden.
+Mithilfe des "Zurücksetzen"-Buttons, kann das System in seine Ausgangslage zurückversetzt werden.
 </p>
 

@@ -19,12 +19,12 @@
     "stop_button.label":
     {
         "en": "Stop",
-        "de": "stop"
+        "de": "Stop"
     },
     "reset_button.label":
     {
         "en": "Reset",
-        "de": "zurücksetzten"
+        "de": "Zurücksetzen"
     },
     "play_pause_button.label":
     {
@@ -32,12 +32,12 @@
         "on":
         {
             "en": "Pause",
-            "de": "pausieren"
+            "de": "Pause"
         },
         "off":
         {
             "en": "Play",
-            "de": "abspielen"
+            "de": "Start"
         }
     },
     "mass_ratio_input.title":
@@ -53,12 +53,12 @@
     "D1_input.title":
     {
         "en": "\\\\text{Percentage of Critical Damping of Main Mass } D_1 = \\\\frac{c_1}{2 \\cdot m_1 \\cdot \\omega_1} = ",
-        "de": "\\\\text{???? } D_1 = \\\\frac{c_1}{2 \\cdot m_1 \\cdot \\omega_1} = "
+        "de": "\\\\text{Prozentualer Anteil der kritischen Dämpfung der Hauptmasse } D_1 = \\\\frac{c_1}{2 \\cdot m_1 \\cdot \\omega_1} = "
     },
     "D2_input.title":
     {
         "en": "\\\\text{Percentage of Critical Damping of Top Mass } D_2  = \\\\frac{c_2}{2 \\cdot m_2 \\cdot \\omega_2} = ",
-        "de": "\\\\text{???? } D_2  = \\\\frac{c_2}{2 \\cdot m_2 \\cdot \\omega_2} = "
+        "de": "\\\\text{Prozentualer Anteil der kritischen Dämpfung der oberen Masse } D_2  = \\\\frac{c_2}{2 \\cdot m_2 \\cdot \\omega_2} = "
     },
     "frequency_ratio_input.title":
     {
@@ -93,7 +93,7 @@
     "displacementTime_plot.yaxis.axis_label":
     {
         "en": "Normalized Displacement u/(F/k₁)",
-        "de": "skalierte Verschiebung u/(F/k₁)"
+        "de": "Skalierte Verschiebung u/(F/k₁)"
     },
     "legend_text[0]":
     {
@@ -103,6 +103,6 @@
     "legend_text[1]":
     {
         "en": "Top Mass",
-        "de": "Nebenmasse"
+        "de": "Obere Masse"
     }
 }
