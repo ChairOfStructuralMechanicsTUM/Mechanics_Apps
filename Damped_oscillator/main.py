@@ -19,11 +19,16 @@ from DO_Coord import DO_Coord
 # latex integration
 from os.path import dirname, join, split, abspath
 import sys, inspect
+import yaml
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv, LatexSlider
 
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Damped_oscillator/static/strings.json', encoding='utf-8'))
 #---------------------------------------------------------------------#
 
 # z = lam/(2*sqrt(k*m))
@@ -49,6 +54,7 @@ mass.linkObj(dashpot,(2,11))
 Bottom_Line  = ColumnDataSource(data = dict(x=[-2,2],y=[11,11]))
 Linking_Line = ColumnDataSource(data = dict(x=[0,0],y=[11,9]))
 Position     = ColumnDataSource(data = dict(t=[0],s=[0]))
+glob_active  = ColumnDataSource(data=dict(Active=[False]))
 
 ## global variables
 glob_vars = dict(cid     = None,  # callback id
@@ -151,13 +157,17 @@ initV_input.on_change('value',change_initV)
 ########################
 
 def play_pause():
-    if play_pause_button.label == "Play":
+    [lang] = flags.data["lang"]
+    glob_active.data["Active"][0] = not glob_active.data["Active"][0]
+    Active = glob_active.data["Active"][0]
+
+    if Active:
         glob_vars["cid"] = curdoc().add_periodic_callback(evolve,dt*1000)
-        play_pause_button.label = "Pause"
+        play_pause_button.label = strings["play_pause_button.label"]['on'][lang]
         initV_input.disabled = True # disable initial velocity slider during simulation
-    elif play_pause_button.label == "Pause":
+    else:
         curdoc().remove_periodic_callback(glob_vars["cid"])
-        play_pause_button.label = "Play"
+        play_pause_button.label = strings["play_pause_button.label"]['off'][lang]
 
 
 def stop():
@@ -167,7 +177,9 @@ def stop():
     # if stop is pressed before pause, i.e. while the callback is still in use
     if curdoc().session_callbacks:
         curdoc().remove_periodic_callback(glob_vars["cid"])
-        play_pause_button.label = "Play"
+        glob_active.data["Active"][0] = False
+        [lang] = flags.data["lang"]
+        play_pause_button.label = strings["play_pause_button.label"]['off'][lang]
     glob_vars['t'] = 0                          #      /output
     glob_vars['s'] = 0                          #      /output
     Position.data=dict(t=[0],s=[0])             #      /output
@@ -204,6 +216,38 @@ reset_button = Button(label="Reset", button_type="success",width=100)
 reset_button.on_click(reset)
 
 
+######################################
+# Change language
+######################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+    [Active] = glob_active.data["Active"]
+    if Active:
+        play_pause_button.label = strings["play_pause_button.label"]['on'][lang]
+    else:
+        play_pause_button.label = strings["play_pause_button.label"]['off'][lang]
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+
 ########################
 #  layout definitions  #
 ########################
@@ -213,7 +257,7 @@ description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1050)
 
 ## Send to window
-curdoc().add_root(column(description, \
+curdoc().add_root(column(row(Spacer(width=750),lang_button), description, \
     row(column(Spacer(height=100),play_pause_button,stop_button,reset_button),Spacer(width=20),fig,p), \
     row(mass_input,Spacer(width=110),kappa_input), \
     Spacer(height=30), \

@@ -3,8 +3,13 @@
 Instant centre of rotation - 
 @author: antonis / martin
 """
+###################################
+# Imports
+###################################
+
 # general imports
 from numpy      import math, loadtxt
+import yaml
 
 # bokeh imports
 from bokeh.plotting         import figure
@@ -29,21 +34,37 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
-#--------Data Source--------#
+
+
+###################################
+# Constants
+###################################
+# -> define constant length
+const_length                = 5
+
+
+
+###################################
+# DataSources
+###################################
+
+# -> change language
+std_lang = 'en'
+flags = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings = yaml.safe_load(open('Instant_centre_of_rotation/static/strings.json', encoding='utf-8'))
+
 # -> trace curve
 trace_curve_data = loadtxt('Instant_centre_of_rotation/graph.txt')
 trace_curve=ColumnDataSource( data = dict(x=[], y=[]))
+
 # -> Hatching
 hatching_data = loadtxt('Instant_centre_of_rotation/hatching.txt')
 wall_horizontal_hatching    = ColumnDataSource( data = dict(x=hatching_data[0:105,0], y=hatching_data[0:105,1]) )
 wall_vertical_hatching      = ColumnDataSource( data = dict(x=hatching_data[106:196,0], y=hatching_data[106:196,1]) )
-#--------Data Source--------#
 
-#--------initialize variables--------#
-# -> define constant length
-const_length                = 5
 # -> global variable
 global_vars = dict(show=-1)
+
 # -> immutable objects
 wall_horizontal             = ColumnDataSource( data = dict( x=[-1,const_length+1], y=[-0.06,-0.06]) )
 wall_vertical               = ColumnDataSource( data = dict( x=[-0.06,-0.06], y=[-0.06,const_length+1]) )
@@ -53,6 +74,7 @@ displacement_ratio_w        = ColumnDataSource( data = dict( x=[0.52,0.52], y=[0
 displacement_ratio_u        = ColumnDataSource( data = dict( x=[0.52,2.98], y=[-0.25,-0.25]) )
 displacement_ratio_w_label  = ColumnDataSource( data = dict( x=[0.1], y=[0.15], text=['w:']) )
 displacement_ratio_u_label  = ColumnDataSource( data = dict( x=[0.1], y=[-0.35], text=['u:']) )
+
 # -> mutable objects
 current_coords              = ColumnDataSource( data = dict( x=[0],y=[const_length], x0=[0], y0=[0]) )
 beam_position               = ColumnDataSource( data = dict( x=[0,0], y=[const_length,0]) )
@@ -65,11 +87,15 @@ displacement_u_source       = ColumnDataSource( data = dict( xS=[0], xE=[0+0.8],
 displacement_w_label_source = ColumnDataSource( data = dict( x=[0.05], y=[const_length-0.45], text=['w']) )
 displacement_u_label_source = ColumnDataSource( data = dict( x=[0.3], y=[0.05], text=['u']) )
 ICR_label_source            = ColumnDataSource( data = dict( x=[0.1], y=[const_length+0.1], text=['ICR']) )
-#--------initialize variables--------#
 
-#--------------------------------------Main--------------------------------------#
+
+
+###################################
+# Figures
+###################################
+
 # -> create figures
-fig_1 = figure( plot_height=650, plot_width=650, tools="", x_range=(-1,const_length+1), y_range=(-1,const_length+1), toolbar_location=None )
+fig_1 = figure( plot_height=580, plot_width=580, tools="", x_range=(-1,const_length+1), y_range=(-1,const_length+1), toolbar_location=None )
 fig_1.axis.visible = False
 fig_1.grid.visible = False
 fig_1.outline_line_color = None
@@ -117,11 +143,13 @@ fig_2.add_layout(ratio_w_label)
 ratio_u_label = LabelSet( x='x', y='y', text='text', source=displacement_ratio_u_label, text_font_size="15pt", level='glyph', text_color=c_black )
 fig_2.add_layout(ratio_u_label)
 
-# -> inputs: create silder and button
-slider_angle= LatexSlider(title='\\text{Inclination of ladder:}', value_unit='^{\\circ}', value=0.0, start=0.0, end=90, step=90/20)
-button_structural_system = Button(label="Show/Hide structural system", button_type="success", width=300)
 
-# -> function: updates the drawing, for change of angle
+
+###################################
+# Callback Functions
+###################################
+
+# -> updates the drawing, for change of angle
 def slider_func(attr, old, new):
     angle=(slider_angle.value) * math.pi/180
     trace_curve_index=int(round(angle * 180/math.pi * 20/90,0))
@@ -138,7 +166,7 @@ def slider_func(attr, old, new):
     beam_position.data          = dict( x=[0,x_current], y=[y_current,0] )
     support_A_locus.data        = dict( x=[-1,const_length+1], y=[y_current, y_current] )
     support_B_locus.data        = dict( x=[x_current,x_current], y=[-1, const_length+1] )
-    ICR_label_source.data       = dict( x=[x_current+0.1], y=[y_current+0.1], text=['ICR'] )
+    ICR_label_source.data['x'], ICR_label_source.data['y'] = [x_current+0.1], [y_current+0.1]
     displacement_w_label_source.data        = dict( x=[0.05], y=[y_current-0.45], text=['w'])
     displacement_u_label_source.data        = dict( x=[x_current+0.3], y=[0.05], text=['u'])
     displacement_w_source.stream(           dict( xS=[0], xE=[0], yS=[y_current], yE=[y_current-0.8]), rollover=-1)
@@ -156,25 +184,65 @@ def slider_func(attr, old, new):
     trace_curve.data = dict( x=trace_curve_data[0:trace_curve_index+1,0], y=trace_curve_data[0:trace_curve_index+1,1])
     pass
     
-# -> function: show/hide structural system
+# -> show/hide structural system
 def show_structural_system():
     global_vars['show']=global_vars['show'] * -1
     slider_func(None,None,None)
     pass
 
-# -> call functions
+
+
+###################################
+# Change Language
+###################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+    ICR_label_source.data['text'] = ICR_label_source.data['text']
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+
+
+###################################
+# Buttons and Sliders
+###################################
+
+slider_angle = LatexSlider(title='\\text{Inclination of ladder:}', value_unit='^{\\circ}', value=0.0, start=0.0, end=90, step=90/20)
 slider_angle.on_change('value',slider_func)
+
+button_structural_system = Button(label="Show/Hide structural system", button_type="success", width=300)
 button_structural_system.on_click(show_structural_system)
 
-#--------------------------------------Main--------------------------------------#
+lang_button = Button(label='Zu Deutsch wechseln', button_type="success")
+lang_button.on_click(changeLanguage)
+
+
+
+###################################
+# Page Layout
+###################################
 
 # add app description text
 description_filename = join(dirname(__file__), "description.html")
-description = Div(text=open(description_filename).read(), render_as_text=False, width=1200)
-caption_filename = join(dirname(__file__), "caption.html")
-caption = Div(text=open(caption_filename).read(), render_as_text=False, width=300)
+description          = Div(text=open(description_filename).read(), render_as_text=False, width=880)
+caption_filename     = join(dirname(__file__), "caption.html")
+caption              = Div(text=open(caption_filename).read(), render_as_text=False, width=300)
 
 # send to window
-doc_layout=layout(children=[ column(description, row( column( widgetbox(slider_angle), widgetbox(button_structural_system), Spacer(height=50,width=300), caption, fig_2), column(fig_1) ) ) ] )
+doc_layout=layout(children=[ column(row(Spacer(width=600),lang_button),description, row( column( widgetbox(slider_angle), widgetbox(button_structural_system), Spacer(height=50,width=300), caption, fig_2), column(fig_1) ) ) ] )
 curdoc().add_root(doc_layout)
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

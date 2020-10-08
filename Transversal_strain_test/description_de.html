@@ -1,0 +1,58 @@
+<style>
+    h1 {
+        margin: 2em 0 0 0;
+        color: #2e484c;
+        font-family: 'Julius Sans One', sans-serif;
+        font-size: 1.8em;
+        text-transform: uppercase;
+    }
+
+    a:link {
+        font-weight: bold;
+        text-decoration: none;
+        color: #0d8ba1;
+    }
+
+    a:visited {
+        font-weight: bold;
+        text-decoration: none;
+        color: #1a5952;
+    }
+
+    a:hover,
+    a:focus,
+    a:active {
+        text-decoration: underline;
+        color: #9685BA;
+    }
+
+    p {
+        font: "Libre Baskerville", sans-serif;
+        text-align: justify;
+        text-justify: inter-word;
+    }
+
+    code {
+        color: #336699;
+    }
+</style>
+
+<h1>Querdehnung</h1>
+
+<p>
+    <p>Diese App zeigt die Auswirkung der Poissonzahl $\nu$ auf die Verformung eines Rechteckquerschnitts, der durch eine Einwirkung belastet wird.
+        Es wird von einem vollständig elastischem Materialverhalten ausgegangen.</p>
+    <p>Die Last wird über die resultierenden $R_x$ und $R_y$ definiert, die mit den Normalspannungen in Verbindung stehen: <br>
+    $$\sigma_{x} = \frac{R_{x}}{A_{x}} \; \; \; \text{und} \; \; \; \sigma_{y} = \frac{R_{y}}{A_{y}} \text{;}$$
+    $A_x$ und $A_y$ sind die Flächen auf welche die Normalspannungen einwirken.</p>
+    <p>Die Dehnungen $\epsilon_{x}$ und $\epsilon_{y}$ ergeben sich zu:<br>
+    $$ \epsilon_{x} = \frac{\sigma_{x}}{E} - \frac{\sigma_{y}}{E} \cdot \nu \; \; \; \text{und} \; \; \; \epsilon_{y} = \frac{\sigma_{y}}{E} - \frac{\sigma_{x}}{E} \cdot \nu $$</p>
+    Der Elastizitätsmodul $E$ und die Poissonzahl $\nu$ sind materialabhängig und können vom Benutzer gewählt werden. 
+    Die Grenzen der Schieberegler der Lasten passen sich dem gewählten Material an, um ein brauchbares Ergebnis zu erhalten.<br>
+    Mit einem Klick auf "Zeige Symbole" sind die Verformungen noch besser zu erkennen.<br>
+</p>
+
+
+
+
+
