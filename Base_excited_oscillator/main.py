@@ -11,6 +11,7 @@ from bokeh.models import Slider, Button, Div, ColumnDataSource
 from math import sin, radians, sqrt, pi, pow, atan2
 from copy import deepcopy
 import numpy as np
+import yaml
 
 from os.path import dirname, join, split, abspath
 import sys, inspect
@@ -19,6 +20,14 @@ parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv, LatexSlider
 
+
+
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Base_excited_oscillator/static/strings.json', encoding='utf-8'))
+
+glob_active = ColumnDataSource(data=dict(Active=[False]))
 
 # z = lam/(2*sqrt(k*m))
 # z = 1 => crit damped
@@ -222,14 +231,17 @@ def disable_all_sliders(d=True):
     lam_input.disabled = d
 
 def play_pause():
-    if play_pause_button.label == "Play":
+    glob_active.data["Active"][0] = not glob_active.data["Active"][0]
+
+    if glob_active.data["Active"][0]:
         play()
     else: 
         pause()
 
 def pause():
-    [g1BaseOscillator] = glob_g1BaseOscillator.data["g1BaseOscillator"] 
-    play_pause_button.label = "Play"
+    [g1BaseOscillator] = glob_g1BaseOscillator.data["g1BaseOscillator"]
+    [lang] = flags.data["lang"]
+    play_pause_button.label = strings["play_pause_button.label"]['off'][lang]
     try:
         curdoc().remove_periodic_callback(g1BaseOscillator)
     except ValueError:
@@ -240,15 +252,17 @@ def pause():
         raise
 
 def play():
-    [g1BaseOscillator] = glob_g1BaseOscillator.data["g1BaseOscillator"] 
+    [g1BaseOscillator] = glob_g1BaseOscillator.data["g1BaseOscillator"]
+    [lang] = flags.data["lang"]
+    play_pause_button.label = strings["play_pause_button.label"]['on'][lang]
     disable_all_sliders(True) # while the app is running, it's not possible to change any values
-    play_pause_button.label = "Pause"
     # Add a callback to be invoked on a session periodically
     g1BaseOscillator = curdoc().add_periodic_callback(evolve,dt*1000)
     glob_g1BaseOscillator.data = dict(g1BaseOscillator = [g1BaseOscillator])
 
 def stop():
     # set everything except mass value, lam value and kappa value to initial settings
+    glob_active.data["Active"][0] = False
     [t] = glob_t.data["t"]                 
     [s] = glob_s.data["s"] 
     [sOld] = glob_sOld.data["sOld"]
@@ -274,6 +288,7 @@ def stop():
 
 def reset():
     # set everything to initial settings
+    glob_active.data["Active"][0] = False
     stop()
     mass_input.value=5.0
     lam_input.value=5.0
@@ -330,11 +345,48 @@ reset_button.on_click(reset)
 stop_button = Button(label="Stop", button_type="success",width=100)
 stop_button.on_click(stop)
 
+
+######################################
+# Change language
+######################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+    
+    [Active] = glob_active.data["Active"]
+    if Active:
+        play_pause_button.label = strings["play_pause_button.label"]['on'][lang]
+    else:
+        play_pause_button.label = strings["play_pause_button.label"]['off'][lang]
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+
+######################################
+# Page layout
+######################################
+
 ## Send to window
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=1010)
 
-curdoc().add_root(column(description,row(column(Spacer(height=100),play_pause_button,stop_button,reset_button),Spacer(width=10),fig,p, column(amp, Spacer(height=1), pa)),
+curdoc().add_root(column(row(Spacer(width=700),lang_button), description,row(column(Spacer(height=100),play_pause_button,stop_button,reset_button),Spacer(width=10),fig,p, column(amp, Spacer(height=1), pa)),
     row(mass_input),row(kappa_input),row(lam_input)))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 

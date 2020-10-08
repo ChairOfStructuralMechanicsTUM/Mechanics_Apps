@@ -1,0 +1,64 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Transversal strain test",
+        "de": "Querdehnungsversuch"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Transversal_strain_test/description.html').read()",
+        "de": "open('Transversal_strain_test/description_de.html', encoding='utf-8').read()"
+    },
+    "material_caption.text":
+    {
+        "isCode": true,
+        "en": "open('Transversal_strain_test/caption.html').read()",
+        "de": "open('Transversal_strain_test/caption_de.html', encoding='utf-8').read()"
+    },
+    "materials.labels[0]":
+    {
+        "en": "Rubber",
+        "de": "Gummi"
+    },
+    "materials.labels[1]":
+    {
+        "en": "Lead",
+        "de": "Blei"
+    },
+    "materials.labels[2]":
+    {
+        "en": "Aluminium",
+        "de": "Aluminium"
+    },
+    "materials.labels[3]":
+    {
+        "en": "Steel",
+        "de": "Stahl"
+    },
+    "materials.labels[4]":
+    {
+        "en": "Custom",
+        "de": "Benutzerdefiniert"
+    },
+    "button.label":
+    {
+        "checkFlag": "show",
+        "on":
+        {
+            "en": "Hide symbols",
+            "de": "Verberge Symbole"
+        },
+        "off":
+        {
+            "en": "Show symbols",
+            "de": "Zeige Symbole"
+        }
+    }
+}
