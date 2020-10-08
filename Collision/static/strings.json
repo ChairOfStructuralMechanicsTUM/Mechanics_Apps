@@ -25,22 +25,22 @@
     "ballOneVelocityDirSlider.title":
     {
         "en": "\\\\text{Green Ball Velocity Direction [deg]:} ",
-        "de": "\\\\text{grüner Ball Geschw.-Richtung [deg]:} "
+        "de": "\\\\text{Grüner Ball Geschw.-Richtung [deg]:} "
     },
     "ballOneVelocityMagSlider.title":
     {
         "en": "\\\\text{Green Ball Velocity Magnitude} \\\\left[ \\\\frac{m}{s} \\\\right] :",
-        "de": "\\\\text{grüner Ball Geschwindigkeit} \\\\left[ \\\\frac{m}{s} \\\\right] :"
+        "de": "\\\\text{Grüner Ball Geschwindigkeit} \\\\left[ \\\\frac{m}{s} \\\\right] :"
     },
     "ballTwoVelocityDirSlider.title":
     {
         "en": "\\\\text{Orange Ball Velocity Direction [deg]:}",
-        "de": "\\\\text{oranger Ball Geschw.-Richtung [deg]:}"
+        "de": "\\\\text{Oranger Ball Geschw.-Richtung [deg]:}"
     },
     "ballTwoVelocityMagSlider.title":
     {
         "en": "\\\\text{Orange Ball Velocity Magnitude} \\\\left[ \\\\frac{m}{s} \\\\right] : ",
-        "de": "\\\\text{oranger Ball Geschwindigkeit} \\\\left[ \\\\frac{m}{s} \\\\right] : "
+        "de": "\\\\text{Oranger Ball Geschwindigkeit} \\\\left[ \\\\frac{m}{s} \\\\right] : "
     },
     "crSlider.title":
     {
@@ -53,18 +53,18 @@
         "on":
         {
             "en": "Play",
-            "de": "abspielen"
+            "de": "Start"
         },
         "off":
         {
             "en": "Pause",
-            "de": "pausieren"
+            "de": "Pause"
         }
     },
     "reset_button.label":
     {
         "en": "Reset",
-        "de": "zurücksetzen"
+        "de": "Zurücksetzen"
     },
     "playGround.title.text":
     {
@@ -74,17 +74,17 @@
     "barsFig.fig.yaxis.axis_label":
     {
         "en": "Kinetic Energy ( Joule )",
-        "de": "kinetische Energie ( Joule )"
+        "de": "Kinetische Energie ( Joule )"
     },
     "barsFig.xVals[0]":
     {
         "en": "Green ball",
-        "de": "grüner Ball"
+        "de": "Grüner Ball"
     },
     "barsFig.xVals[1]":
     {
         "en": "Orange Ball",
-        "de": "oranger Ball"
+        "de": "Oranger Ball"
     },
     "barsFig.xVals[2]":
     {
