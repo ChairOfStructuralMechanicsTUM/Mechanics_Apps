@@ -1,15 +1,21 @@
 from __future__ import division
 from bokeh.plotting import figure
-from bokeh.layouts import column, row
+from bokeh.layouts import column, row, Spacer
 from bokeh.models import ColumnDataSource, Slider, Button, Toggle, Arrow, OpenHead, RadioGroup
 from bokeh.io import curdoc
 from math import pi, sin, cos, radians, sqrt, atan2
 from os.path import dirname, join, split, abspath
 import sys, inspect
+import yaml
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir) 
 from latex_support import LatexDiv
+
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Coriolis_force/static/strings.json', encoding='utf-8'))
 
 ## Create all required variables
 glob_circle_axis_phi       = ColumnDataSource(data=dict(phi1=[],phi2=[]))
@@ -344,13 +350,43 @@ arrow_glyph = Arrow(end=OpenHead(line_color="black",line_width=2),
     x_start='xStart', y_start='yStart', x_end='xEnd', y_end='yEnd',source=v0_source)
 p.add_layout(arrow_glyph)
 
+
+######################################
+# Change language
+######################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+######################################
+# Page layout
+######################################
+
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=900)
 
 ## Send to window
-curdoc().add_root(column(description,
+curdoc().add_root(column(row(Spacer(width=600),lang_button), description,
                          row(p,column(Omega_input,v0_input_x,v0_input_y,play_button,pause_button,reset_button,reinit_button,Referential_button))
                          )
                   )
