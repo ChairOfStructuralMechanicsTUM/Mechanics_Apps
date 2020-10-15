@@ -24,18 +24,21 @@ declare namespace vis {
 // This defines some default options for the Graph3d feature of vis.js
 // See: http://visjs.org/graph3d_examples.html for more details.
 const OPTIONS = {
-  width: '400px',
-  height: '400px',
+  width: '600px',
+  height: '450px',
   style: 'surface',
   showPerspective: true,
   showGrid: true,
   keepAspectRatio: false,
-  verticalRatio: 1.0,
+  verticalRatio: 0.5,
+  xLabel: 'Beam length [m]',
+  yLabel: 'Excitation Frequency [1/s]',
+  zLabel: 'Deflection [m]',
   legendLabel: 'stuff',
   cameraPosition: {
-    horizontal: -0.35,
-    vertical: 0.22,
-    distance: 1.8,
+    horizontal: -0.785,
+    vertical: 0.45,
+    distance: 2.2,
   },
 }
 // To create custom model extensions that will render on to the HTML canvas

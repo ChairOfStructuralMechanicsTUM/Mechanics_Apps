@@ -34,13 +34,24 @@ length_right = L-length_left                           # distance between the lo
 omega = 5.0                                                       # excitation frequency
 lam = (mue*(omega**2)/EI)**(1/4)              # lambda (the length of the beam is already integrated in the corresponding calculations)
 
+# initial coordinates of the 3D plot
+x_3D = np.linspace(0,L,51)
+y_3D = np.linspace(1,201,41)
+xx, yy = np.meshgrid(x_3D, y_3D)
+xx = xx.ravel()
+yy = yy.ravel()
+value_unraveled = np.zeros((41,51))
+value = value_unraveled.ravel()
+value_unraveled2 = np.zeros((41,51))
+value2 = value_unraveled2.ravel()
+
 # initial coordinates of the beam 
 x_beam = np.linspace(0,L,n)
 y_beam = np.zeros(n)
 
 # initial coordinates of the amplitude display
-x_amp =                 np.linspace(1,max_omega,max_omega)
-y_amp =                 np.zeros(max_omega)
+x_amp =                 np.linspace(5,max_omega,496)
+y_amp =                 np.zeros(496)
 
 # initial coordinates of the pointer which indicates the location 
 # of frequency analysis
@@ -54,13 +65,17 @@ y_freq =                [0.00001,max_amp_plot]
 length_left_glob = ColumnDataSource(data=dict(length_left=[length_left]))
 length_right_glob = ColumnDataSource(data=dict(length_right=[length_right]))
 lam_glob = ColumnDataSource(data=dict(lam=[lam]))
+y_3D_glob = ColumnDataSource(data=dict(y_3D=y_3D))
+value_unraveled_glob = ColumnDataSource(data=dict(value_unraveled=value_unraveled))
+value_unraveled_glob2 = ColumnDataSource(data=dict(value_unraveled2=value_unraveled2))
 
 beam_coordinates_source = ColumnDataSource(data=dict(x=x_beam,y=y_beam))                 # beam deflection coordinates
 amp_coordinates_source = ColumnDataSource(data=dict(x = x_amp, y = y_amp))    # amplitude coordinates
 lfa_coordinates_source = ColumnDataSource(data=dict(x = x_lfa, y = y_lfa))    # coordinates of the amplitude pointer on the beam
 freq_coordinates_source = ColumnDataSource(data=dict(x = x_freq, y = y_freq))  # coordinates for the amplitude pointer
-load_arrow_source = ColumnDataSource(data = dict(xs = [length_left], xe =[length_left], ys = [4.5], ye=[3.5])) # pointer for the location of the load
-
+load_arrow_source = ColumnDataSource(data=dict(xs = [length_left], xe =[length_left], ys = [4.5], ye=[3.5])) # pointer for the location of the load
+plot_3D_source = ColumnDataSource(data=dict(x=xx, y=yy, z=value))
+plot_3D_source2 = ColumnDataSource(data=dict(x=xx, y=yy, z=value2))
 
 support_left_source = ColumnDataSource(data=dict(x = [-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h]))   # image support left
 support_right_source = ColumnDataSource(data=dict(x = [L-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])) # image support right
@@ -95,13 +110,12 @@ arrow_load = Arrow(start=NormalHead(line_color=c_orange, fill_color = c_orange, 
 plot.add_layout(arrow_load)
 
 ## deflection for every frequency
-disp_freq = figure(x_range = [1, max_omega],y_axis_type="log", y_range = [0.00001,max_amp_plot],
+disp_freq = figure(x_range = [5, max_omega],y_axis_type="log", y_range = [0.00001,max_amp_plot],
                    height = 335, width = 280,toolbar_location = None, tools = "")
-
-disp_freq.yaxis.axis_label = "deflection [m]"
+disp_freq.yaxis.axis_label = "Normalized Deflection W(x)⋅E⋅I/(F⋅L³)"
 disp_freq.yaxis.visible = False
-disp_freq.add_layout(LogAxis(axis_label='deflection [m]'), 'right')
-disp_freq.xaxis.axis_label = "frequency [1/s]"
+disp_freq.add_layout(LogAxis(axis_label='Normalized Deflection W(x)⋅E⋅I/(F⋅L³)'), 'right')
+disp_freq.xaxis.axis_label = "Excitation Frequency [1/s]"
 disp_freq.outline_line_color = c_gray
 
 # deflection for every frequency
@@ -111,24 +125,178 @@ disp_freq.line(x = 'x', y = 'y', source = amp_coordinates_source)
 disp_freq.line(x = 'x', y = 'y', source = freq_coordinates_source, line_dash = "dashed")
 
 ## 3D plot
-x_3D = np.linspace(0,L,100)
-y_3D = np.linspace(1,max_omega,250)
-xx, yy = np.meshgrid(x_3D, y_3D)
-xx = xx.ravel()
-yy = yy.ravel()
+surface = Beam_Modes_Surface3d(x="x", y="y", z="z", data_source=plot_3D_source)
 
-value = np.sin(xx/50 + 2/10) * np.cos(yy/50 + 2/10) * 50 + 50
-
-source = ColumnDataSource(data=dict(x=xx, y=yy, z=value))
-
-surface = Beam_Modes_Surface3d(x="x", y="y", z="z", data_source=source)
-
+surface2 = Beam_Modes_Surface3d(x="x", y="y", z="z", data_source=plot_3D_source2)
 
 ################################
 #####      Functions       #####
 ################################
-#def update_3d_plot():
-#    ""
+def update_3d_plot(x_3D,system,EI,F):     # calculates the deflection for every point of the beam
+
+    [length_left] = length_left_glob.data["length_left"]
+    [length_right] = length_right_glob.data["length_right"]
+    [lam] = lam_glob.data["lam"]
+    y_3D = y_3D_glob.data["y_3D"]
+
+    xx, yy = np.meshgrid(x_3D, y_3D)
+    xx = xx.ravel()
+    yy = yy.ravel()
+
+    value_unraveled = np.zeros((41,51))
+    value_unraveled2 = np.zeros((41,51))
+
+    if (length_left != 0 and length_right != 0) or (length_left != 0 and system=="Fixed-Free beam"): 
+        j = min(y_3D)
+        k = 0
+        while j <= max(y_3D):
+            lam_temp = (mue*(j**2)/EI)**(1/4)  
+            lam_glob.data = dict(lam=[lam_temp])   
+            A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, EI, F)
+  
+            i = 0
+            while i < 51:
+                if xx[i] <= length_left:                                               # for the subsystem on the left
+                    value_unraveled[k][i] = -1*(A1*sin(lam_temp*xx[i])+A2*cos(lam_temp*xx[i])+A3*sinh(lam_temp*xx[i])+A4*cosh(lam_temp*xx[i])) 
+                else:                                                                 # for the subsystem on the right
+                    value_unraveled[k][i] = -1*(B1*sin(lam_temp*(xx[i]-length_left))+B2*cos(lam_temp*(xx[i]-length_left))+B3*sinh(lam_temp*(xx[i]-length_left))+B4*cosh(lam_temp*(xx[i]-length_left)))
+                value_unraveled2[k][i] = value_unraveled[k][i]
+                i+=1    
+            max_value_unraveled_k = np.amax(np.absolute(value_unraveled[k]))
+            value_unraveled[k] = value_unraveled[k] * (3/max_value_unraveled_k)    
+            k+=1
+            j+=5
+
+    lam_glob.data = dict(lam=[lam])
+    value = value_unraveled.ravel()
+    value2 = value_unraveled2.ravel()
+    plot_3D_source.data = dict(x=xx, y=yy, z=value)
+    value_unraveled_glob.data = dict(value_unraveled=value_unraveled)
+    plot_3D_source2.data = dict(x=xx, y=yy, z=value2)
+    value_unraveled_glob2.data = dict(value_unraveled2=value_unraveled2)
+
+def shift_3d_plot(old,new,F,system):
+    [length_left] = length_left_glob.data["length_left"]
+    [lam] = lam_glob.data["lam"]
+    y_3D = y_3D_glob.data["y_3D"]
+    value_unraveled = value_unraveled_glob.data["value_unraveled"]
+    value_unraveled2 = value_unraveled_glob2.data["value_unraveled2"]
+
+    xx, yy = np.meshgrid(x_3D, y_3D)
+    xx = xx.ravel()
+    yy = yy.ravel()
+
+    if new-old == 5 or old-new == 5:
+        if new > old:
+            value_unraveled = value_unraveled[1:]
+            value_unraveled2 = value_unraveled2[1:]
+            j = max(y_3D)
+        elif new < old:
+            value_unraveled = value_unraveled[:40]
+            value_unraveled2 = value_unraveled2[:40]
+            j = min(y_3D)
+        lam_temp = (mue*(j**2)/EI)**(1/4)  
+        lam_glob.data = dict(lam=[lam_temp])   
+        A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, EI, F)
+  
+        i = 0
+        a = np.zeros(51)
+        a2 = np.zeros(51)
+        while i < 51:
+            if xx[i] <= length_left:                                               # for the subsystem on the left
+                a[i] = -1*(A1*sin(lam_temp*xx[i])+A2*cos(lam_temp*xx[i])+A3*sinh(lam_temp*xx[i])+A4*cosh(lam_temp*xx[i]))  
+            else:                                                                 # for the subsystem on the right
+                a[i] = -1*(B1*sin(lam_temp*(xx[i]-length_left))+B2*cos(lam_temp*(xx[i]-length_left))+B3*sinh(lam_temp*(xx[i]-length_left))+B4*cosh(lam_temp*(xx[i]-length_left)))
+            a2[i] = a[i]
+            i+=1    
+        max_a = np.amax(np.absolute(a))
+        a = a * (3/max_a)
+
+    else: 
+        if new > old:
+            
+            num = int((new-old)/5)
+            if (new > 105 and old < 105):
+                num = int((new-105)/5)
+            if new > 400:
+                num = int((400-old)/5) 
+            if num > 41:
+                num = 41
+
+            value_unraveled = value_unraveled[num:]
+            value_unraveled2 = value_unraveled2[num:]
+            
+            a = np.zeros((num,51))
+            a2 = np.zeros((num,51))
+            j = y_3D[-num]
+            k = 0
+            while j <= max(y_3D):
+                lam_temp = (mue*(j**2)/EI)**(1/4)  
+                lam_glob.data = dict(lam=[lam_temp])   
+                A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, EI, F)
+  
+                i = 0
+                while i < 51:
+                    if xx[i] <= length_left:                                               # for the subsystem on the left
+                        a[k][i] = -1*(A1*sin(lam_temp*xx[i])+A2*cos(lam_temp*xx[i])+A3*sinh(lam_temp*xx[i])+A4*cosh(lam_temp*xx[i]))  
+                    else:                                                                 # for the subsystem on the right
+                        a[k][i] = -1*(B1*sin(lam_temp*(xx[i]-length_left))+B2*cos(lam_temp*(xx[i]-length_left))+B3*sinh(lam_temp*(xx[i]-length_left))+B4*cosh(lam_temp*(xx[i]-length_left)))
+                    a2[k][i] = a[k][i]
+                    i+=1    
+                max_a_k = np.amax(np.absolute(a[k]))
+                a[k] = a[k] * (3/max_a_k)    
+                k+=1
+                j+=5
+
+        elif new < old:
+            num = int((old-new)/5)
+            if (new < 400 and old > 400):
+                num = int((400-new)/5)
+            if new < 105:
+                num = int((old-105)/5) 
+            if num > 41:
+                num = 41
+            value_unraveled = value_unraveled[:41-num]
+            value_unraveled2 = value_unraveled2[:41-num]
+        
+            a = np.zeros((num,51))
+            a2 = np.zeros((num,51))
+            j = min(y_3D)
+            k = 0
+            while j <= y_3D[num-1]:
+                lam_temp = (mue*(j**2)/EI)**(1/4)  
+                lam_glob.data = dict(lam=[lam_temp])   
+                A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, EI, F)
+  
+                i = 0
+                while i < 51:
+                    if xx[i] <= length_left:                                               # for the subsystem on the left
+                        a[k][i] = -1*(A1*sin(lam_temp*xx[i])+A2*cos(lam_temp*xx[i])+A3*sinh(lam_temp*xx[i])+A4*cosh(lam_temp*xx[i]))  
+                    else:                                                                 # for the subsystem on the right
+                        a[k][i] = -1*(B1*sin(lam_temp*(xx[i]-length_left))+B2*cos(lam_temp*(xx[i]-length_left))+B3*sinh(lam_temp*(xx[i]-length_left))+B4*cosh(lam_temp*(xx[i]-length_left)))
+                    a2[k][i] = a[k][i]
+                    i+=1    
+                max_a_k = np.amax(np.absolute(a[k]))
+                a[k] = a[k] * (3/max_a_k)    
+                k+=1
+                j+=5
+
+    if new > old:
+        value_unraveled = np.vstack((value_unraveled,a))
+        value_unraveled2 = np.vstack((value_unraveled2,a2))
+
+    elif new < old:
+        value_unraveled = np.vstack((a,value_unraveled))
+        value_unraveled2 = np.vstack((a2,value_unraveled2))
+    
+    value_unraveled_glob.data = dict(value_unraveled=value_unraveled)
+    value = value_unraveled.ravel()
+    plot_3D_source.data = dict(x=xx, y=yy, z=value)
+    value_unraveled_glob2.data = dict(value_unraveled2=value_unraveled2)
+    value2 = value_unraveled2.ravel()
+    plot_3D_source2.data = dict(x=xx, y=yy, z=value2)
+    lam_glob.data = dict(lam=[lam])
+
 
 def change_selection(attr,old,new):                                                 
     [length_left] = length_left_glob.data["length_left"]
@@ -214,18 +382,18 @@ def calculate_amp(mue,EI,max_omega,F):                                          
     [length_right] = length_right_glob.data["length_right"]
     [lam] = lam_glob.data["lam"]
 
-    y_amp = np.zeros(max_omega)
+    y_amp = np.zeros(496)
     if (length_left != 0 and length_right != 0 and float(lfa_coordinates_source.data['x'][0]) != 0 and float(lfa_coordinates_source.data['x'][0]) != L) or (system_select.value=="Fixed-Free beam" and float(lfa_coordinates_source.data['x'][0]) != 0 and length_left != 0):
-        j = 1
+        j = 5
         while j < max_omega:
             lam_temp = (mue*(j**2)/EI)**(1/4)           # calculates lambda for every frequency  
             lam_glob.data = dict(lam=[lam_temp])   
             A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system_select.value, EI, F)
             if lfa_coordinates_source.data['x'][0] <= length_left:  # for the subsystem on the left
-                y_amp[j] = -1*(A1*sin(lam_temp*lfa_coordinates_source.data['x'][0])+A2*cos(lam_temp*lfa_coordinates_source.data['x'][0])
+                y_amp[j-5] = -1*10000/(80*(5**3))*(A1*sin(lam_temp*lfa_coordinates_source.data['x'][0])+A2*cos(lam_temp*lfa_coordinates_source.data['x'][0])
                                  +A3*sinh(lam_temp*lfa_coordinates_source.data['x'][0])+A4*cosh(lam_temp*lfa_coordinates_source.data['x'][0]))
             else:                                       # for the subsystem on the right
-                y_amp[j] = -1*(B1*sin(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))+B2*cos(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))
+                y_amp[j-5] = -1*10000/(80*(5**3))*(B1*sin(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))+B2*cos(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))
                                  +B3*sinh(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))+B4*cosh(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left)))
             j+=1
     amp_coordinates_source.data['y'] = np.absolute(y_amp)      # calculates the absolute values
@@ -248,6 +416,16 @@ def change_frequency (attr,old,new):                                            
     lam_glob.data = dict(lam=[lam])                          # calculates the new lambda  
     calculate_deflection(n,x_beam,system_select.value,EI,F)
     freq_coordinates_source.data = dict(x = [new,new], y = [0.00001,max_amp_plot])
+    if new <= 105:
+        y_3D = np.linspace(5,205,41)
+    elif new >= 400:
+        y_3D = np.linspace(300,500,41)
+    else:
+        y_3D = np.linspace(new-100,new+100,41)
+    y_3D_glob.data=dict(y_3D=y_3D)
+    if (new > 105 and new < 400) or (new <= 105 and old > 105) or (new >= 400 and old < 400):
+        shift_3d_plot(old,new,F,system_select.value)
+    
 
 def disable_plot_sliders ():                                                      # disables / enables sliders coresponding to the frequency / load and frequency locations
     if switch_button.label == "⇦  Change load and shown location":# case 1: "Change load..." is displayed while pushing the button
@@ -263,6 +441,7 @@ def disable_plot_sliders ():                                                    
         system_select.disabled = True
         slider_frequency.disabled = False
         calculate_amp(mue,EI,max_omega,F)
+        update_3d_plot(x_3D,system_select.value,EI,F)
         switch_button.label = "⇦  Change load and shown location"
 
 
@@ -288,7 +467,7 @@ slider_location_freq.on_change('value',change_location_freq)
 
 # slider for the excitation frequency
 slider_frequency = LatexSlider(title="\\text{Excitation frequency } \\Omega \\left[ \\mathrm{\\frac{1}{s}} \\right]: ", value=5, 
-                               start=1, end=max_omega, step=1, width=215,height=40, bar_color = c_blue, 
+                               start=5, end=max_omega, step=5, width=215,height=40, bar_color = c_blue, 
                                css_classes=["slider"]) 
 slider_frequency.on_change('value',change_frequency)
 
@@ -298,6 +477,7 @@ switch_button.on_click(disable_plot_sliders)
 slider_frequency.disabled = True
 
 calculate_deflection(n,x_beam,system_select.value,EI,F)
+update_3d_plot(x_3D,system_select.value,EI,F)
 
 ########################################
 #####        ADD DESCRIPTION       #####
@@ -327,7 +507,10 @@ curdoc().add_root(
             column(
                 Spacer(height=39), slider_frequency, Spacer(height=11), disp_freq
             )
-        ), surface
+        ), 
+        row(
+            surface, Spacer(width=610), surface2
+        )
     )
 )
 
