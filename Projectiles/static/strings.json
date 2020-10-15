@@ -1,0 +1,49 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Projectiles",
+        "de": "Vektorverschiebung"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Projectiles/description.html').read()",
+        "de": "open('Projectiles/description_de.html', encoding='utf-8').read()"
+    },
+    "fire_button.label":
+    {
+        "en": "Fire!",
+        "de": "Feuer!"
+    },
+    "reset_button.label":
+    {
+        "en": "Reset",
+        "de": "Zurücksetzen"
+    },
+    "angle_slider.title":
+    {
+        "en": "\\\\text{Angle \\u0398} \\\\left[ \\\\mathrm{°} \\\\right]: ",
+        "de": "\\\\text{Abschusswinkel \\u0398} \\\\left[ \\\\mathrm{°} \\\\right]: "
+    },
+    "speed_slider.title":
+    {
+        "en": "\\\\text{Velocity} \\\\left[ \\\\frac{\\\\mathrm{m}}{\\\\mathrm{s}} \\\\right]: ",
+        "de": "\\\\text{Abschussgeschwindigkeit} \\\\left[ \\\\frac{\\\\mathrm{m}}{\\\\mathrm{s}} \\\\right]: "
+    },
+    "mass_slider.title":
+    {
+        "en": "\\\\text{Mass} \\\\left[ \\\\mathrm{kg} \\\\right]: ",
+        "de": "\\\\text{Masse} \\\\left[ \\\\mathrm{kg} \\\\right]: "
+    },
+    "height_slider.title":
+    {
+        "en": "\\\\text{Height of base} \\\\left[ \\\\mathrm{m} \\\\right]: ",
+        "de": "\\\\text{Abschusshöhe} \\\\left[ \\\\mathrm{m} \\\\right]: "
+    }
+}

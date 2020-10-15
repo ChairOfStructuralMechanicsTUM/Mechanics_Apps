@@ -1,0 +1,60 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+<h1>Normalkraftstab</h1>
+
+<p>
+ Diese App zeigt den Normalkraftverlauf $N(x)$ und die horizontale Verschiebung $u(x)$ eines Stabes, dessen Lagerung und Belastung
+ vom Benutzer definiert werden kann.
+<br>
+Unter dem statischen System ist der Normalkraftverlauf $N(x)$ und die horizontale Verschiebung $u(x)$ über die Länge $L$
+des Stabes zu sehen.
+<p>
+Berechnet werden die Verläufe mit der folgenden Differentialgleichung:
+$u^{''}(x) = \left ( \frac{N(x)}{EA} \right)^{'} + \left( \alpha_T T(x) \right )^{'}$; <br>
+das Elastizitätsmodul $E$, die Querschnittsfläche $A$ und der Wärmeausdehnkoeffizient $\alpha_T$ werden über die Stablänge als
+konstant angenommen.
+</p>   
+    <p> Die anpassbaren Parameter sind:</p>
+    <ul>
+    <li> der Lasttyp (Einzellast, Linienlast, Dreieckslast, Temperaturlast)</li>
+    <li> die Position bzw. Länge der Last</li>
+    <li> die Richtungswirkung der Last </li>
+    <li> die Lagerung des Stabes</li>
+    </ul>
+
+Wird der Stab beidseitig durch ein festes Auflager gehalten, kann durch "Zeige Linie" die Stelle der maximalen
+horizontalen Verschiebung $u_{max}(x_a)$ eingeblendet werden.
+</p>
+
+
+

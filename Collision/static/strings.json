@@ -1,0 +1,94 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Collision",
+        "de": "Der gerade zentrale Stoß"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open('Collision/description.html').read()",
+        "de": "open('Collision/description_de.html', encoding='utf-8').read()"
+    },
+    "particles_parameters.text":
+    {
+        "isCode": true,
+        "en": "open('Collision/particles_parameters.html').read()",
+        "de": "open('Collision/particles_parameters_de.html', encoding='utf-8').read()"
+    },
+    "ballOneVelocityDirSlider.title":
+    {
+        "en": "\\\\text{Green Ball Velocity Direction [deg]:} ",
+        "de": "\\\\text{Grüner Ball Geschw.-Richtung [deg]:} "
+    },
+    "ballOneVelocityMagSlider.title":
+    {
+        "en": "\\\\text{Green Ball Velocity Magnitude} \\\\left[ \\\\frac{m}{s} \\\\right] :",
+        "de": "\\\\text{Grüner Ball Geschwindigkeit} \\\\left[ \\\\frac{m}{s} \\\\right] :"
+    },
+    "ballTwoVelocityDirSlider.title":
+    {
+        "en": "\\\\text{Orange Ball Velocity Direction [deg]:}",
+        "de": "\\\\text{Oranger Ball Geschw.-Richtung [deg]:}"
+    },
+    "ballTwoVelocityMagSlider.title":
+    {
+        "en": "\\\\text{Orange Ball Velocity Magnitude} \\\\left[ \\\\frac{m}{s} \\\\right] : ",
+        "de": "\\\\text{Oranger Ball Geschwindigkeit} \\\\left[ \\\\frac{m}{s} \\\\right] : "
+    },
+    "crSlider.title":
+    {
+        "en": "\\\\text{Coefficient of Restitution:}",
+        "de": "\\\\text{Stoßzahl:}"
+    },
+    "playpause_button.label":
+    {
+        "checkFlag": "show",
+        "on":
+        {
+            "en": "Play",
+            "de": "Start"
+        },
+        "off":
+        {
+            "en": "Pause",
+            "de": "Pause"
+        }
+    },
+    "reset_button.label":
+    {
+        "en": "Reset",
+        "de": "Zurücksetzen"
+    },
+    "playGround.title.text":
+    {
+        "en": "Collision Play Ground",
+        "de": "Stoßfeld"
+    },
+    "barsFig.fig.yaxis.axis_label":
+    {
+        "en": "Kinetic Energy ( Joule )",
+        "de": "Kinetische Energie ( Joule )"
+    },
+    "barsFig.xVals[0]":
+    {
+        "en": "Green ball",
+        "de": "Grüner Ball"
+    },
+    "barsFig.xVals[1]":
+    {
+        "en": "Orange Ball",
+        "de": "Oranger Ball"
+    },
+    "barsFig.xVals[2]":
+    {
+        "en": "Whole system",
+        "de": "Gesamtsystem"
+    }
+}

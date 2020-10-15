@@ -1,0 +1,80 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<!--<hr>-->
+
+<h4> Knickdifferentialgleichung nach Euler</h4>
+<p>
+  Die Knickdifferentialgleichung nach Euler ist eine Differentialgleichung 4.Ordnung und ergibt sich zu:
+    $$ EI {d^4 w \over dx^4} + F{d^2 w \over dx^2} = 0 $$
+
+</p>
+
+<p>
+  Die Lösung dieser Differentialgelichung kann durch eine Sinus- und Cosinusfunktion beschrieben werden:
+  $$ w = A \sin{\sqrt{ {F \over EI}} x  } + B \cos{\sqrt{ {F \over EI} } x} + Cx + D $$
+</p>
+
+<p>
+  Die Konstanten $A,B,C,D$ werden durch die Randbedingungen des Stabes bestimmt.
+</p>
+
+
+Um die Knicklast eines Stabes zu berechnen, kann die Euler Formel verwendet werden:
+$$ F_{crit} = { c \pi^2 E I \over L^2 } $$
+<p> Wobei: </p>
+<ul>
+<li> \(F_{crit}\) die maximale Druckkraft ist, die aufgenommen werden kann, bevor der Stab knickt.</li>
+<li> \(E\) das Elastizitätsmodul des Materials ist.</li>
+<li> \(I\) das Flächenträgheitsmoment des Stabes ist. </li>
+<li> \(L\) die Länge des Stabes ist.</li>
+<li> \(c\) der Faktor ist, mit dem sich die effektive Länge eines Stabes bestimmen lässt. \(c\) hängt von den Randbedingungen des Stabes ab.
+</ul>
+
+<p>
+Die in der App verwendeten Faktoren \(c\) ergeben sich zu:
+</p>
+<ul>
+<li> Eulerfall 1 (frei-frei):               \(c = 1/4\) </li>
+<li> Eulerfall 2 (gelenkig-gelenkig):       \(c = 1\) </li>
+<li> Eulerfall 3 (gelenkig-eingespannt):    \(c = 2\) </li>
+<li> Eulerfall 4 (eingespannt-eingespannt): \(c = 4\) </li>
+</ul>
+
+<!-- bifurcation plot excluded - just adds a lot of confusion? - maybe think of another description
+<p>Buckling can be described mathematically as a bifurcation in the solution to the equations of static equilibrium (see bifurcation plot).
+The bifurcation plot shows the displacement \(w\) (normalized to \(L\)). </p>
+-->

@@ -11,12 +11,16 @@ from bokeh.models.glyphs import ImageURL, Patch, Quadratic, Rect
 import numpy as np
 import math
 import sys, inspect
+import yaml
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
 parentdir = join(dirname(currentdir), "shared/")
 sys.path.insert(0,parentdir)
 from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
-
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('2D_cantilever_beam/static/strings.json', encoding='utf-8'))
 
 # Define basic beam parameters and loading
 length = 5.0
@@ -554,7 +558,6 @@ def fun_change_Pz(attrname, old, new):
                                       f= ['Fz']
                                  ),rollover=1)
         
-    update_colorBar_extremas(smallestValue,biggestValue)
     fun_update_xz_element_stresses(length,height,thickness,glCantileverCrossSection,Pz,Py)
     
 
@@ -628,15 +631,34 @@ def fun_change_Py(attrname, old, new):
                                       f= ['Fy']
                                  ),rollover=1)
         
-    update_colorBar_extremas(smallestValue,biggestValue)
     fun_update_xz_element_stresses(length,height,thickness,glCantileverCrossSection,Pz,Py)
 
+def update_cross_section_image():
+    # update images
+    [lang] = flags.data["lang"]
+    if lang == "en":    lang_str = ""
+    elif lang == "de":  lang_str = "_de"
+
+    CrossSection1 = "2D_cantilever_beam/static/images/Rectangular"+lang_str+".svg"
+    CrossSection2 = "2D_cantilever_beam/static/images/DoubleT"+lang_str+".svg"
+    CrossSection3 = "2D_cantilever_beam/static/images/Circular"+lang_str+".svg"
+    CrossSection4 = "2D_cantilever_beam/static/images/Triangular"+lang_str+".svg"
+
+    if radio_button_group.active == 0:
+        CrossSectionSource1.data['sp1'] = [CrossSection1]
+    elif radio_button_group.active == 1:
+        CrossSectionSource2.data['sp2'] = [CrossSection2]
+    elif radio_button_group.active == 2:
+        CrossSectionSource3.data['sp3'] = [CrossSection3]
+    elif radio_button_group.active == 3:
+        CrossSectionSource4.data['sp4'] = [CrossSection4]
+    
 # Function that is called, when change in selected cross section occurs
 def fun_change_Cross_Section(attrname, old, new):
     if (radio_button_group.active == 0 ):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
         CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS0.png"])
-        CrossSectionSource1.data = dict(sp1=[CrossSection1], x = [0], y = [0])
+        CrossSectionSource1.data = dict(sp1=[''], x = [0], y = [0])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])
@@ -652,7 +674,7 @@ def fun_change_Cross_Section(attrname, old, new):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
         CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS1.png"])
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
-        CrossSectionSource2.data = dict(sp2=[CrossSection2], x = [0], y = [0])
+        CrossSectionSource2.data = dict(sp2=[''], x = [0], y = [0])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
         CoordArrowXZSource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)   
@@ -666,7 +688,7 @@ def fun_change_Cross_Section(attrname, old, new):
         CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS2.png"])
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
-        CrossSectionSource3.data = dict(sp3=[CrossSection3], x = [0], y = [0])
+        CrossSectionSource3.data = dict(sp3=[''], x = [0], y = [0])
         CrossSectionSource4.data = dict(sp4=[], x = [], y = [])        
         CoordArrowXZSource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)
         CoordArrowXZESource.stream(dict( xs=[-0.5], ys=[0.0],xe=[5.9], ye=[0.0]),rollover=1)            
@@ -680,14 +702,14 @@ def fun_change_Cross_Section(attrname, old, new):
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])       
-        CrossSectionSource4.data = dict(sp4=[CrossSection4], x = [0], y = [0]) 
+        CrossSectionSource4.data = dict(sp4=[''], x = [0], y = [0]) 
         CoordArrowXZSource.stream(dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0]),rollover=1)
         CoordArrowXZESource.stream(dict( xs=[-0.5], ys=[1.0/6.0],xe=[5.9], ye=[1.0/6.0]),rollover=1)   
         labelXZ.data=dict(x=[-.3,5.8], y=[-2.7,-.3+1.0/6.0], text=['z','x'])
         labelXZElement.data=dict(x=[-.3,5.8], y=[-2.7,-.3+1.0/6.0], text=['z','x'])    
         XZElementSource.data = dict(sp4=[], x =[], y = []) 
         XZElement2Source.data = dict(sp4=[XZElement], x = [0], y = [0])                                            
-
+    update_cross_section_image()
     # Update Color Bar
     colorBarSource.data = dict( x=colorBarXCoords, y=colorBarYCoords, c=colorBarColorList, a=colorBarAlphaList )
 
@@ -1093,14 +1115,13 @@ def update_colorBar(glCantileverCrossSection):
 (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(glCantileverCrossSection)
 colorBarSource.data = dict( x=colorBarXCoords, y=colorBarYCoords, c=colorBarColorList, a=colorBarAlphaList )
 
-## Label colorbar min-max stess range
-def update_colorBar_extremas(smallesValue, biggestValue):
-    colorBar.title.text =  " "*15  + "-" + " "*55 + "Normal Stress" + " "*55 + "+"
-
 # Construct the patches 
 colorBar.patches( xs='x', ys='y', source=colorBarSource, color = 'c', alpha = 'a' )
 plotDefXZ.patches  (xs='x', ys='y', source=sourceXZdef  , color = 'c', alpha = 'a')
 plotDefXY.patches  (xs='x', ys='y', source=sourceXYdef  , color = 'c', alpha = 'a')
+
+## Label colorbar min-max stess range
+colorBar.title.text =  " "*15  + "-" + " "*55 + "Normal Stress" + " "*55 + "+"
 
 ############## PLOT 6: 3D ##########################
 plot3DBeam = Figure(    
@@ -1130,6 +1151,40 @@ Reset_button.on_click(init_data)
 
 init_data()    
 
+######################################
+# Change language
+######################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+        lang_str = "_de"
+    elif lang == "de":
+        setDocumentLanguage('en')
+        lang_str = ""
+
+    update_cross_section_image()
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+######################################
+# Page layout
+######################################
+
+
 # add app description
 description_filename = join(dirname(__file__), "description.html")
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=950)
@@ -1140,7 +1195,7 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
             #width = 550,
             #height = 405 )
 
-curdoc().add_root(column(row(Spacer(height=650),description, column(Spacer(height=100),plot3DBeam)),row(
+curdoc().add_root(column(row(Spacer(width=1150),lang_button),row(Spacer(height=650),description, column(Spacer(height=100),plot3DBeam)),row(
     column(plotDefZY,widgetbox(radio_button_group),Zforce_slider,Yforce_slider,Reset_button),
     column(row(column(plotXZElement,row(Spacer(width=40),radio_button_group2)),column(row(column(plotDefXZ), column(plotDefXY)),colorBar))))))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '

@@ -3,6 +3,7 @@
 ###################################
 # general imports
 from math                 import pi
+import yaml
 
 # bokeh imports
 from bokeh.io             import curdoc
@@ -24,6 +25,10 @@ sys.path.insert(0,parentdir)
 
 from latex_support        import LatexDiv, LatexLabelSet, LatexSlider
 
+# change language
+std_lang = 'en'
+flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
+strings  = yaml.safe_load(open('Transversal_strain_test/static/strings.json', encoding='utf-8'))
 
 ###################################
 # Constants
@@ -50,6 +55,7 @@ a = 0.75
 ###################################
 # DataSources
 ###################################
+glob_active       = ColumnDataSource(data=dict(Active=[False]))
 deformable_object = DeformableObject(10,5,0,0, E_start_value, nu_start_value)
 # symbols on object
 deformable_object.add_child(-2.5,0,False,[[-1.5,1.5,1.5,-1.5,-1.5],[1,1,-1,-1,1]])
@@ -120,15 +126,20 @@ def cb_show_hide_symbols(event):
     deformable_object.children_vis *= -1
     if deformable_object.children_vis == 1:
         width, fill = 1, c_black
-        # state = True (not supported for Patch in bokeh 1.4.0)
-        button.label = 'Hide symbols'
     else:
         width, fill = 0, None
-        # state = False (not supported for Patch in bokeh 1.4.0)
-        button.label = 'Show symbols'
     for child in children_visual:
         child.line_width, child.fill_color = width, fill
         # child.visible = state (not supported for Patch in bokeh 1.4.0)
+    
+    # Button label
+    [lang] = flags.data["lang"]
+    glob_active.data["Active"][0] = not glob_active.data["Active"][0]
+    [Active] = glob_active.data["Active"]
+    if Active:
+        button.label = strings["button.label"]['on'][lang]
+    else:
+        button.label = strings["button.label"]['off'][lang]
 
 
 
@@ -212,6 +223,38 @@ materials.  on_change('active', cb_change_material)
 
 
 
+######################################
+# Change language
+######################################
+
+def changeLanguage():
+    [lang] = flags.data["lang"]
+    if lang == "en":
+        setDocumentLanguage('de')
+    elif lang == "de":
+        setDocumentLanguage('en')
+
+def setDocumentLanguage(lang):
+    flags.patch( {'lang':[(0,lang)]} )
+    for s in strings:
+        if 'checkFlag' in strings[s]:
+            flag = flags.data[strings[s]['checkFlag']][0]
+            exec( (s + '=\"' + strings[s][flag][lang] + '\"').encode(encoding='utf-8') )
+        elif 'isCode' in strings[s] and strings[s]['isCode']:
+            exec( (s + '=' + strings[s][lang]).encode(encoding='utf-8') )
+        else:
+            exec( (s + '=\"' + strings[s][lang] + '\"').encode(encoding='utf-8') )
+    [Active] = glob_active.data["Active"]
+    if Active:
+        button.label = strings["button.label"]['on'][lang]
+    else:
+        button.label = strings["button.label"]['off'][lang]
+
+lang_button = Button(button_type="success", label="Zu Deutsch wechseln")
+lang_button.on_click(changeLanguage)
+
+
+
 ###################################
 # Page Layout
 ###################################
@@ -226,6 +269,6 @@ widget_box = column(Fx_slider,Fy_slider, row(Spacer(width=50), button), Spacer(h
     row(Spacer(width=25),E_slider), row(Spacer(width=25),nu_slider) )
 
 curdoc().add_root(column(
-    description, Spacer(height=10), row(Spacer(width=10), widget_box,Spacer(width=10), column(Spacer(height=5),figure)), Spacer(height=20)
+    row(Spacer(width=700),lang_button), description, Spacer(height=10), row(Spacer(width=10), widget_box,Spacer(width=10), column(Spacer(height=5),figure)), Spacer(height=20)
 ))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')

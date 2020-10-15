@@ -521,7 +521,6 @@ def read_seismic_input(file, scale):
 def read_ERS_data(file):
     acceleration = list()
     period = list()
-    
     wordCounter = 0
     lineCounter = 0
     
@@ -540,15 +539,53 @@ def read_ERS_data(file):
             lineCounter += 1
     
     return ColumnDataSource(data=dict(period=period,acceleration=acceleration))
+
+def read_KOKE_ERS_data(file):
+    acceleration = list()
+    period = list()
+    wordCounter = 0
+    lineCounter = 0
+    
+    with open( file,'r' ) as f:
+        for line in f:
+            for word in line.split(','):
+                if lineCounter > 66 and lineCounter < 178: #input data situated between line 67 and 179 in the data file
+                    if wordCounter == 0:
+                        #print(word)
+                        period.append(float(word))
+                    elif wordCounter == 10:
+                        acceleration.append(float(word)*9.81) # multiplication by 9.81 to convert it to m/sec/sec
+                    wordCounter += 1
+                #wordCounter += 1
+            wordCounter = 0
+            lineCounter += 1
+    
+    return ColumnDataSource(data=dict(period=period,acceleration=acceleration))
     
 def Read_ERS_info(file):
 
     data = list()
-    wordCounter = 0
+    wordCounter = -1
     lineCounter = 0                    
     with open( file, 'r') as f:
         for line in f:
             if lineCounter == 34:
+                for word in line.split(','):
+                    if wordCounter >= 9 and wordCounter <= 15:
+                        data.append(word)
+                    wordCounter += 1
+            lineCounter += 1
+
+    return data
+
+def Read_Kobe_ERS_info(file):
+
+    data = list()
+    wordCounter = -1
+    lineCounter = 0                    
+    with open( file, 'r') as f:
+        for line in f:
+            if lineCounter == 40:
                 for word in line.split(','):
                     if wordCounter >= 9 and wordCounter <= 15:
                         data.append(word)
