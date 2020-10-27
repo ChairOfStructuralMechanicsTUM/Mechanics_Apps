@@ -26,7 +26,7 @@ c_gray        = "#b3b3b3"
 
 F = 80                  # maximum force of the dynamic load
 L = 5.0                 # length of the beam
-EI = 10000.0           # Youngs Modulus * area moment of inertia
+EI = 10000.0*(1+0.1j)            # Youngs Modulus * area moment of inertia
 mue = 1.0               # mue
 
 ###################################
@@ -34,8 +34,7 @@ mue = 1.0               # mue
 ###################################
 
 n = 401                         # value of fragmentation of the beam
-max_omega = 500                 # maximum of displayable frequency
-max_amp_plot = 100.0            # highest displayable deflection
+max_omega = 501                 # maximum of displayable frequency
 
 
 ##################################

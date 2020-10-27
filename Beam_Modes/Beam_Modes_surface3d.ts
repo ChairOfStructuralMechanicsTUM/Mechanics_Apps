@@ -33,13 +33,16 @@ const OPTIONS = {
   verticalRatio: 0.5,
   xLabel: 'Beam length [m]',
   yLabel: 'Excitation Frequency [1/s]',
-  zLabel: 'Deflection [m]',
+  zLabel: 'Normalized Deflection [1/s²]',
+  xValueLabel: function(value: number) {
+    return value / 5 + 'L'
+  },
   legendLabel: 'stuff',
   cameraPosition: {
     horizontal: -0.785,
     vertical: 0.45,
     distance: 2.2,
-  },
+  }
 }
 // To create custom model extensions that will render on to the HTML canvas
 // or into the DOM, we must create a View subclass for the model.
