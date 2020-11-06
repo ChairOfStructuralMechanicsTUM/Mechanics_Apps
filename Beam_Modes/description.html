@@ -1,0 +1,58 @@
+<head>
+    <style>
+    h1 {
+        margin: 2em 0 0 0;
+        color: #2e484c;
+        font-family: 'Julius Sans One', sans-serif;
+        font-size: 1.8em;
+        text-transform: uppercase;
+    }
+    a:link {
+        font-weight: bold;
+        text-decoration: none;
+        color: #0d8ba1;
+    }
+    a:visited {
+        font-weight: bold;
+        text-decoration: none;
+        color: #1a5952;
+    }
+    a:hover, a:focus, a:active {
+        text-decoration: underline;
+        color: #9685BA;
+    }
+    p {
+        font: "Libre Baskerville", sans-serif;
+        text-align: justify;
+        text-justify: inter-word;
+    }
+    code {
+        color: #336699;
+    }
+    </style>
+    <head>
+    
+    <h1>Beam Modes</h1>
+    
+    <p>
+        This app shows the deflection of a harmonically loaded beam for different boundary conditions. The force amplitude $F$ is fixed, as well as the length $L$, the Young's modulus $E$ and the area moment of inertia $I$ of the beam.
+    </p>
+    <p>
+        The deflection can be calculated with the following equation: $$W\left(x\right) = C_1 \cdot sin\left(\frac{\lambda}{L} \cdot x\right) + C_2 \cdot cos\left(\frac{\lambda}{L} \cdot x\right) + C_3 \cdot sinh\left(\frac{\lambda}{L} \cdot x\right) + C_4 \cdot cosh\left(\frac{\lambda}{L} \cdot x\right).$$
+    </p>
+    <p>
+        The drop down menu allows to choose from four different support systems. Additionally, we allow the modification of the
+        <ul>
+            <li> location of the load in $m$ </li>
+            <li> location of the frequency analysis in $m$ </li>
+            <li> excitation frequency $\Omega$ in $\frac{1}{s}$ </li>
+        </ul>
+    </p>
+    <p>
+        The plot on the upper left shows the chosen system and the deformed beam. The maximum deflection is normalized to a certain value.
+        The diagram on the upper right shows the deflection of the beam at the chosen location for a fixed range of excitation frequencies.
+        The green button allows the user to change between the frequency analysis and the modification of the locations of interest.
+    </p>
+    <p>
+        The 3D plot at the bottom puts together the information displayed in the upper diagrams and shows the dependency between the excitation frequency, the eigenfrequencies of the system and the deflection of the beam.
+    </p>
