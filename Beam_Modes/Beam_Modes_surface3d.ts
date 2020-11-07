@@ -33,7 +33,7 @@ const OPTIONS = {
   verticalRatio: 0.5,
   xLabel: 'Beam length [m]',
   yLabel: 'Excitation Frequency [1/s]',
-  zLabel: 'Normalized Deflection [1/s²]',
+  zLabel: 'Normalized Deflection [-]',
   xValueLabel: function(value: number) {
     return value / 5 + 'L'
   },
@@ -41,7 +41,7 @@ const OPTIONS = {
   cameraPosition: {
     horizontal: -0.785,
     vertical: 0.45,
-    distance: 2.2,
+    distance: 2.3,
   }
 }
 // To create custom model extensions that will render on to the HTML canvas

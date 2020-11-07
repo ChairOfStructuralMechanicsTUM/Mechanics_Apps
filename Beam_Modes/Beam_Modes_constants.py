@@ -27,6 +27,7 @@ c_gray        = "#b3b3b3"
 F = 80                  # maximum force of the dynamic load
 L = 5.0                 # length of the beam
 mue = 1.0               # mue
+EI_real = 10000.0
 
 ###################################
 #       plotting properties       #
