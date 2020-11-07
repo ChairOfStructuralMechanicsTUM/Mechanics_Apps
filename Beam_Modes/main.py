@@ -26,14 +26,18 @@ from Beam_Modes_constants import (
     c_orange, c_green, c_black, c_blue, c_gray, c_white,                    # colors
     pinned_support_img, fixed_support_left_img, fixed_support_right_img,    # support images
     img_h, img_w_fixed, img_w_pinned, y_fixed,                              # image properties
-    F, L, EI, mue,                                                           # beam properties
+    F, L, mue,                                                           # beam properties
     n, max_omega,                                             # plotting properties
     )
 
 length_left = 2.0                                     # distance between the load and the left support
 length_right = L-length_left                           # distance between the load and the right support                                               
 omega = 5.0                                                       # excitation frequency
+damping = 0.1
+EI_real = 10000.0
+EI = complex(EI_real, EI_real*damping)      # Youngs Modulus * area moment of inertia
 lam = (mue*(omega**2)/EI)**(1/4)              # lambda (the length of the beam is already integrated in the corresponding calculations)
+
 
 # initial coordinates of the 3D plot
 x_3D = np.linspace(0,L,26)
@@ -75,6 +79,7 @@ length_left_glob = ColumnDataSource(data=dict(length_left=[length_left]))
 length_right_glob = ColumnDataSource(data=dict(length_right=[length_right]))
 lam_glob = ColumnDataSource(data=dict(lam=[lam]))
 y_3D_glob = ColumnDataSource(data=dict(y_3D=y_3D))
+EI_glob = ColumnDataSource(data=dict(EI=[EI]))
 value_unraveled_glob = ColumnDataSource(data=dict(value_unraveled=value_unraveled))
 value_unraveled_glob2 = ColumnDataSource(data=dict(value_unraveled2=value_unraveled2))
 
@@ -161,12 +166,13 @@ surface2 = Beam_Modes_Surface3d(x="x", y="y", z="z", data_source=plot_3D_source2
 ################################
 #####      Functions       #####
 ################################
-def update_3d_plot(x_3D,system,EI,F):     # calculates the deflection for every point of the beam
+def update_3d_plot(x_3D,system,F):     # calculates the deflection for every point of the beam
 
     [length_left] = length_left_glob.data["length_left"]
     [length_right] = length_right_glob.data["length_right"]
     [lam] = lam_glob.data["lam"]
     y_3D = y_3D_glob.data["y_3D"]
+    [EI] = EI_glob.data["EI"]
     xx, yy = np.meshgrid(x_3D, y_3D)
     xx = xx.ravel()
     yy = yy.ravel()
@@ -180,7 +186,7 @@ def update_3d_plot(x_3D,system,EI,F):     # calculates the deflection for every 
         while j <= max(y_3D):
             lam_temp = (mue*(j**2)/EI)**(1/4)  
             lam_glob.data = dict(lam=[lam_temp])   
-            A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, EI, F)
+            A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, F)
   
             i = 0
             while i < 26:
@@ -207,6 +213,7 @@ def shift_3d_plot(old,new,F,system):
     [length_left] = length_left_glob.data["length_left"]
     [lam] = lam_glob.data["lam"]
     y_3D = y_3D_glob.data["y_3D"]
+    [EI] = EI_glob.data["EI"]
     value_unraveled = value_unraveled_glob.data["value_unraveled"]
     value_unraveled2 = value_unraveled_glob2.data["value_unraveled2"]
 
@@ -225,7 +232,7 @@ def shift_3d_plot(old,new,F,system):
             j = min(y_3D)
         lam_temp = (mue*(j**2)/EI)**(1/4)  
         lam_glob.data = dict(lam=[lam_temp])   
-        A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, EI, F)
+        A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, F)
   
         i = 0
         a = np.zeros(26, dtype=complex)
@@ -262,7 +269,7 @@ def shift_3d_plot(old,new,F,system):
             while j <= max(y_3D):
                 lam_temp = (mue*(j**2)/EI)**(1/4)  
                 lam_glob.data = dict(lam=[lam_temp])   
-                A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, EI, F)
+                A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, F)
   
                 i = 0
                 while i < 26:
@@ -296,7 +303,7 @@ def shift_3d_plot(old,new,F,system):
             while j <= y_3D[num-1]:
                 lam_temp = (mue*(j**2)/EI)**(1/4)  
                 lam_glob.data = dict(lam=[lam_temp])   
-                A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, EI, F)
+                A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, F)
   
                 i = 0
                 while i < 26:
@@ -346,13 +353,14 @@ def change_selection(attr,old,new):
     elif new == "Fixed-Free beam":
         support_left_source.data = dict(x = [-0.05], y = [y_fixed], src = [fixed_support_left_img], w = [img_w_fixed] , h = [img_h])    
         support_right_source.data = dict(x = [], y = [], src = [], w = [] , h = []) 
-    calculate_deflection(n,x_beam,system_select.value,EI,F)
+    calculate_deflection(n,x_beam,system_select.value,F)
 
-def create_matrix_and_calculate_coefficients(system, EI, F): 
+def create_matrix_and_calculate_coefficients(system, F): 
 
     [length_left] = length_left_glob.data["length_left"]
     [length_right] = length_right_glob.data["length_right"]
     [lam] = lam_glob.data["lam"]
+    [EI] = EI_glob.data["EI"]
 
     # M_line_1 doesn't change since the deflection at the left support is always zero                        
     if system == "Pinned-Pinned beam":                     # moment is equal to zero                                                           
@@ -387,13 +395,14 @@ def create_matrix_and_calculate_coefficients(system, EI, F):
                     # resulting variables    
     return A1,A2,A3,A4,B1,B2,B3,B4
 
-def calculate_deflection(n,x_beam,system,EI,F):     # calculates the deflection for every point of the beam
+def calculate_deflection(n,x_beam,system,F):     # calculates the deflection for every point of the beam
 
     [length_left] = length_left_glob.data["length_left"]
     [length_right] = length_right_glob.data["length_right"]
     [lam] = lam_glob.data["lam"]
+    [EI] = EI_glob.data["EI"]
 
-    A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, EI, F)
+    A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system, F)
 
     y_beam = np.zeros(n, dtype=complex)
     if (length_left != 0 and length_right != 0) or (length_left != 0 and system=="Fixed-Free beam"):                                     # precludes conditions, where no calculation is needed    
@@ -408,10 +417,11 @@ def calculate_deflection(n,x_beam,system,EI,F):     # calculates the deflection 
         y_beam = y_beam * (3/max_value)                                                     # scales the deflection to a maximum amplitude of 3 
     beam_coordinates_source.data = dict(x=x_beam,y=y_beam.real)
 
-def calculate_amp_and_phase(mue,EI,max_omega,F):                                                                    # calculates the deflection for every frequency
+def calculate_amp_and_phase(mue,max_omega,F):                                                                    # calculates the deflection for every frequency
     [length_left] = length_left_glob.data["length_left"]
     [length_right] = length_right_glob.data["length_right"]
     [lam] = lam_glob.data["lam"]
+    [EI] = EI_glob.data["EI"]
 
     y_amp = np.zeros(501, dtype=complex)
     if (length_left != 0 and length_right != 0 and float(lfa_coordinates_source.data['x'][0]) != 0 and float(lfa_coordinates_source.data['x'][0]) != L) or (system_select.value=="Fixed-Free beam" and float(lfa_coordinates_source.data['x'][0]) != 0 and length_left != 0):
@@ -419,12 +429,12 @@ def calculate_amp_and_phase(mue,EI,max_omega,F):                                
         while j < max_omega:
             lam_temp = (mue*(j**2)/EI)**(1/4)           # calculates lambda for every frequency  
             lam_glob.data = dict(lam=[lam_temp])   
-            A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system_select.value, EI, F)
+            A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system_select.value, F)
             if lfa_coordinates_source.data['x'][0] <= length_left:  # for the subsystem on the left
-                y_amp[j-1] = -1*10000/(80*(5**3))*j*j*(A1*cm.sin(lam_temp*lfa_coordinates_source.data['x'][0])+A2*cm.cos(lam_temp*lfa_coordinates_source.data['x'][0])
+                y_amp[j-1] = -1*EI/(F*(L**3))*j*j*(A1*cm.sin(lam_temp*lfa_coordinates_source.data['x'][0])+A2*cm.cos(lam_temp*lfa_coordinates_source.data['x'][0])
                                  +A3*cm.sinh(lam_temp*lfa_coordinates_source.data['x'][0])+A4*cm.cosh(lam_temp*lfa_coordinates_source.data['x'][0]))
             else:                                       # for the subsystem on the right
-                y_amp[j-1] = -1*10000/(80*(5**3))*j*j*(B1*cm.sin(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))+B2*cm.cos(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))
+                y_amp[j-1] = -1*EI/(F*(L**3))*j*j*(B1*cm.sin(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))+B2*cm.cos(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))
                                  +B3*cm.sinh(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))+B4*cm.cosh(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left)))
             j+=1
     for i in range(0,501): 
@@ -441,22 +451,29 @@ def calculate_amp_and_phase(mue,EI,max_omega,F):                                
     else:
         disp_freq.y_range.end = 1.2*max(y_amp.real)
 
-def change_location_load(attr,old,new):                                           # changes the location of the load and adjust the location of its pointer
+def change_location_load(attr,old,new):            
+    [EI] = EI_glob.data["EI"]
+                                   # changes the location of the load and adjust the location of its pointer
     length_left = new*L                                         # defines the new place of the load
     length_right = L - length_left
     length_left_glob.data = dict(length_left=[length_left])
     length_right_glob.data = dict(length_right=[length_right])
-    calculate_deflection(n,x_beam,system_select.value,EI,F)
+    calculate_deflection(n,x_beam,system_select.value,F)
     load_arrow_source.stream(dict(xs = [length_left], xe =[length_left], ys = [4.5], ye=[3.5]),rollover=1) # updates load pointer
     
 def change_location_freq(attr,old,new):                                            # changes the location of the point used for the frequency plot
     lfa_coordinates_source.data = dict(x = [new*L,new*L], y = [-L,L])
+
+def change_damping(attr,old,new):
+    EI = complex(EI_real, EI_real*new)
+    EI_glob.data = dict(EI = [EI])
     
 def change_frequency (attr,old,new):                                              # changes the frequency of the oscillating load
+    [EI] = EI_glob.data["EI"]
     omega = new                                                 # adjusts omega to the new value
     lam = (mue*(omega**2)/EI)**(1/4)  
     lam_glob.data = dict(lam=[lam])                          # calculates the new lambda  
-    calculate_deflection(n,x_beam,system_select.value,EI,F)
+    calculate_deflection(n,x_beam,system_select.value,F)
     freq_coordinates_source.data = dict(x = [new,new], y = [disp_freq.y_range.start, disp_freq.y_range.end])
     freq2_coordinates_source.data = dict(x = [new,new], y = y_freq2)
     if new <= 101:
@@ -472,7 +489,7 @@ def change_frequency (attr,old,new):                                            
 
 def disable_plot_sliders ():                                                      # disables / enables sliders coresponding to the frequency / load and frequency locations
 
-    if switch_button.label == "⇦  Change load and shown location":# case 1: "Change load..." is displayed while pushing the button
+    if switch_button.label == "⇦  Change input parameters":# case 1: "Change load..." is displayed while pushing the button
         slider_location_load.disabled = False
         slider_location_freq.disabled = False 
         system_select.disabled = False
@@ -484,10 +501,10 @@ def disable_plot_sliders ():                                                    
         slider_location_freq.disabled = True
         system_select.disabled = True
         slider_frequency.disabled = False
-        calculate_amp_and_phase(mue,EI,max_omega,F)
-        update_3d_plot(x_3D,system_select.value,EI,F)
+        calculate_amp_and_phase(mue,max_omega,F)
+        update_3d_plot(x_3D,system_select.value,F)
         freq_coordinates_source.data = dict(x = [slider_frequency.value, slider_frequency.value], y = [disp_freq.y_range.start, disp_freq.y_range.end])
-        switch_button.label = "⇦  Change load and shown location"
+        switch_button.label = "⇦  Change input parameters"
 
 
 ########################################
@@ -510,19 +527,25 @@ slider_location_freq = LatexSlider(title="\\text{Location of the frequency analy
                                    bar_color = c_green, css_classes=["slider"]) 
 slider_location_freq.on_change('value',change_location_freq)
 
+# slider for damping coefficient
+slider_damping = LatexSlider(title="\\text{Loss modulus} \\left[ \\mathrm{\\frac{N}{m²}} \\right]: ", value_unit="\\mathrm{E}", 
+                                   value=damping, start=0, end=0.5, step=.01, width=423, height=30,
+                                   css_classes=["slider"]) 
+slider_damping.on_change('value',change_damping)
+
 # slider for the excitation frequency
 slider_frequency = LatexSlider(title="\\text{Excitation frequency } \\Omega \\left[ \\mathrm{\\frac{1}{s}} \\right]: ", value=5, 
-                               start=1, end=max_omega, step=2, width=215,height=40, bar_color = c_blue, 
+                               start=1, end=max_omega, step=2, width=215,height=30, bar_color = c_blue, 
                                css_classes=["slider"]) 
 slider_frequency.on_change('value',change_frequency)
 
 # button to switch between selection of the locations and the adjustment of the frequency 
-switch_button = Button(label="Frequency Analysis  ⇨", button_type="success", width=220, height=40)
+switch_button = Button(label="Frequency Analysis  ⇨", button_type="success", width=200, height=40)
 switch_button.on_click(disable_plot_sliders)
 slider_frequency.disabled = True
 
-calculate_deflection(n,x_beam,system_select.value,EI,F)
-update_3d_plot(x_3D,system_select.value,EI,F)
+calculate_deflection(n,x_beam,system_select.value,F)
+update_3d_plot(x_3D,system_select.value,F)
 
 ########################################
 #####        ADD DESCRIPTION       #####
@@ -537,20 +560,23 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 
 curdoc().add_root(
     column(
-        description, system_select, Spacer(height=20),row(
+        description, system_select, Spacer(height=15),row(
             column(
+                row(
+                    Spacer(width=85), slider_damping
+                ), 
                 row(
                     Spacer(width=85), slider_location_load
                 ), 
                 row(
                     Spacer(width=85), slider_location_freq
-                ), Spacer(height=20),plot, surface2
+                ),Spacer(height=15),plot, surface2
             ), Spacer(width=15),
             column(
-                Spacer(height=225), switch_button
+                Spacer(height=258), switch_button
             ), Spacer(width=15),
             column(
-                Spacer(height=39), slider_frequency, Spacer(height=11), disp_freq, disp_phase
+                Spacer(height=80), slider_frequency, Spacer(height=15), disp_freq, Spacer(height=15), disp_phase
             )
         )
     )

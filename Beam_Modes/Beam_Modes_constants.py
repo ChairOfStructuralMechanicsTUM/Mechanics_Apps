@@ -26,7 +26,6 @@ c_gray        = "#b3b3b3"
 
 F = 80                  # maximum force of the dynamic load
 L = 5.0                 # length of the beam
-EI = 10000.0*(1+0.1j)            # Youngs Modulus * area moment of inertia
 mue = 1.0               # mue
 
 ###################################
