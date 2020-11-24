@@ -3,7 +3,7 @@
 #################################
 
 # general imports
-from math import cos, sin, cosh, sinh, pi
+from math import cos, sin, cosh, sinh, pi, sqrt
 import numpy as np
 import cmath as cm
 
@@ -11,7 +11,7 @@ import cmath as cm
 from bokeh.plotting import figure
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, Spacer
-from bokeh.models import Slider, Button, Select, CustomJS, Div, Arrow, NormalHead, LinearAxis, ColumnDataSource, Range1d
+from bokeh.models import Slider, Button, Select, CustomJS, Div, Arrow, NormalHead, LogAxis, LinearAxis, ColumnDataSource, Range1d
 from bokeh.models.glyphs import ImageURL
 
 # latex integration
@@ -29,7 +29,7 @@ from Beam_Modes_constants import (
     pinned_support_img, fixed_support_left_img, fixed_support_right_img,    # support images
     img_h, img_w_fixed, img_w_pinned, y_fixed,                              # image properties
     F, L, mue, EI_real,                                                     # beam properties
-    n, max_omega                                                           # plotting properties
+    n_beam, n_r, max_r                                                      # plotting properties
     )
 
 
@@ -39,15 +39,16 @@ from Beam_Modes_constants import (
 
 # initial parameters
 length_left = 2.0                             # initial distance between the load and the left support
-length_right = L-length_left                  # initial distance between the load and the right support                                               
-omega = 5.0                                   # initial excitation frequency
+length_right = L-length_left                  # initial distance between the load and the right support     
+lfa = 2.0                                     # inital location of frequency analysis                                          
+r = 0.2                                       # initial excitation frequency ratio
 damping = 0.1                                 # initial damping coefficient
 EI = complex(EI_real, EI_real*damping)        # Youngs Modulus * area moment of inertia
-lam = (mue*(omega**2)/EI)**(1/4)              # lambda (the length of the beam is already integrated in the corresponding calculations)
+lam = pi*sqrt(r)*cm.sqrt(cm.sqrt(EI/EI_real))       # lambda 
 
 # initial coordinates of the 3D plot
 x_3D = np.linspace(0,L,26)
-y_3D = np.linspace(1,201,101)
+y_3D = np.linspace(0.04,4.04,101)
 xx, yy = np.meshgrid(x_3D, y_3D)
 xx = xx.ravel()
 yy = yy.ravel()
@@ -55,28 +56,28 @@ value_unraveled = np.zeros((101,26))
 value = value_unraveled.ravel()
 
 # initial coordinates of the beam 
-x_beam = np.linspace(0,L,n)
-y_beam = np.zeros(n, dtype=complex)
+x_beam = np.linspace(0,L,n_beam)
+y_beam = np.zeros(n_beam, dtype=complex)
 
 # initial coordinates of the amplitude display
-x_amp =                 np.linspace(1,max_omega,501)
-y_amp =                 np.zeros(501, dtype=complex)
+x_amp =                 np.linspace(0.04,max_r,n_r)
+y_amp =                 np.zeros(n_r, dtype=complex)
 
 # initial coordinates of the phase display
-x_phase =                 np.linspace(1,max_omega,501)
-y_phase =                 np.zeros(501)
+x_phase =                 np.linspace(0.04,max_r,n_r)
+y_phase =                 np.zeros(n_r)
 
 # initial coordinates of the pointer which indicates the location of frequency analysis
-x_lfa =                 [0.0,0.0]
+x_lfa =                 [lfa,lfa]
 y_lfa =                 [-L,L]
 
 # initial coordinates of the pointer which indicates the current frequency for the amplitude
-x_freq =                [omega,omega]
-y_freq =                [-0.05,0.05]
+x_freq =                [r,r]
+y_freq =                [0.00001,100]
 
 # initial coordinates of the pointer which indicates the current frequency for the phase angle
-x_freq2 =                [omega,omega]
-y_freq2 =                [-pi,pi]
+x_freq2 =                [r,r]
+y_freq2 =                [-pi-0.1,pi+0.1]
 
 
 #################################
@@ -86,6 +87,7 @@ y_freq2 =                [-pi,pi]
 # define global variables
 length_left_glob = ColumnDataSource(data=dict(length_left=[length_left]))
 length_right_glob = ColumnDataSource(data=dict(length_right=[length_right]))
+r_glob = ColumnDataSource(data=dict(r=[r]))
 lam_glob = ColumnDataSource(data=dict(lam=[lam]))
 y_3D_glob = ColumnDataSource(data=dict(y_3D=y_3D))
 EI_glob = ColumnDataSource(data=dict(EI=[EI]))
@@ -124,22 +126,22 @@ arrow_load = Arrow(start=NormalHead(line_color=c_orange, fill_color = c_orange, 
 plot.add_layout(arrow_load)
 
 # amplitude for every excitation frequency
-disp_freq = figure(x_range = [1, max_omega], y_range = [-0.05,0.05],
+disp_freq = figure(x_range = [0.04, max_r], y_axis_type="log", y_range = [0.00001,100],
                    height = 335, width = 280,toolbar_location = None, tools = "")
 disp_freq.yaxis.visible = False
-disp_freq.add_layout(LinearAxis(axis_label='Normalized Deflection W(x)⋅E⋅I⋅λ³/(F⋅L³) [-]'), 'right')
-disp_freq.xaxis.axis_label = "Excitation Frequency [1/s]"
+disp_freq.add_layout(LogAxis(axis_label='Normalized Deflection W(x)⋅E⋅I/(F⋅L³)'), 'right')
+disp_freq.xaxis.axis_label = "Excitation Frequency Ratio"
 disp_freq.outline_line_color = c_gray
 disp_freq.line(x = 'x', y = 'y', source = amp_coordinates_source)
 disp_freq.line(x = 'x', y = 'y', source = freq_coordinates_source, line_dash = "dashed")
 
 # phase angle for every excitation frequency
-disp_phase = figure(x_range = [1, max_omega], y_range = [-pi, pi],
+disp_phase = figure(x_range = [0.04, max_r], y_range = [-pi-0.1, pi+0.1],
                    height = 335, width = 280,toolbar_location = None, tools = "")
 disp_phase.yaxis.axis_label = "Phase Angle [rad]"
 disp_phase.yaxis.visible = False
 disp_phase.add_layout(LinearAxis(axis_label='Phase Angle [rad]'), 'right')
-disp_phase.xaxis.axis_label = "Excitation Frequency [1/s]"
+disp_phase.xaxis.axis_label = "Excitation Frequency Ratio"
 disp_phase.outline_line_color = c_gray
 disp_phase.line(x = 'x', y = 'y', source = phase_coordinates_source)
 disp_phase.line(x = 'x', y = 'y', source = freq2_coordinates_source, line_dash = "dashed")
@@ -152,30 +154,30 @@ surface = Beam_Modes_Surface3d(x="x", y="y", z="z", data_source=plot_3D_source)
 ##          FUNCTIONS          ##
 #################################
 
-# calculates the deflection for the 3D plot for excitation frequencies between j_min and j_max
+# calculates the deflection for the 3D plot for excitation frequency ratios between j_min and j_max
 def calculate_3D_plot_coordinates(y_3D,j_min,j_max,xx,system,array):
 
     # get global variables
     [length_left] = length_left_glob.data["length_left"]
     [lam] = lam_glob.data["lam"]
     [EI] = EI_glob.data["EI"]
-
     j = j_min
     k = 0
     while j <= j_max:
-        lam_temp = (mue*(j**2)/EI)**(1/4)            # calculates lambda for every frequency
+        lam_temp = calculate_lambda(system,j,EI)     # calculates lambda for every frequency
         lam_glob.data = dict(lam=[lam_temp])   
         A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system)
 
         i = 0
         while i < 26:
             if xx[i] <= length_left:                 # for the subsystem on the left
-                array[k][i] = -1*EI*(lam_temp**3)/(F*(L**3))*(A1*cm.sin(lam_temp*xx[i])+A2*cm.cos(lam_temp*xx[i])+A3*cm.sinh(lam_temp*xx[i])+A4*cm.cosh(lam_temp*xx[i]))  
+                array[k][i] = -1*EI*j*j/(F*(L**3))*(A1*cm.sin(lam_temp/L*xx[i])+A2*cm.cos(lam_temp/L*xx[i])+A3*cm.sinh(lam_temp/L*xx[i])+A4*cm.cosh(lam_temp/L*xx[i]))  
             else:                                    # for the subsystem on the right
-                array[k][i] = -1*EI*(lam_temp**3)/(F*(L**3))*(B1*cm.sin(lam_temp*(xx[i]-length_left))+B2*cm.cos(lam_temp*(xx[i]-length_left))+B3*cm.sinh(lam_temp*(xx[i]-length_left))+B4*cm.cosh(lam_temp*(xx[i]-length_left)))
+                array[k][i] = -1*EI*j*j/(F*(L**3))*(B1*cm.sin(lam_temp/L*(xx[i]-length_left))+B2*cm.cos(lam_temp/L*(xx[i]-length_left))+B3*cm.sinh(lam_temp/L*(xx[i]-length_left))+B4*cm.cosh(lam_temp/L*(xx[i]-length_left)))
             i+=1       
         k+=1
-        j+=2
+        j = round(j+0.04,2)
+    
 
     lam_glob.data = dict(lam=[lam])
 
@@ -194,8 +196,8 @@ def update_3d_plot(system):
 
     value_unraveled = np.zeros((101,26), dtype=complex)
     if (length_left != 0 and length_right != 0) or (length_left != 0 and system=="Fixed-Free beam"): # otherwise the beam is not deformed
-        j_min = min(y_3D)                 
-        j_max = max(y_3D)
+        j_min = round(min(y_3D),2)                 
+        j_max = round(max(y_3D),2)
         calculate_3D_plot_coordinates(y_3D,j_min,j_max,xx,system,value_unraveled)
 
     # update plotting variables
@@ -217,11 +219,11 @@ def shift_3d_plot(old,new,system):
 
     if new > old:
         # number of excitation frequencies which have to be updated
-        num = int((new-old)/2)                       
-        if (new > 101 and old < 101):    
-            num = int((new-101)/2)
-        if new > 401:                    
-            num = int((401-old)/2) 
+        num = round((new-old)/0.04)              
+        if (new > 2.04 and old < 2.04):    
+            num = round((new-2.04)/0.04)
+        if new > 8:                    
+            num = round((8-old)/0.04) 
         if num > 101:
             num = 101
 
@@ -229,28 +231,27 @@ def shift_3d_plot(old,new,system):
         
         # calculate new values
         a = np.zeros((num,26), dtype=complex)            
-        j_min = y_3D[-num]
-        j_max = max(y_3D)
+        j_min = round(y_3D[-num],2)
+        j_max = round(max(y_3D),2)
         calculate_3D_plot_coordinates(y_3D,j_min,j_max,xx,system,a)
 
         value_unraveled = np.vstack((value_unraveled,a))  # add new values to the array
 
     elif new < old:
         # number of excitation frequencies which have to be updated
-        num = int((old-new)/2)
-        if (new < 401 and old > 401):
-            num = int((401-new)/2)
-        if new < 101:
-            num = int((old-101)/2) 
+        num = round((old-new)/0.04)
+        if (new < 8 and old > 8):
+            num = round((8-new)/0.04)
+        if new < 2.04:
+            num = round((old-2.04)/0.04) 
         if num > 101:
             num = 101
 
         value_unraveled = value_unraveled[:101-num]       # delete corresponding values from the array
-
         # calculate new values
         a = np.zeros((num,26), dtype=complex)
-        j_min = min(y_3D)
-        j_max = y_3D[num-1]
+        j_min = round(min(y_3D),2)
+        j_max = round(y_3D[num-1],2)
         calculate_3D_plot_coordinates(y_3D,j_min,j_max,xx,system,a)
 
         value_unraveled = np.vstack((a,value_unraveled))  # add new values to the array
@@ -261,22 +262,35 @@ def shift_3d_plot(old,new,system):
     plot_3D_source.data = dict(x=xx, y=yy, z=value.real)
 
 # update support images when type of beam is changed and update the deflection
-def change_selection(attr,old,new):                                                 
+def change_selection(attr,old,new):    
 
     if new == "Pinned-Pinned beam":
         support_left_source.data = dict(x = [-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])        
-        support_right_source.data = dict(x = [L-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])      
+        support_right_source.data = dict(x = [L-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])  
     elif new == "Fixed-Fixed beam":
         support_left_source.data = dict(x = [-0.05], y = [y_fixed], src = [fixed_support_left_img], w = [img_w_fixed] , h = [img_h])    
-        support_right_source.data = dict(x = [L+0.05], y = [y_fixed], src = [fixed_support_right_img], w = [img_w_fixed] , h = [img_h]) 
+        support_right_source.data = dict(x = [L+0.05], y = [y_fixed], src = [fixed_support_right_img], w = [img_w_fixed] , h = [img_h])
     elif new == "Fixed-Pinned beam":
         support_left_source.data = dict(x = [-0.05], y = [y_fixed], src = [fixed_support_left_img], w = [img_w_fixed] , h = [img_h])    
-        support_right_source.data = dict(x = [L-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])   
+        support_right_source.data = dict(x = [L-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h]) 
     elif new == "Fixed-Free beam":
         support_left_source.data = dict(x = [-0.05], y = [y_fixed], src = [fixed_support_left_img], w = [img_w_fixed] , h = [img_h])    
         support_right_source.data = dict(x = [], y = [], src = [], w = [] , h = []) 
 
     calculate_deflection(system_select.value)
+
+def calculate_lambda(system,r,EI):
+
+    if system == "Pinned-Pinned beam":
+        lam = pi*sqrt(r)*cm.sqrt(cm.sqrt(EI/EI_real))   
+    elif system == "Fixed-Fixed beam":
+        lam = 1.505618812*pi*sqrt(r)*cm.sqrt(cm.sqrt(EI/EI_real))    
+    elif system == "Fixed-Pinned beam":
+        lam = 1.249876236*pi*sqrt(r)*cm.sqrt(cm.sqrt(EI/EI_real))   
+    elif system == "Fixed-Free beam":
+        lam = 0.5968641408*pi*sqrt(r)*cm.sqrt(cm.sqrt(EI/EI_real))   
+
+    return lam
 
 # calculate coefficients C_1, C_2, C_3, C_4 for both subsystems
 def create_matrix_and_calculate_coefficients(system): 
@@ -292,30 +306,30 @@ def create_matrix_and_calculate_coefficients(system):
     else:                                                   
         M_line_2 = [1, 0, 1, 0, 0, 0, 0, 0]                # distortion of left support is equal to zero
     if system == "Fixed-Free beam":                        # lateral force of right support is equal to zero
-        M_line_7 = [0, 0, 0, 0, cm.cos(lam*length_right), -cm.sin(lam*length_right),     
-                    -cm.cosh(lam*length_right), -cm.sinh(lam*length_right)]
+        M_line_7 = [0, 0, 0, 0, cm.cos(lam/L*length_right), -cm.sin(lam/L*length_right),     
+                    -cm.cosh(lam/L*length_right), -cm.sinh(lam/L*length_right)]
     else:                                                  # deflection of right support is equal to zero 
-        M_line_7 = [0, 0, 0, 0, cm.sin(lam*length_right), cm.cos(lam*length_right),     
-                    cm.sinh(lam*length_right), cm.cosh(lam*length_right)]
+        M_line_7 = [0, 0, 0, 0, cm.sin(lam/L*length_right), cm.cos(lam/L*length_right),     
+                    cm.sinh(lam/L*length_right), cm.cosh(lam/L*length_right)]
     if system == "Fixed-Fixed beam":                       # distortion of right support is equal to zero
-        M_line_8 = [0, 0, 0, 0, cm.cos(lam*length_right), -cm.sin(lam*length_right),         
-                    cm.cosh(lam*length_right), cm.sinh(lam*length_right)]
+        M_line_8 = [0, 0, 0, 0, cm.cos(lam/L*length_right), -cm.sin(lam/L*length_right),         
+                    cm.cosh(lam/L*length_right), cm.sinh(lam/L*length_right)]
     else:                                                  # moment of right support is equal to zero
-        M_line_8 = [0, 0, 0, 0, cm.sin(lam*length_right), cm.cos(lam*length_right),     
-                    -cm.sinh(lam*length_right), -cm.cosh(lam*length_right)]
+        M_line_8 = [0, 0, 0, 0, cm.sin(lam/L*length_right), cm.cos(lam/L*length_right),     
+                    -cm.sinh(lam/L*length_right), -cm.cosh(lam/L*length_right)]
 
     M_ges = np.matrix([
         [0, 1, 0, 1, 0, 0, 0, 0],                          # deflection of left support is always equal to zero                                                         
         M_line_2,                                                                                                        
-        [cm.sin(lam*length_left), cm.cos(lam*length_left), cm.sinh(lam*length_left), cm.cosh(lam*length_left), 0, -1, 0, -1],   
-        [cm.cos(lam*length_left), -cm.sin(lam*length_left), cm.cosh(lam*length_left), cm.sinh(lam*length_left), -1, 0, -1, 0], 
-        [cm.sin(lam*length_left), cm.cos(lam*length_left), -cm.sinh(lam*length_left), -cm.cosh(lam*length_left), 0, -1, 0, 1],  
-        [cm.cos(lam*length_left), -cm.sin(lam*length_left), -cm.cosh(lam*length_left), -cm.sinh(lam*length_left), -1, 0, 1, 0], 
+        [cm.sin(lam/L*length_left), cm.cos(lam/L*length_left), cm.sinh(lam/L*length_left), cm.cosh(lam/L*length_left), 0, -1, 0, -1],   
+        [cm.cos(lam/L*length_left), -cm.sin(lam/L*length_left), cm.cosh(lam/L*length_left), cm.sinh(lam/L*length_left), -1, 0, -1, 0], 
+        [cm.sin(lam/L*length_left), cm.cos(lam/L*length_left), -cm.sinh(lam/L*length_left), -cm.cosh(lam/L*length_left), 0, -1, 0, 1],  
+        [cm.cos(lam/L*length_left), -cm.sin(lam/L*length_left), -cm.cosh(lam/L*length_left), -cm.sinh(lam/L*length_left), -1, 0, 1, 0], 
         M_line_7, 
         M_line_8])
                                                                                                      
-    V_ges = np.matrix([[0],[0],[0],[0],[0],[F/(EI*(lam**3))],[0],[0]])           
-    [A1,A2,A3,A4,B1,B2,B3,B4] = (np.linalg.inv(M_ges))*V_ges     
+    V_ges = np.matrix([[0],[0],[0],[0],[0],[F/(EI*((lam/L)**3))],[0],[0]])           
+    [A1,A2,A3,A4,B1,B2,B3,B4] = (np.linalg.inv(M_ges))*V_ges    
                       
     return A1,A2,A3,A4,B1,B2,B3,B4
 
@@ -329,14 +343,14 @@ def calculate_deflection(system):
 
     A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system)
 
-    y_beam = np.zeros(n, dtype=complex)
+    y_beam = np.zeros(n_beam, dtype=complex)
     if (length_left != 0 and length_right != 0) or (length_left != 0 and system=="Fixed-Free beam"):  # otherwise the beam is not deformed                                 
         i = 0
-        while i < n:
+        while i < n_beam:
             if x_beam[i] <= length_left:                                          # for the subsystem on the left
-                y_beam[i] = -1*(A1*cm.sin(lam*x_beam[i])+A2*cm.cos(lam*x_beam[i])+A3*cm.sinh(lam*x_beam[i])+A4*cm.cosh(lam*x_beam[i]))
+                y_beam[i] = -1*(A1*cm.sin(lam/L*x_beam[i])+A2*cm.cos(lam/L*x_beam[i])+A3*cm.sinh(lam/L*x_beam[i])+A4*cm.cosh(lam/L*x_beam[i]))
             else:                                                                 # for the subsystem on the right
-                y_beam[i] = -1*(B1*cm.sin(lam*(x_beam[i]-length_left))+B2*cm.cos(lam*(x_beam[i]-length_left))+B3*cm.sinh(lam*(x_beam[i]-length_left))+B4*cm.cosh(lam*(x_beam[i]-length_left)))
+                y_beam[i] = -1*(B1*cm.sin(lam/L*(x_beam[i]-length_left))+B2*cm.cos(lam/L*(x_beam[i]-length_left))+B3*cm.sinh(lam/L*(x_beam[i]-length_left))+B4*cm.cosh(lam/L*(x_beam[i]-length_left)))
             i+=1
 
         # scales the deflection to a maximum amplitude of 3 
@@ -355,41 +369,38 @@ def calculate_amp_and_phase():
     [lam] = lam_glob.data["lam"]
     [EI] = EI_glob.data["EI"]
 
-    y_amp = np.zeros(501, dtype=complex)
+    y_amp = np.zeros(n_r, dtype=complex)
     if (length_left != 0 and length_right != 0 and float(lfa_coordinates_source.data['x'][0]) != 0 and float(lfa_coordinates_source.data['x'][0]) != L) or (system_select.value=="Fixed-Free beam" and float(lfa_coordinates_source.data['x'][0]) != 0 and length_left != 0):  # otherwise the amplitude is zero for every excitation frequency
-        j = 1
-        while j < max_omega:
-            lam_temp = (mue*(j**2)/EI)**(1/4)           # calculates lambda for every frequency  
+        j = 0.04
+        i = 0
+        while j < max_r:
+            lam_temp = calculate_lambda(system_select.value, j, EI)         # calculates lambda for every frequency  
             lam_glob.data = dict(lam=[lam_temp])   
             A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system_select.value)
             if lfa_coordinates_source.data['x'][0] <= length_left:      # for the subsystem on the left
-                y_amp[j-1] = -1*EI*(lam_temp**3)/(F*(L**3))*(A1*cm.sin(lam_temp*lfa_coordinates_source.data['x'][0])+A2*cm.cos(lam_temp*lfa_coordinates_source.data['x'][0])
-                                 +A3*cm.sinh(lam_temp*lfa_coordinates_source.data['x'][0])+A4*cm.cosh(lam_temp*lfa_coordinates_source.data['x'][0]))
+                y_amp[i] = -1*EI/(F*(L**3))*(A1*cm.sin(lam_temp/L*lfa_coordinates_source.data['x'][0])+A2*cm.cos(lam_temp/L*lfa_coordinates_source.data['x'][0])
+                                 +A3*cm.sinh(lam_temp/L*lfa_coordinates_source.data['x'][0])+A4*cm.cosh(lam_temp/L*lfa_coordinates_source.data['x'][0]))
             else:                                                       # for the subsystem on the right
-                y_amp[j-1] = -1*EI*(lam_temp**3)/(F*(L**3))*(B1*cm.sin(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))+B2*cm.cos(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))
-                                 +B3*cm.sinh(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left))+B4*cm.cosh(lam_temp*(lfa_coordinates_source.data['x'][0]-length_left)))
-            j+=1
+                y_amp[i] = -1*EI/(F*(L**3))*(B1*cm.sin(lam_temp/L*(lfa_coordinates_source.data['x'][0]-length_left))+B2*cm.cos(lam_temp/L*(lfa_coordinates_source.data['x'][0]-length_left))
+                                 +B3*cm.sinh(lam_temp/L*(lfa_coordinates_source.data['x'][0]-length_left))+B4*cm.cosh(lam_temp/L*(lfa_coordinates_source.data['x'][0]-length_left)))
+            j+=0.02
+            i+=1    
+                         
 
-    for i in range(0,501): 
-        y_phase[i] = cm.phase(y_amp[i])                # calculate the phase angle for every exitation frequency
+    for i in range(0,n_r): 
+        if slider_damping.value == 0:
+            y_phase[i] = cm.phase(y_amp[i])            # calculate the phase angle for every exitation frequency
+        else:
+            y_phase[i] = -cm.phase(y_amp[i])
+        y_amp[i] = abs(y_amp[i])                       # calculate the absolute value  
 
     # update plotting variables
-    amp_coordinates_source.data['y'] = y_amp.real      
+    amp_coordinates_source.data['y'] = y_amp.real   
     phase_coordinates_source.data['y'] = y_phase
     lam_glob.data = dict(lam=[lam])
 
-    # adapt amplitude range to the maximum and minimum value
-    if min(y_amp.real) == 0:
-        disp_freq.y_range.start = -0.01
-    else:
-        disp_freq.y_range.start = 1.2*min(y_amp.real) 
-    if max(y_amp.real) == 0:
-        disp_freq.y_range.end = 0.01
-    else:
-        disp_freq.y_range.end = 1.2*max(y_amp.real)
-
 # if the location of the load is changed, update beam deflection and corresponding global variables and plotting variables
-def change_location_load(attr,old,new):            
+def change_location_load(attr,old,new):           
     length_left = new*L                                         
     length_right = L - length_left
     length_left_glob.data = dict(length_left=[length_left])
@@ -398,8 +409,8 @@ def change_location_load(attr,old,new):
     load_arrow_source.stream(dict(xs = [length_left], xe =[length_left], ys = [4.5], ye=[3.5]),rollover=1) 
 
 # if the location of frequency analysis is changed, update corresponding plotting variables
-def change_location_freq(attr,old,new):             
-    lfa_coordinates_source.data = dict(x = [new*L,new*L], y = [-L,L])
+def change_location_freq(attr,old,new):           
+    lfa_coordinates_source.data['x']= [new*L,new*L]
 
 # if the damping is changed, update value for E*I
 def change_damping(attr,old,new):
@@ -407,28 +418,30 @@ def change_damping(attr,old,new):
     EI_glob.data = dict(EI = [EI])
 
 # if the excitation frequency is changed, update beam deflection, 3D plot and corresponding global variables and plotting variables
-def change_frequency (attr,old,new):                  
+def change_frequency_ratio(attr,old,new): 
+
+    new = round(new,2)    
+    old = round(old,2)  
 
     # get global variable                            
     [EI] = EI_glob.data["EI"]
-
-    omega = new                                                 
-    lam = (mue*(omega**2)/EI)**(1/4)  
+                                           
+    lam = calculate_lambda(system_select.value,new, EI) 
     lam_glob.data = dict(lam=[lam])                      
     calculate_deflection(system_select.value)
 
-    freq_coordinates_source.data = dict(x = [new,new], y = [disp_freq.y_range.start, disp_freq.y_range.end])
-    freq2_coordinates_source.data = dict(x = [new,new], y = y_freq2)
+    freq_coordinates_source.data['x'] = [new,new]
+    freq2_coordinates_source.data['x'] = [new,new]
 
-    if new <= 101:
-        y_3D = np.linspace(1,201,101)
-    elif new >= 401:
-        y_3D = np.linspace(301,501,101)
+    if new <= 2.04:
+        y_3D = np.linspace(0.04,4.04,101)
+    elif new >= 8:
+        y_3D = np.linspace(6,10,101)
     else:
-        y_3D = np.linspace(new-100,new+100,101)
+        y_3D = np.linspace(new-2,new+2,101)
     y_3D_glob.data=dict(y_3D=y_3D)
 
-    if (new > 101 and new < 401) or (new <= 101 and old > 101) or (new >= 401 and old < 401):
+    if (new > 2.04 and new < 8) or (new <= 2.04 and old > 2.04) or (new >= 8 and old < 8):
         shift_3d_plot(old,new,system_select.value)
     
 # disables / enables sliders 
@@ -439,6 +452,7 @@ def disable_plot_sliders():
         slider_location_load.disabled = False
         slider_location_freq.disabled = False 
         system_select.disabled = False
+        slider_damping.disabled = False
         slider_frequency.disabled = True
         switch_button.label =  "Frequency Analysis  ⇨"
     
@@ -447,6 +461,7 @@ def disable_plot_sliders():
         slider_location_load.disabled = True
         slider_location_freq.disabled = True
         system_select.disabled = True
+        slider_damping.disabled = True
         slider_frequency.disabled = False
         calculate_amp_and_phase()
         update_3d_plot(system_select.value)
@@ -465,26 +480,24 @@ system_select.on_change('value', change_selection)
 
 # slider for location of the load
 slider_location_load = LatexSlider(title="\\text{Location of the load} \\left[ \\mathrm{m} \\right]: ", value_unit="\\mathrm{L}", value=length_left/L,
-                                   start=0, end=1, step=.01, width=423, height=30, bar_color = c_orange, css_classes=["slider"])
+                                   start=0, end=1, step=.01, width=423, bar_color = c_orange)
 slider_location_load.on_change('value',change_location_load)
 
 # slider for location of the frequency analysis
 slider_location_freq = LatexSlider(title="\\text{Location of the frequency analysis} \\left[ \\mathrm{m} \\right]: ", value_unit="\\mathrm{L}", 
-                                   value=0, start=0, end=1, step=.01, width=423, height=30,
-                                   bar_color = c_green, css_classes=["slider"]) 
+                                   value=lfa/L, start=0, end=1, step=.01, width=423, bar_color = c_green)
 slider_location_freq.on_change('value',change_location_freq)
 
 # slider for damping coefficient
-slider_damping = LatexSlider(title="\\text{Loss modulus } E'' \\left[ \\mathrm{\\frac{N}{m²}} \\right]: ", value_unit="\\mathrm{E'}", 
-                                   value=damping, start=0, end=0.5, step=.01, width=423, height=30,
-                                   css_classes=["slider"]) 
+slider_damping = LatexSlider(title="\\text{Loss modulus } \\eta: ", value=damping, start=0.01, end=0.4, step=.01, width=423) 
 slider_damping.on_change('value',change_damping)
 
 # slider for excitation frequency
-slider_frequency = LatexSlider(title="\\text{Excitation frequency } \\Omega \\left[ \\mathrm{\\frac{1}{s}} \\right]: ", value=5, 
-                               start=1, end=max_omega, step=2, width=215,height=30, bar_color = c_blue, 
-                               css_classes=["slider"]) 
-slider_frequency.on_change('value',change_frequency)
+slider_frequency = LatexSlider(title="\\text{Excitation frequency ratio } r=\\frac{\\Omega}{\\omega_1}: ", value=r, 
+                               start=0.04, end=10, step=0.04, width=215, bar_color = c_blue) 
+slider_frequency.on_change('value',change_frequency_ratio)
+
+
 
 # button to switch between the adjustment of the input parameters and the adjustment of the excitation frequency 
 switch_button = Button(label="Frequency Analysis  ⇨", button_type="success", width=200, height=40)
@@ -497,6 +510,7 @@ slider_frequency.disabled = True
 #################################
 
 calculate_deflection(system_select.value)
+calculate_amp_and_phase()
 update_3d_plot(system_select.value)
 
 

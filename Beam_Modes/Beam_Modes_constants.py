@@ -33,9 +33,9 @@ EI_real = 10000.0
 #       plotting properties       #
 ###################################
 
-n = 401                         # value of fragmentation of the beam
-max_omega = 501                 # maximum of displayable frequency
-
+n_beam = 401                    # value of fragmentation of the beam
+n_r = 499                       # value of fragmentation of the excitation frequency ratio
+max_r = 10                      # maximum of displayable excitation frequency ratio
 
 ##################################
 #        external images         #
