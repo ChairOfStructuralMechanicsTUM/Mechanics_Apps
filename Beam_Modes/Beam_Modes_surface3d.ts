@@ -23,7 +23,6 @@ declare namespace vis {
 
 // This defines some default options for the Graph3d feature of vis.js
 // See: http://visjs.org/graph3d_examples.html for more details.
-
 var OPTIONS = {
   width: '600px',
   height: '450px',
@@ -40,15 +39,12 @@ var OPTIONS = {
   },
   zMax: 2.0,
   zMin: 1.0,
-  legendLabel: 'stuff',
   cameraPosition: {
     horizontal: -0.8,
     vertical: 0.4,
-    distance: 2.55,
+    distance: 2.4,
   }
 }
-
-
 
 // To create custom model extensions that will render on to the HTML canvas
 // or into the DOM, we must create a View subclass for the model.
@@ -91,12 +87,11 @@ export class Surface3dView extends LayoutDOMView {
     })
   }
 
+  // This function sets zMax and zMin to new values
   set_zAxis(value1: number, value2: number): void {
     OPTIONS.zMax = value1
     OPTIONS.zMin = value2
   }
-  
-
   
   // This is the callback executed when the Bokeh data has an change. Its basic
   // function is to adapt the Bokeh data source to the vis.js DataSet format.

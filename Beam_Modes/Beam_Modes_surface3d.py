@@ -16,7 +16,6 @@ DEFAULTS = {
     'xLabel': 'Beam Length [m]',
     'yLabel': 'Excitation Frequency Ratio',
     'zLabel': 'Normalized Deflection⋅r²',
-    'legendLabel':     'stuff',
     'cameraPosition':  {
         'horizontal': -0.8,
         'vertical':    0.4,
