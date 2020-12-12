@@ -47,13 +47,13 @@ EI = complex(EI_real, EI_real*damping)        # Youngs Modulus * area moment of 
 lam = pi*sqrt(r)*cm.sqrt(cm.sqrt(EI/EI_real))       # lambda 
 
 # initial coordinates of the 3D plot
-x_3D = np.linspace(0,L,26)
-y_3D = np.linspace(0.04,4.04,101)
-xx, yy = np.meshgrid(x_3D, y_3D)
-xx = xx.ravel()
-yy = yy.ravel()
-value_unraveled = np.zeros((101,26))
-value = value_unraveled.ravel()
+kmin = 0
+kmax = 100
+x_3D_all = np.linspace(0,L,26)
+y_3D_all = np.linspace(0.04,10.0,250)
+xx_all, yy_all = np.meshgrid(x_3D_all, y_3D_all)
+value_unraveled_all = np.zeros((250,26))
+
 
 # initial coordinates of the beam 
 x_beam = np.linspace(0,L,n_beam)
@@ -89,9 +89,12 @@ length_left_glob = ColumnDataSource(data=dict(length_left=[length_left]))
 length_right_glob = ColumnDataSource(data=dict(length_right=[length_right]))
 r_glob = ColumnDataSource(data=dict(r=[r]))
 lam_glob = ColumnDataSource(data=dict(lam=[lam]))
-y_3D_glob = ColumnDataSource(data=dict(y_3D=y_3D))
 EI_glob = ColumnDataSource(data=dict(EI=[EI]))
-value_unraveled_glob = ColumnDataSource(data=dict(value_unraveled=value_unraveled))
+value_unraveled_all_glob = ColumnDataSource(data=dict(value_unraveled_all=value_unraveled_all))
+zmax_glob = ColumnDataSource(data=dict(zmax=[]))
+zmin_glob = ColumnDataSource(data=dict(zmin=[]))
+kmin_glob = ColumnDataSource(data=dict(kmin=[kmin]))
+kmax_glob = ColumnDataSource(data=dict(kmax=[kmax]))
 
 # define plotting variables
 beam_coordinates_source = ColumnDataSource(data=dict(x=x_beam,y=y_beam.real))                 # beam deflection 
@@ -101,7 +104,7 @@ lfa_coordinates_source = ColumnDataSource(data=dict(x = x_lfa, y = y_lfa))      
 freq_coordinates_source = ColumnDataSource(data=dict(x = x_freq, y = y_freq))                 # coordinates for the current excitation frequency 
 freq2_coordinates_source = ColumnDataSource(data=dict(x = x_freq2, y = y_freq2))              # coordinates for the current excitation frequency
 load_arrow_source = ColumnDataSource(data=dict(xs = [length_left], xe =[length_left], ys = [4.5], ye=[3.5])) # coordinates for the location of the load
-plot_3D_source = ColumnDataSource(data=dict(x=xx, y=yy, z=value.real))                        # 3D plot
+plot_3D_source = ColumnDataSource(data=dict(x=[], y=[], z=[]))                        # 3D plot
 support_left_source = ColumnDataSource(data=dict(x = [-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h]))   # image support left
 support_right_source = ColumnDataSource(data=dict(x = [L-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])) # image support right
 
@@ -154,111 +157,72 @@ surface = Beam_Modes_Surface3d(x="x", y="y", z="z", data_source=plot_3D_source)
 ##          FUNCTIONS          ##
 #################################
 
-# calculates the deflection for the 3D plot for excitation frequency ratios between j_min and j_max
-def calculate_3D_plot_coordinates(y_3D,j_min,j_max,xx,system,array):
-
-    # get global variables
-    [length_left] = length_left_glob.data["length_left"]
-    [lam] = lam_glob.data["lam"]
-    [EI] = EI_glob.data["EI"]
-    j = j_min
-    k = 0
-    while j <= j_max:
-        lam_temp = calculate_lambda(system,j,EI)     # calculates lambda for every frequency
-        lam_glob.data = dict(lam=[lam_temp])   
-        A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system)
-
-        i = 0
-        while i < 26:
-            if xx[i] <= length_left:                 # for the subsystem on the left
-                array[k][i] = -1*EI*j*j/(F*(L**3))*(A1*cm.sin(lam_temp/L*xx[i])+A2*cm.cos(lam_temp/L*xx[i])+A3*cm.sinh(lam_temp/L*xx[i])+A4*cm.cosh(lam_temp/L*xx[i]))  
-            else:                                    # for the subsystem on the right
-                array[k][i] = -1*EI*j*j/(F*(L**3))*(B1*cm.sin(lam_temp/L*(xx[i]-length_left))+B2*cm.cos(lam_temp/L*(xx[i]-length_left))+B3*cm.sinh(lam_temp/L*(xx[i]-length_left))+B4*cm.cosh(lam_temp/L*(xx[i]-length_left)))
-            i+=1       
-        k+=1
-        j = round(j+0.04,2)
-    
-
-    lam_glob.data = dict(lam=[lam])
-
 # calculates the coordinates of the 3D plot for new input parameters
-def update_3d_plot(system):     
+def calculate_3d_plot_coordinates(system):     
 
     # get global variables
     [length_left] = length_left_glob.data["length_left"]
     [length_right] = length_right_glob.data["length_right"]
-    y_3D = y_3D_glob.data["y_3D"]
+    [lam] = lam_glob.data["lam"]
+    [EI] = EI_glob.data["EI"]
 
-    # define grid
-    xx, yy = np.meshgrid(x_3D, y_3D)
-    xx = xx.ravel()
-    yy = yy.ravel()
+    xx = xx_all[0]
 
-    value_unraveled = np.zeros((101,26), dtype=complex)
+    value_unraveled_all = np.zeros((250,26), dtype=complex)
     if (length_left != 0 and length_right != 0) or (length_left != 0 and system=="Fixed-Free beam"): # otherwise the beam is not deformed
-        j_min = round(min(y_3D),2)                 
-        j_max = round(max(y_3D),2)
-        calculate_3D_plot_coordinates(y_3D,j_min,j_max,xx,system,value_unraveled)
+        j = 0.04
+        k = 0
+        while j <= 10.0:
+            lam_temp = calculate_lambda(system,j,EI)     # calculates lambda for every frequency
+            lam_glob.data = dict(lam=[lam_temp])   
+            A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system)
+
+            i = 0
+            while i < 26:
+                if xx[i] <= length_left:                 # for the subsystem on the left
+                    value_unraveled_all[k][i] = -1*EI*j*j/(F*(L**3))*(A1*cm.sin(lam_temp/L*xx[i])+A2*cm.cos(lam_temp/L*xx[i])+A3*cm.sinh(lam_temp/L*xx[i])+A4*cm.cosh(lam_temp/L*xx[i]))  
+                else:                                    # for the subsystem on the right
+                    value_unraveled_all[k][i] = -1*EI*j*j/(F*(L**3))*(B1*cm.sin(lam_temp/L*(xx[i]-length_left))+B2*cm.cos(lam_temp/L*(xx[i]-length_left))+B3*cm.sinh(lam_temp/L*(xx[i]-length_left))+B4*cm.cosh(lam_temp/L*(xx[i]-length_left)))
+                i+=1       
+            k+=1
+            j = round(j+0.04,2)
+
+
+    zmax = complex(max(value_unraveled_all.ravel().real), 0)
+    zmin = complex(min(value_unraveled_all.ravel().real), 0)
+    if (zmax.real == 0.0 and zmin.real == 0.0):
+        zmax = complex(0.05, 0)
+        zmin = complex(-0.05, 0)
+
+    lam_glob.data = dict(lam=[lam])
+    zmax_glob.data = dict(zmax=[zmax])
+    zmin_glob.data = dict(zmin=[zmin])
 
     # update plotting variables
-    value = value_unraveled.ravel()
-    plot_3D_source.data = dict(x=xx, y=yy, z=value.real)
-    value_unraveled_glob.data = dict(value_unraveled=value_unraveled)
+    value_unraveled_all_glob.data = dict(value_unraveled_all=value_unraveled_all)
 
 # shifts the 3D plot when the excitation frequency is changed
-def shift_3d_plot(old,new,system):
+def update_3d_plot():
 
     # get global variables
-    y_3D = y_3D_glob.data["y_3D"]
-    value_unraveled = value_unraveled_glob.data["value_unraveled"]
-
+    value_unraveled_all = value_unraveled_all_glob.data["value_unraveled_all"]
+    [zmax] = zmax_glob.data["zmax"]
+    [zmin] = zmin_glob.data["zmin"]
+    [kmax] = kmax_glob.data["kmax"]
+    [kmin] = kmin_glob.data["kmin"]
+    
     # define grid
-    xx, yy = np.meshgrid(x_3D, y_3D)
+    xx = xx_all[kmin:kmax]
     xx = xx.ravel()
+    yy = yy_all[kmin:kmax]
     yy = yy.ravel()
-
-    if new > old:
-        # number of excitation frequencies which have to be updated
-        num = round((new-old)/0.04)              
-        if (new > 2.04 and old < 2.04):    
-            num = round((new-2.04)/0.04)
-        if new > 8:                    
-            num = round((8-old)/0.04) 
-        if num > 101:
-            num = 101
-
-        value_unraveled = value_unraveled[num:]           # delete corresponding values from the array
-        
-        # calculate new values
-        a = np.zeros((num,26), dtype=complex)            
-        j_min = round(y_3D[-num],2)
-        j_max = round(max(y_3D),2)
-        calculate_3D_plot_coordinates(y_3D,j_min,j_max,xx,system,a)
-
-        value_unraveled = np.vstack((value_unraveled,a))  # add new values to the array
-
-    elif new < old:
-        # number of excitation frequencies which have to be updated
-        num = round((old-new)/0.04)
-        if (new < 8 and old > 8):
-            num = round((8-new)/0.04)
-        if new < 2.04:
-            num = round((old-2.04)/0.04) 
-        if num > 101:
-            num = 101
-
-        value_unraveled = value_unraveled[:101-num]       # delete corresponding values from the array
-        # calculate new values
-        a = np.zeros((num,26), dtype=complex)
-        j_min = round(min(y_3D),2)
-        j_max = round(y_3D[num-1],2)
-        calculate_3D_plot_coordinates(y_3D,j_min,j_max,xx,system,a)
-
-        value_unraveled = np.vstack((a,value_unraveled))  # add new values to the array
-
-    # update plotting variables
-    value_unraveled_glob.data = dict(value_unraveled=value_unraveled)
+    value_unraveled = value_unraveled_all[kmin:kmax]
     value = value_unraveled.ravel()
+
+    xx = np.append(xx, [0, 0])
+    yy = np.append(yy, [0, 0])
+    value = np.append(value, [zmin, zmax])
+
     plot_3D_source.data = dict(x=xx, y=yy, z=value.real)
 
 # update support images when type of beam is changed and update the deflection
@@ -379,13 +343,12 @@ def calculate_amp_and_phase():
             A1,A2,A3,A4,B1,B2,B3,B4 = create_matrix_and_calculate_coefficients(system_select.value)
             if lfa_coordinates_source.data['x'][0] <= length_left:      # for the subsystem on the left
                 y_amp[i] = -1*EI/(F*(L**3))*(A1*cm.sin(lam_temp/L*lfa_coordinates_source.data['x'][0])+A2*cm.cos(lam_temp/L*lfa_coordinates_source.data['x'][0])
-                                 +A3*cm.sinh(lam_temp/L*lfa_coordinates_source.data['x'][0])+A4*cm.cosh(lam_temp/L*lfa_coordinates_source.data['x'][0]))
+                                 +A3*cm.sinh(lam_temp/L*lfa_coordinates_source.data['x'][0])+A4*cm.cosh(lam_temp/L*lfa_coordinates_source.data['x'][0]))     
             else:                                                       # for the subsystem on the right
                 y_amp[i] = -1*EI/(F*(L**3))*(B1*cm.sin(lam_temp/L*(lfa_coordinates_source.data['x'][0]-length_left))+B2*cm.cos(lam_temp/L*(lfa_coordinates_source.data['x'][0]-length_left))
                                  +B3*cm.sinh(lam_temp/L*(lfa_coordinates_source.data['x'][0]-length_left))+B4*cm.cosh(lam_temp/L*(lfa_coordinates_source.data['x'][0]-length_left)))
             j+=0.02
-            i+=1    
-                         
+            i+=1         
 
     for i in range(0,n_r): 
         if slider_damping.value == 0:
@@ -434,15 +397,20 @@ def change_frequency_ratio(attr,old,new):
     freq2_coordinates_source.data['x'] = [new,new]
 
     if new <= 2.04:
-        y_3D = np.linspace(0.04,4.04,101)
+        kmin = 0
+        kmax = 100
     elif new >= 8:
-        y_3D = np.linspace(6,10,101)
+        kmin = 149
+        kmax = 249
     else:
-        y_3D = np.linspace(new-2,new+2,101)
-    y_3D_glob.data=dict(y_3D=y_3D)
+        kmin = int(((new-2)/0.04)-1)
+        kmax = int(((new+2)/0.04)-1)
+    
+    kmin_glob.data = dict(kmin = [kmin])
+    kmax_glob.data = dict(kmax = [kmax])
 
     if (new > 2.04 and new < 8) or (new <= 2.04 and old > 2.04) or (new >= 8 and old < 8):
-        shift_3d_plot(old,new,system_select.value)
+        update_3d_plot()
     
 # disables / enables sliders 
 def disable_plot_sliders(): 
@@ -464,7 +432,8 @@ def disable_plot_sliders():
         slider_damping.disabled = True
         slider_frequency.disabled = False
         calculate_amp_and_phase()
-        update_3d_plot(system_select.value)
+        calculate_3d_plot_coordinates(system_select.value)
+        update_3d_plot()
         freq_coordinates_source.data = dict(x = [slider_frequency.value, slider_frequency.value], y = [disp_freq.y_range.start, disp_freq.y_range.end])
         switch_button.label = "⇦  Change input parameters"
 
@@ -511,7 +480,8 @@ slider_frequency.disabled = True
 
 calculate_deflection(system_select.value)
 calculate_amp_and_phase()
-update_3d_plot(system_select.value)
+calculate_3d_plot_coordinates(system_select.value)
+update_3d_plot()
 
 
 #################################
