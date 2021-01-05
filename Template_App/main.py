@@ -13,6 +13,7 @@ from bokeh.models.widgets import Button, RadioButtonGroup, RadioGroup
 from bokeh.layouts        import column, row, Spacer
 
 # internal imports
+from TA_surface3d import TA_Surface3d
 from TA_custom_class import TA_example_class
 from TA_constants import (
     slide_support_img, fixed_support_img,  # support images
@@ -62,7 +63,7 @@ cds_support_left  = ColumnDataSource(data=dict(sp_img=[fixed_support_img], x=[xs
 cds_support_right = ColumnDataSource(data=dict(sp_img=[slide_support_img], x=[xsr] , y=[ysr]))
 
 cds_arrow = ColumnDataSource(data=dict(xS=[1], xE=[3], yS=[1], yE=[1]))
-
+plot_3D_source = ColumnDataSource(data=dict(x=[], y=[], z=[]))
 
 ##################################
 #       Callback Functions       #
@@ -145,6 +146,18 @@ figure_name.add_glyph(cds_support_right, ImageURL(url="sp_img", x='x', y='y', w=
 #arrow_glyph = Arrow(end=NormalHead(line_color=c_orange, fill_color=c_orange), x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_color=c_orange, source=cds_arrow)
 arrow_glyph = Arrow(end=OpenHead(line_color=c_orange), x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_color=c_orange, source=cds_arrow)
 figure_name.add_layout(arrow_glyph)
+
+### define the 3D plot ###
+x = np.arange(0, 300, 10)
+y = np.arange(0, 300, 10)
+xx, yy = np.meshgrid(x, y)
+xx = xx.ravel()
+yy = yy.ravel()
+value = np.sin(xx / 50) * np.cos(yy / 50) * 50 + 50
+
+plot_3D_source.data=dict(x=xx, y=yy, z=value)
+
+surface = TA_Surface3d(x="x", y="y", z="z", data_source=plot_3D_source)
 
 
 
@@ -236,7 +249,8 @@ curdoc().add_root(column(
                                                example_slider,
                                                radio_group_01,
                                                radio_group_02,
-                                               radio_button_group))
+                                               radio_button_group)),
+    surface
 ))
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 
