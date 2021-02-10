@@ -13,14 +13,13 @@ DEFAULTS = {
     'showGrid':        True,
     'keepAspectRatio': False,
     'verticalRatio':   0.5,
-    'xLabel': 'Beam length [m]',
-    'yLabel': 'Excitation Frequency [1/s]',
-    'zLabel': 'Normalized Deflection [-]',
-    'legendLabel':     'stuff',
+    'xLabel': 'Beam Length [m]',
+    'yLabel': 'Excitation Frequency Ratio',
+    'zLabel': 'Normalized Deflection⋅r²',
     'cameraPosition':  {
-        'horizontal': -0.785,
-        'vertical':    0.45,
-        'distance':    2.3,
+        'horizontal': -0.8,
+        'vertical':    0.4,
+        'distance':    2.55,
     }
 }
 

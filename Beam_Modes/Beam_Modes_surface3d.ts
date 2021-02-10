@@ -23,7 +23,7 @@ declare namespace vis {
 
 // This defines some default options for the Graph3d feature of vis.js
 // See: http://visjs.org/graph3d_examples.html for more details.
-const OPTIONS = {
+var OPTIONS = {
   width: '600px',
   height: '450px',
   style: 'surface',
@@ -31,19 +31,21 @@ const OPTIONS = {
   showGrid: true,
   keepAspectRatio: false,
   verticalRatio: 0.5,
-  xLabel: 'Beam length [m]',
-  yLabel: 'Excitation Frequency [1/s]',
-  zLabel: 'Normalized Deflection [-]',
+  xLabel: 'Beam Length [m]',
+  yLabel: 'Excitation Frequency Ratio',
+  zLabel: 'Normalized Deflection⋅r²',
   xValueLabel: function(value: number) {
     return value / 5 + 'L'
   },
-  legendLabel: 'stuff',
+  zMax: 2.0,
+  zMin: 1.0,
   cameraPosition: {
-    horizontal: -0.785,
-    vertical: 0.45,
-    distance: 2.3,
+    horizontal: -0.8,
+    vertical: 0.4,
+    distance: 2.4,
   }
 }
+
 // To create custom model extensions that will render on to the HTML canvas
 // or into the DOM, we must create a View subclass for the model.
 //
@@ -78,22 +80,37 @@ export class Surface3dView extends LayoutDOMView {
     // Set a listener so that when the Bokeh data source has a change
     // event, we can process the new data
     this.connect(this.model.data_source.change, () => {
+      if (this.model.data_source.data[this.model.z][this.model.data_source.get_length()!-1] != OPTIONS.zMax || this.model.data_source.data[this.model.z][this.model.data_source.get_length()!-2] != OPTIONS.zMin){
+        this._graph = new vis.Graph3d(this.el, this.get_data(), OPTIONS)
+      }  
       this._graph.setData(this.get_data())
     })
   }
 
+  // This function sets zMax and zMin to new values
+  set_zAxis(value1: number, value2: number): void {
+    OPTIONS.zMax = value1
+    OPTIONS.zMin = value2
+  }
+  
   // This is the callback executed when the Bokeh data has an change. Its basic
   // function is to adapt the Bokeh data source to the vis.js DataSet format.
   get_data(): vis.DataSet {
     const data = new vis.DataSet()
     const source = this.model.data_source
-    for (let i = 0; i < source.get_length()!; i++) {
+    for (let i = 0; i < source.get_length()!-2; i++) {
       data.add({
         x: source.data[this.model.x][i],
         y: source.data[this.model.y][i],
         z: source.data[this.model.z][i],
       })
     }
+
+    var max = source.data[this.model.z][source.get_length()!-1]
+    var min = source.data[this.model.z][source.get_length()!-2]
+
+    this.set_zAxis(max, min)
+
     return data
   }
 
