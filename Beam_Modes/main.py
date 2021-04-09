@@ -11,7 +11,7 @@ import cmath as cm
 from bokeh.plotting import figure
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, Spacer
-from bokeh.models import Slider, Button, Select, CustomJS, Div, Arrow, NormalHead, LogAxis, LinearAxis, ColumnDataSource, Range1d
+from bokeh.models import Slider, Button, Select, CustomJS, Div, Arrow, NormalHead, LogAxis, LinearAxis, ColumnDataSource, Range1d, MultiLine
 from bokeh.models.glyphs import ImageURL
 
 # latex integration
@@ -80,6 +80,9 @@ y_freq =                [0.00001,100]
 x_freq2 =                [r,r]
 y_freq2 =                [-pi-0.1,pi+0.1]
 
+y_eigenfreq = [[-0.1, -0.05], [-0.1, -0.05], [-0.1, -0.05], [-0.1, -0.05]]
+x_pin_pin = [[1, 1], [4, 4], [9, 9], [16, 16]]
+x_fix_fix = [[2.266888008, 2.266888008], [6.24876401, 6.24876401], [12.25007957, 12.25007957], [20.25, 20.25]]
 
 #################################
 ##      COLUMNDATASOURCES      ##
@@ -108,6 +111,8 @@ load_arrow_source = ColumnDataSource(data=dict(xs = [length_left], xe =[length_l
 plot_3D_source = ColumnDataSource(data=dict(x=[], y=[], z=[]))                                # 3D plot coordinates
 support_left_source = ColumnDataSource(data=dict(x = [-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h]))   # image support left
 support_right_source = ColumnDataSource(data=dict(x = [L-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])) # image support right
+eigenfreq_pin_pin_source = ColumnDataSource(data=dict(xs = x_pin_pin, ys = y_eigenfreq))  
+eigenfreq_fix_fix_source = ColumnDataSource(data=dict(xs = x_fix_fix, ys = y_eigenfreq))  
 
 
 #################################
@@ -149,6 +154,18 @@ disp_phase.xaxis.axis_label = "Excitation Frequency Ratio"
 disp_phase.outline_line_color = c_gray
 disp_phase.line(x = 'x', y = 'y', source = phase_coordinates_source)
 disp_phase.line(x = 'x', y = 'y', source = freq2_coordinates_source, line_dash = "dashed")
+
+# eigenfrequencies of all systems
+disp_eigenfreq = figure(x_range = [0.04, max_r], y_range = [-0.1, 1],
+                   height = 200, width = 280,toolbar_location = None, tools = "")
+#disp_eigenfreq.xaxis.fixed_location = 0
+disp_eigenfreq.yaxis.visible = False
+disp_eigenfreq.grid.visible = False
+disp_eigenfreq.outline_line_color = None
+multiline_pin_pin = disp_eigenfreq.multi_line(xs="xs", ys="ys", source = eigenfreq_pin_pin_source, line_width=2, line_color = c_blue, legend_label="Pinned-Pinned")
+multiline_fix_fix = disp_eigenfreq.multi_line(xs="xs", ys="ys", source = eigenfreq_fix_fix_source, line_width=2, line_color = c_gray, legend_label="Fixed-Fixed")
+disp_eigenfreq.legend.label_text_font_size = '9pt'
+
 
 # 3D plot
 surface = Beam_Modes_Surface3d(x="x", y="y", z="z", data_source=plot_3D_source)
@@ -378,17 +395,22 @@ def change_location_freq(attr,old,new):
 def change_damping(attr,old,new):
     EI = complex(EI_real, EI_real*new)
     EI_glob.data = dict(EI = [EI])
+    [r] = r_glob.data["r"]
+    lam = calculate_lambda(system_select.value, r, EI) 
+    lam_glob.data = dict(lam=[lam])  
+    calculate_deflection(system_select.value)
 
 # if the excitation frequency ratio is changed, update beam deflection, 3D plot and corresponding global variables and plotting variables
 def change_frequency_ratio(attr,old,new): 
 
     new = round(new,2)    
     old = round(old,2)  
+    r_glob.data = dict(r = [new])
 
     # get global variable                            
     [EI] = EI_glob.data["EI"]
                                            
-    lam = calculate_lambda(system_select.value,new, EI) 
+    lam = calculate_lambda(system_select.value, new, EI) 
     lam_glob.data = dict(lam=[lam])                      
     calculate_deflection(system_select.value)
 
@@ -512,7 +534,7 @@ curdoc().add_root(
                 Spacer(height=258), switch_button
             ), Spacer(width=15),
             column(
-                Spacer(height=80), slider_frequency, Spacer(height=15), disp_freq, Spacer(height=15), disp_phase
+                Spacer(height=80), slider_frequency, Spacer(height=15), disp_freq, disp_eigenfreq, Spacer(height=15), disp_phase
             )
         )
     )
