@@ -80,9 +80,12 @@ y_freq =                [0.00001,100]
 x_freq2 =                [r,r]
 y_freq2 =                [-pi-0.1,pi+0.1]
 
-y_eigenfreq = [[-0.1, -0.05], [-0.1, -0.05], [-0.1, -0.05], [-0.1, -0.05]]
-x_pin_pin = [[1, 1], [4, 4], [9, 9], [16, 16]]
-x_fix_fix = [[2.266888008, 2.266888008], [6.24876401, 6.24876401], [12.25007957, 12.25007957], [20.25, 20.25]]
+# initial coordinates of the eigenfrequencies of all systems
+y_eigenfreq = [[-0.1, -0.05], [-0.1, -0.05], [-0.1, -0.05], [-0.1, -0.05], [-0.1, -0.05]]
+x_pin_pin = [[1, 1], [4, 4], [9, 9], [16, 16], [25, 25]]
+x_fix_fix = [[2.266888008, 2.266888008], [6.24876401, 6.24876401], [12.25007957, 12.25007957], [20.25, 20.25], [30.25, 30.25]]
+x_fix_pin = [[1.562190605, 1.562190605], [5.062497894, 5.062497894], [10.56250802, 10.56250802], [18.0625, 18.0625], [27.5625, 27.5625]]
+x_fix_fre = [[0.3562468026, 0.3562468026], [2.23256064, 2.23256064], [6.251238869, 6.251238869], [12.25, 12.25], [20.25, 20.25]]
 
 #################################
 ##      COLUMNDATASOURCES      ##
@@ -113,6 +116,8 @@ support_left_source = ColumnDataSource(data=dict(x = [-0.0015], y = [0.05], src 
 support_right_source = ColumnDataSource(data=dict(x = [L-0.0015], y = [0.05], src = [pinned_support_img], w = [img_w_pinned] , h = [img_h])) # image support right
 eigenfreq_pin_pin_source = ColumnDataSource(data=dict(xs = x_pin_pin, ys = y_eigenfreq))  
 eigenfreq_fix_fix_source = ColumnDataSource(data=dict(xs = x_fix_fix, ys = y_eigenfreq))  
+eigenfreq_fix_pin_source = ColumnDataSource(data=dict(xs = x_fix_pin, ys = y_eigenfreq))  
+eigenfreq_fix_fre_source = ColumnDataSource(data=dict(xs = x_fix_fre, ys = y_eigenfreq)) 
 
 
 #################################
@@ -156,16 +161,17 @@ disp_phase.line(x = 'x', y = 'y', source = phase_coordinates_source)
 disp_phase.line(x = 'x', y = 'y', source = freq2_coordinates_source, line_dash = "dashed")
 
 # eigenfrequencies of all systems
-disp_eigenfreq = figure(x_range = [0.04, max_r], y_range = [-0.1, 1],
-                   height = 200, width = 280,toolbar_location = None, tools = "")
-#disp_eigenfreq.xaxis.fixed_location = 0
+disp_eigenfreq = figure(x_range = [0.04, max_r], y_range = [-0.1, 1.0],
+                   height = 180, width = 280,toolbar_location = None, tools = "")
+disp_eigenfreq.xaxis.axis_label = "Position of Eigenfrequencies"
 disp_eigenfreq.yaxis.visible = False
 disp_eigenfreq.grid.visible = False
 disp_eigenfreq.outline_line_color = None
 multiline_pin_pin = disp_eigenfreq.multi_line(xs="xs", ys="ys", source = eigenfreq_pin_pin_source, line_width=2, line_color = c_blue, legend_label="Pinned-Pinned")
-multiline_fix_fix = disp_eigenfreq.multi_line(xs="xs", ys="ys", source = eigenfreq_fix_fix_source, line_width=2, line_color = c_gray, legend_label="Fixed-Fixed")
-disp_eigenfreq.legend.label_text_font_size = '9pt'
-
+multiline_fix_fix = disp_eigenfreq.multi_line(xs="xs", ys="ys", source = eigenfreq_fix_fix_source, line_width=2, line_color = "#000000", legend_label="Fixed-Fixed")
+multiline_fix_pin = disp_eigenfreq.multi_line(xs="xs", ys="ys", source = eigenfreq_fix_pin_source, line_width=2, line_color = c_orange, legend_label="Fixed-Pinned")
+multiline_fix_fre = disp_eigenfreq.multi_line(xs="xs", ys="ys", source = eigenfreq_fix_fre_source, line_width=2, line_color = c_green, legend_label="Fixed-Free")
+disp_eigenfreq.legend.label_text_font_size = '8pt'
 
 # 3D plot
 surface = Beam_Modes_Surface3d(x="x", y="y", z="z", data_source=plot_3D_source)
@@ -242,6 +248,33 @@ def update_3d_plot():
 
     plot_3D_source.data = dict(x=xx, y=yy, z=value.real)
 
+# update the positions of the eigenfrequencies when system is changed
+def update_position_eigenfrequencies(system):
+    if system == "Pinned-Pinned Beam":
+        x_pin_pin = [[1, 1], [4, 4], [9, 9], [16, 16], [25, 25]]
+        x_fix_fix = [[2.266888008, 2.266888008], [6.24876401, 6.24876401], [12.25007957, 12.25007957], [20.25, 20.25], [30.25, 30.25]]
+        x_fix_pin = [[1.562190605, 1.562190605], [5.062497894, 5.062497894], [10.56250802, 10.56250802], [18.0625, 18.0625], [27.5625, 27.5625]]
+        x_fix_fre = [[0.3562468026, 0.3562468026], [2.23256064, 2.23256064], [6.251238869, 6.251238869], [12.25, 12.25], [20.25, 20.25]]
+    elif system == "Fixed-Fixed Beam":
+        x_pin_pin = [[1/2.266888008, 1/2.266888008], [4/2.266888008, 4/2.266888008], [9/2.266888008, 9/2.266888008], [16/2.266888008, 16/2.266888008], [25/2.266888008, 25/2.266888008]]
+        x_fix_fix = [[2.266888008/2.266888008, 2.266888008/2.266888008], [6.24876401/2.266888008, 6.24876401/2.266888008], [12.25007957/2.266888008, 12.25007957/2.266888008], [20.25/2.266888008, 20.25/2.266888008], [30.25/2.266888008, 30.25/2.266888008]]
+        x_fix_pin = [[1.562190605/2.266888008, 1.562190605/2.266888008], [5.062497894/2.266888008, 5.062497894/2.266888008], [10.56250802/2.266888008, 10.56250802/2.266888008], [18.0625/2.266888008, 18.0625/2.266888008], [27.5625/2.266888008, 27.5625/2.266888008]]
+        x_fix_fre = [[0.3562468026/2.266888008, 0.3562468026/2.266888008], [2.23256064/2.266888008, 2.23256064/2.266888008], [6.251238869/2.266888008, 6.251238869/2.266888008], [12.25/2.266888008, 12.25/2.266888008], [20.25/2.266888008, 20.25/2.266888008]] 
+    elif system == "Fixed-Pinned Beam":
+        x_pin_pin = [[1/1.562190605, 1/1.562190605], [4/1.562190605, 4/1.562190605], [9/1.562190605, 9/1.562190605], [16/1.562190605, 16/1.562190605], [25/1.562190605, 25/1.562190605]]
+        x_fix_fix = [[2.266888008/1.562190605, 2.266888008/1.562190605], [6.24876401/1.562190605, 6.24876401/1.562190605], [12.25007957/1.562190605, 12.25007957/1.562190605], [20.25/1.562190605, 20.25/1.562190605], [30.25/1.562190605, 30.25/1.562190605]]
+        x_fix_pin = [[1.562190605/1.562190605, 1.562190605/1.562190605], [5.062497894/1.562190605, 5.062497894/1.562190605], [10.56250802/1.562190605, 10.56250802/1.562190605], [18.0625/1.562190605, 18.0625/1.562190605], [27.5625/1.562190605, 27.5625/1.562190605]]
+        x_fix_fre = [[0.3562468026/1.562190605, 0.3562468026/1.562190605], [2.23256064/1.562190605, 2.23256064/1.562190605], [6.251238869/1.562190605, 6.251238869/1.562190605], [12.25/1.562190605, 12.25/1.562190605], [20.25/1.562190605, 20.25/1.562190605]]
+    elif system == "Fixed-Free Beam":
+        x_pin_pin = [[1/0.3562468026, 1/0.3562468026], [4/0.3562468026, 4/0.3562468026], [9/0.3562468026, 9/0.3562468026], [16/0.3562468026, 16/0.3562468026], [25/0.3562468026, 25/0.3562468026]]
+        x_fix_fix = [[2.266888008/0.3562468026, 2.266888008/0.3562468026], [6.24876401/0.3562468026, 6.24876401/0.3562468026], [12.25007957/0.3562468026, 12.25007957/0.3562468026], [20.25/0.3562468026, 20.25/0.3562468026], [30.25/0.3562468026, 30.25/0.3562468026]]
+        x_fix_pin = [[1.562190605/0.3562468026, 1.562190605/0.3562468026], [5.062497894/0.3562468026, 5.062497894/0.3562468026], [10.56250802/0.3562468026, 10.56250802/0.3562468026], [18.0625/0.3562468026, 18.0625/0.3562468026], [27.5625/0.3562468026, 27.5625/0.3562468026]]
+        x_fix_fre = [[0.3562468026/0.3562468026, 0.3562468026/0.3562468026], [2.23256064/0.3562468026, 2.23256064/0.3562468026], [6.251238869/0.3562468026, 6.251238869/0.3562468026], [12.25/0.3562468026, 12.25/0.3562468026], [20.25/0.3562468026, 20.25/0.3562468026]]
+    eigenfreq_pin_pin_source.data["xs"] = x_pin_pin
+    eigenfreq_fix_fix_source.data["xs"] = x_fix_fix 
+    eigenfreq_fix_pin_source.data["xs"] = x_fix_pin
+    eigenfreq_fix_fre_source.data["xs"] = x_fix_fre
+
 # update support images when type of beam is changed and update the deflection
 def change_selection(attr,old,new):    
 
@@ -258,8 +291,8 @@ def change_selection(attr,old,new):
         support_left_source.data = dict(x = [-0.05], y = [y_fixed], src = [fixed_support_left_img], w = [img_w_fixed] , h = [img_h])    
         support_right_source.data = dict(x = [], y = [], src = [], w = [] , h = []) 
 
-    calculate_deflection(system_select.value)
-
+    calculate_deflection(new)
+    
 def calculate_lambda(system,r,EI):
 
     if system == "Pinned-Pinned Beam":
@@ -456,6 +489,7 @@ def disable_plot_sliders():
         calculate_amp_and_phase()
         calculate_3d_plot_coordinates(system_select.value)
         update_3d_plot()
+        update_position_eigenfrequencies(system_select.value)
         freq_coordinates_source.data = dict(x = [slider_frequency.value, slider_frequency.value], y = [disp_freq.y_range.start, disp_freq.y_range.end])
         switch_button.label = "⇦  Change Input Parameters"
 
