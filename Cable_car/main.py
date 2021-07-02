@@ -80,12 +80,12 @@ figure_fbd.outline_line_alpha = 0
 
 # Initial parameters & its limits
 #Cable car dimensions & user inputs
-H_max =550.0 #Verical distance between the supports (m) -H
-H_min= 450.0
+H_max =525.0 #Verical distance between the supports (m) -H
+H_min= 475.0
 H=500.0
 
-B_max=550.0 #Horizontal distance between the supports (m) -B
-B_min=450.0
+B_max=525.0 #Horizontal distance between the supports (m) -B
+B_min=475.0
 B=500.0
 
 c_max=1.009  #Cable length stretch factor -c
