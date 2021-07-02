@@ -459,7 +459,7 @@ curdoc().add_root(column(
     X_slider,
     Reset_button,
     value_plot_distance_cable_length,
-    value_plot_angles1,
+    #value_plot_angles1,
     #value_plot_angles2,
     value_plot_tensions))
     ))
