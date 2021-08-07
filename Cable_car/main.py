@@ -5,6 +5,7 @@ location of the carriage car
 Created on Tue Jun  1 22:53:14 2021
 @author: Ramsubramanian Pazhanisamy
 """
+
 #################################
 ##           IMPORTS           ##
 #################################
@@ -33,19 +34,20 @@ from latex_support import LatexDiv, LatexLabelSet, LatexSlider
 ###################################################
 ##           APP THEORETICAL DESCRIPTION         ##
 ###################################################
+
 #Theoretical description of the app in Latex
 description_filename1 = join(dirname(__file__), "description1.html") #Part I of the description
 description1 = LatexDiv(text=open(description_filename1).read(), render_as_text=False, width=1000)
 
-description_filename2 = join(dirname(__file__), "description2.html")#Part II of the description
+description_filename2 = join(dirname(__file__), "description2.html") #Part II of the description
 description2 = LatexDiv(text=open(description_filename2).read(), render_as_text=False, width=1000)
 
-description_filename3 = join(dirname(__file__), "description3.html")#Part III of the description
+description_filename3 = join(dirname(__file__), "description3.html") #Part III of the description
 description3 = LatexDiv(text=open(description_filename3).read(), render_as_text=False, width=1000)
 
-#Figures_static
+# Figures_static
 # Plot
-#Kinematics of the cable car 
+# Kinematics of the cable car 
 kinematics_img="Cable_car/static/images/Kinematics.svg"
 figure_kin = figure(height=235, width=235)
 figure_kin.toolbar.logo = None # do not display the bokeh logo
@@ -80,7 +82,7 @@ figure_fbd.outline_line_alpha = 0
 #################################
 
 # Initial parameters & its limits
-#Cable car dimensions & user inputs
+# Cable car dimensions & user inputs
 H_max =525.0 #Verical distance between the supports (m) -H
 H_min= 475.0
 H=500.0
@@ -89,7 +91,7 @@ B_max=525.0 #Horizontal distance between the supports (m) -B
 B_min=475.0
 B=500.0
 
-c_max=1.02  #Cable length stretch factor -c
+c_max=1.3  #Cable length stretch factor -c
 c_min=1.003
 c=(c_min+c_max)/2
 
@@ -100,27 +102,22 @@ M=250.0
 x=0.55*B #Axial location of the cable car
 D=np.sqrt(H*H+B*B) #Diagonal distance between the supports (m)
 L=c*D #Length of the cable (m) - cable length should be always higher than the distance between the supports
-theta_s1= np.arcsin(H/D) #Angle of the support 1 - bottom support
-theta_s2= np.arcsin(B/D) #Angle of the support 2 - top support
 W=M*9.81 #Weight of the car (N)
 
-a1=0.0 #alpha1 - angle between the cable and diagonal joining the supports at bottom support
-a2=0.0 #alpha2 - angle between the cable and diagonal joining the supports at top support            
+#Symbolic constants
+theta1=sp.Symbol('theta1',real=True)
+theta2=sp.Symbol('theta2',real=True)         
 
-#Symbolic constants for sympy - a1 & a2
-alpha1=sp.Symbol('alpha1',real=True)
-alpha2=sp.Symbol('alpha2',real=True)        
-
-#Kinematic equations 
-eq1= sp.Eq(((L-x/sp.cos(theta_s1-alpha1))*sp.sin(theta_s2-alpha2))+x-B,0)
-eq2= sp.Eq((x/sp.cos(theta_s1-alpha1)*sp.sin(alpha1))-((L-x/sp.cos(theta_s1-alpha1))*sp.sin(alpha2)),0)    
-
-#Simultaneously solving the system of equations numerically
-[a1,a2]=sp.nsolve((eq1,eq2),(alpha1,alpha2),(0.10,0.10))    
+#Kinematic equations
+eq1= sp.Eq(((L-x/sp.cos(theta1))*sp.cos(theta2))+x-B,0)
+eq2= sp.Eq(((x/sp.cos(theta1))*sp.sin(theta1))+((L-x/sp.cos(theta1))*sp.sin(theta2))-H,0)
+    
+#Solving the system of equations numerically
+[t1,t2]=sp.nsolve((eq1,eq2),(theta1,theta2),(0.25,0.75))    
 
 #Effective angles on the Cable
-theta_total1=float(theta_s1-a1) #Actual angle at S1 for a specific car position on the rope
-theta_total2=float(theta_s2+a2) #Actual angle at S2 for a specific car position on the rope
+theta_total1=float(t1) #Actual angle at S1 for a specific car position on the rope
+theta_total2=float(t2) #Actual angle at S2 for a specific car position on the rope
 Lx=x/np.cos(theta_total1) #Length of the bottom cable segement     
 
 #Tensions on the Cable
@@ -134,15 +131,13 @@ T2= W/(np.sin(theta_total2)-(np.cos(theta_total2)*np.sin(theta_total1)/np.cos(th
 
 # Div to show tension and distance values
 value_plot_distance_cable_length= LatexDiv(text="", render_as_text=False, width=400)
-value_plot_angles1 = LatexDiv(text="", render_as_text=False, width=400)
-value_plot_angles2 = LatexDiv(text="", render_as_text=False, width=400)
+value_plot_angles = LatexDiv(text="", render_as_text=False, width=400)
 value_plot_tensions = LatexDiv(text="", render_as_text=False, width=400)
 
 #Display the results
-def setValueText(D,L,t1,t2,a1,a2,T1,T2):
+def setValueText(D,L,t1,t2,T1,T2):
     value_plot_distance_cable_length.text = "$$\\begin{aligned} D&=" + "{:4.1f}".format(D) + "\\,\\mathrm{m}\\\\ L&=" + "{:4.1f}".format(L) + "\\,\\mathrm{m} \\end{aligned}$$"    #Display the D & L
-    value_plot_angles1.text = "$$\\begin{aligned} \\theta_1&=" + "{:4.1f}".format(t1) + "\\,\\mathrm{°}\\\\ \\theta_2&=" + "{:4.1f}".format(t2) + "\\,\\mathrm{°} \\end{aligned}$$" #Display Theta1 & Theta2
-    value_plot_angles2.text = "$$\\begin{aligned} \\alpha_1&=" + "{:4.1f}".format(a1) + "\\,\\mathrm{°}\\\\ \\alpha_2&=" + "{:4.1f}".format(a2) + "\\,\\mathrm{°} \\end{aligned}$$" #Display alpha1 & alpha2
+    value_plot_angles.text = "$$\\begin{aligned} \\theta_1&=" + "{:4.1f}".format(t1) + "\\,\\mathrm{°}\\\\ \\theta_2&=" + "{:4.1f}".format(t2) + "\\,\\mathrm{°} \\end{aligned}$$" #Display Theta1 & Theta2
     value_plot_tensions.text = "$$\\begin{aligned} T_1&=" + "{:4.1f}".format(T1) + "\\,\\mathrm{N}\\\\ T_2&=" + "{:4.1f}".format(T2) + "\\,\\mathrm{N} \\end{aligned}$$"           #Display T1 & T2
 
 #Slider change call back function for H, c, M, X
@@ -155,28 +150,22 @@ def slider_cb_fun(attr,old,new):
     
     D=np.sqrt(H*H+B*B) #Height of the support (m)
     L=c*D #Length of the rope (m)
-    
-    theta_s1= np.arcsin(H/D) #Angle of the support 1
-    theta_s2= np.arcsin(B/D) #Angle of the support 2
     W=M*9.81 #Weight of the car (N)
     
-    a1=0.0 #alpha1 - angle between the cable and diagonal joining the supports at bottom support
-    a2=0.0 #alpha2 - angle between the cable and diagonal joining the supports at top support            
+    #Symbolic constants
+    theta1=sp.Symbol('theta1',real=True)
+    theta2=sp.Symbol('theta2',real=True)         
 
-    #Symbolic constants for sympy - a1 & a2
-    alpha1=sp.Symbol('alpha1',real=True)
-    alpha2=sp.Symbol('alpha2',real=True)        
-
-    #Kinematic equations 
-    eq1= sp.Eq(((L-x/sp.cos(theta_s1-alpha1))*sp.sin(theta_s2-alpha2))+x-B,0)
-    eq2= sp.Eq((x/sp.cos(theta_s1-alpha1)*sp.sin(alpha1))-((L-x/sp.cos(theta_s1-alpha1))*sp.sin(alpha2)),0)    
-
-    #Simultaneously solving the system of equations numerically
-    [a1,a2]=sp.nsolve((eq1,eq2),(alpha1,alpha2),(0.10,0.10))    
+    #Kinematic equations
+    eq1= sp.Eq(((L-x/sp.cos(theta1))*sp.cos(theta2))+x-B,0)
+    eq2= sp.Eq(((x/sp.cos(theta1))*sp.sin(theta1))+((L-x/sp.cos(theta1))*sp.sin(theta2))-H,0)
+    
+    #Solving the system of equations numerically
+    [t1,t2]=sp.nsolve((eq1,eq2),(theta1,theta2),(0.25,0.75))    
 
     #Effective angles on the Cable
-    theta_total1=float(theta_s1-a1) #Actual angle at S1 for a specific car position on the rope
-    theta_total2=float(theta_s2+a2) #Actual angle at S2 for a specific car position on the rope
+    theta_total1=float(t1) #Actual angle at S1 for a specific car position on the rope
+    theta_total2=float(t2) #Actual angle at S2 for a specific car position on the rope
     Lx=x/np.cos(theta_total1) #Length of the bottom cable segement     
 
     #Tensions on the Cable
@@ -184,9 +173,10 @@ def slider_cb_fun(attr,old,new):
     T2= W/(np.sin(theta_total2)-(np.cos(theta_total2)*np.sin(theta_total1)/np.cos(theta_total1)))  # Rope tension in the top
 
     #Update the result display
-    setValueText(D, L,theta_total1*180/np.pi, theta_total2*180/np.pi, a1*180/np.pi, a2*180/np.pi, T1, T2) 
+    setValueText(D, L,theta_total1*180/np.pi, theta_total2*180/np.pi, T1, T2) 
     #Update the animated plot
-    plot.x_range.end=B+200.0 
+    plot.x_range.end=B+200.0
+    plot.y_range.start=min (-200,Lx * np.sin(theta_total1)-320)
     plot.y_range.end=H+150.0
     support_source_top.patch( {'x':[(0,B)]} )
     support_source_top.patch( {'y':[(0,H+5.0)]} )
@@ -195,13 +185,13 @@ def slider_cb_fun(attr,old,new):
     line_source_carriage.data=dict(xs = [Lx * np.cos(theta_total1),Lx * np.cos(theta_total1)], ys= [Lx * np.sin(theta_total1)-120,Lx * np.sin(theta_total1)] )
     mass_source_carriage.data=dict(x = [Lx * np.cos(theta_total1)], y = [Lx * np.sin(theta_total1)-120], size=[int(M/M_max*80)] )
     connecting_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [ Lx * np.sin(theta_total1)] )
-    x_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [-200+15] )
+    x_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [min(-200+25,Lx * np.sin(theta_total1)-320+25)] )
     y_pt_circle.data=dict(x = [-150+15], y = [ Lx * np.sin(theta_total1)] )
-    B_dist_source.patch( {'xE':[(0,B)], 'xL':[(0,0.5*B)]} )
-    H_dist_source.patch( {'xS':[(0,B+100)],'xE':[(0,B+100)],'yE':[(0,H)], 'xL':[(0,B+110)], 'yL':[(0,0.5*H)]} )
-    D_dist_source.patch( {'xE':[(0,B-60)], 'xL':[(0,0.5*B-70)], 'yE':[(0,H+60)], 'yL':[(0,0.5*H+70)]} )
-    T1_source.patch( {'xE':[(0,-5-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,+5-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-25-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,+15-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
-    T2_source.patch( {'xS':[(0,+5+B)],'xE':[(0,+5+B+(np.cos(theta_total2)*150*T2/(T1+T2)))],'yS':[(0,+5+H)],'yE':[(0,+5+H+(np.sin(theta_total2)*150*T2/(T1+T2)))], 'xL':[(0,+35+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2)))], 'yL':[(0,-10+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2)))]} )
+    B_dist_source.patch( {'xE':[(0,B)], 'yS':[(0,min(-150,Lx * np.sin(theta_total1)-270))], 'yE':[(0,min(-150,Lx * np.sin(theta_total1)-270))], 'xL':[(0,0.5*B)],'yL':[(0,min(-140,Lx * np.sin(theta_total1)-260))]} )
+    H_dist_source.patch( {'xS':[(0,B+100)],'xE':[(0,B+100)],'yE':[(0,H)], 'xL':[(0,B+70)], 'yL':[(0,0.5*H)]} )
+    D_dist_source.patch( {'xE':[(0,B-20)], 'xL':[(0,0.5*B-30)], 'yE':[(0,H+10)], 'yL':[(0,0.5*H+30)]} )
+    T1_source.patch( {'xE':[(0,-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-25-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,-50-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
+    T2_source.patch( {'xS':[(0,B)],'xE':[(0,B+(np.cos(theta_total2)*150*T2/(T1+T2)))],'yS':[(0,H)],'yE':[(0,H+(np.sin(theta_total2)*150*T2/(T1+T2)))], 'xL':[(0,+25+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2)))], 'yL':[(0,-25+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2)))]} )
 
 #Slider change call back function for B    
 def slider_cb_fun_b(attr,old,new):
@@ -218,38 +208,34 @@ def slider_cb_fun_b(attr,old,new):
     D=np.sqrt(H*H + B*B) #Height of the support (m)
     c=c_slider.value    
     L=c*D #Length of the rope (m)
-    
-    theta_s1= np.arcsin(H/D) #Angle of the support 1
-    theta_s2= np.arcsin(B/D) #Angle of the support 2
     W=M*9.81 #Weight of the car (N)
+    
+    #Symbolic constants
+    theta1=sp.Symbol('theta1',real=True)
+    theta2=sp.Symbol('theta2',real=True)         
 
-    a1=0.0 #alpha1 - angle between the cable and diagonal joining the supports at bottom support
-    a2=0.0 #alpha2 - angle between the cable and diagonal joining the supports at top support            
-
-    #Symbolic constants for sympy - a1 & a2
-    alpha1=sp.Symbol('alpha1',real=True)
-    alpha2=sp.Symbol('alpha2',real=True)        
-
-    #Kinematic equations 
-    eq1= sp.Eq(((L-x/sp.cos(theta_s1-alpha1))*sp.sin(theta_s2-alpha2))+x-B,0)
-    eq2= sp.Eq((x/sp.cos(theta_s1-alpha1)*sp.sin(alpha1))-((L-x/sp.cos(theta_s1-alpha1))*sp.sin(alpha2)),0)    
-
-    #Simultaneously solving the system of equations numerically
-    [a1,a2]=sp.nsolve((eq1,eq2),(alpha1,alpha2),(0.10,0.10))    
+    #Kinematic equations
+    eq1= sp.Eq(((L-x/sp.cos(theta1))*sp.cos(theta2))+x-B,0)
+    eq2= sp.Eq(((x/sp.cos(theta1))*sp.sin(theta1))+((L-x/sp.cos(theta1))*sp.sin(theta2))-H,0)
+    
+    #Solving the system of equations numerically
+    [t1,t2]=sp.nsolve((eq1,eq2),(theta1,theta2),(0.25,0.75))    
 
     #Effective angles on the Cable
-    theta_total1=float(theta_s1-a1) #Actual angle at S1 for a specific car position on the rope
-    theta_total2=float(theta_s2+a2) #Actual angle at S2 for a specific car position on the rope
+    theta_total1=float(t1) #Actual angle at S1 for a specific car position on the rope
+    theta_total2=float(t2) #Actual angle at S2 for a specific car position on the rope
     Lx=x/np.cos(theta_total1) #Length of the bottom cable segement     
 
     #Tensions on the Cable
-    T1= W/(np.sin(theta_total2)-(np.cos(theta_total2)*np.sin(theta_total1)/np.cos(theta_total1)))*(np.cos(theta_total2)/np.cos(theta_total1)) # Cable tension in the bottom
-    T2= W/(np.sin(theta_total2)-(np.cos(theta_total2)*np.sin(theta_total1)/np.cos(theta_total1)))  # Cable tension in the top
+    T1= W/(np.sin(theta_total2)-(np.cos(theta_total2)*np.sin(theta_total1)/np.cos(theta_total1)))*(np.cos(theta_total2)/np.cos(theta_total1)) # Rope tension in the bottom
+    T2= W/(np.sin(theta_total2)-(np.cos(theta_total2)*np.sin(theta_total1)/np.cos(theta_total1)))  # Rope tension in the top
 
     #Update the result display
-    setValueText(D, L,theta_total1*180/np.pi, theta_total2*180/np.pi, a1*180/np.pi, a2*180/np.pi, T1, T2) 
+    setValueText(D, L,theta_total1*180/np.pi, theta_total2*180/np.pi, T1, T2) 
+    
     #Update the animated plot
     plot.x_range.end=B+200.0 
+    plot.y_range.start=min (-200,Lx * np.sin(theta_total1)-320)
     plot.y_range.end=H+150.0
     support_source_top.patch( {'x':[(0,B)]} )
     support_source_top.patch( {'y':[(0,H+5.0)]} )
@@ -258,13 +244,13 @@ def slider_cb_fun_b(attr,old,new):
     line_source_carriage.data=dict(xs = [Lx * np.cos(theta_total1),Lx * np.cos(theta_total1)], ys= [Lx * np.sin(theta_total1)-120,Lx * np.sin(theta_total1)] )
     mass_source_carriage.data=dict(x = [Lx * np.cos(theta_total1)], y = [Lx * np.sin(theta_total1)-120], size=[int(M/M_max*80)] )
     connecting_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [ Lx * np.sin(theta_total1)] )
-    x_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [-200+15] )
+    x_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [min(-200+25,Lx * np.sin(theta_total1)-320+25)] )
     y_pt_circle.data=dict(x = [-150+15], y = [ Lx * np.sin(theta_total1)] )
-    B_dist_source.patch( {'xE':[(0,B)], 'xL':[(0,0.5*B)]} )
-    H_dist_source.patch( {'xS':[(0,B+100)],'xE':[(0,B+100)],'yE':[(0,H)], 'xL':[(0,B+110)], 'yL':[(0,0.5*H)]} )
-    D_dist_source.patch( {'xE':[(0,B-60)], 'xL':[(0,0.5*B-70)], 'yE':[(0,H+60)], 'yL':[(0,0.5*H+70)]} )
-    T1_source.patch( {'xE':[(0,-5-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,+5-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-25-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,+15-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
-    T2_source.patch( {'xS':[(0,+5+B)],'xE':[(0,+5+B+(np.cos(theta_total2)*150*T2/(T1+T2)))],'yS':[(0,+5+H)],'yE':[(0,+5+H+(np.sin(theta_total2)*150*T2/(T1+T2)))], 'xL':[(0,+35+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2)))], 'yL':[(0,-10+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2)))]} )
+    B_dist_source.patch( {'xE':[(0,B)], 'yS':[(0,min(-150,Lx * np.sin(theta_total1)-270))], 'yE':[(0,min(-150,Lx * np.sin(theta_total1)-270))], 'xL':[(0,0.5*B)],'yL':[(0,min(-140,Lx * np.sin(theta_total1)-260))]} )
+    H_dist_source.patch( {'xS':[(0,B+100)],'xE':[(0,B+100)],'yE':[(0,H)], 'xL':[(0,B+70)], 'yL':[(0,0.5*H)]} )
+    D_dist_source.patch( {'xE':[(0,B-20)], 'xL':[(0,0.5*B-30)], 'yE':[(0,H+10)], 'yL':[(0,0.5*H+30)]} )
+    T1_source.patch( {'xE':[(0,-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-25-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,-50-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
+    T2_source.patch( {'xS':[(0,B)],'xE':[(0,B+(np.cos(theta_total2)*150*T2/(T1+T2)))],'yS':[(0,H)],'yE':[(0,H+(np.sin(theta_total2)*150*T2/(T1+T2)))], 'xL':[(0,+25+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2)))], 'yL':[(0,-25+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2)))]} )
 
 
 #Call back function for reset button
@@ -280,37 +266,34 @@ def callback_reset(event):
     
     D=np.sqrt(H*H+B*B) #Height of the support (m)
     L=c*D #Length of the rope (m)
-    
-    theta_s1= np.arcsin(H/D) #Angle of the support 1
-    theta_s2= np.arcsin(B/D) #Angle of the support 2
     W=M*9.81 #Weight of the car (N)
-    a1=0.0 #alpha1 - angle between the cable and diagonal joining the supports at bottom support
-    a2=0.0 #alpha2 - angle between the cable and diagonal joining the supports at top support            
+    
+    #Symbolic constants
+    theta1=sp.Symbol('theta1',real=True)
+    theta2=sp.Symbol('theta2',real=True)         
 
-    #Symbolic constants for sympy - a1 & a2
-    alpha1=sp.Symbol('alpha1',real=True)
-    alpha2=sp.Symbol('alpha2',real=True)        
-
-    #Kinematic equations 
-    eq1= sp.Eq(((L-x/sp.cos(theta_s1-alpha1))*sp.sin(theta_s2-alpha2))+x-B,0)
-    eq2= sp.Eq((x/sp.cos(theta_s1-alpha1)*sp.sin(alpha1))-((L-x/sp.cos(theta_s1-alpha1))*sp.sin(alpha2)),0)    
-
-    #Simultaneously solving the system of equations numerically
-    [a1,a2]=sp.nsolve((eq1,eq2),(alpha1,alpha2),(0.10,0.10))    
+    #Kinematic equations
+    eq1= sp.Eq(((L-x/sp.cos(theta1))*sp.cos(theta2))+x-B,0)
+    eq2= sp.Eq(((x/sp.cos(theta1))*sp.sin(theta1))+((L-x/sp.cos(theta1))*sp.sin(theta2))-H,0)
+    
+    #Solving the system of equations numerically
+    [t1,t2]=sp.nsolve((eq1,eq2),(theta1,theta2),(0.25,0.75))    
 
     #Effective angles on the Cable
-    theta_total1=float(theta_s1-a1) #Actual angle at S1 for a specific car position on the rope
-    theta_total2=float(theta_s2+a2) #Actual angle at S2 for a specific car position on the rope
+    theta_total1=float(t1) #Actual angle at S1 for a specific car position on the rope
+    theta_total2=float(t2) #Actual angle at S2 for a specific car position on the rope
     Lx=x/np.cos(theta_total1) #Length of the bottom cable segement     
 
     #Tensions on the Cable
-    T1= W/(np.sin(theta_total2)-(np.cos(theta_total2)*np.sin(theta_total1)/np.cos(theta_total1)))*(np.cos(theta_total2)/np.cos(theta_total1)) # Cable tension in the bottom
-    T2= W/(np.sin(theta_total2)-(np.cos(theta_total2)*np.sin(theta_total1)/np.cos(theta_total1)))  # Cable tension in the top
+    T1= W/(np.sin(theta_total2)-(np.cos(theta_total2)*np.sin(theta_total1)/np.cos(theta_total1)))*(np.cos(theta_total2)/np.cos(theta_total1)) # Rope tension in the bottom
+    T2= W/(np.sin(theta_total2)-(np.cos(theta_total2)*np.sin(theta_total1)/np.cos(theta_total1)))  # Rope tension in the top
 
     #Update the result display
-    setValueText(D, L,theta_total1*180/np.pi, theta_total2*180/np.pi, a1*180/np.pi, a2*180/np.pi, T1, T2) 
+    setValueText(D, L,theta_total1*180/np.pi, theta_total2*180/np.pi, T1, T2) 
+    
     #Update the animated plot
     plot.x_range.end=B+200.0 
+    plot.y_range.start=min (-200,Lx * np.sin(theta_total1)-320)
     plot.y_range.end=H+150.0
     support_source_top.patch( {'x':[(0,B)]} )
     support_source_top.patch( {'y':[(0,H+5.0)]} )
@@ -319,13 +302,13 @@ def callback_reset(event):
     line_source_carriage.data=dict(xs = [Lx * np.cos(theta_total1),Lx * np.cos(theta_total1)], ys= [Lx * np.sin(theta_total1)-120,Lx * np.sin(theta_total1)] )
     mass_source_carriage.data=dict(x = [Lx * np.cos(theta_total1)], y = [Lx * np.sin(theta_total1)-120], size=[int(M/M_max*80)] )
     connecting_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [ Lx * np.sin(theta_total1)] )
-    x_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [-200+15] )
+    x_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [min(-200+25,Lx * np.sin(theta_total1)-320+25)] )
     y_pt_circle.data=dict(x = [-150+15], y = [ Lx * np.sin(theta_total1)] )
-    B_dist_source.patch( {'xE':[(0,B)], 'xL':[(0,0.5*B)]} )
-    H_dist_source.patch( {'xS':[(0,B+100)],'xE':[(0,B+100)],'yE':[(0,H)], 'xL':[(0,B+110)], 'yL':[(0,0.5*H)]} )
-    D_dist_source.patch( {'xE':[(0,B-60)], 'xL':[(0,0.5*B-70)], 'yE':[(0,H+60)], 'yL':[(0,0.5*H+70)]} )
-    T1_source.patch( {'xE':[(0,-5-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,+5-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-25-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,+15-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
-    T2_source.patch( {'xS':[(0,+5+B)],'xE':[(0,+5+B+(np.cos(theta_total2)*150*T2/(T1+T2)))],'yS':[(0,+5+H)],'yE':[(0,+5+H+(np.sin(theta_total2)*150*T2/(T1+T2)))], 'xL':[(0,+35+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2)))], 'yL':[(0,-10+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2)))]} )
+    B_dist_source.patch( {'xE':[(0,B)], 'yS':[(0,min(-150,Lx * np.sin(theta_total1)-270))], 'yE':[(0,min(-150,Lx * np.sin(theta_total1)-270))], 'xL':[(0,0.5*B)],'yL':[(0,min(-140,Lx * np.sin(theta_total1)-260))]} )
+    H_dist_source.patch( {'xS':[(0,B+100)],'xE':[(0,B+100)],'yE':[(0,H)], 'xL':[(0,B+70)], 'yL':[(0,0.5*H)]} )
+    D_dist_source.patch( {'xE':[(0,B-20)], 'xL':[(0,0.5*B-30)], 'yE':[(0,H+10)], 'yL':[(0,0.5*H+30)]} )
+    T1_source.patch( {'xE':[(0,-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-25-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,-50-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
+    T2_source.patch( {'xS':[(0,B)],'xE':[(0,B+(np.cos(theta_total2)*150*T2/(T1+T2)))],'yS':[(0,H)],'yE':[(0,H+(np.sin(theta_total2)*150*T2/(T1+T2)))], 'xL':[(0,+25+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2)))], 'yL':[(0,-25+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2)))]} )
 # ----------------------------------------------------------------- #
 
 ####################################
@@ -363,7 +346,7 @@ Reset_button.on_click(callback_reset)
 ####################################
 
 # Plot
-plot = figure(title="", tools="", x_range=(-150,B+200), y_range=(-200,H+150),aspect_scale=2.0)
+plot = figure(title="", tools="", x_range=(-150,B+200), y_range=(min(-200,Lx * np.sin(theta_total1)-320),H+150),aspect_scale=2.0)
 plot.plot_height=700
 plot.plot_width=850
 plot.toolbar.logo = None
@@ -391,16 +374,15 @@ mass_source_carriage=ColumnDataSource(dict(x = [Lx * np.cos(theta_total1)], y = 
 connecting_pt_circle=ColumnDataSource(dict(x = [Lx * np.cos(theta_total1)], y = [ Lx * np.sin(theta_total1)] ))
 
 #Annotations 
-B_dist_source = ColumnDataSource(dict(xS=[0], xE=[B], yS=[-150], yE=[-150], xL=[B*0.5], yL=[-140], text=["B"]))
-#X_dist_source = ColumnDataSource(dict(xS=[0], xE=[x], yS=[-125], yE=[-125], xL=[x*0.5], yL=[-115], text=["X"]))
-H_dist_source = ColumnDataSource(dict(xS=[B+100], xE=[B+100], yS=[0], yE=[H], xL=[B+110], yL=[0.5*H], text=["H"]))
-D_dist_source = ColumnDataSource(dict(xS=[0-60], xE=[B-60], yS=[0+60], yE=[H+60], xL=[B*0.5-70], yL=[H*0.5+70], text=["D"]))
-x_pt_circle=ColumnDataSource(dict(x = [Lx * np.cos(theta_total1)], y = [-200+15] ))
+B_dist_source = ColumnDataSource(dict(xS=[0], xE=[B], yS=[min(-200+50,Lx * np.sin(theta_total1)-320+50)], yE=[min(-200+50,Lx * np.sin(theta_total1)-320+50)], xL=[B*0.5], yL=[min(-200+60,Lx * np.sin(theta_total1)-320+60)], text=["B"]))
+H_dist_source = ColumnDataSource(dict(xS=[B+100], xE=[B+100], yS=[0], yE=[H], xL=[B+70], yL=[0.5*H], text=["H"]))
+D_dist_source = ColumnDataSource(dict(xS=[+0], xE=[B-20], yS=[0+30], yE=[H+10], xL=[B*0.5-30], yL=[H*0.5+30], text=["D"]))
+x_pt_circle=ColumnDataSource(dict(x = [Lx * np.cos(theta_total1)], y = [min(-200+25,Lx * np.sin(theta_total1)-320+25)] ))
 y_pt_circle=ColumnDataSource(dict(x = [-150+15], y = [ Lx * np.sin(theta_total1)] ))
 
 #Cable Tensions & Load
-T1_source = ColumnDataSource(dict(xS=[-10], xE=[-10-(np.cos(theta_total1)*150*T1/(T1+T2))], yS=[-10], yE=[-10-(np.sin(theta_total1)*150*T1/(T1+T2))], xL=[-25-0.5*(np.cos(theta_total1)*150*T1/(T1+T2))], yL=[+15-0.5*(np.sin(theta_total1)*150*T1/(T1+T2))], name=["T_1"]))
-T2_source =ColumnDataSource(dict(xS=[5+B], xE=[5+B+(np.cos(theta_total2)*150*T2/(T1+T2))], yS=[5+H], yE=[5+H+(np.sin(theta_total2)*150*T2/(T1+T2))], xL=[+35+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2))], yL=[-10+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2))], name=["T_2"]))
+T1_source = ColumnDataSource(dict(xS=[0], xE=[-(np.cos(theta_total1)*150*T1/(T1+T2))], yS=[0], yE=[-(np.sin(theta_total1)*150*T1/(T1+T2))], xL=[-25-0.5*(np.cos(theta_total1)*150*T1/(T1+T2))], yL=[-50-0.5*(np.sin(theta_total1)*150*T1/(T1+T2))], name=["T_1"]))
+T2_source =ColumnDataSource(dict(xS=[B], xE=[B+(np.cos(theta_total2)*150*T2/(T1+T2))], yS=[H], yE=[H+(np.sin(theta_total2)*150*T2/(T1+T2))], xL=[+25+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2))], yL=[-25+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2))], name=["T_2"]))
 
 #Labels and arrows for annotations & cable tensions
 B_dist = Arrow(end=TeeHead(line_color="#808080", line_width=1, size=10),
@@ -462,7 +444,7 @@ curdoc().add_root(column(
     column(plot,column(
     row(H_slider,B_slider,c_slider),
     row(M_slider,X_slider,Reset_button),
-    row(value_plot_distance_cable_length,value_plot_angles1, value_plot_tensions)
+    row(value_plot_distance_cable_length,value_plot_angles, value_plot_tensions)
     ))))
 
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
