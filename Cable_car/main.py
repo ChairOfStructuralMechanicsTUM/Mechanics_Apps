@@ -44,6 +44,7 @@ description_filename3 = join(dirname(__file__), "description3.html")#Part III of
 description3 = LatexDiv(text=open(description_filename3).read(), render_as_text=False, width=1000)
 
 #Figures_static
+# Plot
 #Kinematics of the cable car 
 kinematics_img="Cable_car/static/images/Kinematics.svg"
 figure_kin = figure(height=235, width=235)
@@ -88,7 +89,7 @@ B_max=525.0 #Horizontal distance between the supports (m) -B
 B_min=475.0
 B=500.0
 
-c_max=1.009  #Cable length stretch factor -c
+c_max=1.02  #Cable length stretch factor -c
 c_min=1.003
 c=(c_min+c_max)/2
 
@@ -96,7 +97,7 @@ M_max=300.0 #Mass of the cable car - M (Kg)
 M_min=200.0 
 M=250.0
 
-x=0.5*B #Axial location of the cable car
+x=0.55*B #Axial location of the cable car
 D=np.sqrt(H*H+B*B) #Diagonal distance between the supports (m)
 L=c*D #Length of the cable (m) - cable length should be always higher than the distance between the supports
 theta_s1= np.arcsin(H/D) #Angle of the support 1 - bottom support
@@ -132,10 +133,10 @@ T2= W/(np.sin(theta_total2)-(np.cos(theta_total2)*np.sin(theta_total1)/np.cos(th
 #################################
 
 # Div to show tension and distance values
-value_plot_distance_cable_length= LatexDiv(text="", render_as_text=False, width=300)
-value_plot_angles1 = LatexDiv(text="", render_as_text=False, width=300)
-value_plot_angles2 = LatexDiv(text="", render_as_text=False, width=300)
-value_plot_tensions = LatexDiv(text="", render_as_text=False, width=300)
+value_plot_distance_cable_length= LatexDiv(text="", render_as_text=False, width=400)
+value_plot_angles1 = LatexDiv(text="", render_as_text=False, width=400)
+value_plot_angles2 = LatexDiv(text="", render_as_text=False, width=400)
+value_plot_tensions = LatexDiv(text="", render_as_text=False, width=400)
 
 #Display the results
 def setValueText(D,L,t1,t2,a1,a2,T1,T2):
@@ -185,18 +186,19 @@ def slider_cb_fun(attr,old,new):
     #Update the result display
     setValueText(D, L,theta_total1*180/np.pi, theta_total2*180/np.pi, a1*180/np.pi, a2*180/np.pi, T1, T2) 
     #Update the animated plot
-    plot.x_range.end=B+150.0 
+    plot.x_range.end=B+200.0 
     plot.y_range.end=H+150.0
     support_source_top.patch( {'x':[(0,B)]} )
     support_source_top.patch( {'y':[(0,H+5.0)]} )
     line_source_bottom.data=dict(xs = [0, Lx * np.cos(theta_total1)], ys =[0, Lx * np.sin(theta_total1)] )
     line_source_top.data=dict(xs = [Lx * np.cos(theta_total1), B], ys =[Lx * np.sin(theta_total1), H] )
-    line_source_carriage.data=dict(xs = [Lx * np.cos(theta_total1),Lx * np.cos(theta_total1)], ys= [Lx * np.sin(theta_total1)-70,Lx * np.sin(theta_total1)] )
-    mass_source_carriage.data=dict(x = [Lx * np.cos(theta_total1)], y = [Lx * np.sin(theta_total1)-70], size=[int(M/M_max*35)] )
+    line_source_carriage.data=dict(xs = [Lx * np.cos(theta_total1),Lx * np.cos(theta_total1)], ys= [Lx * np.sin(theta_total1)-120,Lx * np.sin(theta_total1)] )
+    mass_source_carriage.data=dict(x = [Lx * np.cos(theta_total1)], y = [Lx * np.sin(theta_total1)-120], size=[int(M/M_max*80)] )
     connecting_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [ Lx * np.sin(theta_total1)] )
+    x_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [-200+15] )
+    y_pt_circle.data=dict(x = [-150+15], y = [ Lx * np.sin(theta_total1)] )
     B_dist_source.patch( {'xE':[(0,B)], 'xL':[(0,0.5*B)]} )
-    X_dist_source.patch( {'xE':[(0,x)], 'xL':[(0,0.5*x)]} )
-    H_dist_source.patch( {'xS':[(0,B+30)],'xE':[(0,B+30)],'yE':[(0,H)], 'xL':[(0,B+40)], 'yL':[(0,0.5*H)]} )
+    H_dist_source.patch( {'xS':[(0,B+100)],'xE':[(0,B+100)],'yE':[(0,H)], 'xL':[(0,B+110)], 'yL':[(0,0.5*H)]} )
     D_dist_source.patch( {'xE':[(0,B-60)], 'xL':[(0,0.5*B-70)], 'yE':[(0,H+60)], 'yL':[(0,0.5*H+70)]} )
     T1_source.patch( {'xE':[(0,-5-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,+5-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-25-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,+15-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
     T2_source.patch( {'xS':[(0,+5+B)],'xE':[(0,+5+B+(np.cos(theta_total2)*150*T2/(T1+T2)))],'yS':[(0,+5+H)],'yE':[(0,+5+H+(np.sin(theta_total2)*150*T2/(T1+T2)))], 'xL':[(0,+35+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2)))], 'yL':[(0,-10+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2)))]} )
@@ -208,7 +210,7 @@ def slider_cb_fun_b(attr,old,new):
     M=M_slider.value
     
     x_old_fraction = (X_slider.value - X_slider.start) / (X_slider.end - X_slider.start)
-    X_slider.start=int(0.1*B)
+    X_slider.start=int(0.2*B)
     X_slider.end=int(0.9*B)
     X_slider.value=int(x_old_fraction * (X_slider.end - X_slider.start) + X_slider.start)
     x=int(x_old_fraction * (X_slider.end - X_slider.start) + X_slider.start)
@@ -247,18 +249,19 @@ def slider_cb_fun_b(attr,old,new):
     #Update the result display
     setValueText(D, L,theta_total1*180/np.pi, theta_total2*180/np.pi, a1*180/np.pi, a2*180/np.pi, T1, T2) 
     #Update the animated plot
-    plot.x_range.end=B+150.0 
+    plot.x_range.end=B+200.0 
     plot.y_range.end=H+150.0
     support_source_top.patch( {'x':[(0,B)]} )
     support_source_top.patch( {'y':[(0,H+5.0)]} )
     line_source_bottom.data=dict(xs = [0, Lx * np.cos(theta_total1)], ys =[0, Lx * np.sin(theta_total1)] )
     line_source_top.data=dict(xs = [Lx * np.cos(theta_total1), B], ys =[Lx * np.sin(theta_total1), H] )
-    line_source_carriage.data=dict(xs = [Lx * np.cos(theta_total1),Lx * np.cos(theta_total1)], ys= [Lx * np.sin(theta_total1)-70,Lx * np.sin(theta_total1)] )
-    mass_source_carriage.data=dict(x = [Lx * np.cos(theta_total1)], y = [Lx * np.sin(theta_total1)-70], size=[int(M/M_max*35)] )
+    line_source_carriage.data=dict(xs = [Lx * np.cos(theta_total1),Lx * np.cos(theta_total1)], ys= [Lx * np.sin(theta_total1)-120,Lx * np.sin(theta_total1)] )
+    mass_source_carriage.data=dict(x = [Lx * np.cos(theta_total1)], y = [Lx * np.sin(theta_total1)-120], size=[int(M/M_max*80)] )
     connecting_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [ Lx * np.sin(theta_total1)] )
+    x_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [-200+15] )
+    y_pt_circle.data=dict(x = [-150+15], y = [ Lx * np.sin(theta_total1)] )
     B_dist_source.patch( {'xE':[(0,B)], 'xL':[(0,0.5*B)]} )
-    X_dist_source.patch( {'xE':[(0,x)], 'xL':[(0,0.5*x)]} )
-    H_dist_source.patch( {'xS':[(0,B+30)],'xE':[(0,B+30)],'yE':[(0,H)], 'xL':[(0,B+40)], 'yL':[(0,0.5*H)]} )
+    H_dist_source.patch( {'xS':[(0,B+100)],'xE':[(0,B+100)],'yE':[(0,H)], 'xL':[(0,B+110)], 'yL':[(0,0.5*H)]} )
     D_dist_source.patch( {'xE':[(0,B-60)], 'xL':[(0,0.5*B-70)], 'yE':[(0,H+60)], 'yL':[(0,0.5*H+70)]} )
     T1_source.patch( {'xE':[(0,-5-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,+5-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-25-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,+15-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
     T2_source.patch( {'xS':[(0,+5+B)],'xE':[(0,+5+B+(np.cos(theta_total2)*150*T2/(T1+T2)))],'yS':[(0,+5+H)],'yE':[(0,+5+H+(np.sin(theta_total2)*150*T2/(T1+T2)))], 'xL':[(0,+35+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2)))], 'yL':[(0,-10+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2)))]} )
@@ -270,9 +273,9 @@ def callback_reset(event):
     c_slider.value=c
     B_slider.value=B
     M_slider.value=M
-    X_slider.start=0.1*B
+    X_slider.start=0.2*B
     X_slider.end=0.9*B
-    X_slider.value=0.5*B    
+    X_slider.value=0.55*B    
     x=X_slider.value
     
     D=np.sqrt(H*H+B*B) #Height of the support (m)
@@ -307,18 +310,19 @@ def callback_reset(event):
     #Update the result display
     setValueText(D, L,theta_total1*180/np.pi, theta_total2*180/np.pi, a1*180/np.pi, a2*180/np.pi, T1, T2) 
     #Update the animated plot
-    plot.x_range.end=B+150.0 
+    plot.x_range.end=B+200.0 
     plot.y_range.end=H+150.0
     support_source_top.patch( {'x':[(0,B)]} )
     support_source_top.patch( {'y':[(0,H+5.0)]} )
     line_source_bottom.data=dict(xs = [0, Lx * np.cos(theta_total1)], ys =[0, Lx * np.sin(theta_total1)] )
     line_source_top.data=dict(xs = [Lx * np.cos(theta_total1), B], ys =[Lx * np.sin(theta_total1), H] )
-    line_source_carriage.data=dict(xs = [Lx * np.cos(theta_total1),Lx * np.cos(theta_total1)], ys= [Lx * np.sin(theta_total1)-70,Lx * np.sin(theta_total1)] )
-    mass_source_carriage.data=dict(x = [Lx * np.cos(theta_total1)], y = [Lx * np.sin(theta_total1)-70], size=[int(M/M_max*35)] )
+    line_source_carriage.data=dict(xs = [Lx * np.cos(theta_total1),Lx * np.cos(theta_total1)], ys= [Lx * np.sin(theta_total1)-120,Lx * np.sin(theta_total1)] )
+    mass_source_carriage.data=dict(x = [Lx * np.cos(theta_total1)], y = [Lx * np.sin(theta_total1)-120], size=[int(M/M_max*80)] )
     connecting_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [ Lx * np.sin(theta_total1)] )
+    x_pt_circle.data=dict(x = [Lx * np.cos(theta_total1)], y = [-200+15] )
+    y_pt_circle.data=dict(x = [-150+15], y = [ Lx * np.sin(theta_total1)] )
     B_dist_source.patch( {'xE':[(0,B)], 'xL':[(0,0.5*B)]} )
-    X_dist_source.patch( {'xE':[(0,x)], 'xL':[(0,0.5*x)]} )
-    H_dist_source.patch( {'xS':[(0,B+30)],'xE':[(0,B+30)],'yE':[(0,H)], 'xL':[(0,B+40)], 'yL':[(0,0.5*H)]} )
+    H_dist_source.patch( {'xS':[(0,B+100)],'xE':[(0,B+100)],'yE':[(0,H)], 'xL':[(0,B+110)], 'yL':[(0,0.5*H)]} )
     D_dist_source.patch( {'xE':[(0,B-60)], 'xL':[(0,0.5*B-70)], 'yE':[(0,H+60)], 'yL':[(0,0.5*H+70)]} )
     T1_source.patch( {'xE':[(0,-5-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,+5-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-25-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,+15-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
     T2_source.patch( {'xS':[(0,+5+B)],'xE':[(0,+5+B+(np.cos(theta_total2)*150*T2/(T1+T2)))],'yS':[(0,+5+H)],'yE':[(0,+5+H+(np.sin(theta_total2)*150*T2/(T1+T2)))], 'xL':[(0,+35+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2)))], 'yL':[(0,-10+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2)))]} )
@@ -345,11 +349,11 @@ M_slider = LatexSlider(title="\\text{Mass carried by the system (M)}=", value_un
 M_slider.on_change('value',slider_cb_fun) # callback function is called when value changes
 
 #Axial location of the carriage
-X_slider = LatexSlider(title="\\text{Horizontal location of the carriage (X)}=", value_unit="\\text{m}", value=int(0.5*B_slider.value), start=int(0.1*B_slider.value), end=int(0.9*B_slider.value), step=1.0, width=400, css_classes=["slider"])
+X_slider = LatexSlider(title="\\text{Horizontal location of the carriage (X)}=", value_unit="\\text{m}", value=int(0.55*B_slider.value), start=int(0.2*B_slider.value), end=int(0.9*B_slider.value), step=1.0, width=400, css_classes=["slider"])
 X_slider.on_change('value',slider_cb_fun) # callback function is called when value changes
 
 #Reset Button
-button_width = 100
+button_width = 400
 Reset_button=Button(label='Reset', button_type='success', width=button_width)
 Reset_button.on_click(callback_reset)
 # ----------------------------------------------------------------- #
@@ -359,16 +363,22 @@ Reset_button.on_click(callback_reset)
 ####################################
 
 # Plot
-plot = figure(title="", tools="", x_range=(-100,B+150), y_range=(-200,H+150))
+plot = figure(title="", tools="", x_range=(-150,B+200), y_range=(-200,H+150),aspect_scale=2.0)
+plot.plot_height=700
+plot.plot_width=850
 plot.toolbar.logo = None
 plot.axis.axis_label_text_font_style="normal"
 plot.axis.axis_label_text_font_size="14pt"
-plot.xaxis.axis_label='X (m)'
-plot.yaxis.axis_label='Y (m)'
+plot.axis.major_label_text_font_size="14pt"
+plot.xaxis.axis_label='x (m)'
+plot.yaxis.axis_label='y (m)'
+plot.outline_line_width=1.5
+plot.outline_line_color="#333333"
+plot.outline_line_alpha=0.9
 
 #Column Data Sources definition
 # Support source
-support_source_bottom = ColumnDataSource(dict(x = [0], y = [0+5.0] , src = ["Cable_car/static/images/fixed_support.svg"]))
+support_source_bottom = ColumnDataSource(dict(x = [0], y = [0+10.0] , src = ["Cable_car/static/images/fixed_support.svg"]))
 support_source_top    = ColumnDataSource(dict(x = [B], y = [H+5.0] , src = ["Cable_car/static/images/fixed_support.svg"]))
 
 #Line source for the cable
@@ -376,18 +386,20 @@ line_source_bottom = ColumnDataSource(dict(xs = [0, Lx * np.cos(theta_total1)], 
 line_source_top    = ColumnDataSource(dict(xs = [Lx * np.cos(theta_total1), B], ys =[Lx * np.sin(theta_total1), H] ))
 
 # Carriage
-line_source_carriage = ColumnDataSource(dict(xs = [Lx * np.cos(theta_total1),Lx * np.cos(theta_total1)], ys= [Lx * np.sin(theta_total1)-70,Lx * np.sin(theta_total1)] ))
-mass_source_carriage=ColumnDataSource(dict(x = [Lx * np.cos(theta_total1)], y = [Lx * np.sin(theta_total1)-70], size=[int(M/M_max*35)] ))
+line_source_carriage = ColumnDataSource(dict(xs = [Lx * np.cos(theta_total1),Lx * np.cos(theta_total1)], ys= [Lx * np.sin(theta_total1)-120,Lx * np.sin(theta_total1)] ))
+mass_source_carriage=ColumnDataSource(dict(x = [Lx * np.cos(theta_total1)], y = [Lx * np.sin(theta_total1)-120], size=[int(M/M_max*80)] ))
 connecting_pt_circle=ColumnDataSource(dict(x = [Lx * np.cos(theta_total1)], y = [ Lx * np.sin(theta_total1)] ))
 
 #Annotations 
-B_dist_source = ColumnDataSource(dict(xS=[0], xE=[B], yS=[-180], yE=[-180], xL=[B*0.5], yL=[-170], text=["B"]))
-X_dist_source = ColumnDataSource(dict(xS=[0], xE=[x], yS=[-125], yE=[-125], xL=[x*0.5], yL=[-115], text=["X"]))
-H_dist_source = ColumnDataSource(dict(xS=[B+30], xE=[B+30], yS=[0], yE=[H], xL=[B+40], yL=[0.5*H], text=["H"]))
+B_dist_source = ColumnDataSource(dict(xS=[0], xE=[B], yS=[-150], yE=[-150], xL=[B*0.5], yL=[-140], text=["B"]))
+#X_dist_source = ColumnDataSource(dict(xS=[0], xE=[x], yS=[-125], yE=[-125], xL=[x*0.5], yL=[-115], text=["X"]))
+H_dist_source = ColumnDataSource(dict(xS=[B+100], xE=[B+100], yS=[0], yE=[H], xL=[B+110], yL=[0.5*H], text=["H"]))
 D_dist_source = ColumnDataSource(dict(xS=[0-60], xE=[B-60], yS=[0+60], yE=[H+60], xL=[B*0.5-70], yL=[H*0.5+70], text=["D"]))
+x_pt_circle=ColumnDataSource(dict(x = [Lx * np.cos(theta_total1)], y = [-200+15] ))
+y_pt_circle=ColumnDataSource(dict(x = [-150+15], y = [ Lx * np.sin(theta_total1)] ))
 
 #Cable Tensions & Load
-T1_source = ColumnDataSource(dict(xS=[-5], xE=[-5-(np.cos(theta_total1)*150*T1/(T1+T2))], yS=[-5], yE=[-5-(np.sin(theta_total1)*150*T1/(T1+T2))], xL=[-25-0.5*(np.cos(theta_total1)*150*T1/(T1+T2))], yL=[+15-0.5*(np.sin(theta_total1)*150*T1/(T1+T2))], name=["T_1"]))
+T1_source = ColumnDataSource(dict(xS=[-10], xE=[-10-(np.cos(theta_total1)*150*T1/(T1+T2))], yS=[-10], yE=[-10-(np.sin(theta_total1)*150*T1/(T1+T2))], xL=[-25-0.5*(np.cos(theta_total1)*150*T1/(T1+T2))], yL=[+15-0.5*(np.sin(theta_total1)*150*T1/(T1+T2))], name=["T_1"]))
 T2_source =ColumnDataSource(dict(xS=[5+B], xE=[5+B+(np.cos(theta_total2)*150*T2/(T1+T2))], yS=[5+H], yE=[5+H+(np.sin(theta_total2)*150*T2/(T1+T2))], xL=[+35+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2))], yL=[-10+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2))], name=["T_2"]))
 
 #Labels and arrows for annotations & cable tensions
@@ -395,11 +407,6 @@ B_dist = Arrow(end=TeeHead(line_color="#808080", line_width=1, size=10),
                start=TeeHead(line_color="#808080",line_width=1, size=10),
                x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width=1, line_color="#808080", source=B_dist_source)
 B_dist_label = LatexLabelSet(x='xL', y='yL', text='text', source=B_dist_source)
-
-X_dist = Arrow(end=TeeHead(line_color="#808080", line_width=1, size=10),
-               start=TeeHead(line_color="#808080",line_width=1, size=10),
-               x_start='xS', y_start='yS', x_end='xE', y_end='yE', line_width=1, line_color="#808080", source=X_dist_source)
-X_dist_label = LatexLabelSet(x='xL', y='yL', text='text', source=X_dist_source)
 
 H_dist = Arrow(end=TeeHead(line_color="#808080", line_width=1, size=10),
                start=TeeHead(line_color="#808080",line_width=1, size=10),
@@ -421,22 +428,22 @@ T1_label_glyph=LatexLabelSet(x='xL', y='yL', text='name', text_font_size="15pt",
 T2_label_glyph=LatexLabelSet(x='xL', y='yL', text='name', text_font_size="15pt", level='glyph', source=T2_source)
 
 #Adding all glyps into the plot - lines, carriage, supports, tensions & annotations
-plot.line(x='xs', y='ys', source=line_source_bottom , line_width=5, color='#3070B3')
-plot.line(x='xs', y='ys', source=line_source_top , line_width=5, color='#3070B3')
-plot.circle(x='x', y='y', source=connecting_pt_circle, size=10, color="#e37222")
-plot.line(x='xs', y='ys', source=line_source_carriage,  line_width=5, color="#e37222")
+plot.line(x='xs', y='ys', source=line_source_bottom , line_width=10, color='#3070B3')
+plot.line(x='xs', y='ys', source=line_source_top , line_width=10, color='#3070B3')
+plot.circle(x='x', y='y', source=connecting_pt_circle, size=20, color="#e37222")
+plot.line(x='xs', y='ys', source=line_source_carriage,  line_width=10, color="#e37222")
 plot.square(x='x', y='y', size='size', source=mass_source_carriage,  color="#e37222")
+plot.circle(x='x', y='y', source=x_pt_circle, size=20, color="#a2ad00")
+plot.circle(x='x', y='y', source=y_pt_circle, size=20, color="#a2ad00")
 
-plot.add_glyph(support_source_top,ImageURL(url="src", x='x', y='y', w=40, h=40, anchor="top_center"))
-plot.add_glyph(support_source_bottom,ImageURL(url="src", x='x', y='y', w=40, h=40, anchor="top_center"))
+plot.add_glyph(support_source_top,ImageURL(url="src", x='x', y='y', w=60, h=60, anchor="top_center"))
+plot.add_glyph(support_source_bottom,ImageURL(url="src", x='x', y='y', w=60, h=60, anchor="top_center"))
 plot.add_layout(T1_arrow_glyph)
 plot.add_layout(T2_arrow_glyph)
 plot.add_layout(T1_label_glyph)
 plot.add_layout(T2_label_glyph)
 plot.add_layout(B_dist)
 plot.add_layout(B_dist_label)
-plot.add_layout(X_dist)
-plot.add_layout(X_dist_label)
 plot.add_layout(H_dist)
 plot.add_layout(H_dist_label)
 plot.add_layout(D_dist)
@@ -452,17 +459,11 @@ curdoc().add_root(column(
     description2,
     figure_fbd,
     description3,
-    row(plot,column(H_slider,
-    B_slider,
-    c_slider,
-    M_slider,
-    X_slider,
-    Reset_button,
-    value_plot_distance_cable_length,
-    #value_plot_angles1,
-    #value_plot_angles2,
-    value_plot_tensions))
-    ))
+    column(plot,column(
+    row(H_slider,B_slider,c_slider),
+    row(M_slider,X_slider,Reset_button),
+    row(value_plot_distance_cable_length,value_plot_angles1, value_plot_tensions)
+    ))))
 
 curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
 # ----------------------------------------------------------------- #
