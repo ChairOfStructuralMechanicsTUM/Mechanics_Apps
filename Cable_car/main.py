@@ -17,7 +17,7 @@ import sympy as sp
 # bokeh imports
 from bokeh.io             import curdoc
 from bokeh.plotting       import figure
-from bokeh.models         import ColumnDataSource, Arrow, OpenHead, Range1d, TeeHead
+from bokeh.models         import ColumnDataSource, Arrow, OpenHead, Range1d, TeeHead, Div
 from bokeh.models.glyphs  import ImageURL
 from bokeh.models.widgets import Button
 from bokeh.layouts        import column, row
@@ -48,8 +48,8 @@ description3 = LatexDiv(text=open(description_filename3).read(), render_as_text=
 # Figures_static
 # Plot
 # Kinematics of the cable car 
-kinematics_img="Cable_car/static/images/Kinematics.svg"
-figure_kin = figure(height=235, width=235)
+kinematics_img = join(dirname(__file__),"static","images", "Kinematics.svg")
+figure_kin = figure()#(height=235, width=235)
 figure_kin.toolbar.logo = None # do not display the bokeh logo
 figure_kin.toolbar_location = None # do not display the tools 
 figure_kin.x_range=Range1d(start=0, end=1)
@@ -59,12 +59,12 @@ figure_kin.yaxis.visible = None
 figure_kin.xgrid.grid_line_color = None
 figure_kin.ygrid.grid_line_color = None
 kinematics_src = ColumnDataSource(dict(url = [kinematics_img]))
-figure_kin.image_url(url='url', x=0, y = 1, h=1, w=1, source=kinematics_src)
+figure_kin.image_url(url='url', x=0, y =0,w=235,h=235, source=kinematics_src, anchor="bottom_left")
 figure_kin.outline_line_alpha = 0 
 
 # Free boy diagram of the cable car
-fbd_img="Cable_car/static/images/FreeBodyDiagram.svg"
-figure_fbd = figure(height=259, width=279)
+fbd_img=join(dirname(__file__),"static","images", "FreeBodyDiagram.svg")
+figure_fbd = figure()#height=259, width=279)
 figure_fbd.toolbar.logo = None # do not display the bokeh logo
 figure_fbd.toolbar_location = None # do not display the tools 
 figure_fbd.x_range=Range1d(start=0, end=1)
@@ -74,8 +74,11 @@ figure_fbd.yaxis.visible = None
 figure_fbd.xgrid.grid_line_color = None
 figure_fbd.ygrid.grid_line_color = None
 fbd_src = ColumnDataSource(dict(url = [fbd_img]))
-figure_fbd.image_url(url='url', x=0, y = 1, h=1, w=1, source=fbd_src)
+figure_fbd.image_url(url='url', x=0, y = 0, w=259, h=279, source=fbd_src, anchor="bottom_left")
 figure_fbd.outline_line_alpha = 0 
+
+
+
 
 #################################
 ##        INITIALIZATION       ##
@@ -91,7 +94,7 @@ B_max=525.0 #Horizontal distance between the supports (m) -B
 B_min=475.0
 B=500.0
 
-c_max=1.3  #Cable length stretch factor -c
+c_max=1.9  #Cable length stretch factor -c
 c_min=1.003
 c=(c_min+c_max)/2
 
@@ -361,8 +364,8 @@ plot.outline_line_alpha=0.9
 
 #Column Data Sources definition
 # Support source
-support_source_bottom = ColumnDataSource(dict(x = [0], y = [0+10.0] , src = ["Cable_car/static/images/fixed_support.svg"]))
-support_source_top    = ColumnDataSource(dict(x = [B], y = [H+5.0] , src = ["Cable_car/static/images/fixed_support.svg"]))
+support_source_bottom = ColumnDataSource(dict(x = [0], y = [0+10.0] , src = [join(dirname(__file__),"static","images", "fixed_support.svg")]))
+support_source_top    = ColumnDataSource(dict(x = [B], y = [H+5.0] , src = [join(dirname(__file__),"static","images", "fixed_support.svg")]))
 
 #Line source for the cable
 line_source_bottom = ColumnDataSource(dict(xs = [0, Lx * np.cos(theta_total1)], ys =[0, Lx * np.sin(theta_total1)] ))
