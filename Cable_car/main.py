@@ -17,12 +17,13 @@ import sympy as sp
 # bokeh imports
 from bokeh.io             import curdoc
 from bokeh.plotting       import figure
-from bokeh.models         import ColumnDataSource, Arrow, OpenHead, Range1d, TeeHead, Div
+from bokeh.models         import ColumnDataSource, Arrow, OpenHead, Range1d, TeeHead
 from bokeh.models.glyphs  import ImageURL
 from bokeh.models.widgets import Button
 from bokeh.layouts        import column, row
 
 # latex integration
+import os
 from os.path import dirname, join, split, abspath
 import sys, inspect
 currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
@@ -45,11 +46,11 @@ description2 = LatexDiv(text=open(description_filename2).read(), render_as_text=
 description_filename3 = join(dirname(__file__), "description3.html") #Part III of the description
 description3 = LatexDiv(text=open(description_filename3).read(), render_as_text=False, width=1000)
 
-# Figures_static
+#Figures_static
 # Plot
-# Kinematics of the cable car 
-kinematics_img = join(dirname(__file__),"static","images", "Kinematics.svg")
-figure_kin = figure()#(height=235, width=235)
+#Kinematics of the cable car 
+kinematics_img=os.path.join(os.path.basename(os.path.dirname(__file__)), "static", "Kinematics.svg")
+figure_kin = figure(height=235, width=235)
 figure_kin.toolbar.logo = None # do not display the bokeh logo
 figure_kin.toolbar_location = None # do not display the tools 
 figure_kin.x_range=Range1d(start=0, end=1)
@@ -59,12 +60,12 @@ figure_kin.yaxis.visible = None
 figure_kin.xgrid.grid_line_color = None
 figure_kin.ygrid.grid_line_color = None
 kinematics_src = ColumnDataSource(dict(url = [kinematics_img]))
-figure_kin.image_url(url='url', x=0, y =0,w=235,h=235, source=kinematics_src, anchor="bottom_left")
+figure_kin.image_url(url='url', x=0, y = 1, h=1, w=1, source=kinematics_src)
 figure_kin.outline_line_alpha = 0 
 
 # Free boy diagram of the cable car
-fbd_img=join(dirname(__file__),"static","images", "FreeBodyDiagram.svg")
-figure_fbd = figure()#height=259, width=279)
+fbd_img=os.path.join(os.path.basename(os.path.dirname(__file__)), "static", "FreeBodyDiagram.svg")
+figure_fbd = figure(height=259, width=279)
 figure_fbd.toolbar.logo = None # do not display the bokeh logo
 figure_fbd.toolbar_location = None # do not display the tools 
 figure_fbd.x_range=Range1d(start=0, end=1)
@@ -74,9 +75,8 @@ figure_fbd.yaxis.visible = None
 figure_fbd.xgrid.grid_line_color = None
 figure_fbd.ygrid.grid_line_color = None
 fbd_src = ColumnDataSource(dict(url = [fbd_img]))
-figure_fbd.image_url(url='url', x=0, y = 0, w=259, h=279, source=fbd_src, anchor="bottom_left")
+figure_fbd.image_url(url='url', x=0, y = 1, h=1, w=1, source=fbd_src)
 figure_fbd.outline_line_alpha = 0 
-
 
 
 
@@ -193,7 +193,7 @@ def slider_cb_fun(attr,old,new):
     B_dist_source.patch( {'xE':[(0,B)], 'yS':[(0,min(-150,Lx * np.sin(theta_total1)-270))], 'yE':[(0,min(-150,Lx * np.sin(theta_total1)-270))], 'xL':[(0,0.5*B)],'yL':[(0,min(-140,Lx * np.sin(theta_total1)-260))]} )
     H_dist_source.patch( {'xS':[(0,B+100)],'xE':[(0,B+100)],'yE':[(0,H)], 'xL':[(0,B+70)], 'yL':[(0,0.5*H)]} )
     D_dist_source.patch( {'xE':[(0,B-20)], 'xL':[(0,0.5*B-30)], 'yE':[(0,H+10)], 'yL':[(0,0.5*H+30)]} )
-    T1_source.patch( {'xE':[(0,-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-25-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,-50-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
+    T1_source.patch( {'xE':[(0,-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-50-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,-50-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
     T2_source.patch( {'xS':[(0,B)],'xE':[(0,B+(np.cos(theta_total2)*150*T2/(T1+T2)))],'yS':[(0,H)],'yE':[(0,H+(np.sin(theta_total2)*150*T2/(T1+T2)))], 'xL':[(0,+25+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2)))], 'yL':[(0,-25+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2)))]} )
 
 #Slider change call back function for B    
@@ -252,7 +252,7 @@ def slider_cb_fun_b(attr,old,new):
     B_dist_source.patch( {'xE':[(0,B)], 'yS':[(0,min(-150,Lx * np.sin(theta_total1)-270))], 'yE':[(0,min(-150,Lx * np.sin(theta_total1)-270))], 'xL':[(0,0.5*B)],'yL':[(0,min(-140,Lx * np.sin(theta_total1)-260))]} )
     H_dist_source.patch( {'xS':[(0,B+100)],'xE':[(0,B+100)],'yE':[(0,H)], 'xL':[(0,B+70)], 'yL':[(0,0.5*H)]} )
     D_dist_source.patch( {'xE':[(0,B-20)], 'xL':[(0,0.5*B-30)], 'yE':[(0,H+10)], 'yL':[(0,0.5*H+30)]} )
-    T1_source.patch( {'xE':[(0,-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-25-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,-50-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
+    T1_source.patch( {'xE':[(0,-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-50-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,-50-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
     T2_source.patch( {'xS':[(0,B)],'xE':[(0,B+(np.cos(theta_total2)*150*T2/(T1+T2)))],'yS':[(0,H)],'yE':[(0,H+(np.sin(theta_total2)*150*T2/(T1+T2)))], 'xL':[(0,+25+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2)))], 'yL':[(0,-25+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2)))]} )
 
 
@@ -310,7 +310,7 @@ def callback_reset(event):
     B_dist_source.patch( {'xE':[(0,B)], 'yS':[(0,min(-150,Lx * np.sin(theta_total1)-270))], 'yE':[(0,min(-150,Lx * np.sin(theta_total1)-270))], 'xL':[(0,0.5*B)],'yL':[(0,min(-140,Lx * np.sin(theta_total1)-260))]} )
     H_dist_source.patch( {'xS':[(0,B+100)],'xE':[(0,B+100)],'yE':[(0,H)], 'xL':[(0,B+70)], 'yL':[(0,0.5*H)]} )
     D_dist_source.patch( {'xE':[(0,B-20)], 'xL':[(0,0.5*B-30)], 'yE':[(0,H+10)], 'yL':[(0,0.5*H+30)]} )
-    T1_source.patch( {'xE':[(0,-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-25-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,-50-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
+    T1_source.patch( {'xE':[(0,-(np.cos(theta_total1)*150*(T1/(T1+T2))))],'yE':[(0,-(np.sin(theta_total1)*150*(T1/(T1+T2))))], 'xL':[(0,-50-0.5*(np.cos(theta_total1)*150*(T1/(T1+T2))))], 'yL':[(0,-50-0.5*(np.sin(theta_total1)*150*(T1/(T1+T2))))]} )
     T2_source.patch( {'xS':[(0,B)],'xE':[(0,B+(np.cos(theta_total2)*150*T2/(T1+T2)))],'yS':[(0,H)],'yE':[(0,H+(np.sin(theta_total2)*150*T2/(T1+T2)))], 'xL':[(0,+25+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2)))], 'yL':[(0,-25+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2)))]} )
 # ----------------------------------------------------------------- #
 
@@ -364,8 +364,8 @@ plot.outline_line_alpha=0.9
 
 #Column Data Sources definition
 # Support source
-support_source_bottom = ColumnDataSource(dict(x = [0], y = [0+10.0] , src = [join(dirname(__file__),"static","images", "fixed_support.svg")]))
-support_source_top    = ColumnDataSource(dict(x = [B], y = [H+5.0] , src = [join(dirname(__file__),"static","images", "fixed_support.svg")]))
+support_source_bottom = ColumnDataSource(dict(x = [0], y = [0+10.0] , src = [os.path.join(os.path.basename(os.path.dirname(__file__)), "static", "fixed_support.svg")]))
+support_source_top    = ColumnDataSource(dict(x = [B], y = [H+5.0] , src = [os.path.join(os.path.basename(os.path.dirname(__file__)), "static", "fixed_support.svg")]))
 
 #Line source for the cable
 line_source_bottom = ColumnDataSource(dict(xs = [0, Lx * np.cos(theta_total1)], ys =[0, Lx * np.sin(theta_total1)] ))
@@ -384,7 +384,7 @@ x_pt_circle=ColumnDataSource(dict(x = [Lx * np.cos(theta_total1)], y = [min(-200
 y_pt_circle=ColumnDataSource(dict(x = [-150+15], y = [ Lx * np.sin(theta_total1)] ))
 
 #Cable Tensions & Load
-T1_source = ColumnDataSource(dict(xS=[0], xE=[-(np.cos(theta_total1)*150*T1/(T1+T2))], yS=[0], yE=[-(np.sin(theta_total1)*150*T1/(T1+T2))], xL=[-25-0.5*(np.cos(theta_total1)*150*T1/(T1+T2))], yL=[-50-0.5*(np.sin(theta_total1)*150*T1/(T1+T2))], name=["T_1"]))
+T1_source = ColumnDataSource(dict(xS=[0], xE=[-(np.cos(theta_total1)*150*T1/(T1+T2))], yS=[0], yE=[-(np.sin(theta_total1)*150*T1/(T1+T2))], xL=[-50-0.5*(np.cos(theta_total1)*150*T1/(T1+T2))], yL=[-50-0.5*(np.sin(theta_total1)*150*T1/(T1+T2))], name=["T_1"]))
 T2_source =ColumnDataSource(dict(xS=[B], xE=[B+(np.cos(theta_total2)*150*T2/(T1+T2))], yS=[H], yE=[H+(np.sin(theta_total2)*150*T2/(T1+T2))], xL=[+25+B+0.5*(np.cos(theta_total2)*150*T2/(T1+T2))], yL=[-25+H+0.5*(np.sin(theta_total2)*150*T2/(T1+T2))], name=["T_2"]))
 
 #Labels and arrows for annotations & cable tensions
