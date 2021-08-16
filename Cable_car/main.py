@@ -65,7 +65,7 @@ figure_kin.outline_line_alpha = 0
 
 # Free boy diagram of the cable car
 fbd_img=os.path.join(os.path.basename(os.path.dirname(__file__)), "static", "FreeBodyDiagram.svg")
-figure_fbd = figure(height=259, width=279)
+figure_fbd = figure(height=259, width=239)
 figure_fbd.toolbar.logo = None # do not display the bokeh logo
 figure_fbd.toolbar_location = None # do not display the tools 
 figure_fbd.x_range=Range1d(start=0, end=1)
@@ -444,9 +444,10 @@ curdoc().add_root(column(
     description2,
     figure_fbd,
     description3,
-    column(plot,column(
+    column(column(
     row(H_slider,B_slider,c_slider),
     row(M_slider,X_slider,Reset_button),
+    row(plot),
     row(value_plot_distance_cable_length,value_plot_angles, value_plot_tensions)
     ))))
 
