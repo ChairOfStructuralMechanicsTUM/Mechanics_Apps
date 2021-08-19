@@ -50,7 +50,7 @@ description3 = LatexDiv(text=open(description_filename3).read(), render_as_text=
 # Plot
 #Kinematics of the cable car 
 kinematics_img=os.path.join(os.path.basename(os.path.dirname(__file__)), "static", "Kinematics.svg")
-figure_kin = figure(height=235, width=235)
+figure_kin = figure(height=235, width=298)
 figure_kin.toolbar.logo = None # do not display the bokeh logo
 figure_kin.toolbar_location = None # do not display the tools 
 figure_kin.x_range=Range1d(start=0, end=1)
@@ -59,13 +59,16 @@ figure_kin.xaxis.visible = None
 figure_kin.yaxis.visible = None
 figure_kin.xgrid.grid_line_color = None
 figure_kin.ygrid.grid_line_color = None
+figure_kin.toolbar.active_drag = None
+figure_kin.toolbar.active_scroll = None
+figure_kin.toolbar.active_tap = None
 kinematics_src = ColumnDataSource(dict(url = [kinematics_img]))
 figure_kin.image_url(url='url', x=0, y = 1, h=1, w=1, source=kinematics_src)
 figure_kin.outline_line_alpha = 0 
 
 # Free boy diagram of the cable car
-fbd_img=os.path.join(os.path.basename(os.path.dirname(__file__)), "static", "FreeBodyDiagram.svg")
-figure_fbd = figure(height=259, width=239)
+fbd_img=os.path.join(os.path.basename(os.path.dirname(__file__)), "static", "Free_Body_Diagram.svg")
+figure_fbd = figure(height=385, width=450)
 figure_fbd.toolbar.logo = None # do not display the bokeh logo
 figure_fbd.toolbar_location = None # do not display the tools 
 figure_fbd.x_range=Range1d(start=0, end=1)
@@ -74,6 +77,9 @@ figure_fbd.xaxis.visible = None
 figure_fbd.yaxis.visible = None
 figure_fbd.xgrid.grid_line_color = None
 figure_fbd.ygrid.grid_line_color = None
+figure_fbd.toolbar.active_drag = None
+figure_fbd.toolbar.active_scroll = None
+figure_fbd.toolbar.active_tap = None
 fbd_src = ColumnDataSource(dict(url = [fbd_img]))
 figure_fbd.image_url(url='url', x=0, y = 1, h=1, w=1, source=fbd_src)
 figure_fbd.outline_line_alpha = 0 
@@ -95,7 +101,7 @@ B_min=475.0
 B=500.0
 
 c_max=1.9  #Cable length stretch factor -c
-c_min=1.003
+c_min=1.00001
 c=(c_min+c_max)/2
 
 M_max=300.0 #Mass of the cable car - M (Kg)
@@ -116,7 +122,7 @@ eq1= sp.Eq(((L-x/sp.cos(theta1))*sp.cos(theta2))+x-B,0)
 eq2= sp.Eq(((x/sp.cos(theta1))*sp.sin(theta1))+((L-x/sp.cos(theta1))*sp.sin(theta2))-H,0)
     
 #Solving the system of equations numerically
-[t1,t2]=sp.nsolve((eq1,eq2),(theta1,theta2),(0.25,0.75))    
+[t1,t2]=sp.nsolve((eq1,eq2),(theta1,theta2),(0.25,0.75))  
 
 #Effective angles on the Cable
 theta_total1=float(t1) #Actual angle at S1 for a specific car position on the rope
@@ -140,7 +146,7 @@ value_plot_tensions = LatexDiv(text="", render_as_text=False, width=400)
 #Display the results
 def setValueText(D,L,t1,t2,T1,T2):
     value_plot_distance_cable_length.text = "$$\\begin{aligned} D&=" + "{:4.1f}".format(D) + "\\,\\mathrm{m}\\\\ L&=" + "{:4.1f}".format(L) + "\\,\\mathrm{m} \\end{aligned}$$"    #Display the D & L
-    value_plot_angles.text = "$$\\begin{aligned} \\theta_1&=" + "{:4.1f}".format(t1) + "\\,\\mathrm{°}\\\\ \\theta_2&=" + "{:4.1f}".format(t2) + "\\,\\mathrm{°} \\end{aligned}$$" #Display Theta1 & Theta2
+    value_plot_angles.text = "$$\\begin{aligned} \\theta_1&=" + "{:4.1f}".format((t1)) + "\\,\\mathrm{°}\\\\ \\theta_2&=" + "{:4.1f}".format(t2) + "\\,\\mathrm{°} \\end{aligned}$$" #Display Theta1 & Theta2
     value_plot_tensions.text = "$$\\begin{aligned} T_1&=" + "{:4.1f}".format(T1) + "\\,\\mathrm{N}\\\\ T_2&=" + "{:4.1f}".format(T2) + "\\,\\mathrm{N} \\end{aligned}$$"           #Display T1 & T2
 
 #Slider change call back function for H, c, M, X
@@ -327,7 +333,7 @@ B_slider = LatexSlider(title="\\text{Horizontal distance between supports (B)}="
 B_slider.on_change('value',slider_cb_fun_b) # callback function is called when value changes
 
 #Cable length stretch factor to compute the length of the cable from the distance between the supports 
-c_slider = LatexSlider(title="\\text{Cable length stretch factor (c = L/D)}", value=c, start=c_min, end=c_max, step=0.00005, width=400, css_classes=["slider"], show_value=False)
+c_slider = LatexSlider(title="\\text{Cable length stretch factor (c = L/D)}=", value=float("{:.5f}".format((c))), start=c_min, end=c_max, step=0.005, width=400, css_classes=["slider"])
 c_slider.on_change('value',slider_cb_fun) # callback function is called when value changes
 
 #Mass carried by the cable car container
