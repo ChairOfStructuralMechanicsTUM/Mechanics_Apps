@@ -142,6 +142,8 @@ For more information and contacts, please consult the [Wiki](https://github.com/
 - Hannes Englert (he)
 - Corinna Schmausser (cs)
 - Felix Schneider (fs)
+- Matthias Passek (mp)
+- Aditi Kumawat (ak)
 
 ### Developers
 
@@ -163,4 +165,6 @@ Please comply with the [Development Guideline](https://github.com/ChairOfStructu
 - Khaled Boulbrachene, kb
 - Rishith Ellath Meethal, rem
 - Irfan Haider, ih
-- Sascha Kubisch, sk, [@ga96wec](https://github.com/ga96wec)
+- Sascha Kubisch, sk, [@ga96wec](https://github.com/ga96wec) 
+- Ramsubramanian Pazhanisamy, rp , [@ge73vil] (https://github.com/ge73vil)
+
