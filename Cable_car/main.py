@@ -333,8 +333,9 @@ B_slider = LatexSlider(title="\\text{Horizontal distance between supports (B)}="
 B_slider.on_change('value',slider_cb_fun_b) # callback function is called when value changes
 
 #Cable length stretch factor to compute the length of the cable from the distance between the supports 
-c_slider = LatexSlider(title="\\text{Cable length stretch factor (c = L/D)}=", value=float("{:.5f}".format((c))), start=c_min, end=c_max, step=0.005, width=400, css_classes=["slider"])
+c_slider=LatexSlider(title="\\text{Cable length stretch factor (c = L/D)=}", value=float("{:.5f}".format((c))), start=c_min, end=c_max, step=0.005, width=400, css_classes=["slider"])
 c_slider.on_change('value',slider_cb_fun) # callback function is called when value changes
+
 
 #Mass carried by the cable car container
 M_slider = LatexSlider(title="\\text{Mass carried by the system (M)}=", value_unit="\\text{Kg}", value=M, start=M_min, end=M_max, step=1.0, width=400, css_classes=["slider"])
