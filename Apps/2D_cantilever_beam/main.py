@@ -5,6 +5,7 @@ from bokeh.layouts import row, column, widgetbox, layout
 from bokeh.models import Slider, LabelSet, Div
 from bokeh.models import Arrow, NormalHead, OpenHead, VeeHead
 from os.path import dirname, join, split, abspath
+import pathlib  # better use pathlib!
 from bokeh.models.layouts import Spacer
 from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
 from bokeh.models.glyphs import ImageURL, Patch, Quadratic, Rect
@@ -12,15 +13,21 @@ import numpy as np
 import math
 import sys, inspect
 import yaml
-currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
-parentdir = join(dirname(currentdir), "shared/")
-sys.path.insert(0,parentdir)
+# TODO: Move shared outside Apps and make import more sane
+# currentdir = dirname(abspath(inspect.getfile(inspect.currentframe())))
+# parentdir = join(dirname(currentdir), "shared/")
+# sys.path.insert(0,parentdir)
+# Using pathlib
+shareddir = str(pathlib.Path(__file__).parent.parent.resolve() / "shared" ) + "/"
+sys.path.insert(0,shareddir)
 from latex_support import LatexDiv, LatexLabel, LatexLabelSet, LatexSlider, LatexLegend
 
 # change language
 std_lang = 'en'
 flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
-strings  = yaml.safe_load(open('2D_cantilever_beam/static/strings.json', encoding='utf-8'))
+#strings  = yaml.safe_load(open('Apps/2D_cantilever_beam/static/strings.json', encoding='utf-8'))
+app_base_path = pathlib.Path(__file__).resolve().parents[0]
+strings  = yaml.safe_load(open(app_base_path / 'static' / 'strings.json', encoding='utf-8'))
 
 # Define basic beam parameters and loading
 length = 5.0
@@ -1186,7 +1193,9 @@ lang_button.on_click(changeLanguage)
 
 
 # add app description
-description_filename = join(dirname(__file__), "description.html")
+# description_filename = join("Apps", dirname(__file__), "description.html")
+# Use pathlib
+description_filename = app_base_path / "description.html"
 description = LatexDiv(text=open(description_filename).read(), render_as_text=False, width=950)
 
 # Old version: only 3D picture of rectangular cross section
@@ -1198,4 +1207,5 @@ description = LatexDiv(text=open(description_filename).read(), render_as_text=Fa
 curdoc().add_root(column(row(Spacer(width=1150),lang_button),row(Spacer(height=650),description, column(Spacer(height=100),plot3DBeam)),row(
     column(plotDefZY,widgetbox(radio_button_group),Zforce_slider,Yforce_slider,Reset_button),
     column(row(column(plotXZElement,row(Spacer(width=40),radio_button_group2)),column(row(column(plotDefXZ), column(plotDefXY)),colorBar))))))
-curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
+#curdoc().title = split(dirname(__file__))[-1].replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
+curdoc().title = str(pathlib.Path(__file__).parent.parts[-1]).replace('_',' ').replace('-',' ')  # get path of parent directory and only use the name of the Parent Directory for the tab name. Replace underscores '_' and minuses '-' with blanks ' '
