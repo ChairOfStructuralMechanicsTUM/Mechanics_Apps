@@ -13,4 +13,8 @@ Write-Host -ForegroundColor Yellow "********************************************
 
 $apps = Get-Content -Path appnames_testing.conf
 
-Start-Process bokeh -ArgumentList "serve $apps --port $port --allow-websocket-origin=${ip}:${port}" -NoNewWindow
+# There are two different options, uncomment one of the two lines below.
+# Use SSL (served at https://${ip}:${port})
+Start-Process bokeh -ArgumentList "serve $apps --port $port --allow-websocket-origin=${ip}:${port} --ssl-certfile C:\Mechanics_Apps\fullchain.pem --ssl-keyfile C:\Mechanics_Apps\privkey.pem" -NoNewWindow 
+# Don't use SSL (served at http://${ip}:${port})
+#Start-Process bokeh -ArgumentList "serve $apps --port $port --allow-websocket-origin=${ip}:${port}" -NoNewWindow 
