@@ -45,12 +45,11 @@ from gaussian_process import *
 
 #observation window
 T = 8 # observation time
-dt = 1/sample_rate
 sample_rate = 128
+dt = 1/sample_rate
 N = T * sample_rate
 f_list = rfftfreq(N , 1/sample_rate) 
 t_list = np.linspace(-T/2, T/2, T * sample_rate, endpoint=False)  
-
 
 #SDOF system parameters
 system_params = Properties()  
@@ -63,7 +62,7 @@ v0 = 0
 
 #excitation
 mean = 0
-sigma = 2
+sigma = 1
 standard_deviation = 0
 b = np.pi/4
 cov = np.ones(len(t_list)) * mean
@@ -86,7 +85,7 @@ IF_res = 0
 
 #----------------------------------------------------------------------------------------bokeh widgets------------------------------------------------------------------------------------------------
 #CheckboxButtonGroup
-statistical_property_checkbox =  CheckboxButtonGroup(labels=["Process Categroy", "Theory"], active=[1], width = 1250)
+# statistical_property_checkbox =  CheckboxButtonGroup(labels=["Application", "Theory"], active=[0], width = 1250)
 covariance_checkbox = CheckboxButtonGroup(labels=["Narrowband Process", " Squared Exponential Cov", "Martérn Class", "White Noise"], active=[], width = 1250)
 #Button
 calculate_button_Gauss = Button(label="Calculate", button_type="primary", height=40)
@@ -103,48 +102,50 @@ correlation_slider = Slider(title='correlation lenght/  length scale [-]',value 
 bandwidth_slider = Slider(title="bandwidth [-]", value=0, start=0, end=np.pi*2, step=np.pi/8, max_width = 300)
 ferquency_slider = Slider(title="frequency f [Hz]", value=5, start=1, end=10, step=1, max_width = 300)
 
-failure_slider = Slider(title="critical level |u|[-]", value=3, start=1, end= 6, step=0.5, min_width = 600, max_width = 600)
+#failure_slider = Slider(title="critical level |u|[-]", value=3, start=1, end= 6, step=0.5, min_width = 600, max_width = 600)
+
 #-----------------------------------------------------------------------------------------bokeh divs--------------------------------------------------------------------------------------------------
 div_width = 300
 title_div = Div(text="<b>SDOF under Random Vibration</b>", style={'font-size': '30px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
 Exitation_div = Div(text="<b>Excitation</b>", style={'font-size': '20px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
 para_div = Div(text="<b>Parameter Control</b>", style={'font-size': '20px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center")
 Response_div = Div(text="<b>Response</b>", style={'font-size': '20px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
-Gaussian_div = Div(text="<b>Marginal Gaussian Distribution</b>", style={'font-size': '20px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
+#Gaussian_div = Div(text="<b>Marginal Gaussian Distribution</b>", style={'font-size': '20px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
 Control_para_div = Div(text="<b>Control Parameters</b>", style={'font-size': '20px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
-Failure_div = Div(text="<b>Failure Analysis</b>", style={'font-size': '20px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
+#Failure_div = Div(text="<b>Failure Analysis</b>", style={'font-size': '20px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
 system_para_div = Div(text="<b>SDOF System</b>", style={'font-size': '15px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
-SDOF_system_div = Div(text="<b>SDOF System</b>", style={'font-size': '20px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
+SDOF_system_div = Div(text="<b>System response functions</b>", style={'font-size': '20px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
 excitation_para = Div(text="<b>Excitation</b>", style={'font-size': '15px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
-realization_div = Div(text="<b>Realization</b>", style={'font-size': '15px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
+realization_div = Div(text="<b>Add and remove realizations</b>", style={'font-size': '20px'}, width=div_width, height=15, sizing_mode="stretch_width", align="center", height_policy = "fit")
 
 frequency_title = Div(text=f"Natural frequency: {round(system_params.w, 2)}rad/s or {round(system_params.w / (2 * np.pi), 2)}Hz", style={'font-size': '12px'})
 
-theory_div = LatexDiv(text=" This application is supposed to visualize the response of a single degree of freedom (SDOF) system subjected to random vibration. The excitation thereby is a Gaussian random process $\\{X(t)\\}$ and thus solely dependent on the mean vector $\\bm{\\mu}_{X}$ and covariance matrix $\\mathbf{K}_{X X}$:"
-"$$p_{\\mathbf{X}}(\\mathbf{u})=\\frac{1}{2\\pi^{n / 2}\\left|\\mathbf{K}_{X X}\\right|^{1 / 2}} \\exp \\left(-\\frac{1}{2}\\left(\\mathbf{u}-\\bm{\\mu}_{X}\\right)^{T}\\mathbf{K}_{X X}^{-1}\\left(\\mathbf{u}-\\bm{\\mu}_{X}\\right)\\right)\\:.$$"
-"The response of the SDOF system is calculated with the harmonic transfer function $H_x(f)$ in the frequency domain with the following formular:"
+theory_div = LatexDiv(text=" This application visualizesthe response $\\{X(t)\\}$ of a single degree of freedom (SDOF) system subjected to random vibration. "
+"The excitation is modelled through a stationary Gaussian random process $\\{F(t)\\}$ with constant mean $\\mu_{F}$ and autocovrariance function $G_{FF} (\\tau)$."
+"The response of the SDOF system can be calculated in the frequency domain using the harmonic transfer function $H (f)$ with the following formula:"
 "$$X(f) = H_x(f)F(f)\\:,$$"
 "where $F(f)$ and $X(f)$ denote the excitation and reponse spectrum, respectively."
+"Under the assumption of Gaussian excitation the response of the SDOF system will also be Gaussian. "
 "</p>"
-"Furthermore, all processes are second-order stationary. This indicates that the mean and the covarinace are independent of a time shift along the abscissa. Thus, the mean value is constant for all values of $t$:"
-"$$\mu_{X}(t)=\mu_{X}\\:.$$"
-"The reason for considering stationary vibrations is that we suppose the system has oscillated since $t = -\infty$. Thus, we can assume a steady-state response. Furthermore, the choice of a Gaussian random process enables a feasible response calculation. As it is known that the response of a system subjected to a Gaussian vibration will also be Gaussian distributed."
+"The user can choose between different autocorrelation functions of the random excitation. Depending on the chosen autocorrelation function, the user can choose a number of hyperparameters in the correlation model. "
 "</p>"
-"On top of the application, the user can choose between different categories of random processes. The chategories are defined by their covaraince and thus by the degree of correlations between the different random variables that define the Gaussian process. Possible choices and their respective stationary covariance functions are:"
-"</p>"
-"narrowband processes: $$G_{\\mathrm{XX,NB}}(\\tau) = \\sigma^2 \\cos{(f_c\\tau)} \\frac{\\sin{(b\\tau)}}{b\\tau}\\:,$$"
-"processes with a squared exponential covariance: $$G_{\\mathrm{XX,SE}}(\\tau)= \\sigma^2 \\exp \\left(-\\frac{\\tau^{2}}{2 \ell^{2}}\\right)\\:,$$"
-"processes with a Matérn class covariance :$$G_{\\mathrm{XX,MC}}(\\tau)= \\sigma^{2}\\frac{2^{1-\\nu}}{\Gamma(\\nu)}\left(\\frac{\\sqrt{2 \\nu} \\tau}{\ell}\\right)^{\\nu} K_{\\nu}\left(\\frac{\sqrt{2 \\nu} \\tau}{\\ell}\\right) \\:,$$ and "
-"white noise processes: $$  G_{\\mathrm{XX,WN}}(\\tau) = 2\\pi S_0\\delta(\\tau)\\:.$$"
-"After choosing a covariance the system and the excitation can be altered by the control parameters on the top of the page. Further, to demonstrate that the shown vibration is only one possible realization, the user can add and delete other realizations."
-"</p>"
-"At the bottom of the application, the marginal cumulative distribution function (CDF) and marginal probability density function (PDF) of each random variable of the process are shown. Moreover, the probability of survival and first passage time gives an estimation of the probability of failure depending on a chosen critical level $|u|$ that indicating malfunction."
-"It is important to note that |u| in this case, defines the multiples of the standard deviation $\\sigma$.  This means that $ u*\\sigma$ is passed to the functions. Further, the probability of survival is implemented by:"
-"$$L_{|X|}(u, t) = L_{|X|}(u, 0) \\exp \\left[-v_{|X|}^{+}(u) t\\right]\ \:,$$"
-"where $ L_{|X|}(u, 0) $ is calculated of the CDF for the value $u$, and $ v_{|X|}^{+}(u) t $ describes the occurrence of crossing of level |u|." 
-"The probability of failure time is given by"
-"$$p_{T_{X}}(t) = v_{X}^{+}(u) \\exp \\left[-v_{|X|}^{+}(u) t\\right]\\:.$$"
-"For both functions, the Poisson approximation was used.", style={'font-size': '12px'} , render_as_text=False, width=1200)
+"The available models are:"
+"<ul>"
+"<li>narrowband processes: $$G_{\\mathrm{FF,NB}}(\\tau) = \\sigma^2 \\cos{(f_c\\tau)} \\frac{\\sin{(b\\tau)}}{b\\tau}\\:,$$</li>"
+"<li> squared exponential covariance: $$G_{\\mathrm{FF,SE}}(\\tau)= \\sigma^2 \\exp \\left(-\\frac{\\tau^{2}}{2 \ell^{2}}\\right)\\:,$$</li>"
+"<li> Matérn class covariance :$$G_{\\mathrm{FF,MC}}(\\tau)= \\sigma^{2}\\frac{2^{1-\\nu}}{\Gamma(\\nu)}\left(\\frac{\\sqrt{2 \\nu} \\tau}{\ell}\\right)^{\\nu} K_{\\nu}\left(\\frac{\sqrt{2 \\nu} \\tau}{\\ell}\\right) \\:,$$ </li>"
+"<li> white noise processes: $$  G_{\\mathrm{FF,WN}}(\\tau) = 2\\pi S_0\\delta(\\tau)\\:.$$</li>"
+"</ul>"
+"In addition to the first and second order moments, we plot a number of realizations of the excitation and response processes.",
+# "</p>"
+# "At the bottom of the application, the marginal cumulative distribution function (CDF) and marginal probability density function (PDF) of each random variable of the process are shown. Moreover, the probability of survival and first passage time gives an estimation of the probability of failure depending on a chosen critical level $|u|$ that indicating malfunction."
+# "It is important to note that |u| in this case, defines the multiples of the standard deviation $\\sigma$.  This means that $ u*\\sigma$ is passed to the functions. Further, the probability of survival is implemented by:"
+# "$$L_{|X|}(u, t) = L_{|X|}(u, 0) \\exp \\left[-v_{|X|}^{+}(u) t\\right]\ \:,$$"
+# "where $ L_{|X|}(u, 0) $ is calculated of the CDF for the value $u$, and $ v_{|X|}^{+}(u) t $ describes the occurrence of crossing of level |u|." 
+# "The probability of failure time is given by"
+# "$$p_{T_{X}}(t) = v_{X}^{+}(u) \\exp \\left[-v_{|X|}^{+}(u) t\\right]\\:.$$"
+# "For both functions, the Poisson approximation was used.", 
+style={'font-size': '12px'} , render_as_text=False, width=1200)
 
 spacer = Div(text="", style={'font-size': '12px'} , width = 300)
 
@@ -163,6 +164,10 @@ excitation_time.toolbar.logo = None
 excitation_time.outline_line_width = line_width
 excitation_time.outline_line_color = "Black"
 excitation_time.title.text_font_size =text_font_size
+varea_excitation_time = excitation_time.varea(x = [], y1 = [] , y2 = [] , alpha = 0.25, fill_color = "olivedrab", legend_label = "\u03C3")
+ds_excitation_time_varea = varea_excitation_time.data_source
+varea_excitation_3_time = excitation_time.varea(x = [], y1 = [] , y2 = [] , alpha = 0.25, fill_color = "darkorange", legend_label = "3\u03C3")
+ds_excitation_time_3_varea = varea_excitation_3_time.data_source
 line_excitation_t = excitation_time.line([], [], line_color="royalblue", line_width=line_width)
 ds_excitation_t = line_excitation_t.data_source
 line_excitation_t_mean = excitation_time.line([], [], line_color="red",  line_width= line_width)
@@ -173,10 +178,6 @@ ex_new3 = excitation_time.line([], [], line_color="green", line_width=line_width
 ds_ex_new1 = ex_new1.data_source
 ds_ex_new2 = ex_new2.data_source
 ds_ex_new3 = ex_new3.data_source
-varea_excitation_time = excitation_time.varea(x = [], y1 = [] , y2 = [] , alpha = 0.25, fill_color = "olivedrab", legend_label = "\u03C3")
-ds_excitation_time_varea = varea_excitation_time.data_source
-varea_excitation_3_time = excitation_time.varea(x = [], y1 = [] , y2 = [] , alpha = 0.25, fill_color = "darkorange", legend_label = "3\u03C3")
-ds_excitation_time_3_varea = varea_excitation_3_time.data_source
 excitation_time.legend.label_text_font_size = "7pt"
 
 # excitation realization in frequency domain
@@ -251,6 +252,10 @@ response_time.toolbar.logo = None
 response_time.outline_line_width = line_width
 response_time.outline_line_color = "Black"
 response_time.title.text_font_size = text_font_size
+varea1_response = response_time.varea(x = [] , y1 = [] , y2 = [] , alpha = 0.25, fill_color = "olivedrab", legend_label = "\u03C3")
+ds_response_varea1 = varea1_response.data_source
+varea2_response = response_time.varea(x = [] , y1 = [] , y2 = [] , alpha = 0.25, fill_color = "darkorange", legend_label = "3\u03C3")
+ds_response_varea2 = varea2_response.data_source
 line_response_time = response_time.line([], [], line_color="royalblue", line_width=line_width)
 ds_response_time =line_response_time.data_source
 line_response_t_mean = response_time.line([], [], line_color="red",  line_width= line_width)
@@ -261,10 +266,6 @@ res_new3 = response_time.line([], [], line_color="green", line_width=line_width)
 res_new_1 = res_new.data_source
 res_new_2 = res_new2.data_source
 res_new_3 = res_new3.data_source
-varea1_response = response_time.varea(x = [] , y1 = [] , y2 = [] , alpha = 0.25, fill_color = "olivedrab", legend_label = "\u03C3")
-ds_response_varea1 = varea1_response.data_source
-varea2_response = response_time.varea(x = [] , y1 = [] , y2 = [] , alpha = 0.25, fill_color = "darkorange", legend_label = "3\u03C3")
-ds_response_varea2 = varea2_response.data_source
 response_time.legend.label_text_font_size = "7pt"
 
 # response realization in frequency domain
@@ -308,39 +309,39 @@ line_spectral_density_res = spectral_density_res.line([], [], line_color="royalb
 ds_spectral_density_res = line_spectral_density_res.data_source
 
 #probability density function of response 
-pdf_gaussian = figure(title="Probability Density", x_axis_label="u",
-                         y_axis_label="p_X(u)",
-                         plot_width=plot_width, plot_height=plot_height, output_backend="svg")
-pdf_gaussian.xaxis[0].formatter = PrintfTickFormatter(format = "%4.0e")
-pdf_gaussian.xaxis.major_label_orientation = "vertical"
-pdf_gaussian.align  = "center"
-pdf_gaussian.title.align = "center" #titel in the center
-pdf_gaussian.toolbar.logo = None 
-pdf_gaussian.outline_line_width = line_width
-pdf_gaussian.outline_line_color = "Black"
-pdf_gaussian.title.text_font_size = text_font_size
-line_gaussian_distribution = pdf_gaussian.line([], [], line_color="royalblue", line_width=line_width)
-ds_pdf_gaussian = line_gaussian_distribution.data_source
-vbar1_pdf_gaussian = pdf_gaussian.vbar(x = [], top =[], bottom = [], width=standard_deviation/20, line_color="olivedrab", alpha = 0.5,legend_label = "\u03C3" )
-ds_pdf_gaussian_vbar1 = vbar1_pdf_gaussian.data_source
-vbar2_pdf_gaussian = pdf_gaussian.vbar(x = [], top =[], bottom = [], width=standard_deviation/20, line_color="darkorange", alpha = 0.5, legend_label = "3\u03C3")
-ds_pdf_gaussian_vbar2 = vbar2_pdf_gaussian.data_source
-pdf_gaussian.legend.label_text_font_size = "7pt"
+# pdf_gaussian = figure(title="Probability Density", x_axis_label="u",
+#                          y_axis_label="p_X(u)",
+#                          plot_width=plot_width, plot_height=plot_height, output_backend="svg")
+# pdf_gaussian.xaxis[0].formatter = PrintfTickFormatter(format = "%4.0e")
+# pdf_gaussian.xaxis.major_label_orientation = "vertical"
+# pdf_gaussian.align  = "center"
+# pdf_gaussian.title.align = "center" #titel in the center
+# pdf_gaussian.toolbar.logo = None 
+# pdf_gaussian.outline_line_width = line_width
+# pdf_gaussian.outline_line_color = "Black"
+# pdf_gaussian.title.text_font_size = text_font_size
+# line_gaussian_distribution = pdf_gaussian.line([], [], line_color="royalblue", line_width=line_width)
+# ds_pdf_gaussian = line_gaussian_distribution.data_source
+# vbar1_pdf_gaussian = pdf_gaussian.vbar(x = [], top =[], bottom = [], width=standard_deviation/20, line_color="olivedrab", alpha = 0.5,legend_label = "\u03C3" )
+# ds_pdf_gaussian_vbar1 = vbar1_pdf_gaussian.data_source
+# vbar2_pdf_gaussian = pdf_gaussian.vbar(x = [], top =[], bottom = [], width=standard_deviation/20, line_color="darkorange", alpha = 0.5, legend_label = "3\u03C3")
+# ds_pdf_gaussian_vbar2 = vbar2_pdf_gaussian.data_source
+# pdf_gaussian.legend.label_text_font_size = "7pt"
 
 #cumulative distribution function of response 
-cdf_gaussian = figure(title="Cumulative Distribution", x_axis_label= "u",
-                         y_axis_label="\u03C6((u-\u03BC)/\u03C3)",
-                         plot_width=plot_width, plot_height=plot_height, output_backend="svg")
-cdf_gaussian.xaxis[0].formatter = PrintfTickFormatter(format = "%4.0e")
-cdf_gaussian.xaxis.major_label_orientation = "vertical"
-cdf_gaussian.title.align = "center" #titel in the center
-cdf_gaussian.align  = "center"
-cdf_gaussian.toolbar.logo = None 
-cdf_gaussian.outline_line_width = line_width
-cdf_gaussian.outline_line_color = "Black"
-cdf_gaussian.title.text_font_size = text_font_size
-line_cdf_gaussian = cdf_gaussian.line([], [], line_color="royalblue", line_width=line_width)
-ds_cdf_gaussian = line_cdf_gaussian.data_source
+# cdf_gaussian = figure(title="Cumulative Distribution", x_axis_label= "u",
+#                          y_axis_label="\u03C6((u-\u03BC)/\u03C3)",
+#                          plot_width=plot_width, plot_height=plot_height, output_backend="svg")
+# cdf_gaussian.xaxis[0].formatter = PrintfTickFormatter(format = "%4.0e")
+# cdf_gaussian.xaxis.major_label_orientation = "vertical"
+# cdf_gaussian.title.align = "center" #titel in the center
+# cdf_gaussian.align  = "center"
+# cdf_gaussian.toolbar.logo = None 
+# cdf_gaussian.outline_line_width = line_width
+# cdf_gaussian.outline_line_color = "Black"
+# cdf_gaussian.title.text_font_size = text_font_size
+# line_cdf_gaussian = cdf_gaussian.line([], [], line_color="royalblue", line_width=line_width)
+# ds_cdf_gaussian = line_cdf_gaussian.data_source
 
 #bivariate distibution of response 
 # bivariate_gaussian = figure(title="Bivariate Distribution", x_axis_label= "X 1",
@@ -355,51 +356,52 @@ ds_cdf_gaussian = line_cdf_gaussian.data_source
 # ds_bivariate_gaussian = line_bivariate_gaussian.data_source
 
 #probability of survival of response realization
-prob_of_survival = figure(title="Probability of Survival", x_axis_label="t [s]",
-                         y_axis_label=f"L_X(u = (u\u03C3),t)",
-                         plot_width=plot_width, plot_height=plot_height, x_range=[0, 4], output_backend="svg")
-prob_of_survival.title.align = "center" #titel in the center
-prob_of_survival.align  = "center"
-prob_of_survival.toolbar.logo = None 
-prob_of_survival.outline_line_width = line_width
-prob_of_survival.outline_line_color = "Black"
-prob_of_survival.title.text_font_size = text_font_size
-line_prob_of_survival = prob_of_survival.line([], [], line_color="royalblue", line_width=line_width)
-ds_prob_of_survival = line_prob_of_survival.data_source
+# prob_of_survival = figure(title="Probability of Survival", x_axis_label="t [s]",
+#                          y_axis_label=f"L_X(u = (u\u03C3),t)",
+#                          plot_width=plot_width, plot_height=plot_height, x_range=[0, 4], output_backend="svg")
+# prob_of_survival.title.align = "center" #titel in the center
+# prob_of_survival.align  = "center"
+# prob_of_survival.toolbar.logo = None 
+# prob_of_survival.outline_line_width = line_width
+# prob_of_survival.outline_line_color = "Black"
+# prob_of_survival.title.text_font_size = text_font_size
+# line_prob_of_survival = prob_of_survival.line([], [], line_color="royalblue", line_width=line_width)
+# ds_prob_of_survival = line_prob_of_survival.data_source
 
 #first passage time of response realization
-prob_of_time = figure(title="First Passage Time", x_axis_label="t [s]",
-                         y_axis_label="p(T_X(t))",
-                         plot_width=plot_width, plot_height=plot_height, x_range=[0, 4], output_backend="svg")
-prob_of_time.title.align = "center" #titel in the center
-prob_of_time.align  = "center"
-prob_of_time.toolbar.logo = None 
-prob_of_time.outline_line_width = line_width
-prob_of_time.outline_line_color = "Black"
-prob_of_time.title.text_font_size = text_font_size
-line_prob_of_time = prob_of_time.line([], [], line_color="royalblue", line_width=line_width)
-ds_prob_of_time = line_prob_of_time.data_source
+# prob_of_time = figure(title="First Passage Time", x_axis_label="t [s]",
+#                          y_axis_label="p(T_X(t))",
+#                          plot_width=plot_width, plot_height=plot_height, x_range=[0, 4], output_backend="svg")
+# prob_of_time.title.align = "center" #titel in the center
+# prob_of_time.align  = "center"
+# prob_of_time.toolbar.logo = None 
+# prob_of_time.outline_line_width = line_width
+# prob_of_time.outline_line_color = "Black"
+# prob_of_time.title.text_font_size = text_font_size
+# line_prob_of_time = prob_of_time.line([], [], line_color="royalblue", line_width=line_width)
+# ds_prob_of_time = line_prob_of_time.data_source
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------call back functions---------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-def update_statistic_checkbox(attrname, old, new): 
-#Makes sure that only on item (covariance, spectral density or theory is selected and shows bokeh widgets accordingly)
-    global active_statistical #varaible that remembers last checkbox item
-    if statistical_property_checkbox.active == [1]: #theory
-        covariance_checkbox.visible = False
-        theory_div.visible = True
-        covariance_checkbox.active = []
-        update_checkbox(None, None, None)
+# def update_statistic_checkbox(attrname, old, new): 
+# #Makes sure that only on item (covariance, spectral density or theory is selected and shows bokeh widgets accordingly)
+#     global active_statistical #varaible that remembers last checkbox item
+#     if statistical_property_checkbox.active == [1]: #theory
+#         covariance_checkbox.visible = False
+#         theory_div.visible = True
+#         covariance_checkbox.active = []
+#         update_checkbox(None, None, None)
     
-    if (statistical_property_checkbox.active == [0,1]):
-        #If used selects more than one checkbox item at ones, the fisr selected item is active
-        statistical_property_checkbox.active = active_statistical
+#     if (statistical_property_checkbox.active == [0,1]):
+#         #If used selects more than one checkbox item at ones, the fisr selected item is active
+#         statistical_property_checkbox.active = active_statistical
     
-    if statistical_property_checkbox.active == [0]:
-        covariance_checkbox.visible = True
-        theory_div.visible = False
+#     if statistical_property_checkbox.active == [0]:
+#         covariance_checkbox.visible = True
+#         theory_div.visible = False
        
-    active_statistical = statistical_property_checkbox.active
+#     active_statistical = statistical_property_checkbox.active
 
 def update_covariance_checkbox(attrname, old, new):
     global active_cov
@@ -440,82 +442,82 @@ def update_checkbox(attrname, old, new):
 
     realizations = []
 
-    # changing GUI depending on checkbox values (Gaussian Process, Equalizer)
-    if  statistical_property_checkbox.active == [1]: 
-        statistical_property_checkbox.visible = True
-        theory_div.visible = True
-        sigma_slider.visible = False
-        mean_slider.visible = False
-        ferquency_slider.visible = False
-        bandwidth_slider.visible = False
-        correlation_slider.visible = False
-        mass_slider. visible = False
-        damping_slider.visible = False
-        stiffness_slider.visible = False
-        transfer_time.visible = False
-        transfer_freq_mag.visible = False
-        excitation_time.visible = False
-        excitation_freq.visible = False
-        response_time.visible = False
-        response_freq.visible = False
-        covariance_exc.visible = False
-        spectral_density_exc.visible = False
-        covariance_res.visible = False
-        spectral_density_res.visible = False
-        calculate_button_Gauss.visible = False
-        frequency_title.visible = False
-        Add_Gaussian_Button.visible = False
-        Remove_Gaussian_Button.visible = False
-        Exitation_div.visible = False
-        Response_div.visible = False
-        Gaussian_div.visible = False
-        Failure_div.visible = False
-        pdf_gaussian.visible = False
-        cdf_gaussian.visible = False
-        #bivariate_gaussian.visible = False
-        Control_para_div.visible = False
-        prob_of_survival.visible = False
-        prob_of_time.visible = False
-        failure_slider.visible = False
-        SDOF_system_div.visible = False
-        system_para_div.visible = False
-        excitation_para.visible = False
-        realization_div.visible = False
-    else:
-        mass_slider. visible = True
-        damping_slider.visible = True
-        stiffness_slider.visible = True
-        transfer_time.visible = True
-        transfer_freq_mag.visible = True
-        excitation_time.visible = True
-        excitation_freq.visible = True
-        response_time.visible = True
-        response_freq.visible = True
-        covariance_exc.visible = True
-        spectral_density_exc.visible = True
-        covariance_res.visible = True
-        spectral_density_res.visible = True
-        calculate_button_Gauss.visible = True
-        frequency_title.visible = True
-        Add_Gaussian_Button.visible = True
-        Remove_Gaussian_Button.visible = True
-        Exitation_div.visible = True
-        Response_div.visible = True
-        Gaussian_div.visible = True
-        Failure_div.visible = True
-        theory_div.visible = False
-        Failure_div.visible = True
-        pdf_gaussian.visible = True
-        cdf_gaussian.visible = True
-        #bivariate_gaussian.visible = True
-        Control_para_div.visible = True
-        prob_of_survival.visible = True
-        prob_of_time.visible = True
-        failure_slider.visible = True
-        SDOF_system_div.visible = True
-        system_para_div.visible = True
-        excitation_para.visible = True
-        realization_div.visible = True
+    # # changing GUI depending on checkbox values (Gaussian Process, Equalizer)
+    # if  statistical_property_checkbox.active == [1]: 
+    #     statistical_property_checkbox.visible = True
+    #     theory_div.visible = True
+    #     sigma_slider.visible = False
+    #     mean_slider.visible = False
+    #     ferquency_slider.visible = False
+    #     bandwidth_slider.visible = False
+    #     correlation_slider.visible = False
+    #     mass_slider. visible = False
+    #     damping_slider.visible = False
+    #     stiffness_slider.visible = False
+    #     transfer_time.visible = False
+    #     transfer_freq_mag.visible = False
+    #     excitation_time.visible = False
+    #     excitation_freq.visible = False
+    #     response_time.visible = False
+    #     response_freq.visible = False
+    #     covariance_exc.visible = False
+    #     spectral_density_exc.visible = False
+    #     covariance_res.visible = False
+    #     spectral_density_res.visible = False
+    #     calculate_button_Gauss.visible = False
+    #     frequency_title.visible = False
+    #     Add_Gaussian_Button.visible = False
+    #     Remove_Gaussian_Button.visible = False
+    #     Exitation_div.visible = False
+    #     Response_div.visible = False
+    #     # Gaussian_div.visible = False
+    #     # Failure_div.visible = False
+    #     # pdf_gaussian.visible = False
+    #     # cdf_gaussian.visible = False
+    #     #bivariate_gaussian.visible = False
+    #     Control_para_div.visible = False
+    #     # prob_of_survival.visible = False
+    #     # prob_of_time.visible = False
+    #     # failure_slider.visible = False
+    #     SDOF_system_div.visible = False
+    #     system_para_div.visible = False
+    #     excitation_para.visible = False
+    #     realization_div.visible = False
+    # else:
+    #     mass_slider. visible = True
+    #     damping_slider.visible = True
+    #     stiffness_slider.visible = True
+    #     transfer_time.visible = True
+    #     transfer_freq_mag.visible = True
+    #     excitation_time.visible = True
+    #     excitation_freq.visible = True
+    #     response_time.visible = True
+    #     response_freq.visible = True
+    #     covariance_exc.visible = True
+    #     spectral_density_exc.visible = True
+    #     covariance_res.visible = True
+    #     spectral_density_res.visible = True
+    #     calculate_button_Gauss.visible = True
+    #     frequency_title.visible = True
+    #     Add_Gaussian_Button.visible = True
+    #     Remove_Gaussian_Button.visible = True
+    #     Exitation_div.visible = True
+    #     Response_div.visible = True
+    #     # Gaussian_div.visible = True
+    #     # Failure_div.visible = True
+    #     theory_div.visible = False
+    #     # Failure_div.visible = True
+    #     # pdf_gaussian.visible = True
+    #     # cdf_gaussian.visible = True
+    #     #bivariate_gaussian.visible = True
+    #     Control_para_div.visible = True
+    #     # prob_of_survival.visible = True
+    #     # prob_of_time.visible = True
+    #     # failure_slider.visible = True
+    #     SDOF_system_div.visible = True
+    #     system_para_div.visible = True
+    #     excitation_para.visible = True
+    #     realization_div.visible = True
         
     update_cov_slider()
 
@@ -847,79 +849,79 @@ def calculate_stochastic():
     ds_response_varea2.data["y2"] = y2
 
 
-    Gaussian_distribution()
-    failure(None, None, None)
+    # Gaussian_distribution()
+    # failure(None, None, None)
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------Gaussian distribution------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-def Gaussian_distribution():
-    mean = statistics.mean(response_f)
+# def Gaussian_distribution():
+#     mean = statistics.mean(response_f)
 
-    u = np.linspace(-standard_deviation*5 + mean, standard_deviation * 5 + mean, 100)
-    gauss_pdf = Gaussian_distribution_pdf(u, mean, standard_deviation)
-    gauss_cdf = Gaussian_distribution_cdf(u, mean, standard_deviation)
+#     u = np.linspace(-standard_deviation*5 + mean, standard_deviation * 5 + mean, 100)
+#     gauss_pdf = Gaussian_distribution_pdf(u, mean, standard_deviation)
+#     gauss_cdf = Gaussian_distribution_cdf(u, mean, standard_deviation)
 
-    x = np.linspace(-standard_deviation + mean, standard_deviation + mean, 20)
-    y = gauss_pdf[40:60]
-    y_bottom = np.zeros(len(y))
+#     x = np.linspace(-standard_deviation + mean, standard_deviation + mean, 20)
+#     y = gauss_pdf[40:60]
+#     y_bottom = np.zeros(len(y))
 
-    x_1 = np.linspace(-3*standard_deviation + mean,3*standard_deviation + mean, 60)
-    y_1 = gauss_pdf[20:80]
-    y1_bottom = np.zeros(len(y_1))
+#     x_1 = np.linspace(-3*standard_deviation + mean,3*standard_deviation + mean, 60)
+#     y_1 = gauss_pdf[20:80]
+#     y1_bottom = np.zeros(len(y_1))
 
-    ds_pdf_gaussian_vbar1.data["x"]= x
-    ds_pdf_gaussian_vbar1.data["top"]= y
-    ds_pdf_gaussian_vbar1.data["bottom"]= y_bottom
+#     ds_pdf_gaussian_vbar1.data["x"]= x
+#     ds_pdf_gaussian_vbar1.data["top"]= y
+#     ds_pdf_gaussian_vbar1.data["bottom"]= y_bottom
 
-    ds_pdf_gaussian_vbar2.data["x"]= x_1
-    ds_pdf_gaussian_vbar2.data["top"]= y_1
-    ds_pdf_gaussian_vbar2.data["bottom"]= y1_bottom
+#     ds_pdf_gaussian_vbar2.data["x"]= x_1
+#     ds_pdf_gaussian_vbar2.data["top"]= y_1
+#     ds_pdf_gaussian_vbar2.data["bottom"]= y1_bottom
 
-    ds_pdf_gaussian.data["x"] = u
-    ds_pdf_gaussian.data["y"] = gauss_pdf
+#     ds_pdf_gaussian.data["x"] = u
+#     ds_pdf_gaussian.data["y"] = gauss_pdf
 
-    ds_cdf_gaussian.data["x"] = u
-    ds_cdf_gaussian.data["y"] = gauss_cdf
+#     ds_cdf_gaussian.data["x"] = u
+#     ds_cdf_gaussian.data["y"] = gauss_cdf
 
 
-    # mean_bivariate = np.array([mean, mean])
-    # sigma_bivariate = np.array([[sigma, 0.95], [ 0.95, sigma]])
-    # xs, ys, col, xt, yt, text = plot_Gaussian_contours(mean_bivariate,sigma_bivariate)
+#     # mean_bivariate = np.array([mean, mean])
+#     # sigma_bivariate = np.array([[sigma, 0.95], [ 0.95, sigma]])
+#     # xs, ys, col, xt, yt, text = plot_Gaussian_contours(mean_bivariate,sigma_bivariate)
     
-    # ds_bivariate_gaussian.data["xs"] = xs
-    # ds_bivariate_gaussian.data["ys"] = ys
-    # ds_bivariate_gaussian.data["col"] = col
-    # ds_bivariate_gaussian.data["xt"] = xt
-    # ds_bivariate_gaussian.data["yt"] = yt
-    # ds_bivariate_gaussian.data["text"] = text
+#     # ds_bivariate_gaussian.data["xs"] = xs
+#     # ds_bivariate_gaussian.data["ys"] = ys
+#     # ds_bivariate_gaussian.data["col"] = col
+#     # ds_bivariate_gaussian.data["xt"] = xt
+#     # ds_bivariate_gaussian.data["yt"] = yt
+#     # ds_bivariate_gaussian.data["text"] = text
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------failure calculation-----------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-def failure(attr, old, new):
-    mean = statistics.mean(response_f)
-    velocity = np.gradient(response_f, dt)
-    sigma_velocity= np.std(velocity)
-    u = failure_slider.value * standard_deviation
-    v = 2 * rate_of_upcrossing(u, standard_deviation, sigma_velocity, 0)
-    d = norm(loc=mean, scale=standard_deviation)
-    L = d.cdf(np.abs(u)) #+ d.cdf(np.abs(-u)) 
-    prob_surv = prob_of_surv(v, L, t_list)
+# def failure(attr, old, new):
+#     mean = statistics.mean(response_f)
+#     velocity = np.gradient(response_f, dt)
+#     sigma_velocity= np.std(velocity)
+#     u = failure_slider.value * standard_deviation
+#     v = 2 * rate_of_upcrossing(u, standard_deviation, sigma_velocity, 0)
+#     d = norm(loc=mean, scale=standard_deviation)
+#     L = d.cdf(np.abs(u)) #+ d.cdf(np.abs(-u)) 
+#     prob_surv = prob_of_surv(v, L, t_list)
 
-    ds_prob_of_survival.data["x"] = t_list[512 :]
-    ds_prob_of_survival.data["y"] = prob_surv[512:]
+#     ds_prob_of_survival.data["x"] = t_list[512 :]
+#     ds_prob_of_survival.data["y"] = prob_surv[512:]
 
-    prob_time = prob_of_failure_time(v, t_list)
-    #prob_of_survival.y_axis_label=f"Probability L_X(({failure_slider.value}\u03C3),t)"
-    ds_prob_of_time.data["x"] = t_list[512 :]
-    ds_prob_of_time.data["y"] = prob_time[512 :]
+#     prob_time = prob_of_failure_time(v, t_list)
+#     #prob_of_survival.y_axis_label=f"Probability L_X(({failure_slider.value}\u03C3),t)"
+#     ds_prob_of_time.data["x"] = t_list[512 :]
+#     ds_prob_of_time.data["y"] = prob_time[512 :]
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------widgets callback-------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-statistical_property_checkbox.on_change("active", update_statistic_checkbox)
+# statistical_property_checkbox.on_change("active", update_statistic_checkbox)
 covariance_checkbox.on_change("active", update_covariance_checkbox)
 
 damping_slider.on_change("value_throttled", update_impulse)
@@ -937,7 +939,7 @@ Remove_Gaussian_Button.on_click(delete_Gaussian)
 
 calculate_button_Gauss.on_click(calculate)
 
-failure_slider.on_change("value_throttled", failure)
+# failure_slider.on_change("value_throttled", failure)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------pre run-----------------------------------------------------------------------------------------------------
@@ -948,7 +950,7 @@ failure_slider.on_change("value_throttled", failure)
 #calling callbacks at start of website so no values are undefined
 #update_excitation_cov(None, None, None)
 update_impulse(None, None, None)
-update_statistic_checkbox(None, None, None)
+# update_statistic_checkbox(None, None, None)
 covariance_distribution()
 spec_dens(cov)
 
@@ -967,13 +969,15 @@ input_4 = row(spacer, Add_Gaussian_Button, Remove_Gaussian_Button, spacer)
 
 # putting plots into GUI
 
-explain = theory_div
+# explain = theory_div
 plot = column(Exitation_div, row(covariance_exc, spectral_density_exc, excitation_time, excitation_freq),
                     calculate_button_Gauss, Response_div,
-               row(covariance_res, spectral_density_res, response_time, response_freq), Gaussian_div,
-               row(spacer, pdf_gaussian, cdf_gaussian, spacer), Failure_div, row(spacer,failure_slider), row(spacer,prob_of_survival, prob_of_time, spacer)) #, data_table)
+               row(covariance_res, spectral_density_res, response_time, response_freq)) #, data_table)
+#, Gaussian_div,
+            #    row(spacer, pdf_gaussian, cdf_gaussian, spacer), Failure_div, row(spacer,failure_slider), row(spacer,prob_of_survival, prob_of_time, spacer)
 
-final = column(title_div, statistical_property_checkbox, covariance_checkbox,explain, Control_para_div, system_para_div, input_1, excitation_para, input_3, realization_div, input_4, SDOF_system_div ,input_2,  plot)
+# final = column(title_div, statistical_property_checkbox, covariance_checkbox,explain, Control_para_div, system_para_div, input_1, excitation_para, input_3, SDOF_system_div ,input_2, realization_div, input_4,  plot)
+final = column(title_div, theory_div, covariance_checkbox, Control_para_div, system_para_div, input_1, excitation_para, input_3, SDOF_system_div ,input_2, realization_div, input_4,  plot)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
