@@ -1,0 +1,34 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Couple Moment",
+        "de": "Äquivalente Momente"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open(app_base_path /'description.html').read()",
+        "de": "open(app_base_path /'description_de.html', encoding='utf-8').read()"
+    },
+    "F1F2Location_slider.title":
+    {
+        "en": "\\\\text{Length }b=",
+        "de": "\\\\text{Länge }b="
+    },
+    "plot.xaxis.axis_label":
+    {
+        "en": "Distance [m]",
+        "de": "Länge [m]"
+    },
+    "plot.yaxis.axis_label":
+    {
+        "en": "Force [N]",
+        "de": "Kraft [N]"
+    }
+}

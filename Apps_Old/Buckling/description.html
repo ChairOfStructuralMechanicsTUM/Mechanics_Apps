@@ -1,0 +1,80 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<!--<hr>-->
+
+<h4> Euler Buckling Equation </h4>
+<p>
+  Buckling can be modeled by a fourth-order differential equation known as the Euler Buckling Equation:
+    $$ EI {d^4 w \over dx^4} + F{d^2 w \over dx^2} = 0 $$
+
+</p>
+
+<p>
+  The solution of this differential equation can be represented in the form of sines and cosines:
+  $$ w = A \sin{\sqrt{ {F \over EI}} x  } + B \cos{\sqrt{ {F \over EI} } x} + Cx + D $$
+</p>
+
+<p>
+  Where constants $A,B,C,D$ are determined by the boundary conditions of the column.
+</p>
+
+
+In order to determine the maximum load a column can withstand before buckling, one can utilize the 'Euler' Formula at the critical load (the lowest value) and obtain:
+$$ F_{crit} = { c \pi^2 E I \over L^2 } $$
+<p> Where: </p>
+<ul>
+<li> \(F_{crit}\) is the calculated critical force where buckling will occur.</li>
+<li> \(E\) is the modulus of elasticity of the material.</li>
+<li> \(I\) is the moment of inertia of the cross section of the column. </li>
+<li> \(L\) is the length of the column.</li>
+<li> \(c\) is the column effective length factor. \(c\) changes with the boundary conditions and is the governing parameter in this application.</li>
+</ul>
+
+<p>
+ \(c\) varies for each boundary condition. The boundary conditions used in this app have the following values:
+</p>
+<ul>
+<li> Free-Fixed:      \(c = 1/4\) </li>
+<li> Pinned-Pinned:   \(c = 1\) </li>
+<li> Pinned-Fixed:    \(c = 2\) </li>
+<li> Fixed-Fixed:     \(c = 4\) </li>
+</ul>
+
+<!-- bifurcation plot excluded - just adds a lot of confusion? - maybe think of another description
+<p>Buckling can be described mathematically as a bifurcation in the solution to the equations of static equilibrium (see bifurcation plot).
+The bifurcation plot shows the displacement \(w\) (normalized to \(L\)). </p>
+-->

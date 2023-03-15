@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="24.444744"
+   height="19.744839"
+   viewBox="0 0 24.444744 19.744839"
+   id="svg10739"
+   version="1.1"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="support02.svg">
+  <defs
+     id="defs10741">
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker11557"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutM">
+      <path
+         transform="scale(0.4)"
+         style="fill:#ff0000;fill-opacity:1;fill-rule:evenodd;stroke:#ff0000;stroke-width:1.00000003pt;stroke-opacity:1"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path11559"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker11511"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutM">
+      <path
+         transform="scale(0.4)"
+         style="fill:#ff0000;fill-opacity:1;fill-rule:evenodd;stroke:#ff0000;stroke-width:1.00000003pt;stroke-opacity:1"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path11513"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutM"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutM">
+      <path
+         transform="scale(0.4)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path9442"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker11348"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutM">
+      <path
+         transform="scale(0.4)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path11350"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutM-5"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutM">
+      <path
+         transform="scale(0.4)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path9442-4-5"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutM-55"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutM">
+      <path
+         transform="scale(0.4)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;marker-start:none"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path9442-4"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInMZ"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleInMZ"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4960"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#00a51a;fill-rule:evenodd;stroke:#00a51a;stroke-width:1.00000003pt;marker-start:none"
+         transform="scale(-0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInMZ"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleInMZ-3"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4960-4"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#00a51a;fill-rule:evenodd;stroke:#00a51a;stroke-width:1.00000003pt;marker-start:none"
+         transform="scale(-0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutMZ"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutMZ"
+       style="overflow:visible">
+      <path
+         id="path5915"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#00a51a;fill-rule:evenodd;stroke:#00a51a;stroke-width:1.00000003pt;marker-start:none"
+         transform="scale(0.4)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <inkscape:path-effect
+       is_visible="true"
+       id="path-effect5343-3"
+       effect="spiro" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="5.6"
+     inkscape:cx="76.446372"
+     inkscape:cy="-13.317026"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="true"
+     inkscape:object-paths="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:object-nodes="true"
+     inkscape:snap-smooth-nodes="true"
+     units="px"
+     inkscape:window-width="1366"
+     inkscape:window-height="706"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:snap-global="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid11287"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       originx="-0.49655519"
+       originy="-59.589173" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata10744">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-0.49655519,-973.0282)">
+    <g
+       transform="translate(-411.63771,934.8872)"
+       id="g3721">
+      <polygon
+         style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
+         stroke-miterlimit="22.9256"
+         points="424.602,44.31 418.976,52.157 430.228,52.157 "
+         id="polygon283" />
+      <line
+         style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
+         stroke-miterlimit="22.9256"
+         x1="412.62399"
+         y1="52.298"
+         x2="436.57901"
+         y2="52.298"
+         id="line285" />
+      <line
+         style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
+         stroke-miterlimit="22.9256"
+         x1="428.64301"
+         y1="57.499001"
+         x2="434.99399"
+         y2="52.298"
+         id="line287" />
+      <line
+         style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
+         stroke-miterlimit="22.9256"
+         x1="422.64301"
+         y1="57.499001"
+         x2="428.99399"
+         y2="52.298"
+         id="line289" />
+      <line
+         style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
+         stroke-miterlimit="22.9256"
+         x1="416.64401"
+         y1="57.499001"
+         x2="422.99399"
+         y2="52.298"
+         id="line291" />
+      <line
+         style="fill:none;stroke:#000000;stroke-miterlimit:22.92560005"
+         stroke-miterlimit="22.9256"
+         x1="412.45099"
+         y1="56.057999"
+         x2="417.04401"
+         y2="52.298"
+         id="line293" />
+      <circle
+         style="fill:#ffffff;stroke:#000000;stroke-miterlimit:22.92560005"
+         stroke-miterlimit="22.9256"
+         cx="424.60199"
+         cy="41.474998"
+         r="2.8340001"
+         id="circle295" />
+    </g>
+  </g>
+</svg>

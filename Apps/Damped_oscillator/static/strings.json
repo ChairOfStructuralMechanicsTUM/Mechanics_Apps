@@ -1,0 +1,73 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Damped oscillator",
+        "de": "Gedämpfter Einmassenschwinger"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open(app_base_path /'description.html').read()",
+        "de": "open(app_base_path /'description_de.html', encoding='utf-8').read()"
+    },
+    "stop_button.label":
+    {
+        "en": "Stop",
+        "de": "Stop"
+    },
+    "reset_button.label":
+    {
+        "en": "Reset",
+        "de": "Zurücksetzen"
+    },
+    "play_pause_button.label":
+    {
+        "checkFlag": "show",
+        "on":
+        {
+            "en": "Pause",
+            "de": "Pause"
+        },
+        "off":
+        {
+            "en": "Play",
+            "de": "Start"
+        }
+    },
+    "mass_input.title":
+    {
+        "en": "\\\\text{Mass } \\\\left[ \\mathrm{kg} \\\\right]: ",
+        "de": "\\\\text{Masse } \\\\left[ \\mathrm{kg} \\\\right]: "
+    },
+    "kappa_input.title":
+    {
+        "en": "\\\\text{Spring stiffness } \\\\left[ \\\\frac{N}{m} \\\\right]: ",
+        "de": "\\\\text{Federsteifigkeit } \\\\left[ \\\\frac{N}{m} \\\\right]: "
+    },
+    "lam_input.title":
+    {
+        "en": "\\\\text{Damping coefficient } \\\\left[ \\\\frac{Ns}{m} \\\\right]: ",
+        "de": "\\\\text{Dämpferkoeffizient } \\\\left[ \\\\frac{Ns}{m} \\\\right]: "
+    },
+    "initV_input.title":
+    {
+        "en": "\\\\text{Initial velocity } \\\\left[ \\\\frac{m}{s} \\\\right]: ",
+        "de": "\\\\text{Anfangsgeschwindigkeit } \\\\left[ \\\\frac{m}{s} \\\\right]: "
+    },
+    "p.xaxis.axis_label":
+    {
+        "en": "Time [s]",
+        "de": "Zeit [s]"
+    },
+    "p.yaxis.axis_label":
+    {
+        "en": "Displacement [m]",
+        "de": "Verschiebung [m]"
+    }
+}

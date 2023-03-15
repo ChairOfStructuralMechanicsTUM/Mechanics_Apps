@@ -13,14 +13,14 @@
     "description.text":
     {
         "isCode": true,
-        "en": "open('Apps/2d_cantilever_beam/description.html').read()",
-        "de": "open('Apps/2d_cantilever_beam/description_de.html', encoding='utf-8').read()"
+        "en": "open(app_base_path /'description.html').read()",
+        "de": "open(app_base_path /'description_de.html', encoding='utf-8').read()"
     },
     "CrossSection3":
     {
         "isCode": true,
-        "en": "open('Apps/2D_cantilever_beam/static/images/Circular.svg').read()",
-        "de": "open('Apps/2D_cantilever_beam/static/images/Circular_de.svg').read()"
+        "en": "open(app_base_path /'static/images/Circular.svg').read()",
+        "de": "open(app_base_path /'static/images/Circular_de.svg').read()"
     },
     "radio_button_group.labels[0]":
     {

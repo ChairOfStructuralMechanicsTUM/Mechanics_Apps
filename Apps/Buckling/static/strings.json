@@ -1,0 +1,55 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Buckling",
+        "de": "Knicken"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description1.text":
+    {
+        "isCode": true,
+        "en": "open(app_base_path /'description1.html').read()",
+        "de": "open(app_base_path /'description1_de.html', encoding='utf-8').read()"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open(app_base_path /'description.html').read()",
+        "de": "open(app_base_path /'description_de.html', encoding='utf-8').read()"
+    },
+    "weight_slide.title":
+    {
+        "en": "\\\\mathrm{Force \\ Ratio \\ }\\\\frac{\\\\mathrm{F}}{\\\\mathrm{F_{crit,2}}}\\\\mathrm{:}",
+        "de": "\\\\mathrm{Lastverhältnis \\ }\\\\frac{\\\\mathrm{F}}{\\\\mathrm{F_{crit,2}}}\\\\mathrm{:}"
+    },
+    "button.label":
+    {
+        "en": "Reset",
+        "de": "Zurücksetzen"
+    },
+    "col1.name":
+    {
+        "en": "Free-Fixed",
+        "de": "Eulerfall \\ 1"
+    },
+    "col2.name":
+    {
+        "en": "Pinned-Pinned",
+        "de": "Eulerfall \\ 2"
+    },
+    "col3.name":
+    {
+        "en": "Pinned-Fixed",
+        "de": "Eulerfall \\ 3"
+    },
+    "col4.name":
+    {
+        "en": "Fixed-Fixed",
+        "de": "Eulerfall \\ 4"
+    }
+}

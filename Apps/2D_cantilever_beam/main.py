@@ -4,7 +4,7 @@ from bokeh.plotting import Figure, ColumnDataSource, output_file , show
 from bokeh.layouts import row, column, widgetbox, layout
 from bokeh.models import Slider, LabelSet, Div
 from bokeh.models import Arrow, NormalHead, OpenHead, VeeHead
-from os.path import dirname, join, split, abspath
+#from os.path import dirname, join, split, abspath
 import pathlib  # better use pathlib!
 from bokeh.models.layouts import Spacer
 from bokeh.models.widgets import Button, CheckboxGroup, RadioButtonGroup
@@ -28,7 +28,6 @@ flags    = ColumnDataSource(data=dict(show=['off'], lang=[std_lang]))
 #strings  = yaml.safe_load(open('Apps/2D_cantilever_beam/static/strings.json', encoding='utf-8'))
 app_base_path = pathlib.Path(__file__).resolve().parents[0]
 strings  = yaml.safe_load(open(app_base_path / 'static' / 'strings.json', encoding='utf-8'))
-
 # Define basic beam parameters and loading
 length = 5.0
 height = 1.0
@@ -54,24 +53,24 @@ amplificationFactor = 200
 
 
 # Cross Section Source:
-CrossSection1 = "2D_cantilever_beam/static/images/Rectangular.svg"
-CrossSection2 = "2D_cantilever_beam/static/images/DoubleT.svg"
-CrossSection3 = "2D_cantilever_beam/static/images/Circular.svg"
-CrossSection4 = "2D_cantilever_beam/static/images/Triangular.svg"
+CrossSection1 = str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"Rectangular.svg")
+CrossSection2 = str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"DoubleT.svg")
+CrossSection3 = str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"Circular.svg")
+CrossSection4 = str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"Triangular.svg")
 CrossSectionSource1 = ColumnDataSource(data=dict(sp1=[], x=[] , y=[]))
 CrossSectionSource2 = ColumnDataSource(data=dict(sp2=[], x=[] , y=[]))
 CrossSectionSource3 = ColumnDataSource(data=dict(sp3=[], x=[] , y=[]))
 CrossSectionSource4 = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
-CrossSectionSource_3D = ColumnDataSource(data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS0.png"]))
+CrossSectionSource_3D = ColumnDataSource(data=dict(img_url=[str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"3DBeam_CS0.png")]))
 
 # Source & Initialization of Internal Element Plot:
-XZElement = "2D_cantilever_beam/static/images/XZElement.svg"
+XZElement = str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"XZElement.svg")
 XZElementSource = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
 XZElementSource.data = dict(sp4=[XZElement], x = [0], y = [0])
-XZElement2 = "2D_cantilever_beam/static/images/XZElement.svg"
+XZElement2 = str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"XZElement.svg")
 XZElement2Source = ColumnDataSource(data=dict(sp4=[], x=[] , y=[]))
 XZElement2Source.data = dict(sp4=[XZElement], x = [0], y = [0])
-XZBeam = "2D_cantilever_beam/static/images/XZBeam.svg"
+XZBeam = str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"XZBeam.svg")
 XZBeamSource = ColumnDataSource(data=dict(sp5=[], x=[] , y=[]))
 XZBeamSource.data = dict(sp5=[XZBeam], x = [0], y = [0])
 
@@ -646,10 +645,10 @@ def update_cross_section_image():
     if lang == "en":    lang_str = ""
     elif lang == "de":  lang_str = "_de"
 
-    CrossSection1 = "2D_cantilever_beam/static/images/Rectangular"+lang_str+".svg"
-    CrossSection2 = "2D_cantilever_beam/static/images/DoubleT"+lang_str+".svg"
-    CrossSection3 = "2D_cantilever_beam/static/images/Circular"+lang_str+".svg"
-    CrossSection4 = "2D_cantilever_beam/static/images/Triangular"+lang_str+".svg"
+    CrossSection1 = str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"Rectangular")+lang_str+".svg"
+    CrossSection2 = str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"DoubleT")+lang_str+".svg"
+    CrossSection3 = str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"Circular")+lang_str+".svg"
+    CrossSection4 = str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"Triangular")+lang_str+".svg"
 
     if radio_button_group.active == 0:
         CrossSectionSource1.data['sp1'] = [CrossSection1]
@@ -664,7 +663,7 @@ def update_cross_section_image():
 def fun_change_Cross_Section(attrname, old, new):
     if (radio_button_group.active == 0 ):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
-        CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS0.png"])
+        CrossSectionSource_3D.data=dict(img_url=[str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"3DBeam_CS0.png")])
         CrossSectionSource1.data = dict(sp1=[''], x = [0], y = [0])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
@@ -679,7 +678,7 @@ def fun_change_Cross_Section(attrname, old, new):
         XZElement2Source.data = dict(sp4=[], x = [], y = [])          
     elif (radio_button_group.active == 1):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
-        CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS1.png"])
+        CrossSectionSource_3D.data=dict(img_url=[str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"3DBeam_CS1.png")])
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[''], x = [0], y = [0])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])
@@ -692,7 +691,7 @@ def fun_change_Cross_Section(attrname, old, new):
         XZElement2Source.data = dict(sp4=[], x = [], y = [])        
     elif (radio_button_group.active == 2):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
-        CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS2.png"])
+        CrossSectionSource_3D.data=dict(img_url=[str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"3DBeam_CS2.png")])
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[''], x = [0], y = [0])
@@ -705,7 +704,7 @@ def fun_change_Cross_Section(attrname, old, new):
         XZElement2Source.data = dict(sp4=[], x = [], y = [])                                            
     elif (radio_button_group.active == 3):
         (colorBarXCoords, colorBarYCoords , colorBarColorList, colorBarAlphaList) = update_colorBar(radio_button_group.active)
-        CrossSectionSource_3D.data=dict(img_url=["2D_cantilever_beam/static/images/3DBeam_CS3.png"])
+        CrossSectionSource_3D.data=dict(img_url=[str(app_base_path.relative_to(app_base_path.parent)/"static"/"images"/"3DBeam_CS3.png")])
         CrossSectionSource1.data = dict(sp1=[], x = [], y = [])
         CrossSectionSource2.data = dict(sp2=[], x = [], y = [])
         CrossSectionSource3.data = dict(sp3=[], x = [], y = [])       

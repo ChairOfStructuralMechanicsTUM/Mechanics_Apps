@@ -1,0 +1,65 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Pendulum",
+        "de": "Pendel"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open(app_base_path/'description.html').read()",
+        "de": "open(app_base_path/'description_de.html', encoding='utf-8').read()"
+    },
+    "fig.title.text":
+    {
+        "en": "Kinetic energy balance",
+        "de": "Energiebilanz: Anteil kinetische Energie"
+    },
+    "phase_diagramm.title.text":
+    {
+        "en": "Phase diagram",
+        "de": "Phasendiagramm"
+    },
+    "Play_button.label":
+    {
+        "en": "Play",
+        "de": "Start"
+    },
+    "Stop_button.label":
+    {
+        "en": "Stop",
+        "de": "Stop"
+    },
+    "Reset_button.label":
+    {
+        "en": "Reset",
+        "de": "Zurücksetzen"
+    },
+    "mass_input.title":
+    {
+        "en": "\\\\mathrm{Mass =}",
+        "de": "\\\\mathrm{Masse =}"
+    },
+    "lam_input.title":
+    {
+        "en": "\\\\mathrm{Damper\\\\ coefficient =}",
+        "de": "\\\\mathrm{Dämpferkoeffizient =}"
+    },
+    "pendulum_type_input.labels[0]":
+    {
+        "en": "Single pendulum",
+        "de": "Pendel"
+    },
+    "pendulum_type_input.labels[1]":
+    {
+        "en": "Double pendulum",
+        "de": "Doppelpendel"
+    }
+
+}

@@ -1,0 +1,71 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Mohr Circle",
+        "de": "Mohrscher Spannungskreis"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open(app_base_path/'description.html').read()",
+        "de": "open(app_base_path/'description_de.html', encoding='utf-8').read()"
+    },
+    "reset_button.label":
+    {
+        "isCode": false,
+        "en": "Reset",
+        "de": "Zurücksetzen"
+    },
+    "draw_button.label":
+    {
+        "isCode": false,
+        "en": "Draw",
+        "de": "Mohrschen Spannungskreis zeichnen"
+    },
+    "show_button.label":
+    {
+        "en": "Show/Hide principal stress + direction",
+        "de": "Zeige/Verberge Lage der Hauptspannungen"
+    },
+    "figure_texts.data['text'][0]":
+    {
+        "en": "\\\\text{Normal Stresses}\\\\ \\\\sigma_x, \\\\sigma_z",
+        "de": "\\\\text{Normalspannungen}\\\\ \\\\sigma_x, \\\\sigma_z"
+    },
+    "figure_texts.data['text'][1]":
+    {
+        "en": "\\\\text{Shear Stresses}\\\\ \\\\tau_{xz}",
+        "de": "\\\\text{Schubspannungen}\\\\ \\\\tau_{xz}"
+    },
+    "figure_texts.data['text'][2]":
+    {
+        "en": "\\\\text{Normal Stresses}\\\\ \\\\sigma_{\\overline{x}}, \\\\sigma_{\\overline{z}}",
+        "de": "\\\\text{Normalspannungen}\\\\ \\\\sigma_{\\overline{x}}, \\\\sigma_{\\overline{z}}"
+    },
+    "figure_texts.data['text'][3]":
+    {
+        "en": "\\\\text{Shear Stresses}\\\\ \\\\tau_{\\overline{xz}}",
+        "de": "\\\\text{Schubspannungen}\\\\ \\\\tau_{\\overline{xz}}"
+    },
+    "figure_texts.data['text'][4]":
+    {
+        "en": "Stress State A",
+        "de": "Spannungszustand A"
+    },
+    "figure_texts.data['text'][5]":
+    {
+        "en": "Mohr's Circle",
+        "de": "Mohrscher Spannungskreis"
+    },
+    "figure_texts.data['text'][6]":
+    {
+        "en": "Stress State B",
+        "de": "Spannungszustand B"
+    }
+}

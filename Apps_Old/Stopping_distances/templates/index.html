@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        {{ bokeh_css }}
+        {{ bokeh_js }}
+        <style>
+            .bk-widget{
+              font-size:14px;
+            }
+            
+            label {
+              font-size:14px !important;
+            }
+
+            input[type="text"] {
+              font-size:14px !important;
+            }
+            
+            button {
+                display: block;
+                font-size:14px !important;
+            }
+            
+            .bk-layout-fixed {
+                vertical-align: top;
+                float: None !important;
+            }
+            .bk-widget-box {
+                vertical-align: bottom;
+            }
+			p {
+			font: "Libre Baskerville", sans-serif;
+			text-align: justify;
+			text-justify: inter-word;
+			}
+        </style>
+    </head>
+    <body>
+        <div class="content">
+            {{ plot_div|indent(8) }}
+            {{ plot_script|indent(8) }}
+        </div>
+    </body>
+</html>

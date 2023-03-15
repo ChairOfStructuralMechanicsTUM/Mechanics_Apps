@@ -1,0 +1,66 @@
+<head>
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+<head>
+
+<h1>Tuned Mass Damper</h1>
+
+<p>
+The Tuned Mass Damper (TMD) is a dynamical system that consists of two masses, of which one has a bigger mass content and is fixed to the ground by a 
+spring and a damper and the other has a smaller mass content and is attached to the bigger mass by a spring and a damper. The bigger mass is referred to as the main mass, whereas the 
+smaller mass is referred to as the top mass. The name Tuned Mass Damper was chosen because this application is 
+meant to demonstrate how the adjustment of the top mass as well as the spring stiffness and the damping coefficient can affect
+the vibration pattern of the main mass.  
+</p>
+<p>
+In this application, a time-varying force is acting directly upon the main mass. This force is plotted in a Force-Time diagram. The normalized displacements of the main mass and the top mass
+are plotted in the Displacement-Time plot. Furthermore, the diagrams in the middle show the amplification function and the phase angle of the system plotted against the excitation frequency ratio. The dot marks the current excitation frequency ratio.
+</p>
+<ul>
+    <li> Amplification: ratio between maximum displacement achieved by the main mass at a specific force frequency and the static displacement, which is simply the force amplitude divided by the spring stiffness of the main mass </li>
+    <li> Excitation Frequency Ratio $\eta$: ratio between force frequency and natural frequency of the main mass</li>
+    <li> Phase Angle: describes by how much the response of the system lags the excitation (for a zero phase angle the system's response is in phase with the excitation) </li>
+    </ul>
+<p>
+The interactivity parameters are:
+</p>
+<ul>
+    <li> the mass ratio $\mu$: top mass divided by main mass, which is fixed at 5 kg </li>
+    <li> the TMD tuning $\kappa$: eigenfrequency of top mass divided by eigenfrequency of main mass, while the spring stiffness of the main mass is fixed at 200 N/m </li>
+    <li> the percentage of critical damping of the main mass $D_1$: damper coefficient of the main mass divided by the critical damping, which is the product of the eigenfrequency and the mass of the main mass multiplicated by 2 </li>
+    <li> the percentage of critical damping of the top mass $D_2$: damper coefficient of the top mass divided by the critical damping, which is the product of the eigenfrequency and the mass of the top mass multiplicated by 2 </li>    
+    <li> the excitation frequency ratio $\eta$: see above </li>
+    </ul>
+<p>
+    At the right-top corner of the displacement and force plot, several tools allow to zoom in or to scroll forward in time. By pressing the Reset button, all settings are restored.
+</p>
+

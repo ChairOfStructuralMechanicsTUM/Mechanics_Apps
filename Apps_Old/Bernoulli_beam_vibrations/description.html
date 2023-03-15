@@ -1,0 +1,54 @@
+<style>
+h1 {
+    margin: 2em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+}
+code {
+    color: #336699;
+}
+</style>
+
+<h1>Free Vibrations of the Euler-Bernoulli Beam</h1>
+<br>
+This app shows the vibration patterns of the Euler-Bernoulli beam for different boundary conditions. If no damping is considered, the equation of motion reduces to $$EIw'''' + \mu \ddot{w} = 0.$$ 
+Performing a separation of variables, $$w\left(x,t\right) = W\left(x\right) f\left(t\right)$$ and defining $$ \lambda = l \sqrt[4]{\frac{\mu \omega^2}{\mathrm{EI}}} $$ an ordinary differential equation is obtained: 
+$$ W''''\left(x\right) - \lambda^4W\left(x\right) = 0, \qquad \ddot{f}\left(t\right) + \omega^2 f\left(t\right) = 0.$$
+The solution of this ODE is given by $$W\left(x\right) = C_{x1}\cosh\left(\lambda x\right) + C_{x2}\sinh\left(\lambda x\right) + C_{x3}\cos\left(\lambda x\right) + C_{x4}\sin\left(\lambda x\right), \qquad f\left(t\right) = C_{t1}\cos\left(\omega t\right) + C_{t2}\sin\left(\omega t\right). $$
+Using two temporal and four spatial boundary conditions, depending on the support of the beam, the system of equations can be established. It can be solved setting its determinant equal to zero.
+<br><br>
+Following, the vibration of beams with different boundary conditions are presented. The eigenmodes can be selected using the sliders below the beam plots and the different parts of the solution can be visualized.
+<br><br>
+<div>
+<p><b><u>Definitions:</u></b> </p>
+<table>
+<tr><td> \( C(\lambda) = \frac{1}{2} \left[ \cosh(\lambda) + \cos(\lambda) \right] \) </td></tr>
+<tr><td> \( S(\lambda) = \frac{1}{2} \left[ \sinh(\lambda) + \sin(\lambda) \right] \) </td></tr>
+<tr><td> \( c(\lambda) = \frac{1}{2} \left[ \cosh(\lambda) - \cos(\lambda) \right] \) </td></tr>
+<tr><td> \( s(\lambda) = \frac{1}{2} \left[ \sinh(\lambda) - \sin(\lambda) \right] \) </td></tr>
+<tr><td> \( \xi = \frac{x}{l} \) </td></tr>
+<tr><td> \( \lambda = l \sqrt[4]{\frac{\mu \omega^2}{\mathrm{EI}}} \) </td></tr>
+<tr><td> \( \rightarrow  \omega = \frac{\lambda^2}{l^2} \sqrt{\frac{\mathrm{EI}}{\mu}} \) </td></tr>
+</table>
+</div>

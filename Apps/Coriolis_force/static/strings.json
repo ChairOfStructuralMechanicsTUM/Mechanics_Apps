@@ -1,0 +1,54 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Coriolis force",
+        "de": "Corioliskraft"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open(app_base_path /'description.html').read()",
+        "de": "open(app_base_path /'description_de.html', encoding='utf-8').read()"
+    },
+    "p.title.text":
+    {
+        "en": "Rotating disk with non accelerated particle",
+        "de": "Rotierende Scheibe mit unbeschleunigtem Partikel"
+    },
+    "Referential_button.labels[0]":
+    {
+        "en": "Reference frame: Room",
+        "de": "Bezugssytem: Raum"
+    },
+    "Referential_button.labels[1]":
+    {
+        "en": "Reference frame: Disk",
+        "de": "Bezugssystem: Scheibe"
+    },
+    "play_button.label":
+    {
+        "en": "Play",
+        "de": "Start"
+    },
+    "reinit_button.label":
+    {
+        "en": "Re-initialise",
+        "de": "Zurücksetzen"
+    },
+    "pause_button.label":
+    {
+        "en": "Pause",
+        "de": "Pause"
+    },
+    "reset_button.label":
+    {
+        "en": "Reset",
+        "de": "Neu starten"
+    }
+}

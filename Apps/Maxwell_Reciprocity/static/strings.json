@@ -1,0 +1,45 @@
+{
+    "curdoc().title": 
+    {
+        "en": "Maxwell Reciprocity",
+        "de": "Der Satz von Maxwell und Betti"
+    },
+    "lang_button.label":
+    {
+        "isCode": false,
+        "en": "Zu Deutsch wechseln",
+        "de": "Switch to English"
+    },
+    "description.text":
+    {
+        "isCode": true,
+        "en": "open(app_base_path /'description.html').read()",
+        "de": "open(app_base_path /'description_de.html', encoding='utf-8').read()"
+    },
+    "description1.text":
+    {
+        "isCode": true,
+        "en": "open(app_base_path /'description1.html').read()",
+        "de": "open(app_base_path /'description1_de.html', encoding='utf-8').read()"
+    },
+    "mag_slider.title":
+    {
+        "en": "Magnitude",
+        "de": "Lastgröße"
+    },
+    "loc_slider.title":
+    {
+        "en": "Position",
+        "de": "Position"
+    },
+    "button.label":
+    {
+            "en": "Save Deformed Frame",
+            "de": "Speichere verformten Rahmen"
+    },
+    "rbutton.label":
+    {
+        "en": "Reset",
+        "de": "Zurücksetzen"
+    }
+}

@@ -1,0 +1,64 @@
+<head>
+    <style>
+    h1 {
+        margin: 2em 0 0 0;
+        color: #2e484c;
+        font-family: 'Julius Sans One', sans-serif;
+        font-size: 1.8em;
+        text-transform: uppercase;
+    }
+    a:link {
+        font-weight: bold;
+        text-decoration: none;
+        color: #0d8ba1;
+    }
+    a:visited {
+        font-weight: bold;
+        text-decoration: none;
+        color: #1a5952;
+    }
+    a:hover, a:focus, a:active {
+        text-decoration: underline;
+        color: #9685BA;
+    }
+    p {
+        font: "Libre Baskerville", sans-serif;
+        text-align: justify;
+        text-justify: inter-word;
+    }
+    code {
+        color: #336699;
+    }
+    </style>
+    <head>
+    
+    <h1>Beam Modes</h1>
+    
+    <p>
+        This app shows the deflection of a harmonically loaded beam for different boundary conditions. The beam properties (the length $L$, the real part of the Young's modulus $E'$, the area moment of inertia $I$ and the mass per unit length $\mu$), as well as the force amplitude $F$ are fixed.
+    </p>
+    <p>
+        The deflection can be calculated with the following equation: $$W\left(x\right) = C_1 \cdot sin\left(\frac{\lambda}{L} \cdot x\right) + C_2 \cdot cos\left(\frac{\lambda}{L} \cdot x\right) + C_3 \cdot sinh\left(\frac{\lambda}{L} \cdot x\right) + C_4 \cdot cosh\left(\frac{\lambda}{L} \cdot x\right),$$
+        where $$\lambda = L \cdot \sqrt[4]{\frac{\mu \cdot \Omega^2}{E \cdot I}}.$$ 
+        The complex Young's modulus can be described with $$E = E' \cdot \left(1 + \text{i} \cdot \eta\right)$$ where $\eta$ is the damping loss factor.
+    </p>
+    <p>
+        The drop down menu allows to choose from four different support systems. Additionally, we allow the modification of
+        <ul>
+            <li> the loss factor $\eta$ which describes the energy loss and thus the damping of the material, </li>
+            <li> the location where the load is applied in $m$, </li>
+            <li> the location where the frequency analysis is performed in $m$, </li>
+            <li> the excitation frequency ratio $r = \frac{\Omega}{\omega_1}$, where $\Omega$ is the excitation frequency and $\omega_1$ the first eigenfrequency. </li>
+        </ul>
+    </p>
+    <p>
+        The plot on the upper left shows the chosen system and the deformed beam. The maximum deflection is normalized to a certain value.
+        The diagram on the upper right shows the normalized deflection of the beam at the chosen location for a fixed range of excitation frequency ratios. 
+        On the lower right the corresponding phase angle is plotted. The phase angle describes by how much the response lags behind the excitation.
+        The green button allows the user to change between the frequency analysis and the modification of the input parameters.
+    </p>
+    <p>
+        The 3D plot at the bottom puts together the information displayed in the upper diagrams and shows the dependency between the excitation frequency ratio, the eigenfrequencies of the system and the normalized deflection of the beam.
+        For a better visualization of the beam deflection at higher excitation frequencies, the normalized deflection is multiplied with the squared excitation frequency ratio $r$.
+        One can pan to rotate the figure and scroll or pinch to zoom.
+    </p>
