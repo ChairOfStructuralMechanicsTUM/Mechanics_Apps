@@ -55,7 +55,7 @@ def mandel(x0, y0, xw, yw, x_res, y_res, iterate_max, iteration_bound):
 
                 it_count[i, j] = count
 
-    t0 = time.clock()
+    t0 = time.perf_counter()
 
     # create grid in the complex plane
     re, im = np.meshgrid(np.linspace(x0, x0 + xw, x_res, dtype=np.float64),
@@ -65,6 +65,6 @@ def mandel(x0, y0, xw, yw, x_res, y_res, iterate_max, iteration_bound):
     # call vectorized worker function
     print("calling iterate_mandelbrot.")
     iterate_mandelbrot(re, im, it_count)
-    print("elapsed time:" + str(time.clock() - t0) + " sec")
+    print("elapsed time:" + str(time.perf_counter() - t0) + " sec")
 
     return it_count
