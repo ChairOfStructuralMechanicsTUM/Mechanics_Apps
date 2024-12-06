@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>1D - Monoatomic Mass-Spring-Chain</title>
+    <script type="text/javascript" async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    <style>
+        body{
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            padding: 20px
+        }
+
+
+    </style>
+</head>
+<body>
+<!--<hr>-->
+    <h3>Derivation of the Dispersion Relation</h3>
+<p>
+    The equation of motion for the mass $$m_n$$ is given by: <br>
+    <br>
+    $$m_n \ddot{u}_n = c\,(u_{n+1}-2  u_n + u_{n-1})$$ <br>
+    <br>
+    Due to the periodicity of the system, the Bloch theorem can be employed to derive the eigenvalue problem $$\omega(k)$$
+    based on a single unit cell. For this purpose, a harmonic, plane wave is assumed as a solution to the homogeneous differential equation. <br>
+    <b>Ansatz:</b> <br>
+    <br>
+    $$u(x_n,t)=u_n(t)=\hat{u}(\omega)\text{e}^{-\text{i}\omega t}=A(k(\omega))\text{e}^{\text{i}(ka-\omega t)}$$ <br>
+    <br>
+    Here, $$k$$ represents the Bloch wave vector and is defined as: $$k=\frac{2\pi n}{Na}$$. <br>
+    $$n$$ denotes the numbering of a unit cell and $$N$$ represents the total number of unit cells within a segment of the periodic structure, fulfilling periodic boundary conditions with the Bloch theorem. <br>
+    Using the Bloch theorem, $$\hat{u}(\omega)$$ describes the expression of phase change from one unit cell to the next adjacent unit cell. <br>
+    <br>
+    $$\hat{u}(\omega)=A(k(\omega))\text{e}^{\text{i}ka}$$ <br>
+    <br>
+    Furthermore, the definition of the dimensionless wave number $$\mu=\frac{2\pi}{Na}a$$ is adopted. Thus, the approach simplifies to: <br>
+    <br>
+    $$u_n(t)=A(k(\omega))\text{e}^{\text{i}(\mu n - \omega t)}$$ <br>
+    <br>
+    Substituting into the differential equation and considering the relationship $$2cos(x) = \text{e}^{\text{i}x}+\text{e}^{-\text{i}x}$$, we obtain: <br>
+    <br>
+    $$A\text{e}^{\text{i}(\mu n-\omega t)} [-\omega^2m + 2c\,(1-\cos{(\mu)})] = 0$$ <br>
+    <br>
+    <b>The non-trivial solution of the differential equation yields the dispersion relation $$\omega(k)$$ of the monoatomic mass-spring chain: <br>
+    <br>
+    $$\omega(k) = \sqrt{\frac{4c}{m}}  | \frac{sin(ka)}{2}| = \sqrt{\frac{4c}{m}}  | \frac{sin(\mu)}{2}|$$ <br>
+    <br>
+
+</p>
+
+</body>
+</html>

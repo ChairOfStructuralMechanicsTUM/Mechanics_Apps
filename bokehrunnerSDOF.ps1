@@ -11,7 +11,8 @@ Write-Host -ForegroundColor Yellow "********************************************
 
 #generate appnames.conf by running `generate_appnames.cmd` via cmd
 #remove Apps/shared from this list
-$apps = Get-Content -Path appnames.conf
+#manually add all folders from Math_Apps
+$apps = Apps\Dispersion1DMassSpringChain
 
 # There are two different options, uncomment one of the two lines below.
 # Use SSL (served at https://${ip}:${port})

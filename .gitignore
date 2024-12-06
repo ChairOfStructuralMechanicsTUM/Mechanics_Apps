@@ -8,4 +8,6 @@ server.conf
 server_autorun.cmd
 .vscode/settings.json
 *.pem
+MechanicApps.yml
+not_working_apps.txt
 

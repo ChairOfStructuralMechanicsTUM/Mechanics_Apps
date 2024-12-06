@@ -1,0 +1,53 @@
+<head>
+    <title>Title</title>
+    <style>
+        body{
+            text-align: left;
+        }
+
+    </style>
+</head>
+<h2>Animation of the Diatomic Mass-Feder Chain</h2>
+<p>In the following, the normal modes of a diatomic mass-spring chain can be visualized.
+    For this purpose, a segment of the structure consisting of $N+1$ unit cells has been connected using the periodic boundary conditions of the Bloch theorem.
+    The invariant parameters of the animation are:
+    <ul>
+    <li>Mass $m_2 = 1$</li>
+    <li>Spring constant $c = 1$</li>
+    <li>Distance between unit cells $a = 8$</li>
+    <li>Number of visualized masses $n = 32$</li>
+    <li>Number of unit cells $N = 16$ (or number of normal modes)</li>
+</ul>
+To visualize the normal modes, the real part of $u_n$ and $v_n$ is calculated. <br>
+This is determined by the amplitude ratio
+$\frac{A}{B}=\frac{c\,(1+\text{e}^{-\text{i}\mu})}{2c-\omega^2m_1}= \frac{2c-\omega^2m_2}{c\,(1+\text{e}^{\text{i}\mu})}$.<br>
+For the acoustic branch, the real parts are given by: <br>
+<ul>
+<li><b>$u_n=\cos{(\mu n -\omega_{-}t)}$</b></li>
+<li><b>$v_n=\frac{c}{2c-\omega^2_{-}m_2}((1+\cos{(\mu)})\cos{(\mu n-\omega_{-}t)} - \sin{(\mu)}\sin{(\mu n - \omega_{-}t)})$</b></li><br>
+</ul>
+For the optical branch, they are given by: <br>
+<ul>
+<li><b>$u_n=\frac{c}{2c-\omega^2_{+}m_1}((1+\cos{(\mu)})\cos{(\mu n-\omega_{+}t)} + \sin{(\mu)}\sin{(\mu n - \omega_{+}t)})$</b></li>
+<li><b>$v_n=\cos{(\mu n -\omega_{+}t)}$</b></li>
+</ul><br>
+
+Using the <button><span style="font-size: 18px;">&minus;</span></button> & <button><span style="font-size: 18px;">&plus;</span></button> buttons,
+the values for $\mu=ka$ can be adjusted, and the corresponding normal modes can be visualized.<br>
+By clicking the <button>Show Bandgaps</button>, the frequency ranges in which the mass-spring chain does not oscillate can be visualized.<br>
+The <button>Start Diatomic Normal Mode Animation</button> button can be used to stop and start the animation.<br>
+<br>
+<b>Special Normal Modes:</b> <br>
+At the boundaries of the reduced Brillouin zone $[0;\pi]$, the two extremes can be visualized. <br>
+For $\mu=\pi$, $ \frac{\mathrm{d} \omega}{\mathrm{d} k} = 0$ and:
+<ul>
+    <li> in the acoustic branch, the heavy masses oscillate out of phase, while the light masses remain still </li>
+    <li>in the optical branch, the light masses oscillate out of phase, while the heavy masses remain still</li>
+</ul>
+For $\mu = 0$:
+<ul>
+    <li>in the acoustic branch, all masses remain still</li>
+    <li>in the optical branch, $\frac{\mathrm{d} \omega}{\mathrm{d} k} = 0$ and the light and heavy masses oscillate out of phase with
+    the amplitude ratio $\frac{u_k}{v_k}=\frac{-m_2}{m_1}$</li>
+</ul>
+</p>

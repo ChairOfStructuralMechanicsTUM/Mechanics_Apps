@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Animation der diatomaren Masse-Feder-Kette </h2>
+<p>Im Folgenden k&ouml;nnen die Normal-Modes einer diatomaren Masse-Feder-Kette visualisiert werden.
+    Hierzu wurde ein Ausschnitt der Struktur aus $$N+1$$ Einheitszellen mithilfe der periodischen Randbedingungen des Bloch Theorems verkn&uuml;pft.
+    Die unver&auml;nderlichen Parameter der Animation sind:
+    <ul>
+    <li>Masse $$m_2 = 1$$</li>
+    <li>Federkonstante $$c = 1$$</li>
+    <li>Abstand der Einheitszellen $$a = 8$$</li>
+    <li>Anzahl der visualisierten Massen $$N = 32$$</li>
+    <li>Anzahl der Einheitszellen $$N = 16$$ (bzw. Anzahl der Normal Modes)</li>
+</ul>
+Zur Visualisirung der Normal-Modes wird der Real-Teil von $$u_n$$ und $$v_n$$ berechnet. <br>
+Dieser ergibt sich mit dem Amplitudenverh&auml;ltnis
+$$\frac{A}{B}=\frac{c(1+e^{-i\mu})}{2c-\omega^2m_1}= \frac{2c-\omega^2m_2}{c(1+e^{i\mu})}$$.<br>
+F&uuml;r den akustischen Zweig ergeben sich die Realteile mit <br>
+<ul>
+<li><b>$$u_n=\cos{(\mu n -\omega_{-}t)}$$</b></li>
+<li><b>$$v_n=\frac{c}{2c-\omega^2_{-}m_2}((1+\cos{(\mu)})\cos{(\mu n-\omega_{-}t)} - \sin{(\mu)}\sin{(\mu n - \omega_{-}t)})$$</b></li><br>
+</ul>
+f&uuml;r den optischen Zweig mit <br>
+<ul>
+<li><b>$$u_n=mono$$</b></li>
+<li><b>$$v_n=\cos{(\mu n -\omega_{+}t)}$$</b></li>
+</ul><br>
+
+Mithilfe des <button><span style="font-size: 18px;">&minus;</span></button> & <button><span style="font-size: 18px;">&plus;</span></button> k&ouml;nnen die
+Werte f&uuml;r $$\mu=ka$$ angepasst und die zugeh&ouml;rigen Normal Modes visualisiert werden.<br>
+Mit dem Button <button>Frequenzperrb&auml;nder anzeigen</button> lassen sich die Frequenzbereiche visualisiert werden, in welchen die Masse-Feder-Kette nicht schwingt.<br>
+ Der <button>Diatomic Normal Mode Animation starten</button> kann die Animation gestoppt und gestartet werden.<br>
+<br>
+<b>Besondere Normal Modes:</b> <br>
+An den Grenzen der Reduced Brillouin Zone $$[0;\pi]$$ sind die zwei Extreme visualisierbar. <br>
+F&uuml;r $$\mu= \pi$$ gilt $$ \frac{\partial \omega}{\partial k} = 0$$ und:
+<ul>
+    <li> im <b>akustischen</b> Zweig schwingen die schweren Massen gegenphasig, w&auml;hrend die leichten Massen stillstehen </li>
+    <li>im <b>optischen</b> Zweig schwingen die leichten Massen gegenphasig, w&auml;hrend die schweren Massen stillstehen</li>
+</ul>
+F&uuml;r $$\mu = 0$$ gilt:
+<ul>
+    <li>im <b>akustischen</b> Zweig stehen alle Massen still</li>
+    <li>im <b>optischen</b> Zweig $$ \frac{\partial \omega}{\partial k} = 0$$ und die leichten und schweren Massen schwingen gegenphasig mit
+    dem Amplitudenverh&auml;ltnis $$\frac{u_k}{v_k}=\frac{-m_2}{m_1}$$</li>
+
+</ul>
+
+
+</p>
+
+
+
+</body>
+</html>

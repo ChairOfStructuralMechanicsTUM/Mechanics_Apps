@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>1-D Diatomic Mass-Spring-Chain</title>
+    <script type="text/javascript" async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    <style>
+        body{
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            padding: 20px
+        }
+
+
+    </style>
+</head>
+<body>
+<!--<hr>-->
+    <h3>Herleitung des Dispersionsverhältnis</h3>
+    <p> Die Bewegungsgleichungen der beiden Massen $$m_1$$ und $$m_2$$ sind gegeben durch:<br>
+        <br>
+        $$m_1 \cdot \ddot{u}_n = c \cdot (v_{n-1} - 2 u_n + v_n)$$ <br>
+        $$m_2 \cdot \ddot{v}_n = c \cdot (u_{n} - 2 v_n + u_{n+1})$$ <br>
+        mit den Parametern:
+        <ul>
+        <li>Verschiebung von $$m_1$$: $$u_l$$</li>
+        <li>Verschiebung von $$m_2$$: $$v_l$$</li>
+        <li>Nummer der Einheitszelle $$n$$</li>
+        </ul>
+        <br>
+        Aufgrund der Periodizit&auml;t des Systems kann das Bloch-Theorem genutzt werden, um das Eigenwertproblem $$\omega(k)$$
+        anhand einer einzelnen Einheitszelle herzuleiten. Hierf&uuml;r werden als L&ouml;sung des homogenen Differentialgleichungssystems
+        ebene, harmonische Wellen angenommen.<br>
+        <b>Ansatz:</b> <br>
+        <br>
+        <br>
+            $$u_n(t)=A(k(\omega))e^{i(ka-\omega t)}$$ <br>
+            $$v_n(t)=B(k(\omega))e^{i(ka-\omega t)}$$ <br>
+        <br>
+
+        $$k$$ ist der Bloch-Wellenvektor und definiert mit: $$k=\frac{2\pi n}{Na}$$.<br>
+        $$n$$ beschreibt die Nummerierung einer Einheitszelle und $$N$$ die gesamte Anzahl der Einheitszellen aus einem
+        Auschnitt der periodischen Struktur, der mit dem Bloch Theorem die periodischen Randbedingungen erf&uuml;llt.<br>
+
+        Im Weiteren wird die Definition der dimensionslosen Wellenzahl $$\mu=\frac{2\pi}{Na}a$$ &uuml;bernommen. Damit vereinfacht sich der Ansatz zu:
+        <br>
+        <br>
+        $$u_n(t)=A(k(\omega))e^{i(\mu n-\omega t)}$$, <br>
+        $$v_n(t)=B(k(\omega))e^{i(\mu n-\omega t)}$$.<br>
+    <br>
+    In das lineare Differntialgleichungssystem eingesetzt ergibt sich: <br>
+     <br>
+        $$-\omega^2m_1A=-2cA+cB(1+e^{-i\mu})$$,<br>
+        $$-\omega^2m_2B=cA(1+e^{i\mu})-2cB$$.<br>
+    <br>
+
+    bzw. in Matrixschreibweise zu: <br>
+    $$\begin{bmatrix}
+    \omega^2m_1-2c & c(1+e^{-i\mu}) \\
+    (1+e^{i\mu}) &  \omega^2m_2-2c
+    \end{bmatrix}\begin{bmatrix}
+        A\\B
+    \end{bmatrix} =\begin{bmatrix}
+        0\\0
+    \end{bmatrix}$$ <br>
+    <br>
+    F&uuml;r das lineare Gleichungssystem existiert eine <b>nicht triviale L&ouml;sung ($$A\neq 0,B\neq 0$$), wenn</b> f&uuml;r die
+    dynamische Steifigkeitsmatrix $$[K-\omega^2M]$$ gilt: <br>
+<b>$$det(K-\omega^2M)=0$$</b>. <br>
+Daraus folgt das <b>Dispersionsverh&auml;ltnis $$\omega(k)$$:</b> <br>
+<br>
+    $$\omega_{+}$$ $$=\frac{c}{m_1m_2}(m_1+m_2+\sqrt{m_1^2+m_2^2+2m_1m_2\cos{(ka)}})$$
+$$=\frac{c}{m_1m_2}(m_1+m_2+\sqrt{m_1^2+m_2^2+2m_1m_2\cos{(\mu)}})$$
+<br>
+    $$\omega_{-} =\frac{c}{m_1m_2}(m_1+m_2-\sqrt{m_1^2+m_2^2+2m_1m_2\cos{(ka)}}) = \frac{c}{m_1m_2}(m_1+m_2-\sqrt{m_1^2+m_2^2+2m_1m_2\cos{(\mu)}})$$
+<br>
+<br>
+Die niederfrequente Dispersbeziehung wird als <b>akustischer Zweig</b> und die L&ouml;sung h&ouml;herer Frequenz als <b>optischer Zweig</b> bezeichnet.
+Im Unterschied zum monoatomaren System existieren <b>zwei Normal Modes f&uuml;r jeden Wellenvektor $$k$$</b>. Eine akustische und eine optische Mode.
+
+
+    </p>
+</body>
+</html>

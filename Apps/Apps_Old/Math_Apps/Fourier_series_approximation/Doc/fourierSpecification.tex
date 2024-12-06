@@ -1,0 +1,151 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% 	Template for seminar reports
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,pdftex]{scrartcl}
+
+\usepackage[utf8]{inputenc}   
+\usepackage{graphicx}
+\usepackage{amstext}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{bm}
+\usepackage{comment}
+\usepackage{listings}
+
+% no page number on first page
+% \pagestyle{empty}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{acronym}
+
+\newcommand{\dx}{\text{d}x}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 	Paper title
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Designing interactive webapplications for mathematical visualization}
+\subtitle{}
+
+\author{
+Christian Karpfinger, Benjamin Rüth\\
+Technische Universit\"at M\"unchen\\
+Email: benjamin.rueth@tum.de 
+}
+
+\maketitle
+
+%abstract
+We developed a flexible open--source based workflow with the specific application of webdriven, platform independent, interactive applications for mathematical visualization in the context of university education. Our main goal is to realize mathematical visualization with no requirements of programming skills or program installation on the user--side. The Python plotting library Bokeh plays a crucial role in our approach.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 	Sections, Subsections,...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+We wanted to setup interactive webapplications for the visualization of math content, specially in the context of the math lecture for mechanical engineering students. The goal was to have an environment where as few user interaction as possible is necessary to get the application running and with as less visible code as possible. Both restrictions are in our opinion very important, because a non smooth start--up of the application often frustrates the user and especially undergraduate students often do not want or are not able to program (even few lines of code), sometimes even seeing code results in the user immediatelly leaving the webpage. Therefore we put up the following constraints to our application:
+\begin{itemize}
+\item no installation or log--in required
+\item no visible code and no necessity to access or modify code 
+\item use of open source software
+\item interactive modification of math visualizations
+\item high flexibility with respect to plotting and interaction
+\end{itemize}
+Before starting this project we have used videos generated in MATLAB for visualizing mathematical content. At some point we found out that many topics cannot be visualized properly by creating a video. Often it has a much higher effect, if the user is able to play around with parameters and try out different combinations of parameters on ones own.
+
+Our MATLAB videos were --- obviously --- not able to fulfil our constraints. Also other environments like "Wolfram CDF Player" (huge installation, not open source), "IPython Notebook" (too much code interaction) or "Geogebra" (only basic scripting language, not flexible) do not fulfil our criteria and turned out to be not appropriate for that specific task.
+
+The Python framework is in general very flexible, open--source and also extendible, since many scientific applications base on Python. After some research we discovered the plotting library Bokeh, which is similar to matplotlib, but also supports interactive manipulation of the plots with different kinds of widgets as well as running these interactive plots on a server. In the following we want to describe our workflow for setting up an interactive webapp using Bokeh as well as the other used tools. 
+
+\section{Installation}
+The Framework \href{}{Anaconda} turned out to be a good choice for the installation of all the necessary python modules. The installation of Anaconda is described at
+\begin{center}
+\href{http://continuum.io/downloads}{http://continuum.io/downloads}
+\end{center}
+
+After the installation of Anaconda one can install Bokeh with the following commands:
+\begin{verbatim}
+$ sudo conda install bokeh
+\end{verbatim}
+If installation fails due to access rights create environment.
+\begin{verbatim}
+$ conda create -n my_root
+$ sudo activate my_root
+\end{verbatim}
+Exit environment with
+\begin{verbatim}
+$ source deactivate
+\end{verbatim}
+For development one can use the IDE spyder. Running Spyder from \verb!sudo! often causes problems, don't do this! If problems with the libraries occur run
+\begin{verbatim}
+$ spyder --reset
+$ spyder
+\end{verbatim}
+
+\section{The idea}
+Our goal was to implement an interactive Fourier--Series app. The Fourier--Series of a $2\pi$--periodic  function $f(x)$ is defined in the following way:
+\begin{align*}
+f\left(x \right) = \frac{a_0}{2}+\sum\limits_{k=1}^\infty \left[a_k \cos\left(kx \right) + b_k \sin\left(kx\right)\right],\\
+\intertext{with}
+a_k = \frac{1}{\pi}\int\limits_{0}^{2\pi} f\left(x \right)\cos\left(kx\right)\dx \text{\quad and\quad }
+b_k = \frac{1}{\pi}\int\limits_{0}^{2\pi} f\left(x \right)\sin\left(kx\right)\dx.
+\end{align*}
+This representation is exact, if one uses infinitely many coefficients $a_k,b_k$. If one truncuates the series after $n$ coefficients, such that we set $a_k,b_k = 0 \forall k>n$ we do not get an exact representation of $f(x)$, but only an approximation:
+\begin{align*}
+f\left(x \right) \approx \frac{a_0}{2}+\sum\limits_{k=1}^n \left[a_k \cos\left(kx \right) + b_k \sin\left(kx\right)\right].
+\end{align*}
+We now wanted to implement a app, where the user has the possibility to choose the value of $n$ and can therefore interactively control the accuracy of the approximation of $f(x)$. An additional goal is to visualize the analytical representation of the fourier series at the same time, such that the user can see different phenomena:
+\begin{itemize}
+\item The higher we choose $n$ the longer our analytical expression is.
+\item Even functions (symmetrical to the y--axis) produce only $\cos$ terms in the series expansion, odd functions (point--symmetrical to the origin) produce onyl $\sin$ terms in the series expansion.
+\item The coefficients are decreasing along the series.
+\end{itemize}
+Of course one can also proof all these properties, but seeing them "in action" often has a bigger effect.
+
+\section{Implementation}
+The mathematical functionality has been implemented in the file \verb!fourierFunctions.py!; these functions just supply us with some example functions $f(x)$ and functions for the calculation of the coefficients and the evaluation of the fourier series. We will not explain these in detail.
+
+The dynamic generation of \LaTeX\ strings depending on the degree of the fourier series and $f(x)$ is done in \verb!fourierTex.py!.
+
+The most important part of our implementation is in \verb!fourierApp.py!. This file sets up the web app and uses the previously mentioned files to correctly handle user input.
+
+These functions are only able to publish our app directly on the Bokeh plotting server. For more elaborate functionality (like the dynamic update of \LaTeX\ strings) we feed the output of the Bokeh plotting server to a \href{}{Flask} server(which is able to handle to \LaTeX\ strings sent via an request). The \LaTeX\ strings are finally embedded into the html file via \href{https://www.mathjax.org/}{MathJax}.
+All source files can be found in the appendix as well as on GitHub: \href{}{}
+
+\section{Running the App}
+For running the app one firstly has to start the Bokeh plotting server via
+\begin{verbatim}
+$ bokeh-server -m --backend=memory
+\end{verbatim}
+Then one has to run the script starting the App on the plotting server
+\begin{verbatim}
+$ python fourierApp.py
+\end{verbatim}
+One can now access the App at the plotting server. For enabling displaying of dynamically generatex \LaTeX\ strings one has to run
+\begin{verbatim}
+$ python fourierFlask.py
+\end{verbatim}
+for starting the Flask server. The FourierApp can now be accessed from any Browser.
+
+\section{Conclusions}
+With Python and Bokeh we have the possibility to realize a large field of visualizations. Additionaly to sliders, Bokeh also supplies many other Widgets like buttons, checkboxes, dropdown--lists etc. as well as many different kinds of 2D plots.
+Embedding These Bokeh plots in a Flask environment gives us additionaly the possibility to modify the html content directly from our app.
+Currently we are working on running this app on a server as well as developing more interactive visualizations. Another already completed app is the visualization of different ODE solvers where the user is able to control parameters as step size and initial value.
+
+\appendix
+\section{Listings}
+\subsection{fourierApp.py}
+\lstinputlisting[basicstyle=\scriptsize]{fourierApp.py}
+\subsection{fourierFunctions.py}
+\lstinputlisting[basicstyle=\scriptsize]{fourierFunctions.py}
+\subsection{fourierTex.py}
+\lstinputlisting[basicstyle=\scriptsize]{fourierTex.py}
+\subsection{fourierFlask.py}
+\lstinputlisting[basicstyle=\scriptsize]{fourierFlask.py}
+\end{document}
+
+
+
