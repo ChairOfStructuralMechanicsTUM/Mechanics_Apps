@@ -25,7 +25,7 @@ shareddir = str(pathlib.Path(__file__).parent.parent.resolve() / "shared" ) + "/
 sys.path.insert(0,shareddir)
 from latex_support import LatexDiv, LatexSlider
 
-from math import sqrt, exp, pow, sin , cos, pi, atan2, sinh, cosh
+from math import sqrt, exp, pow, sin , cos, pi, atan2, sinh, cosh, atan
 
 app_base_path = pathlib.Path(__file__).resolve().parents[0]
 
@@ -44,6 +44,13 @@ ef        = sqrt(initial_spring_constant_value/initial_mass_value)
 D         = initial_damping_coefficient_value / (2.0*initial_mass_value*ef)
 damped_ef = ef * sqrt(1-pow(D,2))
 excitation_frequency_value = frequency_ratio_value * ef
+if D == 0 and frequency_ratio_value == 1:
+        V = 1000
+elif frequency_ratio_value == 0:
+        V = 1.0
+else:
+        V = 1.0 / sqrt( pow(1.0-pow(frequency_ratio_value,2),2) + pow(2.0*D*frequency_ratio_value,2) )
+
 
 # change language
 std_lang = 'en'
@@ -72,11 +79,11 @@ displacement_homogeneous = ColumnDataSource(data = dict(t=[0],s=[0]))
 arrow_line   = ColumnDataSource(data = dict(x1=[0],y1=[15],x2=[0],y2=[12]))
 arrow_offset = ColumnDataSource(data = dict(x1=[0],y1=[12],x2=[0],y2=[11.9]))
 phase_angle  = ColumnDataSource(data = dict(beta=[0],phi=[0]))
-amplification_function = ColumnDataSource(data = dict(beta=[0],V=[1]))
+amplification_function = ColumnDataSource(data = dict(beta=[0],V=[V]))
 for beta in range(1,75):
-    amplification_function.stream(dict(beta=[beta/25.0],V=[1]))
+    amplification_function.stream(dict(beta=[beta/25.0],V=[V]))
     phase_angle.stream(dict(beta=[beta/25.0],phi=[1]))
-current_ratio = ColumnDataSource(data = dict(beta=[0],V=[1],phi=[0]))
+current_ratio = ColumnDataSource(data = dict(beta=[0],V=[V],phi=[0]))
 parameters    = ColumnDataSource(data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)]))
 
 ## global variables
@@ -113,31 +120,57 @@ def evolve():
     [frequency_ratio_value]      = glob_frequency_ratio_value.data["frequency_ratio_value"]           # input/
     [force_value]                = glob_force_value.data["force_value"]                               # input/
     [excitation_frequency_value] = glob_excitation_frequency_value.data["excitation_frequency_value"] # input/
-    
+    [V]                          = current_ratio.data["V"]
+
     #########
     k = spring.getSpringConstant
 
     if force_value > 0:
-        if D == 0 and frequency_ratio_value == 1:
-            s_p = -force_value/ (2*k) * ef*t*cos(ef*t)
-            s_h = initial_displacement_value * cos(ef*t)+initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * sin(ef*t)
+        #if D == 0 and frequency_ratio_value == 1:
+            #s_p = -force_value/ (2*k) * ef*t*cos(ef*t)
+            #s_h = initial_displacement_value * cos(ef*t)+initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * sin(ef*t)
+        if frequency_ratio_value == 1:
+            if D == 0 and initial_displacement_value==0 and initial_velocity_value==0:
+                #s_p = -force_value/ (2*k) * ef*t*cos(ef*t)
+                #s_h = initial_displacement_value * cos(ef*t)+initial_velocity_value/ef * sin(ef*t) + force_value/ (2*k) * sin(ef*t)
+                s_p= -force_value/(2*k) *ef*t*sin(ef*t) #already transient solution 
+                s_h=0
+            elif D>0:
+                phi_w = pi*0.5
+                w_01 = initial_displacement_value - (force_value/k)*V*cos(phi_w)
+                w_02 = -(1/damped_ef)*(initial_velocity_value + D*ef*initial_displacement_value + (force_value/k)*V*excitation_frequency_value*sin(phi_w))
+                s_h = exp(-D*ef*t)*(w_01*cos(damped_ef*t)-w_02*sin(damped_ef*t))
+                s_p = (force_value/k)*V*cos(excitation_frequency_value*t+phi_w)    
+            else:
+                print("resonance case")
+                s_h = 0
+                play_pause_button.disabled = True
+                pause()        
+            
         else:
             # homogeneous (transient) part
-            if D<1: 
-                if frequency_ratio_value>1:
-                    s_h = exp(-D*ef*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) ) \
-                        + force_value * exp(-D*ef*t) / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
-                        * ( -2*D*frequency_ratio_value*cos(damped_ef*t) + ef/damped_ef * ( -2*frequency_ratio_value*pow(D,2) + frequency_ratio_value * (1-pow(frequency_ratio_value,2)) ) * sin(damped_ef*t) )
+            phi_w = atan2( (1 - pow(frequency_ratio_value, 2)),2 * D * frequency_ratio_value )
+            #phi_w = atan2(2 * D * frequency_ratio_value , (1 - pow(frequency_ratio_value, 2)))
+            #phi_w = atan(2 * D * frequency_ratio_value / (1 - pow(frequency_ratio_value, 2)))
+            w_01 = initial_displacement_value - (force_value/k)*V*cos(phi_w)
+            w_02 = -(1/damped_ef)*(initial_velocity_value + D*ef*initial_displacement_value + (force_value/k)*V*excitation_frequency_value*sin(phi_w))
+            if D<1:
+                s_h = exp(-D*ef*t)*(w_01*cos(damped_ef*t)-w_02*sin(damped_ef*t))
+                s_p = (force_value/k)*V*cos(excitation_frequency_value*t+phi_w) 
+                #if frequency_ratio_value>1:
+                #    s_h = exp(-D*ef*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) ) \
+                #        + force_value * exp(-D*ef*t) / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
+                #        * ( -2*D*frequency_ratio_value*cos(damped_ef*t) + ef/damped_ef * ( -2*frequency_ratio_value*pow(D,2) + frequency_ratio_value * (1-pow(frequency_ratio_value,2)) ) * sin(damped_ef*t) )
 
-                    s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
-                        * ( -( 1-pow(frequency_ratio_value,2) ) * sin(excitation_frequency_value*t) + 2*D*frequency_ratio_value*cos(excitation_frequency_value*t) )
-                else:
-                    s_h = exp(-D*ef*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) ) \
-                        + force_value * exp(-D*ef*t) / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
-                        * ( 2*D*frequency_ratio_value*cos(damped_ef*t) + ef/damped_ef * ( 2*frequency_ratio_value*pow(D,2) - frequency_ratio_value * (1-pow(frequency_ratio_value,2)) ) * sin(damped_ef*t) )
+                #    s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
+                #        * ( -( 1-pow(frequency_ratio_value,2) ) * sin(excitation_frequency_value*t) + 2*D*frequency_ratio_value*cos(excitation_frequency_value*t) )
+                #else:
+                #    s_h = exp(-D*ef*t) * ( initial_displacement_value * cos(damped_ef*t) + (initial_velocity_value + initial_displacement_value * ef * D)/damped_ef * sin(damped_ef*t) ) \
+                #        + force_value * exp(-D*ef*t) / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
+                #        * ( 2*D*frequency_ratio_value*cos(damped_ef*t) + ef/damped_ef * ( 2*frequency_ratio_value*pow(D,2) - frequency_ratio_value * (1-pow(frequency_ratio_value,2)) ) * sin(damped_ef*t) )
 
-                    s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
-                        * ( ( 1-pow(frequency_ratio_value,2) ) * sin(excitation_frequency_value*t) - 2*D*frequency_ratio_value*cos(excitation_frequency_value*t) )
+                #    s_p = force_value / ( k * (pow(1-pow(frequency_ratio_value,2),2) + pow(2*D*frequency_ratio_value,2)) ) \
+                #        * ( ( 1-pow(frequency_ratio_value,2) ) * sin(excitation_frequency_value*t) - 2*D*frequency_ratio_value*cos(excitation_frequency_value*t) )
             else:
                 print("how did we get there?") # even if this place is reached, there should be no bug
                 s_h = 0
@@ -236,32 +269,33 @@ def compute_amp_and_phase_angle():
         amplification_function.patch({ 'V':[(beta,V)] })
         phase_angle.patch({ 'phi':[(beta,phi)] })
     
-    plot_current_ratio()
+    #plot_current_ratio()
 
-def plot_current_ratio():
-    # extract global variables
-    [frequency_ratio_value] = glob_frequency_ratio_value.data["frequency_ratio_value"] # input/
-    [D] = glob_D.data["D"] # input/
-    
-    
-    if D == 0 and frequency_ratio_value == 1:
-        V = 1000
-    else:
-        V = 1.0 / sqrt( pow(1.0-pow(frequency_ratio_value,2),2) + pow(2.0*D*frequency_ratio_value,2) )
-
-    if D == 0 and frequency_ratio_value < 1:
-        phi = 0
-    elif frequency_ratio_value == 1:
-        phi = 90
-    elif D == 0 and frequency_ratio_value > 1:
-        phi = 180
-    else:
-        phi = atan2( 2.0*D*frequency_ratio_value, 1.0-pow(frequency_ratio_value,2) ) * 180.0 / pi
-
-    current_ratio.data=dict(beta=[frequency_ratio_value],V=[V],phi=[phi])
+#def plot_current_ratio():
+#    # extract global variables
+#    [frequency_ratio_value] = glob_frequency_ratio_value.data["frequency_ratio_value"] # input/
+#    [D] = glob_D.data["D"] # input/
+#    
+#    
+#    if D == 0 and frequency_ratio_value == 1:
+#        V = 1000
+#    else:
+#        V = 1.0 / sqrt( pow(1.0-pow(frequency_ratio_value,2),2) + pow(2.0*D*frequency_ratio_value,2) )
+#
+#    if D == 0 and frequency_ratio_value < 1:
+#        phi = 0
+#    elif frequency_ratio_value == 1:
+#        phi = 90
+#    elif D == 0 and frequency_ratio_value > 1:
+#        phi = 180
+#    else:
+#        phi = atan2( 2.0*D*frequency_ratio_value, 1.0-pow(frequency_ratio_value,2) ) * 180.0 / pi
+#
+#    current_ratio.data=dict(beta=[frequency_ratio_value],V=[V],phi=[phi])
     
     
 compute_amp_and_phase_angle()
+
 p_af = figure(title="", tools="", x_range=(0,3.0), y_range=(0,5), width=300, height=300)
 p_af.line(x='beta', y='V', source=amplification_function, color="#a2ad00")
 p_af.circle(x='beta', y='V', size=10, color="#e37222", source=current_ratio)
@@ -290,7 +324,7 @@ def move_system(disp):
     Linking_Line.data=dict(x=[0,0],y=[8+disp, 10+disp])
     if force_value > 0:
         t = displacement.data["t"][-1]
-        F_length = force_value*sin(excitation_frequency_value*t)
+        F_length = -force_value*sin(excitation_frequency_value*t)
         arrow_line.stream(dict(x1=[0],x2=[0],y1=[15],y2=[15-F_length*3]),rollover=1)
         arrow_offset.stream(dict(x1=[0],x2=[0],y1=[15-F_length*3],y2=[15-F_length*3 - (2*(F_length>0)-1)*1.0]),rollover=1)
     else:
@@ -367,7 +401,7 @@ def change_frequency_ratio(attr,old,new):
     frequency_ratio_value           = new
     glob_frequency_ratio_value.data = dict(frequency_ratio_value = [frequency_ratio_value])
     updateParameters()
-    plot_current_ratio()
+    #plot_current_ratio()
 
 frequency_ratio_input = LatexSlider(title="\\text{Frequency ratio} : ", value=frequency_ratio_value, start=0.1, end=3.0, step=0.1,width=400)
 frequency_ratio_input.on_change('value',change_frequency_ratio)
@@ -510,11 +544,27 @@ def updateParameters():
     else:
         damped_ef = ef * sqrt(pow(D,2)-1)
     excitation_frequency_value = frequency_ratio_value * ef
+    
+    if D == 0 and frequency_ratio_value == 1:
+        V = 1000
+    else:
+        V = 1.0 / sqrt( pow(1.0-pow(frequency_ratio_value,2),2) + pow(2.0*D*frequency_ratio_value,2) )
+
+    if D == 0 and frequency_ratio_value < 1:
+        phi = 0
+    elif frequency_ratio_value == 1:
+        phi = 90
+    elif D == 0 and frequency_ratio_value > 1:
+        phi = 180
+    else:
+        phi = atan2( 2.0*D*frequency_ratio_value, 1.0-pow(frequency_ratio_value,2) ) * 180.0 / pi  
+    
     parameters.data = dict(names1=[u'\u03c9',u"\u03a9"],names2=["D",u'\u03c9*'],values1=[round(ef,4),round(excitation_frequency_value,4)],values2=[round(D,4),round(damped_ef,4)])
     glob_D.data     = dict(D = [D])
     glob_ef.data    = dict(ef = [ef])
     glob_damped_ef.data = dict(damped_ef = [damped_ef])
     glob_excitation_frequency_value.data = dict(excitation_frequency_value = [excitation_frequency_value])
+    current_ratio.data=dict(beta=[frequency_ratio_value],V=[V],phi=[phi])
     # deactivate play button if there exists no solution for these configurations
     if force_value > 0 and D>=1:
         play_pause_button.disabled = True
