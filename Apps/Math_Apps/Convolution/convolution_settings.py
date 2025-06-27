@@ -14,7 +14,7 @@ x_min=-10
 x_max=10
 y_min=-10
 y_max=10
-resolution=2000.0
+resolution=2000
 
 #function input
 sample_function_names = [

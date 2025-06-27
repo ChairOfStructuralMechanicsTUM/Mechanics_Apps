@@ -17,6 +17,8 @@ from bokeh.io import curdoc
 #from os.path import dirname, split
 import pathlib
 
+app_base_path = pathlib.Path(__file__).resolve().parents[0]
+
 import numpy as np
 
 import convolution_settings
