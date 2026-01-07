@@ -449,7 +449,8 @@ def ModesInBand( ElasticModulusData,
     #    fmend = 16000
 
     B = 1.0 / 3.0
-    Baender = (1.0 / B ) * np.log2( fmend / fmstart ) + 1.0
+    #Baender = (1.0 / B ) * np.log2( fmend / fmstart ) + 1.0
+    Baender = int(np.floor((1.0 / B) * np.log2(fmend / fmstart) + 1.0)) #corrected 01.01.2026
     i = np.linspace( 1, Baender, Baender, dtype = int )
 
     freq_T = np.zeros( i.size )
